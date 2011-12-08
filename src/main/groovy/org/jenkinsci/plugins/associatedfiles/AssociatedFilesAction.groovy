@@ -22,7 +22,7 @@ public class AssociatedFilesAction implements Action {
     return "associatedFiles"
   }
   
-  public String getBuildAssociatedFilesList() {
-    return buildAssociatedFiles.split(',')*.trim()
+  public getBuildAssociatedFilesList() {
+    return buildAssociatedFiles.split(',').collect { it.trim() }
   }
 }

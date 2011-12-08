@@ -17,13 +17,13 @@ public class AssociatedFilesRunListener extends RunListener<AbstractBuild> {
     if (afa == null)
       return
     
-    log.warning("Processing files/dirs to delete - raw version is ${afa.buildAssociatedFiles}")
-    afa.getBuildAssociatedFilesList().each { afRaw ->
-      def afName = 
+    log.warning("Processing files/dirs to delete - raw version is ${afa.buildAssociatedFilesList}")
+    afa.getBuildAssociatedFilesList().each { afName ->
+      
       log.warning("Checking associated file ${afName}")
       def afFile = new File(afName)
       
-      if (afFile.isDir()) {
+      if (afFile.isDirectory()) {
           log.warning("Deleting directory ${afName}")
           if (!afFile.deleteDir()) {
             log.warning("Could not delete directory ${afName}")

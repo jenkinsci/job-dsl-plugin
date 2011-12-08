@@ -27,7 +27,7 @@ import org.kohsuke.stapler.DataBoundConstructor
  * @author Andrew Bayer
  */
 public class AssociatedFilesPublisher extends Recorder {
-  private String associatedFiles
+  String associatedFiles
 
   @DataBoundConstructor
   public AssociatedFilesPublisher(String associatedFiles) {
@@ -38,14 +38,14 @@ public class AssociatedFilesPublisher extends Recorder {
     return BuildStepMonitor.NONE;
   }
 
-  public getAssociatedFiles() {
-    return associatedFiles.split(',')*.trim()
+  public getAssociatedFilesList() {
+    return associatedFiles.split(',').collect { it.trim() }
   }
 
 
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-    AssociatedFilesAction afa = build.getEnvironment(listener).expand(associatedFiles)
+    AssociatedFilesAction afa = new AssociatedFilesAction(build.getEnvironment(listener).expand(associatedFiles))
     build.addAction(afa)
     return true;
   }
