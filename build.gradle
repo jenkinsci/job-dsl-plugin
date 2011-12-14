@@ -18,36 +18,36 @@ dependencies {
 }
 
 task stubs {
-    destinationDir = "$buildDir/generated-src/stubs"
-    doFirst {
-        def isolatedAnt = services.get(org.gradle.api.internal.project.IsolatedAntBuilder)
-        isolatedAnt.execute {
-            mkdir(dir: destinationDir)
-            taskdef(name: "generatestubs", classname: "org.codehaus.groovy.ant.GenerateStubsTask") {
-                classpath {
-                        pathelement path: sourceSets.main.compileClasspath.asPath
-                    
-                }
-            }
-
-            generatestubs(destdir: destinationDir) {
-              configuration(targetByteCode:"1.6")
-                classpath {
-                pathelement path: sourceSets.main.compileClasspath.asPath
-                }
-                src {
-                  sourceSets.main.groovy.srcDirs.each { srcDir ->
-                    if (srcDir.exists()) {
-                      dirset(dir: srcDir) {
-                      exclude name: "**/*.properties"
-                      }
-                    }
-                  }
-                }
-            }
+  destinationDir = "$buildDir/generated-src/stubs"
+  doFirst {
+    def isolatedAnt = services.get(org.gradle.api.internal.project.IsolatedAntBuilder)
+    isolatedAnt.execute {
+      mkdir(dir: destinationDir)
+      taskdef(name: "generatestubs", classname: "org.codehaus.groovy.ant.GenerateStubsTask") {
+        classpath {
+        pathelement path: sourceSets.main.compileClasspath.asPath
+          
         }
+      }
+      
+      generatestubs(destdir: destinationDir) {
+        configuration(targetByteCode:"1.6")
+        classpath {
+        pathelement path: sourceSets.main.compileClasspath.asPath
+        }
+        src {
+          sourceSets.main.groovy.srcDirs.each { srcDir ->
+            if (srcDir.exists()) {
+              dirset(dir: srcDir) {
+              exclude name: "**/*.properties"
+              }
+            }
+          }
+        }
+      }
     }
-    sourceSets.main.java.srcDirs += file("${buildDir}/generated-src/stubs")
+  }
+  sourceSets.main.java.srcDirs += file("${buildDir}/generated-src/stubs")
 }
 
 compileJava.targetCompatibility = "1.6"
