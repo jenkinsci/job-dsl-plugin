@@ -55,6 +55,6 @@ compileJava.sourceCompatibility = "1.6"
 compileJava.dependsOn(stubs)
 
 jenkinsPlugin {
-    coreVersion = '1.424'
+    coreVersion = '1.443'
     displayName = 'Associated Files Plugin'
 }
