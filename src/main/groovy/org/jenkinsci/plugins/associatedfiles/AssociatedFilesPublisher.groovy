@@ -49,6 +49,18 @@ public class AssociatedFilesPublisher extends Recorder {
     build.addAction(afa)
     return true;
   }
+  @Extension
+  public static final class AssociatedFilesPublisherDescriptor extends BuildStepDescriptor<Publisher> {
+    @Override
+    public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+      return true
+    }
+    
+    @Override
+    public String getDisplayName() {
+      return "Associate non-archived files"
+    }
+  }
 
 }  
 
