@@ -8,12 +8,6 @@ import hudson.tasks.Publisher
 
 @Extension
 public class AssociatedFilesPublisherDescriptor extends BuildStepDescriptor<Publisher> {
-
-  public AssociatedFilesPublisherDescriptor() {
-    super(AssociatedFilesPublisher.class)
-    load()
-  }
-  
   @Override
   public boolean isApplicable(Class<? extends AbstractProject> jobType) {
     return true

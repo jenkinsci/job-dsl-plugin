@@ -1,0 +1,60 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+  dependencies {
+    classpath group: 'org.jenkins-ci.tools', name: 'gradle-hpi-plugin', version: '0.1-SNAPSHOT'
+  }
+}
+
+group = "org.jenkinsci.plugins"
+version = "1.0-SNAPSHOT"
+apply plugin: 'hpi'
+apply plugin: 'groovy'
+
+dependencies {
+  groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.8.2'
+}
+
+task stubs {
+    destinationDir = "$buildDir/generated-src/stubs"
+    doFirst {
+        def isolatedAnt = services.get(org.gradle.api.internal.project.IsolatedAntBuilder)
+        isolatedAnt.execute {
+            mkdir(dir: destinationDir)
+            taskdef(name: "generatestubs", classname: "org.codehaus.groovy.ant.GenerateStubsTask") {
+                classpath {
+                        pathelement path: sourceSets.main.compileClasspath.asPath
+                    
+                }
+            }
+
+            generatestubs(destdir: destinationDir) {
+              configuration(targetByteCode:"1.6")
+                classpath {
+                pathelement path: sourceSets.main.compileClasspath.asPath
+                }
+                src {
+                  sourceSets.main.groovy.srcDirs.each { srcDir ->
+                    if (srcDir.exists()) {
+                      dirset(dir: srcDir) {
+                      exclude name: "**/*.properties"
+                      }
+                    }
+                  }
+                }
+            }
+        }
+    }
+    sourceSets.main.java.srcDirs += file("${buildDir}/generated-src/stubs")
+}
+
+compileJava.targetCompatibility = "1.6"
+compileJava.sourceCompatibility = "1.6"
+compileJava.dependsOn(stubs)
+
+jenkinsPlugin {
+    coreVersion = '1.424'
+    displayName = 'Associated Files Plugin'
+}
