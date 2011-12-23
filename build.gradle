@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenLocal()
         maven {
             name "m.g.o"
             delegate.url("http://maven.glassfish.org/content/groups/public/")
@@ -7,7 +8,7 @@ buildscript {
         // The plugin is currently only available via the Jenkins Maven repository.
     }
     dependencies {
-        classpath group: 'org.jenkins-ci.tools', name: 'gradle-jpi-plugin', version: '0.1'
+        classpath group: 'org.jenkins-ci.tools', name: 'gradle-jpi-plugin', version: '0.2'
     }
 }
 
@@ -20,7 +21,7 @@ archivesBaseName = "associated-files"
 apply plugin: 'jpi'
 
 dependencies {
-  groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.8.2'
+    groovy localGroovy()
 }
 
 jenkinsPlugin {
