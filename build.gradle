@@ -1,26 +1,30 @@
 buildscript {
-  repositories {
-    mavenCentral()
-    mavenLocal()
-  }
-  dependencies {
-    classpath group: 'org.jenkins-ci.tools', name: 'gradle-hpi-plugin', version: '0.1-SNAPSHOT'
-  }
+    repositories {
+        maven {
+            name "m.g.o"
+            delegate.url("http://maven.glassfish.org/content/groups/public/")
+        }
+        // The plugin is currently only available via the Jenkins Maven repository.
+    }
+    dependencies {
+        classpath group: 'org.jenkins-ci.tools', name: 'gradle-jpi-plugin', version: '0.1'
+    }
 }
 
+
 group = "org.jenkinsci.plugins"
-version = "1.0-SNAPSHOT"
-apply plugin: 'hpi'
-apply plugin: 'groovy'
+version = "0.1"
+description = "This plugin allows for marking files or directories outside of Jenkins as related to a build."
+archivesBaseName = "associated-files"
+
+apply plugin: 'jpi'
 
 dependencies {
   groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.8.2'
 }
 
-compileJava.targetCompatibility = "1.6"
-compileJava.sourceCompatibility = "1.6"
-
 jenkinsPlugin {
-    coreVersion = '1.443'
+    coreVersion = '1.420'
     displayName = 'Associated Files Plugin'
+    url = "https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin"
 }
