@@ -1,31 +1,38 @@
+
 buildscript {
     repositories {
-        mavenLocal()
         maven {
-            name "m.g.o"
-            delegate.url("http://maven.glassfish.org/content/groups/public/")
+            name 'jenkins-ci-plugins'
+            url("http://maven.jenkins-ci.org/content/repositories/releases")
         }
-        // The plugin is currently only available via the Jenkins Maven repository.
+        mavenCentral()
     }
-    dependencies {
-        classpath group: 'org.jenkins-ci.tools', name: 'gradle-jpi-plugin', version: '0.2'
+    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.3.4') }
+}
+apply plugin: 'jpi'
+
+repositories {
+    maven {
+        name 'jenkin-ci'
+        url "http://maven.jenkins-ci.org/content/repositories/releases"
     }
+    mavenCentral()
 }
 
+dependencies { 
+    groovy localGroovy()
+    //org.jenkins-ci.modules:instance-identity:1.2@jenkins-module
+}
 
 group = "org.jenkinsci.plugins"
 version = "0.1"
-description = "This plugin allows for marking files or directories outside of Jenkins as related to a build."
-archivesBaseName = "associated-files"
-
-apply plugin: 'jpi'
-
-dependencies {
-    groovy localGroovy()
-}
+description = "This plugin allows definition of a Jobs via a DSL, integating with Template jobs."
+archivesBaseName = "jenkins-job-dsl"
 
 jenkinsPlugin {
-    coreVersion = '1.420'
-    displayName = 'Associated Files Plugin'
-    url = "https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin"
+    coreVersion = '1.456'
+    displayName = 'Job DSL'
+    url = "https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin" // TODO
 }
+
+task createWrapper(type: Wrapper) { gradleVersion = '1.0-milestone-9' }

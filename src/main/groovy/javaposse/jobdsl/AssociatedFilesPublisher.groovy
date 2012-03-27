@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.associatedfiles
+package javaposse.jobdsl
 
 import hudson.Extension
 import hudson.FilePath
@@ -45,7 +45,7 @@ public class AssociatedFilesPublisher extends Recorder {
 
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-    AssociatedFilesAction afa = new AssociatedFilesAction(build.getEnvironment(listener).expand(associatedFiles))
+    AssociatedFilesAction afa = new GeneratedJobsAction(build.getEnvironment(listener).expand(associatedFiles))
     build.addAction(afa)
     return true;
   }

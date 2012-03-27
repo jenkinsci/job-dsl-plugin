@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.associatedfiles
+package javaposse.jobdsl
 
 import hudson.Extension
 import hudson.model.AbstractBuild
