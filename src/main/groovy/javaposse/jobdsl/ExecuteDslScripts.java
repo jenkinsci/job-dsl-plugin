@@ -87,7 +87,7 @@ class ExecuteDslScripts extends Builder {
            }
            // We run the DSL, it'll need someway of grabbing a template config.xml and how to save it
            // They'll make REST calls
-           AbstractProject project = (AbstractProject) build.getProject(); // TODO instanceof check
+           AbstractProject<?,?> project = build.getProject();
            XmlFile xmlFile = project.getConfigFile();
            Reader xmlReader = xmlFile.readRaw();
 

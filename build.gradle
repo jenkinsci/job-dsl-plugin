@@ -19,9 +19,13 @@ repositories {
     mavenCentral()
 }
 
+configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'instance-identity'
+configurations.testCompile.exclude group:'org.jenkins-ci.main', module:'jenkins-war'
+
 dependencies { 
     groovy localGroovy()
     //org.jenkins-ci.modules:instance-identity:1.2@jenkins-module
+    //testCompile.exclude group:'org.jenkins-ci.main', module:'jenkins-war'
 }
 
 group = "org.jenkinsci.plugins"
@@ -30,7 +34,7 @@ description = "This plugin allows definition of a Jobs via a DSL, integating wit
 archivesBaseName = "jenkins-job-dsl"
 
 jenkinsPlugin {
-    coreVersion = '1.456'
+    coreVersion = '1.420'
     displayName = 'Job DSL'
     url = "https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin" // TODO
 }
