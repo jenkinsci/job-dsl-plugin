@@ -1,60 +1,34 @@
 package javaposse.jobdsl;
 
-import hudson.Launcher;
-import hudson.Extension;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.Descriptor;
-import hudson.tasks.Builder;
-import hudson.tasks.Fingerprinter;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import hudson.XmlFile;
-import java.io.Reader;
-import java.io.IOException;
-import hudson.CopyOnWrite;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
-import hudson.Functions;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractItem;
-import hudson.model.AbstractProject;
-import hudson.model.Project;
+import hudson.XmlFile;
 import hudson.model.BuildListener;
-import hudson.model.Computer;
-import hudson.model.EnvironmentSpecific;
-import jenkins.model.Jenkins;
-import hudson.model.Node;
-import hudson.model.TaskListener;
-import hudson.remoting.Callable;
-import hudson.slaves.NodeSpecific;
-import hudson.tools.ToolDescriptor;
-import hudson.tools.ToolInstallation;
-import hudson.tools.DownloadFromUrlInstaller;
-import hudson.tools.ToolInstaller;
-import hudson.tools.ToolProperty;
-import hudson.util.ArgumentListBuilder;
-import hudson.util.VariableResolver;
-import hudson.util.FormValidation;
-import hudson.util.XStream2;
+import hudson.model.TopLevelItem;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
+import hudson.tasks.Builder;
+import hudson.model.TopLevelItem;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.QueryParameter;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.List;
-import java.util.Collections;
-import java.util.Set;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.transform.stream.StreamSource;
 
-class ExecuteDslScripts extends Builder {
-    /**
+import jenkins.model.Jenkins;
+
+public class ExecuteDslScripts extends Builder {
+    private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
+
+   /**
     * newlines separated list of locations to dsl scripts
     */
    private final String targets;
@@ -74,6 +48,7 @@ class ExecuteDslScripts extends Builder {
        env.overrideAll(build.getBuildVariables());
 
        String targetsStr = env.expand(this.targets);
+       LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
        String[] targets = targetsStr.split("\n");
 
        for(String target: targets) {
@@ -85,14 +60,44 @@ class ExecuteDslScripts extends Builder {
                    return false;
                }
            }
-           // We run the DSL, it'll need someway of grabbing a template config.xml and how to save it
-           // They'll make REST calls
-           AbstractProject<?,?> project = build.getProject();
-           XmlFile xmlFile = project.getConfigFile();
-           Reader xmlReader = xmlFile.readRaw();
+           LOGGER.log(Level.INFO, String.format("Running dsl from %s", targetPath));
 
-           StreamSource streamSource = new StreamSource(xmlReader); // TODO use real xmlReader
-           project.updateByXml(streamSource);
+           String dslBody = targetPath.readToString();
+           LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
+
+           // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
+           // They'll make REST calls, we'll make internal Jenkins calls
+           JobManagement jm = new JobManagement() {
+                Jenkins jenkins = Jenkins.getInstance();
+                
+                @Override
+                public String getConfig(String jobName) throws IOException {
+                    LOGGER.log(Level.INFO, String.format("Getting config for %s", jobName));
+                    AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+                    XmlFile xmlFile = project.getConfigFile();
+                    String xml = xmlFile.asString();
+                    LOGGER.log(Level.FINE, String.format("Job config %s", xml));
+                    return xml;
+                }
+
+                @Override
+                public void createOrUpdateConfig(String jobName, String config) throws IOException {
+                    LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
+                    AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+                    if (project == null) {
+                        // Creating project
+                        LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
+                        InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+                        TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
+                    } else {
+                        LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
+                        StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
+                        project.updateByXml(streamSource);
+                    }
+                }
+           };
+           
+           DslScriptLoader.runDsl(dslBody, jm);
        }
        return true;
    }

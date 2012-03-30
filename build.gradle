@@ -7,7 +7,7 @@ buildscript {
         }
         mavenCentral()
     }
-    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.3.4') }
+    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.4.0') }
 }
 apply plugin: 'jpi'
 
@@ -20,7 +20,7 @@ repositories {
 }
 
 configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'instance-identity'
-configurations.testCompile.exclude group:'org.jenkins-ci.main', module:'jenkins-war'
+configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-cli-auth'
 
 dependencies { 
     groovy localGroovy()
@@ -34,7 +34,7 @@ description = "This plugin allows definition of a Jobs via a DSL, integating wit
 archivesBaseName = "jenkins-job-dsl"
 
 jenkinsPlugin {
-    coreVersion = '1.420'
+    coreVersion = '1.456'
     displayName = 'Job DSL'
     url = "https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin" // TODO
 }
