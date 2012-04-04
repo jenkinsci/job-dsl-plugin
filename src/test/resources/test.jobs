@@ -1,0 +1,27 @@
+println "Running DSL"
+job {
+    using 'TMPL-test'
+    name 'copy of TMPL-test'
+    configure {
+        //name.value = 'copy of TMPL-test'
+    }
+}
+
+/**
+job {
+    using 'TMPL-library-promotion'
+    configure {
+        scm.p4view.value = '//depot/project-lib'
+        chuckNorris.enabled.value = 'true'
+    }
+}
+
+job {
+    using 'TMPL-webapp-tests'
+    configure {
+        name.value = 'my-webapp'
+        scm.p4view.value = '//depot/project-web'
+        
+    }
+}
+*/

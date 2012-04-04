@@ -32,13 +32,22 @@ public class Job {
             this.project = project
         }
 
-        def methodMissing(String name, args) { 
-            // look on project
-            println "1: missing method $name"
+        def methodMissing(String name, args) {
+            if (nodeAlreadyPresent(name)) {
+                project.get(name)[0].value = args[0]
+            } else {
+                project.appendNode(name, args[0])
+            }
+        }
+
+        private boolean nodeAlreadyPresent(String nodeName) {
+            return project.get(nodeName).size() > 0
         }
     }
 
-    def getXml() {
+    public String getXml() {
+        //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
+
         String configStr = XmlUtil.serialize(job.project)
         return configStr
     }
