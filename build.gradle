@@ -26,14 +26,22 @@ dependencies {
 }
 
 group = "org.jenkinsci.plugins"
-version = "0.1"
-description = "This plugin allows definition of a Jobs via a DSL, integating with Template jobs."
-archivesBaseName = "jenkins-job-dsl"
+version = "0.4"
+description = "This plugin allows definition of a Jobs via a DSL, using existing Jobs as a template."
+//archivesBaseName = "job-dsl-plugin"
 
 jenkinsPlugin {
     coreVersion = '1.456'
     displayName = 'Job DSL'
-    url = "https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin" // TODO
+    url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin' // TODO create wiki page
+    gitHubUrl = 'https://github.com/JavaPosseRoundup/jenkins-job-dsl' // TODO Move to jenkin org
+    developers {
+        developer {
+            id 'quidryan'
+            name 'Justin Ryan'
+            email 'andrew.bayer@gmail.com'
+        }
+    }
 }
 
 task createWrapper(type: Wrapper) { gradleVersion = '1.0-milestone-9' }
