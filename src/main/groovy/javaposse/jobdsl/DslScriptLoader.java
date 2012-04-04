@@ -1,12 +1,8 @@
 package javaposse.jobdsl;
 
-import java.util.logging.Logger;
-
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyObject;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;

@@ -1,4 +1,4 @@
-package javaposse.jobdsl.GeneratedJobsAction;
+package javaposse.jobdsl.GeneratedJobsBuildAction;
 
 import lib.LayoutTagLib
 
@@ -7,11 +7,11 @@ t=namespace("/lib/hudson")
 st=namespace("jelly:stapler")
 f=namespace("lib/form")
 
-if (my?.jobNames != null) { 
+if (my?.modifiedJobs != null) { 
   t.summary(icon:"package.png") {
     raw("Generated Jobs:")
     table(class:"jobList") {
-      my.getJobNames().each { af ->
+      my.getModifiedJobs().each { af ->
         tr() { 
           td() {
             raw(af) // TODO: Make this a link

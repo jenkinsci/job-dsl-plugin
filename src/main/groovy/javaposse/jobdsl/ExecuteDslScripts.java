@@ -15,10 +15,13 @@ import hudson.tasks.Builder;
 import hudson.model.TopLevelItem;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import com.google.common.collect.Sets;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.transform.stream.StreamSource;
@@ -43,13 +46,16 @@ public class ExecuteDslScripts extends Builder {
    }
 
    @Override
-   public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+   public boolean perform(final AbstractBuild<?,?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
        EnvVars env = build.getEnvironment(listener);
        env.overrideAll(build.getBuildVariables());
 
        String targetsStr = env.expand(this.targets);
        LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
        String[] targets = targetsStr.split("\n");
+
+       // Track what jobs got created/updated
+       Set<String> modifiedJobs = Sets.newHashSet();
 
        for(String target: targets) {
            FilePath targetPath = build.getModuleRoot().child(target);
@@ -69,7 +75,7 @@ public class ExecuteDslScripts extends Builder {
            // They'll make REST calls, we'll make internal Jenkins calls
            JobManagement jm = new JobManagement() {
                 Jenkins jenkins = Jenkins.getInstance();
-                
+
                 @Override
                 public String getConfig(String jobName) throws IOException {
                     LOGGER.log(Level.INFO, String.format("Getting config for %s", jobName));
@@ -99,14 +105,18 @@ public class ExecuteDslScripts extends Builder {
            
            DslScriptLoader.runDsl(dslBody, jm);
        }
+
+       // Add GeneratedJobsAction
+       GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(modifiedJobs);
+       build.addAction(gjba);
+
        return true;
    }
 
    @Extension
    public static final class DescriptorImpl extends Descriptor<Builder> {
        public String getDisplayName() {
-           return "Job Dsl Plugin";
-           //return Messages.CreateFingerprint_DisplayName();
+           return "Process Job DSLs";
        }
    }
 

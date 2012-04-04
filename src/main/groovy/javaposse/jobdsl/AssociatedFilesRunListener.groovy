@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 @Extension
 public class AssociatedFilesRunListener extends RunListener<AbstractBuild> {
   private final Logger log = Logger.getLogger(AssociatedFilesRunListener.class.getName());
-  
+
   public void onDeleted(AbstractBuild build) {
     AssociatedFilesAction afa = build.getAction(AssociatedFilesAction.class)
     

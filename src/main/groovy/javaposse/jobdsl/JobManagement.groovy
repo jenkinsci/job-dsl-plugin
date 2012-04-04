@@ -9,7 +9,6 @@ import java.io.IOException;
  *
  */
 public interface JobManagement {
-
     String getConfig(String jobName) throws IOException;
     void createOrUpdateConfig(String jobName, String config) throws IOException;
 }

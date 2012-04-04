@@ -1,14 +1,15 @@
 package javaposse.jobdsl;
 
-import hudson.model.AbstractProject;
-import hudson.model.Action;
+import java.util.Collection;
 
+import hudson.model.Action;
+import com.google.common.collect.ImmutableList;
 
 class GeneratedJobsBuildAction implements Action {
-    public final AbstractProject<?,?> project;
+    public final Collection<String> modifiedJobs;
 
-    public GeneratedJobsBuildAction(AbstractProject<?,?> project) {
-        this.project = project;
+    public GeneratedJobsBuildAction(Collection<String> modifiedJobs) {
+        this.modifiedJobs = ImmutableList.copyOf(modifiedJobs); // TODO Make this a tuple with job name and if it was created or updated
     }
 
     /**
@@ -26,24 +27,8 @@ class GeneratedJobsBuildAction implements Action {
         return "generatedJobs";
     }
 
-//    public GeneratedJobsAction getLastTestResultAction() {
-//        final AbstractBuild<?,?> tb = project.getLastSuccessfulBuild();
-//
-//        AbstractBuild<?,?> b=project.getLastBuild();
-//        while(b!=null) {
-//            GeneratedJobsAction a = b.getGeneratedJobsAction();
-//            if (a!=null && !b.isBuilding()) {
-//                return a;
-//            }
-//
-//            if(b==tb) {
-//                // if even the last successful build didn't produce the test result,
-//                // that means we just don't have any tests configured.
-//                return null;
-//            }
-//            b = b.getPreviousBuild();
-//        }
-//
-//        return null;
-//    }
+    public Collection<String> getModifiedJobs() {
+        return modifiedJobs;
+    }
+
 }
