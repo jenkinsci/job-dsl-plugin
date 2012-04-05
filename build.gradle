@@ -21,7 +21,7 @@ repositories {
 configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'instance-identity'
 configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-cli-auth'
 
-dependencies { 
+dependencies {
     //groovy localGroovy() // Can't gaurentee 1.8.6
     groovy "org.codehaus.groovy:groovy-all:1.8.6"
     testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
@@ -41,7 +41,7 @@ jenkinsPlugin {
         developer {
             id 'quidryan'
             name 'Justin Ryan'
-            email 'andrew.bayer@gmail.com'
+            email 'jryan@netflix.com'
         }
     }
 }
@@ -50,29 +50,29 @@ task createWrapper(type: Wrapper) { gradleVersion = '1.0-milestone-9' }
 
 /** Added to work around the bug GRADLE-1420 */
 task pathingJar(type: Jar , dependsOn: 'cleanPathingJar') {
-	/**
-	 * If the gradle_user_home env var has been set to
-         * C:\ on a Win7 machine, we may not have permission to write the jar to
-	 * this directory, so we will write it to the caches subdir instead.
-         * This assumes a caches subdir containing the jars
-	 * will always exist.
-	 */
-	gradleUserHome = new File(gradle.getGradleUserHomeDir(), "caches")
+    /**
+     * If the gradle_user_home env var has been set to
+     * C:\ on a Win7 machine, we may not have permission to write the jar to
+     * this directory, so we will write it to the caches subdir instead.
+     * This assumes a caches subdir containing the jars
+     * will always exist.
+     */
+    gradleUserHome = new File(gradle.getGradleUserHomeDir(), "caches")
 
-	relativeClasspathEntries = configurations.compile.files.collect {
-		new File(gradleUserHome.getAbsolutePath()).toURI().
-                      relativize(new File(it.getAbsolutePath()).toURI()).getPath()
-	}
-	appendix = "pathing"
-	destinationDir = gradleUserHome
-	doFirst {
-		manifest {
-			attributes "Class-Path": relativeClasspathEntries.join(" ")
-		}
-	}
+    relativeClasspathEntries = configurations.compile.files.collect {
+        new File(gradleUserHome.getAbsolutePath()).toURI().
+                relativize(new File(it.getAbsolutePath()).toURI()).getPath()
+    }
+    appendix = "pathing"
+    destinationDir = gradleUserHome
+    doFirst {
+        manifest {
+            attributes "Class-Path": relativeClasspathEntries.join(" ")
+        }
+    }
 }
 
 compileGroovy {
-	dependsOn(pathingJar)
-	classpath = files(pathingJar.archivePath)
+    dependsOn(pathingJar)
+    classpath = files(pathingJar.archivePath)
 }
