@@ -21,34 +21,51 @@ public class Job {
     }
 
     def configure(Closure configureClosure) {
-        configureClosure.delegate = new ConfigureDelegate(project) // TODO we might need a layer between the Node and the Closure
-        configureClosure.call()
+        configureClosure.delegate = new NodeDelegate(project)
+        configureClosure.call(project) // make Xml Node available, incase it needs to be passed to other methods
     }
 
-    public static class ConfigureDelegate {
-        Node project
+    public static class NodeDelegate {
+        Node node
 
-        ConfigureDelegate(Node project) {
-            this.project = project
+        NodeDelegate(Node node) {
+            this.node = node
         }
 
         def methodMissing(String name, args) {
-            if (nodeAlreadyPresent(name)) {
-                project.get(name)[0].value = args[0]
-            } else {
-                project.appendNode(name, args[0])
+            if (args.length == 0) {
+                return // Not sure what to do with a method with no args in this context
             }
+
+            // Identify Node
+            def targetNode
+            if (nodeAlreadyPresent(name)) {
+                targetNode = project.get(name)[0]
+            } else {
+                targetNode = project.appendNode(name)
+            }
+
+            if (args[0] instanceof Closure) {
+                // block that wants to be configured
+                def childClosure = args[0]
+                childClosure.delegate = new NodeDelegate(targetNode)
+                childClosure.call(targetNode)
+            } else {
+                // Default to setting direct value
+                targetNode.value = args[0]
+            }
+
         }
 
         private boolean nodeAlreadyPresent(String nodeName) {
-            return project.get(nodeName).size() > 0
+            return node.get(nodeName).size() > 0
         }
     }
 
     public String getXml() {
         //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
 
-        String configStr = XmlUtil.serialize(job.project)
+        String configStr = XmlUtil.serialize(project)
         return configStr
     }
 

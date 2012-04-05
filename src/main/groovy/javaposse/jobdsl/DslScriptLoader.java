@@ -18,12 +18,11 @@ public class DslScriptLoader {
 
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
         config.setScriptBaseClass("javaposse.jobdsl.JobParent");
-        
+
         parseScript(scriptContent, config, binding);
     }
 
     public static Object parseScript(String scriptContent, CompilerConfiguration config, Binding binding) throws CompilationFailedException {
-        
         ClassLoader parent = DslScriptLoader.class.getClassLoader(); // TODO Setup different classloader
         GroovyShell shell = new GroovyShell(parent, binding, config);
         Script script = shell.parse(scriptContent);
