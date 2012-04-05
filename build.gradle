@@ -43,6 +43,11 @@ jenkinsPlugin {
             name 'Justin Ryan'
             email 'jryan@netflix.com'
         }
+        developer {
+            id 'andrewharmellaw'
+            name 'Andrew Harmel-Law'
+            email 'andrew@harmel-law.com'
+        }
     }
 }
 
