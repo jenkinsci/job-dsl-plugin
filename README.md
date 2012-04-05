@@ -9,7 +9,7 @@ Jenkins is a wonderful system for managing builds, and people love using its UI 
 
 The goal is for a project to define all the jobs they want to be related to their project, declaring only the parts unique to their project. For example, a project might want a unit test job, a nightly sonar build, a integration test job, and a promotion job:
 
-'''groovy
+```groovy
 job {
     using 'TMPL-test'
     name 'PROJ-unit-tests'
@@ -50,15 +50,23 @@ job {
         goals = 'release'
     }
 }
-'''
+```
 
 Manually creating these jobs wouldn't be too hard, but doing the same thing for a branch or a hundred other projects is where it gets interesting and difficult. It's even likely that to minimize the amount of configuration, someone might make a single parameterized job to do all these things in one job, but then the history of the job is skewed and they were limited in some settings like triggers. This example does depend on existing jobs which are used at templates, but in the future we hope to support the complete definition of a jobs from scratch, sourced from a DSL file in source control. Another future feature is to synchronize the jobs with the template, so if the template changes it all generated jobs would be updated with the changes.
 
 Building
 --------
-./gradlew build # To build
-./gradlew server # To run Jenkins and test JPI
-./gradlew jpi # Build job-dsl.hpi to be installed in Jenkins
+To build:
+
+    ./gradlew build
+
+To run Jenkins and test JPI:
+
+    ./gradlew server 
+
+Build job-dsl.hpi to be installed in Jenkins:
+
+    ./gradlew jpi 
 
 Author
 ------
