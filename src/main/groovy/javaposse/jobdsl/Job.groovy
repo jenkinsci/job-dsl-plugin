@@ -4,6 +4,9 @@ import groovy.util.Node;
 import groovy.xml.XmlUtil
 import java.io.StringReader
 
+/**
+ * DSL Element representing a Jenkins Job
+ */
 public class Job {
     String name // Required
     Node project
@@ -14,6 +17,11 @@ public class Job {
         this.jobManagement = jobManagement;
     }
 
+    /**
+     * Creates a new job configuration, based on the job template referenced by the parameter
+     * @param templateName the name of the template upon which to base the new job
+     * @return a new graph of groovy.util.Node, representing the job configuration structure
+     */
     def using(String templateName) {
         String configXml = jobManagement.getConfig(templateName)
         // TODO record which templates are used to generate jobs, so that they can be connected
@@ -22,7 +30,7 @@ public class Job {
 
     def configure(Closure configureClosure) {
         configureClosure.delegate = new NodeDelegate(project)
-        configureClosure.call(project) // make Xml Node available, incase it needs to be passed to other methods
+        configureClosure.call(project) // make Xml Node available, in case it needs to be passed to other methods
     }
 
     public static class NodeDelegate {
