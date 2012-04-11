@@ -28,11 +28,16 @@ import javax.xml.transform.stream.StreamSource;
 
 import jenkins.model.Jenkins;
 
+/**
+ * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create / update Jenkins jobs.
+ *
+ * @author jryan
+ */
 public class ExecuteDslScripts extends Builder {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
 
    /**
-    * newlines separated list of locations to dsl scripts
+    * Newline-separated list of paths to dsl scripts.
     */
    private final String targets;
 
@@ -45,6 +50,17 @@ public class ExecuteDslScripts extends Builder {
        return targets;
    }
 
+    /**
+     * Runs every job DSL script provided in the plugin configuration, which results in new / updated Jenkins jobs.  The
+     * created / updated jobs are reported in the build result.
+     *
+     * @param build
+     * @param launcher
+     * @param listener
+     * @return
+     * @throws InterruptedException
+     * @throws IOException
+     */
    @Override
    public boolean perform(final AbstractBuild<?,?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
        EnvVars env = build.getEnvironment(listener);
@@ -55,7 +71,7 @@ public class ExecuteDslScripts extends Builder {
        String[] targets = targetsStr.split("\n");
 
        // Track what jobs got created/updated
-       Set<String> modifiedJobs = Sets.newHashSet();
+       Set<String> modifiedJobs = Sets.newHashSet(); // TODO: update this as jobs are created / updated
 
        for(String target: targets) {
            FilePath targetPath = build.getModuleRoot().child(target);
