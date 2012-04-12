@@ -10,8 +10,8 @@ import java.io.IOException;
 public interface JobManagement {
     /**
      * Gets (loads) the job configuration for the Jenkins job with the specified name
-     * @param jobName
-     * @return the job configuration
+     * @param jobName the name of the job to look up
+     * @return the job configuration as XML
      * @throws IOException
      */
     String getConfig(String jobName) throws IOException;

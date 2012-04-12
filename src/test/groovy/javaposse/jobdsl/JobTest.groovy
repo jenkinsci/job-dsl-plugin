@@ -3,7 +3,7 @@ package javaposse.jobdsl
 import spock.lang.*
 
 class JobTest extends Specification {
-    def "construct a job"() {
+    def "construct a job manually (not from a DSL script)"() {
         setup:
         JobManagement jm = Mock()
 
@@ -14,7 +14,7 @@ class JobTest extends Specification {
         notThrown(Exception)
     }
 
-    def "set name on a job"() {
+    def "set name on a manually constructed job"() {
         setup:
         JobManagement jm = Mock()
 
@@ -26,7 +26,7 @@ class JobTest extends Specification {
         job.name == "NAME"
     }
 
-    def "load template from job"() {
+    def "load an empty template from a manually constructed job"() {
         setup:
         JobManagement jm = Mock()
         Job job = new Job(jm)
@@ -45,7 +45,7 @@ class JobTest extends Specification {
         '''
     }
 
-    def "load template and generate xml from job"() {
+    def "load an empty template from a manually constructed job and generate xml from it"() {
         setup:
         JobManagement jm = Mock()
         Job job = new Job(jm)
@@ -79,65 +79,12 @@ class JobTest extends Specification {
 //            </project>
 //        '''
 //        jm.getConfig(("TMPL")) >> xml
-//        job.xml == '<?xml version="1.0" encoding="UTF-8"?>'+ xml
+//        job.xml == '<?xml version="1.0" encoding="UTF-8"?>' + xml
 //
 //        when:
 //        job.using("TMPL-NOT_THERE")
 //
 //        then:
 //        // failure expected
-//    }
-
-//    def "generate job - template name absent"() {
-//        setup:
-//        JobManagement jm = Mock()
-//        Job job = new Job(jm)
-//        def xml = '''
-//            <project>
-//                <actions/>
-//                <description></description>
-//                <keepDependencies>false</keepDependencies>
-//                <properties/>
-//            </project>
-//        '''
-//        jm.getConfig(("TMPL")) >> xml
-//        job.xml == '<?xml version="1.0" encoding="UTF-8"?>'+ xml
-//
-//        when:
-//        job.using("")
-//
-//        then:
-//        // failure expected
-//    }
-
-//    def "generate job - add a name this time"() {
-//        setup:
-//        JobManagement jm = Mock()
-//        Job job = new Job(jm)
-//        def templateXml = '''
-//            <project>
-//                <actions/>
-//                <description></description>
-//                <keepDependencies>false</keepDependencies>
-//                <properties/>
-//            </project>
-//        '''
-//        jm.getConfig(("TMPL")) >> templateXml
-////        job.xml == '<?xml version="1.0" encoding="UTF-8"?>'+ templateXml
-//        job.using("TMPL")
-//
-//        def newJobXml = '''
-//            <project>
-//                <name>
-//                <actions/>
-//                <description></description>
-//                <keepDependencies>false</keepDependencies>
-//                <properties/>
-//            </project>
-//        '''
-//
-//        when:
-//        jm.createOrUpdateConfig("NEW-JOB", "")
-//
 //    }
 }

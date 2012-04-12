@@ -18,9 +18,9 @@ public class Job {
     }
 
     /**
-     * Creates a new job configuration, based on the job template referenced by the parameter
+     * Creates a new job configuration, based on the job template referenced by the parameter and stores this.
      * @param templateName the name of the template upon which to base the new job
-     * @return a new graph of groovy.util.Node, representing the job configuration structure
+     * @return a new graph of groovy.util.Node objects, representing the job configuration structure
      */
     def using(String templateName) {
         String configXml = jobManagement.getConfig(templateName)
