@@ -37,34 +37,29 @@ class JobTest extends Specification {
         job.using("TMPL")
 
         then:
-        1 * jm.getConfig("TMPL") >> '''
-            <project>
-                <actions/>
-                <description></description>
-                <keepDependencies>false</keepDependencies>
-                <properties/>
-            </project>
-        '''
+        1 * jm.getConfig("TMPL") >> minimalXml
     }
 
     def "load template and generate xml from job"() {
         setup:
         JobManagement jm = Mock()
         Job job = new Job(jm)
-        def xml = '''
-            <project>
-                <actions/>
-                <description></description>
-                <keepDependencies>false</keepDependencies>
-                <properties/>
-            </project>
-        '''
+
 
         when:
         job.using("TMPL")
 
         then:
-        1 * jm.getConfig("TMPL") >> xml
-        job.xml == '<?xml version="1.0" encoding="UTF-8"?>'+xml
+        1 * jm.getConfig("TMPL") >> minimalXml
+        job.xml == '<?xml version="1.0" encoding="UTF-8"?>'+minimalXml
     }
+    
+    def minimalXml = 
+'''<project>
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+</project>
+'''
 }
