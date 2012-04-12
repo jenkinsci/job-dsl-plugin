@@ -1,4 +1,4 @@
-package javaposse.jobdsl;
+package javaposse.jobdsl.dsl;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -8,6 +8,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 public class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.class.getName());

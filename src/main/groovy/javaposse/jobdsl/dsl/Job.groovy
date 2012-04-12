@@ -1,8 +1,10 @@
-package javaposse.jobdsl
+package javaposse.jobdsl.dsl
 
 import groovy.util.Node;
 import groovy.xml.XmlUtil
 import java.io.StringReader
+
+import javaposse.jobdsl.JobManagement;
 
 public class Job {
     String name // Required

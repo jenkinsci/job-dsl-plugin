@@ -1,4 +1,4 @@
-package javaposse.jobdsl;
+package javaposse.jobdsl.plugin;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -24,6 +24,10 @@ import java.io.StringReader;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javaposse.jobdsl.dsl.DslScriptLoader;
+import javaposse.jobdsl.dsl.JobManagement;
+
 import javax.xml.transform.stream.StreamSource;
 
 import jenkins.model.Jenkins;

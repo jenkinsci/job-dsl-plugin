@@ -1,5 +1,7 @@
-package javaposse.jobdsl
+package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.Job;
+import javaposse.jobdsl.dsl.JobManagement;
 import spock.lang.*
 
 class JobTest extends Specification {

@@ -1,6 +1,8 @@
-package javaposse.jobdsl;
+package javaposse.jobdsl.dsl;
 
 import java.io.IOException;
+
+import javaposse.jobdsl.dsl.JobManagement;
 
 class FileJobManagement implements JobManagement {
     String getConfig(String jobName) throws IOException {

@@ -1,7 +1,10 @@
-package javaposse.jobdsl;
+package javaposse.jobdsl.dsl;
 
 import java.util.logging.Logger
 import java.util.logging.Level
+
+import javaposse.jobdsl.Job;
+import javaposse.jobdsl.JobManagement;
 
 import groovy.lang.Closure
 import groovy.lang.Script

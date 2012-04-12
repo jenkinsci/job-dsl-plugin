@@ -1,4 +1,4 @@
-package javaposse.jobdsl;
+package javaposse.jobdsl.plugin;
 
 import java.util.Collection;
 

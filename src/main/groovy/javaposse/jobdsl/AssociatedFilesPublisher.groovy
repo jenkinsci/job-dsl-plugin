@@ -17,6 +17,8 @@ import net.sf.json.JSONObject
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javaposse.jobdsl.plugin.GeneratedJobsAction;
+
 
 import org.kohsuke.stapler.AncestorInPath
 import org.kohsuke.stapler.QueryParameter
