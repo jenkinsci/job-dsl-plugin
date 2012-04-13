@@ -51,13 +51,6 @@ public final class JenkinsJobManagement implements JobManagement {
         return xml;
     }
 
-    private String lookupJob(String jobName) throws IOException {
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
-        XmlFile xmlFile = project.getConfigFile();
-        String xml = xmlFile.asString();
-        return xml;
-    }
-
     /**
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
@@ -80,5 +73,12 @@ public final class JenkinsJobManagement implements JobManagement {
             project.updateByXml(streamSource);
             modifiedJobs.add(jobName);
         }
+    }
+
+    private String lookupJob(String jobName) throws IOException {
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        XmlFile xmlFile = project.getConfigFile();
+        String xml = xmlFile.asString();
+        return xml;
     }
 }
