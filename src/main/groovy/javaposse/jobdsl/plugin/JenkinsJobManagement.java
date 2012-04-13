@@ -41,12 +41,19 @@ public final class JenkinsJobManagement implements JobManagement {
         referencedTemplates.add(jobName); // assumes all getConfigs are templates, we might to do a diff on current jobs before update them
 
         String xml;
-        try {
-            xml = lookupJob(jobName);
-        } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, "Named Job Config not found: %s", jobName);
-            throw new JobConfigurationNotFoundException(jobName);
+
+        // TODO: This is as ugly as sin, but I think it would be nice to have something like this.
+        if (jobName.isEmpty()) {
+            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n\t<actions/>\n\t<description/>\n\t<keepDependencies>false</keepDependencies>\n\t<properties/>\n</project>";
+        } else {
+            try {
+                xml = lookupJob(jobName);
+            } catch (IOException ioex) {
+                LOGGER.log(Level.WARNING, "Named Job Config not found: %s", jobName);
+                throw new JobConfigurationNotFoundException(jobName);
+            }
         }
+
         LOGGER.log(Level.FINE, String.format("Job config %s", xml));
         return xml;
     }

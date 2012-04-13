@@ -10,7 +10,8 @@ import java.io.IOException;
  */
 public interface JobManagement {
     /**
-     * Gets (loads) the job configuration for the Jenkins job with the specified name.
+     * Gets (loads) the job configuration for the Jenkins job with the specified name.  If no name is supplied, an empty
+     * configuration is returned.
      * @param jobName the name of the job to look up
      * @return the job configuration as XML
      * @throws JobConfigurationNotFoundException

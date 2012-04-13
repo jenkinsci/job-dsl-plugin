@@ -1,9 +1,12 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.plugin.JenkinsJobManagement;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 
 import spock.lang.*
+import static org.custommonkey.xmlunit.XMLAssert.*
+import static org.custommonkey.xmlunit.XMLUnit.*
 
 class JobManagementTest extends Specification {
 
@@ -19,8 +22,19 @@ class JobManagementTest extends Specification {
     }
 
     def "get config - no name provided"() {
-        // TODO: implement me
         // Should return an empty, default config
+        setup:
+        setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
+        JobManagement jm = new JenkinsJobManagement()
+
+        when:
+        String xml = jm.getConfig("")
+
+        System.out.println("XML returned: \n" + xml);
+        System.out.println("Minimal XML:\n" + minimalXml);
+
+        then:
+        assertXMLEqual "<?xml version=\"1.0\" encoding=\"UTF-8\"?><project><actions/><description/><keepDependencies>false</keepDependencies><properties/></project>", xml  //'<?xml version="1.0" encoding="UTF-8"?>' + minimalXml, xml
     }
 
     def "create new config"() {

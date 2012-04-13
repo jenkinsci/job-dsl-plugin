@@ -3,8 +3,8 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.Job;
 import javaposse.jobdsl.dsl.JobTemplateMissingException;
 import javaposse.jobdsl.dsl.JobManagement;
-import spock.lang.*
 
+import spock.lang.*
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobTest extends Specification {
