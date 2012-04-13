@@ -22,9 +22,10 @@ configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'inst
 configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-cli-auth'
 
 dependencies {
-    //groovy localGroovy() // Can't gaurentee 1.8.6
+    //groovy localGroovy() // Can't guarantee 1.8.6
     groovy "org.codehaus.groovy:groovy-all:1.8.6"
     testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
+    testCompile "xmlunit:xmlunit:1.1"
 }
 
 group = "org.jenkinsci.plugins"

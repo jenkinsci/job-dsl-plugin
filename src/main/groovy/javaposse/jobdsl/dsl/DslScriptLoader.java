@@ -1,4 +1,4 @@
-package javaposse.jobdsl;
+package javaposse.jobdsl.dsl;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;

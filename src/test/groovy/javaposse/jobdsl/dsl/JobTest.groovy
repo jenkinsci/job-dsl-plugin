@@ -4,6 +4,8 @@ import javaposse.jobdsl.dsl.Job;
 import javaposse.jobdsl.dsl.JobManagement;
 import spock.lang.*
 
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
+
 class JobTest extends Specification {
     def "construct a job manually (not from a DSL script)"() {
         setup:
@@ -45,13 +47,12 @@ class JobTest extends Specification {
         JobManagement jm = Mock()
         Job job = new Job(jm)
 
-
         when:
         job.using("TMPL")
 
         then:
         1 * jm.getConfig("TMPL") >> minimalXml
-        job.xml == '<?xml version="1.0" encoding="UTF-8"?>' + minimalXml // This is a dangerous check, since we're not guaranteed to get the XML in order
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + minimalXml, job.xml
     }
 
     def "load large template from file"() {
@@ -66,7 +67,7 @@ class JobTest extends Specification {
         job.project.description.text() == 'Description'
     }
 
-def "generate job from missing template"() {
+//def "generate job from missing template"() {
 //        setup:
 //        JobManagement jm = Mock()
 //        Job job = new Job(jm)
@@ -88,7 +89,8 @@ def "generate job from missing template"() {
 //        // failure expected
 //    }
 
-    def minimalXml = '''<project>
+    def minimalXml = '''
+<project>
   <actions/>
   <description/>
   <keepDependencies>false</keepDependencies>
