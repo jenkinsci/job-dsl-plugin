@@ -64,7 +64,7 @@ public class ExecuteDslScripts extends Builder {
        String[] targets = targetsStr.split("\n");
 
        // Track what jobs got created/updated
-       Set<String> modifiedJobs = Sets.newHashSet();
+       Set<String> modifiedJobs = Sets.newHashSet(); // TODO: update this as jobs are created / updated
        Set<String> referencedTemplates = Sets.newHashSet();
        
        for(String target: targets) {
@@ -84,9 +84,10 @@ public class ExecuteDslScripts extends Builder {
            // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
            // They'll make REST calls, we'll make internal Jenkins calls
            JenkinsJobManagement jm = new JenkinsJobManagement();
-           
+
            DslScriptLoader.runDsl(dslBody, jm);
-           
+
+           modifiedJobs.addAll(jm.modifiedJobs);
            referencedTemplates.addAll(jm.referencedTemplates);
        }
 
