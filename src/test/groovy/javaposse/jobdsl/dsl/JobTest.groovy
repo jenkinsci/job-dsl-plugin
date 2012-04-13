@@ -1,5 +1,7 @@
-package javaposse.jobdsl
+package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.Job;
+import javaposse.jobdsl.dsl.JobManagement;
 import spock.lang.*
 
 class JobTest extends Specification {
@@ -35,38 +37,36 @@ class JobTest extends Specification {
         job.using("TMPL")
 
         then:
-        1 * jm.getConfig("TMPL") >> '''
-            <project>
-                <actions/>
-                <description></description>
-                <keepDependencies>false</keepDependencies>
-                <properties/>
-            </project>
-        '''
+        1 * jm.getConfig("TMPL") >> minimalXml
     }
 
     def "load an empty template from a manually constructed job and generate xml from it"() {
         setup:
         JobManagement jm = Mock()
         Job job = new Job(jm)
-        def xml = '''
-            <project>
-                <actions/>
-                <description></description>
-                <keepDependencies>false</keepDependencies>
-                <properties/>
-            </project>
-        '''
+
 
         when:
         job.using("TMPL")
 
         then:
-        1 * jm.getConfig("TMPL") >> xml
-        job.xml == '<?xml version="1.0" encoding="UTF-8"?>' + xml
+        1 * jm.getConfig("TMPL") >> minimalXml
+        job.xml == '<?xml version="1.0" encoding="UTF-8"?>' + minimalXml // This is a dangerous check, since we're not guaranteed to get the XML in order
     }
 
-//    def "generate job from missing template"() {
+    def "load large template from file"() {
+        setup:
+        JobManagement jm = new FileJobManagement(new File("src/test/resources"))
+        Job job = new Job(jm)
+
+        when:
+        job.using("config")
+
+        then:
+        job.project.description.text() == 'Description'
+    }
+
+def "generate job from missing template"() {
 //        setup:
 //        JobManagement jm = Mock()
 //        Job job = new Job(jm)
@@ -87,4 +87,13 @@ class JobTest extends Specification {
 //        then:
 //        // failure expected
 //    }
+
+    def minimalXml = '''<project>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+</project>
+'''
+
 }

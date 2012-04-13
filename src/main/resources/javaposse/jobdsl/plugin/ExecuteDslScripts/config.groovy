@@ -1,4 +1,4 @@
-package javaposse.jobdsl.ExecuteDslScripts;
+package javaposse.jobdsl.plugin.ExecuteDslScripts;
 
 import lib.LayoutTagLib
 

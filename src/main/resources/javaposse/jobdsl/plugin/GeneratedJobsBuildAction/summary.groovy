@@ -1,4 +1,4 @@
-package javaposse.jobdsl.GeneratedJobsBuildAction;
+package javaposse.jobdsl.plugin.GeneratedJobsBuildAction;
 
 import lib.LayoutTagLib
 

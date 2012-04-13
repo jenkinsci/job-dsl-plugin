@@ -17,6 +17,7 @@ public class DslScriptLoader {
 
     /**
      * Runs the provided DSL script through the provided job manager.
+     * 
      * @param scriptContent the contents of the DSL script
      * @param jobManagement the instance of JobManagement which processes the resulting Jenkins job config changes
      */
@@ -25,13 +26,12 @@ public class DslScriptLoader {
         binding.setVariable("secretJobManagement", jobManagement); // TODO Find better way of getting this variable into JobParent
 
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
-        config.setScriptBaseClass("javaposse.jobdsl.JobParent");
+        config.setScriptBaseClass("javaposse.jobdsl.dsl.JobParent");
 
         parseScript(scriptContent, config, binding);
     }
 
-    // TODO: Could this be made private?
-    public static Object parseScript(String scriptContent, CompilerConfiguration config, Binding binding) throws CompilationFailedException {
+    static Object parseScript(String scriptContent, CompilerConfiguration config, Binding binding) throws CompilationFailedException {
         ClassLoader parent = DslScriptLoader.class.getClassLoader(); // TODO Setup different classloader
         GroovyShell shell = new GroovyShell(parent, binding, config);
         Script script = shell.parse(scriptContent);
