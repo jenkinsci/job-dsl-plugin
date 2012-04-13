@@ -9,7 +9,6 @@ import groovy.lang.Script;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.class.getName());
 
@@ -18,7 +17,7 @@ public class DslScriptLoader {
         binding.setVariable("secretJobManagement", jobManagement); // TODO Find better way of getting this variable into JobParent
 
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
-        config.setScriptBaseClass("javaposse.jobdsl.JobParent");
+        config.setScriptBaseClass("javaposse.jobdsl.dsl.JobParent");
 
         parseScript(scriptContent, config, binding);
     }

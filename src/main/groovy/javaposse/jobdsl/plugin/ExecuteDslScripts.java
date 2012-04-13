@@ -5,32 +5,20 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.XmlFile;
 import hudson.model.BuildListener;
-import hudson.model.TopLevelItem;
 import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.tasks.Builder;
-import hudson.model.TopLevelItem;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.google.common.collect.Sets;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javaposse.jobdsl.dsl.DslScriptLoader;
-import javaposse.jobdsl.dsl.JobManagement;
-
-import javax.xml.transform.stream.StreamSource;
-
-import jenkins.model.Jenkins;
 
 public class ExecuteDslScripts extends Builder {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
@@ -60,7 +48,8 @@ public class ExecuteDslScripts extends Builder {
 
        // Track what jobs got created/updated
        Set<String> modifiedJobs = Sets.newHashSet();
-
+       Set<String> referencedTemplates = Sets.newHashSet();
+       
        for(String target: targets) {
            FilePath targetPath = build.getModuleRoot().child(target);
            if (!targetPath.exists()) {
@@ -77,37 +66,11 @@ public class ExecuteDslScripts extends Builder {
 
            // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
            // They'll make REST calls, we'll make internal Jenkins calls
-           JobManagement jm = new JobManagement() {
-                Jenkins jenkins = Jenkins.getInstance();
-
-                @Override
-                public String getConfig(String jobName) throws IOException {
-                    LOGGER.log(Level.INFO, String.format("Getting config for %s", jobName));
-                    AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
-                    XmlFile xmlFile = project.getConfigFile();
-                    String xml = xmlFile.asString();
-                    LOGGER.log(Level.FINE, String.format("Job config %s", xml));
-                    return xml;
-                }
-
-                @Override
-                public void createOrUpdateConfig(String jobName, String config) throws IOException {
-                    LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
-                    AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
-                    if (project == null) {
-                        // Creating project
-                        LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
-                        InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-                        TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
-                    } else {
-                        LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
-                        StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
-                        project.updateByXml(streamSource);
-                    }
-                }
-           };
+           JenkinsJobManagement jm = new JenkinsJobManagement();
            
            DslScriptLoader.runDsl(dslBody, jm);
+           
+           referencedTemplates.addAll(jm.referencedTemplates);
        }
 
        // Add GeneratedJobsAction

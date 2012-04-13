@@ -51,15 +51,27 @@ class JobTest extends Specification {
 
         then:
         1 * jm.getConfig("TMPL") >> minimalXml
-        job.xml == '<?xml version="1.0" encoding="UTF-8"?>'+minimalXml
+        job.xml == '<?xml version="1.0" encoding="UTF-8"?>'+minimalXml // This is a dangerous check, since we're not guaranteed to get the XML in order
     }
-    
+
+    def "load large template from file"() {
+        setup:
+        JobManagement jm = new FileJobManagement(new File("src/test/resources"))
+        Job job = new Job(jm)
+
+        when:
+        job.using("config")
+
+        then:
+        job.project.description.text() == 'Description'
+    }
+
     def minimalXml = 
 '''<project>
-    <actions/>
-    <description></description>
-    <keepDependencies>false</keepDependencies>
-    <properties/>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
 </project>
 '''
 }

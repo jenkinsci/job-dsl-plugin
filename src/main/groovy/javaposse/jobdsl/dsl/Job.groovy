@@ -4,64 +4,25 @@ import groovy.util.Node;
 import groovy.xml.XmlUtil
 import java.io.StringReader
 
-import javaposse.jobdsl.JobManagement;
-
 public class Job {
     String name // Required
     Node project
     JobManagement jobManagement
 
     public Job(JobManagement jobManagement) {
-        super();
         this.jobManagement = jobManagement;
     }
 
     def using(String templateName) {
         String configXml = jobManagement.getConfig(templateName)
-        // TODO record which templates are used to generate jobs, so that they can be connected
+        // TODO record which templates are used to generate jobs, so that they can be connected to this job
         project = new XmlParser().parse(new StringReader(configXml))
     }
 
     def configure(Closure configureClosure) {
         configureClosure.delegate = new NodeDelegate(project)
-        configureClosure.call(project) // make Xml Node available, incase it needs to be passed to other methods
-    }
-
-    public static class NodeDelegate {
-        Node node
-
-        NodeDelegate(Node node) {
-            this.node = node
-        }
-
-        def methodMissing(String name, args) {
-            if (args.length == 0) {
-                return // Not sure what to do with a method with no args in this context
-            }
-
-            // Identify Node
-            def targetNode
-            if (nodeAlreadyPresent(name)) {
-                targetNode = project.get(name)[0]
-            } else {
-                targetNode = project.appendNode(name)
-            }
-
-            if (args[0] instanceof Closure) {
-                // block that wants to be configured
-                def childClosure = args[0]
-                childClosure.delegate = new NodeDelegate(targetNode)
-                childClosure.call(targetNode)
-            } else {
-                // Default to setting direct value
-                targetNode.value = args[0]
-            }
-
-        }
-
-        private boolean nodeAlreadyPresent(String nodeName) {
-            return node.get(nodeName).size() > 0
-        }
+        // make Node Delegate available, so that it can be passed to other methods
+        configureClosure.call(configureClosure.delegate) 
     }
 
     public String getXml() {
