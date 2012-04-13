@@ -6,7 +6,6 @@ import java.io.IOException;
  * Interface to manage jobs, which the DSL needs to do.
  * 
  * @author jryan
- * @author jryan
  */
 public interface JobManagement {
     /**
