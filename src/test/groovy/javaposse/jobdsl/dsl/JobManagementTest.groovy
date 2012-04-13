@@ -1,16 +1,21 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
+
 import spock.lang.*
 
 class JobManagementTest extends Specification {
-    def "get config by name"() {
-        // TODO: implement me
-        // Should get a job as expected
-    }
 
     def "get non-existent config"() {
-        // TODO: implement me
-        // Should throw a new "JobConfigurationNotFoundException (or something like this)
+        setup:
+        JobManagement jm = new FileJobManagement(new File("src/test/resources"))
+
+        when:
+        jm.getConfig("TMPL-NOT-THERE")
+
+        then:
+        thrown(JobConfigurationNotFoundException)
     }
 
     def "get config - no name provided"() {
@@ -23,13 +28,23 @@ class JobManagementTest extends Specification {
         // Should create a new job as expected
     }
 
-    def "create new config - a config with the given name already exists"() {
+    def "update existing config"() {
         // TODO: implement me
-        // Should throw a "JobNameClashException (or something like this)
+        // Should update job as expected
     }
 
     def "create new config - name not provided"() {
         // TODO: implement me
-        // Should throw a "JobNameMissingException (or something like this)
+        // Should throw a "NewJobNameMissingException (or something like this)
     }
+
+def minimalXml = '''
+<project>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+</project>
+'''
+
 }

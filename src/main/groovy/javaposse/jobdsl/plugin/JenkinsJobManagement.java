@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.JobManagement;
 
 import javax.xml.transform.stream.StreamSource;
@@ -35,16 +36,22 @@ public final class JenkinsJobManagement implements JobManagement {
     }
 
     @Override
-    public String getConfig(String jobName) throws IOException {
+    public String getConfig(String jobName) throws JobConfigurationNotFoundException {
         LOGGER.log(Level.INFO, String.format("Getting config for %s", jobName));
         referencedTemplates.add(jobName); // assumes all getConfigs are templates, we might to do a diff on current jobs before update them
 
-        String xml = lookupJob(jobName);
+        String xml;
+        try {
+            xml = lookupJob(jobName);
+        } catch (IOException ioex) {
+            LOGGER.log(Level.WARNING, "Named Job Config not found: %s", jobName);
+            throw new JobConfigurationNotFoundException(jobName);
+        }
         LOGGER.log(Level.FINE, String.format("Job config %s", xml));
         return xml;
     }
 
-    private String lookupJob(String jobName) throws IOException{
+    private String lookupJob(String jobName) throws IOException {
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
         XmlFile xmlFile = project.getConfigFile();
         String xml = xmlFile.asString();

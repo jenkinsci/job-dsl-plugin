@@ -6,15 +6,16 @@ import java.io.IOException;
  * Interface to manage jobs, which the DSL needs to do.
  * 
  * @author jryan
+ * @author aharmel-law
  */
 public interface JobManagement {
     /**
      * Gets (loads) the job configuration for the Jenkins job with the specified name.
      * @param jobName the name of the job to look up
      * @return the job configuration as XML
-     * @throws IOException
+     * @throws JobConfigurationNotFoundException
      */
-    String getConfig(String jobName) throws IOException;
+    String getConfig(String jobName) throws JobConfigurationNotFoundException;
 
     /**
      * Creates or updates the job config for the named Jenkins job with the config provided.

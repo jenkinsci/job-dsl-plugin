@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.Job;
+import javaposse.jobdsl.dsl.JobTemplateMissingException;
 import javaposse.jobdsl.dsl.JobManagement;
 import spock.lang.*
 
@@ -67,27 +68,17 @@ class JobTest extends Specification {
         job.project.description.text() == 'Description'
     }
 
-//def "generate job from missing template"() {
-//        setup:
-//        JobManagement jm = Mock()
-//        Job job = new Job(jm)
-//        def xml = '''
-//            <project>
-//                <actions/>
-//                <description></description>
-//                <keepDependencies>false</keepDependencies>
-//                <properties/>
-//            </project>
-//        '''
-//        jm.getConfig(("TMPL")) >> xml
-//        job.xml == '<?xml version="1.0" encoding="UTF-8"?>' + xml
-//
-//        when:
-//        job.using("TMPL-NOT_THERE")
-//
-//        then:
-//        // failure expected
-//    }
+    def "generate job from missing template - throws JobTemplateMissingException"() {
+        setup:
+        JobManagement jm = new FileJobManagement(new File("src/test/resources"))
+        Job job = new Job(jm)
+
+        when:
+        job.using("TMPL-NOT_THERE")
+
+        then:
+        thrown(JobTemplateMissingException)
+    }
 
     def minimalXml = '''
 <project>

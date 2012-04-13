@@ -6,6 +6,9 @@ import java.io.StringReader
 
 /**
  * DSL Element representing a Jenkins Job
+ *
+ * @author jryan
+ * @author aharmel-law
  */
 public class Job {
     String name // Required
@@ -20,9 +23,16 @@ public class Job {
      * Creates a new job configuration, based on the job template referenced by the parameter and stores this.
      * @param templateName the name of the template upon which to base the new job
      * @return a new graph of groovy.util.Node objects, representing the job configuration structure
+     * @throws JobTemplateMissingException
      */
-    def using(String templateName) {
-        String configXml = jobManagement.getConfig(templateName)
+    def using(String templateName) throws JobTemplateMissingException {
+        String configXml
+        try {
+            configXml = jobManagement.getConfig(templateName)
+        } catch (JobConfigurationNotFoundException jcnfex) {
+            throw new JobTemplateMissingException(templateName)
+        }
+
         // TODO record which templates are used to generate jobs, so that they can be connected to this job
         project = new XmlParser().parse(new StringReader(configXml))
     }
