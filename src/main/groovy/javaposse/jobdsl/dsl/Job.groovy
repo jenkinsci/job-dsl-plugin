@@ -11,9 +11,11 @@ import java.io.StringReader
  * @author aharmel-law
  */
 public class Job {
+    JobManagement jobManagement
+
     String name // Required
     Node project
-    JobManagement jobManagement
+    String templateName
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
@@ -32,6 +34,9 @@ public class Job {
         } catch (JobConfigurationNotFoundException jcnfex) {
             throw new JobTemplateMissingException(templateName)
         }
+
+        // Save for late, when constructing GeneratedJob
+        this.templateName = templateName
 
         // TODO record which templates are used to generate jobs, so that they can be connected to this job
         project = new XmlParser().parse(new StringReader(configXml))

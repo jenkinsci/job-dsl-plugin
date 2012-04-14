@@ -33,8 +33,9 @@ public class StringJobManagement implements JobManagement {
         xml
     }
 
-    void createOrUpdateConfig(String jobName, String config) {
-        savedXml
+    boolean createOrUpdateConfig(String jobName, String config) {
+        savedXml = config
+        return false
     }
 }
 

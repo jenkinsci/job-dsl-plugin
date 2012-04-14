@@ -1,14 +1,16 @@
 package javaposse.jobdsl.plugin;
 
 import hudson.model.Action;
-import java.util.List;
+import java.util.Set;
+
+import javaposse.jobdsl.dsl.GeneratedJob;
 
 
 public class GeneratedJobsAction implements Action {
-    List<String> jobNames;
+    Set<GeneratedJob> modifiedJobs;
 
-    public GeneratedJobsAction(List<String> jobNames) {
-        this.jobNames = jobNames;
+    public GeneratedJobsAction(Set<GeneratedJob> modifiedJobs) {
+        this.modifiedJobs = modifiedJobs;
     }
 
     public String getIconFileName() {
@@ -23,7 +25,7 @@ public class GeneratedJobsAction implements Action {
         return "generatedFiles";
     }
 
-    public List<String> getJobNames() {
-        return jobNames;
+    public Set<GeneratedJob> getGeneratedJobs() {
+        return modifiedJobs;
     }
 }

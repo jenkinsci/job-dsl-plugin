@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javaposse.jobdsl.dsl.DslScriptLoader;
+import javaposse.jobdsl.dsl.GeneratedJob;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -64,9 +65,8 @@ public class ExecuteDslScripts extends Builder {
        String[] targets = targetsStr.split("\n");
 
        // Track what jobs got created/updated
-       Set<String> modifiedJobs = Sets.newHashSet(); // TODO: update this as jobs are created / updated
-       Set<String> referencedTemplates = Sets.newHashSet();
-       
+       Set<GeneratedJob> modifiedJobs = Sets.newHashSet();
+
        for(String target: targets) {
            FilePath targetPath = build.getModuleRoot().child(target);
            if (!targetPath.exists()) {
@@ -85,10 +85,17 @@ public class ExecuteDslScripts extends Builder {
            // They'll make REST calls, we'll make internal Jenkins calls
            JenkinsJobManagement jm = new JenkinsJobManagement();
 
-           DslScriptLoader.runDsl(dslBody, jm);
+           Set<GeneratedJob> generatedJobs = DslScriptLoader.runDsl(dslBody, jm);
 
-           modifiedJobs.addAll(jm.modifiedJobs);
-           referencedTemplates.addAll(jm.referencedTemplates);
+           modifiedJobs.addAll(generatedJobs);
+       }
+
+       GeneratedJobsAction gja = build.getProject().getAction(GeneratedJobsAction.class);
+       if (gja != null) {
+           // TODO Do a diff, to calculate what jobs were removed
+           gja.getGeneratedJobs().addAll(modifiedJobs);
+       } else {
+           gja = new GeneratedJobsAction(modifiedJobs);
        }
 
        // Add GeneratedJobsAction
@@ -104,4 +111,5 @@ public class ExecuteDslScripts extends Builder {
            return "Process Job DSLs";
        }
    }
+
 }

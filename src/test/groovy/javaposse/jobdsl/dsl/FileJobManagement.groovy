@@ -38,8 +38,9 @@ class FileJobManagement implements JobManagement {
         } 
     }
 
-    void createOrUpdateConfig(String jobName, String config) {
+    boolean createOrUpdateConfig(String jobName, String config) {
         new File(jobName).write(config)
+        return true
     }
 }
 

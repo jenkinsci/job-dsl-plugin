@@ -24,5 +24,5 @@ public interface JobManagement {
      * @param config the new / updated job config
      * @throws IOException
      */
-    void createOrUpdateConfig(String jobName, String config) throws IOException;
+    boolean createOrUpdateConfig(String jobName, String config) throws IOException;
 }

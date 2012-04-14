@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.JobManagement;
 
@@ -25,20 +26,15 @@ public final class JenkinsJobManagement implements JobManagement {
     Jenkins jenkins = Jenkins.getInstance();
     static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
-    Set<String> referencedTemplates;
-    Set<String> modifiedJobs;
-    Set<String> createdJobs;
+    Set<GeneratedJob> modifiedJobs;
 
     public JenkinsJobManagement() {
-        referencedTemplates = Sets.newHashSet();
         modifiedJobs = Sets.newHashSet();
-        createdJobs = Sets.newHashSet();
     }
 
     @Override
     public String getConfig(String jobName) throws JobConfigurationNotFoundException {
         LOGGER.log(Level.INFO, String.format("Getting config for %s", jobName));
-        referencedTemplates.add(jobName); // assumes all getConfigs are templates, we might to do a diff on current jobs before update them
 
         String xml;
 
@@ -62,15 +58,16 @@ public final class JenkinsJobManagement implements JobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public void createOrUpdateConfig(String jobName, String config) throws IOException {
+    public boolean createOrUpdateConfig(String jobName, String config) throws IOException {
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        boolean created = false;
         if (project == null) {
             // Creating project
             LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
             TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
-            createdJobs.add(jobName);
+            created = true;
         } else {
             LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
             // TODO Perform comparison between old and new, and print to console
@@ -78,8 +75,8 @@ public final class JenkinsJobManagement implements JobManagement {
             // TODO Leverage XMLUnit to perform diffs
             StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
             project.updateByXml(streamSource);
-            modifiedJobs.add(jobName);
         }
+        return created;
     }
 
     private String lookupJob(String jobName) throws IOException {
