@@ -5,6 +5,6 @@ package javaposse.jobdsl.dsl
  */
 public class JobTemplateMissingException extends Exception {
     private JobTemplateMissingException(String templateName) {
-        super("The template job with name " + templateName + " does not exist.")
+        super("The template job with name ${templateName} does not exist.")
     }
 }

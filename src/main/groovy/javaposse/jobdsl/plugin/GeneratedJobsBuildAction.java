@@ -1,17 +1,19 @@
 package javaposse.jobdsl.plugin;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javaposse.jobdsl.dsl.GeneratedJob;
 
 import hudson.model.Action;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 class GeneratedJobsBuildAction implements Action {
-    public final Collection<GeneratedJob> modifiedJobs;
+    public final Set<GeneratedJob> modifiedJobs;
 
     public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs) {
-        this.modifiedJobs = ImmutableList.copyOf(modifiedJobs); // TODO Make this a tuple with job name and if it was created or updated
+        this.modifiedJobs = Sets.newHashSet(modifiedJobs);
     }
 
     /**

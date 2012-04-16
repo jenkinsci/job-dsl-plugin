@@ -3,8 +3,9 @@ package javaposse.jobdsl.dsl;
 public class GeneratedJob {
     private String templateName;
     private String jobName;
+    private boolean created;
 
-    public GeneratedJob(String templateName, String jobName) {
+    public GeneratedJob(String templateName, String jobName, boolean created) {
         super();
         this.templateName = templateName;
         this.jobName = jobName;
@@ -14,16 +15,12 @@ public class GeneratedJob {
         return jobName;
     }
 
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
-
     public String getTemplateName() {
         return templateName;
     }
 
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
+    public boolean isCreated() {
+        return created;
     }
 
     @Override

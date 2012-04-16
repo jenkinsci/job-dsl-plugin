@@ -66,6 +66,7 @@ public final class JenkinsJobManagement implements JobManagement {
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
         // TODO: There is redundancy here with the "lookupJob()" method below.  Factor this out.
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        Jenkins.checkGoodName(jobName);
         boolean created = false;
         if (project == null) {
             // Creating project
