@@ -38,7 +38,7 @@ class FileJobManagement implements JobManagement {
         } 
     }
 
-    boolean createOrUpdateConfig(String jobName, String config) {
+    boolean createOrUpdateConfig(String jobName, String config) throws JobNameNotProvidedException, JobConfigurationMissingException {
         new File(jobName).write(config)
         return true
     }

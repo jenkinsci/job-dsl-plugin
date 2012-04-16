@@ -4,17 +4,16 @@ import hudson.XmlFile;
 import hudson.model.AbstractProject;
 import hudson.model.TopLevelItem;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.JobConfigurationMissingException;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.dsl.JobNameNotProvidedException;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -58,23 +57,41 @@ public final class JenkinsJobManagement implements JobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public boolean createOrUpdateConfig(String jobName, String config) throws IOException {
+    public boolean createOrUpdateConfig(String jobName, String config) throws JobNameNotProvidedException, JobConfigurationMissingException {
+
+        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
+
+        if (config ==null || config.isEmpty()) throw new JobConfigurationMissingException();
+
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
+        // TODO: There is redundancy here with the "lookupJob()" method below.  Factor this out.
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
         boolean created = false;
         if (project == null) {
             // Creating project
             LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
-            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-            TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
-            created = true;
+            InputStream is = null;
+            try {
+                is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+                TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
+                created = true;
+            } catch (UnsupportedEncodingException ueex) {
+                // TODO: Handle this
+            } catch (IOException ioex) {
+                // TODO: Handle this
+            }
+
         } else {
             LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
             // TODO Perform comparison between old and new, and print to console
             // TODO Print out, for posterity, what the user might ahve changed, in the format of the DSL
             // TODO Leverage XMLUnit to perform diffs
             StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
-            project.updateByXml(streamSource);
+            try {
+                project.updateByXml(streamSource);
+            } catch (IOException ioex) {
+                // TODO: Handle this
+            }
         }
         return created;
     }

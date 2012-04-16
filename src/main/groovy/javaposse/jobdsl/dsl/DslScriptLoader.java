@@ -26,7 +26,7 @@ public class DslScriptLoader {
      * @param scriptContent the contents of the DSL script
      * @param jobManagement the instance of JobManagement which processes the resulting Jenkins job config changes
      */
-    public static Set<GeneratedJob> runDsl(String scriptContent, JobManagement jobManagement) throws IOException {
+    public static Set<GeneratedJob> runDsl(String scriptContent, JobManagement jobManagement) {
         Binding binding = new Binding();
         binding.setVariable("secretJobManagement", jobManagement); // TODO Find better way of getting this variable into JobParent
 
@@ -39,7 +39,13 @@ public class DslScriptLoader {
         Set<GeneratedJob> generatedJobs = Sets.newHashSet();
         if (jp != null) {
             for(Job job: jp.getReferencedJobs()) {
-                jobManagement.createOrUpdateConfig(job.getName(), job.getXml());
+                try {
+                    jobManagement.createOrUpdateConfig(job.getName(), job.getXml());
+                } catch (JobNameNotProvidedException jnnpe) {
+                    // TODO: What is the sensible thing to do here?
+                } catch (JobConfigurationMissingException jcmex) {
+                    // TODO: What is the sensible thing to do here?
+                }
                 GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName());
                 generatedJobs.add(gj);
             }

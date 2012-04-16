@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl;
 
-import java.io.IOException;
-
 /**
  * Interface to manage jobs, which the DSL needs to do.
  * 
@@ -22,7 +20,8 @@ public interface JobManagement {
      * Creates or updates the job config for the named Jenkins job with the config provided.
      * @param jobName the name of the new / updated job
      * @param config the new / updated job config
-     * @throws IOException
+     * @throws JobNameNotProvidedException if the jobName is null or blank
+     * @throws JobConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config) throws IOException;
+    boolean createOrUpdateConfig(String jobName, String config) throws JobNameNotProvidedException, JobConfigurationMissingException;
 }
