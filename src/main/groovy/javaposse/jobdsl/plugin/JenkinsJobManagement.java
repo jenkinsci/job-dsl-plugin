@@ -2,9 +2,11 @@ package javaposse.jobdsl.plugin;
 
 import hudson.XmlFile;
 import hudson.model.AbstractProject;
+import hudson.model.Project;
 import hudson.model.TopLevelItem;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +19,9 @@ import javaposse.jobdsl.dsl.JobNameNotProvidedException;
 
 import javax.xml.transform.stream.StreamSource;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 import jenkins.model.Jenkins;
@@ -61,12 +66,14 @@ public final class JenkinsJobManagement implements JobManagement {
 
         if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
 
-        if (config ==null || config.isEmpty()) throw new JobConfigurationMissingException();
+        if (config == null || config.isEmpty()) throw new JobConfigurationMissingException();
 
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
         // TODO: There is redundancy here with the "lookupJob()" method below.  Factor this out.
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        Jenkins.checkGoodName(jobName);
         boolean created = false;
+        // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
         if (project == null) {
             // Creating project
             LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
@@ -97,9 +104,39 @@ public final class JenkinsJobManagement implements JobManagement {
     }
 
     private String lookupJob(String jobName) throws IOException {
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName);
         XmlFile xmlFile = project.getConfigFile();
         String xml = xmlFile.asString();
         return xml;
+    }
+
+//    @SuppressWarnings("rawtypes")
+//    public Collection<AbstractProject> getJobsByName(final Set<String> names) {
+//        return Collections2.filter(Jenkins.getInstance().getProjects(), new Predicate<AbstractProject>() {
+//            @Override public boolean apply(AbstractProject project) {
+//                return names.contains(project.getName());
+//            }
+//        });
+//    }
+//
+//    public Collection<AbstractProject> getJobsByGeneratedJobs(final Set<GeneratedJob> generatedJobs) {
+//        Set<String> jobNames = Sets.newHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
+//        return getJobsByName(jobNames);
+//    }
+
+    public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
+        return Sets.newHashSet(Collections2.transform(jobs, new ExtractTemplate()));
+    }
+
+    public static class ExtractJobName implements Function<GeneratedJob, String> {
+        @Override public String apply(GeneratedJob input) {
+            return input.getJobName();
+        }
+    }
+
+    public static class ExtractTemplate implements Function<GeneratedJob, String> {
+        @Override public String apply(GeneratedJob input) {
+            return input.getTemplateName();
+        }
     }
 }

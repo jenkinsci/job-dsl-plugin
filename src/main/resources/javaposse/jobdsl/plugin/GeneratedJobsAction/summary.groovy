@@ -7,7 +7,7 @@ t=namespace("/lib/hudson")
 st=namespace("jelly:stapler")
 f=namespace("lib/form")
 
-if (my?.modifiedJobs != null) {
+if (my?.generatedJobs != null) {
     t.summary(icon:"folder.png") {
         raw("Generated Jobs:")
         ul(class:"jobList") {

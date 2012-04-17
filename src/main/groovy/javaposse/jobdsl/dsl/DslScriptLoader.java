@@ -40,14 +40,15 @@ public class DslScriptLoader {
         if (jp != null) {
             for(Job job: jp.getReferencedJobs()) {
                 try {
-                    jobManagement.createOrUpdateConfig(job.getName(), job.getXml());
+                    // TODO remove project.properties.'javaposse.jobdsl.plugin.SeedJobsProperty', since that is a special property
+                    boolean created = jobManagement.createOrUpdateConfig(job.getName(), job.getXml());
+                    GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
+                    generatedJobs.add(gj);
                 } catch (JobNameNotProvidedException jnnpe) {
                     // TODO: What is the sensible thing to do here?
                 } catch (JobConfigurationMissingException jcmex) {
                     // TODO: What is the sensible thing to do here?
                 }
-                GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName());
-                generatedJobs.add(gj);
             }
         }
         return generatedJobs;
