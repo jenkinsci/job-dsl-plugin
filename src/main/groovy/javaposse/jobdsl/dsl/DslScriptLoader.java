@@ -40,6 +40,7 @@ public class DslScriptLoader {
         if (jp != null) {
             for(Job job: jp.getReferencedJobs()) {
                 try {
+                    // TODO remove project.properties.'javaposse.jobdsl.plugin.SeedJobsProperty', since that is a special property
                     boolean created = jobManagement.createOrUpdateConfig(job.getName(), job.getXml());
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
                     generatedJobs.add(gj);

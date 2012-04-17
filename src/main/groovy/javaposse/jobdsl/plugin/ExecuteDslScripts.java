@@ -5,23 +5,14 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
-import hudson.model.Project;
 import hudson.tasks.Builder;
-import org.kohsuke.stapler.DataBoundConstructor;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +20,12 @@ import java.util.logging.Logger;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import jenkins.model.Jenkins;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -53,6 +50,18 @@ public class ExecuteDslScripts extends Builder {
         return targets;
     }
 
+    // Track what jobs got created/updated, we don't want to depend on the builds
+    Set<GeneratedJob> generatedJobs;
+
+    @Override
+    public Action getProjectAction(AbstractProject<?, ?> project) {
+        if (generatedJobs == null) {
+            return new GeneratedJobsAction();
+        } else {
+            return new GeneratedJobsAction(generatedJobs);
+        }
+    }
+
     /**
      * Runs every job DSL script provided in the plugin configuration, which results in new /
      * updated Jenkins jobs. The created / updated jobs are reported in the build result.
@@ -64,6 +73,7 @@ public class ExecuteDslScripts extends Builder {
      * @throws InterruptedException
      * @throws IOException
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
                     throws InterruptedException, IOException {
@@ -74,9 +84,11 @@ public class ExecuteDslScripts extends Builder {
         LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
         String[] targets = targetsStr.split("\n");
 
-        // Track what jobs got created/updated
-        Set<GeneratedJob> modifiedJobs = Sets.newHashSet();
+        // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
+        // They'll make REST calls, we'll make internal Jenkins calls
+        JenkinsJobManagement jm = new JenkinsJobManagement();
 
+        Set<GeneratedJob> modifiedJobs = Sets.newHashSet();
         for (String target : targets) {
             FilePath targetPath = build.getModuleRoot().child(target);
             if (!targetPath.exists()) {
@@ -91,10 +103,6 @@ public class ExecuteDslScripts extends Builder {
             String dslBody = targetPath.readToString();
             LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
 
-            // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-            // They'll make REST calls, we'll make internal Jenkins calls
-            JenkinsJobManagement jm = new JenkinsJobManagement();
-
             // Room for one dsl to succeed and another to fail, yet jobs from the first will finish
             // TODO postpone saving jobs even later
             Set<GeneratedJob> generatedJobs = DslScriptLoader.runDsl(dslBody, jm);
@@ -102,85 +110,58 @@ public class ExecuteDslScripts extends Builder {
             modifiedJobs.addAll(generatedJobs);
         }
 
-        GeneratedJobsAction gja = build.getProject().getAction(GeneratedJobsAction.class);
-        if (gja == null) {
-            gja = new GeneratedJobsAction();
-            build.getProject().addAction(gja);
+        if (generatedJobs == null) {
+            generatedJobs = Sets.newHashSet();
         }
 
-        // Capture some data first
-        Set<String> existingTemplates = Sets.newHashSet(getTemplates(gja.modifiedJobs));
-        Set<GeneratedJob> existingGeneratedJobs = Sets.newHashSet(gja.modifiedJobs);
+        // Update Project
+        Set<GeneratedJob> removedJobs = Sets.difference(generatedJobs, modifiedJobs);
+        // TODO Print to listener, so that it shows up in the build
+        LOGGER.info("Adding jobs: " + Joiner.on(",").join( Sets.difference(modifiedJobs, generatedJobs) )); // TODO only bring jobNames
+        LOGGER.info("Existing jobs: " + Joiner.on(",").join( Sets.intersection(generatedJobs, modifiedJobs) ));
+        LOGGER.info("Removing jobs: " + Joiner.on(",").join(removedJobs));
+
+        // Update unreferenced jobs
+        for(GeneratedJob removedJob: removedJobs) {
+            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName());
+            removedProject.disable(); // TODO deleteJob which is protected
+        }
+
+        // Update Templates
+        Set<String> templates = JenkinsJobManagement.getTemplates(modifiedJobs);
+        Set<String> existingTemplates = JenkinsJobManagement.getTemplates(generatedJobs);
+        Set<String> newTemplates = Sets.difference(templates, existingTemplates);
+        Set<String> removedTemplates = Sets.difference(existingTemplates, templates);
+        Set<String> modifyTemplates = Sets.newHashSet(Iterables.concat(newTemplates,removedTemplates));
 
         // Add GeneratedJobsBuildAction to Build
         GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(modifiedJobs);
         build.addAction(gjba);
-        gja.getGeneratedJobs().addAll(modifiedJobs); // Relying on Set to keep only unique values
+        gjba.getModifiedJobs().addAll(modifiedJobs); // Relying on Set to keep only unique values
 
-        // Update Project
-        Set<GeneratedJob> removedJobs = Sets.difference(existingGeneratedJobs, modifiedJobs);
-        LOGGER.info("Adding jobs: " + Joiner.on(",").join( Sets.difference(modifiedJobs, existingGeneratedJobs) ));
-        LOGGER.info("Existing jobs: " + Joiner.on(",").join( Sets.intersection(existingGeneratedJobs, modifiedJobs) ));
-        LOGGER.info("Removing jobs: " + Joiner.on(",").join(removedJobs));
-        gja.getGeneratedJobs().clear();
-        gja.getGeneratedJobs().addAll(modifiedJobs);
-
-        // Update unreferenced jobs
-        Jenkins.getInstance().getProjects().removeAll( getJobsByGeneratedJobs(removedJobs) ); // TODO not sure if this works, or if this is what people want
-
-        // Update Templates
-        Set<String> templates = getTemplates(gja.modifiedJobs);
-        Set<String> newTemplates = Sets.difference(templates, existingTemplates);
-        Set<String> removedTemplates = Sets.difference(existingTemplates, newTemplates);
-        Set<String> modifyTemplates = Sets.newHashSet(Iterables.concat(newTemplates,removedTemplates));
+        // Save onto Builder
+        generatedJobs = Sets.newHashSet(modifiedJobs);
 
         // Processing new and old together to simplify all the job lookup code
         String seedJobName = build.getProject().getName();
-        for(Project<?,?> templateProject: getJobsByName(modifyTemplates)) {
-            SeedJobsAction seedJobsAction = (SeedJobsAction) templateProject.getAction(SeedJobsAction.class);
-            if (seedJobsAction == null) {
-                seedJobsAction = new SeedJobsAction();
-                templateProject.addAction(seedJobsAction);
+        for(String templateProjectName: modifyTemplates) {
+            AbstractProject templateProject = (AbstractProject) Jenkins.getInstance().getItem(templateProjectName);
+            SeedJobsProperty seedJobsProp = (SeedJobsProperty) templateProject.getProperty(SeedJobsProperty.class);
+            if (seedJobsProp == null) {
+                seedJobsProp = new SeedJobsProperty();
+                templateProject.addProperty(seedJobsProp);
             }
             String name = templateProject.getName();
             if (removedTemplates.contains(name)) { // Clean up templates which are no longer referenced
-                seedJobsAction.seedJobs.remove(seedJobName);
+                seedJobsProp.seedJobs.remove(seedJobName);
             } else { // Add breadcrumbs to referenced templates
-                seedJobsAction.seedJobs.add(seedJobName);
+                seedJobsProp.seedJobs.add(seedJobName);
             }
         }
 
         return true;
     }
 
-    public Collection<Project> getJobsByName(final Set<String> names) {
-        return Collections2.filter(Jenkins.getInstance().getProjects(), new Predicate<Project>() {
-            @Override public boolean apply(Project project) {
-                return names.contains(project.getName());
-            }
-        });
-    }
-
-    public Collection<Project> getJobsByGeneratedJobs(final Set<GeneratedJob> generatedJobs) {
-        Set<String> jobNames = Sets.newHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
-        return getJobsByName(jobNames);
-    }
-
-    public Set<String> getTemplates(Collection<GeneratedJob> jobs) {
-        return Sets.newHashSet(Collections2.transform(jobs, new ExtractTemplate()));
-    }
-
-    public static class ExtractJobName implements Function<GeneratedJob, String> {
-        @Override public String apply(GeneratedJob input) {
-            return input.getJobName();
-        }
-    }
-
-    public static class ExtractTemplate implements Function<GeneratedJob, String> {
-        @Override public String apply(GeneratedJob input) {
-            return input.getTemplateName();
-        }
-    }
 
     @Extension
     public static final class DescriptorImpl extends Descriptor<Builder> {

@@ -10,6 +10,7 @@ import groovy.lang.Script
 
 public abstract class JobParent extends Script {
     private static final Logger LOGGER = Logger.getLogger(JobParent.class.getName());
+
     JobManagement jm;
     Set<Job> referencedJobs
 
