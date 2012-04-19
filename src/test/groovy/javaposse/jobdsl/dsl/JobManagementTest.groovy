@@ -5,6 +5,7 @@ import javaposse.jobdsl.plugin.JenkinsJobManagement;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 
 import spock.lang.*
+
 import static org.custommonkey.xmlunit.XMLAssert.*
 import static org.custommonkey.xmlunit.XMLUnit.*
 
@@ -30,12 +31,24 @@ class JobManagementTest extends Specification {
         when:
         String xml = jm.getConfig("")
 
-        System.out.println("XML returned: \n" + xml);
-        System.out.println("Minimal XML:\n" + minimalXml);
-
         then:
         assertXMLEqual minimalXml, xml
     }
+
+//    //TODO: Enable this when I figure out how to mock what I need using Spock
+//    def "lookup template job - job not found"() {
+//        setup:
+//        JobManagement jm = new JenkinsJobManagement()
+//        jm.jenkins = Mock(Jenkins)
+////        jm.lookupJob() >> ""
+//
+//        when:
+//        String xml = jm.lookupJob("TEMPLATE_JOB_THAT_ISNT_THERE")
+//
+//        then:
+////        thrown(NullPointerException)
+//        assertEqual "", xml
+//    }
 
 //    def "create new config"() {
 //        // Should create a new job as expected

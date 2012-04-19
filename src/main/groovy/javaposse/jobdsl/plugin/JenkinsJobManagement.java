@@ -91,7 +91,7 @@ public final class JenkinsJobManagement implements JobManagement {
         } else {
             LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
             // TODO Perform comparison between old and new, and print to console
-            // TODO Print out, for posterity, what the user might ahve changed, in the format of the DSL
+            // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
             // TODO Leverage XMLUnit to perform diffs
             StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
             try {
@@ -104,10 +104,16 @@ public final class JenkinsJobManagement implements JobManagement {
     }
 
     private String lookupJob(String jobName) throws IOException {
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName);
-        XmlFile xmlFile = project.getConfigFile();
-        String xml = xmlFile.asString();
-        return xml;
+        String jobXml = "";
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName); // TODO: This can return null if the nob with the provided name isn't found
+        if (project != null) {
+            XmlFile xmlFile = project.getConfigFile();
+            jobXml = xmlFile.asString();
+        } else {
+            LOGGER.log(Level.WARNING, String.format("No Job with the name %s could be found.", jobName));
+            throw new IOException(String.format("No Job with the name %s could be found.", jobName));
+        }
+        return jobXml;
     }
 
 //    @SuppressWarnings("rawtypes")
