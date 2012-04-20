@@ -26,10 +26,13 @@ import com.google.common.collect.Sets;
 
 import jenkins.model.Jenkins;
 
+/**
+ * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
+ */
 public final class JenkinsJobManagement implements JobManagement {
-    Jenkins jenkins = Jenkins.getInstance();
     static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
+    Jenkins jenkins = Jenkins.getInstance();
     Set<GeneratedJob> modifiedJobs;
 
     public JenkinsJobManagement() {
@@ -38,8 +41,7 @@ public final class JenkinsJobManagement implements JobManagement {
 
     @Override
     public String getConfig(String jobName) throws JobConfigurationNotFoundException {
-        LOGGER.log(Level.INFO, String.format("Getting config for %s", jobName));
-
+        LOGGER.log(Level.INFO, String.format("Getting config for Job %s", jobName));
         String xml;
 
         // TODO: This is as ugly as sin, but I think it would be nice to have something like this.
@@ -49,7 +51,7 @@ public final class JenkinsJobManagement implements JobManagement {
             try {
                 xml = lookupJob(jobName);
             } catch (IOException ioex) {
-                LOGGER.log(Level.WARNING, "Named Job Config not found: %s", jobName);
+                LOGGER.log(Level.WARNING, String.format("Named Job Config not found: %s", jobName));
                 throw new JobConfigurationNotFoundException(jobName);
             }
         }
@@ -73,41 +75,18 @@ public final class JenkinsJobManagement implements JobManagement {
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
         Jenkins.checkGoodName(jobName);
 
-        // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
         if (project == null) {
-            // Creating project
-            LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
-            InputStream is = null;
-            try {
-                is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-                TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
-                created = true;
-            } catch (UnsupportedEncodingException ueex) {
-                LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
-                created = false;
-            } catch (IOException ioex) {
-                LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", jobName));
-                created = false;
-            }
-
+            created = createNewJob(jobName, config);
         } else {
-            LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
-            // TODO Perform comparison between old and new, and print to console
-            // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
-            // TODO Leverage XMLUnit to perform diffs
-            StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
-            try {
-                project.updateByXml(streamSource);
-            } catch (IOException ioex) {
-                LOGGER.log(Level.WARNING, String.format("Error writing updated job %s to file.", jobName));
-                created = false;
-            }
+            created = updateExistingJob(project, config);
         }
         return created;
     }
 
     private String lookupJob(String jobName) throws IOException {
+        LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
+
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName);
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
@@ -115,8 +94,48 @@ public final class JenkinsJobManagement implements JobManagement {
         } else {
             LOGGER.log(Level.WARNING, String.format("No Job called %s could be found.", jobName));
             throw new IOException(String.format("No Job called %s could be found.", jobName));
+
         }
+
+        LOGGER.log(Level.FINE, String.format("Looked up Job with config %s", jobXml));
         return jobXml;
+    }
+
+    private boolean updateExistingJob(AbstractProject<?, ?> project, String config) {
+        LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
+        boolean created;
+
+        // TODO Perform comparison between old and new, and print to console
+        // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
+        // TODO Leverage XMLUnit to perform diffs
+        StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
+        try {
+            project.updateByXml(streamSource);
+            created = true;
+        } catch (IOException ioex) {
+            LOGGER.log(Level.WARNING, String.format("Error writing updated project to file."));
+            created = false;
+        }
+        return created;
+    }
+
+    // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
+    private boolean createNewJob(String jobName, String config) {
+        LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
+        boolean created;
+
+        try {
+            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+            TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
+            created = true;
+        } catch (UnsupportedEncodingException ueex) {
+            LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
+            created = false;
+        } catch (IOException ioex) {
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", jobName));
+            created = false;
+        }
+        return created;
     }
 
 //    @SuppressWarnings("rawtypes")
