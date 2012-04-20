@@ -64,15 +64,15 @@ public final class JenkinsJobManagement implements JobManagement {
     @Override
     public boolean createOrUpdateConfig(String jobName, String config) throws JobNameNotProvidedException, JobConfigurationMissingException {
 
-        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
+        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
+        boolean created = false;
 
+        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
         if (config == null || config.isEmpty()) throw new JobConfigurationMissingException();
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
-        // TODO: There is redundancy here with the "lookupJob()" method below.  Factor this out.
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
         Jenkins.checkGoodName(jobName);
-        boolean created = false;
+
         // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
         if (project == null) {
             // Creating project
@@ -83,9 +83,11 @@ public final class JenkinsJobManagement implements JobManagement {
                 TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
                 created = true;
             } catch (UnsupportedEncodingException ueex) {
-                // TODO: Handle this
+                LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
+                created = false;
             } catch (IOException ioex) {
-                // TODO: Handle this
+                LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", jobName));
+                created = false;
             }
 
         } else {
@@ -97,7 +99,8 @@ public final class JenkinsJobManagement implements JobManagement {
             try {
                 project.updateByXml(streamSource);
             } catch (IOException ioex) {
-                // TODO: Handle this
+                LOGGER.log(Level.WARNING, String.format("Error writing updated job %s to file.", jobName));
+                created = false;
             }
         }
         return created;
@@ -105,13 +108,13 @@ public final class JenkinsJobManagement implements JobManagement {
 
     private String lookupJob(String jobName) throws IOException {
         String jobXml = "";
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName); // TODO: This can return null if the nob with the provided name isn't found
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName);
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
         } else {
-            LOGGER.log(Level.WARNING, String.format("No Job with the name %s could be found.", jobName));
-            throw new IOException(String.format("No Job with the name %s could be found.", jobName));
+            LOGGER.log(Level.WARNING, String.format("No Job called %s could be found.", jobName));
+            throw new IOException(String.format("No Job called %s could be found.", jobName));
         }
         return jobXml;
     }
