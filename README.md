@@ -82,11 +82,11 @@ To build:
 
 To run Jenkins and test JPI:
 
-    ./gradlew server 
+    ./gradlew server
 
 Build job-dsl.hpi to be installed in Jenkins:
 
-    ./gradlew jpi 
+    ./gradlew jpi
 
 Usage
 -----
@@ -101,9 +101,10 @@ and enter your job script locations (relative to this job's "workspace") as a ne
 5. Finally, it is good practice to organise your Jenkins UI with some new tabs so that the management and template
 jobs are not the first thing a user sees when they login
 
-Author
+Authors
 ------
 Justin Ryan <jryan@netflix.com>
+
 Andrew Harmel-Law <andrew@harmel-law.com>
 
 Artifacts

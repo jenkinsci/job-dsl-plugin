@@ -7,6 +7,7 @@ import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.JobProperty;
 import hudson.model.AbstractProject;
+import hudson.model.JobPropertyDescriptor;
 import hudson.tasks.Builder;
 
 import com.google.common.collect.Sets;
@@ -31,9 +32,8 @@ class SeedJobsProperty extends JobProperty<AbstractProject<?,?>> {
         return seedJobs;
     }
 
-
     @Extension
-    public static final class DescriptorImpl extends Descriptor<Builder> {
+    public static final class DescriptorImpl extends JobPropertyDescriptor {
         public String getDisplayName() {
             return "Seed Jobs Being Referenced";
         }

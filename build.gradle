@@ -13,7 +13,7 @@ apply plugin: 'jpi'
 repositories {
     maven {
         name 'jenkin-ci'
-        url "http://maven.jenkins-ci.org/content/repositories/releases"
+        url 'http://maven.jenkins-ci.org/content/repositories/releases'
     }
     mavenCentral()
 }
@@ -23,9 +23,14 @@ configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-
 
 dependencies {
     //groovy localGroovy() // Can't guarantee 1.8.6
-    groovy "org.codehaus.groovy:groovy-all:1.8.6"
-    testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
-    testCompile "xmlunit:xmlunit:1.1"
+    groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+    testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+    testCompile 'xmlunit:xmlunit:1.1'
+    testCompile 'junit:junit:4.10'
+}
+
+test {
+    useJUnit() // Causes "failed to create temp file to extract class from jar into"
 }
 
 group = "org.jenkinsci.plugins"
@@ -52,5 +57,15 @@ jenkinsPlugin {
     }
 }
 
-task createWrapper(type: Wrapper) { gradleVersion = '1.0-rc-1' }
+task createWrapper(type: Wrapper) { gradleVersion = '1.0-rc-3' }
 
+task(showTestClasspath) << {
+    println "Classpath:"
+    println "${configurations.testCompile.resolvedConfiguration}"
+    println "${configurations.compile.allArtifacts}"
+    configurations.testCompile.files.each {
+        println it
+    }
+    println "${configurations.testCompile.allDependencies}"
+    println "${configurations.jenkinsTest.allArtifacts}"
+}
