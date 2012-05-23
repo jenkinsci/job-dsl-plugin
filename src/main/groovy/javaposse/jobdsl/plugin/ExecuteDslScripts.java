@@ -49,15 +49,27 @@ public class ExecuteDslScripts extends Builder {
         private final boolean usingScriptText;
         private final String targets;
         private final String scriptText;
-
     }
 
     /**
-     * Newline-separated list of locations to dsl scripts
+     * Newline-separated list of locations to load as dsl scripts.
      */
     private final String targets;
+
+    /**
+     * Text of a dsl script.
+     */
     private final String scriptText;
+
+    /**
+     * Whether we're using some text for the script directly
+     */
     private final boolean usingScriptText;
+
+    /**
+     * Track what jobs got created/updated, we don't want to depend on the builds
+     */
+    Set<GeneratedJob> generatedJobs;
 
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation) {
@@ -92,8 +104,9 @@ public class ExecuteDslScripts extends Builder {
         return usingScriptText;
     }
 
-    // Track what jobs got created/updated, we don't want to depend on the builds
-    Set<GeneratedJob> generatedJobs;
+    public Set<GeneratedJob> getGeneratedJobs() {
+        return generatedJobs;
+    }
 
     @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
@@ -171,7 +184,7 @@ public class ExecuteDslScripts extends Builder {
         // Update Project
         Set<GeneratedJob> removedJobs = Sets.difference(generatedJobs, modifiedJobs);
         // TODO Print to listener, so that it shows up in the build
-        listener.getLogger().println("Adding jobs: " + Joiner.on(",").join( Sets.difference(modifiedJobs, generatedJobs) )); // TODO only bring jobNames
+        listener.getLogger().println("Adding jobs: "   + Joiner.on(",").join( Sets.difference(modifiedJobs, generatedJobs) ));
         listener.getLogger().println("Existing jobs: " + Joiner.on(",").join( Sets.intersection(generatedJobs, modifiedJobs) ));
         listener.getLogger().println("Removing jobs: " + Joiner.on(",").join(removedJobs));
 
@@ -188,13 +201,18 @@ public class ExecuteDslScripts extends Builder {
         Set<String> removedTemplates = Sets.difference(existingTemplates, templates);
         Set<String> modifyTemplates = Sets.newHashSet(Iterables.concat(newTemplates,removedTemplates));
 
+        listener.getLogger().println("Existing Templates: " + Joiner.on(",").join( existingTemplates ));
+        listener.getLogger().println("New Templates: " + Joiner.on(",").join( newTemplates ));
+        listener.getLogger().println("Unreferenced Templates: " + Joiner.on(",").join(removedTemplates));
+
         // Add GeneratedJobsBuildAction to Build
         GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(modifiedJobs);
-        build.addAction(gjba);
         gjba.getModifiedJobs().addAll(modifiedJobs); // Relying on Set to keep only unique values
+        build.addAction(gjba);
 
-        // Save onto Builder
+        // Save onto Builder, which belongs to a Project.
         generatedJobs = Sets.newHashSet(modifiedJobs);
+        build.getProject().save();
 
         // Processing new and old together to simplify all the job lookup code
         String seedJobName = build.getProject().getName();
@@ -211,6 +229,7 @@ public class ExecuteDslScripts extends Builder {
             } else { // Add breadcrumbs to referenced templates
                 seedJobsProp.seedJobs.add(seedJobName);
             }
+            templateProject.save();
         }
 
         return true;
