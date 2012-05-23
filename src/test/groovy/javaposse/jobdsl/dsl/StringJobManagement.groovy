@@ -7,7 +7,7 @@ import groovy.xml.MarkupBuilder
  * since it can be prodded with the expected value.
  * @author jryan
  */
-public class StringJobManagement implements JobManagement {
+public class StringJobManagement extends AbstractJobManagement {
     /**
      * XML to always return
      */

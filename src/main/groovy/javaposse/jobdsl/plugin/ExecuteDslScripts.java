@@ -6,11 +6,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.Action;
-import hudson.model.BuildListener;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
+import hudson.model.*;
 import hudson.tasks.Builder;
 
 import java.io.IOException;
@@ -77,6 +73,13 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
     }
 
+    ExecuteDslScripts() { /// Where is the empty constructor called?
+        super();
+        this.usingScriptText = true;
+        this.scriptText = null;
+        this.targets = null;
+    }
+
     public String getTargets() {
         return targets;
     }
@@ -118,10 +121,11 @@ public class ExecuteDslScripts extends Builder {
                     throws InterruptedException, IOException {
         EnvVars env = build.getEnvironment(listener);
         env.overrideAll(build.getBuildVariables());
+        // TODO Use env to inject into DSL
 
         List<String> bodies = Lists.newArrayList();
         if (usingScriptText) {
-            LOGGER.log(Level.INFO, "Using dsl from string");
+            listener.getLogger().println("Using dsl from string");
             bodies.add(scriptText);
         } else {
             String targetsStr = env.expand(this.targets);
@@ -137,7 +141,7 @@ public class ExecuteDslScripts extends Builder {
                         return false;
                     }
                 }
-                LOGGER.log(Level.INFO, String.format("Running dsl from %s", targetPath));
+                listener.getLogger().println(String.format("Running dsl from %s", targetPath));
 
                 String dslBody = targetPath.readToString();
                 bodies.add(dslBody);
@@ -145,7 +149,7 @@ public class ExecuteDslScripts extends Builder {
         }
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
         // They'll make REST calls, we'll make internal Jenkins calls
-        JenkinsJobManagement jm = new JenkinsJobManagement();
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger());
 
         Set<GeneratedJob> modifiedJobs = Sets.newHashSet();
         for (String dslBody: bodies) {
@@ -167,9 +171,9 @@ public class ExecuteDslScripts extends Builder {
         // Update Project
         Set<GeneratedJob> removedJobs = Sets.difference(generatedJobs, modifiedJobs);
         // TODO Print to listener, so that it shows up in the build
-        LOGGER.info("Adding jobs: " + Joiner.on(",").join( Sets.difference(modifiedJobs, generatedJobs) )); // TODO only bring jobNames
-        LOGGER.info("Existing jobs: " + Joiner.on(",").join( Sets.intersection(generatedJobs, modifiedJobs) ));
-        LOGGER.info("Removing jobs: " + Joiner.on(",").join(removedJobs));
+        listener.getLogger().println("Adding jobs: " + Joiner.on(",").join( Sets.difference(modifiedJobs, generatedJobs) )); // TODO only bring jobNames
+        listener.getLogger().println("Existing jobs: " + Joiner.on(",").join( Sets.intersection(generatedJobs, modifiedJobs) ));
+        listener.getLogger().println("Removing jobs: " + Joiner.on(",").join(removedJobs));
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removedJobs) {

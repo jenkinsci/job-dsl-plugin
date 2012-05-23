@@ -11,11 +11,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javaposse.jobdsl.dsl.GeneratedJob;
-import javaposse.jobdsl.dsl.JobConfigurationMissingException;
-import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
-import javaposse.jobdsl.dsl.JobManagement;
-import javaposse.jobdsl.dsl.JobNameNotProvidedException;
+import javaposse.jobdsl.dsl.*;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -29,13 +25,14 @@ import jenkins.model.Jenkins;
 /**
  * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
  */
-public final class JenkinsJobManagement implements JobManagement {
+public final class JenkinsJobManagement extends AbstractJobManagement {
     static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
     Jenkins jenkins = Jenkins.getInstance();
     Set<GeneratedJob> modifiedJobs;
 
-    public JenkinsJobManagement() {
+    public JenkinsJobManagement(PrintStream outputLogger) {
+        super(outputLogger);
         modifiedJobs = Sets.newHashSet();
     }
 

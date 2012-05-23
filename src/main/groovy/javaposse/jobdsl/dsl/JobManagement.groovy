@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl;
 
 /**
  * Interface to manage jobs, which the DSL needs to do.
- * 
+ *
  * @author jryan
  * @author aharmel-law
  */
@@ -24,4 +24,11 @@ public interface JobManagement {
      * @throws JobConfigurationMissingException if the config xml is null or blank
      */
     boolean createOrUpdateConfig(String jobName, String config) throws JobNameNotProvidedException, JobConfigurationMissingException;
+
+    /**
+     * Stream to write to, for stdout.
+     * @return PrintWriter
+     */
+    PrintStream getOutputStream();
+
 }

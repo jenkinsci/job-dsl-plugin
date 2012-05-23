@@ -1,6 +1,11 @@
-package javaposse.jobdsl.plugin.ExecuteDslScripts;
+package javaposse.jobdsl.plugin.ExecuteDslScripts
+
+import javaposse.jobdsl.plugin.ExecuteDslScripts;
 
 def f=namespace(lib.FormTagLib)
+if (instance == null) {
+    instance = new ExecuteDslScripts()
+}
 
 f.radioBlock(name: 'scriptLocation', value: 'true', title: 'Use the provided DSL script', checked: instance.usingScriptText) {
     f.entry(title: 'DSL Script', field: 'scriptText') {

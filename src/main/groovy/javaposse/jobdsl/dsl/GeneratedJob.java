@@ -54,4 +54,11 @@ public class GeneratedJob {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "GeneratedJob{" +
+                "jobName='" + jobName + '\'' +
+                ", templateName='" + templateName + '\'' +
+                '}';
+    }
 }

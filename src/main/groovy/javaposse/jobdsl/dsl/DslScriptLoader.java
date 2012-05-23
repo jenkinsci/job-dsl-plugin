@@ -10,6 +10,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,16 +23,19 @@ public class DslScriptLoader {
 
     /**
      * Runs the provided DSL script through the provided job manager.
-     * 
+     *
      * @param scriptContent the contents of the DSL script
      * @param jobManagement the instance of JobManagement which processes the resulting Jenkins job config changes
      */
     public static Set<GeneratedJob> runDsl(String scriptContent, JobManagement jobManagement) {
         Binding binding = new Binding();
         binding.setVariable("secretJobManagement", jobManagement); // TODO Find better way of getting this variable into JobParent
+        binding.setVariable("out", jobManagement.getOutputStream() ); // Works for println, but not System.out
 
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
         config.setScriptBaseClass("javaposse.jobdsl.dsl.JobParent");
+
+        config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
 
         JobParent jp = parseScript(scriptContent, config, binding);
 

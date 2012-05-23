@@ -8,8 +8,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 public class SeedJobTest { //  extends HudsonTestCase {
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+//    @Rule
+//    public JenkinsRule j = new JenkinsRule();
 
     private static final String templateProjectName = "TMPL";
 
