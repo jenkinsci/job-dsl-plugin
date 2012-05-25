@@ -69,3 +69,5 @@ task(showTestClasspath) << {
     println "${configurations.testCompile.allDependencies}"
     println "${configurations.jenkinsTest.allArtifacts}"
 }
+
+apply from: 'gradle/ide.gradle'

@@ -6,6 +6,7 @@ bin
 *.iml
 *.ipr
 *.iws
+/.idea
 work
 nbactions.xml
 /.gradle
@@ -15,3 +16,4 @@ gradle-app.setting
 *.bak
 /local*
 /build
+/out

@@ -1,0 +1,20 @@
+apply plugin: "idea"
+apply plugin: "eclipse"
+
+def gitIgnore = file(".gitignore").readLines()
+def gitIgnoreDirs = gitIgnore*.trim().findAll { !it.startsWith("#") && it.endsWith("/") }
+
+idea {
+    project {
+        jdkName "1.6"
+        configure(modules) {
+            excludeDirs = files(gitIgnoreDirs) as Set
+        }
+        ipr {
+            withXml { provider ->
+                def node = provider.asNode()
+                node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
+            }
+        }
+    }
+}
