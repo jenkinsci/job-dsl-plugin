@@ -1,0 +1,7 @@
+<project>
+    <target name="compile">
+        <exec executable="./gradlew">
+            <arg value="testClasses"/>
+        </exec>
+    </target>
+</project>

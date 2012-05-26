@@ -17,4 +17,60 @@ idea {
             }
         }
     }
+    module {
+        iml {
+            withXml { provider ->
+                def node = provider.asNode()
+                final component = node.component.find { it.'@name' == 'NewModuleRootManager' }
+                component?.'@inherit-compiler-output' = 'false'
+                component.'exclude-output' + {
+                    output(url: 'file://$MODULE_DIR$/build/classes/main')
+                    'output-test'(url: 'file://$MODULE_DIR$/build/classes/test')
+                }
+            }
+        }
+    }
+    workspace {
+        iws {
+            withXml { provider ->
+                def node = provider.asNode()
+                final runManager = node.component.find { it.'@name' == 'RunManager' }
+                runManager.replaceNode() {
+                    component(name: 'RunManager', selected: 'JUnit.All in job-dsl-plugin') {
+                        configuration(default: "false", name: "All in job-dsl-plugin", type:"JUnit", factoryName: "JUnit", temporary: "true") {
+                          extension(name: "coverage", enabled: "false", merge: "false", runner: "idea") {
+                            pattern {
+                              option(name: "PATTERN", value: "javaposse.jobdsl.*")
+                              option(name: "ENABLED", value: "true")
+                            }
+                          }
+                          module(name: "job-dsl-plugin")
+                          option(name: "ALTERNATIVE_JRE_PATH_ENABLED", value="false")
+                          option(name: "ALTERNATIVE_JRE_PATH", value: '')
+                          option(name: "PACKAGE_NAME", value: '')
+                          option(name: "MAIN_CLASS_NAME", value: '')
+                          option(name: "METHOD_NAME", value: '')
+                          option(name: "TEST_OBJECT", value: 'package')
+                          option(name: "VM_PARAMETERS", value: '')
+                          option(name: "PARAMETERS", value: '')
+                          option(name: "WORKING_DIRECTORY", value: 'file://$PROJECT_DIR$')
+                          option(name: "ENV_VARIABLES")
+                          option(name: "PASS_PARENT_ENVS", value: 'true')
+                          option(name: "TEST_SEARCH_SCOPE") {
+                            value(defaultName: "singleModule")
+                          }
+                          envs()
+                          patterns()
+                          RunnerSettings(RunnerId: "Run")
+                          ConfigurationWrapper(RunnerId: "Run")
+                          method() {
+                            option(name: "AntTarget", enabled: "true", antfile: 'file://$PROJECT_DIR$/build.xml', target: "compile")
+                            option(name: "Make", enabled: "false")
+                          }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
