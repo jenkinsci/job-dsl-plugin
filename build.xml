@@ -1,0 +1,10 @@
+<!-- This is not a real Ant build. This file is only here so that the IntelliJ
+Idea run config can call an ant task that kicks off Gradle. When an IntelliJ
+run config can invoke Gradle tasks this will not be needed.-->
+<project>
+    <target name="compile">
+        <exec executable="./gradlew">
+            <arg value="testClasses"/>
+        </exec>
+    </target>
+</project>
