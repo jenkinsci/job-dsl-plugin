@@ -34,7 +34,7 @@ test {
 }
 
 group = "org.jenkinsci.plugins"
-version = "0.4"
+version = "1.0-alpha"
 description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
 //archivesBaseName = "job-dsl-plugin"
 

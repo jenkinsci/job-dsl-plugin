@@ -44,8 +44,9 @@ public class Job {
 
     def configure(Closure configureClosure) {
         configureClosure.delegate = new NodeDelegate(project)
+        configureClosure.resolveStrategy = Closure.OWNER_FIRST // so that outside variables get resolved first
         // make Node Delegate available, so that it can be passed to other methods
-        configureClosure.call(configureClosure.delegate) 
+        configureClosure.call(configureClosure.delegate)
     }
 
     public String getXml() {

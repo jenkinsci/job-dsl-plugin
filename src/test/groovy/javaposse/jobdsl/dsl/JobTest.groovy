@@ -40,6 +40,7 @@ class JobTest extends Specification {
         job.using("TMPL")
 
         then:
+        // TODO This won't be true one we lazily execute
         1 * jm.getConfig("TMPL") >> minimalXml
     }
 

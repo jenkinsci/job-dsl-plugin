@@ -59,7 +59,9 @@ public class DslScriptLoader {
     }
 
     static JobParent parseScript(String scriptContent, CompilerConfiguration config, Binding binding) throws CompilationFailedException {
-        ClassLoader parent = DslScriptLoader.class.getClassLoader(); // TODO Setup different classloader
+        // TODO Setup different classloader, especially for Grape to work, which needs a RootLoader or a GroovyLoader
+        ClassLoader parent = DslScriptLoader.class.getClassLoader();
+
         GroovyShell shell = new GroovyShell(parent, binding, config);
         Script script = shell.parse(scriptContent);
         if (!(script instanceof JobParent)) {

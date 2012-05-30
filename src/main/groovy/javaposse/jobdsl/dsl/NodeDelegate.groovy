@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import groovy.util.Node;
-
 /**
  * TODO Do some cleanup in the bodies of the missing methods
  * @author jryan
@@ -14,24 +12,55 @@ public class NodeDelegate {
         this.node = node
     }
 
+    NodeDelegate(String xml) {
+        this(new XmlParser().parse(new StringReader(xml)))
+    }
+
+    private int nodesAlreadyPresent(String nodeName) {
+        return node.get(nodeName).size()
+    }
+
+    /**
+     * Mutates node. :-(
+     */
     def findTargetNode(name) {
         def targetNode
-        if (nodeAlreadyPresent(name)) {
+        if (nodesAlreadyPresent(name)) {
             targetNode = node.get(name)[0]
         } else {
-            targetNode = node.appendNode(name)
+            targetNode = node.appendNode(name) // This will cause problems when trying to use ++
         }
         targetNode
     }
 
+    /**
+     * Add potential children as real nodes
+     */
+    def reconcileChildren() {
+
+    }
+
+    def plus(Object b) {
+        if (b instanceof Node) {
+
+        }
+    }
+
+    def minus(Object b) {
+
+    }
+
+    // Getter
     def propertyMissing(String name) {
         // Identify Node
         def targetNode = findTargetNode(name)
         targetNode.value
     }
 
+    // Setter, always sets the value. Will be converted to a string
+    // TODO How do we deal with attributes on the name
     def propertyMissing(String name, arg) {
-        def targetNode = findTargetNode(name)
+        Node targetNode = findTargetNode(name)
 
         def value = arg
         if (arg instanceof Closure) {
@@ -40,7 +69,7 @@ public class NodeDelegate {
             childClosure.delegate = new NodeDelegate(targetNode)
             value = childClosure.call(targetNode)
         }
-        targetNode.value = value
+        targetNode.value = value.toString()
     }
 
     def methodMissing(String name, args) {
@@ -54,18 +83,15 @@ public class NodeDelegate {
 
         if (args[0] instanceof Closure) {
             // block that wants to be configured
-            def childClosure = args[0]
+            Closure childClosure = args[0]
             childClosure.delegate = new NodeDelegate(targetNode)
-            childClosure.call(targetNode)
+            childClosure.resolveStrategy = Closure.DELEGATE_FIRST
+            childClosure.call(childClosure.delegate)
         } else {
             // Default to setting direct value
             targetNode.value = args[0]
         }
-
-    }
-
-    private boolean nodeAlreadyPresent(String nodeName) {
-        return node.get(nodeName).size() > 0
+        targetNode
     }
 
     /**
