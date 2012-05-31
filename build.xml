@@ -2,9 +2,17 @@
 Idea run config can call an ant task that kicks off Gradle. When an IntelliJ
 run config can invoke Gradle tasks this will not be needed.-->
 <project>
-    <target name="compile">
+
+    <target name="compileMac" if="isMac">
         <exec executable="./gradlew">
             <arg value="testClasses"/>
         </exec>
     </target>
+
+    <target name="compileWindows" if="isWindows">
+        <exec executable="./gradlew.bat">
+            <arg value="testClasses"/>
+        </exec>
+    </target>
+
 </project>
