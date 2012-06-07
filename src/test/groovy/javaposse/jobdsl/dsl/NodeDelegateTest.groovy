@@ -19,38 +19,54 @@ class NodeDelegateTest extends Specification {
     }
 
     def 'add node using equals notation'() {
-        when: nd.with {  elementEquals = 'VALUE1' }
+        when:
+        nd.with {  elementEquals = 'VALUE1' }
+        nd.processActions()
         then: nd.node.elementEquals.text() == 'VALUE1'
     }
 
     def 'simple node onto root'() {
-        when: nd.with { 'KEY0' }
+        when:
+        nd.with { 'KEY0' }
+        nd.processActions()
         then: nd.node.KEY0 != null
     }
 
     def 'add node using space/method'() {
-        when: nd.with {  elementSpace 'VALUE3' }
+        when:
+        nd.with {  elementSpace 'VALUE3' }
+        nd.processActions()
         then: nd.node.elementSpace.text() == 'VALUE3'
     }
 
     def 'add empty node using empty notation'() {
-        when: nd.with {  elementEmpty }
+        when:
+        nd.with {  elementEmpty }
+        nd.processActions()
         then: nd.node.elementEmpty != null
     }
 
     def 'add node with string name'() {
         // when: nd.with {  'elementString' = 'VALUE4' } // Invalid Groovy
-        when: nd.with {  'elementString' 'VALUE4' }
+        when:
+        nd.with {  'elementString' 'VALUE4' }
+        nd.processActions()
         then: nd.node.elementString.text() == 'VALUE4'
     }
 
     def 'add node using native boolean'() {
-        when: nd.with {  elementBoolean = false }
-        then: nd.node.elementBoolean.text() == 'false'
+        when:
+        nd.with {  elementBoolean = false }
+        nd.processActions()
+
+        then:
+        nd.node.elementBoolean.text() == 'false'
     }
 
     def 'add node using closure notation to add child'() {
-        when: nd.with {  elementClosure { 'VALUE2' } } // <-- VALUE will resolved as a new node underneath
+        when:
+        nd.with {  elementClosure { 'VALUE2' } } // <-- VALUE will resolved as a new node underneath
+        nd.processActions()
         then: nd.node.elementClosure.VALUE2 != null
     }
 
@@ -61,6 +77,7 @@ class NodeDelegateTest extends Specification {
                 elementAdded 'VALUE3'
             }
         }
+        nd.processActions()
 
         then:
         nd.node.emptyElement.elementAdded.text() == 'VALUE3'
@@ -76,19 +93,30 @@ class NodeDelegateTest extends Specification {
 //    }
 
     def 'append node to root, plus notation explicit method'() {
-        when: nd.with {
-            it + description('Another description') // How is this not automatically updating?
+        expect: nd.node.description.size() == 1
+
+        when:
+        nd.with {
+            it + description('Another description')
         }
-        then: nd.node.description.size() == 2
+        nd.processActions()
+
+        then:
+        nd.node.description.size() == 2
     }
 
-    def 'append node with attributes'() {
-        when:
-            // TODO need to detect Map as an argument
-            nd.with { scm(class: "hudson.plugins.git.GitSCM") }
+    def 'append node created on other node'() {
+        expect:
+        nd.node.actions.size() == 0
+
+        when: nd.with {
+
+             actions + description('Another description')
+        }
+        nd.processActions()
         then:
-            nd.node.scm != null
-            nd.node.scm[0].attribute('class') == "hudson.plugins.git.GitSCM"
+        nd.node.description.size() == 1
+        nd.node.actions.children().size() == 1
     }
 
 //    def 'append node to root, plus plus notation'() {
@@ -104,7 +132,20 @@ class NodeDelegateTest extends Specification {
                 value 'VALUE2'
             }
         }
-        then: nd.node.properties[0].size() == 2
+        nd.processActions()
+
+        then:
+        nd.node.properties[0].size() == 2
+    }
+
+    def 'append node with attributes'() {
+        when:
+        nd.with { scm(class: "hudson.plugins.git.GitSCM") }
+        nd.processActions()
+
+        then:
+        nd.node.scm != null
+        nd.node.scm[0].attribute('class') == "hudson.plugins.git.GitSCM"
     }
 
 //    def 'append node to existing parent, plus plus notation'() {
@@ -132,13 +173,21 @@ class NodeDelegateTest extends Specification {
 //    }
 
     def 'update existing node on root'() {
-        when: nd.with {  description = 'VALUE1' }
-        then: nd.node.description.text() == 'VALUE1'
+        when:
+        nd.with {  description = 'VALUE1' }
+        nd.processActions()
+
+        then:
+        nd.node.description.text() == 'VALUE1'
     }
 
     def 'update existing node via closure value'() {
-        when: nd.with { 'properties' { prop {  key = 'KEY2' } } }
-        then: nd.node.'properties'[0].prop[0].key[0].text() == 'KEY2'
+        when:
+        nd.with { 'properties' { prop {  key = 'KEY2' } } }
+        nd.processActions()
+
+        then:
+        nd.node.'properties'[0].prop[0].key[0].text() == 'KEY2'
     }
 
     def 'update existing node via nexted closures value with attributes'() {
@@ -149,7 +198,10 @@ class NodeDelegateTest extends Specification {
                 }
             }
         }
-        then: nd.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec.text() == '*/5 * * * *'
+        nd.processActions()
+
+        then:
+        nd.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec.text() == '*/5 * * * *'
     }
 
     // // More tests to write

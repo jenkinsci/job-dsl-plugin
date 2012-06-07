@@ -14,8 +14,8 @@ public class Job {
     JobManagement jobManagement
 
     String name // Required
-    Node project
-    String templateName
+    String templateName = null // Optional
+    Closure configureClosure = null // Optional
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
@@ -28,32 +28,14 @@ public class Job {
      * @throws JobTemplateMissingException
      */
     def using(String templateName) throws JobTemplateMissingException {
-        String configXml
-        try {
-            configXml = jobManagement.getConfig(templateName)
-        } catch (JobConfigurationNotFoundException jcnfex) {
-            throw new JobTemplateMissingException(templateName)
+        if (this.templateName != null) {
+            throw new RuntimeException('Can only use using once')
         }
-
-        // Save for late, when constructing GeneratedJob
         this.templateName = templateName
-
-        // TODO record which templates are used to generate jobs, so that they can be connected to this job
-        project = new XmlParser().parse(new StringReader(configXml))
     }
 
     def configure(Closure configureClosure) {
-        configureClosure.delegate = new NodeDelegate(project)
-        configureClosure.resolveStrategy = Closure.OWNER_FIRST // so that outside variables get resolved first
-        // make Node Delegate available, so that it can be passed to other methods
-        configureClosure.call(configureClosure.delegate)
-    }
-
-    public String getXml() {
-        //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
-
-        String configStr = XmlUtil.serialize(project)
-        return configStr
+        this.configureClosure = configureClosure
     }
 
     def name(String name) {
@@ -62,6 +44,70 @@ public class Job {
 
     def name(Closure nameClosure) {
         // TODO do we need a delegate?
-        this.name = nameClosure.call()
+        this.name = nameClosure.call().toString()
     }
+
+    /**
+     * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
+     * even if the user didn't specify them in order.
+     * @return
+     */
+    public String getXml() {
+        Node project = templateName==null?executeEmptyTemplate():executeUsing()
+
+        if (configureClosure != null) {
+            executeConfigure(project)
+        }
+
+        //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
+
+        String configStr = XmlUtil.serialize(project)
+        return configStr
+    }
+
+    // TODO record which templates are used to generate jobs, so that they can be connected to this job
+    private executeUsing() {
+        String configXml
+        try {
+            configXml = jobManagement.getConfig(templateName)
+            if (configXml==null) {
+                throw new JobConfigurationNotFoundException()
+            }
+        } catch (JobConfigurationNotFoundException jcnfex) {
+            throw new JobTemplateMissingException(templateName)
+        }
+
+        return new XmlParser().parse(new StringReader(configXml))
+    }
+
+    private executeEmptyTemplate() {
+        return new XmlParser().parse(new StringReader(emptyTemplate))
+    }
+
+    private executeConfigure(Node project) {
+        NodeDelegate nd = new NodeDelegate(project)
+        configureClosure.delegate = nd
+        configureClosure.resolveStrategy = Closure.OWNER_FIRST // so that outside variables get resolved first
+        // make Node Delegate available, so that it can be passed to other methods
+        configureClosure.call(nd)
+    }
+
+    def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+</project>
+'''
 }

@@ -24,6 +24,9 @@ public abstract class JobParent extends Script {
         closure.delegate = job
         closure.call()
 
+        // In lieu of AST transformations, we queue up the blocks then execute
+        job.execute()
+
         // TODO check name field
 
         referencedJobs.add(job)

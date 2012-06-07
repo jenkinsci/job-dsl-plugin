@@ -6,6 +6,8 @@ import javaposse.jobdsl.dsl.JobManagement;
 
 import spock.lang.*
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLValid
+import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists
 
 class JobTest extends Specification {
     def "construct a job manually (not from a DSL script)"() {
@@ -38,23 +40,25 @@ class JobTest extends Specification {
 
         when:
         job.using("TMPL")
+        job.getXml()
 
         then:
-        // TODO This won't be true one we lazily execute
         1 * jm.getConfig("TMPL") >> minimalXml
     }
 
     def "load an empty template from a manually constructed job and generate xml from it"() {
         setup:
         JobManagement jm = Mock()
+        //jm.getConfig("TMPL") >> minimalXml
         Job job = new Job(jm)
 
         when:
         job.using("TMPL")
+        def xml = job.getXml()
 
         then:
-        1 * jm.getConfig("TMPL") >> minimalXml
-        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + minimalXml, job.xml
+        _ * jm.getConfig("TMPL") >> minimalXml
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + minimalXml, xml
     }
 
     def "load large template from file"() {
@@ -64,9 +68,11 @@ class JobTest extends Specification {
 
         when:
         job.using("config")
+        String project = job.getXml()
 
         then:
-        job.project.description.text() == 'Description'
+        // assertXpathExists('/description', project) // java.lang.NoSuchMethodError: org.apache.xpath.XPathContext
+        project.contains('<description>Description</description>')
     }
 
     def "generate job from missing template - throws JobTemplateMissingException"() {
@@ -76,12 +82,13 @@ class JobTest extends Specification {
 
         when:
         job.using("TMPL-NOT_THERE")
+        job.getXml()
 
         then:
         thrown(JobTemplateMissingException)
     }
 
-    def minimalXml = '''
+    final minimalXml = '''
 <project>
   <actions/>
   <description/>
