@@ -138,7 +138,6 @@ public class NodeDelegate {
      * @param arg
      * @return
      */
-    @Override
     def propertyMissing(String name, arg) {
         NodeDelegate targetNode = findChild(name)
 
