@@ -5,11 +5,8 @@ import java.util.logging.Level
 
 import com.google.common.collect.Sets;
 
-import groovy.lang.Closure
-import groovy.lang.Script
-
 public abstract class JobParent extends Script {
-    private static final Logger LOGGER = Logger.getLogger(JobParent.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JobParent.getName());
 
     JobManagement jm;
     Set<Job> referencedJobs
@@ -21,16 +18,15 @@ public abstract class JobParent extends Script {
     public Job job(Closure closure) {
         LOGGER.log(Level.FINE, "Got closure and have ${secretJobManagement}")
         Job job = new Job(secretJobManagement)
+
+        // Configure with what we have already
         closure.delegate = job
         closure.call()
 
-        // In lieu of AST transformations, we queue up the blocks then execute
-        job.execute()
-
-        // TODO check name field
-
+        // Save jobs, so that we know what to extract XML from
         referencedJobs.add(job)
 
+        // This job can have .withXml { } called on
         return job
     }
 }

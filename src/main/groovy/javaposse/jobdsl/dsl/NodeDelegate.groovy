@@ -2,6 +2,10 @@ package javaposse.jobdsl.dsl
 
 /**
  * TODO Do some cleanup in the bodies of the missing methods
+ *
+ * Approach:
+ * http://stackoverflow.com/questions/3451538/append-to-an-existing-groovy-util-node-with-groovy-xml-markupbuilder-syntax
+ *
  * @author jryan
  *
  */
@@ -42,6 +46,14 @@ public class NodeDelegate {
         return node.get(nodeName).size() + possibleChildren.findAll({ it.name == nodeName }).size()
     }
 
+    private NodeDelegate findFirstChild(String nodeName) {
+        def children = node.get(nodeName)
+        if (children.size() > 0) {
+            // Original node
+            return new NodeDelegate(children[0], this)
+        }
+        return possibleChildren.find { it.name == nodeName }
+    }
     /**
      * Locate child. Create one if not found.  We don't currently support matching based on attributes.
      */
@@ -51,21 +63,18 @@ public class NodeDelegate {
 
     def NodeDelegate findChild(String name, Map attributes) {
         int childrenCount = nodesAlreadyPresent(name)
-        def potentialNode
         def targetNodeDelegate
-        if (childrenCount == 1) { // TODO We're return existing nodes, which are going to be appended :-(
-            // Found single child, this is it
-            if (childrenAlreadyPresent(name) == 1) {
-                potentialNode = node.get(name)[0] // Just grab node
-            } else {
-                potentialNode = possibleChildren.find { it.node.name() == name }.node // Find it in the pile, albeit small pile
-            }
-            targetNodeDelegate = new NodeDelegate(potentialNode, this)
+        def first = findFirstChild(name)
+        if (first) {
+            // We might be returning a node which will be appended to another node, hopefully not since they should be calling
+            // plus next. My worry is creation of a Node in one place, and appending to another, but in this case we're returning
+            // the first one, which might end up someone where else.
+            targetNodeDelegate = first
         } else {
             // No existing children, add node as a potential
             // OR Multiple children, we don't have support to access multiple children. We going to either append or remove,
             // pretty similar from our point of view
-            potentialNode = new Node(null, name, attributes)
+            def potentialNode = new Node(null, name, attributes)
             targetNodeDelegate = new NodeDelegate(potentialNode, this)
             possibleChildren.add(new Action(targetNodeDelegate))
         }

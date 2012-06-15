@@ -16,6 +16,7 @@ public class Job {
     String name // Required
     String templateName = null // Optional
     Closure configureClosure = null // Optional
+    List<WithXmlAction> withXmlActions = []
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
@@ -29,22 +30,44 @@ public class Job {
      */
     def using(String templateName) throws JobTemplateMissingException {
         if (this.templateName != null) {
-            throw new RuntimeException('Can only use using once')
+            throw new RuntimeException('Can only use "using" once')
         }
         this.templateName = templateName
     }
 
+    @Deprecated
     def configure(Closure configureClosure) {
+        if (this.configureClosure != null) {
+            throw new RuntimeException('Can only use "configure" once')
+        }
         this.configureClosure = configureClosure
     }
 
+    /**
+     * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
+     *
+     * Examples:
+     *
+     * <pre>
+     * withXml {
+     *
+     * }
+     * </pre>
+     * @param withXmlClosure
+     * @return
+     */
+    def withXml(Closure withXmlClosure) {
+        withXmlActions.add( new WithXmlAction(withXmlClosure) )
+    }
+
     def name(String name) {
+        // TODO Validation
         this.name = name
     }
 
     def name(Closure nameClosure) {
         // TODO do we need a delegate?
-        this.name = nameClosure.call().toString()
+        name(nameClosure.call().toString())
     }
 
     /**
@@ -55,6 +78,10 @@ public class Job {
     public String getXml() {
         Node project = templateName==null?executeEmptyTemplate():executeUsing()
 
+        // TODO check name field
+
+        executeWithXmlActions(project)
+
         if (configureClosure != null) {
             executeConfigure(project)
         }
@@ -64,6 +91,15 @@ public class Job {
         String configStr = XmlUtil.serialize(project)
         return configStr
     }
+
+    void executeWithXmlActions(final Node root) {
+        // Create builder, based on what we already have
+        // TODO Some Node magic to copy it at each phase, and then presenting a diff in the logs
+        withXmlActions.each { WithXmlAction withXmlClosure ->
+            withXmlClosure.execute(root)
+        }
+    }
+
 
     // TODO record which templates are used to generate jobs, so that they can be connected to this job
     private executeUsing() {

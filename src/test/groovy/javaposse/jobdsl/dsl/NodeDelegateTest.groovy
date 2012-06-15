@@ -92,51 +92,51 @@ class NodeDelegateTest extends Specification {
 //        then: nd.node.elementEmpty.elementAdded.text() == 'VALUE3'
 //    }
 
-    def 'append node to root, plus notation explicit method'() {
-        expect: nd.node.description.size() == 1
-
-        when:
-        nd.with {
-            it + description('Another description')
-        }
-        nd.processActions()
-
-        then:
-        nd.node.description.size() == 2
-    }
-
-    def 'append node created on other node'() {
-        expect:
-        nd.node.actions.size() == 0
-
-        when: nd.with {
-
-             actions + description('Another description')
-        }
-        nd.processActions()
-        then:
-        nd.node.description.size() == 1
-        nd.node.actions.children().size() == 1
-    }
-
-//    def 'append node to root, plus plus notation'() {
-//        when: nd.with {  keepDependencies { false } ++ }
-//        then: nd.node.keepDependencies.text() == 'VALUE2' // TOOD look for multiple values
+//    def 'append node to root, plus notation explicit method'() {
+//        expect: nd.node.description.size() == 1
+//
+//        when:
+//        nd.with {
+//            it + description('Another description')
+//        }
+//        nd.processActions()
+//
+//        then:
+//        nd.node.description.size() == 2
 //    }
-
-    def 'append node to existing parent, plus notation'() {
-        when:
-        nd.with {
-            'properties' + prop {
-                key 'KEY2'
-                value 'VALUE2'
-            }
-        }
-        nd.processActions()
-
-        then:
-        nd.node.properties[0].size() == 2
-    }
+//
+//    def 'append node created on other node'() {
+//        expect:
+//        nd.node.actions.size() == 0
+//
+//        when: nd.with {
+//
+//             actions + description('Another description')
+//        }
+//        nd.processActions()
+//        then:
+//        nd.node.description.size() == 1
+//        nd.node.actions.children().size() == 1
+//    }
+//
+////    def 'append node to root, plus plus notation'() {
+////        when: nd.with {  keepDependencies { false } ++ }
+////        then: nd.node.keepDependencies.text() == 'VALUE2' // TOOD look for multiple values
+////    }
+//
+//    def 'append node to existing parent, plus notation'() {
+//        when:
+//        nd.with {
+//            'properties' + prop {
+//                key 'KEY2'
+//                value 'VALUE2'
+//            }
+//        }
+//        nd.processActions()
+//
+//        then:
+//        nd.node.properties[0].size() == 2
+//    }
 
     def 'append node with attributes'() {
         when:
