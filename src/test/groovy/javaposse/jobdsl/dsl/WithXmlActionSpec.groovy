@@ -11,7 +11,7 @@ import java.util.logging.Handler
  * Work through the additional functionality we're offer over node
  */
 class WithXmlActionSpec extends Specification {
-    def xml = """<?xml version='1.0' encoding='UTF-8'?>
+    public static String xml = """<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>

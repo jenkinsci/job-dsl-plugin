@@ -9,32 +9,44 @@ import groovy.xml.MarkupBuilder
  */
 public class StringJobManagement extends AbstractJobManagement {
     /**
-     * XML to always return
+     * XML to return by default
      */
-    String xml
+    String defaultXml
 
-    /**
-     * XML that was saved
-     */
-    String savedXml
+    Map<String,String> availableConfigs = [:]
+    Map<String,String> savedConfigs = [:]
 
-    public StringJobManagement(String xml) {
-        this.xml = xml
+    public StringJobManagement(String defaultXml) {
+        this.defaultXml = defaultXml
+    }
+
+    public StringJobManagement() {
+        this.defaultXml = null
     }
 
     public StringJobManagement(Closure closure) {
         StringWriter writer = new StringWriter()
         def build = new MarkupBuilder(writer)
         closure.delegate = build
-        this.xml = writer.toString()
+        defaultXml = writer.toString()
+    }
+
+    void addConfig(String jobName, String xml) {
+        availableConfigs[jobName] = xml
     }
 
     String getConfig(String jobName) {
-        xml
+        if (availableConfigs.containsKey(jobName)) {
+            return availableConfigs[jobName]
+        } else if (defaultXml!=null) {
+            return defaultXml
+        } else {
+            throw new RuntimeException("No config found for ${jobName}")
+        }
     }
 
     boolean createOrUpdateConfig(String jobName, String config) {
-        savedXml = config
+        savedConfigs[jobName] = config
         return false
     }
 }

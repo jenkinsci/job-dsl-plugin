@@ -26,7 +26,7 @@ public abstract class JobParent extends Script {
         // Save jobs, so that we know what to extract XML from
         referencedJobs.add(job)
 
-        // This job can have .withXml { } called on
+        // This job can have .configure { } called on
         return job
     }
 }

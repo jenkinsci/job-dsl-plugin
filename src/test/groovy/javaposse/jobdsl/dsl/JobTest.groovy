@@ -1,13 +1,8 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.Job;
-import javaposse.jobdsl.dsl.JobTemplateMissingException;
-import javaposse.jobdsl.dsl.JobManagement;
-
 import spock.lang.*
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLValid
-import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists
+
 import java.util.concurrent.atomic.AtomicBoolean
 
 class JobTest extends Specification {
@@ -94,11 +89,11 @@ class JobTest extends Specification {
         Job job = new Job(null)
 
         when:
-        job.withXml { Node node ->
+        job.configure { Node node ->
             // Not going to actually execute this
         }
 
-        job.withXml { Node node ->
+        job.configure { Node node ->
             // Not going to actually execute this
         }
 
@@ -106,7 +101,7 @@ class JobTest extends Specification {
         !job.withXmlActions.isEmpty()
 
         when:
-        job.withXml("Not a closure")
+        job.configure("Not a closure")
 
         then:
         thrown(MissingMethodException)
@@ -119,7 +114,7 @@ class JobTest extends Specification {
         AtomicBoolean boolOutside = new AtomicBoolean(true)
 
         when: 'Simple update'
-        job.withXml { Node node ->
+        job.configure { Node node ->
             node.description[0].value = 'Test Description'
         }
         job.executeWithXmlActions(project)
@@ -128,7 +123,7 @@ class JobTest extends Specification {
         project.description[0].text() == 'Test Description'
 
         when: 'Update using variable from outside scope'
-        job.withXml { Node node ->
+        job.configure { Node node ->
             node.keepDependencies[0].value = boolOutside.get()
         }
         job.executeWithXmlActions(project)
@@ -147,7 +142,7 @@ class JobTest extends Specification {
         project.keepDependencies[0].text() == 'false'
 
         when: 'Append node'
-        job.withXml { Node node ->
+        job.configure { Node node ->
             def actions = node.actions[0]
             actions.appendNode('action', 'Make Breakfast')
         }

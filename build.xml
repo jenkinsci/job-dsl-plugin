@@ -19,13 +19,13 @@ run config can invoke Gradle tasks this will not be needed.-->
     </target>
 
     <target name="compileMac" if="isUnix">
-        <exec executable="./gradlew">
+        <exec executable="./gradlew" failonerror="true">
             <arg value="testClasses"/>
         </exec>
     </target>
 
     <target name="compileWindows" if="isWindows">
-        <exec executable="./gradlew.bat">
+        <exec executable="./gradlew.bat" failonerror="true">
             <arg value="testClasses"/>
         </exec>
     </target>

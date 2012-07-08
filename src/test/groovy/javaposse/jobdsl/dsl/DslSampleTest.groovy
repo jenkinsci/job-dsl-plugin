@@ -4,93 +4,168 @@ import spock.lang.*
 import groovy.xml.MarkupBuilder
 
 /**
- * Attempt to execute the sample page in the wiki: https://github.com/JavaPosseRoundup/job-dsl-plugin/wiki/Job-DSL-Sample
+ * Attempt to execute the sample page in README.md
  */
 class DslSampleTest extends Specification {
 
     def 'load sample dsl'() {
+        setup:
+        StringJobManagement jm = new StringJobManagement()
+        jm.addConfig('TMPL-test', sampleTemplate)
 
+        when:
+        Set<GeneratedJob> results = DslScriptLoader.runDsl(sampleDsl, jm)
+
+        then:
+        results != null
+        results.size() == 4
+        jm.savedConfigs.size() == 4
+        def firstJob = jm.savedConfigs['PROJ-unit-tests']
+        firstJob != null
+        // TODO Review actual results
+        println(firstJob)
     }
-    def sample = '''
+
+    def sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Description</description>
+  <logRotator>
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>10</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.model.Item.Configure:jryan</permission>
+      <permission>hudson.model.Item.Workspace:jryan</permission>
+      <permission>hudson.model.Item.Delete:jryan</permission>
+      <permission>hudson.model.Item.Build:jryan</permission>
+      <permission>hudson.model.Run.Delete:jryan</permission>
+      <permission>hudson.model.Item.Read:jryan</permission>
+      <permission>hudson.model.Item.Release:jryan</permission>
+      <permission>hudson.model.Item.ExtendedRead:jryan</permission>
+      <permission>hudson.model.Run.Update:jryan</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty/>
+    <hudson.plugins.jira.JiraProjectProperty>
+      <siteName>http://jira.company.com/</siteName>
+    </hudson.plugins.jira.JiraProjectProperty>
+    <hudson.plugins.descriptionsetter.JobByDescription/>
+  </properties>
+  <assignedNode>RPM</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>JDK 6</jdk>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>webapplication/build/**/*.rpm, webapplication/dist/*</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.chucknorris.CordellWalkerRecorder>
+      <factGenerator/>
+    </hudson.plugins.chucknorris.CordellWalkerRecorder>
+    <hudson.plugins.emailext.ExtendedEmailPublisher>
+      <recipientList>Engineering@company.com</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <recipientList>$PROJECT_DEFAULT_RECIPIENTS</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <sendToDevelopers>true</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.FixedTrigger>
+          <email>
+            <recipientList>$PROJECT_DEFAULT_RECIPIENTS</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <sendToDevelopers>true</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>true</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FixedTrigger>
+      </configuredTriggers>
+      <contentType>default</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers/>
+</project>
+'''
+    def sampleDsl = '''
+def gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
+
 job {
-    name = "${JOBNAME}-tests"
-    configure { project ->
-        // Simple block, adds if it doesn't exists
-        publishers.'hudson.tasks.JavadocArchiver' {
-            // Simple body as a method call
-            javadocDir 'build/javadoc'
-
-            // Simple asssignment of text used via equals
-            title = 'Java Documentation'
-
-            // Support native boolean and other native types.
-            keepAll = true
-        }
-
-        // Updating of existing node, e.g. properties
-        properties {
-            // Further navigation of existing nodes
-            'hudson.security.AuthorizationMatrixProperty' {
-                // Add a new permission to existing Authorization Matrix
-                + permission { 'hudson.model.Item.Configure:jryan' }
-
-                // Replace all existing permissions since we assume everything is an update
-                permission { hudson.model.Run.Delete:jryan }
-            }
-        }
-
-        // Remove element from project, technically all elements with this name
-        - canRoam
-
-        builders {
-            + 'hudson.tasks.Ant' { // This appends the hudson.tasks.Ant node to builders
-                targets { 'sanitize findbugs build' }
-                antName { 'Ant 1.8' }
-                buildFile = 'build.xml'
-            }
-       }
-
-       // Append a trigger, using a function
-       triggers(class:'vector') + generateTrigger('*/10 * * * *')
-
-       configureGit(project, 'git://github.com/jenkinsci/analysis-collector-plugin.git', 'origin/master')
-   }
+    using 'TMPL-test'
+    name 'PROJ-unit-tests'
+    scm {
+        git(gitUrl)
+    }
+    triggers {
+        scm('*/15 * * * *')
+    }
+    steps { // build step
+        maven('-e clean test')
+    }
 }
 
-// Convenience Methods, examples
-
-// Function to add trigger, generate a node inside of current context, which in this case is triggers(class:'vector')
-def generateTrigger(String cron) {
-    'hudson.triggers.SCMTrigger' {
-        spec { cron }
-     }
+job {
+    using 'TMPL-test'
+    name 'PROJ-sonar'
+    scm {
+        git(gitUrl)
+    }
+    triggers {
+        cron('15 13 * * *')
+    }
+    steps {
+        maven('sonar:sonar')
+    }
+}
+job {
+    using 'TMPL-test'
+    name 'PROJ-integ-tests'
+    scm {
+        git(gitUrl)
+    }
+    triggers {
+        cron('15 1,13 * * *')
+    }
+    steps {
+        maven('-e clean integTest')
+    }
 }
 
-// Function to configure git, takes Node and work with it
-def configureGit(project, url, branch) {
-  project.with {
-    scm(class:'hudson.plugins.git.GitSCM') {
-        userRemoteConfigs {
-            'hudson.plugins.git.UserRemoteConfig' {
-                // Using bracket to indicate text of node
-                name { 'origin' }
-
-                // Using equals to set node text
-                refspec = '+refs/heads/*:refs/remotes/origin/*'
-
-                // Variable to method, making sure delegates work
-                url { url }
-            }
-        }
-        branches {
-           'hudson.plugins.git.BranchSpec' {
-               name { branch }
-           }
-        }
-
-        recursiveSubmodules { false }
-     }
-   }
+job {
+    // No template, not needed
+    name 'PROJ-release'
+    scm {
+        git(gitUrl)
+    }
+    // No Trigger
+    authorization {
+        // Limit builds to just jack and jill
+        permission('ItemBuild', 'jill')
+        permission('ItemBuild', 'jack')
+    }
+    steps {
+        maven('release')
+        shell('cleanup.sh')
+    }
 }
 '''
 }

@@ -1,8 +1,7 @@
 package javaposse.jobdsl.dsl
 
-import groovy.util.Node;
 import groovy.xml.XmlUtil
-import java.io.StringReader
+import javaposse.jobdsl.dsl.helpers.*
 
 /**
  * DSL Element representing a Jenkins Job
@@ -15,11 +14,21 @@ public class Job {
 
     String name // Required
     String templateName = null // Optional
-    Closure configureClosure = null // Optional
     List<WithXmlAction> withXmlActions = []
+
+    // The idea here is that we'll let the helpers define their own methods, without polluting this class too mcuh
+    // Though we could use some methodMissing to do some sort of dynamic lookup
+    @Delegate AuthorizationHelper helperAuthorization
+    @Delegate ScmHelper helperScm
+    @Delegate TriggerHelper helperTrigger
+    @Delegate StepHelper helperStep
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
+        helperAuthorization = new AuthorizationHelper(withXmlActions)
+        helperScm = new ScmHelper(withXmlActions)
+        helperTrigger = new TriggerHelper(withXmlActions)
+        helperStep = new StepHelper(withXmlActions)
     }
 
     /**
@@ -35,28 +44,20 @@ public class Job {
         this.templateName = templateName
     }
 
-    @Deprecated
-    def configure(Closure configureClosure) {
-        if (this.configureClosure != null) {
-            throw new RuntimeException('Can only use "configure" once')
-        }
-        this.configureClosure = configureClosure
-    }
-
     /**
      * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
      *
      * Examples:
      *
      * <pre>
-     * withXml {
+     * configure {
      *
      * }
      * </pre>
      * @param withXmlClosure
      * @return
      */
-    def withXml(Closure withXmlClosure) {
+    def configure(Closure withXmlClosure) {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )
     }
 
@@ -82,10 +83,6 @@ public class Job {
 
         executeWithXmlActions(project)
 
-        if (configureClosure != null) {
-            executeConfigure(project)
-        }
-
         //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
 
         String configStr = XmlUtil.serialize(project)
@@ -99,7 +96,6 @@ public class Job {
             withXmlClosure.execute(root)
         }
     }
-
 
     // TODO record which templates are used to generate jobs, so that they can be connected to this job
     private executeUsing() {
@@ -118,14 +114,6 @@ public class Job {
 
     private executeEmptyTemplate() {
         return new XmlParser().parse(new StringReader(emptyTemplate))
-    }
-
-    private executeConfigure(Node project) {
-        NodeDelegate nd = new NodeDelegate(project)
-        configureClosure.delegate = nd
-        configureClosure.resolveStrategy = Closure.OWNER_FIRST // so that outside variables get resolved first
-        // make Node Delegate available, so that it can be passed to other methods
-        configureClosure.call(nd)
     }
 
     def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
