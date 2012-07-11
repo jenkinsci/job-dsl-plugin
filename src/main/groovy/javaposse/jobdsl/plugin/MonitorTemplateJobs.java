@@ -1,7 +1,11 @@
 package javaposse.jobdsl.plugin;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import hudson.Util;
 import jenkins.model.Jenkins;
 
 import hudson.Extension;
@@ -22,9 +26,10 @@ public class MonitorTemplateJobs extends SaveableListener {
     @SuppressWarnings("rawtypes")
     @Override
     public void onChange(Saveable saveable, XmlFile file) {
-        LOGGER.fine("onChange");
+        LOGGER.info("onChange");
+
         if( !AbstractProject.class.isAssignableFrom(saveable.getClass()) ) {
-            LOGGER.finer("Is not a Project");
+            LOGGER.fine(String.format("%s is not a Project", saveable.getClass()));
             return;
         }
 
@@ -32,13 +37,34 @@ public class MonitorTemplateJobs extends SaveableListener {
         AbstractProject project = (AbstractProject) saveable;
         SeedJobsProperty seedJobsProp = (SeedJobsProperty) project.getProperty(SeedJobsProperty.class);
         if (seedJobsProp == null || seedJobsProp.seedJobs == null) {
-            LOGGER.finer("Is not a Template Project");
+            LOGGER.fine(String.format("%s is not a Template Project", project.getName()));
             return;
         }
 
         // If Template is changing, we need to kick off all see jobs
-        for(String seedJob: seedJobsProp.getSeedJobs()) {
+        LOGGER.fine(String.format("%s is a Template", project.getName()));
+        String digest;
+        try {
+            digest = Util.getDigestOf(new FileInputStream(file.getFile()));
+        } catch (IOException e) {
+            LOGGER.warning(String.format("Unable to calculate digest from file for %s", project.getName()));
+            return;
+        }
+
+        for(Map.Entry<String,String> entry: seedJobsProp.seedJobs.entrySet()) {
+            String seedJob = entry.getKey();
+            String previousDigest = entry.getValue();
+            if (digest.equals(previousDigest)) {
+                LOGGER.fine(String.format("Previously seen %s seed job", seedJob));
+                continue;
+            }
             AbstractProject seedProject = (AbstractProject) Jenkins.getInstance().getItem(seedJob);
+            if (seedProject == null) {
+                LOGGER.fine(String.format("Downstream project %s not found", seedJob)); // TODO use this excuse to do cleanup
+                continue;
+            }
+
+            LOGGER.fine(String.format("Scheduling %s, since it's downstream", seedJob));
             seedProject.scheduleBuild(30, new TemplateTriggerCause());
         }
     }

@@ -24,8 +24,8 @@ configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-
 dependencies {
     //groovy localGroovy() // Can't guarantee 1.8.6
     groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+    compile 'xmlunit:xmlunit:1.1'
     testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
-    testCompile 'xmlunit:xmlunit:1.1'
     testCompile 'junit:junit:4.10'
 }
 

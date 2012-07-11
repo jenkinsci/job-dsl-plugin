@@ -88,7 +88,7 @@ class AuthorizationHelper extends AbstractHelper<AuthorizationContext> {
     Closure generateWithXmlClosure(AuthorizationContext context) {
         List<String> perms = context.perms
         return { Node project ->
-            def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
+            def matrix = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
             perms.each { String perm ->
                 // Using matrix << permission(perm) will resolve permission locally on AuthorizationHelper
                 matrix.appendNode('permission', perm)

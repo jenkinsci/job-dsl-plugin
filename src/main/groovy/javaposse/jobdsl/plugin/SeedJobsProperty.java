@@ -1,14 +1,14 @@
 package javaposse.jobdsl.plugin;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import hudson.Extension;
-import hudson.model.Descriptor;
 import hudson.model.JobProperty;
 import hudson.model.AbstractProject;
 import hudson.model.JobPropertyDescriptor;
-import hudson.tasks.Builder;
 
 import com.google.common.collect.Sets;
 
@@ -18,20 +18,20 @@ import com.google.common.collect.Sets;
  *
  */
 class SeedJobsProperty extends JobProperty<AbstractProject<?,?>> {
-    public final Set<String> seedJobs;
+    public final Map<String,String> seedJobs;
 
-    public SeedJobsProperty(Collection<String> seedJobs) {
-        this.seedJobs = Sets.newHashSet(seedJobs);
+    public SeedJobsProperty(Map<String,String> seedJobs) {
+        this.seedJobs = Maps.newHashMap(seedJobs);
     }
 
     public SeedJobsProperty() {
-        this.seedJobs = Sets.newHashSet();
+        this.seedJobs = Maps.newHashMap();
     }
 
-    public Collection<String> getSeedJobs() {
-        return seedJobs;
-    }
-
+//    public Collection<String> getSeedJobs() {
+//        return seedJobs.keySet();
+//    }
+//
     @Extension
     public static final class DescriptorImpl extends JobPropertyDescriptor {
         public String getDisplayName() {

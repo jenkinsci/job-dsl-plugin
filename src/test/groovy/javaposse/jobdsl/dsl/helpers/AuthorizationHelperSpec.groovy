@@ -69,7 +69,7 @@ public class AuthorizationHelperSpec extends Specification {
         withXmlAction.execute(root)
 
         then:
-        NodeList permissions = root.builders[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
+        NodeList permissions = root.properties[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
         permissions.size() == 2
         permissions[0].text() == 'hudson.model.Item.Configure:jill'
         permissions[1].text() == 'hudson.model.Item.Configure:jack'

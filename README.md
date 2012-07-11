@@ -139,10 +139,15 @@ Build job-dsl.hpi to be installed in Jenkins:
     ./gradlew jpi
 
 Authors
-------
+-------
 Justin Ryan <jryan@netflix.com>
 
 Andrew Harmel-Law <andrew@harmel-law.com>
+
+
+Mailing List
+------------
+To track progress and ask questions head over the mailing list, https://groups.google.com/d/forum/job-dsl-plugin
 
 Artifacts
 ---------

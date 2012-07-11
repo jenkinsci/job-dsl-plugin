@@ -1,5 +1,6 @@
 package javaposse.jobdsl.plugin;
 
+import com.google.common.base.Predicates;
 import hudson.XmlFile;
 import hudson.model.AbstractProject;
 import hudson.model.Project;
@@ -21,6 +22,9 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 import jenkins.model.Jenkins;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.xml.sax.SAXException;
 
 /**
  * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
@@ -41,16 +45,15 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.INFO, String.format("Getting config for Job %s", jobName));
         String xml;
 
-        // TODO: This is as ugly as sin, but I think it would be nice to have something like this.
         if (jobName.isEmpty()) {
-            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n\t<actions/>\n\t<description/>\n\t<keepDependencies>false</keepDependencies>\n\t<properties/>\n</project>";
-        } else {
-            try {
-                xml = lookupJob(jobName);
-            } catch (IOException ioex) {
-                LOGGER.log(Level.WARNING, String.format("Named Job Config not found: %s", jobName));
-                throw new JobConfigurationNotFoundException(jobName);
-            }
+            throw new JobConfigurationNotFoundException(jobName);
+        }
+
+        try {
+            xml = lookupJob(jobName);
+        } catch (IOException ioex) {
+            LOGGER.log(Level.WARNING, String.format("Named Job Config not found: %s", jobName));
+            throw new JobConfigurationNotFoundException(jobName);
         }
 
         LOGGER.log(Level.FINE, String.format("Job config %s", xml));
@@ -99,12 +102,26 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private boolean updateExistingJob(AbstractProject<?, ?> project, String config) {
-        LOGGER.log(Level.FINE, String.format("Updating project as %s", config));
         boolean created;
+
+        // Leverage XMLUnit to perform diffs
+        Diff diff;
+        try {
+            String oldJob = project.getConfigFile().asString();
+            diff = XMLUnit.compareXML(oldJob, config);
+            if (diff.similar()) {
+                LOGGER.log(Level.FINE, String.format("Project %s is identical", project.getName()));
+                return false;
+            }
+        } catch (Exception e) {
+            // It's not a big deal if we can't diff, we'll just move on
+            LOGGER.warning(e.getMessage());
+        }
 
         // TODO Perform comparison between old and new, and print to console
         // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
-        // TODO Leverage XMLUnit to perform diffs
+
+        LOGGER.log(Level.FINE, String.format("Updating project %s as %s", project.getName(), config));
         StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
         try {
             project.updateByXml(streamSource);
@@ -150,7 +167,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 //    }
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
-        return Sets.newHashSet(Collections2.transform(jobs, new ExtractTemplate()));
+        return Sets.newHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
     }
 
     public static class ExtractJobName implements Function<GeneratedJob, String> {

@@ -41,7 +41,7 @@ public class StringJobManagement extends AbstractJobManagement {
         } else if (defaultXml!=null) {
             return defaultXml
         } else {
-            throw new RuntimeException("No config found for ${jobName}")
+            throw new JobConfigurationNotFoundException("No config found for ${jobName}")
         }
     }
 

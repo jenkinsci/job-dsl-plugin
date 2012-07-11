@@ -55,7 +55,7 @@ class WithXmlActionSpec extends Specification {
         def withXmlAction = new WithXmlAction ({ project ->
             Preconditions.checkNotNull(project)
             Preconditions.checkArgument(project instanceof Node)
-             println "About to reference! ${owner} ${delegate}"
+            println "About to reference! ${owner} ${delegate}"
 
             def matrix = project / builders / builder
         })

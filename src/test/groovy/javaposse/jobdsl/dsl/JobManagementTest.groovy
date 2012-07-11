@@ -23,16 +23,14 @@ class JobManagementTest extends Specification {
     }
 
     def "get config - no name provided"() {
-        // Should return an empty, default config
         setup:
-        setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new JenkinsJobManagement()
 
         when:
         String xml = jm.getConfig("")
 
         then:
-        assertXMLEqual minimalXml, xml
+        thrown(JobConfigurationNotFoundException)
     }
 
 //    //TODO: Enable this when I figure out how to mock what I need using Spock

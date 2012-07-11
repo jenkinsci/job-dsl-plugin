@@ -9,7 +9,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Set;
 import java.util.logging.Level;
@@ -44,14 +43,16 @@ public class DslScriptLoader {
         if (jp != null) {
             for(Job job: jp.getReferencedJobs()) {
                 try {
-                    // TODO remove project.properties.'javaposse.jobdsl.plugin.SeedJobsProperty', since that is a special property
+                    LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), job.getXml()));
                     boolean created = jobManagement.createOrUpdateConfig(job.getName(), job.getXml());
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
                     generatedJobs.add(gj);
-                } catch (JobNameNotProvidedException jnnpe) {
-                    // TODO: What is the sensible thing to do here?
-                } catch (JobConfigurationMissingException jcmex) {
-                    // TODO: What is the sensible thing to do here?
+                } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException
+                    if (e instanceof RuntimeException) {
+                        throw ((RuntimeException) e);
+                    } else {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

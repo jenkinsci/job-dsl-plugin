@@ -109,7 +109,13 @@ public class Job {
             throw new JobTemplateMissingException(templateName)
         }
 
-        return new XmlParser().parse(new StringReader(configXml))
+        def templateNode = new XmlParser().parse(new StringReader(configXml))
+
+        // Clean up our own indication that a job is a template
+        List<Node> seedJobProperties = templateNode.depthFirst().findAll { it.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty' }
+        seedJobProperties.each { Node node -> node.parent().remove(node) }
+
+        return templateNode
     }
 
     private executeEmptyTemplate() {
