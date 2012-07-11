@@ -1,10 +1,15 @@
 package javaposse.jobdsl.plugin;
 
+
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Collection;
 import java.util.logging.Logger;
 
+import com.google.common.base.Function;
+import static com.google.common.collect.Collections2.*;
+
+import com.google.common.base.Predicates;
 import hudson.Util;
 import jenkins.model.Jenkins;
 
@@ -15,6 +20,8 @@ import hudson.model.Saveable;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.listeners.SaveableListener;
+
+import javaposse.jobdsl.plugin.ExecuteDslScripts.DescriptorImpl;
 
 @Extension
 public class MonitorTemplateJobs extends SaveableListener {
@@ -28,43 +35,37 @@ public class MonitorTemplateJobs extends SaveableListener {
     public void onChange(Saveable saveable, XmlFile file) {
         LOGGER.info("onChange");
 
-        if( !AbstractProject.class.isAssignableFrom(saveable.getClass()) ) {
-            LOGGER.fine(String.format("%s is not a Project", saveable.getClass()));
+        if (!AbstractProject.class.isAssignableFrom(saveable.getClass())) {
+            LOGGER.finest(String.format("%s is not a Project", saveable.getClass()));
             return;
         }
 
         // Look for template jobs
         AbstractProject project = (AbstractProject) saveable;
-        SeedJobsProperty seedJobsProp = (SeedJobsProperty) project.getProperty(SeedJobsProperty.class);
-        if (seedJobsProp == null || seedJobsProp.seedJobs == null) {
-            LOGGER.fine(String.format("%s is not a Template Project", project.getName()));
+        String possibleTemplateName = project.getName();
+
+        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(possibleTemplateName);
+
+        if (seedJobReferences.isEmpty()) {
             return;
         }
 
-        // If Template is changing, we need to kick off all see jobs
-        LOGGER.fine(String.format("%s is a Template", project.getName()));
-        String digest;
+        final String digest;
         try {
-            digest = Util.getDigestOf(new FileInputStream(file.getFile()));
+            digest = Util.getDigestOf(new FileInputStream(project.getConfigFile().getFile()));
         } catch (IOException e) {
-            LOGGER.warning(String.format("Unable to calculate digest from file for %s", project.getName()));
+            LOGGER.warning(String.format("Unable to read template %s, which means we wouldn't be able to run seed anyways", possibleTemplateName));
             return;
         }
 
-        for(Map.Entry<String,String> entry: seedJobsProp.seedJobs.entrySet()) {
-            String seedJob = entry.getKey();
-            String previousDigest = entry.getValue();
-            if (digest.equals(previousDigest)) {
-                LOGGER.fine(String.format("Previously seen %s seed job", seedJob));
-                continue;
-            }
-            AbstractProject seedProject = (AbstractProject) Jenkins.getInstance().getItem(seedJob);
-            if (seedProject == null) {
-                LOGGER.fine(String.format("Downstream project %s not found", seedJob)); // TODO use this excuse to do cleanup
-                continue;
-            }
+        Collection<AbstractProject> changed = filter(
+                transform(
+                        filter(seedJobReferences, new SeedReferenceDigestPredicate(digest)),
+                        new LookupProjectFunction()),
+                Predicates.notNull());
 
-            LOGGER.fine(String.format("Scheduling %s, since it's downstream", seedJob));
+        for (AbstractProject seedProject : changed) {
             seedProject.scheduleBuild(30, new TemplateTriggerCause());
         }
     }
@@ -94,4 +95,11 @@ public class MonitorTemplateJobs extends SaveableListener {
         }
     }
 
+    private static class LookupProjectFunction implements Function<SeedReference, AbstractProject> {
+
+        @Override
+        public AbstractProject apply(SeedReference input) {
+            return (AbstractProject) Jenkins.getInstance().getItem(input.seedJobName);
+        }
+    }
 }

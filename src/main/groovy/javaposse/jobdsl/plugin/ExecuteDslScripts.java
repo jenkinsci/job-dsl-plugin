@@ -1,7 +1,7 @@
 package javaposse.jobdsl.plugin;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -13,6 +13,7 @@ import hudson.tasks.Builder;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,13 +24,9 @@ import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import jenkins.model.Jenkins;
 
-import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -75,11 +72,6 @@ public class ExecuteDslScripts extends Builder {
      */
     Set<GeneratedJob> generatedJobs;
 
-    /**
-     * Track what Templates were used to generate the jobs
-     */
-    private Map<String,String> templateJobs;
-
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation) {
         // Copy over from embedded object
@@ -114,6 +106,10 @@ public class ExecuteDslScripts extends Builder {
     }
 
     public Set<GeneratedJob> getGeneratedJobs() {
+        if (generatedJobs == null) {
+            generatedJobs = Sets.newHashSet();
+        }
+
         return generatedJobs;
     }
 
@@ -121,21 +117,9 @@ public class ExecuteDslScripts extends Builder {
         this.generatedJobs = generatedJobs;
     }
 
-    public Map<String, String> getTemplateJobs() {
-        return templateJobs;
-    }
-
-    public void setTemplateJobs(Map<String, String> templateJobs) {
-        this.templateJobs = templateJobs;
-    }
-
     @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
-        if (generatedJobs == null) {
-            return new GeneratedJobsAction();
-        } else {
-            return new GeneratedJobsAction(generatedJobs);
-        }
+        return new GeneratedJobsAction(getGeneratedJobs());
     }
 
     /**
@@ -157,72 +141,20 @@ public class ExecuteDslScripts extends Builder {
         env.overrideAll(build.getBuildVariables());
         // TODO Use env to inject into DSL
 
-        List<String> bodies = collectBodies(build, listener, env);
-
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
         JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger());
 
-        Set<GeneratedJob> freshJobs = Sets.newHashSet();
-        for (String dslBody: bodies) {
-            LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
+        List<String> bodies = collectBodies(build, listener, env);
+        Set<GeneratedJob> freshJobs = executeBodies(bodies, jm);
 
-            // Room for one dsl to succeed and another to fail, yet jobs from the first will finish
-            // TODO postpone saving jobs even later
-            Set<GeneratedJob> generatedJobs = DslScriptLoader.runDsl(dslBody, jm);
-
-            freshJobs.addAll(generatedJobs);
-        }
-
-        if (generatedJobs == null) {
-            generatedJobs = Sets.newHashSet();
-        }
         // TODO Pull all this out, so that it can run outside of the plugin, e.g. JenkinsRestApiJobManagement
+        updateTemplates(build, listener, freshJobs);
+        updateGeneratedJobs(build, listener, freshJobs);
 
-        // Update Project
-        Set<GeneratedJob> removedJobs = Sets.difference(generatedJobs, freshJobs);
-        // TODO Print to listener, so that it shows up in the build
-        listener.getLogger().println("Adding jobs: "   + Joiner.on(",").join( Sets.difference(freshJobs, generatedJobs) ));
-        listener.getLogger().println("Existing jobs: " + Joiner.on(",").join( Sets.intersection(generatedJobs, freshJobs) ));
-        listener.getLogger().println("Removing jobs: " + Joiner.on(",").join(removedJobs));
-
-        // Update unreferenced jobs
-        for(GeneratedJob removedJob: removedJobs) {
-            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName());
-            removedProject.disable(); // TODO deleteJob which is protected
-        }
-
-        // Update Templates
-        if (templateJobs == null) {
-            templateJobs = Maps.newHashMap();
-        }
-
-        Set<String> freshTemplates = JenkinsJobManagement.getTemplates(freshJobs);
-        Set<String> existingTemplates = templateJobs.keySet();
-        Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
-        Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
-
-        listener.getLogger().println("Existing Templates: " + Joiner.on(",").join( existingTemplates ));
-        listener.getLogger().println("New Templates: " + Joiner.on(",").join( newTemplates ));
-        listener.getLogger().println("Unreferenced Templates: " + Joiner.on(",").join(removedTemplates));
-
-        // Collect information about the templates we loaded
-        String seedJobName = build.getProject().getName();
-        Map<String, String> freshTemplateMap = Maps.newHashMap();
-        for(String templateProjectName: freshTemplates) {
-            AbstractProject templateProject = (AbstractProject) Jenkins.getInstance().getItem(templateProjectName);
-            String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
-            freshTemplateMap.put(templateProjectName, digest);
-        }
-
-        // Add GeneratedJobsBuildAction to Build
+        // Save onto Builder, which belongs to a Project.
         GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs);
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
-
-        // Save onto Builder, which belongs to a Project.
-        generatedJobs = Sets.newHashSet(freshJobs);
-        templateJobs = Maps.newHashMap(freshTemplateMap);
-        build.getProject().save();
 
         return true;
     }
@@ -254,11 +186,135 @@ public class ExecuteDslScripts extends Builder {
         return bodies;
     }
 
+    private Set<GeneratedJob> executeBodies(List<String> bodies, JenkinsJobManagement jm) {
+        Set<GeneratedJob> freshJobs = Sets.newHashSet();
+        for (String dslBody: bodies) {
+            LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
+
+            // Room for one dsl to succeed and another to fail, yet jobs from the first will finish
+            // TODO postpone saving jobs even later
+            Set<GeneratedJob> generatedJobs = DslScriptLoader.runDsl(dslBody, jm);
+
+            freshJobs.addAll(generatedJobs);
+        }
+        return freshJobs;
+    }
+
+    /**
+     * Uses generatedJobs as existing data, so call before updating generatedJobs.
+     * @param build
+     * @param listener
+     * @param freshJobs
+     * @return
+     * @throws IOException
+     */
+    private Set<String> updateTemplates(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedJob> freshJobs) throws IOException {
+        Set<String> freshTemplates = JenkinsJobManagement.getTemplates(freshJobs);
+        Set<String> existingTemplates = JenkinsJobManagement.getTemplates(getGeneratedJobs());
+        Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
+        Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
+
+        listener.getLogger().println("Existing Templates: " + Joiner.on(",").join( existingTemplates ));
+        listener.getLogger().println("New Templates: " + Joiner.on(",").join( newTemplates ));
+        listener.getLogger().println("Unreferenced Templates: " + Joiner.on(",").join(removedTemplates));
+
+        // Collect information about the templates we loaded
+        final String seedJobName = build.getProject().getName();
+        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        boolean descriptorMutated = false;
+
+        // Clean up
+        for(String templateName: removedTemplates) {
+            Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
+            Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
+            if (!matching.isEmpty()) {
+                seedJobReferences.removeAll(matching);
+                descriptorMutated = true;
+            }
+        }
+
+        // Ensure we have a reference
+        for(String templateName: freshTemplates) {
+            Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
+            Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
+
+            AbstractProject templateProject = (AbstractProject) Jenkins.getInstance().getItem(templateName);
+            final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
+
+            if (matching.size() == 1) {
+                // Just update digest
+                SeedReference ref = Iterables.get(matching, 0);
+                if (digest.equals(ref.digest)) {
+                    ref.digest = digest;
+                    descriptorMutated = true;
+                }
+            } else {
+                if (matching.size() > 1) {
+                    // Not sure how there could be more one, throw it all away and start over
+                    seedJobReferences.removeAll(matching);
+                }
+                seedJobReferences.add(new SeedReference(templateName, seedJobName, digest));
+                descriptorMutated = true;
+            }
+        }
+
+        if (descriptorMutated) {
+            descriptor.save();
+        }
+        return freshTemplates;
+    }
+
+
+    /**
+     * @param listener
+     * @param freshJobs
+     * @throws IOException
+     */
+    private void updateGeneratedJobs(final AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedJob> freshJobs) throws IOException {
+        // Update Project
+        Set<GeneratedJob> added = Sets.difference(freshJobs, getGeneratedJobs());
+        Set<GeneratedJob> existing = Sets.intersection(getGeneratedJobs(), freshJobs);
+        Set<GeneratedJob> removed = Sets.difference(getGeneratedJobs(), freshJobs);
+
+        listener.getLogger().println("Adding jobs: "   + Joiner.on(",").join(added));
+        listener.getLogger().println("Existing jobs: " + Joiner.on(",").join(existing));
+        listener.getLogger().println("Removing jobs: " + Joiner.on(",").join(removed));
+
+        // Update unreferenced jobs
+        for(GeneratedJob removedJob: removed) {
+            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName());
+            removedProject.disable(); // TODO deleteJob which is protected
+        }
+
+        // Actual Update of project
+        generatedJobs = Sets.newHashSet(freshJobs);
+        build.getProject().save();
+    }
 
     @Extension
     public static final class DescriptorImpl extends Descriptor<Builder> {
+
+        private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed
+
+        public DescriptorImpl() {
+            super(ExecuteDslScripts.class);
+            load();
+        }
+
         public String getDisplayName() {
             return "Process Job DSLs";
+        }
+
+        public Multimap<String, SeedReference> getTemplateJobMap() {
+            if (templateJobMap == null) {
+                templateJobMap = HashMultimap.create();
+            }
+
+            return templateJobMap;
+        }
+
+        public void setTemplateJobMap(Multimap<String, SeedReference> templateJobMap) {
+            this.templateJobMap = templateJobMap;
         }
 
         static final String defaultDsl = "job {\n" +
@@ -271,6 +327,7 @@ public class ExecuteDslScripts extends Builder {
                 "    }\n" +
                 "}\n";
 
+        /*
         @Override
         public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             return super.newInstance(req, formData);
@@ -280,6 +337,19 @@ public class ExecuteDslScripts extends Builder {
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
             return super.configure(req, json);
         }
+        */
     }
 
+    private static class SeedNamePredicate implements Predicate<SeedReference> {
+        private final String seedJobName;
+
+        public SeedNamePredicate(String seedJobName) {
+            this.seedJobName = seedJobName;
+        }
+
+        @Override
+        public boolean apply(SeedReference input) {
+            return seedJobName.equals(input.seedJobName);
+        }
+    }
 }
