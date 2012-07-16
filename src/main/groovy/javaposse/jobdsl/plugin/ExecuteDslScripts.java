@@ -14,8 +14,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,11 +67,6 @@ public class ExecuteDslScripts extends Builder {
      */
     private final boolean usingScriptText;
 
-    /**
-     * Track what jobs got created/updated, we don't want to depend on the builds
-     */
-    Set<GeneratedJob> generatedJobs;
-
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation) {
         // Copy over from embedded object
@@ -105,21 +100,9 @@ public class ExecuteDslScripts extends Builder {
         return usingScriptText;
     }
 
-    public Set<GeneratedJob> getGeneratedJobs() {
-        if (generatedJobs == null) {
-            generatedJobs = Sets.newHashSet();
-        }
-
-        return generatedJobs;
-    }
-
-    void setGeneratedJobs(Set<GeneratedJob> generatedJobs) {
-        this.generatedJobs = generatedJobs;
-    }
-
     @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new GeneratedJobsAction(getGeneratedJobs());
+        return new GeneratedJobsAction(project);
     }
 
     /**
@@ -156,6 +139,9 @@ public class ExecuteDslScripts extends Builder {
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
 
+        // Hint that our new jobs might have really shaken things up
+        Jenkins.getInstance().rebuildDependencyGraph();
+
         return true;
     }
 
@@ -187,15 +173,15 @@ public class ExecuteDslScripts extends Builder {
     }
 
     private Set<GeneratedJob> executeBodies(List<String> bodies, JenkinsJobManagement jm) {
-        Set<GeneratedJob> freshJobs = Sets.newHashSet();
+        Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
         for (String dslBody: bodies) {
             LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
 
             // Room for one dsl to succeed and another to fail, yet jobs from the first will finish
             // TODO postpone saving jobs even later
-            Set<GeneratedJob> generatedJobs = DslScriptLoader.runDsl(dslBody, jm);
+            Set<GeneratedJob> dslJobs = DslScriptLoader.runDsl(dslBody, jm);
 
-            freshJobs.addAll(generatedJobs);
+            freshJobs.addAll(dslJobs);
         }
         return freshJobs;
     }
@@ -210,7 +196,7 @@ public class ExecuteDslScripts extends Builder {
      */
     private Set<String> updateTemplates(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedJob> freshJobs) throws IOException {
         Set<String> freshTemplates = JenkinsJobManagement.getTemplates(freshJobs);
-        Set<String> existingTemplates = JenkinsJobManagement.getTemplates(getGeneratedJobs());
+        Set<String> existingTemplates = JenkinsJobManagement.getTemplates(extractGeneratedJobs(build.getProject()));
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
         Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
 
@@ -272,9 +258,10 @@ public class ExecuteDslScripts extends Builder {
      */
     private void updateGeneratedJobs(final AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedJob> freshJobs) throws IOException {
         // Update Project
-        Set<GeneratedJob> added = Sets.difference(freshJobs, getGeneratedJobs());
-        Set<GeneratedJob> existing = Sets.intersection(getGeneratedJobs(), freshJobs);
-        Set<GeneratedJob> removed = Sets.difference(getGeneratedJobs(), freshJobs);
+        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(build.getProject());
+        Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
+        Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
+        Set<GeneratedJob> removed = Sets.difference(generatedJobs, freshJobs);
 
         listener.getLogger().println("Adding jobs: "   + Joiner.on(",").join(added));
         listener.getLogger().println("Existing jobs: " + Joiner.on(",").join(existing));
@@ -283,12 +270,21 @@ public class ExecuteDslScripts extends Builder {
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
             AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName());
+            // TODO Let user choose what to do
             removedProject.disable(); // TODO deleteJob which is protected
         }
 
-        // Actual Update of project
-        generatedJobs = Sets.newHashSet(freshJobs);
-        build.getProject().save();
+        // BuildAction is created with the result, we'll look at an aggregation of builds to know figure out our generated jobs
+
+    }
+
+    private Set<GeneratedJob> extractGeneratedJobs(AbstractProject project) {
+        GeneratedJobsAction gja = project.getAction(GeneratedJobsAction.class);
+        if (gja==null || gja.findLastGeneratedJobs() == null) {
+            return Sets.newHashSet();
+        } else {
+            return gja.findLastGeneratedJobs();
+        }
     }
 
     @Extension

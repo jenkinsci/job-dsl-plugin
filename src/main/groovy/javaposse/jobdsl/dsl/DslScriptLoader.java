@@ -39,7 +39,7 @@ public class DslScriptLoader {
         JobParent jp = parseScript(scriptContent, config, binding);
 
         // Iterate jobs which were setup, save them, and convert to a serializable form
-        Set<GeneratedJob> generatedJobs = Sets.newHashSet();
+        Set<GeneratedJob> generatedJobs = Sets.newLinkedHashSet();
         if (jp != null) {
             for(Job job: jp.getReferencedJobs()) {
                 try {

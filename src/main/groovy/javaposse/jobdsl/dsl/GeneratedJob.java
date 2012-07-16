@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl;
 
-public class GeneratedJob {
+public class GeneratedJob implements Comparable {
     private String templateName;
     private String jobName;
     private boolean created;
@@ -21,6 +21,15 @@ public class GeneratedJob {
 
     public boolean isCreated() {
         return created;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof GeneratedJob) {
+            return jobName.compareTo(((GeneratedJob) o).getJobName());
+        } else {
+            return jobName.compareTo(o.toString());
+        }
     }
 
     @Override
