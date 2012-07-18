@@ -101,15 +101,13 @@ Please refer to the wiki, https://github.com/JavaPosseRoundup/job-dsl-plugin/wik
 
 Features
 --------
-* DSL
-** Scriptable via Groovy
-** Direct control of XML, so that anything possible in a config.xml is possible via the DSL
-** Helper methods for common job configurations, e.g. scm, triggers, build steps
-* Plugin
-** DSL can be put directly in a job
-** DSL can be put into SCM and polled using standard SCM triggering
-** Multiple DSLs can be referenced as a time
-** Tracks Templates used, will update derivative jobs when template is changed
+* DSL - Scriptable via Groovy
+* DSL - Direct control of XML, so that anything possible in a config.xml is possible via the DSL
+* DSL - Helper methods for common job configurations, e.g. scm, triggers, build steps
+* Plugin - DSL can be put directly in a job
+* Plugin - DSL can be put into SCM and polled using standard SCM triggering
+* Plugin - Multiple DSLs can be referenced as a time
+* Plugin - Tracks Templates used, will update derivative jobs when template is changed
 
 Basic Usage
 -----
