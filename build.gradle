@@ -34,15 +34,15 @@ test {
 }
 
 group = "org.jenkinsci.plugins"
-version = "1.0-beta"
+version = "1.0"
 description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
 //archivesBaseName = "job-dsl-plugin"
 
 jenkinsPlugin {
     coreVersion = '1.456'
     displayName = 'Job DSL'
-    url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin' // TODO create wiki page
-    gitHubUrl = 'https://github.com/JavaPosseRoundup/jenkins-job-dsl' // TODO Move to jenkin org
+    url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
+    gitHubUrl = 'https://github.com/JavaPosseRoundup/job-dsl-plugin'
     developers {
         developer {
             id 'quidryan'
