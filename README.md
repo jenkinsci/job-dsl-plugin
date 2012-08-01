@@ -24,7 +24,7 @@ have our specific SCM settings, and we want to re-use the same one, so we'll def
 We'll also limit whom can run the release job.
 
 ```groovy
-def gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
+def gitUrl = 'git://github.com/jenkinsci/job-dsl-plugin.git'
 
 job {
     using 'TMPL-test'
@@ -97,7 +97,7 @@ things in one job, but then the history of the job is skewed and they were limit
 provides a much more powerful way of defining them. Likewise, if using the jenkins plugin of the DSL then when the 
 template is changed, the test jobs will be re-created! 
 
-Please refer to the wiki, https://github.com/JavaPosseRoundup/job-dsl-plugin/wiki, for further documentation and examples.
+Please refer to the wiki, https://github.com/jenkinsci/job-dsl-plugin/wiki, for further documentation and examples.
 
 Features
 --------
