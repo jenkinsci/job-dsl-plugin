@@ -42,7 +42,7 @@ jenkinsPlugin {
     coreVersion = '1.456'
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
-    gitHubUrl = 'https://github.com/JavaPosseRoundup/job-dsl-plugin'
+    gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
     developers {
         developer {
             id 'quidryan'
