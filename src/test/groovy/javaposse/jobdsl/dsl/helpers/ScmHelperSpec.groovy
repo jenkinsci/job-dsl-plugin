@@ -12,6 +12,15 @@ public class ScmHelperSpec extends Specification {
     ScmHelper helper = new ScmHelper(mockActions)
     ScmContext context = new ScmContext()
 
+    def 'duplicate scm calls disallowed'() {
+        when:
+        context.git(GIT_REPO_URL)
+        context.git(GIT_REPO_URL)
+
+        then:
+        thrown(RuntimeException)
+    }
+
     def 'call git scm methods'() {
         when:
         context.git(GIT_REPO_URL)
