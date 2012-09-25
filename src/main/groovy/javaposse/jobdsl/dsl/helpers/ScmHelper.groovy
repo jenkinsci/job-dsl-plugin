@@ -40,6 +40,44 @@ class ScmHelper extends AbstractHelper<ScmContext> {
         }
 
         /**
+         * Generate configuration for Mercurial.
+         *
+         <scm class="hudson.plugins.mercurial.MercurialSCM">
+            <source>http://selenic.com/repo/hello</source>
+            <modules>sample-module1 sample-module2</modules>
+            <subdir>path-to-check-out-into</subdir>
+            <clean>true</clean>
+            <browser class="hudson.plugins.mercurial.browser.HgWeb">
+              <url>http://selenic.com/repo/hello/</url>
+            </browser>
+          </scm>
+         */
+        def hg(String url, String branch = null, Closure configure = null) {
+            Preconditions.checkNotNull(url)
+            // TODO Validate url as a Mercurial url (e.g. http, https or ssh)
+
+            if (scmNode != null) {
+                throw new RuntimeException('Multiple calls scm')
+            }
+
+            // TODO Attempt to update existing scm node
+            def nodeBuilder = new NodeBuilder()
+
+            scmNode = nodeBuilder.scm(class:'hudson.plugins.mercurial.MercurialSCM') {
+                source url
+                modules ''
+                clean false
+            }
+            scmNode.appendNode('branch', branch?:'')
+
+            // Apply Context
+            if (configure) {
+                WithXmlAction action = new WithXmlAction(configure)
+                action.execute(scmNode)
+            }
+        }
+
+        /**
          *
          * @param url
          * @param branch

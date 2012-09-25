@@ -8,9 +8,31 @@ import spock.lang.Specification
 public class ScmHelperSpec extends Specification {
 
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
+    private static final String HG_REPO_URL = 'http://selenic.com/repo/hello'
+
     List<WithXmlAction> mockActions = Mock()
     ScmHelper helper = new ScmHelper(mockActions)
     ScmContext context = new ScmContext()
+
+    def 'base hg configuration'() {
+        when:
+        context.hg(HG_REPO_URL)
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.modules[0].text() == ''
+    }
+
+    def 'hg with branch'() {
+        final String branch = "not-default"
+
+        when:
+        context.hg(HG_REPO_URL, branch)
+
+        then:
+        context.scmNode.branch[0].text() == branch
+    }
 
     def 'duplicate scm calls disallowed'() {
         when:
