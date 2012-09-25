@@ -127,7 +127,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             project.updateByXml(streamSource);
             created = true;
         } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing updated project to file."));
+            LOGGER.log(Level.WARNING, String.format("Error writing updated project to file."), ioex);
             created = false;
         }
         return created;
@@ -146,7 +146,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
             created = false;
         } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", jobName));
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", jobName), ioex);
             created = false;
         }
         return created;
