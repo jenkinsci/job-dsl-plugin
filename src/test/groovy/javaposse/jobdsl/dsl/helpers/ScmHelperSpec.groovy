@@ -7,24 +7,25 @@ import spock.lang.Specification
 
 public class ScmHelperSpec extends Specification {
 
+    private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
     List<WithXmlAction> mockActions = Mock()
     ScmHelper helper = new ScmHelper(mockActions)
     ScmContext context = new ScmContext()
 
     def 'call git scm methods'() {
         when:
-        context.git('git://github.com/Netflix/curator.git')
+        context.git(GIT_REPO_URL)
 
         then:
         context.scmNode != null
-        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == 'git://github.com/Netflix/curator.git'
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == GIT_REPO_URL
         context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
 
     }
 
     def 'call git scm with branch'() {
         when:
-        context.git('git://github.com/Netflix/curator.git', 'feature-branch')
+        context.git(GIT_REPO_URL, 'feature-branch')
 
         then:
         context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'feature-branch'
@@ -33,7 +34,7 @@ public class ScmHelperSpec extends Specification {
 
     def 'call git scm with configure'() {
         when:
-        context.git('git://github.com/Netflix/curator.git', null) { gitNode ->
+        context.git(GIT_REPO_URL, null) { gitNode ->
             gitNode << gitConfigName('john')
             gitNode.appendNode('gitConfigEmail' ,'john@gmail.com')
         }
@@ -46,7 +47,7 @@ public class ScmHelperSpec extends Specification {
     def 'call scm via helper'() {
         when:
         helper.scm {
-            git('git://github.com/Netflix/curator.git')
+            git(GIT_REPO_URL)
         }
 
         then:
