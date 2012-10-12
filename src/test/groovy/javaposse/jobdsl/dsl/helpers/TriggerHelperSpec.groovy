@@ -73,23 +73,18 @@ public class TriggerHelperSpec extends Specification {
             }
             project('reg_exp:myProject', ['ant:feature-branch', 'plain:origin/refs/mybranch']) // full access
             project('test-project', '**') // simplified
-            configure {
-                gerritBuildStartedVerifiedValue 0
-                gerritBuildStartedCodeReviewValue 0
-                gerritBuildSuccessfulVerifiedValue 1
-                gerritBuildSuccessfulCodeReviewValue 2
-                gerritBuildFailedVerifiedValue -2
-                gerritBuildFailedCodeReviewValue -2
-                gerritBuildUnstableVerifiedValue -1
-                gerritBuildUnstableCodeReviewValue -1
-                gerritBuildNotBuiltVerifiedValue 0
-                gerritBuildNotBuiltCodeReviewValue 0
+            configure { node ->
+                node / gerritBuildSuccessfulVerifiedValue << '10'
             }
         }
 
         then:
         def gerritTrigger = context.triggerNodes[0]
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '1'
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '10'
+
+        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() == '-2'
 
         Node gerritEvents = gerritTrigger.triggerOnEvents[0]
         gerritEvents.children().size() == 2

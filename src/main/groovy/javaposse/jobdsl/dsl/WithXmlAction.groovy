@@ -18,7 +18,7 @@ class WithXmlAction {
         Preconditions.checkNotNull(root)
 
         //println "${closure} ${closure.class}"
-        closure.delegate = new MissingPropertyToStringDelegate()
+        closure.delegate = new MissingPropertyToStringDelegate(root)
         // Let creator set strategy
         //closure.resolveStrategy = Closure.OWNER_FIRST
 

@@ -53,6 +53,11 @@ jenkinsPlugin {
             name 'Andrew Harmel-Law'
             email 'andrew@harmel-law.com'
         }
+        developer {
+            id 'sit'
+            name 'Emil Sit'
+            email 'sit@hadapt.com'
+        }
     }
 }
 
