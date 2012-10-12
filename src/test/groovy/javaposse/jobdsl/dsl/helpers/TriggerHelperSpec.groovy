@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
-import javaposse.jobdsl.dsl.helpers.TriggerHelper.TriggerContext
 import spock.lang.Specification
 
 public class TriggerHelperSpec extends Specification {
@@ -50,6 +49,71 @@ public class TriggerHelperSpec extends Specification {
 //
 //        then:
 //        1 * mockActions.add(_)
+    }
+
+    def 'call empty gerrit trigger methods'() {
+        when:
+        context.gerrit {
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def gerritTrigger = context.triggerNodes[0]
+        gerritTrigger.name().contains('GerritTrigger')
+        !gerritTrigger.buildStartMessage.isEmpty()
+    }
+
+    def 'call advanced gerrit trigger methods'() {
+        when:
+        context.gerrit {
+            events {
+                ChangeMerged
+                DraftPublished
+            }
+            project('reg_exp:myProject', ['ant:feature-branch', 'plain:origin/refs/mybranch']) // full access
+            project('test-project', '**') // simplified
+            configure {
+                gerritBuildStartedVerifiedValue 0
+                gerritBuildStartedCodeReviewValue 0
+                gerritBuildSuccessfulVerifiedValue 1
+                gerritBuildSuccessfulCodeReviewValue 2
+                gerritBuildFailedVerifiedValue -2
+                gerritBuildFailedCodeReviewValue -2
+                gerritBuildUnstableVerifiedValue -1
+                gerritBuildUnstableCodeReviewValue -1
+                gerritBuildNotBuiltVerifiedValue 0
+                gerritBuildNotBuiltCodeReviewValue 0
+            }
+        }
+
+        then:
+        def gerritTrigger = context.triggerNodes[0]
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '1'
+
+        Node gerritEvents = gerritTrigger.triggerOnEvents[0]
+        gerritEvents.children().size() == 2
+        gerritEvents.children()[0].name().contains('com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin')
+
+        Node gerritProjects = gerritTrigger.gerritProjects[0]
+        gerritProjects.children().size() == 2
+
+        Node gerritProject = gerritProjects.children()[0]
+        gerritProject.name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'
+        gerritProject.compareType[0].value() == 'REG_EXP'
+        gerritProject.pattern[0].value() == 'myProject'
+        gerritProject.branches[0].children().size() == 2
+
+        Node gerritBranch = gerritProject.branches[0].children()[0]
+        gerritBranch.name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch'
+        gerritBranch.compareType[0].value() == 'ANT'
+        gerritBranch.pattern[0].value() == 'feature-branch'
+
+        Node gerritProjectSimple = gerritProjects.children()[1]
+        gerritProjectSimple.compareType[0].value() == 'PLAIN'
+        gerritProjectSimple.pattern[0].value() == 'test-project'
+        gerritProjectSimple.branches[0].children().size() == 1
+        // Assume branch is fine
     }
 
     def 'execute withXml Action'() {

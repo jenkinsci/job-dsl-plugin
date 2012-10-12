@@ -34,7 +34,6 @@ test {
 }
 
 group = "org.jenkinsci.plugins"
-version = "1.0"
 description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
 //archivesBaseName = "job-dsl-plugin"
 
@@ -57,7 +56,7 @@ jenkinsPlugin {
     }
 }
 
-task createWrapper(type: Wrapper) { gradleVersion = '1.0' }
+task wrapper(type: Wrapper) { gradleVersion = '1.2' }
 
 task(showTestClasspath) << {
     println "Classpath:"
