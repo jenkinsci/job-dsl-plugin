@@ -11,15 +11,26 @@ abstract class AbstractHelper<T extends Context> implements Helper {
      */
     List<WithXmlAction> withXmlActions
 
+    static def executeInContext(Closure closure, Context freshContext) {
+        if(closure) {
+            closure.delegate = freshContext
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            def result = closure.call() // No args
+
+            // TODO Create callback to concrete classes, so that they can "enhance" the closure, e.g. with static imports
+        }
+    }
+    /**
+     * Make assumption that we're creating top level xml elements
+     * @param closure
+     * @param freshContext
+     * @return
+     */
     def execute(Closure closure, T freshContext) {
-        // Reset context
-        closure.delegate = freshContext
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.call() // No args
+        // Execute context, which we expect will just establish some state
+        executeInContext(closure, freshContext)
 
-        // TODO Create callback to concrete classes, so that they can "enhance" the closure, e.g. with static imports
-
-        // Queue up our action
+        // Queue up our action, using the concrete classes logic
         withXmlActions << generateWithXmlAction(freshContext)
     }
 
