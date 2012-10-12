@@ -22,6 +22,7 @@ public class Job {
     @Delegate ScmHelper helperScm
     @Delegate TriggerHelper helperTrigger
     @Delegate StepHelper helperStep
+    @Delegate PublisherHelper helperPublisher
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
@@ -29,6 +30,7 @@ public class Job {
         helperScm = new ScmHelper(withXmlActions)
         helperTrigger = new TriggerHelper(withXmlActions)
         helperStep = new StepHelper(withXmlActions)
+        helperPublisher = new PublisherHelper(withXmlActions)
     }
 
     /**
