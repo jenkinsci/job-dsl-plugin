@@ -21,6 +21,12 @@ class AuthorizationHelper extends AbstractHelper<AuthorizationContext> {
             perms << perm
         }
 
+        def permissionAll(String user) {
+            Permissions.values().each {
+                permission(it, user)
+            }
+        }
+
         def permission(String perm) {
             // TODO Check formatting, e.g. has colon
             addAuthorization(perm)
