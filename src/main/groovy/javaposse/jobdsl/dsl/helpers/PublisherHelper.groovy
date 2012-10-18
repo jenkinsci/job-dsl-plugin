@@ -7,7 +7,7 @@ import javax.naming.event.EventContext
 class PublisherHelper extends AbstractHelper<PublisherContext> {
 
     PublisherHelper(List<WithXmlAction> withXmlActions) {
-        this.withXmlActions = withXmlActions
+        super(withXmlActions)
     }
 
     def publishers(Closure closure) {

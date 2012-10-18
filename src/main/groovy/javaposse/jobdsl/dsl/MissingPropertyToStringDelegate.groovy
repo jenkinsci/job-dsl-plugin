@@ -7,6 +7,7 @@ import java.util.logging.Logger
  */
 class MissingPropertyToStringDelegate {
     private static final Logger LOGGER = Logger.getLogger(MissingPropertyToStringDelegate.getName())
+    //@Delegate // TODO investigate making node the delegate
     Node root
 
     MissingPropertyToStringDelegate(Node root) {
