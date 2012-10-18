@@ -1,6 +1,7 @@
 package javaposse.jobdsl.plugin;
 
 import com.google.common.base.Predicates;
+import hudson.EnvVars;
 import hudson.XmlFile;
 import hudson.model.AbstractProject;
 import hudson.model.Project;
@@ -8,6 +9,7 @@ import hudson.model.TopLevelItem;
 
 import java.io.*;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,10 +35,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
     Jenkins jenkins = Jenkins.getInstance();
+    EnvVars envVars;
     Set<GeneratedJob> modifiedJobs;
 
-    public JenkinsJobManagement(PrintStream outputLogger) {
+    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars) {
         super(outputLogger);
+        this.envVars = envVars;
         modifiedJobs = Sets.newHashSet();
     }
 
@@ -81,6 +85,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             created = updateExistingJob(project, config);
         }
         return created;
+    }
+
+    @Override
+    public Map<String, String> getParameters() {
+        return envVars;
     }
 
     private String lookupJob(String jobName) throws IOException {
