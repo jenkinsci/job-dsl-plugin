@@ -45,8 +45,8 @@ public class MultiScmHelperSpec extends Specification {
 
         then:
         root.scm.size() == 1 // MultiSCM
-        root.scm[0].scm.size() == 2 // Both gits
-        root.scm[0].scm[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'branch1'
-        root.scm[0].scm[1].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'branch2'
+        root.scm[0].scms[0].scm.size() == 2 // Both gits
+        root.scm[0].scms[0].scm[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'branch1'
+        root.scm[0].scms[0].scm[1].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'branch2'
     }
 }
