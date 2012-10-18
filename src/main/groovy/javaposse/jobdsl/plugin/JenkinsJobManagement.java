@@ -1,6 +1,8 @@
 package javaposse.jobdsl.plugin;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Maps;
+import groovy.transform.PackageScope;
 import hudson.EnvVars;
 import hudson.XmlFile;
 import hudson.model.AbstractProject;
@@ -37,6 +39,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     Jenkins jenkins = Jenkins.getInstance();
     EnvVars envVars;
     Set<GeneratedJob> modifiedJobs;
+
+    JenkinsJobManagement() {
+        super();
+        envVars = new EnvVars();
+        modifiedJobs = Sets.newHashSet();
+    }
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars) {
         super(outputLogger);

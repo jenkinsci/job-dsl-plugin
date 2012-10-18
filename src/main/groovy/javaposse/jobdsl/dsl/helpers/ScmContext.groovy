@@ -4,13 +4,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import com.google.common.base.Preconditions
 import groovy.transform.PackageScope
 
-/**
- * Created with IntelliJ IDEA.
- * User: jryan
- * Date: 10/16/12
- * Time: 10:24 AM
- * To change this template use File | Settings | File Templates.
- */
 @PackageScope
 class ScmContext implements Context {
     boolean multiEnabled
@@ -34,7 +27,7 @@ class ScmContext implements Context {
     }
 
     private validateMulti(){
-        Preconditions.checkState(scmNodes.size() < (multiEnabled?10:1), 'Outside "multiscm", only one SCM can be specified'+multiEnabled+scmNodes.empty+scmNodes)
+        Preconditions.checkState(scmNodes.size() < (multiEnabled?10:1), 'Outside "multiscm", only one SCM can be specified')
     }
 
     /**
@@ -187,9 +180,38 @@ class ScmContext implements Context {
        <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
      </scm>
      */
-//        def svn() {
-//
-//        }
+        def svn(String svnUrl, Closure configure = null) {
+            Preconditions.checkNotNull(svnUrl)
+            validateMulti()
+            // TODO Validate url as a svn url (e.g. https or http)
+
+            // TODO Attempt to update existing scm node
+            def nodeBuilder = new NodeBuilder()
+
+            Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
+                locations {
+                    'hudson.scm.SubversionSCM_-ModuleLocation' {
+                        remote "${svnUrl}"
+                        local '.'
+                    }
+                }
+
+                excludedRegions ''
+                includedRegions ''
+                excludedUsers ''
+                excludedRevprop ''
+                excludedCommitMessages ''
+                workspaceUpdater(class: "hudson.scm.subversion.UpdateUpdater")
+            }
+
+            // Apply Context
+            if (configure) {
+                WithXmlAction action = new WithXmlAction(configure)
+                action.execute(svnNode)
+            }
+            scmNodes << svnNode
+
+        }
     /**
      <scm class="hudson.plugins.perforce.PerforceSCM">
        <p4User>rolem</p4User>
@@ -225,7 +247,52 @@ class ScmContext implements Context {
        <pollOnlyOnMaster>true</pollOnlyOnMaster>
      </scm>
      */
-//        def perforce() {
-//
-//        }
+    def p4(String viewspec, String user = 'rolem', String password = '', Closure configure = null) {
+            Preconditions.checkNotNull(viewspec)
+        validateMulti()
+        // TODO Validate viewspec as valid viewspec
+
+        // TODO Attempt to update existing scm node
+        def nodeBuilder = new NodeBuilder()
+
+        Node p4Node = nodeBuilder.scm(class:'hudson.plugins.perforce.PerforceSCM') {
+            p4User user
+            p4Passwd password
+            p4Port 'perforce:1666'
+            p4Client 'builds-${JOB_NAME}'
+            projectPath "${viewspec}"
+            projectOptions 'noallwrite clobber nocompress unlocked nomodtime rmdir'
+            p4Exe 'p4'
+            p4SysDrive 'C:'
+            p4SysRoot 'C:\\WINDOWS'
+            useClientSpec 'false'
+            forceSync 'false'
+            alwaysForceSync 'false'
+            dontUpdateServer 'false'
+            disableAutoSync 'false'
+            disableSyncOnly 'false'
+            useOldClientName 'false'
+            updateView 'true'
+            dontRenameClient 'false'
+            updateCounterValue 'false'
+            dontUpdateClient 'false'
+            exposeP4Passwd 'false'
+            wipeBeforeBuild 'true'
+            wipeRepoBeforeBuild 'false'
+            firstChange '-1'
+            slaveClientNameFormat '${basename}-${nodename}'
+            lineEndValue ''
+            useViewMask 'false'
+            useViewMaskForPolling 'false'
+            useViewMaskForSyncing 'false'
+            pollOnlyOnMaster 'true'
+        }
+
+        // Apply Context
+        if (configure) {
+            WithXmlAction action = new WithXmlAction(configure)
+            action.execute(p4Node)
+        }
+        scmNodes << p4Node
+    }
 }
