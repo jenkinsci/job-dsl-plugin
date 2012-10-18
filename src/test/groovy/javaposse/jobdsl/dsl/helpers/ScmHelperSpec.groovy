@@ -98,6 +98,58 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.scmName[0].text() == 'Kittner'
     }
 
+    def 'call svn'() {
+        when:
+        context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
+            svnNode / excludedRegions << '/trunk/.*'
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'http://svn.apache.org/repos/asf/xml/crimson/trunk/'
+        context.scmNode.excludedRegions.size() == 1
+        context.scmNode.excludedRegions[0].value() == '/trunk/.*'
+    }
+
+    def 'call p4 with all parameters'() {
+        setup:
+        def viewspec = '//depot/Tools/build/...\n//depot/webapplications/helloworld/...'
+
+        when:
+        context.p4(viewspec, 'roleoe', 'secret') { p4Node ->
+            p4Node / alwaysForceSync << 'true'
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.attributes()['class'] == 'hudson.plugins.perforce.PerforceSCM'
+        context.scmNode.p4User[0].value() == 'roleoe'
+        context.scmNode.p4Passwd[0].value() == 'secret'
+        context.scmNode.p4Port[0].value() == 'perforce:1666'
+        context.scmNode.alwaysForceSync.size() == 1 // Double check there's only one
+        context.scmNode.alwaysForceSync[0].value() == 'true'
+        context.scmNode.projectPath.size() == 1
+        context.scmNode.projectPath[0].value().contains('//depot')
+    }
+
+    def 'call p4 with few parameters'() {
+        setup:
+        def viewspec = '//depot/Tools/build/...\n//depot/webapplications/helloworld/...'
+
+        when:
+        context.p4(viewspec)
+
+        then:
+        context.scmNode != null
+        context.scmNode.p4User[0].value() == 'rolem'
+        context.scmNode.p4Passwd[0].value() == ''
+        context.scmNode.p4Port[0].value() == 'perforce:1666'
+        context.scmNode.alwaysForceSync[0].value() == 'false'
+        context.scmNode.projectPath.size() == 1
+        context.scmNode.projectPath[0].value().contains('//depot')
+    }
+
     def 'call scm via helper'() {
         when:
         helper.scm {
