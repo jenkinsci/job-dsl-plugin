@@ -10,6 +10,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
 import java.io.PrintWriter;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +31,11 @@ public class DslScriptLoader {
         Binding binding = new Binding();
         binding.setVariable("secretJobManagement", jobManagement); // TODO Find better way of getting this variable into JobParent
         binding.setVariable("out", jobManagement.getOutputStream() ); // Works for println, but not System.out
+
+        Map<String, String> params = jobManagement.getParameters();
+        for(Map.Entry<String,String> entry: params.entrySet()) {
+            binding.setVariable(entry.getKey(), entry.getValue());
+        }
 
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
         config.setScriptBaseClass("javaposse.jobdsl.dsl.JobParent");

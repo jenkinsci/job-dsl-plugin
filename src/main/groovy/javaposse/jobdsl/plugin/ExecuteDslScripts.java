@@ -125,7 +125,7 @@ public class ExecuteDslScripts extends Builder {
         // TODO Use env to inject into DSL
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger());
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env);
 
         List<String> bodies = collectBodies(build, listener, env);
         Set<GeneratedJob> freshJobs = executeBodies(bodies, jm);

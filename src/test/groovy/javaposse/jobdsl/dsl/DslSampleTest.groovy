@@ -26,6 +26,25 @@ class DslSampleTest extends Specification {
         println(firstJob)
     }
 
+    def 'use parameters when loading script'() {
+        setup:
+        setup:
+        StringJobManagement jm = new StringJobManagement()
+        jm.params.gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
+        jm.params.REPO = 'JavaPosseRoundup'
+
+        when:
+        Set<GeneratedJob> results = DslScriptLoader.runDsl(sampleVarDsl, jm)
+
+        then:
+        results != null
+        results.size() == 1
+        jm.savedConfigs.size() == 1
+        def firstJob = jm.savedConfigs['PROJ-JavaPosseRoundup']
+        firstJob != null
+        println firstJob
+    }
+
     def sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
@@ -106,6 +125,21 @@ class DslSampleTest extends Specification {
   <buildWrappers/>
 </project>
 '''
+    def sampleVarDsl = '''
+job {
+    name "PROJ-${REPO}"
+    scm {
+        git(gitUrl)
+    }
+    triggers {
+        scm('*/15 * * * *')
+    }
+    steps { // build step
+        maven('install')
+    }
+}
+'''
+
     def sampleDsl = '''
 def gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
 
