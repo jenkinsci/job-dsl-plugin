@@ -142,6 +142,7 @@ Justin Ryan <jryan@netflix.com>
 
 Andrew Harmel-Law <andrew@harmel-law.com>
 
+Emil Sit <sit@hadapt.com>
 
 Mailing List
 ------------
@@ -149,7 +150,7 @@ To track progress and ask questions head over the mailing list, https://groups.g
 
 Artifacts
 ---------
-(TBD) The library is built using Jenkins-on-Jenkins and is released via its update center.
+The library is built using Jenkins-on-Jenkins and is released via its update center.
 
 License
 -------
