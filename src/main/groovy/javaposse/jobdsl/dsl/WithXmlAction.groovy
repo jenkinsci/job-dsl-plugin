@@ -17,17 +17,13 @@ class WithXmlAction {
     def execute(Node root) {
         Preconditions.checkNotNull(root)
 
-        //println "${closure} ${closure.class}"
         closure.delegate = new MissingPropertyToStringDelegate(root)
+
         // Let creator set strategy
         //closure.resolveStrategy = Closure.OWNER_FIRST
 
-        // Lock up the arguments with the closure
-        //def curried = closure.curry(root)
-
         use(NodeEnhancement) {
             closure.call(root)
-            //curried.call()
         }
     }
 }

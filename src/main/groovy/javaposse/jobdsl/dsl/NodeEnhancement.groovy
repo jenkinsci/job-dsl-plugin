@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import java.util.logging.Logger
+import com.google.common.collect.Sets
 
 /**
  * Add div and leftShift operators to Node.
@@ -10,6 +11,24 @@ import java.util.logging.Logger
 @Category(Node)
 class NodeEnhancement {
     private static final Logger LOGGER = Logger.getLogger(NodeEnhancement.getName())
+
+    Node div(Node orphan) {
+        LOGGER.info("Looking for child node ${orphan}")
+        def childName = orphan.name()
+        def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
+            child instanceof Node && child.name() == childName && child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
+        }
+        if (children.size() == 0) {
+            LOGGER.fine("Creating node for ${childName}")
+            // Create node using just name
+            this.append(orphan)
+            orphan
+        } else {
+            // Return first childName, that's the contract for div
+            LOGGER.fine("Using first found childName for ${childName}")
+            return children[0]
+        }
+    }
 
     Node div(String childName) { // a.div(b)
         LOGGER.info("Looking for childName ${childName} ${LOGGER.getLevel()}")

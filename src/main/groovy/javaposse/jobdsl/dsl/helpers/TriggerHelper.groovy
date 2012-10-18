@@ -13,9 +13,14 @@ import groovy.transform.Canonical
 class TriggerHelper extends AbstractHelper<TriggerContext> {
 
     TriggerHelper(List<WithXmlAction> withXmlActions) {
-        this.withXmlActions = withXmlActions
+        super(withXmlActions)
     }
 
+    /**
+     * Public method available on job {}
+     * @param closure
+     * @return
+     */
     def triggers(Closure closure) {
         execute(closure, new TriggerContext())
     }

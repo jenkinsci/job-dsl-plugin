@@ -2,6 +2,11 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.WithXmlAction
 
+/**
+ * Each helper has essentially two parts. First they run a closure in executeWithContext right away to build a context
+ * object. Once we have the actually root, we run again via the generateWithXmlClosure.
+ * @param < T >
+ */
 abstract class AbstractHelper<T extends Context> implements Helper {
     /**
      * Global list of all withXmlActions. Helper should append to it as they get called. They could prepend to the list,
@@ -10,6 +15,10 @@ abstract class AbstractHelper<T extends Context> implements Helper {
      *
      */
     List<WithXmlAction> withXmlActions
+
+    AbstractHelper(List<WithXmlAction> withXmlActions) {
+        this.withXmlActions = withXmlActions
+    }
 
     static def executeInContext(Closure closure, Context freshContext) {
         if(closure) {
@@ -32,6 +41,8 @@ abstract class AbstractHelper<T extends Context> implements Helper {
 
         // Queue up our action, using the concrete classes logic
         withXmlActions << generateWithXmlAction(freshContext)
+
+        return freshContext
     }
 
     WithXmlAction generateWithXmlAction(T context) {
