@@ -34,7 +34,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 class StepHelper extends AbstractHelper<StepContext> {
 
     StepHelper(List<WithXmlAction> withXmlActions) {
-        this.withXmlActions = withXmlActions
+        super(withXmlActions)
     }
 
     static class StepContext implements Context {

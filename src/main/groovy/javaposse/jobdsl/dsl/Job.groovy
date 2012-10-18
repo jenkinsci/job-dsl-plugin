@@ -23,11 +23,13 @@ public class Job {
     @Delegate TriggerHelper helperTrigger
     @Delegate StepHelper helperStep
     @Delegate PublisherHelper helperPublisher
+    @Delegate MultiScmHelper helperMultiscm
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
         helperAuthorization = new AuthorizationHelper(withXmlActions)
         helperScm = new ScmHelper(withXmlActions)
+        helperMultiscm = new MultiScmHelper(withXmlActions)
         helperTrigger = new TriggerHelper(withXmlActions)
         helperStep = new StepHelper(withXmlActions)
         helperPublisher = new PublisherHelper(withXmlActions)

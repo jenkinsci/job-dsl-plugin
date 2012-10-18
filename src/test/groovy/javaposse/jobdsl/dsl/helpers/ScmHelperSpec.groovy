@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
-import javaposse.jobdsl.dsl.helpers.ScmHelper.ScmContext
 import spock.lang.Specification
 
 public class ScmHelperSpec extends Specification {
@@ -50,7 +49,7 @@ public class ScmHelperSpec extends Specification {
         then:
         context.scmNode != null
         context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == GIT_REPO_URL
-        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == '**'
 
     }
 
@@ -60,19 +59,43 @@ public class ScmHelperSpec extends Specification {
 
         then:
         context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'feature-branch'
-
     }
 
-    def 'call git scm with configure'() {
+    def 'call git scm with configure appending'() {
         when:
-        context.git(GIT_REPO_URL, null) { gitNode ->
-            gitNode << gitConfigName('john')
-            gitNode.appendNode('gitConfigEmail' ,'john@gmail.com')
+        context.git(GIT_REPO_URL, null) { Node gitNode ->
+            gitNode << authorOrCommitter('true')
+            // gitNode / authorOrCommitter('true') // Always append
+            // gitNode.authorOrCommitter('true') // Does not work since there is no method that
+            // authorOrCommitter('true') // Does not work since it has no context
+            gitNode.appendNode('gitTool', 'NotDefault')
         }
 
         then:
+        context.scmNode.authorOrCommitter.size() == 2
+        context.scmNode.authorOrCommitter[0].text() == 'false'
+        context.scmNode.authorOrCommitter[1].text() == 'true'
+        context.scmNode.gitTool.size() == 2
+        context.scmNode.gitTool[0].text() == 'Default'
+        context.scmNode.gitTool[1].text() == 'NotDefault'
+    }
+
+
+    def 'call git scm with configure on Node'() {
+        when:
+        context.git(GIT_REPO_URL, null) { gitNode ->
+            gitNode << gitConfigName('john') // Always append
+            gitNode.appendNode('gitConfigEmail' ,'john@gmail.com') // Clearly an append
+            gitNode / scmName << 'Kittner' // Re-use node and set value
+        }
+
+        then:
+        context.scmNode.gitConfigName.size() == 1
         context.scmNode.gitConfigName[0].text() == 'john'
+        context.scmNode.gitConfigEmail.size() == 1
         context.scmNode.gitConfigEmail[0].text() == 'john@gmail.com'
+        context.scmNode.scmName.size() == 1
+        context.scmNode.scmName[0].text() == 'Kittner'
     }
 
     def 'call scm via helper'() {
@@ -83,16 +106,7 @@ public class ScmHelperSpec extends Specification {
 
         then:
         1 * mockActions.add(_)
-
-        // TODO Support this notation
-//        when:
-//        helper.scm.git('git://github.com/Netflix/curator.git')
-//
-//        then:
-//        1 * mockActions.add(_)
     }
-
-    // TODO Test Configure Block
 
     def 'execute withXml Action'() {
         Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
@@ -103,7 +117,7 @@ public class ScmHelperSpec extends Specification {
         }
 
         when:
-        def withXmlAction = helper.generateWithXmlAction( new ScmContext(scmNode))
+        def withXmlAction = helper.generateWithXmlAction( new ScmContext(scmNode) )
         withXmlAction.execute(root)
 
         then:
