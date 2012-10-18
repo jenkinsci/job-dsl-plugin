@@ -16,6 +16,8 @@ public class StringJobManagement extends AbstractJobManagement {
     Map<String,String> availableConfigs = [:]
     Map<String,String> savedConfigs = [:]
 
+    Map<String,String> params = [:]
+
     public StringJobManagement(String defaultXml) {
         this.defaultXml = defaultXml
     }
@@ -48,6 +50,11 @@ public class StringJobManagement extends AbstractJobManagement {
     boolean createOrUpdateConfig(String jobName, String config) {
         savedConfigs[jobName] = config
         return false
+    }
+
+    @Override
+    Map<String, String> getParameters() {
+        return params
     }
 }
 
