@@ -2,7 +2,7 @@ buildscript {
     repositories {
         maven {
             name 'jenkins-ci-plugins'
-            url("http://maven.jenkins-ci.org/content/repositories/releases")
+            url('http://maven.jenkins-ci.org/content/repositories/releases')
         }
         mavenCentral()
     }
@@ -62,16 +62,5 @@ jenkinsPlugin {
 }
 
 task wrapper(type: Wrapper) { gradleVersion = '1.2' }
-
-task(showTestClasspath) << {
-    println "Classpath:"
-    println "${configurations.testCompile.resolvedConfiguration}"
-    println "${configurations.compile.allArtifacts}"
-    configurations.testCompile.files.each {
-        println it
-    }
-    println "${configurations.testCompile.allDependencies}"
-    println "${configurations.jenkinsTest.allArtifacts}"
-}
 
 apply from: 'gradle/ide.gradle'
