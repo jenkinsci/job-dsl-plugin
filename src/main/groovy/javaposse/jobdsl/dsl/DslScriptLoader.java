@@ -34,6 +34,7 @@ public class DslScriptLoader {
 
         Map<String, String> params = jobManagement.getParameters();
         for(Map.Entry<String,String> entry: params.entrySet()) {
+            LOGGER.fine(String.format("Binding {} to {}", entry.getKey(), entry.getValue()));
             binding.setVariable(entry.getKey(), entry.getValue());
         }
 

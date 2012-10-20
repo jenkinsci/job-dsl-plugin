@@ -14,8 +14,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -121,8 +121,7 @@ public class ExecuteDslScripts extends Builder {
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
                     throws InterruptedException, IOException {
         EnvVars env = build.getEnvironment(listener);
-        env.overrideAll(build.getBuildVariables());
-        // TODO Use env to inject into DSL
+        env.putAll(build.getBuildVariables());
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
         JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env);
