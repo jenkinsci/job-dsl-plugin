@@ -271,7 +271,9 @@ public class ExecuteDslScripts extends Builder {
         for(GeneratedJob removedJob: removed) {
             AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName());
             // TODO Let user choose what to do
-            removedProject.disable(); // TODO deleteJob which is protected
+            if (removedProject != null) {
+                removedProject.disable(); // TODO deleteJob which is protected
+            }
         }
 
         // BuildAction is created with the result, we'll look at an aggregation of builds to know figure out our generated jobs
