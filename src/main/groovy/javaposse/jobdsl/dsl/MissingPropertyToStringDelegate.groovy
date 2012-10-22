@@ -15,6 +15,7 @@ class MissingPropertyToStringDelegate {
     }
     /**
      * Make string for div() to do lookup
+     * TODO Return Node instead of String, and let div() receive it
      */
     def propertyMissing(String propertyName) {
         LOGGER.info("Missing ${propertyName}")
@@ -27,7 +28,7 @@ class MissingPropertyToStringDelegate {
         writer.toString()
     }
 
-    def methodMissing(String methodName, args) {
+    Node methodMissing(String methodName, args) {
         LOGGER.fine("Method missing for ${methodName} ${args}")
 
         // TODO Investigate re-using root's children for names. Problems with closure and non-left aligned assignments

@@ -24,6 +24,7 @@ public class Job {
     @Delegate StepHelper helperStep
     @Delegate PublisherHelper helperPublisher
     @Delegate MultiScmHelper helperMultiscm
+    @Delegate TopLevelHelper helperTopLevel
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
@@ -33,6 +34,7 @@ public class Job {
         helperTrigger = new TriggerHelper(withXmlActions)
         helperStep = new StepHelper(withXmlActions)
         helperPublisher = new PublisherHelper(withXmlActions)
+        helperTopLevel = new TopLevelHelper(withXmlActions)
     }
 
     /**

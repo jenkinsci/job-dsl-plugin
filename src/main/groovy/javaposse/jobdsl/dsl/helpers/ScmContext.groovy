@@ -180,38 +180,39 @@ class ScmContext implements Context {
        <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
      </scm>
      */
-        def svn(String svnUrl, Closure configure = null) {
-            Preconditions.checkNotNull(svnUrl)
-            validateMulti()
-            // TODO Validate url as a svn url (e.g. https or http)
+    def svn(String svnUrl, Closure configure = null) {
+        Preconditions.checkNotNull(svnUrl)
+        validateMulti()
+        // TODO Validate url as a svn url (e.g. https or http)
 
-            // TODO Attempt to update existing scm node
-            def nodeBuilder = new NodeBuilder()
+        // TODO Attempt to update existing scm node
+        def nodeBuilder = new NodeBuilder()
 
-            Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
-                locations {
-                    'hudson.scm.SubversionSCM_-ModuleLocation' {
-                        remote "${svnUrl}"
-                        local '.'
-                    }
+        Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
+            locations {
+                'hudson.scm.SubversionSCM_-ModuleLocation' {
+                    remote "${svnUrl}"
+                    local '.'
                 }
-
-                excludedRegions ''
-                includedRegions ''
-                excludedUsers ''
-                excludedRevprop ''
-                excludedCommitMessages ''
-                workspaceUpdater(class: "hudson.scm.subversion.UpdateUpdater")
             }
 
-            // Apply Context
-            if (configure) {
-                WithXmlAction action = new WithXmlAction(configure)
-                action.execute(svnNode)
-            }
-            scmNodes << svnNode
-
+            excludedRegions ''
+            includedRegions ''
+            excludedUsers ''
+            excludedRevprop ''
+            excludedCommitMessages ''
+            workspaceUpdater(class: "hudson.scm.subversion.UpdateUpdater")
         }
+
+        // Apply Context
+        if (configure) {
+            WithXmlAction action = new WithXmlAction(configure)
+            action.execute(svnNode)
+        }
+        scmNodes << svnNode
+
+    }
+
     /**
      <scm class="hudson.plugins.perforce.PerforceSCM">
        <p4User>rolem</p4User>

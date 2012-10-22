@@ -23,7 +23,7 @@ abstract class AbstractHelper<T extends Context> implements Helper {
     static def executeInContext(Closure closure, Context freshContext) {
         if(closure) {
             closure.delegate = freshContext
-            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            //closure.resolveStrategy = Closure.DELEGATE_FIRST
             def result = closure.call() // No args
 
             // TODO Create callback to concrete classes, so that they can "enhance" the closure, e.g. with static imports
@@ -48,26 +48,12 @@ abstract class AbstractHelper<T extends Context> implements Helper {
     WithXmlAction generateWithXmlAction(T context) {
         // Closure to be run later, in this context we're given the root node with the WithXmlAction magic
         Closure withXmlClosure = generateWithXmlClosure(context)
-        withXmlClosure.resolveStrategy = Closure.DELEGATE_ONLY // So call don't come back to us
+        //withXmlClosure.resolveStrategy = Closure.DELEGATE_FIRST
 
         return new WithXmlAction(withXmlClosure)
     }
 
     abstract Closure generateWithXmlClosure(T context);
 
-    /*
-    <buildWrappers>
-      <hudson.plugins.build__timeout.BuildTimeoutWrapper>
-        <timeoutMinutes>15</timeoutMinutes>
-        <failBuild>true</failBuild>
-      </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    </buildWrappers>
-    */
-
-    /*
-    <hudson.plugins.chucknorris.CordellWalkerRecorder>
-      <factGenerator/>
-    </hudson.plugins.chucknorris.CordellWalkerRecorder>
-     */
 }
 

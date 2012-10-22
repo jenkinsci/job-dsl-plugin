@@ -53,8 +53,12 @@ class NodeEnhancement {
         return newNode.children();
     }
 
+    Node leftShift(boolean boolValue) {
+        leftShift( boolValue?'true':'false')
+    }
+
     Node leftShift(String appendChildName) {
-        LOGGER.fine("Appending fresh node for ${appendChildName}")
+        LOGGER.fine("Setting value of ${appendChildName} for ${this.name()}")
         this.setValue(appendChildName)
         //this.appendNode(appendChildName)
         return this
