@@ -48,6 +48,8 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     boolean createOrUpdateConfig(String jobName, String config) {
+        validateUpdateArgs(jobName, config);
+
         savedConfigs[jobName] = config
         return false
     }

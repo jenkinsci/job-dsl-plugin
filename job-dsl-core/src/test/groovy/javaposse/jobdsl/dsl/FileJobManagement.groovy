@@ -39,6 +39,8 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     boolean createOrUpdateConfig(String jobName, String config) throws JobNameNotProvidedException, JobConfigurationMissingException {
+        validateUpdateArgs(jobName, config);
+
         new File(jobName).write(config)
         return true
     }

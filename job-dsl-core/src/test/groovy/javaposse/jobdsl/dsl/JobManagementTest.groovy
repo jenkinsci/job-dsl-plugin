@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.JobManagement;
-import javaposse.jobdsl.plugin.JenkinsJobManagement;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 
 import spock.lang.*
@@ -24,7 +23,7 @@ class JobManagementTest extends Specification {
 
     def "get config - no name provided"() {
         setup:
-        JobManagement jm = new JenkinsJobManagement()
+        JobManagement jm = new StringJobManagement()
 
         when:
         String xml = jm.getConfig("")
@@ -78,11 +77,12 @@ class JobManagementTest extends Specification {
 //        // Check that the new config for this job is as expected now the update was successful
 //    }
 
+
     def "create new config - name not provided (NULL)"() {
         // Should throw a "NewJobNameMissingException
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new JenkinsJobManagement()
+        JobManagement jm = new StringJobManagement()
 
         when:
         jm.createOrUpdateConfig(null, updatedXml_keepDepIsTrue)
@@ -95,7 +95,7 @@ class JobManagementTest extends Specification {
         // Should throw a "NewJobNameMissingException
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new JenkinsJobManagement()
+        JobManagement jm = new StringJobManagement()
 
         when:
         jm.createOrUpdateConfig("", updatedXml_keepDepIsTrue)
@@ -108,7 +108,7 @@ class JobManagementTest extends Specification {
         // Should throw a "NewJobNameMissingException
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new JenkinsJobManagement()
+        JobManagement jm = new StringJobManagement()
 
         when:
         jm.createOrUpdateConfig("NEW-JOB-NAME", null)
@@ -121,7 +121,7 @@ class JobManagementTest extends Specification {
         // Should throw a "NewJobNameMissingException
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new JenkinsJobManagement()
+        JobManagement jm = new StringJobManagement()
 
         when:
         jm.createOrUpdateConfig("NEW-JOB-NAME", "")

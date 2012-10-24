@@ -1,7 +1,7 @@
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
-def gitIgnore = file('.gitignore').readLines()
+def gitIgnore = rootProject.file('.gitignore').readLines()
 def gitIgnoreDirs = gitIgnore*.trim().findAll { !it.startsWith('#') && it.endsWith('/') }
 
 idea {

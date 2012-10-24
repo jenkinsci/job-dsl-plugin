@@ -81,8 +81,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
         boolean created = false;
 
-        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
-        if (config == null || config.isEmpty()) throw new JobConfigurationMissingException();
+        validateUpdateArgs(jobName, config);
 
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
         Jenkins.checkGoodName(jobName);

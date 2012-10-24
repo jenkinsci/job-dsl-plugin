@@ -31,4 +31,10 @@ public abstract class AbstractJobManagement implements JobManagement {
      public Map<String, String> getParameters() {
         return Maps.newHashMap();
     }
+
+    protected void validateUpdateArgs(String jobName, String config) {
+        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
+        if (config == null || config.isEmpty()) throw new JobConfigurationMissingException();
+    }
+
 }

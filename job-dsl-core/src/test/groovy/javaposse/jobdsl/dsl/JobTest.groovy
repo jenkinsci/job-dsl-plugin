@@ -59,6 +59,7 @@ class JobTest extends Specification {
 
     def 'load large template from file'() {
         setup:
+        println new File('src/test/resources').absolutePath
         JobManagement jm = new FileJobManagement(new File('src/test/resources'))
         Job job = new Job(jm)
 
