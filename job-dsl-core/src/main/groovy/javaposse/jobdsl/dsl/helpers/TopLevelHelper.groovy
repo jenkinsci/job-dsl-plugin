@@ -53,6 +53,15 @@ class TopLevelHelper implements Helper {
         }
     }
 
+    /*
+    <disabled>true</disabled>
+     */
+    def disabled(boolean shouldDisable = true) {
+        execute {
+            it / disabled(shouldDisable?'true':'false')
+        }
+    }
+
     WithXmlAction execute(Closure rootClosure) {
         rootClosure.resolveStrategy = Closure.DELEGATE_FIRST
         def action = new WithXmlAction(rootClosure)

@@ -16,8 +16,8 @@ public abstract class JobParent extends Script {
     }
 
     public Job job(Closure closure) {
-        LOGGER.log(Level.FINE, "Got closure and have ${secretJobManagement}")
-        Job job = new Job(secretJobManagement)
+        LOGGER.log(Level.FINE, "Got closure and have ${jm}")
+        Job job = new Job(jm)
 
         // Configure with what we have already
         closure.delegate = job

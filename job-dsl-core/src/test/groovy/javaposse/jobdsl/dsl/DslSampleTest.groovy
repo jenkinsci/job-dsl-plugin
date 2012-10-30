@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.*
-import groovy.xml.MarkupBuilder
 
 /**
  * Attempt to execute the sample page in README.md
@@ -14,7 +13,7 @@ class DslSampleTest extends Specification {
         jm.addConfig('TMPL-test', sampleTemplate)
 
         when:
-        Set<GeneratedJob> results = DslScriptLoader.runDsl(sampleDsl, jm)
+        Set<GeneratedJob> results = DslScriptLoader.runDslShell(sampleDsl, jm)
 
         then:
         results != null
@@ -28,13 +27,12 @@ class DslSampleTest extends Specification {
 
     def 'use parameters when loading script'() {
         setup:
-        setup:
         StringJobManagement jm = new StringJobManagement()
         jm.params.gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
         jm.params.REPO = 'JavaPosseRoundup'
 
         when:
-        Set<GeneratedJob> results = DslScriptLoader.runDsl(sampleVarDsl, jm)
+        Set<GeneratedJob> results = DslScriptLoader.runDslShell(sampleVarDsl, jm)
 
         then:
         results != null

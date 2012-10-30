@@ -26,7 +26,17 @@ class NodeEnhancement {
         } else {
             // Return first childName, that's the contract for div
             LOGGER.fine("Using first found childName for ${childName}")
-            return children[0]
+            Node found = children[0]
+
+            // Copy over value and attribute from orphan if it has one.
+            if(orphan.value()) {
+                found.setValue(orphan.value())
+            }
+            orphan.attributes().each { k, v ->
+                found.attributes().put(k,v)
+            }
+
+            found
         }
     }
 

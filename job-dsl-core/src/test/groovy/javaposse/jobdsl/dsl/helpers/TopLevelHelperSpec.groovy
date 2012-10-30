@@ -56,6 +56,24 @@ public class TopLevelHelperSpec extends Specification {
         1 * mockActions.add(_)
     }
 
+    def 'disable defaults to true'() {
+        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+
+        when:
+        helper.disabled().execute(root)
+
+        then:
+        root.disabled.size() == 1
+        root.disabled[0].value() == 'true'
+
+        when:
+        helper.disabled(false).execute(root)
+
+        then:
+        root.disabled.size() == 1
+        root.disabled[0].value() == 'false'
+    }
+
     def 'label constructs xml'() {
         Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 

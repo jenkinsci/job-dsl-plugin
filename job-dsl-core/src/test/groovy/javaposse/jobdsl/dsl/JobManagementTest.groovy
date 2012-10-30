@@ -1,11 +1,7 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.JobManagement;
-import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
-
 import spock.lang.*
 
-import static org.custommonkey.xmlunit.XMLAssert.*
 import static org.custommonkey.xmlunit.XMLUnit.*
 
 class JobManagementTest extends Specification {

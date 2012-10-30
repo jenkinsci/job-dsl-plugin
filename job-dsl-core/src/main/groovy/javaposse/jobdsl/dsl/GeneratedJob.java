@@ -67,7 +67,7 @@ public class GeneratedJob implements Comparable {
     public String toString() {
         return "GeneratedJob{" +
                 "jobName='" + jobName + '\'' +
-                ", templateName='" + templateName + '\'' +
+                ", templateName=" + templateName==null?"none":("'" + templateName + '\'') +
                 '}';
     }
 }

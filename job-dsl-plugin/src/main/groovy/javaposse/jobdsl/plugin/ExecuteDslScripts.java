@@ -13,15 +13,16 @@ import hudson.tasks.Builder;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.model.Jenkins;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -126,8 +127,27 @@ public class ExecuteDslScripts extends Builder {
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
         JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env);
 
-        List<String> bodies = collectBodies(build, listener, env);
-        Set<GeneratedJob> freshJobs = executeBodies(bodies, jm);
+        Set<GeneratedJob> freshJobs;
+        if(usingScriptText) {
+            // Ideally we'd keep with the url form
+            freshJobs = DslScriptLoader.runDslShell(scriptText, jm);
+        } else {
+            String targetsStr = env.expand(this.targets);
+            LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
+            String[] targets = targetsStr.split("\n");
+
+            String jobName = build.getProject().getName();
+            System.out.println("***************************");
+            System.out.println(sun.net.www.protocol.workspace.Handler.class);
+            URL workspaceUrl = new URL("workspace://${jobName}/");
+            freshJobs = Sets.newHashSet();
+            for (String target : targets) {
+                ScriptRequest request = new ScriptRequest(target, workspaceUrl);
+                Set<GeneratedJob> dslJobs = DslScriptLoader.runDslEngine(request, jm);
+
+                freshJobs.addAll(dslJobs);
+            }
+        }
 
         // TODO Pull all this out, so that it can run outside of the plugin, e.g. JenkinsRestApiJobManagement
         updateTemplates(build, listener, freshJobs);
@@ -144,46 +164,46 @@ public class ExecuteDslScripts extends Builder {
         return true;
     }
 
-    private List<String> collectBodies(AbstractBuild<?, ?> build, BuildListener listener, EnvVars env) throws IOException, InterruptedException {
-        List<String> bodies = Lists.newArrayList();
-        if (usingScriptText) {
-            listener.getLogger().println("Using dsl from string");
-            bodies.add(scriptText);
-        } else {
-            String targetsStr = env.expand(this.targets);
-            LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
-            String[] targets = targetsStr.split("\n");
-
-            for (String target : targets) {
-                FilePath targetPath = build.getModuleRoot().child(target);
-                if (!targetPath.exists()) {
-                    targetPath = build.getWorkspace().child(target);
-                    if (!targetPath.exists()) {
-                        throw new FileNotFoundException("Unable to find DSL script at " + target);
-                    }
-                }
-                listener.getLogger().println(String.format("Running dsl from %s", targetPath));
-
-                String dslBody = targetPath.readToString();
-                bodies.add(dslBody);
-            }
-        }
-        return bodies;
-    }
-
-    private Set<GeneratedJob> executeBodies(List<String> bodies, JenkinsJobManagement jm) {
-        Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
-        for (String dslBody: bodies) {
-            LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
-
-            // Room for one dsl to succeed and another to fail, yet jobs from the first will finish
-            // TODO postpone saving jobs even later
-            Set<GeneratedJob> dslJobs = DslScriptLoader.runDsl(dslBody, jm);
-
-            freshJobs.addAll(dslJobs);
-        }
-        return freshJobs;
-    }
+//    private List<String> collectBodies(AbstractBuild<?, ?> build, BuildListener listener, EnvVars env) throws IOException, InterruptedException {
+//        List<String> bodies = Lists.newArrayList();
+//        if (usingScriptText) {
+//            listener.getLogger().println("Using dsl from string");
+//            bodies.add(scriptText);
+//        } else {
+//            String targetsStr = env.expand(this.targets);
+//            LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
+//            String[] targets = targetsStr.split("\n");
+//
+//            for (String target : targets) {
+//                FilePath targetPath = build.getModuleRoot().child(target);
+//                if (!targetPath.exists()) {
+//                    targetPath = build.getWorkspace().child(target);
+//                    if (!targetPath.exists()) {
+//                        throw new FileNotFoundException("Unable to find DSL script at " + target);
+//                    }
+//                }
+//                listener.getLogger().println(String.format("Running dsl from %s", targetPath));
+//
+//                String dslBody = targetPath.readToString();
+//                bodies.add(dslBody);
+//            }
+//        }
+//        return bodies;
+//    }
+//
+//    private Set<GeneratedJob> executeBodies(List<String> bodies, JenkinsJobManagement jm) {
+//        Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
+//        for (String dslBody: bodies) {
+//            LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
+//
+//            // Room for one dsl to succeed and another to fail, yet jobs from the first will finish
+//            // TODO postpone saving jobs even later
+//            Set<GeneratedJob> dslJobs = DslScriptLoader.runDslShell(dslBody, jm);
+//
+//            freshJobs.addAll(dslJobs);
+//        }
+//        return freshJobs;
+//    }
 
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
