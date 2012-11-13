@@ -109,66 +109,17 @@ public class ExecuteDslScripts extends Builder {
         return new GeneratedJobsAction(project);
     }
 
-
-    static URLStreamHandler getURLStreamHandler(String protocol) {
-        URLStreamHandler handler = null;
-
-        // Try java protocol handler
-                String packagePrefixList = null;
-
-                packagePrefixList
-                        = java.security.AccessController.doPrivileged(
-                        new sun.security.action.GetPropertyAction(
-                                "java.protocol.handler.pkgs",""));
-                if (packagePrefixList != "") {
-                    packagePrefixList += "|";
-                }
-
-                // REMIND: decide whether to allow the "null" class prefix
-                // or not.
-                packagePrefixList += "sun.net.www.protocol";
-
-                StringTokenizer packagePrefixIter =
-                        new StringTokenizer(packagePrefixList, "|");
-
-                while (handler == null &&
-                        packagePrefixIter.hasMoreTokens()) {
-
-                    String packagePrefix =
-                            packagePrefixIter.nextToken().trim();
-                    try {
-                        String clsName = packagePrefix + "." + protocol +
-                                ".Handler";
-                        Class cls = null;
-                        try {
-                            cls = Class.forName(clsName);
-                        } catch (ClassNotFoundException e) {
-                            ClassLoader cl = ClassLoader.getSystemClassLoader();
-                            if (cl != null) {
-                                cls = cl.loadClass(clsName);
-                            }
-                        }
-                        if (cls != null) {
-                            handler  =
-                                    (URLStreamHandler)cls.newInstance();
-                        }
-                    } catch (Exception e) {
-                        // any number of exceptions can get thrown here
-                    }
-        }
-        return handler;
-    }
-            /**
-            * Runs every job DSL script provided in the plugin configuration, which results in new /
-            * updated Jenkins jobs. The created / updated jobs are reported in the build result.
-            *
-            * @param build
-            * @param launcher
-            * @param listener
-            * @return
-            * @throws InterruptedException
-            * @throws IOException
-            */
+    /**
+     * Runs every job DSL script provided in the plugin configuration, which results in new /
+     * updated Jenkins jobs. The created / updated jobs are reported in the build result.
+     *
+     * @param build
+     * @param launcher
+     * @param listener
+     * @return
+     * @throws InterruptedException
+     * @throws IOException
+     */
     @SuppressWarnings("rawtypes")
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)

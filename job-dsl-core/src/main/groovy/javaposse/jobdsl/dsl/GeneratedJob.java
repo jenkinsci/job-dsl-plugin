@@ -65,9 +65,10 @@ public class GeneratedJob implements Comparable {
 
     @Override
     public String toString() {
+        String cleanTemplateName = templateName==null?"none":("'" + templateName + '\'');
         return "GeneratedJob{" +
-                "jobName='" + jobName + '\'' +
-                ", templateName=" + templateName==null?"none":("'" + templateName + '\'') +
-                '}';
+                "jobName='" + jobName + "'" +
+                ", templateName=" + cleanTemplateName +
+                "}";
     }
 }
