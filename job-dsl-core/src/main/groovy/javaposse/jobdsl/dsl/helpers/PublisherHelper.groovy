@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
-import javax.naming.event.EventContext
 
 class PublisherHelper extends AbstractHelper<PublisherContext> {
 

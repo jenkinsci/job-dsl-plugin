@@ -1,4 +1,4 @@
-package sun.net.www.protocol.workspace;
+package javaposse.jobdsl.plugin;
 
 import hudson.FilePath;
 import hudson.model.AbstractProject;
@@ -10,10 +10,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class WorkspaceConnection extends URLConnection {
+public class WorkspaceUrlConnection extends URLConnection {
     InputStream is;
 
-    public WorkspaceConnection(URL url) {
+    public WorkspaceUrlConnection(URL url) {
         super(url);
     }
 

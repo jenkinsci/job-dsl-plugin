@@ -1,13 +1,11 @@
 package javaposse.jobdsl.plugin;
 
-import java.util.Collection;
-import java.util.Set;
-
+import com.google.common.collect.Sets;
+import hudson.model.Action;
 import javaposse.jobdsl.dsl.GeneratedJob;
 
-import hudson.model.Action;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import java.util.Collection;
+import java.util.Set;
 
 class GeneratedJobsBuildAction implements Action {
     public final Set<GeneratedJob> modifiedJobs;

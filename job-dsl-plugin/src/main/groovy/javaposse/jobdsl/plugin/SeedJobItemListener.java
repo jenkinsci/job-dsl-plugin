@@ -1,13 +1,9 @@
 package javaposse.jobdsl.plugin;
 
-import java.util.Set;
-import java.util.logging.Logger;
-
-import jenkins.model.Jenkins;
-
-import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
+
+import java.util.logging.Logger;
 
 public class SeedJobItemListener extends ItemListener {
     private static final Logger LOGGER = Logger.getLogger(SeedJobItemListener.class.getName());

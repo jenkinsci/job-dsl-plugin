@@ -1,4 +1,3 @@
-
 allprojects {
     buildscript {
         repositories {
@@ -11,7 +10,10 @@ allprojects {
 }
 
 subprojects {
+    group = "org.jenkinsci.plugins"
     apply plugin: 'groovy'
+    sourceCompatibility = 1.5
+    targetCompatibility = 1.5
     dependencies {
         //groovy localGroovy() // Can't guarantee 1.8.6
         groovy 'org.codehaus.groovy:groovy-all:1.8.6'
@@ -25,14 +27,8 @@ subprojects {
     }
 }
 
-group = "org.jenkinsci.plugins"
-description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
-
-task wrapper(type: Wrapper) { gradleVersion = '1.2' }
-
 project(':job-dsl-core') {
-    dependencies {
-    }
+    description = "Generates Jenkins jobs via a DSL"
     jar {
         manifest {
             attributes('Main-Class': 'javaposse.jobdsl.Run')
@@ -47,7 +43,10 @@ project(':job-dsl-core') {
 }
 
 project(':job-dsl-plugin') {
+    description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
     dependencies {
         compile project(':job-dsl-core')
     }
 }
+
+task wrapper(type: Wrapper) { gradleVersion = '1.2' }

@@ -12,8 +12,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLStreamHandler;
-import java.util.Date;
 
 /**
  * Implements Groovy's ResourceConnector

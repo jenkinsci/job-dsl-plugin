@@ -1,34 +1,25 @@
 package javaposse.jobdsl.plugin;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
-import groovy.transform.PackageScope;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 import hudson.EnvVars;
 import hudson.XmlFile;
 import hudson.model.AbstractProject;
-import hudson.model.Project;
 import hudson.model.TopLevelItem;
+import javaposse.jobdsl.dsl.*;
+import jenkins.model.Jenkins;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javaposse.jobdsl.dsl.*;
-
-import javax.xml.transform.stream.StreamSource;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
-
-import jenkins.model.Jenkins;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.xml.sax.SAXException;
 
 /**
  * Manages Jenkins Jobs, providing facilities to retrieve and create / update.

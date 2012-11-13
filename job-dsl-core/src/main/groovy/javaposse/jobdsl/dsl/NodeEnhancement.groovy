@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import java.util.logging.Logger
-import com.google.common.collect.Sets
 
 /**
  * Add div and leftShift operators to Node.
