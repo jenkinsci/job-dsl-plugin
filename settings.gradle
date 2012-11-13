@@ -1,1 +1,2 @@
-rootProject.name='job-dsl-plugin'
+rootProject.name='job-dsl-plugin-root'
+include 'job-dsl-core', 'job-dsl-plugin'
