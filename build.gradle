@@ -1,77 +1,53 @@
-buildscript {
-    repositories {
-        maven {
-            name 'jenkins-ci-plugins'
-            url("http://maven.jenkins-ci.org/content/repositories/releases")
+
+allprojects {
+    buildscript {
+        repositories {
+            mavenCentral()
         }
+    }
+    repositories {
         mavenCentral()
     }
-    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.4.0') }
 }
-apply plugin: 'jpi'
 
-repositories {
-    maven {
-        name 'jenkin-ci'
-        url 'http://maven.jenkins-ci.org/content/repositories/releases'
+subprojects {
+    apply plugin: 'groovy'
+    dependencies {
+        //groovy localGroovy() // Can't guarantee 1.8.6
+        groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+        compile 'xmlunit:xmlunit:1.1' // For runtime use, not just for testing
+        compile 'com.google.guava:guava:13.0.1'
+        testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+        testCompile 'junit:junit:4.10'
     }
-    mavenCentral()
-}
-
-configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'instance-identity'
-configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-cli-auth'
-
-dependencies {
-    //groovy localGroovy() // Can't guarantee 1.8.6
-    groovy 'org.codehaus.groovy:groovy-all:1.8.6'
-    compile 'xmlunit:xmlunit:1.1'
-    testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
-    testCompile 'junit:junit:4.10'
-}
-
-test {
-    useJUnit() // Causes "failed to create temp file to extract class from jar into"
+    test {
+        useJUnit() // Causes "failed to create temp file to extract class from jar into"
+    }
 }
 
 group = "org.jenkinsci.plugins"
 description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
-//archivesBaseName = "job-dsl-plugin"
-
-jenkinsPlugin {
-    coreVersion = '1.456'
-    displayName = 'Job DSL'
-    url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
-    gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
-    developers {
-        developer {
-            id 'quidryan'
-            name 'Justin Ryan'
-            email 'jryan@netflix.com'
-        }
-        developer {
-            id 'andrewharmellaw'
-            name 'Andrew Harmel-Law'
-            email 'andrew@harmel-law.com'
-        }
-        developer {
-            id 'sit'
-            name 'Emil Sit'
-            email 'sit@hadapt.com'
-        }
-    }
-}
 
 task wrapper(type: Wrapper) { gradleVersion = '1.2' }
 
-task(showTestClasspath) << {
-    println "Classpath:"
-    println "${configurations.testCompile.resolvedConfiguration}"
-    println "${configurations.compile.allArtifacts}"
-    configurations.testCompile.files.each {
-        println it
+project(':job-dsl-core') {
+    dependencies {
     }
-    println "${configurations.testCompile.allDependencies}"
-    println "${configurations.jenkinsTest.allArtifacts}"
+    jar {
+        manifest {
+            attributes('Main-Class': 'javaposse.jobdsl.Run')
+        }
+    }
+
+    task run(type:JavaExec, dependsOn:build) {
+        classpath sourceSets.main.runtimeClasspath
+        main 'javaposse.jobdsl.Run'
+        //args rootProject.args
+    }
 }
 
-apply from: 'gradle/ide.gradle'
+project(':job-dsl-plugin') {
+    dependencies {
+        compile project(':job-dsl-core')
+    }
+}

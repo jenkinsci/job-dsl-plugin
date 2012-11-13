@@ -15,5 +15,9 @@ gradle-app.setting
 *~
 *.bak
 /local*
-/build
+build
 /out
+
+
+#Jenkins specific out
+*.hpi

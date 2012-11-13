@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        maven {
+            name 'jenkins-ci-plugins'
+            url('http://maven.jenkins-ci.org/content/repositories/releases')
+        }
+    }
+    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.4.0') }
+}
+apply plugin: 'jpi'
+
+repositories {
+    maven {
+        name 'jenkin-ci'
+        url 'http://maven.jenkins-ci.org/content/repositories/releases'
+    }
+}
+
+configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'instance-identity'
+configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-cli-auth'
+
+description = "Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins."
+
+jenkinsPlugin {
+    coreVersion = '1.456'
+    displayName = 'Job DSL'
+    url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
+    gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
+    developers {
+        developer {
+            id 'quidryan'
+            name 'Justin Ryan'
+            email 'jryan@netflix.com'
+        }
+        developer {
+            id 'andrewharmellaw'
+            name 'Andrew Harmel-Law'
+            email 'andrew@harmel-law.com'
+        }
+        developer {
+            id 'sit'
+            name 'Emil Sit'
+            email 'sit@hadapt.com'
+        }
+    }
+}
+
+//apply from: 'ide.gradle'
