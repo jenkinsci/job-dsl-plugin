@@ -28,7 +28,8 @@ public class WorkspaceConnection extends URLConnection {
         FilePath workspace = project.getSomeWorkspace();
 
         String path = url.getFile();
-        FilePath targetPath = workspace.child(path);
+        String relativePath = path.substring(1, path.length());
+        FilePath targetPath = workspace.child(relativePath);
 
         // Make sure we can find the file
         try {

@@ -15,7 +15,7 @@ subprojects {
     dependencies {
         //groovy localGroovy() // Can't guarantee 1.8.6
         groovy 'org.codehaus.groovy:groovy-all:1.8.6'
-        compile 'xmlunit:xmlunit:1.1'
+        compile 'xmlunit:xmlunit:1.1' // For runtime use, not just for testing
         compile 'com.google.guava:guava:13.0.1'
         testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
         testCompile 'junit:junit:4.10'
@@ -32,6 +32,17 @@ task wrapper(type: Wrapper) { gradleVersion = '1.2' }
 
 project(':job-dsl-core') {
     dependencies {
+    }
+    jar {
+        manifest {
+            attributes('Main-Class': 'javaposse.jobdsl.Run')
+        }
+    }
+
+    task run(type:JavaExec, dependsOn:build) {
+        classpath sourceSets.main.runtimeClasspath
+        main 'javaposse.jobdsl.Run'
+        //args rootProject.args
     }
 }
 

@@ -14,9 +14,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLStreamHandler;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,6 +30,7 @@ import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.google.common.base.Joiner;
+import sun.net.www.protocol.workspace.Handler;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -106,17 +109,66 @@ public class ExecuteDslScripts extends Builder {
         return new GeneratedJobsAction(project);
     }
 
-    /**
-     * Runs every job DSL script provided in the plugin configuration, which results in new /
-     * updated Jenkins jobs. The created / updated jobs are reported in the build result.
-     *
-     * @param build
-     * @param launcher
-     * @param listener
-     * @return
-     * @throws InterruptedException
-     * @throws IOException
-     */
+
+    static URLStreamHandler getURLStreamHandler(String protocol) {
+        URLStreamHandler handler = null;
+
+        // Try java protocol handler
+                String packagePrefixList = null;
+
+                packagePrefixList
+                        = java.security.AccessController.doPrivileged(
+                        new sun.security.action.GetPropertyAction(
+                                "java.protocol.handler.pkgs",""));
+                if (packagePrefixList != "") {
+                    packagePrefixList += "|";
+                }
+
+                // REMIND: decide whether to allow the "null" class prefix
+                // or not.
+                packagePrefixList += "sun.net.www.protocol";
+
+                StringTokenizer packagePrefixIter =
+                        new StringTokenizer(packagePrefixList, "|");
+
+                while (handler == null &&
+                        packagePrefixIter.hasMoreTokens()) {
+
+                    String packagePrefix =
+                            packagePrefixIter.nextToken().trim();
+                    try {
+                        String clsName = packagePrefix + "." + protocol +
+                                ".Handler";
+                        Class cls = null;
+                        try {
+                            cls = Class.forName(clsName);
+                        } catch (ClassNotFoundException e) {
+                            ClassLoader cl = ClassLoader.getSystemClassLoader();
+                            if (cl != null) {
+                                cls = cl.loadClass(clsName);
+                            }
+                        }
+                        if (cls != null) {
+                            handler  =
+                                    (URLStreamHandler)cls.newInstance();
+                        }
+                    } catch (Exception e) {
+                        // any number of exceptions can get thrown here
+                    }
+        }
+        return handler;
+    }
+            /**
+            * Runs every job DSL script provided in the plugin configuration, which results in new /
+            * updated Jenkins jobs. The created / updated jobs are reported in the build result.
+            *
+            * @param build
+            * @param launcher
+            * @param listener
+            * @return
+            * @throws InterruptedException
+            * @throws IOException
+            */
     @SuppressWarnings("rawtypes")
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
@@ -137,9 +189,7 @@ public class ExecuteDslScripts extends Builder {
             String[] targets = targetsStr.split("\n");
 
             String jobName = build.getProject().getName();
-            System.out.println("***************************");
-            System.out.println(sun.net.www.protocol.workspace.Handler.class);
-            URL workspaceUrl = new URL("workspace://${jobName}/");
+            URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new Handler());
             freshJobs = Sets.newHashSet();
             for (String target : targets) {
                 ScriptRequest request = new ScriptRequest(target, workspaceUrl);
