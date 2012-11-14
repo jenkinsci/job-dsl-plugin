@@ -22,7 +22,8 @@ class TopLevelHelper implements Helper {
         Preconditions.checkState(!labelAlreadyAdded, "Label can only be appplied once")
         labelAlreadyAdded = true
         execute {
-            it / assignedNode << "${labelExpression}"
+            it / assignedNode(labelExpression)
+            it / canRoam('false') // If canRoam is true, the label will not be used
         }
     }
 
