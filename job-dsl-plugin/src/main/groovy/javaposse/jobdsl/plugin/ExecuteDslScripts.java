@@ -1,36 +1,27 @@
 package javaposse.jobdsl.plugin;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.*;
 import hudson.tasks.Builder;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLStreamHandler;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.model.Jenkins;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import com.google.common.base.Joiner;
-import sun.net.www.protocol.workspace.Handler;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -140,7 +131,7 @@ public class ExecuteDslScripts extends Builder {
             String[] targets = targetsStr.split("\n");
 
             String jobName = build.getProject().getName();
-            URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new Handler());
+            URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
             freshJobs = Sets.newHashSet();
             for (String target : targets) {
                 ScriptRequest request = new ScriptRequest(target, workspaceUrl);

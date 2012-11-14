@@ -91,7 +91,17 @@ public class Job {
 
         //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
 
-        String configStr = XmlUtil.serialize(project)
+        def xmlOutput = new StringWriter()
+        def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
+        xmlNodePrinter.with {
+            preserveWhitespace = true
+            expandEmptyElements = true
+            quote = "'" // Use single quote for attributes
+        }
+        xmlNodePrinter.print(project)
+
+        String configStr = xmlOutput.toString()
+        //String configStr = XmlUtil.serialize(project)
         return configStr
     }
 
@@ -135,7 +145,7 @@ public class Job {
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
+  <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>

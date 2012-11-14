@@ -1,9 +1,8 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
+
 import java.util.logging.Logger
-import java.util.logging.Level
-import java.util.logging.LogManager
 
 class WithXmlAction {
     private static final Logger LOGGER = Logger.getLogger(WithXmlAction.getName())

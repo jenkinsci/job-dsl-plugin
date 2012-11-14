@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
-import javaposse.jobdsl.dsl.WithXmlAction
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.WithXmlAction
 
 class TopLevelHelper implements Helper {
 
@@ -22,7 +22,8 @@ class TopLevelHelper implements Helper {
         Preconditions.checkState(!labelAlreadyAdded, "Label can only be appplied once")
         labelAlreadyAdded = true
         execute {
-            it / assignedNode << "${labelExpression}"
+            it / assignedNode(labelExpression)
+            it / canRoam('false') // If canRoam is true, the label will not be used
         }
     }
 
