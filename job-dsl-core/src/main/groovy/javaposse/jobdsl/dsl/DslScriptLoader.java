@@ -100,8 +100,9 @@ public class DslScriptLoader {
         if (jp != null) {
             for(Job job: jp.getReferencedJobs()) {
                 try {
-                    LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), job.getXml()));
-                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), job.getXml());
+                    String xml = job.getXml();
+                    LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
+                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml);
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
                     generatedJobs.add(gj);
                 } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException

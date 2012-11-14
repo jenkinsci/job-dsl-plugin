@@ -11,7 +11,7 @@ class WorkspaceProtocolSpec  extends Specification {
 
     def 'load workspace url'() {
         when:
-        URL url = new URL("workspace://JOB/dir/file.dsl")
+        URL url = new URL(null, "workspace://JOB/dir/file.dsl", new WorkspaceUrlHandler())
 
         then:
         url.host == 'JOB'
@@ -21,7 +21,7 @@ class WorkspaceProtocolSpec  extends Specification {
     def 'reference workspace form dsl'() {
         def resourcesDir = new File("src/test/resources")
         JobManagement jm = new FileJobManagement(resourcesDir)
-        URL url = new URL("workspace://JOB/dir/file.dsl")
+        URL url = new URL(null, "workspace://JOB/dir/file.dsl", new WorkspaceUrlHandler())
 
         setup:
         ScriptRequest request = new ScriptRequest('caller.dsl', url);

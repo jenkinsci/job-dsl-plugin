@@ -1,9 +1,5 @@
 package javaposse.jobdsl.dsl;
 
-import java.io.File;
-import java.io.IOException;
-
-import javaposse.jobdsl.dsl.JobConfigurationNotFoundException
 
 class FileJobManagement extends AbstractJobManagement {
     /**

@@ -1,19 +1,14 @@
-package sun.net.www.protocol.workspace;
-
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
+package javaposse.jobdsl.plugin;
 
 /**
  * workspace://JOB-NAME/
  *
  * Don't need a URLStreamHandlerFactory because of the package name we're using.
  */
-public class Handler extends URLStreamHandler {
+public class WorkspaceUrlHandler extends URLStreamHandler {
 
     protected URLConnection openConnection(URL url) throws IOException {
-        return new WorkspaceConnection( url );
+        return new WorkspaceUrlConnection( url );
     }
 
     /**
@@ -25,6 +20,6 @@ public class Handler extends URLStreamHandler {
     def static installHandler() {
         Map<String, URLStreamHandler> handlers = URL.handlers;
         if( !handlers.containsKey('workspace') )
-        URL.handlers.put('workspace', new Handler());
+        URL.handlers.put('workspace', new WorkspaceUrlHandler());
     }
 }

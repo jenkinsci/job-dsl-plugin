@@ -83,5 +83,6 @@ public class TopLevelHelperSpec extends Specification {
 
         then:
         root.assignedNode[0].value() == 'FullTools'
+        root.canRoam[0].value() == 'false'
     }
 }
