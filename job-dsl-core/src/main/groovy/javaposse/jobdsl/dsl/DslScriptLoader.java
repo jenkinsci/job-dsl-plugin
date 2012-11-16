@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.codehaus.groovy.runtime.InvokerHelper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -42,11 +43,19 @@ public class DslScriptLoader {
 
         JobParent jp;
         try {
-            Script script = engine.createScript(scriptRequest.location, binding);
+            Script script;
+            if (scriptRequest.body != null) {
+                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.body);
+                script = InvokerHelper.createScript(cls, binding);
+            } else {
+                script = engine.createScript(scriptRequest.location, binding);
+            }
             assert script instanceof JobParent;
 
             jp = (JobParent) script;
             jp.setJm(jobManagement);
+
+            binding.setVariable("jobFactory", jp);
 
             script.run();
         } catch (Exception e) { // ResourceException or ScriptException
@@ -121,6 +130,8 @@ public class DslScriptLoader {
         Binding binding = new Binding();
         //binding.setVariable("secretJobManagement", jobManagement); // TODO Find better way of getting this variable into JobParent
         binding.setVariable("out", jobManagement.getOutputStream() ); // Works for println, but not System.out
+
+        binding.setVariable("testing", "THe string which says testing" );
 
         Map<String, String> params = jobManagement.getParameters();
         for(Map.Entry<String,String> entry: params.entrySet()) {

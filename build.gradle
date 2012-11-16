@@ -27,13 +27,28 @@ subprojects {
     }
 }
 
+buildscript {
+  repositories {
+    mavenRepo urls:'http://repo.smokejumperit.com'
+  }
+  dependencies {
+    classpath 'com.smokejumperit:gradle-plugins:0.8.2'
+  }
+}
+
 project(':job-dsl-core') {
     description = "Generates Jenkins jobs via a DSL"
+    dependencies {
+        compile 'org.slf4j:slf4j-simple:1.4.3' // For perforce
+        compile 'commons-codec:commons-codec:1.4' // For perforce
+    }
     jar {
         manifest {
             attributes('Main-Class': 'javaposse.jobdsl.Run')
         }
     }
+
+    apply plugin:com.smokejumperit.gradle.OneJarPlugin
 
     task run(type:JavaExec, dependsOn:build) {
         classpath sourceSets.main.runtimeClasspath

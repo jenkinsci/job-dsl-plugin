@@ -11,6 +11,7 @@ import hudson.model.AbstractProject;
 import hudson.model.JobPropertyDescriptor;
 
 import com.google.common.collect.Sets;
+import jenkins.YesNoMaybe;
 
 /**
  * Seed Jobs which reference this template.
@@ -32,8 +33,8 @@ class SeedJobsProperty extends JobProperty<AbstractProject<?,?>> {
 //        return seedJobs.keySet();
 //    }
 //
-    @Extension
-    public static final class DescriptorImpl extends JobPropertyDescriptor {
+@Extension(dynamicLoadable = YesNoMaybe.YES)
+public static final class DescriptorImpl extends JobPropertyDescriptor {
         public String getDisplayName() {
             return "Seed Jobs Being Referenced";
         }

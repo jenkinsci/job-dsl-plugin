@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers
 import com.google.common.base.Preconditions
 import groovy.transform.PackageScope
 import javaposse.jobdsl.dsl.WithXmlAction
+import hudson.plugins.perforce.PerforcePasswordEncryptor
 
 @PackageScope
 class ScmContext implements Context {
@@ -256,9 +257,12 @@ class ScmContext implements Context {
         // TODO Attempt to update existing scm node
         def nodeBuilder = new NodeBuilder()
 
+        PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor();
+        String cleanPassword = encryptor.appearsToBeAnEncryptedPassword(password)?password:encryptor.encryptString(password)
+
         Node p4Node = nodeBuilder.scm(class:'hudson.plugins.perforce.PerforceSCM') {
             p4User user
-            p4Passwd password
+            p4Passwd cleanPassword
             p4Port 'perforce:1666'
             p4Client 'builds-${JOB_NAME}'
             projectPath "${viewspec}"
