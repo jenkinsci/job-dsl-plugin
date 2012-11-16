@@ -41,7 +41,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine'() {
         setup:
-        ScriptRequest request = new ScriptRequest('simple.dsl', resourcesDir.toURL());
+        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir.toURL());
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm)
@@ -54,7 +54,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine with reference to other class'() {
         setup:
-        ScriptRequest request = new ScriptRequest('caller.dsl', resourcesDir.toURL());
+        ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir.toURL());
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm)
@@ -67,6 +67,26 @@ public class DslScriptLoaderTest extends Specification {
 
     }
 
+    def 'run engine with reference to other class from a string'() {
+        setup:
+        def scriptStr = '''job {
+    name 'test'
+}
+
+Callee.makeJob(this, 'test2')
+'''
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL())
+
+        when:
+        def jobs = DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        jobs != null
+        jobs.size() == 2
+        jobs.any { it.jobName == 'test'}
+        jobs.any { it.jobName == 'test2'}
+
+    }
 //
 //    def 'Able to run engine for string'() {
 //        setup:

@@ -11,6 +11,7 @@ import static com.google.common.collect.Collections2.*;
 
 import com.google.common.base.Predicates;
 import hudson.Util;
+import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
 
 import hudson.Extension;
@@ -23,7 +24,7 @@ import hudson.model.listeners.SaveableListener;
 
 import javaposse.jobdsl.plugin.ExecuteDslScripts.DescriptorImpl;
 
-@Extension
+@Extension(dynamicLoadable = YesNoMaybe.YES)
 public class MonitorTemplateJobs extends SaveableListener {
     private static final Logger LOGGER = Logger.getLogger(MonitorTemplateJobs.class.getName());
 

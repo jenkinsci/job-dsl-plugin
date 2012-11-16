@@ -18,7 +18,7 @@ public class Run {
         String scriptName = args[0];
 
         File cwd = new File(".");
-        ScriptRequest request = new ScriptRequest(scriptName, cwd.toURL());
+        ScriptRequest request = new ScriptRequest(scriptName, null, cwd.toURL());
         FileJobManagement jm = new FileJobManagement(cwd);
         jm.getParameters().putAll(System.getenv());
         Set<GeneratedJob> generatedJobs = DslScriptLoader.runDslEngine(request, jm);

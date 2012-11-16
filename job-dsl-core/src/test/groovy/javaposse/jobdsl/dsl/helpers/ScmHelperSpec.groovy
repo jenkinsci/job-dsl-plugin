@@ -125,7 +125,7 @@ public class ScmHelperSpec extends Specification {
         context.scmNode != null
         context.scmNode.attributes()['class'] == 'hudson.plugins.perforce.PerforceSCM'
         context.scmNode.p4User[0].value() == 'roleoe'
-        context.scmNode.p4Passwd[0].value() == 'secret'
+        context.scmNode.p4Passwd[0].value() == '0f0kqlwajkEPwz8Yp+A=' // Using PerforcePasswordEncryptor
         context.scmNode.p4Port[0].value() == 'perforce:1666'
         context.scmNode.alwaysForceSync.size() == 1 // Double check there's only one
         context.scmNode.alwaysForceSync[0].value() == 'true'
