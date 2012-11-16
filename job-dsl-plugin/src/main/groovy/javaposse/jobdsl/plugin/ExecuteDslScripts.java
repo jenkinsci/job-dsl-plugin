@@ -12,6 +12,7 @@ import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.ScriptRequest;
+import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -122,19 +123,19 @@ public class ExecuteDslScripts extends Builder {
         JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env);
 
         Set<GeneratedJob> freshJobs;
+        String jobName = build.getProject().getName();
+        URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
         if(usingScriptText) {
-            // Ideally we'd keep with the url form
-            freshJobs = DslScriptLoader.runDslShell(scriptText, jm);
+            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl);
+            freshJobs = DslScriptLoader.runDslEngine(request, jm);
         } else {
             String targetsStr = env.expand(this.targets);
             LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
             String[] targets = targetsStr.split("\n");
 
-            String jobName = build.getProject().getName();
-            URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
             freshJobs = Sets.newHashSet();
             for (String target : targets) {
-                ScriptRequest request = new ScriptRequest(target, workspaceUrl);
+                ScriptRequest request = new ScriptRequest(target, null, workspaceUrl);
                 Set<GeneratedJob> dslJobs = DslScriptLoader.runDslEngine(request, jm);
 
                 freshJobs.addAll(dslJobs);
@@ -300,7 +301,7 @@ public class ExecuteDslScripts extends Builder {
         }
     }
 
-    @Extension
+    @Extension(dynamicLoadable = YesNoMaybe.YES)
     public static final class DescriptorImpl extends Descriptor<Builder> {
 
         private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed

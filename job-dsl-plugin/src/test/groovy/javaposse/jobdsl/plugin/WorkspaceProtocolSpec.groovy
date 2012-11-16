@@ -24,7 +24,7 @@ class WorkspaceProtocolSpec  extends Specification {
         URL url = new URL(null, "workspace://JOB/dir/file.dsl", new WorkspaceUrlHandler())
 
         setup:
-        ScriptRequest request = new ScriptRequest('caller.dsl', url);
+        ScriptRequest request = new ScriptRequest('caller.dsl', null, url);
 
         when:
         DslScriptLoader.runDslEngine(request, jm)
