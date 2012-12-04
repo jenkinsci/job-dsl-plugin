@@ -34,7 +34,7 @@ public class MonitorTemplateJobs extends SaveableListener {
     @SuppressWarnings("rawtypes")
     @Override
     public void onChange(Saveable saveable, XmlFile file) {
-        LOGGER.info("onChange");
+        LOGGER.finest("onChange");
 
         if (!AbstractProject.class.isAssignableFrom(saveable.getClass())) {
             LOGGER.finest(String.format("%s is not a Project", saveable.getClass()));
