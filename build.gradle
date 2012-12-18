@@ -66,4 +66,4 @@ project(':job-dsl-plugin') {
 
 task wrapper(type: Wrapper) { gradleVersion = '1.2' }
 
-apply plugin: 'idea'
+apply from: './job-dsl-plugin/ide.gradle'
