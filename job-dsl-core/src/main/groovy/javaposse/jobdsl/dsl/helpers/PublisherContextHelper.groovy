@@ -132,9 +132,20 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
          * @param excludeGlob
          * @param latestOnly
          */
-        def archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnly = false) {
+        def archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false) {
+            def nodeBuilder = new NodeBuilder()
 
+            Node archiverNode = nodeBuilder.'hudson.tasks.ArtifactArchiver' {
+                artifacts glob
+                if(excludeGlob) {
+                    excludes excludeGlob
+                }
+                latestOnly latestOnlyBoolean?'true':'false'
+            }
+
+            publisherNodes << archiverNode
         }
+
         /**
         <htmlpublisher.HtmlPublisher>
           <reportTargets>
@@ -148,11 +159,30 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
           </reportTargets>
         </htmlpublisher.HtmlPublisher>
         */
-
         def publishHtml(Closure htmlReportContext) {
+            HtmlReportContext reportContext = new HtmlReportContext()
+            AbstractContextHelper.executeInContext(htmlReportContext, reportContext)
 
+            // Now that the context has what we need
+            def nodeBuilder = NodeBuilder.newInstance()
+            def htmlPublisherNode = nodeBuilder.'htmlpublisher.HtmlPublisher' {
+                reportTargets {
+                    reportContext.targets.each { HtmlPublisherTarget target ->
+                        'htmlpublisher.HtmlPublisherTarget' {
+                            // All fields can have a blank, odd.
+                            reportName target.reportName
+                            reportDir target.reportDir
+                            reportFiles target.reportFiles
+                            keepAll target.keepAll
+                            wrapperName target.wrapperName
+                        }
+                    }
+                }
+            }
+            publisherNodes << htmlPublisherNode
         }
     }
+
     static class EmailTrigger {
         EmailTrigger(triggerShortName, recipientList = null, subject = null, body = null, sendToDevelopers = null, sendToRequester = null, includeCulprits = null, sendToRecipientList = null) {
             // Use elvis operator to assign default values if needed
@@ -194,9 +224,31 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
         }
     }
 
-    static class HtmlReportContext implements Context {
-        def report(Map args) {
+    static class HtmlPublisherTarget {
+        String reportName
+        String reportDir
+        String reportFiles
+        String keepAll
+        String wrapperName // Not sure what this is for
+    }
 
+    static class HtmlReportContext implements Context {
+        def targets = []
+        def report(String reportDir, String reportName = null, String reportFiles = null, Boolean keepAll = null) {
+
+            if(!reportDir) {
+                throw new RuntimeException("Report directory for html publisher is required")
+            }
+            targets << new HtmlPublisherTarget(
+                    reportName: reportName?:'',
+                    reportDir: reportDir?:'',
+                    reportFiles: reportFiles?:'index.html',
+                    keepAll: keepAll?'true':'false',
+                    wrapperName: 'htmlpublisher-wrapper.html')
+        }
+
+        def report(Map args) {
+            report(args.reportDir, args.reportName, args.reportFiles, args.keepAll)
         }
     }
 }
