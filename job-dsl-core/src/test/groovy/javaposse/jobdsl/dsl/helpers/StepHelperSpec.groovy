@@ -2,13 +2,13 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
-import javaposse.jobdsl.dsl.helpers.StepHelper.StepContext
+import javaposse.jobdsl.dsl.helpers.StepContextHelper.StepContext
 import spock.lang.Specification
 
 public class StepHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    StepHelper helper = new StepHelper(mockActions)
+    StepContextHelper helper = new StepContextHelper(mockActions)
     StepContext context = new StepContext()
 
     def 'call shell method'() {

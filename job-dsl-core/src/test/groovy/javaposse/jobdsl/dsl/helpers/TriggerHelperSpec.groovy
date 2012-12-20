@@ -7,7 +7,7 @@ import spock.lang.Specification
 public class TriggerHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    TriggerHelper helper = new TriggerHelper(mockActions)
+    TriggerContextHelper helper = new TriggerContextHelper(mockActions)
     TriggerContext context = new TriggerContext()
 
     def 'call cron trigger methods'() {

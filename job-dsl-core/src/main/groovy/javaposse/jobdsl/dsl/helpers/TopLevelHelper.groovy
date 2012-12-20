@@ -3,12 +3,10 @@ package javaposse.jobdsl.dsl.helpers
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 
-class TopLevelHelper implements Helper {
-
-    List<WithXmlAction> withXmlActions
+class TopLevelHelper extends AbstractHelper {
 
     TopLevelHelper(List<WithXmlAction> withXmlActions) {
-        this.withXmlActions = withXmlActions
+        super(withXmlActions)
     }
 
     /**
@@ -63,10 +61,4 @@ class TopLevelHelper implements Helper {
         }
     }
 
-    WithXmlAction execute(Closure rootClosure) {
-        rootClosure.resolveStrategy = Closure.DELEGATE_FIRST
-        def action = new WithXmlAction(rootClosure)
-        withXmlActions << action
-        return action
-    }
 }

@@ -3,9 +3,9 @@ package javaposse.jobdsl.dsl.helpers
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 
-class PublisherHelper extends AbstractHelper<PublisherContext> {
+class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
 
-    PublisherHelper(List<WithXmlAction> withXmlActions) {
+    PublisherContextHelper(List<WithXmlAction> withXmlActions) {
         super(withXmlActions)
     }
 
@@ -75,7 +75,7 @@ class PublisherHelper extends AbstractHelper<PublisherContext> {
          */
         def extendedEmail(String recipients = null, String subjectTemplate = null, String contentTemplate = null, Closure emailClosure = null) {
             EmailContext emailContext = new EmailContext()
-            AbstractHelper.executeInContext(emailClosure, emailContext)
+            AbstractContextHelper.executeInContext(emailClosure, emailContext)
 
             // Validate that we have the typical triggers, if nothing is provided
             if (emailContext.emailTriggers.isEmpty()) {
@@ -122,6 +122,36 @@ class PublisherHelper extends AbstractHelper<PublisherContext> {
 
             publisherNodes << emailNode
         }
+
+        /**
+         <hudson.tasks.ArtifactArchiver>
+           <artifacts>build/libs/*</artifacts>
+           <latestOnly>false</latestOnly>
+         </hudson.tasks.ArtifactArchiver>
+         * @param glob
+         * @param excludeGlob
+         * @param latestOnly
+         */
+        def archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnly = false) {
+
+        }
+        /**
+        <htmlpublisher.HtmlPublisher>
+          <reportTargets>
+            <htmlpublisher.HtmlPublisherTarget>
+              <reportName>Gradle Tests</reportName>
+              <reportDir>build/reports/tests/</reportDir>
+              <reportFiles>index.html</reportFiles>
+              <keepAll>false</keepAll>
+              <wrapperName>htmlpublisher-wrapper.html</wrapperName>
+            </htmlpublisher.HtmlPublisherTarget>
+          </reportTargets>
+        </htmlpublisher.HtmlPublisher>
+        */
+
+        def publishHtml(Closure htmlReportContext) {
+
+        }
     }
     static class EmailTrigger {
         EmailTrigger(triggerShortName, recipientList = null, subject = null, body = null, sendToDevelopers = null, sendToRequester = null, includeCulprits = null, sendToRecipientList = null) {
@@ -161,6 +191,12 @@ class PublisherHelper extends AbstractHelper<PublisherContext> {
         def configure(Closure configureClosure) {
             // save for later
             this.configureClosure = configureClosure
+        }
+    }
+
+    static class HtmlReportContext implements Context {
+        def report(Map args) {
+
         }
     }
 }
