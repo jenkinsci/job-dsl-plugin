@@ -85,4 +85,17 @@ public class TopLevelHelperSpec extends Specification {
         root.assignedNode[0].value() == 'FullTools'
         root.canRoam[0].value() == 'false'
     }
+
+    def 'log rotate xml'() {
+        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+
+        when:
+        def action = helper.logRotator(14,50)
+        action.execute(root)
+
+        then:
+        root.logRotator[0].daysToKeep[0].value() == '14'
+        root.logRotator[0].numToKeep[0].value() == '50'
+
+    }
 }

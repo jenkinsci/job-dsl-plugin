@@ -10,7 +10,7 @@ public class ScmHelperSpec extends Specification {
     private static final String HG_REPO_URL = 'http://selenic.com/repo/hello'
 
     List<WithXmlAction> mockActions = Mock()
-    ScmHelper helper = new ScmHelper(mockActions)
+    ScmContextHelper helper = new ScmContextHelper(mockActions)
     ScmContext context = new ScmContext()
 
     def 'base hg configuration'() {

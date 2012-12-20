@@ -21,9 +21,9 @@ import javaposse.jobdsl.dsl.WithXmlAction
  // TODO Pull all fields from SubversionSCM
  }
  */
-class ScmHelper extends AbstractHelper<ScmContext> {
+class ScmContextHelper extends AbstractContextHelper<ScmContext> {
 
-    ScmHelper(List<WithXmlAction> withXmlActions) {
+    ScmContextHelper(List<WithXmlAction> withXmlActions) {
         super(withXmlActions)
     }
 
