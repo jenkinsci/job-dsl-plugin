@@ -61,4 +61,27 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+
+    /**
+     <logRotator>
+     <daysToKeep>14</daysToKeep>
+     <numToKeep>50</numToKeep>
+     <artifactDaysToKeep>5</artifactDaysToKeep>
+     <artifactNumToKeep>20</artifactNumToKeep>
+     </logRotator>
+
+     TODO - Let them specify a closure to fill a context object, I think it would nicer than a bunch of int args
+     */
+
+    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1, int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
+        execute {
+            it / logRotator {
+                daysToKeep daysToKeepInt.toString()
+                numToKeep numToKeepInt.toString()
+                artifactDaysToKeep artifactDaysToKeepInt.toString()
+                artifactNumToKeep artifactNumToKeepInt.toString()
+            }
+        }
+    }
+
 }
