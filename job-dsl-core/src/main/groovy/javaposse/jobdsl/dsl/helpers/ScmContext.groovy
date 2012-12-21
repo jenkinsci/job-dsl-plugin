@@ -5,7 +5,6 @@ import groovy.transform.PackageScope
 import javaposse.jobdsl.dsl.WithXmlAction
 import hudson.plugins.perforce.PerforcePasswordEncryptor
 
-@PackageScope
 class ScmContext implements Context {
     boolean multiEnabled
     List<Node> scmNodes = []

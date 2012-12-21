@@ -98,6 +98,34 @@ public class PublisherHelperSpec extends Specification {
 
     }
 
+    def 'call junit archive with all args'() {
+        when:
+        context.archiveJunit('include/*', true, true, true)
+
+        then:
+        Node archiveNode = context.publisherNodes[0]
+        archiveNode.name() == 'hudson.tasks.junit.JUnitResultArchiver'
+        archiveNode.testResults[0].value() == 'include/*'
+        archiveNode.keepLongStdio[0].value() == 'true'
+        archiveNode.testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
+        archiveNode.testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
+    }
+
+
+    def 'call junit archive with minimal args'() {
+        when:
+        context.archiveJunit('include/*')
+
+        then:
+        Node archiveNode = context.publisherNodes[0]
+        archiveNode.name() == 'hudson.tasks.junit.JUnitResultArchiver'
+        archiveNode.testResults[0].value() == 'include/*'
+        archiveNode.keepLongStdio[0].value() == 'false'
+        archiveNode.testDataPublishers[0] != null
+        !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
+        !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
+    }
+
     def 'calling minimal html publisher'() {
         when:
         context.publishHtml {
