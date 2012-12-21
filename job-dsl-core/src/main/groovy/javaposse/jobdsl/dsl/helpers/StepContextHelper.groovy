@@ -2,34 +2,6 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.WithXmlAction
 
-/**
- step {
- shell(String command)
- groovy(String command)
- ant(String version, String targets, String buildFile, String properties, String javaOptions)
- ant(Closure configure)
- gradle(Closure configure)
- maven(Closure configure)
- }
-
- ant {
- String version
- String targets
- String buildFile
- String props // Don't want to name properties
- String javaOptions
- }
-
- gradle {
- boolean useWrapper
- // TODO
- }
-
- maven {
- String pomLocation
- // TODO
- }
- */
 class StepContextHelper extends AbstractContextHelper<StepContext> {
 
     StepContextHelper(List<WithXmlAction> withXmlActions) {
@@ -90,15 +62,123 @@ class StepContextHelper extends AbstractContextHelper<StepContext> {
 
         /**
          <hudson.tasks.Ant>
-           <targets>clean build</targets>
-           <antName>Ant 1.8</antName>
-           <buildFile>build.xml</buildFile>
+            <targets>target</targets>
+            <antName>Ant 1.8</antName>
+            <antOpts>-Xmx1g -XX:MaxPermSize=128M -Dorg.apache.jasper.compiler.Parser.STRICT_QUOTE_ESCAPING=false</antOpts>
+            <buildFile>build.xml</buildFile>
+            <properties>test.jvmargs=-Xmx=1g
+test.maxmemory=2g
+multiline=true</properties>
+         </hudson.tasks.Ant>
+
+         Empty:
+         <hudson.tasks.Ant>
+            <targets/>
+            <antName>(Default)</antName>
          </hudson.tasks.Ant>
          */
-//        def ant() {
-//
-//        }
+        def ant(Closure antClosure = null) {
+            ant(null, null, null, antClosure)
+        }
 
+        def ant(String targetsStr, Closure antClosure = null) {
+            ant(targetsStr, null, null, antClosure)
+        }
+
+        def ant(String targetsStr, String buildFileStr, Closure antClosure = null) {
+            ant(targetsStr, buildFileStr, null, antClosure)
+        }
+
+        def ant(String targetsArg, String buildFileArg, String antInstallation, Closure antClosure = null) {
+            AntContext antContext = new AntContext()
+            AbstractHelper.executeInContext(antClosure, antContext)
+
+            def targetList = []
+
+            if (targetsArg) {
+                targetList.addAll targetsArg.contains('\n') ? targetsArg.split('\n') : targetsArg.split(' ')
+            }
+            targetList.addAll antContext.targets
+
+            // Build File
+            if (!buildFileArg && antContext.buildFile) { // Fall back to context
+                buildFileArg = antContext.buildFile
+            }
+
+            def antOptsList = antContext.antOpts
+
+            if(!antInstallation) {
+                antInstallation = antContext.antName?:'(Default)'
+            }
+
+            def propertiesList = []
+            propertiesList += antContext.properties
+
+            def nodeBuilder = NodeBuilder.newInstance()
+            def antNode = nodeBuilder.'hudson.tasks.Ant' {
+                targets targetList.join(' ')
+
+                antName antInstallation
+
+                if (antOptsList) {
+                    antOpts antOptsList.join('\n')
+                }
+
+                if (buildFileArg) {
+                    buildFile buildFileArg
+                }
+            }
+
+            if(propertiesList) {
+                antNode.appendNode('properties', propertiesList.join('\n'))
+            }
+
+            stepNodes << antNode
+        }
+
+        def static class AntContext implements Context {
+            def targets = []
+            def properties = []
+            def buildFile = null
+            def antOpts = []
+            def antName = null
+
+            def target(String target) {
+                targets << target
+            }
+
+            def targets(Iterable<String> addlTargets) {
+                addlTargets.each {
+                    target(it)
+                }
+            }
+
+            def prop(Object key, Object value) {
+                properties << "${key}=${value}"
+            }
+
+            def props(Map<String, String> map) {
+                map.entrySet().each {
+                    prop(it.key, it.value)
+                }
+            }
+
+            def buildFile(String buildFile) {
+                this.buildFile = buildFile
+            }
+
+            def javaOpt(String opt) {
+                antOpts << opt
+            }
+
+            def javaOpts(Iterable<String> opts) {
+                opts.each { javaOpt(it) }
+            }
+
+            def antInstallation(String antInstallationName) {
+                antName = antInstallationName
+            }
+        }
         /**
          <hudson.plugins.groovy.Groovy>
            <scriptSource class="hudson.plugins.groovy.StringScriptSource">
