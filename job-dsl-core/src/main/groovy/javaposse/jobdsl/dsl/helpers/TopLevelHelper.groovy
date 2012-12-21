@@ -3,12 +3,10 @@ package javaposse.jobdsl.dsl.helpers
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 
-class TopLevelHelper implements Helper {
-
-    List<WithXmlAction> withXmlActions
+class TopLevelHelper extends AbstractHelper {
 
     TopLevelHelper(List<WithXmlAction> withXmlActions) {
-        this.withXmlActions = withXmlActions
+        super(withXmlActions)
     }
 
     /**
@@ -63,10 +61,27 @@ class TopLevelHelper implements Helper {
         }
     }
 
-    WithXmlAction execute(Closure rootClosure) {
-        rootClosure.resolveStrategy = Closure.DELEGATE_FIRST
-        def action = new WithXmlAction(rootClosure)
-        withXmlActions << action
-        return action
+
+    /**
+     <logRotator>
+     <daysToKeep>14</daysToKeep>
+     <numToKeep>50</numToKeep>
+     <artifactDaysToKeep>5</artifactDaysToKeep>
+     <artifactNumToKeep>20</artifactNumToKeep>
+     </logRotator>
+
+     TODO - Let them specify a closure to fill a context object, I think it would nicer than a bunch of int args
+     */
+
+    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1, int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
+        execute {
+            it / logRotator {
+                daysToKeep daysToKeepInt.toString()
+                numToKeep numToKeepInt.toString()
+                artifactDaysToKeep artifactDaysToKeepInt.toString()
+                artifactNumToKeep artifactNumToKeepInt.toString()
+            }
+        }
     }
+
 }

@@ -30,9 +30,9 @@ import javaposse.jobdsl.dsl.WithXmlAction
  // TODO
  }
  */
-class StepHelper extends AbstractHelper<StepContext> {
+class StepContextHelper extends AbstractContextHelper<StepContext> {
 
-    StepHelper(List<WithXmlAction> withXmlActions) {
+    StepContextHelper(List<WithXmlAction> withXmlActions) {
         super(withXmlActions)
     }
 
@@ -112,9 +112,9 @@ class StepHelper extends AbstractHelper<StepContext> {
            <classPath/>
          </hudson.plugins.groovy.Groovy>
          */
-//        def groovy() {
-//
-//        }
+        def groovy(String script) {
+
+        }
 
         /**
          <hudson.plugins.groovy.SystemGroovy>
@@ -126,7 +126,7 @@ class StepHelper extends AbstractHelper<StepContext> {
          </hudson.plugins.groovy.SystemGroovy>
          */
 //        def systemGroovy() {
-//
+//                         node / builders / 'hudson.plugins.groovy.SystemGroovy' / scriptSource(class:"hudson.plugins.groovy.StringScriptSource") / command(lastSuccessfulBuildScript)
 //        }
 
         /**

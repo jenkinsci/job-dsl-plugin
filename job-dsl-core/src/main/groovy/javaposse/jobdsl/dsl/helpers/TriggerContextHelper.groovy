@@ -9,9 +9,9 @@ import javaposse.jobdsl.dsl.WithXmlAction
  cron(String cronString)
  }
  */
-class TriggerHelper extends AbstractHelper<TriggerContext> {
+class TriggerContextHelper extends AbstractContextHelper<TriggerContext> {
 
-    TriggerHelper(List<WithXmlAction> withXmlActions) {
+    TriggerContextHelper(List<WithXmlAction> withXmlActions) {
         super(withXmlActions)
     }
 
@@ -75,7 +75,7 @@ class GerritContext implements Context {
     }
 
     def events(Closure eventClosure) {
-        AbstractHelper.executeInContext(eventClosure, eventContext)
+        AbstractContextHelper.executeInContext(eventClosure, eventContext)
     }
 
     def project(String projectName, List<String> branches) {
@@ -160,7 +160,7 @@ class TriggerContext implements Context {
     def gerrit(Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
         GerritContext gerritContext = new GerritContext()
-        AbstractHelper.executeInContext(contextClosure, gerritContext)
+        AbstractContextHelper.executeInContext(contextClosure, gerritContext)
 
         def nodeBuilder = new NodeBuilder()
         def gerritNode = nodeBuilder.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger' {

@@ -9,7 +9,7 @@ public class MultiScmHelperSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
 
     List<WithXmlAction> mockActions = Mock()
-    MultiScmHelper helper = new MultiScmHelper(mockActions)
+    MultiScmContextHelper helper = new MultiScmContextHelper(mockActions)
     ScmContext context = new ScmContext(true)
 
     // Most tests are in ScmHelperSpec

@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import groovy.xml.XmlUtil
 import javaposse.jobdsl.dsl.helpers.*
 
 /**
@@ -18,22 +17,22 @@ public class Job {
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too mcuh
     // Though we could use some methodMissing to do some sort of dynamic lookup
-    @Delegate AuthorizationHelper helperAuthorization
-    @Delegate ScmHelper helperScm
-    @Delegate TriggerHelper helperTrigger
-    @Delegate StepHelper helperStep
-    @Delegate PublisherHelper helperPublisher
-    @Delegate MultiScmHelper helperMultiscm
+    @Delegate AuthorizationContextHelper helperAuthorization
+    @Delegate ScmContextHelper helperScm
+    @Delegate TriggerContextHelper helperTrigger
+    @Delegate StepContextHelper helperStep
+    @Delegate PublisherContextHelper helperPublisher
+    @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
 
     public Job(JobManagement jobManagement) {
         this.jobManagement = jobManagement;
-        helperAuthorization = new AuthorizationHelper(withXmlActions)
-        helperScm = new ScmHelper(withXmlActions)
-        helperMultiscm = new MultiScmHelper(withXmlActions)
-        helperTrigger = new TriggerHelper(withXmlActions)
-        helperStep = new StepHelper(withXmlActions)
-        helperPublisher = new PublisherHelper(withXmlActions)
+        helperAuthorization = new AuthorizationContextHelper(withXmlActions)
+        helperScm = new ScmContextHelper(withXmlActions)
+        helperMultiscm = new MultiScmContextHelper(withXmlActions)
+        helperTrigger = new TriggerContextHelper(withXmlActions)
+        helperStep = new StepContextHelper(withXmlActions)
+        helperPublisher = new PublisherContextHelper(withXmlActions)
         helperTopLevel = new TopLevelHelper(withXmlActions)
     }
 

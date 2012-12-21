@@ -2,13 +2,12 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.WithXmlAction
 
-class AuthorizationHelper extends AbstractHelper<AuthorizationContext> {
+class AuthorizationContextHelper extends AbstractContextHelper<AuthorizationContext> {
     /**
      * Per-execution state, cleared each time, look for STATEFUL
      * TOOD initialize and support permission methods being called directly
      */
-
-    AuthorizationHelper(List<WithXmlAction> withXmlActions) {
+    AuthorizationContextHelper(List<WithXmlAction> withXmlActions) {
         super(withXmlActions)
     }
 
@@ -21,7 +20,7 @@ class AuthorizationHelper extends AbstractHelper<AuthorizationContext> {
     }
 
     // TODO: Support dotted notation. Currently because of perms being around for the closure, we can't just append to it outside of a closure
-    AuthorizationHelper getAuthorization() {
+    AuthorizationContextHelper getAuthorization() {
         return this
     }
 
@@ -50,7 +49,7 @@ class AuthorizationHelper extends AbstractHelper<AuthorizationContext> {
         return { Node project ->
             def matrix = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
             perms.each { String perm ->
-                // Using matrix << permission(perm) will resolve permission locally on AuthorizationHelper
+                // Using matrix << permission(perm) will resolve permission locally on AuthorizationContextHelper
                 matrix.appendNode('permission', perm)
             }
         }

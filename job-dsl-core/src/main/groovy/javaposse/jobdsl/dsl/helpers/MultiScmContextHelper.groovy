@@ -9,9 +9,9 @@ import javaposse.jobdsl.dsl.WithXmlAction
    subverison(Closure configure)
  }
  */
-class MultiScmHelper extends AbstractHelper<ScmContext> {
+class MultiScmContextHelper extends AbstractContextHelper<ScmContext> {
 
-    MultiScmHelper(List<WithXmlAction> withXmlActions) {
+    MultiScmContextHelper(List<WithXmlAction> withXmlActions) {
         super(withXmlActions)
     }
 
