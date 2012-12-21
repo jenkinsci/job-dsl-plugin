@@ -70,6 +70,62 @@ public class StepHelperSpec extends Specification {
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
     }
 
+    def 'call ant methods'() {
+        when:
+        context.ant()
+
+        then:
+        context.stepNodes.size() == 1
+        def antEmptyNode = context.stepNodes[0]
+        antEmptyNode.name() == 'hudson.tasks.Ant'
+        antEmptyNode.targets[0].value() == ''
+        antEmptyNode.antName[0].value() == '(Default)'
+        !antEmptyNode.children().any { it.name() == 'antOpts' }
+        !antEmptyNode.children().any { it.name() == 'properties' }
+
+        when:
+        context.ant('build')
+
+        then:
+        context.stepNodes.size() == 2
+        def antBuildNode = context.stepNodes[1]
+        antBuildNode.targets[0].value() == 'build'
+
+        when:
+        context.ant('build', 'dir1/build.xml', 'Ant 1.8')
+
+        then:
+        context.stepNodes.size() == 3
+        def antArgs = context.stepNodes[2]
+        antArgs.buildFile[0].value() == 'dir1/build.xml'
+        antArgs.antName[0].value() == 'Ant 1.8'
+
+        when:
+        context.ant('build') {
+            target 'test'
+            target 'integTest'
+            targets(['publish', 'deploy']) // FIXME: I have no idea why the parens are needed
+            prop 'test.size', 4
+            prop 'logging', 'info'
+            props 'test.threads': 10, 'input.status':'release'
+            buildFile 'dir2/build.xml'
+            buildFile 'dir1/build.xml'
+            javaOpt '-Xmx1g'
+            javaOpts(['-Dprop2=value2', '-Dprop3=value3']) // FIXME: I have no idea why the parens are needed
+            antInstallation 'Ant 1.6'
+            antInstallation 'Ant 1.7'
+        }
+
+        then:
+        context.stepNodes.size() == 4
+        def antClosure = context.stepNodes[3]
+        antClosure.buildFile[0].value() == 'dir1/build.xml'
+        antClosure.antName[0].value() == 'Ant 1.7'
+        antClosure.targets[0].value() == 'build test integTest publish deploy'
+        antClosure.antOpts[0].value() == '-Xmx1g\n-Dprop2=value2\n-Dprop3=value3'
+        antClosure.'properties'[0].value() == 'test.size=4\nlogging=info\ntest.threads=10\ninput.status=release'
+    }
+
     def 'call step via helper'() {
         when:
         helper.steps {
