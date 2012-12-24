@@ -270,6 +270,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
     }
 
+
     def 'call Jabber publish to get exceptions'() {
         when:
         context.publishJabber('me@gmail.com', 'NOPE')
@@ -283,6 +284,44 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(AssertionError)
 
+    }
+
+    def 'call scp publish with not enough entries'() {
+        when:
+        context.publishScp('javadoc')
+
+        then:
+        thrown(AssertionError)
+    }
+
+    def 'call scp publish with closure'() {
+        when:
+        context.publishScp('javadoc') {
+            entry('api-sdk/**/*')
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'be.certipost.hudson.plugin.SCPRepositoryPublisher'
+        publisherNode.siteName[0].value() == 'javadoc'
+        def entryNode = publisherNode.entries[0].'be.certipost.hudson.plugin.Entry'[0]
+        entryNode.filePath[0].value() == ''
+        entryNode.sourceFile[0].value() == 'api-sdk/**/*'
+        entryNode.keepHierarchy[0].value() == 'false'
+
+        when:
+        context.publishScp('javadoc') {
+            entry('build/javadocs/**/*', 'javadoc', true)
+        }
+
+        then:
+        Node publisherNode2 = context.publisherNodes[1]
+        publisherNode2.name() == 'be.certipost.hudson.plugin.SCPRepositoryPublisher'
+        publisherNode2.siteName[0].value() == 'javadoc'
+        def entryNode2 = publisherNode2.entries[0].'be.certipost.hudson.plugin.Entry'[0]
+        entryNode2.filePath[0].value() == 'javadoc'
+        entryNode2.sourceFile[0].value() == 'build/javadocs/**/*'
+        entryNode2.keepHierarchy[0].value() == 'true'
     }
 
     def 'call step via helper'() {
