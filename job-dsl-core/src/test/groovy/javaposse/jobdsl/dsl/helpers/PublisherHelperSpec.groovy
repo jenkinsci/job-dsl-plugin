@@ -200,6 +200,91 @@ public class PublisherHelperSpec extends Specification {
         target2.reportDir[0].value() == 'test/*'
     }
 
+    def 'call Jabber publish with minimal args'() {
+        when:
+        context.publishJabber('me@gmail.com')
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
+        targetNode.name[0].value() == 'me@gmail.com'
+        targetNode.notificationOnly[0].value() == 'false'
+        publisherNode.strategy[0].value() == 'ALL'
+        publisherNode.notifyOnBuildStart[0].value() == 'false'
+        publisherNode.notifySuspects[0].value() == 'false'
+        publisherNode.notifyCulprits[0].value() == 'false'
+        publisherNode.notifyFixers[0].value() == 'false'
+        publisherNode.notifyUpstreamCommitters[0].value() == 'false'
+        Node buildToNode = publisherNode.buildToChatNotifier[0]
+        buildToNode.attributes().containsKey('class')
+        buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+        publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+
+    }
+
+
+    def 'call Jabber publish with all args'() {
+        when:
+        context.publishJabber('me@gmail.com', 'ANY_FAILURE', 'SummaryOnly' )
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
+        targetNode.name[0].value() == 'me@gmail.com'
+        targetNode.notificationOnly[0].value() == 'false'
+        publisherNode.strategy[0].value() == 'ANY_FAILURE'
+        Node buildToNode = publisherNode.buildToChatNotifier[0]
+        buildToNode.attributes().containsKey('class')
+        buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
+    }
+
+    def 'call Jabber publish with closure args'() {
+        when:
+        context.publishJabber('me@gmail.com', 'ANY_FAILURE', 'SummaryOnly' ) {
+            strategyName 'FAILURE_AND_FIXED' // ALL,  FAILURE_AND_FIXED, ANY_FAILURE, STATECHANGE_ONLY
+            notifyOnBuildStart = true
+            notifySuspects = true
+            notifyCulprits = true
+            notifyFixers = true
+            notifyUpstreamCommitters = true
+            channelNotificationName = 'PrintFailingTests' // Default, SummaryOnly, BuildParameters, PrintFailingTests
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
+        targetNode.name[0].value() == 'me@gmail.com'
+        targetNode.notificationOnly[0].value() == 'false'
+        publisherNode.strategy[0].value() == 'FAILURE_AND_FIXED'
+        publisherNode.notifyOnBuildStart[0].value() == 'true'
+        publisherNode.notifySuspects[0].value() == 'true'
+        publisherNode.notifyCulprits[0].value() == 'true'
+        publisherNode.notifyFixers[0].value() == 'true'
+        publisherNode.notifyUpstreamCommitters[0].value() == 'true'
+        Node buildToNode = publisherNode.buildToChatNotifier[0]
+        buildToNode.attributes().containsKey('class')
+        buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
+        publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+    }
+
+    def 'call Jabber publish to get exceptions'() {
+        when:
+        context.publishJabber('me@gmail.com', 'NOPE')
+
+        then:
+        thrown(AssertionError)
+
+        when:
+        context.publishJabber('me@gmail.com', 'ALL', 'Nope')
+
+        then:
+        thrown(AssertionError)
+
+    }
+
     def 'call step via helper'() {
         when:
         helper.publishers {
