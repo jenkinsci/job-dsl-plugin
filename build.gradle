@@ -9,6 +9,8 @@ allprojects {
     }
 }
 
+defaultTasks 'build' // For BuildHive
+
 subprojects {
     group = "org.jenkinsci.plugins"
     apply plugin: 'groovy'
