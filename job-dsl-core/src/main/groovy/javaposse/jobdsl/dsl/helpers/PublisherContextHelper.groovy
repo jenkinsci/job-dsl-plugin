@@ -279,6 +279,57 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
         }
         def validJabberStrategyNames = ['ALL', 'FAILURE_AND_FIXED', 'ANY_FAILURE', 'STATECHANGE_ONLY']
         def validJabberChannelNotificationNames = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
+
+        /**
+         <be.certipost.hudson.plugin.SCPRepositoryPublisher>
+            <siteName>javadoc</siteName>
+            <entries>
+                <be.certipost.hudson.plugin.Entry>
+                    <filePath/>
+                    <sourceFile>api-sdk/*</sourceFile>
+                    <keepHierarchy>true</keepHierarchy>
+                </be.certipost.hudson.plugin.Entry>
+            </entries>
+        </be.certipost.hudson.plugin.SCPRepositoryPublisher>
+         */
+        def publishScp(String site, Closure scpClosure = null) {
+            ScpContext scpContext = new ScpContext()
+            AbstractContextHelper.executeInContext(scpClosure, scpContext)
+
+            // Validate values
+            assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
+
+            def nodeBuilder = NodeBuilder.newInstance()
+            // TODO Possibility to update existing publish node
+            def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
+                siteName site
+                entries {
+                    scpContext.entries { ScpEntry entry ->
+                        'be.certipost.hudson.plugin.Entry' {
+                            filePath entry.destination
+                            sourceFile entry.source
+                            keepHierarchy entry.keepHierarchy?'true':'false'
+                        }
+                    }
+                }
+            }
+            publisherNodes << publishNode
+        }
+
+    }
+
+    static class ScpContext implements Context {
+        private List<ScpEntry> entries
+
+        def entry(String source, String destination = '', boolean keepHierarchy = false) {
+            entries << new ScpEntry(source:  source, destination: destination, keepHierarchy: keepHierarchy)
+        }
+    }
+
+    static class ScpEntry {
+        String source
+        String destination
+        boolean keepHierarchy
     }
 
     static class JabberContext implements Context {
