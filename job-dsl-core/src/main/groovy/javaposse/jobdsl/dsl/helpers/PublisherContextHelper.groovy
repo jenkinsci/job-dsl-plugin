@@ -147,6 +147,37 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
         }
 
         /**
+         * Everything checked:
+         <hudson.tasks.junit.JUnitResultArchiver>
+             <testResults>build/test/*.xml</testResults> // Can be empty
+             <keepLongStdio>true</keepLongStdio>
+             <testDataPublishers> // Empty if no extra publishers
+                 <hudson.plugins.claim.ClaimTestDataPublisher/> // Allow claiming of failed tests
+                 <hudson.plugins.junitattachments.AttachmentPublisher/> // Publish test attachments
+             </testDataPublishers>
+         </hudson.tasks.junit.JUnitResultArchiver>
+         */
+        def archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false, boolean publishTestAttachments = false) {
+            def nodeBuilder = new NodeBuilder()
+
+            Node archiverNode = nodeBuilder.'hudson.tasks.junit.JUnitResultArchiver' {
+                testResults glob
+                keepLongStdio retainLongStdout?'true':'false'
+                testDataPublishers {
+                    if (allowClaimingOfFailedTests) {
+                        'hudson.plugins.claim.ClaimTestDataPublisher' ''
+                    }
+                    if (publishTestAttachments) {
+                        'hudson.plugins.junitattachments.AttachmentPublisher' ''
+                    }
+                }
+            }
+
+            publisherNodes << archiverNode
+
+        }
+
+        /**
         <htmlpublisher.HtmlPublisher>
           <reportTargets>
             <htmlpublisher.HtmlPublisherTarget>
