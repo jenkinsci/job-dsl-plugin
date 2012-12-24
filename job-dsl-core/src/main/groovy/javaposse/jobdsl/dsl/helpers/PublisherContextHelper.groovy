@@ -212,6 +212,112 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             }
             publisherNodes << htmlPublisherNode
         }
+        /**
+         * With only the target specified:
+         <hudson.plugins.jabber.im.transport.JabberPublisher>
+             <targets>
+                 <hudson.plugins.im.GroupChatIMMessageTarget>
+                     <name>api@conference.jabber.netflix.com</name>
+                     <notificationOnly>false</notificationOnly>
+                 </hudson.plugins.im.GroupChatIMMessageTarget>
+             </targets>
+             <strategy>ALL</strategy> // all
+             or <strategy>FAILURE_AND_FIXED</strategy> // failure and fixed
+             or <strategy>ANY_FAILURE</strategy> // failure
+             or <strategy>STATECHANGE_ONLY</strategy> // change
+             <notifyOnBuildStart>false</notifyOnBuildStart> // Notify on build starts
+             <notifySuspects>false</notifySuspects> // Notify SCM committers
+             <notifyCulprits>false</notifyCulprits> // Notify SCM culprits
+             <notifyFixers>false</notifyFixers> // Notify upstream committers
+             <notifyUpstreamCommitters>false</notifyUpstreamCommitters> // Notify SCM fixers
+
+             // Channel Notification Message
+             <buildToChatNotifier class="hudson.plugins.im.build_notify.DefaultBuildToChatNotifier"/> // Summary + SCM change
+             or <buildToChatNotifier class="hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier"/> // Just Summary
+             or <buildToChatNotifier class="hudson.plugins.im.build_notify.BuildParametersBuildToChatNotifier"/> // Summary and build parameters
+             or <buildToChatNotifier class="hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier"/> // Summary, SCM changes and failed tests
+             <matrixMultiplier>ONLY_CONFIGURATIONS</matrixMultiplier>
+         </hudson.plugins.jabber.im.transport.JabberPublisher>
+         */
+        def publishJabber(String target, Closure jabberClosure = null) {
+            publishJabber(target, null, null, jabberClosure)
+        }
+
+        def publishJabber(String target, String strategyName, Closure jabberClosure = null) {
+            publishJabber(target, strategyName, null, jabberClosure)
+        }
+
+        def publishJabber(String target, String strategyName, String channelNotificationName, Closure jabberClosure = null) {
+            JabberContext jabberContext = new JabberContext()
+            jabberContext.strategyName = strategyName?:'ALL'
+            jabberContext.channelNotificationName = channelNotificationName?:'Default'
+            AbstractContextHelper.executeInContext(jabberClosure, jabberContext)
+
+            // Validate values
+            assert validJabberStrategyNames.contains(jabberContext.strategyName), "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
+            assert validJabberChannelNotificationNames.contains(jabberContext.channelNotificationName), "Jabber Channel Notification name needs to be one of these values: ${validJabberChannelNotificationNames.join(',')}"
+
+            def nodeBuilder = NodeBuilder.newInstance()
+            def publishNode = nodeBuilder.'hudson.plugins.jabber.im.transport.JabberPublisher' {
+                targets {
+                    'hudson.plugins.im.GroupChatIMMessageTarget' {
+                        println "Delegate: ${delegate.class}"
+                        delegate.createNode('name', target)
+                        notificationOnly 'false'
+                    }
+                }
+                strategy jabberContext.strategyName
+                notifyOnBuildStart jabberContext.notifyOnBuildStart?'true':'false'
+                notifySuspects jabberContext.notifyOnBuildStart?'true':'false'
+                notifyCulprits jabberContext.notifyCulprits?'true':'false'
+                notifyFixers jabberContext.notifyFixers?'true':'false'
+                notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters?'true':'false'
+                buildToChatNotifier('class': "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier")
+                matrixMultiplier 'ONLY_CONFIGURATIONS'
+            }
+            publisherNodes << publishNode
+        }
+        def validJabberStrategyNames = ['ALL', 'FAILURE_AND_FIXED', 'ANY_FAILURE', 'STATECHANGE_ONLY']
+        def validJabberChannelNotificationNames = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
+    }
+
+    static class JabberContext implements Context {
+        String strategyName = 'ALL' // ALL,  FAILURE_AND_FIXED, ANY_FAILURE, STATECHANGE_ONLY
+        boolean notifyOnBuildStart = false
+        boolean notifySuspects = false
+        boolean notifyCulprits = false
+        boolean notifyFixers = false
+        boolean notifyUpstreamCommitters = false
+        String channelNotificationName = 'Default' // Default, SummaryOnly, BuildParameters, PrintFailingTests
+
+        void strategyName(String strategyName) {
+            this.strategyName = strategyName
+        }
+
+        void notifyOnBuildStart(boolean notifyOnBuildStart) {
+            this.notifyOnBuildStart = notifyOnBuildStart
+        }
+
+        void notifySuspects(boolean notifySuspects) {
+            this.notifySuspects = notifySuspects
+        }
+
+        void notifyCulprits(boolean notifyCulprits) {
+            this.notifyCulprits = notifyCulprits
+        }
+
+        void notifyFixers(boolean notifyFixers) {
+            this.notifyFixers = notifyFixers
+        }
+
+        void notifyUpstreamCommitters(boolean notifyUpstreamCommitters) {
+            this.notifyUpstreamCommitters = notifyUpstreamCommitters
+        }
+
+        void channelNotificationName(String channelNotificationName) {
+            this.channelNotificationName = channelNotificationName
+        }
+// TODO Create Enum for channelNotificationMessage and strategy
     }
 
     static class EmailTrigger {
