@@ -261,7 +261,6 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             def publishNode = nodeBuilder.'hudson.plugins.jabber.im.transport.JabberPublisher' {
                 targets {
                     'hudson.plugins.im.GroupChatIMMessageTarget' {
-                        println "Delegate: ${delegate.class}"
                         delegate.createNode('name', target)
                         notificationOnly 'false'
                     }
@@ -304,7 +303,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
                 siteName site
                 entries {
-                    scpContext.entries { ScpEntry entry ->
+                    scpContext.entries.each { ScpEntry entry ->
                         'be.certipost.hudson.plugin.Entry' {
                             filePath entry.destination
                             sourceFile entry.source
@@ -316,10 +315,83 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             publisherNodes << publishNode
         }
 
+        /**
+         * Downstream build
+         *
+         <hudson.tasks.BuildTrigger>
+            <childProjects>DSL-Tutorial-1-Test</childProjects>
+            <threshold>
+                <name>SUCCESS</name>
+                <ordinal>0</ordinal>
+                <color>BLUE</color>
+            </threshold>
+            // or
+            <threshold><name>UNSTABLE</name><ordinal>1</ordinal><color>YELLOW</color></threshold>
+            // or
+            <threshold><name>FAILURE</name><ordinal>2</ordinal><color>RED</color></threshold>
+         </hudson.tasks.BuildTrigger>
+         */
+        def downstream(String projectName, String thresholdName = 'SUCCESS') {
+            def thresholdColorMap = ['SUCCESS':'BLUE', 'UNSTABLE':'YELLOW', 'FAILURE':'RED']
+            def thresholdOrdinalMap = ['SUCCESS':'0', 'UNSTABLE':'1', 'FAILURE':'2']
+            assert thresholdColorMap.containsKey(thresholdName), "thresholdName must be one of these values ${thresholdColorMap.keySet().join(',')}"
+
+            def nodeBuilder = new NodeBuilder()
+            Node publishNode = nodeBuilder.'hudson.tasks.BuildTrigger' {
+                childProjects projectName
+                threshold {
+                    delegate.createNode('name', thresholdName)
+                    ordinal thresholdOrdinalMap[thresholdName]
+                    color thresholdColorMap[thresholdName]
+                }
+            }
+
+            publisherNodes << publishNode
+        }
+
+        /**
+        Trigger parameterized build on other projects.
+
+        <hudson.plugins.parameterizedtrigger.BuildTrigger>
+            <configs>
+                <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                    <configs>
+                        <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/> // Current build parameters
+                        <hudson.plugins.parameterizedtrigger.FileBuildParameters> // Parameters from properties file
+                            <propertiesFile>some.properties</propertiesFile>
+                        </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+                        <hudson.plugins.git.GitRevisionBuildParameters> // Pass-through Git commit that was built
+                            <combineQueuedCommits>false</combineQueuedCommits>
+                        </hudson.plugins.git.GitRevisionBuildParameters>
+                        <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters> // Predefined properties
+                            <properties>prop1=value1
+         prop2=value2</properties>
+                        </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+                        <hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters> // Restrict matrix execution to a subset
+                            <filter>label=="${TARGET}"</filter>
+                        </hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters>
+                        <hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters/> // Subversion revision
+                    </configs>
+                    <projects>NEBULA-ubuntu-packaging-plugin</projects>
+                    <condition>SUCCESS</condition>
+                    <triggerWithNoParameters>false</triggerWithNoParameters>
+                </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                    <configs class="java.util.Collections$EmptyList"/>
+                    <projects>DSL-Tutorial-1-Test</projects>
+                    <condition>SUCCESS</condition> // SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED,
+                    <triggerWithNoParameters>false</triggerWithNoParameters>
+                </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+            </configs>
+         </hudson.plugins.parameterizedtrigger.BuildTrigger>
+        */
+        def downstreamParameterized(Closure downstreamClosure) {
+
+        }
     }
 
     static class ScpContext implements Context {
-        private List<ScpEntry> entries
+        private List<ScpEntry> entries = []
 
         def entry(String source, String destination = '', boolean keepHierarchy = false) {
             entries << new ScpEntry(source:  source, destination: destination, keepHierarchy: keepHierarchy)

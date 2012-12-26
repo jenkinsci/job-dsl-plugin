@@ -324,6 +324,40 @@ public class PublisherHelperSpec extends Specification {
         entryNode2.keepHierarchy[0].value() == 'true'
     }
 
+    def 'call trigger downstream without args'() {
+        when:
+        context.downstream('THE-JOB')
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.tasks.BuildTrigger'
+        publisherNode.childProjects[0].value() == 'THE-JOB'
+        publisherNode.threshold[0].name[0].value() == 'SUCCESS'
+        publisherNode.threshold[0].ordinal[0].value() == '0'
+        publisherNode.threshold[0].color[0].value() == 'BLUE'
+    }
+
+    def 'call trigger downstream'() {
+            when:
+        context.downstream('THE-JOB', 'FAILURE')
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.tasks.BuildTrigger'
+        publisherNode.childProjects[0].value() == 'THE-JOB'
+        publisherNode.threshold[0].name[0].value() == 'FAILURE'
+        publisherNode.threshold[0].ordinal[0].value() == '2'
+        publisherNode.threshold[0].color[0].value() == 'RED'
+    }
+
+    def 'call trigger downstream with bad args'() {
+        when:
+        context.downstream('THE-JOB', 'BAD')
+
+        then:
+        thrown(AssertionError)
+    }
+
     def 'call step via helper'() {
         when:
         helper.publishers {
