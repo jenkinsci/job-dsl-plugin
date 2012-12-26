@@ -30,6 +30,11 @@ class TopLevelHelper extends AbstractHelper {
       <hudson.plugins.build__timeout.BuildTimeoutWrapper>
         <timeoutMinutes>15</timeoutMinutes>
         <failBuild>true</failBuild>
+        <!-- Missing from DSL Call -->
+        <writingDescription>false</writingDescription>
+        <timeoutPercentage>0</timeoutPercentage>
+        <timeoutType>absolute</timeoutType>
+        <timeoutMinutesElasticDefault>3</timeoutMinutesElasticDefault>
       </hudson.plugins.build__timeout.BuildTimeoutWrapper>
     </buildWrappers>
     */
