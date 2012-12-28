@@ -291,7 +291,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             </entries>
         </be.certipost.hudson.plugin.SCPRepositoryPublisher>
          */
-        def publishScp(String site, Closure scpClosure = null) {
+        def publishScp(String site, Closure scpClosure) {
             ScpContext scpContext = new ScpContext()
             AbstractContextHelper.executeInContext(scpClosure, scpContext)
 
@@ -379,14 +379,151 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
                 <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
                     <configs class="java.util.Collections$EmptyList"/>
                     <projects>DSL-Tutorial-1-Test</projects>
-                    <condition>SUCCESS</condition> // SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED,
+                    <condition>SUCCESS</condition> // SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED
                     <triggerWithNoParameters>false</triggerWithNoParameters>
                 </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
             </configs>
          </hudson.plugins.parameterizedtrigger.BuildTrigger>
         */
         def downstreamParameterized(Closure downstreamClosure) {
+            DownstreamContext downstreamContext = new DownstreamContext()
+            AbstractContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
+            def nodeBuilder = NodeBuilder.newInstance()
+            def publishNode = nodeBuilder.'hudson.plugins.parameterizedtrigger.BuildTrigger' {
+                configs {
+                    downstreamContext.triggers.each { DownstreamTriggerContext trigger ->
+                        'hudson.plugins.parameterizedtrigger.BuildTriggerConfig' {
+                            projects trigger.projects
+                            condition trigger.condition
+                            triggerWithNoParameters trigger.triggerWithNoParameters?'true':'false'
+                            if (trigger.hasParameter() ) {
+                                configs {
+                                    if (trigger.usingCurrentBuild) {
+                                        'hudson.plugins.parameterizedtrigger.CurrentBuildParameters' ''
+                                    }
+
+                                    if (trigger.usingPropertiesFile) {
+                                        'hudson.plugins.parameterizedtrigger.FileBuildParameters' {
+                                            propertiesFile trigger.propFile
+                                        }
+                                    }
+
+                                    if (trigger.usingGitRevision) {
+                                        'hudson.plugins.git.GitRevisionBuildParameters' {
+                                            'combineQueuedCommits' trigger.combineQueuedCommits?'true':'false'
+                                        }
+                                    }
+
+                                    if (trigger.usingPredefined) {
+                                        'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters' {
+                                            delegate.createNode('properties', trigger.predefinedProps.join('\n'))
+                                        }
+                                    }
+
+                                    if (trigger.usingMatrixSubset) {
+                                        'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters' {
+                                            filter trigger.matrixSubsetFilter
+                                        }
+                                    }
+
+                                    if (trigger.usingSubversionRevision) {
+                                        'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {}
+                                    }
+                                }
+                            } else {
+                                configs('class':'java.util.Collections$EmptyList')
+                            }
+                        }
+                    }
+                }
+            }
+            publisherNodes << publishNode
+
+        }
+    }
+
+    static class DownstreamContext implements Context {
+        private List<DownstreamTriggerContext> triggers = []
+        def trigger(String projects, Closure downstreamTriggerClosure = null) {
+            trigger(projects, null, downstreamTriggerClosure)
+        }
+
+        def trigger(String projects, String condition, Closure downstreamTriggerClosure = null) {
+            trigger(projects, condition, false, downstreamTriggerClosure)
+        }
+
+        def trigger(String projects, String condition, boolean triggerWithNoParameters, Closure downstreamTriggerClosure = null) {
+            DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext()
+            downstreamTriggerContext.projects = projects
+            downstreamTriggerContext.condition = condition?:'SUCCESS'
+            downstreamTriggerContext.triggerWithNoParameters = triggerWithNoParameters
+            AbstractContextHelper.executeInContext(downstreamTriggerClosure, downstreamTriggerContext)
+
+            // Validate this trigger
+            assert validDownstreamConditionNames.contains(downstreamTriggerContext.condition), "Trigger condition has to be one of these values: ${validDownstreamConditionNames.join(',')}"
+
+            triggers << downstreamTriggerContext
+        }
+        def validDownstreamConditionNames = ['SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED']
+    }
+
+    static class DownstreamTriggerContext implements Context {
+        String projects
+        String condition
+        boolean triggerWithNoParameters
+
+        boolean usingCurrentBuild = false
+        def currentBuild() {
+            usingCurrentBuild = true
+        }
+
+        boolean usingPropertiesFile = false
+        String propFile
+        def propertiesFile(String propFile) {
+            usingPropertiesFile = true
+            this.propFile = propFile
+        }
+
+        boolean usingGitRevision = false
+        boolean combineQueuedCommits = false
+        def gitRevision(boolean combineQueuedCommits = false) {
+            usingGitRevision = true
+            this.combineQueuedCommits = combineQueuedCommits
+        }
+
+        boolean usingPredefined = false
+        List<String> predefinedProps = []
+        def predefinedProp(String key, String value) {
+            usingPredefined = true
+            this.predefinedProps << "${key}=${value}"
+        }
+
+        def predefinedProps(Map<String, String> predefinedPropsMap) {
+            usingPredefined = true
+            def props = predefinedPropsMap.collect { "${it.key}=${it.value}"}
+            this.predefinedProps.addAll(props)
+        }
+
+        def predefinedProps(String predefinedProps) { // Newline separated
+            usingPredefined = true
+            this.predefinedProps.addAll(predefinedProps.split('\n'))
+        }
+
+        boolean usingMatrixSubset = false
+        String matrixSubsetFilter
+        def matrixSubset(String groovyFilter) {
+            usingMatrixSubset = true
+            matrixSubsetFilter = groovyFilter
+        }
+
+        boolean usingSubversionRevision = false
+        def subversionRevision() {
+            usingSubversionRevision = true
+        }
+
+        boolean hasParameter() {
+            return usingCurrentBuild || usingGitRevision || usingMatrixSubset || usingPredefined || usingPropertiesFile || usingSubversionRevision
         }
     }
 
