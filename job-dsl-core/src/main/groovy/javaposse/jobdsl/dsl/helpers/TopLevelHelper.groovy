@@ -89,4 +89,19 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * Block build if certain jobs are running
+     <hudson.plugins.buildblocker.BuildBlockerProperty>
+        <useBuildBlocker>true</useBuildBlocker> <!-- Always true -->
+        <blockingJobs>API-SmokeTests-TestBranchAPI-NightlyTests-TestBranchAPI-Sync-Instances</blockingJobs>
+     </hudson.plugins.buildblocker.BuildBlockerProperty>
+     */
+    def blockOn(String projectNames) {
+        execute {
+            it / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
+                useBuildBlocker 'true'
+                blockingJobs projectNames
+            }
+        }
+    }
 }

@@ -96,6 +96,17 @@ public class TopLevelHelperSpec extends Specification {
         then:
         root.logRotator[0].daysToKeep[0].value() == '14'
         root.logRotator[0].numToKeep[0].value() == '50'
+    }
 
+    def 'build blocker xml'() {
+        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+
+        when:
+        def action = helper.blockOn("MyProject")
+        action.execute(root)
+
+        then:
+        root.'hudson.plugins.buildblocker.BuildBlockerProperty'[0].useBuildBlocker[0].value() == 'true'
+        root.'hudson.plugins.buildblocker.BuildBlockerProperty'[0].blockingJobs[0].value() == 'MyProject'
     }
 }
