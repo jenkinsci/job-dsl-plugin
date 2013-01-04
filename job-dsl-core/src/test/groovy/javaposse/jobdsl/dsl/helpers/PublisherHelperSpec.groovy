@@ -226,14 +226,21 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call Jabber publish with all args'() {
         when:
-        context.publishJabber('me@gmail.com', 'ANY_FAILURE', 'SummaryOnly' )
+        context.publishJabber('me@gmail.com *tools@hipchat.com', 'ANY_FAILURE', 'SummaryOnly' )
 
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        targetNode.name[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly[0].value() == 'false'
+        publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'.size() == 2
+
+        def emailTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
+        emailTargetNode.name[0].value() == 'me@gmail.com'
+        emailTargetNode.notificationOnly.size() == 0
+
+        def confTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[1]
+        confTargetNode.name[0].value() == 'tools@hipchat.com'
+        confTargetNode.notificationOnly[0].value() == 'false'
+
         publisherNode.strategy[0].value() == 'ANY_FAILURE'
         Node buildToNode = publisherNode.buildToChatNotifier[0]
         buildToNode.attributes().containsKey('class')
@@ -288,7 +295,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call scp publish with not enough entries'() {
         when:
-        context.publishScp('javadoc')
+        context.publishScp('javadoc', null)
 
         then:
         thrown(AssertionError)
@@ -322,6 +329,103 @@ public class PublisherHelperSpec extends Specification {
         entryNode2.filePath[0].value() == 'javadoc'
         entryNode2.sourceFile[0].value() == 'build/javadocs/**/*'
         entryNode2.keepHierarchy[0].value() == 'true'
+    }
+
+    def 'call trigger downstream without args'() {
+        when:
+        context.downstream('THE-JOB')
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.tasks.BuildTrigger'
+        publisherNode.childProjects[0].value() == 'THE-JOB'
+        publisherNode.threshold[0].name[0].value() == 'SUCCESS'
+        publisherNode.threshold[0].ordinal[0].value() == '0'
+        publisherNode.threshold[0].color[0].value() == 'BLUE'
+    }
+
+    def 'call trigger downstream'() {
+            when:
+        context.downstream('THE-JOB', 'FAILURE')
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.tasks.BuildTrigger'
+        publisherNode.childProjects[0].value() == 'THE-JOB'
+        publisherNode.threshold[0].name[0].value() == 'FAILURE'
+        publisherNode.threshold[0].ordinal[0].value() == '2'
+        publisherNode.threshold[0].color[0].value() == 'RED'
+    }
+
+    def 'call trigger downstream with bad args'() {
+        when:
+        context.downstream('THE-JOB', 'BAD')
+
+        then:
+        thrown(AssertionError)
+    }
+
+    def 'call downstream ext with all args'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true) {
+                currentBuild() // Current build parameters
+                propertiesFile('dir/my.properties') // Parameters from properties file
+                gitRevision(false) // Pass-through Git commit that was built
+                predefinedProp('key1', 'value1') // Predefined properties
+                predefinedProps([key2: 'value2', key3: 'value3'])
+                predefinedProps('key4=value4\nkey5=value5') // Newline separated
+                matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
+                subversionRevision() // Subversion Revision
+            }
+            trigger('Project2') {
+                currentBuild()
+            }
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.parameterizedtrigger.BuildTrigger'
+        publisherNode.configs[0].children().size() == 2
+        Node first = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
+        first.projects[0].value() == 'Project1, Project2'
+        first.condition[0].value() == 'UNSTABLE_OR_BETTER'
+        first.triggerWithNoParameters[0].value() == 'true'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+        first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
+        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == 'false'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+
+        Node second = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[1]
+        second.projects[0].value() == 'Project2'
+        second.condition[0].value() == 'SUCCESS'
+        second.triggerWithNoParameters[0].value() == 'false'
+        second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project3') {
+            }
+        }
+
+        then:
+        Node third = context.publisherNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project3'
+        third.condition[0].value() == 'SUCCESS'
+        third.triggerWithNoParameters[0].value() == 'false'
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project4', 'WRONG')
+        }
+
+        then:
+        thrown(AssertionError)
     }
 
     def 'call step via helper'() {

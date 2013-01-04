@@ -15,8 +15,8 @@ public class Job {
     String templateName = null // Optional
     List<WithXmlAction> withXmlActions = []
 
-    // The idea here is that we'll let the helpers define their own methods, without polluting this class too mcuh
-    // Though we could use some methodMissing to do some sort of dynamic lookup
+    // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
+    // TODO Use some methodMissing to do some sort of dynamic lookup
     @Delegate AuthorizationContextHelper helperAuthorization
     @Delegate ScmContextHelper helperScm
     @Delegate TriggerContextHelper helperTrigger

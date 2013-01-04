@@ -91,7 +91,7 @@ multiline=true</properties>
 
         def ant(String targetsArg, String buildFileArg, String antInstallation, Closure antClosure = null) {
             AntContext antContext = new AntContext()
-            AbstractHelper.executeInContext(antClosure, antContext)
+            AbstractContextHelper.executeInContext(antClosure, antContext)
 
             def targetList = []
 
