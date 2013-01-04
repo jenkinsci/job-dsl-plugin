@@ -226,14 +226,21 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call Jabber publish with all args'() {
         when:
-        context.publishJabber('me@gmail.com', 'ANY_FAILURE', 'SummaryOnly' )
+        context.publishJabber('me@gmail.com *tools@hipchat.com', 'ANY_FAILURE', 'SummaryOnly' )
 
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        targetNode.name[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly[0].value() == 'false'
+        publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'.size() == 2
+
+        def emailTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
+        emailTargetNode.name[0].value() == 'me@gmail.com'
+        emailTargetNode.notificationOnly.size() == 0
+
+        def confTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[1]
+        confTargetNode.name[0].value() == 'tools@hipchat.com'
+        confTargetNode.notificationOnly[0].value() == 'false'
+
         publisherNode.strategy[0].value() == 'ANY_FAILURE'
         Node buildToNode = publisherNode.buildToChatNotifier[0]
         buildToNode.attributes().containsKey('class')

@@ -247,7 +247,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             publishJabber(target, strategyName, null, jabberClosure)
         }
 
-        def publishJabber(String target, String strategyName, String channelNotificationName, Closure jabberClosure = null) {
+        def publishJabber(String targetsArg, String strategyName, String channelNotificationName, Closure jabberClosure = null) {
             JabberContext jabberContext = new JabberContext()
             jabberContext.strategyName = strategyName?:'ALL'
             jabberContext.channelNotificationName = channelNotificationName?:'Default'
@@ -260,9 +260,15 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.jabber.im.transport.JabberPublisher' {
                 targets {
-                    'hudson.plugins.im.GroupChatIMMessageTarget' {
-                        delegate.createNode('name', target)
-                        notificationOnly 'false'
+                    targetsArg.split().each { target ->
+                        def isGroup = target.startsWith('*')
+                        def targetClean = isGroup?target.substring(1):target
+                        'hudson.plugins.im.GroupChatIMMessageTarget' {
+                            delegate.createNode('name', targetClean)
+                            if (isGroup) {
+                                notificationOnly 'false'
+                            }
+                        }
                     }
                 }
                 strategy jabberContext.strategyName
