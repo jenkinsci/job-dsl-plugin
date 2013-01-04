@@ -9,6 +9,13 @@ class TopLevelHelper extends AbstractHelper {
         super(withXmlActions)
     }
 
+    def description(String descriptionString) {
+        execute {
+            def descNode = methodMissing('description', descriptionString)
+            it / descNode
+        }
+    }
+
     /**
      * "Restrict where this project can be run"
      * <assignedNode>FullTools&amp;&amp;RPM&amp;&amp;DC</assignedNode>
@@ -53,7 +60,7 @@ class TopLevelHelper extends AbstractHelper {
      */
     def chucknorris() {
         execute {
-            def factGenerator = it / 'hudson.plugins.chucknorris.CordellWalkerRecorder' / factGenerator
+            it / 'hudson.plugins.chucknorris.CordellWalkerRecorder' / factGenerator
         }
     }
 

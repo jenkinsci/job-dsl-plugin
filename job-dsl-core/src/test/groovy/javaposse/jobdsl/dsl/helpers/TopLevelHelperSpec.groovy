@@ -8,6 +8,25 @@ public class TopLevelHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     TopLevelHelper helper = new TopLevelHelper(mockActions)
+    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+
+    def 'add description'() {
+        when:
+        def action = helper.description('Description')
+        action.execute(root)
+
+        then:
+        root.description[0].value() == 'Description'
+
+        when:
+        def action2 = helper.description('Description2')
+        action2.execute(root)
+
+        then:
+        root.description.size() == 1
+        root.description[0].value() == 'Description2'
+
+    }
 
     def 'can run cordell walker'() {
         when:
@@ -18,8 +37,6 @@ public class TopLevelHelperSpec extends Specification {
     }
 
     def 'cordell walker constructs xml'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
-
         when:
         def action = helper.chucknorris()
         action.execute(root)
@@ -37,8 +54,6 @@ public class TopLevelHelperSpec extends Specification {
     }
 
     def 'timeout constructs xml'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
-
         when:
         def action = helper.timeout(15)
         action.execute(root)
@@ -57,8 +72,6 @@ public class TopLevelHelperSpec extends Specification {
     }
 
     def 'disable defaults to true'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
-
         when:
         helper.disabled().execute(root)
 
@@ -75,8 +88,6 @@ public class TopLevelHelperSpec extends Specification {
     }
 
     def 'label constructs xml'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
-
         when:
         def action = helper.label('FullTools')
         action.execute(root)
@@ -87,8 +98,6 @@ public class TopLevelHelperSpec extends Specification {
     }
 
     def 'log rotate xml'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
-
         when:
         def action = helper.logRotator(14,50)
         action.execute(root)
@@ -99,8 +108,6 @@ public class TopLevelHelperSpec extends Specification {
     }
 
     def 'build blocker xml'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
-
         when:
         def action = helper.blockOn("MyProject")
         action.execute(root)
