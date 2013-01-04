@@ -55,7 +55,7 @@ project(':job-dsl-core') {
     task run(type:JavaExec, dependsOn:build) {
         classpath sourceSets.main.runtimeClasspath
         main 'javaposse.jobdsl.Run'
-        //args rootProject.args
+        args rootProject.hasProperty('args')?rootProject.args:'test.dsl'
     }
 }
 
@@ -66,4 +66,4 @@ project(':job-dsl-plugin') {
     }
 }
 
-task wrapper(type: Wrapper) { gradleVersion = '1.2' }
+task wrapper(type: Wrapper) { gradleVersion = '1.3' }

@@ -9,6 +9,13 @@ class TopLevelHelper extends AbstractHelper {
         super(withXmlActions)
     }
 
+    def description(String descriptionString) {
+        execute {
+            def descNode = methodMissing('description', descriptionString)
+            it / descNode
+        }
+    }
+
     /**
      * "Restrict where this project can be run"
      * <assignedNode>FullTools&amp;&amp;RPM&amp;&amp;DC</assignedNode>
@@ -30,6 +37,11 @@ class TopLevelHelper extends AbstractHelper {
       <hudson.plugins.build__timeout.BuildTimeoutWrapper>
         <timeoutMinutes>15</timeoutMinutes>
         <failBuild>true</failBuild>
+        <!-- Missing from DSL Call -->
+        <writingDescription>false</writingDescription>
+        <timeoutPercentage>0</timeoutPercentage>
+        <timeoutType>absolute</timeoutType>
+        <timeoutMinutesElasticDefault>3</timeoutMinutesElasticDefault>
       </hudson.plugins.build__timeout.BuildTimeoutWrapper>
     </buildWrappers>
     */
@@ -48,7 +60,7 @@ class TopLevelHelper extends AbstractHelper {
      */
     def chucknorris() {
         execute {
-            def factGenerator = it / 'hudson.plugins.chucknorris.CordellWalkerRecorder' / factGenerator
+            it / 'hudson.plugins.chucknorris.CordellWalkerRecorder' / factGenerator
         }
     }
 
@@ -84,4 +96,19 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * Block build if certain jobs are running
+     <hudson.plugins.buildblocker.BuildBlockerProperty>
+        <useBuildBlocker>true</useBuildBlocker> <!-- Always true -->
+        <blockingJobs>API-SmokeTests-TestBranchAPI-NightlyTests-TestBranchAPI-Sync-Instances</blockingJobs>
+     </hudson.plugins.buildblocker.BuildBlockerProperty>
+     */
+    def blockOn(String projectNames) {
+        execute {
+            it / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
+                useBuildBlocker 'true'
+                blockingJobs projectNames
+            }
+        }
+    }
 }

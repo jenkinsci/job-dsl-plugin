@@ -247,7 +247,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             publishJabber(target, strategyName, null, jabberClosure)
         }
 
-        def publishJabber(String target, String strategyName, String channelNotificationName, Closure jabberClosure = null) {
+        def publishJabber(String targetsArg, String strategyName, String channelNotificationName, Closure jabberClosure = null) {
             JabberContext jabberContext = new JabberContext()
             jabberContext.strategyName = strategyName?:'ALL'
             jabberContext.channelNotificationName = channelNotificationName?:'Default'
@@ -260,10 +260,15 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.jabber.im.transport.JabberPublisher' {
                 targets {
-                    'hudson.plugins.im.GroupChatIMMessageTarget' {
-                        println "Delegate: ${delegate.class}"
-                        delegate.createNode('name', target)
-                        notificationOnly 'false'
+                    targetsArg.split().each { target ->
+                        def isGroup = target.startsWith('*')
+                        def targetClean = isGroup?target.substring(1):target
+                        'hudson.plugins.im.GroupChatIMMessageTarget' {
+                            delegate.createNode('name', targetClean)
+                            if (isGroup) {
+                                notificationOnly 'false'
+                            }
+                        }
                     }
                 }
                 strategy jabberContext.strategyName
@@ -292,7 +297,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             </entries>
         </be.certipost.hudson.plugin.SCPRepositoryPublisher>
          */
-        def publishScp(String site, Closure scpClosure = null) {
+        def publishScp(String site, Closure scpClosure) {
             ScpContext scpContext = new ScpContext()
             AbstractContextHelper.executeInContext(scpClosure, scpContext)
 
@@ -304,7 +309,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
                 siteName site
                 entries {
-                    scpContext.entries { ScpEntry entry ->
+                    scpContext.entries.each { ScpEntry entry ->
                         'be.certipost.hudson.plugin.Entry' {
                             filePath entry.destination
                             sourceFile entry.source
@@ -316,10 +321,220 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             publisherNodes << publishNode
         }
 
+        /**
+         * Downstream build
+         *
+         <hudson.tasks.BuildTrigger>
+            <childProjects>DSL-Tutorial-1-Test</childProjects>
+            <threshold>
+                <name>SUCCESS</name>
+                <ordinal>0</ordinal>
+                <color>BLUE</color>
+            </threshold>
+            // or
+            <threshold><name>UNSTABLE</name><ordinal>1</ordinal><color>YELLOW</color></threshold>
+            // or
+            <threshold><name>FAILURE</name><ordinal>2</ordinal><color>RED</color></threshold>
+         </hudson.tasks.BuildTrigger>
+         */
+        def downstream(String projectName, String thresholdName = 'SUCCESS') {
+            def thresholdColorMap = ['SUCCESS':'BLUE', 'UNSTABLE':'YELLOW', 'FAILURE':'RED']
+            def thresholdOrdinalMap = ['SUCCESS':'0', 'UNSTABLE':'1', 'FAILURE':'2']
+            assert thresholdColorMap.containsKey(thresholdName), "thresholdName must be one of these values ${thresholdColorMap.keySet().join(',')}"
+
+            def nodeBuilder = new NodeBuilder()
+            Node publishNode = nodeBuilder.'hudson.tasks.BuildTrigger' {
+                childProjects projectName
+                threshold {
+                    delegate.createNode('name', thresholdName)
+                    ordinal thresholdOrdinalMap[thresholdName]
+                    color thresholdColorMap[thresholdName]
+                }
+            }
+
+            publisherNodes << publishNode
+        }
+
+        /**
+        Trigger parameterized build on other projects.
+
+        <hudson.plugins.parameterizedtrigger.BuildTrigger>
+            <configs>
+                <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                    <configs>
+                        <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/> // Current build parameters
+                        <hudson.plugins.parameterizedtrigger.FileBuildParameters> // Parameters from properties file
+                            <propertiesFile>some.properties</propertiesFile>
+                        </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+                        <hudson.plugins.git.GitRevisionBuildParameters> // Pass-through Git commit that was built
+                            <combineQueuedCommits>false</combineQueuedCommits>
+                        </hudson.plugins.git.GitRevisionBuildParameters>
+                        <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters> // Predefined properties
+                            <properties>prop1=value1
+         prop2=value2</properties>
+                        </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+                        <hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters> // Restrict matrix execution to a subset
+                            <filter>label=="${TARGET}"</filter>
+                        </hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters>
+                        <hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters/> // Subversion revision
+                    </configs>
+                    <projects>NEBULA-ubuntu-packaging-plugin</projects>
+                    <condition>SUCCESS</condition>
+                    <triggerWithNoParameters>false</triggerWithNoParameters>
+                </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                    <configs class="java.util.Collections$EmptyList"/>
+                    <projects>DSL-Tutorial-1-Test</projects>
+                    <condition>SUCCESS</condition> // SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED
+                    <triggerWithNoParameters>false</triggerWithNoParameters>
+                </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+            </configs>
+         </hudson.plugins.parameterizedtrigger.BuildTrigger>
+        */
+        def downstreamParameterized(Closure downstreamClosure) {
+            DownstreamContext downstreamContext = new DownstreamContext()
+            AbstractContextHelper.executeInContext(downstreamClosure, downstreamContext)
+
+            def nodeBuilder = NodeBuilder.newInstance()
+            def publishNode = nodeBuilder.'hudson.plugins.parameterizedtrigger.BuildTrigger' {
+                configs {
+                    downstreamContext.triggers.each { DownstreamTriggerContext trigger ->
+                        'hudson.plugins.parameterizedtrigger.BuildTriggerConfig' {
+                            projects trigger.projects
+                            condition trigger.condition
+                            triggerWithNoParameters trigger.triggerWithNoParameters?'true':'false'
+                            if (trigger.hasParameter() ) {
+                                configs {
+                                    if (trigger.usingCurrentBuild) {
+                                        'hudson.plugins.parameterizedtrigger.CurrentBuildParameters' ''
+                                    }
+
+                                    if (trigger.usingPropertiesFile) {
+                                        'hudson.plugins.parameterizedtrigger.FileBuildParameters' {
+                                            propertiesFile trigger.propFile
+                                        }
+                                    }
+
+                                    if (trigger.usingGitRevision) {
+                                        'hudson.plugins.git.GitRevisionBuildParameters' {
+                                            'combineQueuedCommits' trigger.combineQueuedCommits?'true':'false'
+                                        }
+                                    }
+
+                                    if (trigger.usingPredefined) {
+                                        'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters' {
+                                            delegate.createNode('properties', trigger.predefinedProps.join('\n'))
+                                        }
+                                    }
+
+                                    if (trigger.usingMatrixSubset) {
+                                        'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters' {
+                                            filter trigger.matrixSubsetFilter
+                                        }
+                                    }
+
+                                    if (trigger.usingSubversionRevision) {
+                                        'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {}
+                                    }
+                                }
+                            } else {
+                                configs('class':'java.util.Collections$EmptyList')
+                            }
+                        }
+                    }
+                }
+            }
+            publisherNodes << publishNode
+
+        }
+    }
+
+    static class DownstreamContext implements Context {
+        private List<DownstreamTriggerContext> triggers = []
+        def trigger(String projects, Closure downstreamTriggerClosure = null) {
+            trigger(projects, null, downstreamTriggerClosure)
+        }
+
+        def trigger(String projects, String condition, Closure downstreamTriggerClosure = null) {
+            trigger(projects, condition, false, downstreamTriggerClosure)
+        }
+
+        def trigger(String projects, String condition, boolean triggerWithNoParameters, Closure downstreamTriggerClosure = null) {
+            DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext()
+            downstreamTriggerContext.projects = projects
+            downstreamTriggerContext.condition = condition?:'SUCCESS'
+            downstreamTriggerContext.triggerWithNoParameters = triggerWithNoParameters
+            AbstractContextHelper.executeInContext(downstreamTriggerClosure, downstreamTriggerContext)
+
+            // Validate this trigger
+            assert validDownstreamConditionNames.contains(downstreamTriggerContext.condition), "Trigger condition has to be one of these values: ${validDownstreamConditionNames.join(',')}"
+
+            triggers << downstreamTriggerContext
+        }
+        def validDownstreamConditionNames = ['SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED']
+    }
+
+    static class DownstreamTriggerContext implements Context {
+        String projects
+        String condition
+        boolean triggerWithNoParameters
+
+        boolean usingCurrentBuild = false
+        def currentBuild() {
+            usingCurrentBuild = true
+        }
+
+        boolean usingPropertiesFile = false
+        String propFile
+        def propertiesFile(String propFile) {
+            usingPropertiesFile = true
+            this.propFile = propFile
+        }
+
+        boolean usingGitRevision = false
+        boolean combineQueuedCommits = false
+        def gitRevision(boolean combineQueuedCommits = false) {
+            usingGitRevision = true
+            this.combineQueuedCommits = combineQueuedCommits
+        }
+
+        boolean usingPredefined = false
+        List<String> predefinedProps = []
+        def predefinedProp(String key, String value) {
+            usingPredefined = true
+            this.predefinedProps << "${key}=${value}"
+        }
+
+        def predefinedProps(Map<String, String> predefinedPropsMap) {
+            usingPredefined = true
+            def props = predefinedPropsMap.collect { "${it.key}=${it.value}"}
+            this.predefinedProps.addAll(props)
+        }
+
+        def predefinedProps(String predefinedProps) { // Newline separated
+            usingPredefined = true
+            this.predefinedProps.addAll(predefinedProps.split('\n'))
+        }
+
+        boolean usingMatrixSubset = false
+        String matrixSubsetFilter
+        def matrixSubset(String groovyFilter) {
+            usingMatrixSubset = true
+            matrixSubsetFilter = groovyFilter
+        }
+
+        boolean usingSubversionRevision = false
+        def subversionRevision() {
+            usingSubversionRevision = true
+        }
+
+        boolean hasParameter() {
+            return usingCurrentBuild || usingGitRevision || usingMatrixSubset || usingPredefined || usingPropertiesFile || usingSubversionRevision
+        }
     }
 
     static class ScpContext implements Context {
-        private List<ScpEntry> entries
+        private List<ScpEntry> entries = []
 
         def entry(String source, String destination = '', boolean keepHierarchy = false) {
             entries << new ScpEntry(source:  source, destination: destination, keepHierarchy: keepHierarchy)
