@@ -1,10 +1,9 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.WithXmlAction
-
-import javaposse.jobdsl.dsl.helpers.PublisherContextHelper.PublisherContext
+import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
+import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext
 import spock.lang.Specification
-import javax.xml.stream.events.NotationDeclaration
 
 public class PublisherHelperSpec extends Specification {
 
@@ -209,7 +208,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
         def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
         targetNode.name[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly[0].value() == 'false'
+        targetNode.notificationOnly.size() == 0 // No noficationOnly when not a group
         publisherNode.strategy[0].value() == 'ALL'
         publisherNode.notifyOnBuildStart[0].value() == 'false'
         publisherNode.notifySuspects[0].value() == 'false'
@@ -264,7 +263,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
         def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
         targetNode.name[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly[0].value() == 'false'
+        targetNode.notificationOnly.size() == 0
         publisherNode.strategy[0].value() == 'FAILURE_AND_FIXED'
         publisherNode.notifyOnBuildStart[0].value() == 'true'
         publisherNode.notifySuspects[0].value() == 'true'
@@ -426,6 +425,84 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         thrown(AssertionError)
+    }
+
+
+    def 'call violations plugin with no args has correct defaults'() {
+        when:
+        context.violations()
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.config[0].limit[0].value() == '100'
+        publisherNode.config[0].sourcePathPattern[0].value() == null
+        publisherNode.config[0].fauxProjectPath[0].value() == null
+        publisherNode.config[0].encoding[0].value() == 'default'
+        def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
+        typeConfigsNode.entry.size() == 16
+        def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian'}
+        simianNode != null
+        def typeConfigNode = simianNode.'hudson.plugins.violations.TypeConfig'[0]
+        typeConfigNode.type[0].value() == 'simian'
+        typeConfigNode.min[0].value() == '10'
+        typeConfigNode.max[0].value() == '999'
+        typeConfigNode.unstable[0].value() == '999'
+        typeConfigNode.usePattern[0].value() == 'false'
+        typeConfigNode.pattern[0].value() == null
+    }
+
+    def 'call violations plugin with all args'() {
+        when:
+        context.violations(50) {
+            sourcePathPattern 'source pattern'
+            fauxProjectPath 'faux path'
+            perFileDisplayLimit 51
+            checkstyle(10, 11, 10, 'test-report/*.xml')
+            findbugs(12, 13, 12)
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.violations.ViolationsPublisher'
+        publisherNode.config[0].suppressions.size() == 1
+        publisherNode.config[0].limit[0].value() == '51'
+        publisherNode.config[0].sourcePathPattern[0].value() == 'source pattern'
+        publisherNode.config[0].fauxProjectPath[0].value() == 'faux path'
+        publisherNode.config[0].encoding[0].value() == 'default'
+        def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
+        typeConfigsNode.entry.size() == 16
+        def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle'}
+        checkstyleNode != null
+        checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'checkstyle'
+        checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
+        checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '11'
+        checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
+        checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
+        checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
+        def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs'}
+        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'findbugs'
+        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '12'
+        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '13'
+        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '12'
+        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
+        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0] != null
+        def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint'}
+        jslintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jslint'
+        jslintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
+        jslintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '999'
+        jslintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '999'
+        jslintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
+        jslintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0] != null
+    }
+
+    def 'call violations plugin with bad types'() {
+        when:
+        context.violations {
+            badType 10
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'call step via helper'() {
