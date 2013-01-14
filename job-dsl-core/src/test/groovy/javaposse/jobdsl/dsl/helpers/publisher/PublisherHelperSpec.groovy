@@ -435,8 +435,8 @@ public class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.config[0].limit[0].value() == '100'
-        publisherNode.config[0].sourcePathPattern[0].value() == null
-        publisherNode.config[0].fauxProjectPath[0].value() == null
+        publisherNode.config[0].sourcePathPattern[0].value() == ''
+        publisherNode.config[0].fauxProjectPath[0].value() == ''
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
         typeConfigsNode.entry.size() == 16
@@ -448,7 +448,7 @@ public class PublisherHelperSpec extends Specification {
         typeConfigNode.max[0].value() == '999'
         typeConfigNode.unstable[0].value() == '999'
         typeConfigNode.usePattern[0].value() == 'false'
-        typeConfigNode.pattern[0].value() == null
+        typeConfigNode.pattern[0].value() == ''
     }
 
     def 'call violations plugin with all args'() {
@@ -485,14 +485,14 @@ public class PublisherHelperSpec extends Specification {
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '13'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '12'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
-        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0] != null
+        findbugsNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == ''
         def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint'}
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jslint'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '999'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '999'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
-        jslintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0] != null
+        jslintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == ''
     }
 
     def 'call violations plugin with bad types'() {
