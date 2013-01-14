@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.*
+import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 
 /**
  * DSL Element representing a Jenkins Job
