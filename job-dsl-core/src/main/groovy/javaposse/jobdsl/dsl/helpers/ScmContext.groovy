@@ -172,6 +172,14 @@ class ScmContext implements Context {
            <local>.</local>
          </hudson.scm.SubversionSCM_-ModuleLocation>
        </locations>
+       <browser class="hudson.scm.browsers.ViewSVN>
+         <url>http://mycompany.com/viewvn/repo_name</url>
+       </browser>
+       OR
+       <browser class="hudson.scm.browsers.FishEyeSVN>
+         <url>http://mycompany.com/viewvn/repo_name</url>
+         <rootModule>my_root_module</rootModule>
+       </browser>
        <excludedRegions/>
        <includedRegions/>
        <excludedUsers/>
