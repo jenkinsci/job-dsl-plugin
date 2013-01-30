@@ -31,6 +31,18 @@ class StepContextHelper extends AbstractContextHelper<StepContext> {
         }
 
         /**
+         <hudson.tasks.BatchFile>
+             <command>echo Hello from Windows</command>
+         </hudson.tasks.BatchFile>
+         */
+        def batchFile(String commandStr) {
+            def nodeBuilder = new NodeBuilder()
+            stepNodes << nodeBuilder.'hudson.tasks.BatchFile' {
+                'command' commandStr
+            }
+        }
+
+        /**
          <hudson.plugins.gradle.Gradle>
              <description/>
              <switches>-Dtiming-multiple=5 -P${Status}=true -I ${WORKSPACE}/netflix-oss.gradle ${Option}</switches>
