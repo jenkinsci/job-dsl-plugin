@@ -23,6 +23,18 @@ public class StepHelperSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello"'
     }
 
+    def 'call batchFile method'() {
+        when:
+        context.batchFile('echo "Hello from Windows"')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def shellStep = context.stepNodes[0]
+        shellStep.name() == 'hudson.tasks.BatchFile'
+        shellStep.command[0].value() == 'echo "Hello from Windows"'
+    }
+
     def 'call gradle methods'() {
         when:
         context.gradle('build')
