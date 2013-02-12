@@ -63,18 +63,22 @@ public class ExecuteDslScripts extends Builder {
      */
     private final boolean usingScriptText;
 
+    private final boolean manageJobs;
+
     @DataBoundConstructor
-    public ExecuteDslScripts(ScriptLocation scriptLocation) {
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean manageJobs) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation==null?null:scriptLocation.targets; // May be null;
         this.scriptText = scriptLocation==null?null:scriptLocation.scriptText; // May be null
+        this.manageJobs = manageJobs;
     }
 
     ExecuteDslScripts(String scriptText) {
         this.usingScriptText = true;
         this.scriptText = scriptText;
         this.targets = null;
+        this.manageJobs = true;
     }
 
     ExecuteDslScripts() { /// Where is the empty constructor called?
@@ -82,6 +86,7 @@ public class ExecuteDslScripts extends Builder {
         this.usingScriptText = true;
         this.scriptText = null;
         this.targets = null;
+        this.manageJobs = true;
     }
 
     public String getTargets() {
@@ -94,6 +99,10 @@ public class ExecuteDslScripts extends Builder {
 
     public boolean isUsingScriptText() {
         return usingScriptText;
+    }
+
+    public boolean isManageJobs() {
+        return manageJobs;
     }
 
     @Override
@@ -143,8 +152,12 @@ public class ExecuteDslScripts extends Builder {
         }
 
         // TODO Pull all this out, so that it can run outside of the plugin, e.g. JenkinsRestApiJobManagement
-        updateTemplates(build, listener, freshJobs);
-        updateGeneratedJobs(build, listener, freshJobs);
+        if (manageJobs) {
+            updateTemplates(build, listener, freshJobs);
+            updateGeneratedJobs(build, listener, freshJobs);
+        } else {
+            listener.getLogger().println("Created jobs management is disabled!");
+        }
 
         // Save onto Builder, which belongs to a Project.
         GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs);

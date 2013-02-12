@@ -18,3 +18,7 @@ f.radioBlock(name: 'scriptLocation', value: 'false', title: 'Look on Filesystem'
         f.expandableTextbox()
     }
 }
+
+f.entry(field: 'manageJobs') {
+    f.checkbox(name: 'manageJobs', title: 'Manage jobs', checked: instance.manageJobs)
+}
