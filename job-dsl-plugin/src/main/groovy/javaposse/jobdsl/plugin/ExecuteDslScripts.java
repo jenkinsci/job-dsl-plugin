@@ -152,8 +152,8 @@ public class ExecuteDslScripts extends Builder {
         }
 
         // TODO Pull all this out, so that it can run outside of the plugin, e.g. JenkinsRestApiJobManagement
+        updateTemplates(build, listener, freshJobs);
         if (manageJobs) {
-            updateTemplates(build, listener, freshJobs);
             updateGeneratedJobs(build, listener, freshJobs);
         } else {
             listener.getLogger().println("Created jobs management is disabled!");
