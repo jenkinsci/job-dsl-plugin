@@ -141,7 +141,7 @@ public class StepHelperSpec extends Specification {
     def 'call minimal copyArtifacts'() {
         when: 'Least arguments'
         context.copyArtifacts('upstream', '**/*.xml') {
-            upstream()
+            upstreamBuild()
         }
 
         then:
@@ -161,7 +161,7 @@ public class StepHelperSpec extends Specification {
     def 'call copyArtifacts all args'() {
         when:
         context.copyArtifacts('upstream', '**/*.xml', 'target/', true, true) {
-            upstream()
+            upstreamBuild(true)
         }
 
         then:
@@ -173,7 +173,7 @@ public class StepHelperSpec extends Specification {
         copyEmptyNode.target[0].value() == 'target/'
         Node selectorNode = copyEmptyNode.selector[0]
         selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
-        selectorNode.children().size() == 0
+        selectorNode.fallbackToLastSuccessful[0].value() == 'true'
     }
 
     def 'call copyArtifacts selector variants'() {

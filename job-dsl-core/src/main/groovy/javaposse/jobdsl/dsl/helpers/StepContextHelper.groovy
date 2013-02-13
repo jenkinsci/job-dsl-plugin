@@ -318,6 +318,9 @@ multiline=true</properties>
                 target targetPath?:''
 
                 selector('class':"hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
+                    if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
+                        fallbackToLastSuccessful 'true'
+                    }
                     if (copyArtifactContext.selectedSelector == 'PermalinkBuild') {
                         id copyArtifactContext.permalinkName
                     }
@@ -343,6 +346,7 @@ multiline=true</properties>
 
         def static class CopyArtifactContext implements Context {
             String selectedSelector
+            boolean fallback
             String permalinkName
             int buildNumber
             String parameterName
@@ -354,10 +358,12 @@ multiline=true</properties>
             }
             /**
              * Upstream build that triggered this job
+             * @arg fallback Use "Last successful build" as fallback
              * @return
              */
-            def upstream() {
+            def upstreamBuild(boolean fallback = false) {
                 ensureFirst()
+                this.fallback = fallback
                 selectedSelector = 'TriggeredBuild'
             }
 
