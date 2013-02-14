@@ -138,6 +138,106 @@ public class StepHelperSpec extends Specification {
         antClosure.'properties'[0].value() == 'test.size=4\nlogging=info\ntest.threads=10\ninput.status=release'
     }
 
+    def 'call minimal copyArtifacts'() {
+        when: 'Least arguments'
+        context.copyArtifacts('upstream', '**/*.xml') {
+            upstreamBuild()
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        def copyEmptyNode = context.stepNodes[0]
+        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
+        copyEmptyNode.flatten.size() == 0
+        copyEmptyNode.optional.size() == 0
+        copyEmptyNode.filter[0].value() == '**/*.xml'
+        copyEmptyNode.target[0] != null
+        copyEmptyNode.target[0].value() == ''
+        Node selectorNode = copyEmptyNode.selector[0]
+        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+        selectorNode.children().size() == 0
+    }
+
+    def 'call copyArtifacts all args'() {
+        when:
+        context.copyArtifacts('upstream', '**/*.xml', 'target/', true, true) {
+            upstreamBuild(true)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        def copyEmptyNode = context.stepNodes[0]
+        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
+        copyEmptyNode.flatten[0].value() == 'true'
+        copyEmptyNode.optional[0].value() == 'true'
+        copyEmptyNode.target[0].value() == 'target/'
+        Node selectorNode = copyEmptyNode.selector[0]
+        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+        selectorNode.fallbackToLastSuccessful[0].value() == 'true'
+    }
+
+    def 'call copyArtifacts selector variants'() {
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            latestSuccessful()
+        }
+
+        then:
+        Node selectorNode = context.stepNodes[0].selector[0]
+        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
+        selectorNode.children().size() == 0
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            latestSaved()
+        }
+
+        then:
+        def selectorNode2 = context.stepNodes[1].selector[0]
+        selectorNode2.attribute('class') == 'hudson.plugins.copyartifact.SavedBuildSelector'
+        selectorNode2.children().size() == 0
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            permalink('lastBuild')
+        }
+
+        then:
+        def selectorNode3 = context.stepNodes[2].selector[0]
+        selectorNode3.attribute('class') == 'hudson.plugins.copyartifact.PermalinkBuildSelector'
+        selectorNode3.id[0].value() == 'lastBuild'
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            buildNumber(43)
+        }
+
+        then:
+        def selectorNode4 = context.stepNodes[3].selector[0]
+        selectorNode4.attribute('class') == 'hudson.plugins.copyartifact.SpecificBuildSelector'
+        selectorNode4.buildNumber[0].value() == '43'
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            workspace()
+        }
+
+        then:
+        def selectorNode5 = context.stepNodes[4].selector[0]
+        selectorNode5.attribute('class') == 'hudson.plugins.copyartifact.WorkspaceSelector'
+        selectorNode5.children().size() == 0
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            buildParameter('BUILD_PARAM')
+        }
+
+        then:
+        def selectorNode6 = context.stepNodes[5].selector[0]
+        selectorNode6.attribute('class') == 'hudson.plugins.copyartifact.ParameterizedBuildSelector'
+        selectorNode6.parameterName[0].value() == 'BUILD_PARAM'
+    }
+
     def 'call step via helper'() {
         when:
         helper.steps {
