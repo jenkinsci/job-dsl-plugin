@@ -376,8 +376,7 @@ multiline=true</properties>
                 selectedSelector = 'StatusBuild'
             }
             /**
-             * Latest saved build (marked "keep forever")-->
-             <selector class="hudson.plugins.copyartifact.PermalinkBuildSelector"> <!-- Specified by permalink -->
+             * Latest saved build (marked "keep forever")
              * @return
              */
             def latestSaved() {
@@ -415,6 +414,11 @@ multiline=true</properties>
                 selectedSelector = 'Workspace'
             }
 
+            /**
+             * Specified by build parameter
+             * @param parameterName
+             * @return
+             */
             def buildParameter(String parameterName) {
                 ensureFirst()
                 selectedSelector = 'ParameterizedBuild'
