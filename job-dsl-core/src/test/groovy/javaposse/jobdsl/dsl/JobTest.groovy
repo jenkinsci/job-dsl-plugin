@@ -191,6 +191,18 @@ class JobTest extends Specification {
         project.actions[0].children().size() == 2
     }
 
+    def 'construct simple Maven job and generate xml from it'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm, [type: 'maven'])
+
+        when:
+        def xml = job.getXml()
+
+        then:
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, xml
+    }
+
     final minimalXml = '''
 <project>
   <actions/>
@@ -200,4 +212,30 @@ class JobTest extends Specification {
 </project>
 '''
 
+    final mavenXml = '''
+<maven2-moduleset>
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>false</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class="vector"/>
+    <concurrentBuild>false</concurrentBuild>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <perModuleEmail>true</perModuleEmail>
+    <ignoreUpstremChanges>false</ignoreUpstremChanges>
+    <archivingDisabled>false</archivingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>false</runHeadless>
+    <publishers/>
+    <buildWrappers/>
+</maven2-moduleset>
+'''
 }

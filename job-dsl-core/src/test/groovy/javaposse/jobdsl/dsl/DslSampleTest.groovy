@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl
 
 import spock.lang.*
 
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
+
 /**
  * Attempt to execute the sample page in README.md
  */
@@ -17,12 +19,15 @@ class DslSampleTest extends Specification {
 
         then:
         results != null
-        results.size() == 4
-        jm.savedConfigs.size() == 4
+        results.size() == 5
+        jm.savedConfigs.size() == 5
         def firstJob = jm.savedConfigs['PROJ-unit-tests']
         firstJob != null
         // TODO Review actual results
         println(firstJob)
+        def mavenJob = jm.savedConfigs['PROJ-maven']
+        println mavenJob
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, mavenJob
     }
 
     def 'use parameters when loading script'() {
@@ -199,5 +204,72 @@ job {
         shell('cleanup.sh')
     }
 }
+
+job(type: maven) {
+    name 'PROJ-maven'
+    rootPOM 'my_module/pom.xml'
+    goals 'clean verify'
+    mavenOpts '-Xmx1024m'
+    perModuleEmail false
+    archivingDisabled true
+    runHeadless true
+    ignoreUpstreamChanges true
+    scm {
+        git(gitUrl)
+    }
+}
+'''
+
+    final mavenXml = '''
+<maven2-moduleset>
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <canRoam>false</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class="vector"/>
+    <concurrentBuild>false</concurrentBuild>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <perModuleEmail>false</perModuleEmail>
+    <ignoreUpstremChanges>true</ignoreUpstremChanges>
+    <archivingDisabled>true</archivingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>true</runHeadless>
+    <publishers/>
+    <buildWrappers/>
+    <rootPOM>my_module/pom.xml</rootPOM>
+    <goals>clean verify</goals>
+    <mavenOpts>-Xmx1024m</mavenOpts>
+    <scm class='hudson.plugins.git.GitSCM'>
+        <configVersion>2</configVersion>
+        <disableSubmodules>false</disableSubmodules>
+        <recursiveSubmodules>false</recursiveSubmodules>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <authorOrCommitter>false</authorOrCommitter>
+        <clean>false</clean>
+        <wipeOutWorkspace>false</wipeOutWorkspace>
+        <pruneBranches>false</pruneBranches>
+        <remotePoll>false</remotePoll>
+        <ignoreNotifyCommit>false</ignoreNotifyCommit>
+        <gitTool>Default</gitTool>
+        <skipTag>false</skipTag>
+        <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+                <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>
+            </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+            <hudson.plugins.git.BranchSpec>
+                <name>**</name>
+            </hudson.plugins.git.BranchSpec>
+        </branches>
+    </scm>
+</maven2-moduleset>
 '''
 }

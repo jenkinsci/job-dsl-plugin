@@ -8,6 +8,9 @@ import com.google.common.collect.Sets;
 public abstract class JobParent extends Script {
     private static final Logger LOGGER = Logger.getLogger(JobParent.getName());
 
+    // job types
+    static String maven = 'maven'
+
     JobManagement jm;
     Set<Job> referencedJobs
 
@@ -15,9 +18,9 @@ public abstract class JobParent extends Script {
         referencedJobs = Sets.newHashSet()
     }
 
-    public Job job(Closure closure) {
+    public Job job(Map<String, Object> arguments=[:], Closure closure) {
         LOGGER.log(Level.FINE, "Got closure and have ${jm}")
-        Job job = new Job(jm)
+        Job job = new Job(jm, arguments)
 
         // Configure with what we have already
         closure.delegate = job

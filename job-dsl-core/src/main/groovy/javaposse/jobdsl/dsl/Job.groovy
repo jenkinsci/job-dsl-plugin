@@ -11,6 +11,7 @@ import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
  */
 public class Job {
     JobManagement jobManagement
+    Map<String, Object> arguments
 
     String name // Required
     String templateName = null // Optional
@@ -25,16 +26,19 @@ public class Job {
     @Delegate PublisherContextHelper helperPublisher
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
+    @Delegate MavenHelper helperMaven
 
-    public Job(JobManagement jobManagement) {
+    public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
+        this.arguments = arguments
         helperAuthorization = new AuthorizationContextHelper(withXmlActions)
         helperScm = new ScmContextHelper(withXmlActions)
         helperMultiscm = new MultiScmContextHelper(withXmlActions)
         helperTrigger = new TriggerContextHelper(withXmlActions)
-        helperStep = new StepContextHelper(withXmlActions)
+        helperStep = new StepContextHelper(withXmlActions, arguments)
         helperPublisher = new PublisherContextHelper(withXmlActions)
         helperTopLevel = new TopLevelHelper(withXmlActions)
+        helperMaven = new MavenHelper(withXmlActions, arguments)
     }
 
     /**
@@ -119,6 +123,10 @@ public class Job {
         }
     }
 
+    private isMavenJob() {
+       return arguments['type'] == JobParent.maven
+    }
+
     // TODO record which templates are used to generate jobs, so that they can be connected to this job
     private executeUsing() {
         String configXml
@@ -141,7 +149,7 @@ public class Job {
     }
 
     private executeEmptyTemplate() {
-        return new XmlParser().parse(new StringReader(emptyTemplate))
+        return new XmlParser().parse(new StringReader(isMavenJob() ? emptyMavenTemplate : emptyTemplate))
     }
 
     def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
@@ -161,5 +169,32 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </project>
+'''
+
+    def emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <perModuleEmail>true</perModuleEmail>
+  <ignoreUpstremChanges>false</ignoreUpstremChanges>
+  <archivingDisabled>false</archivingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <publishers/>
+  <buildWrappers/>
+</maven2-moduleset>
 '''
 }
