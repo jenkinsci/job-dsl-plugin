@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 
 class MavenHelper extends AbstractHelper {
 
-    Map<String, Object> arguments
+    Map<String, Object> jobArguments
 
     boolean rootPOMAdded = false
     boolean goalsAdded = false
@@ -16,18 +16,17 @@ class MavenHelper extends AbstractHelper {
     boolean runHeadlessAdded = false
     boolean ignoreUpstreamChangesAdded = false
 
-    MavenHelper(List<WithXmlAction> withXmlActions, Map<String, Object> arguments = [:]) {
+    MavenHelper(List<WithXmlAction> withXmlActions, Map<String, Object> jobArguments = [:]) {
         super(withXmlActions)
-        this.arguments = arguments
+        this.jobArguments = jobArguments
     }
 
     /**
      * Specifies the path to the root POM.
      * @param rootPOMArg path to the root POM
      */
-
     def rootPOM(String rootPOMArg) {
-        Preconditions.checkState(arguments['type'] == JobParent.maven, "rootPOM can only be applied for Maven jobs")
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "rootPOM can only be applied for Maven jobs")
         Preconditions.checkState(!rootPOMAdded, "rootPOM can only be applied once")
         rootPOMAdded = true
         execute {
@@ -40,9 +39,8 @@ class MavenHelper extends AbstractHelper {
      * Specifies the goals to execute.
      * @param goalsArg the goals to execute
      */
-
     def goals(String goalsArg) {
-        Preconditions.checkState(arguments['type'] == JobParent.maven, "goals can only be applied for Maven jobs")
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "goals can only be applied for Maven jobs")
         Preconditions.checkState(!goalsAdded, "goals can only be applied once")
         goalsAdded = true
         execute {
@@ -55,9 +53,8 @@ class MavenHelper extends AbstractHelper {
      * Specifies the JVM options needed when launching Maven as an external process.
      * @param mavenOptsArg JVM options needed when launching Maven
      */
-
     def mavenOpts(String mavenOptsArg) {
-        Preconditions.checkState(arguments['type'] == JobParent.maven, "mavenOpts can only be applied for Maven jobs")
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "mavenOpts can only be applied for Maven jobs")
         Preconditions.checkState(!mavenOptsAdded, "mavenOpts can only be applied once")
         mavenOptsAdded = true
         execute {
@@ -71,7 +68,7 @@ class MavenHelper extends AbstractHelper {
      * @param perModuleEmailArg set to <code>false</code> to disable per module e-mail notifications
      */
     def perModuleEmail(boolean perModuleEmailArg) {
-        Preconditions.checkState(arguments['type'] == JobParent.maven, "perModuleEmail can only be applied for Maven jobs")
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "perModuleEmail can only be applied for Maven jobs")
         Preconditions.checkState(!perModuleEmailAdded, "perModuleEmail can only be applied once")
         perModuleEmailAdded = true
         execute {
@@ -86,7 +83,7 @@ class MavenHelper extends AbstractHelper {
      * @param archivingDisabledArg set to <code>true</code> to disable automatic archiving
      */
     def archivingDisabled(boolean archivingDisabledArg) {
-        Preconditions.checkState(arguments['type'] == JobParent.maven, "archivingDisabled can only be applied for Maven jobs")
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "archivingDisabled can only be applied for Maven jobs")
         Preconditions.checkState(!archivingDisabledAdded, "archivingDisabled can only be applied once")
         archivingDisabledAdded = true
         execute {
@@ -100,7 +97,7 @@ class MavenHelper extends AbstractHelper {
      * @param runHeadlessArg set to <code>true</code> to run the build process in headless mode
      */
     def runHeadless(boolean runHeadlessArg) {
-        Preconditions.checkState(arguments['type'] == JobParent.maven, "runHeadless can only be applied for Maven jobs")
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "runHeadless can only be applied for Maven jobs")
         Preconditions.checkState(!runHeadlessAdded, "runHeadless can only be applied once")
         runHeadlessAdded = true
         execute {
@@ -117,7 +114,7 @@ class MavenHelper extends AbstractHelper {
      * @param ignoreUpstreamChangesArg set to <code>true</code> to ignore SNAPSHOT dependencies
      */
     def ignoreUpstreamChanges(boolean ignoreUpstreamChangesArg) {
-        Preconditions.checkState(arguments['type'] == JobParent.maven, "ignoreUpstreamChanges can only be applied for Maven jobs")
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "ignoreUpstreamChanges can only be applied for Maven jobs")
         Preconditions.checkState(!ignoreUpstreamChangesAdded, "ignoreUpstreamChanges can only be applied once")
         ignoreUpstreamChangesAdded = true
         execute {
