@@ -18,3 +18,8 @@ f.radioBlock(name: 'scriptLocation', value: 'false', title: 'Look on Filesystem'
         f.expandableTextbox()
     }
 }
+
+f.entry(title: 'Removed jobs', field: 'deleteJobs') {
+    f.radioBlock(value: 'false', title: 'Disable', checked: !instance.deleteJobs)
+    f.radioBlock(value: 'true', title: 'Delete', checked: instance.deleteJobs)
+}
