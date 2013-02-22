@@ -55,13 +55,17 @@ public class MavenHelperSpec extends Specification {
         1 * mockActions.add(_)
     }
 
-    def 'cannot run goals twice'() {
+    def 'run goals twice'() {
         when:
-        helper.goals("clean install")
-        helper.goals("clean verify")
+        def action1 = helper.goals("clean")
+        def action2 = helper.goals("verify")
+        action1.execute(root)
+        action2.execute(root)
 
         then:
-        thrown(IllegalStateException)
+        2 * mockActions.add(_)
+        root.goals.size() == 1
+        root.goals[0].value() == "clean verify"
     }
 
     def 'cannot run goals for free style jobs'() {
@@ -92,13 +96,17 @@ public class MavenHelperSpec extends Specification {
         1 * mockActions.add(_)
     }
 
-    def 'cannot run mavenOpts twice'() {
+    def 'run mavenOpts twice'() {
         when:
-        helper.mavenOpts("-Xms512m")
-        helper.mavenOpts("-Xmx1024m")
+        def action1 = helper.mavenOpts("-Xms512m")
+        def action2 = helper.mavenOpts("-Xmx1024m")
+        action1.execute(root)
+        action2.execute(root)
 
         then:
-        thrown(IllegalStateException)
+        2 * mockActions.add(_)
+        root.mavenOpts.size() == 1
+        root.mavenOpts[0].value() == "-Xms512m -Xmx1024m"
     }
 
     def 'cannot run mavenOpts for free style jobs'() {
