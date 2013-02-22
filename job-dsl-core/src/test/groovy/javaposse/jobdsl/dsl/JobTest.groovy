@@ -1,11 +1,16 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.*
+import org.custommonkey.xmlunit.XMLUnit
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 import java.util.concurrent.atomic.AtomicBoolean
 
 class JobTest extends Specification {
+    def setup() {
+        XMLUnit.setIgnoreWhitespace(true)
+    }
+
     def 'construct a job manually (not from a DSL script)'() {
         setup:
         JobManagement jm = Mock()
@@ -59,7 +64,6 @@ class JobTest extends Specification {
 
     def 'load large template from file'() {
         setup:
-        println new File('src/test/resources').absolutePath
         JobManagement jm = new FileJobManagement(new File('src/test/resources'))
         Job job = new Job(jm)
 
@@ -108,58 +112,12 @@ class JobTest extends Specification {
         thrown(MissingMethodException)
     }
 
-    def violations(job, typeName, minNum, maxNum, unstableNum, filenamePattern = null) {
-        job.configure { project ->
-            def violationsConfig = project / publishers / 'hudson.plugins.violations.ViolationsPublisher' / 'config'
-
-            /* these are the lines relevant to the discussion */
-            def typeConfigsNode = violationsConfig / typeConfigs
-            def typeEntry = typeConfigsNode / entry
-            /* --- */
-
-            typeEntry / string(typeName)
-            def typeConfig = typeEntry / 'hudson.plugins.violations.TypeConfig'
-            typeConfig / type(typeName)
-            typeConfig / min(minNum.toString())
-            typeConfig / max(maxNum.toString())
-            typeConfig / unstable(unstableNum.toString())
-            typeConfig / usePattern(filenamePattern ? "true" : "false")
-            typeConfig / pattern(filenamePattern)
-        }
-    }
-
     class JobParentConcrete extends JobParent {
 
         @Override
         Object run() {
             return null // Used in tests
         }
-    }
-
-    def 'typeConfigs not appearing correctly'() {
-        setup:
-        final Node project = new XmlParser().parse(new StringReader(minimalXml))
-        def parent = new JobParentConcrete()
-
-        when:
-        def job = parent.job {
-            name "Tools-jshint-dsl"
-            violations(delegate, "jslint", 10, 11, 10, "test-reports/*.xml")
-        }
-        job.executeWithXmlActions(project)
-
-        then:
-        def configNode = project.publishers[0].'hudson.plugins.violations.ViolationsPublisher'[0].config[0]
-        configNode.typeConfigs.size() == 1
-        def typeEntryNode = configNode.typeConfigs[0].entry[0]
-        typeEntryNode.string[0].value() == 'jslint'
-        def typeConfigNode = typeEntryNode.'hudson.plugins.violations.TypeConfig'[0]
-        typeConfigNode.type[0].value() == 'jslint'
-        typeConfigNode.min[0].value() == '10'
-        typeConfigNode.max[0].value() == '11'
-        typeConfigNode.unstable[0].value() == '10'
-        typeConfigNode.usePattern[0].value() == 'true'
-        typeConfigNode.pattern[0].value() == 'test-reports/*.xml'
     }
 
     def 'update Node using withXml'() {
