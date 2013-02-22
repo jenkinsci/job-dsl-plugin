@@ -284,6 +284,7 @@ job(type: maven) {
     mavenOpts '-Xms128m'
     mavenOpts '-Xmx512m'
     perModuleEmail true
+    jdk 'JDK1.7.0_12'
 }
 '''
 
@@ -366,6 +367,7 @@ job(type: maven) {
     <rootPOM>other_module/pom.xml</rootPOM>
     <goals>clean install</goals>
     <mavenOpts>-Xms128m -Xmx512m</mavenOpts>
+    <jdk>JDK1.7.0_12</jdk>
     <scm class='hudson.plugins.git.GitSCM'>
         <configVersion>2</configVersion>
         <disableSubmodules>false</disableSubmodules>

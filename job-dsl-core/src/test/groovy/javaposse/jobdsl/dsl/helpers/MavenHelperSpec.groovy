@@ -44,6 +44,7 @@ public class MavenHelperSpec extends Specification {
         action.execute(root)
 
         then:
+        root.rootPOM.size() == 1
         root.rootPOM[0].value() == "my_module/pom.xml"
     }
 
@@ -85,6 +86,7 @@ public class MavenHelperSpec extends Specification {
         action.execute(root)
 
         then:
+        root.goals.size() == 1
         root.goals[0].value() == "clean verify"
     }
 
@@ -126,6 +128,7 @@ public class MavenHelperSpec extends Specification {
         action.execute(root)
 
         then:
+        root.mavenOpts.size() == 1
         root.mavenOpts[0].value() == "-DskipTests"
     }
 
@@ -163,6 +166,7 @@ public class MavenHelperSpec extends Specification {
         action.execute(root)
 
         then:
+        root.perModuleEmail.size() == 1
         root.perModuleEmail[0].value() == "false"
     }
 
@@ -200,6 +204,7 @@ public class MavenHelperSpec extends Specification {
         action.execute(root)
 
         then:
+        root.archivingDisabled.size() == 1
         root.archivingDisabled[0].value() == "true"
     }
 
@@ -237,6 +242,7 @@ public class MavenHelperSpec extends Specification {
         action.execute(root)
 
         then:
+        root.runHeadless.size() == 1
         root.runHeadless[0].value() == "true"
     }
 
@@ -274,6 +280,45 @@ public class MavenHelperSpec extends Specification {
         action.execute(root)
 
         then:
+        root.ignoreUpstremChanges.size() == 1
         root.ignoreUpstremChanges[0].value() == "true"
+    }
+
+    def 'can run jdk'() {
+        when:
+        helper.jdk("JDK1.6.0_32")
+
+        then:
+        1 * mockActions.add(_)
+    }
+
+    def 'cannot run jdk twice'() {
+        when:
+        helper.jdk("JDK1.6.0_32")
+        helper.jdk("JDK1.7.0_12")
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'cannot run jdk for free style jobs'() {
+        setup:
+        MavenHelper helper = new MavenHelper(mockActions)
+
+        when:
+        helper.jdk("foo")
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'jdk constructs xml'() {
+        when:
+        def action = helper.jdk("JDK1.7.0_12")
+        action.execute(root)
+
+        then:
+        root.jdk.size() == 1
+        root.jdk[0].value() == "JDK1.7.0_12"
     }
 }

@@ -15,6 +15,7 @@ class MavenHelper extends AbstractHelper {
     boolean archivingDisabledAdded = false
     boolean runHeadlessAdded = false
     boolean ignoreUpstreamChangesAdded = false
+    boolean jdkAdded = false
 
     MavenHelper(List<WithXmlAction> withXmlActions, Map<String, Object> jobArguments = [:]) {
         super(withXmlActions)
@@ -127,6 +128,20 @@ class MavenHelper extends AbstractHelper {
         ignoreUpstreamChangesAdded = true
         execute {
             def node = methodMissing('ignoreUpstremChanges', ignoreUpstreamChanges.toString())
+            it / node
+        }
+    }
+
+    /**
+     * Name of the JDK installation to use for this job.
+     * @param jdk name of the JDK installation to use for this job.
+     */
+    def jdk(String jdk) {
+        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "jdk can only be applied for Maven jobs")
+        Preconditions.checkState(!jdkAdded, "jdk can only be applied once")
+        jdkAdded = true
+        execute {
+            def node = methodMissing('jdk', jdk)
             it / node
         }
     }
