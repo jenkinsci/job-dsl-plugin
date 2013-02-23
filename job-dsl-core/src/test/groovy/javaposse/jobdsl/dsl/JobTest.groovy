@@ -89,6 +89,26 @@ class JobTest extends Specification {
         thrown(JobTemplateMissingException)
     }
 
+    def 'run engine and ensure canRoam values'() {
+        setup:
+        JobManagement jm = new FileJobManagement(new File('src/test/resources'))
+        Job job = new Job(jm)
+
+        when:
+        def projectRoaming = job.getNode()
+
+        then:
+        // See that jobs can roam by default
+        projectRoaming.canRoam[0].value() == ['true']
+
+        when:
+        job.label('Ubuntu')
+        def projectLabelled = job.getNode()
+
+        then:
+        projectLabelled.canRoam[0].value() == 'false'
+    }
+
     def 'create withXml blocks'() {
         setup:
         Job job = new Job(null)

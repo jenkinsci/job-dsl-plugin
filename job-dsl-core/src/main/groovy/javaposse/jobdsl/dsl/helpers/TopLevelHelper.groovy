@@ -19,16 +19,21 @@ class TopLevelHelper extends AbstractHelper {
     /**
      * "Restrict where this project can be run"
      * <assignedNode>FullTools&amp;&amp;RPM&amp;&amp;DC</assignedNode>
-     * @param labelExpression
+     * @param labelExpression Label of node to use, if null is passed in, the label is cleared out and it can roam
      * @return
      */
     boolean labelAlreadyAdded = false
-    def label(String labelExpression) {
+    def label(String labelExpression = null) {
         Preconditions.checkState(!labelAlreadyAdded, "Label can only be appplied once")
         labelAlreadyAdded = true
         execute {
-            it / assignedNode(labelExpression)
-            it / canRoam('false') // If canRoam is true, the label will not be used
+            if (labelExpression) {
+                it / assignedNode(labelExpression)
+                it / canRoam('false') // If canRoam is true, the label will not be used
+            } else {
+                it / assignedNode('')
+                it / canRoam('true')
+            }
         }
     }
 
