@@ -74,7 +74,15 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          * TODO Support list for recipients
          * TODO Escape XML for all subject and content fields
          */
-        def extendedEmail(String recipients = null, String subjectTemplate = null, String contentTemplate = null, Closure emailClosure = null) {
+        def extendedEmail(String recipients = null, Closure emailClosure = null) {
+            return extendedEmail(recipients, null, emailClosure)
+        }
+
+        def extendedEmail(String recipients, String subjectTemplate, Closure emailClosure = null) {
+            return extendedEmail(recipients, subjectTemplate, null, emailClosure)
+        }
+
+        def extendedEmail(String recipients, String subjectTemplate, String contentTemplate, Closure emailClosure = null) {
             EmailContext emailContext = new EmailContext()
             AbstractContextHelper.executeInContext(emailClosure, emailContext)
 

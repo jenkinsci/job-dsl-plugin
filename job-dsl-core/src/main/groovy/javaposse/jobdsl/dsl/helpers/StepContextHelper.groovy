@@ -262,6 +262,169 @@ multiline=true</properties>
 //        def grails() {
 //
 //        }
+
+        /**
+        <hudson.plugins.copyartifact.CopyArtifact>
+            <projectName>jryan-odin-test</projectName>
+            <filter>*ivy-locked.xml</filter>
+            <target>target/</target>
+            <selector class="hudson.plugins.copyartifact.TriggeredBuildSelector"/> <!-- Upstream build that triggered this job -->
+            <flatten>true</flatten>
+            <optional>true</optional>
+        </hudson.plugins.copyartifact.CopyArtifact>
+        <hudson.plugins.copyartifact.CopyArtifact>
+            <projectName>jryan-odin-test</projectName>
+            <filter>*ivy-locked.xml</filter>
+            <target/>
+            <selector class="hudson.plugins.copyartifact.StatusBuildSelector"/> <!-- Latest successful build -->
+        </hudson.plugins.copyartifact.CopyArtifact>
+         <selector class="hudson.plugins.copyartifact.SavedBuildSelector"/> <!-- Latest saved build (marked "keep forever")-->
+         <selector class="hudson.plugins.copyartifact.PermalinkBuildSelector"> <!-- Specified by permalink -->
+             <id>lastBuild</id> <!-- Last Build-->
+             <id>lastStableBuild</id> <!-- Latest Stable Build -->
+         </selector>
+         <selector class="hudson.plugins.copyartifact.SpecificBuildSelector"> <!-- Specific Build -->
+             <buildNumber>43</buildNumber>
+         </selector>
+         <selector class="hudson.plugins.copyartifact.WorkspaceSelector"/> <!-- Copy from WORKSPACE of latest completed build -->
+         <selector class="hudson.plugins.copyartifact.ParameterizedBuildSelector"> <!-- Specified by build parameter -->
+             <parameterName>BUILD_SELECTOR</parameterName>
+         </selector>
+        */
+        def copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure) {
+            return copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
+        }
+
+        def copyArtifacts(String jobName, String includeGlob, String targetPath, Closure copyArtifactClosure) {
+            return copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
+        }
+
+        def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles, Closure copyArtifactClosure) {
+            return copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
+        }
+
+        def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles, boolean optionalAllowed, Closure copyArtifactClosure) {
+            CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
+            AbstractContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
+
+            if (!copyArtifactContext.selectedSelector) {
+                throw new IllegalArgumentException("A selector has to be select in the closure argument")
+            }
+
+            def nodeBuilder = NodeBuilder.newInstance()
+            def copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
+                projectName jobName
+                filter includeGlob
+                target targetPath?:''
+
+                selector('class':"hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
+                    if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
+                        fallbackToLastSuccessful 'true'
+                    }
+                    if (copyArtifactContext.selectedSelector == 'PermalinkBuild') {
+                        id copyArtifactContext.permalinkName
+                    }
+                    if (copyArtifactContext.selectedSelector == 'SpecificBuild') {
+                        buildNumber Integer.toString(copyArtifactContext.buildNumber)
+                    }
+                    if (copyArtifactContext.selectedSelector == 'ParameterizedBuild') {
+                        parameterName copyArtifactContext.parameterName
+                    }
+                }
+
+                if (flattenFiles) {
+                    flatten 'true'
+                }
+                if (optionalAllowed) {
+                    optional 'true'
+                }
+            }
+
+            stepNodes << copyArtifactNode
+
+        }
+
+        def static class CopyArtifactContext implements Context {
+            String selectedSelector
+            boolean fallback
+            String permalinkName
+            int buildNumber
+            String parameterName
+
+            private void ensureFirst() {
+                if (selectedSelector!=null) {
+                    throw new IllegalStateException("Only one selector can be chosen")
+                }
+            }
+            /**
+             * Upstream build that triggered this job
+             * @arg fallback Use "Last successful build" as fallback
+             * @return
+             */
+            def upstreamBuild(boolean fallback = false) {
+                ensureFirst()
+                this.fallback = fallback
+                selectedSelector = 'TriggeredBuild'
+            }
+
+            /**
+             * Latest successful build
+             * @return
+             */
+            def latestSuccessful() {
+                ensureFirst()
+                selectedSelector = 'StatusBuild'
+            }
+            /**
+             * Latest saved build (marked "keep forever")
+             * @return
+             */
+            def latestSaved() {
+                ensureFirst()
+                selectedSelector = 'SavedBuild'
+            }
+            /**
+             * Specified by permalink
+             * @param linkName Values like lastBuild, lastStableBuild
+             * @return
+             */
+            def permalink(String linkName) {
+                ensureFirst()
+                selectedSelector = 'PermalinkBuild'
+                permalinkName = linkName
+            }
+
+            /**
+             * Specific Build
+             * @param buildNumber
+             * @return
+             */
+            def buildNumber(int buildNumber) {
+                ensureFirst()
+                selectedSelector = 'SpecificBuild'
+                this.buildNumber = buildNumber
+            }
+
+            /**
+             * Copy from WORKSPACE of latest completed build
+             * @return
+             */
+            def workspace() {
+                ensureFirst()
+                selectedSelector = 'Workspace'
+            }
+
+            /**
+             * Specified by build parameter
+             * @param parameterName
+             * @return
+             */
+            def buildParameter(String parameterName) {
+                ensureFirst()
+                selectedSelector = 'ParameterizedBuild'
+                this.parameterName = parameterName
+            }
+        }
     }
 
     def steps(Closure closure) {
