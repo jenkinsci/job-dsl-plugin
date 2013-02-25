@@ -67,7 +67,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public boolean createOrUpdateConfig(String jobName, String config) throws JobNameNotProvidedException, JobConfigurationMissingException {
+    public boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+            throws JobNameNotProvidedException, JobConfigurationMissingException {
 
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
         boolean created = false;
@@ -79,7 +80,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         if (project == null) {
             created = createNewJob(jobName, config);
-        } else {
+        } else if (!ignoreExisting) {
             created = updateExistingJob(project, config);
         }
         return created;

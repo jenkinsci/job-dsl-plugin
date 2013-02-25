@@ -68,7 +68,7 @@ public class DslScriptLoader {
 
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
 
-        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp);
+        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, scriptRequest.ignoreExisting);
         return generatedJobs;
 
     }
@@ -98,12 +98,12 @@ public class DslScriptLoader {
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", result));
         JobParent jp =  (JobParent) script;
 
-        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp);
+        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, false);
 
         return generatedJobs;
     }
 
-    private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp) {
+    private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) {
         // Iterate jobs which were setup, save them, and convert to a serializable form
         Set<GeneratedJob> generatedJobs = Sets.newLinkedHashSet();
         if (jp != null) {
@@ -111,7 +111,7 @@ public class DslScriptLoader {
                 try {
                     String xml = job.getXml();
                     LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml);
+                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
                     generatedJobs.add(gj);
                 } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException
