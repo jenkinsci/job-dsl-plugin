@@ -63,18 +63,26 @@ public class ExecuteDslScripts extends Builder {
      */
     private final boolean usingScriptText;
 
+    private final boolean ignoreExisting;
+
+    private final RemovedJobAction removedJobAction;
+
     @DataBoundConstructor
-    public ExecuteDslScripts(ScriptLocation scriptLocation) {
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation==null?null:scriptLocation.targets; // May be null;
         this.scriptText = scriptLocation==null?null:scriptLocation.scriptText; // May be null
+        this.ignoreExisting = ignoreExisting;
+        this.removedJobAction = removedJobAction;
     }
 
     ExecuteDslScripts(String scriptText) {
         this.usingScriptText = true;
         this.scriptText = scriptText;
         this.targets = null;
+        this.ignoreExisting = false;
+        this.removedJobAction = RemovedJobAction.DISABLE;
     }
 
     ExecuteDslScripts() { /// Where is the empty constructor called?
@@ -82,6 +90,8 @@ public class ExecuteDslScripts extends Builder {
         this.usingScriptText = true;
         this.scriptText = null;
         this.targets = null;
+        this.ignoreExisting = false;
+        this.removedJobAction = RemovedJobAction.DISABLE;
     }
 
     public String getTargets() {
@@ -94,6 +104,14 @@ public class ExecuteDslScripts extends Builder {
 
     public boolean isUsingScriptText() {
         return usingScriptText;
+    }
+
+    public boolean isIgnoreExisting() {
+        return ignoreExisting;
+    }
+
+    public RemovedJobAction getRemovedJobAction() {
+        return removedJobAction;
     }
 
     @Override
@@ -126,7 +144,7 @@ public class ExecuteDslScripts extends Builder {
         String jobName = build.getProject().getName();
         URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
         if(usingScriptText) {
-            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl);
+            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl, ignoreExisting);
             freshJobs = DslScriptLoader.runDslEngine(request, jm);
         } else {
             String targetsStr = env.expand(this.targets);
@@ -135,7 +153,7 @@ public class ExecuteDslScripts extends Builder {
 
             freshJobs = Sets.newHashSet();
             for (String target : targets) {
-                ScriptRequest request = new ScriptRequest(target, null, workspaceUrl);
+                ScriptRequest request = new ScriptRequest(target, null, workspaceUrl, ignoreExisting);
                 Set<GeneratedJob> dslJobs = DslScriptLoader.runDslEngine(request, jm);
 
                 freshJobs.addAll(dslJobs);
@@ -282,9 +300,18 @@ public class ExecuteDslScripts extends Builder {
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
             AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName());
-            // TODO Let user choose what to do
-            if (removedProject != null) {
-                removedProject.disable(); // TODO deleteJob which is protected
+            if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
+                if (removedJobAction == RemovedJobAction.DELETE) {
+                    try {
+                        removedProject.delete();
+                    } catch(InterruptedException e) {
+                        listener.getLogger().println(String.format("Delete job failed: %s", removedJob));
+                        listener.getLogger().println(String.format("Disabling job instead: %s", removedJob));
+                        removedProject.disable();
+                    }
+                } else {
+                    removedProject.disable();
+                }
             }
         }
 
