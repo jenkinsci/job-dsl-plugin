@@ -256,7 +256,13 @@ class ScmContext implements Context {
        <pollOnlyOnMaster>true</pollOnlyOnMaster>
      </scm>
      */
-    def p4(String viewspec, String user = 'rolem', String password = '', Closure configure = null) {
+    def p4(String viewspec, Closure configure = null) {
+        return p4(viewspec, 'rolem', '', configure)
+    }
+    def p4(String viewspec, String user, Closure configure = null) {
+        return p4(viewspec, user, '', configure)
+    }
+    def p4(String viewspec, String user, String password, Closure configure = null) {
             Preconditions.checkNotNull(viewspec)
         validateMulti()
         // TODO Validate viewspec as valid viewspec

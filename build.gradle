@@ -30,12 +30,12 @@ subprojects {
 }
 
 buildscript {
-  repositories {
-    mavenRepo urls:'http://repo.smokejumperit.com'
-  }
-  dependencies {
-    classpath 'com.smokejumperit:gradle-plugins:0.8.2'
-  }
+    repositories {
+        mavenRepo urls:'http://repo.smokejumperit.com'
+    }
+    dependencies {
+        classpath 'com.smokejumperit:gradle-plugins:0.8.2'
+    }
 }
 
 project(':job-dsl-core') {
