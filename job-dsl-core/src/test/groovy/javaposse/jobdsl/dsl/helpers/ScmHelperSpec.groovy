@@ -114,7 +114,7 @@ public class ScmHelperSpec extends Specification {
 
     def 'call svn with remote and local'() {
         when:
-                context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/', '/mydir/mycode')
+        context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/', '/mydir/mycode')
 
         then:
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
