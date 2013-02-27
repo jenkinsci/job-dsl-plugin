@@ -172,6 +172,14 @@ class ScmContext implements Context {
            <local>.</local>
          </hudson.scm.SubversionSCM_-ModuleLocation>
        </locations>
+       <browser class="hudson.scm.browsers.ViewSVN>
+         <url>http://mycompany.com/viewvn/repo_name</url>
+       </browser>
+       OR
+       <browser class="hudson.scm.browsers.FishEyeSVN>
+         <url>http://mycompany.com/viewvn/repo_name</url>
+         <rootModule>my_root_module</rootModule>
+       </browser>
        <excludedRegions/>
        <includedRegions/>
        <excludedUsers/>
@@ -181,7 +189,11 @@ class ScmContext implements Context {
      </scm>
      */
     def svn(String svnUrl, Closure configure = null) {
+        svn(svnUrl, '.', configure)
+    }
+    def svn(String svnUrl, String localDir, Closure configure = null) {
         Preconditions.checkNotNull(svnUrl)
+        Preconditions.checkNotNull(localDir)
         validateMulti()
         // TODO Validate url as a svn url (e.g. https or http)
 
@@ -192,7 +204,7 @@ class ScmContext implements Context {
             locations {
                 'hudson.scm.SubversionSCM_-ModuleLocation' {
                     remote "${svnUrl}"
-                    local '.'
+                    local "${localDir}"
                 }
             }
 
