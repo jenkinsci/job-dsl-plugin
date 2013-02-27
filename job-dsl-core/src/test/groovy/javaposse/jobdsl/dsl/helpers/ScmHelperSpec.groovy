@@ -112,6 +112,14 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.excludedRegions[0].value() == '/trunk/.*'
     }
 
+    def 'call svn with remote and local'() {
+        when:
+                context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/', '/mydir/mycode')
+
+        then:
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
+    }
+
     def 'call p4 with all parameters'() {
         setup:
         def viewspec = '//depot/Tools/build/...\n//depot/webapplications/helloworld/...'

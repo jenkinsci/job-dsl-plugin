@@ -189,7 +189,11 @@ class ScmContext implements Context {
      </scm>
      */
     def svn(String svnUrl, Closure configure = null) {
+        svn(svnUrl, '.', configure)
+    }
+    def svn(String svnUrl, String localDir, Closure configure = null) {
         Preconditions.checkNotNull(svnUrl)
+        Preconditions.checkNotNull(localDir)
         validateMulti()
         // TODO Validate url as a svn url (e.g. https or http)
 
@@ -200,7 +204,7 @@ class ScmContext implements Context {
             locations {
                 'hudson.scm.SubversionSCM_-ModuleLocation' {
                     remote "${svnUrl}"
-                    local '.'
+                    local "${localDir}"
                 }
             }
 
