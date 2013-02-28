@@ -395,7 +395,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
          <configs class="java.util.Collections$EmptyList"/>
          <projects>DSL-Tutorial-1-Test</projects>
-         <condition>SUCCESS</condition> // SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED
+         <condition>SUCCESS</condition> // SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED, ALWAYS
          <triggerWithNoParameters>false</triggerWithNoParameters>
          </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
          </configs>
