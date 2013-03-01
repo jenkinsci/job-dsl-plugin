@@ -97,6 +97,17 @@ public class TopLevelHelperSpec extends Specification {
         root.canRoam[0].value() == 'false'
     }
 
+    def 'without label leaves canRoam as true'() {
+        when:
+        when:
+        def action = helper.label()
+        action.execute(root)
+
+        then:
+        root.assignedNode[0].value() == ''
+        root.canRoam[0].value() == 'true'
+    }
+
     def 'log rotate xml'() {
         when:
         def action = helper.logRotator(14,50)
