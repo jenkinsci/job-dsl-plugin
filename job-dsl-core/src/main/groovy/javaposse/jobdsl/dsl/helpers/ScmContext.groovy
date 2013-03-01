@@ -284,7 +284,7 @@ class ScmContext implements Context {
             p4Client 'builds-${JOB_NAME}'
             projectPath "${viewspec}"
             projectOptions 'noallwrite clobber nocompress unlocked nomodtime rmdir'
-            p4Exe 'p4'
+            p4Tool 'p4'
             p4SysDrive 'C:'
             p4SysRoot 'C:\\WINDOWS'
             useClientSpec 'false'
