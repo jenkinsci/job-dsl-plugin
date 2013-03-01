@@ -354,16 +354,6 @@ public class ExecuteDslScripts extends Builder {
             this.templateJobMap = templateJobMap;
         }
 
-        static final String defaultDsl = "job {\n" +
-                "    using 'TMPL-test'\n" +
-                "    name 'PROJ-integ-tests'\n" +
-                "    configure { node ->\n" +
-                "        configureScm(node)\n" +
-                "        triggers.'hudson.triggers.TimerTrigger'.spec = '15 1,13 * * *'\n" +
-                "        goals = '-e clean integTest'\n" +
-                "    }\n" +
-                "}\n";
-
         /*
         @Override
         public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {

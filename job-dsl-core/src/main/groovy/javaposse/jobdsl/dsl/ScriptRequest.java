@@ -3,6 +3,10 @@ package javaposse.jobdsl.dsl;
 import java.net.URL;
 
 public class ScriptRequest {
+    public ScriptRequest(String location, String body, URL urlRoot) {
+        this(location, body, urlRoot, false);
+    }
+
     public ScriptRequest(String location, String body, URL urlRoot, boolean ignoreExisting) {
         this.location = location;
         this.body = body;

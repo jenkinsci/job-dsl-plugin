@@ -18,6 +18,8 @@ gradle-app.setting
 build
 /out
 
+*/test.xml
+*/test2.xml
 
 #Jenkins specific out
 *.hpi

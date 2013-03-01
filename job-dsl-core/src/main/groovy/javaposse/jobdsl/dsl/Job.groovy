@@ -77,17 +77,23 @@ public class Job {
         name(nameClosure.call().toString())
     }
 
+    public Node getNode() {
+        Node project = templateName==null?executeEmptyTemplate():executeUsing()
+
+        // TODO check name field
+
+        executeWithXmlActions(project)
+
+        return project
+    }
+
     /**
      * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
      * even if the user didn't specify them in order.
      * @return
      */
     public String getXml() {
-        Node project = templateName==null?executeEmptyTemplate():executeUsing()
-
-        // TODO check name field
-
-        executeWithXmlActions(project)
+        Node project = getNode()
 
         //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
 
@@ -145,7 +151,7 @@ public class Job {
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
-  <canRoam>false</canRoam>
+  <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
