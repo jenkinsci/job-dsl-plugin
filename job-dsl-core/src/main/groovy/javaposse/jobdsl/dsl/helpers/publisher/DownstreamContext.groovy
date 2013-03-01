@@ -27,5 +27,5 @@ class DownstreamContext implements Context {
         triggers << downstreamTriggerContext
     }
 
-    def validDownstreamConditionNames = ['SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED']
+    def validDownstreamConditionNames = ['SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED', 'ALWAYS']
 }
