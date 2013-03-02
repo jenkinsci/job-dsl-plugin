@@ -28,23 +28,6 @@ public class TopLevelHelperSpec extends Specification {
 
     }
 
-    def 'can run cordell walker'() {
-        when:
-        helper.chucknorris()
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'cordell walker constructs xml'() {
-        when:
-        def action = helper.chucknorris()
-        action.execute(root)
-
-        then:
-        root.'hudson.plugins.chucknorris.CordellWalkerRecorder'[0].factGenerator[0] != null
-    }
-
     def 'can run timeout'() {
         when:
         helper.timeout(15)
