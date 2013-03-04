@@ -36,7 +36,7 @@ public class Job {
         helperAuthorization = new AuthorizationContextHelper(withXmlActions)
         helperScm = new ScmContextHelper(withXmlActions)
         helperMultiscm = new MultiScmContextHelper(withXmlActions)
-        helperTrigger = new TriggerContextHelper(withXmlActions)
+        helperTrigger = new TriggerContextHelper(withXmlActions, arguments)
         helperStep = new StepContextHelper(withXmlActions, arguments)
         helperPublisher = new PublisherContextHelper(withXmlActions)
         helperTopLevel = new TopLevelHelper(withXmlActions)

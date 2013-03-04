@@ -269,9 +269,11 @@ job(type: maven) {
     perModuleEmail false
     archivingDisabled true
     runHeadless true
-    ignoreUpstreamChanges true
     scm {
         git(gitUrl)
+    }
+    triggers {
+        snapshotDependencies false
     }
 }
 

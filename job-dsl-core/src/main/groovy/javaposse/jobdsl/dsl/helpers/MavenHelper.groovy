@@ -111,22 +111,6 @@ class MavenHelper extends AbstractHelper {
     }
 
     /**
-     * If checked, Jenkins will parse the POMs of this project, and see if any of its snapshot dependencies are built on
-     * this Jenkins as well. If so, Jenkins will set up build dependency relationship so that whenever the dependency
-     * job is built and a new SNAPSHOT jar is created, Jenkins will schedule a build of this project. Defaults to
-     * <code>false</code>.
-     * @param ignoreUpstreamChanges set to <code>true</code> to ignore SNAPSHOT dependencies
-     */
-    def ignoreUpstreamChanges(boolean ignoreUpstreamChanges) {
-        checkState jobArguments['type'] == maven, "ignoreUpstreamChanges can only be applied for Maven jobs"
-        checkState !ignoreUpstreamChangesAdded, "ignoreUpstreamChanges can only be applied once"
-        ignoreUpstreamChangesAdded = true
-        execute { Node node ->
-            appendOrReplaceNode node, 'ignoreUpstremChanges', ignoreUpstreamChanges
-        }
-    }
-
-    /**
      * Name of the JDK installation to use for this job.
      * @param jdk name of the JDK installation to use for this job.
      */

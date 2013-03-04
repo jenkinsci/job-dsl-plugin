@@ -244,44 +244,6 @@ public class MavenHelperSpec extends Specification {
         root.runHeadless[0].value() == true
     }
 
-    def 'can run ignoreUpstreamChanges'() {
-        when:
-        helper.ignoreUpstreamChanges(true)
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'cannot run ignoreUpstreamChanges twice'() {
-        when:
-        helper.ignoreUpstreamChanges(true)
-        helper.ignoreUpstreamChanges(false)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'cannot run ignoreUpstreamChanges for free style jobs'() {
-        setup:
-        MavenHelper helper = new MavenHelper(mockActions)
-
-        when:
-        helper.ignoreUpstreamChanges(false)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'ignoreUpstreamChanges constructs xml'() {
-        when:
-        def action = helper.ignoreUpstreamChanges(true)
-        action.execute(root)
-
-        then:
-        root.ignoreUpstremChanges.size() == 1
-        root.ignoreUpstremChanges[0].value() == true
-    }
-
     def 'can run jdk'() {
         when:
         helper.jdk("JDK1.6.0_32")
