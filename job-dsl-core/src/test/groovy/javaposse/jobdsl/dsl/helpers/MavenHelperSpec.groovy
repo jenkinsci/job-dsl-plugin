@@ -58,13 +58,12 @@ public class MavenHelperSpec extends Specification {
 
     def 'run goals twice'() {
         when:
-        def action1 = helper.goals("clean")
-        def action2 = helper.goals("verify")
-        action1.execute(root)
-        action2.execute(root)
+        def action = helper.goals("clean")
+        helper.goals("verify")
+        action.execute(root)
 
         then:
-        2 * mockActions.add(_)
+        1 * mockActions.add(_)
         root.goals.size() == 1
         root.goals[0].value() == "clean verify"
     }
@@ -100,13 +99,12 @@ public class MavenHelperSpec extends Specification {
 
     def 'run mavenOpts twice'() {
         when:
-        def action1 = helper.mavenOpts("-Xms512m")
-        def action2 = helper.mavenOpts("-Xmx1024m")
-        action1.execute(root)
-        action2.execute(root)
+        def action = helper.mavenOpts("-Xms512m")
+        helper.mavenOpts("-Xmx1024m")
+        action.execute(root)
 
         then:
-        2 * mockActions.add(_)
+        1 * mockActions.add(_)
         root.mavenOpts.size() == 1
         root.mavenOpts[0].value() == "-Xms512m -Xmx1024m"
     }
@@ -167,7 +165,7 @@ public class MavenHelperSpec extends Specification {
 
         then:
         root.perModuleEmail.size() == 1
-        root.perModuleEmail[0].value() == "false"
+        root.perModuleEmail[0].value() == false
     }
 
     def 'can run archivingDisabled'() {
@@ -205,7 +203,7 @@ public class MavenHelperSpec extends Specification {
 
         then:
         root.archivingDisabled.size() == 1
-        root.archivingDisabled[0].value() == "true"
+        root.archivingDisabled[0].value() == true
     }
 
     def 'can run runHeadless'() {
@@ -243,7 +241,7 @@ public class MavenHelperSpec extends Specification {
 
         then:
         root.runHeadless.size() == 1
-        root.runHeadless[0].value() == "true"
+        root.runHeadless[0].value() == true
     }
 
     def 'can run ignoreUpstreamChanges'() {
@@ -281,7 +279,7 @@ public class MavenHelperSpec extends Specification {
 
         then:
         root.ignoreUpstremChanges.size() == 1
-        root.ignoreUpstremChanges[0].value() == "true"
+        root.ignoreUpstremChanges[0].value() == true
     }
 
     def 'can run jdk'() {

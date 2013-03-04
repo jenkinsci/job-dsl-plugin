@@ -1,15 +1,16 @@
 package javaposse.jobdsl.dsl.helpers
 
-import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.JobParent
 import javaposse.jobdsl.dsl.WithXmlAction
+
+import static com.google.common.base.Preconditions.checkState
+import static javaposse.jobdsl.dsl.JobParent.getMaven
 
 class MavenHelper extends AbstractHelper {
 
     Map<String, Object> jobArguments
 
-    StringBuilder theGoals = new StringBuilder()
-    StringBuilder theMavenOpts = new StringBuilder()
+    StringBuilder allGoals = new StringBuilder()
+    StringBuilder allMavenOpts = new StringBuilder()
     boolean rootPOMAdded = false
     boolean perModuleEmailAdded = false
     boolean archivingDisabledAdded = false
@@ -27,12 +28,11 @@ class MavenHelper extends AbstractHelper {
      * @param rootPOM path to the root POM
      */
     def rootPOM(String rootPOM) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "rootPOM can only be applied for Maven jobs")
-        Preconditions.checkState(!rootPOMAdded, "rootPOM can only be applied once")
+        checkState jobArguments['type'] == maven, "rootPOM can only be applied for Maven jobs"
+        checkState !rootPOMAdded, "rootPOM can only be applied once"
         rootPOMAdded = true
-        execute {
-            def node = methodMissing('rootPOM', rootPOM)
-            it / node
+        execute { Node node ->
+            appendOrReplaceNode node, 'rootPOM', rootPOM
         }
     }
 
@@ -41,16 +41,15 @@ class MavenHelper extends AbstractHelper {
      * @param goals the goals to execute
      */
     def goals(String goals) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "goals can only be applied for Maven jobs")
-        if (theGoals.length() == 0) {
-            theGoals.append(goals)
-            execute {
-                def node = methodMissing('goals', this.theGoals.toString())
-                it / node
+        checkState jobArguments['type'] == maven, "goals can only be applied for Maven jobs"
+        if (allGoals.length() == 0) {
+            allGoals.append goals
+            execute { Node node ->
+                appendOrReplaceNode node, 'goals', this.allGoals.toString()
             }
         } else {
-            theGoals.append(" ").append(goals)
-            execute {}
+            allGoals.append ' '
+            allGoals.append goals
         }
     }
 
@@ -59,16 +58,15 @@ class MavenHelper extends AbstractHelper {
      * @param mavenOpts JVM options needed when launching Maven
      */
     def mavenOpts(String mavenOpts) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "mavenOpts can only be applied for Maven jobs")
-        if (theMavenOpts.length() == 0) {
-            theMavenOpts.append(mavenOpts)
-            execute {
-                def node = methodMissing('mavenOpts', this.theMavenOpts.toString())
-                it / node
+        checkState jobArguments['type'] == maven, "mavenOpts can only be applied for Maven jobs"
+        if (allMavenOpts.length() == 0) {
+            allMavenOpts.append mavenOpts
+            execute { Node node ->
+                appendOrReplaceNode node, 'mavenOpts', this.allMavenOpts.toString()
             }
         } else {
-            theMavenOpts.append(" ").append(mavenOpts)
-            execute {}
+            allMavenOpts.append ' '
+            allMavenOpts.append mavenOpts
         }
     }
 
@@ -77,12 +75,11 @@ class MavenHelper extends AbstractHelper {
      * @param perModuleEmail set to <code>false</code> to disable per module e-mail notifications
      */
     def perModuleEmail(boolean perModuleEmail) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "perModuleEmail can only be applied for Maven jobs")
-        Preconditions.checkState(!perModuleEmailAdded, "perModuleEmail can only be applied once")
+        checkState jobArguments['type'] == maven, "perModuleEmail can only be applied for Maven jobs"
+        checkState !perModuleEmailAdded, "perModuleEmail can only be applied once"
         perModuleEmailAdded = true
-        execute {
-            def node = methodMissing('perModuleEmail', perModuleEmail.toString())
-            it / node
+        execute { Node node ->
+            appendOrReplaceNode node, 'perModuleEmail', perModuleEmail
         }
     }
 
@@ -92,12 +89,11 @@ class MavenHelper extends AbstractHelper {
      * @param archivingDisabled set to <code>true</code> to disable automatic archiving
      */
     def archivingDisabled(boolean archivingDisabled) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "archivingDisabled can only be applied for Maven jobs")
-        Preconditions.checkState(!archivingDisabledAdded, "archivingDisabled can only be applied once")
+        checkState jobArguments['type'] == maven, "archivingDisabled can only be applied for Maven jobs"
+        checkState !archivingDisabledAdded, "archivingDisabled can only be applied once"
         archivingDisabledAdded = true
-        execute {
-            def node = methodMissing('archivingDisabled', archivingDisabled.toString())
-            it / node
+        execute { Node node ->
+            appendOrReplaceNode node, 'archivingDisabled', archivingDisabled
         }
     }
 
@@ -106,12 +102,11 @@ class MavenHelper extends AbstractHelper {
      * @param runHeadless set to <code>true</code> to run the build process in headless mode
      */
     def runHeadless(boolean runHeadless) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "runHeadless can only be applied for Maven jobs")
-        Preconditions.checkState(!runHeadlessAdded, "runHeadless can only be applied once")
+        checkState(jobArguments['type'] == maven, "runHeadless can only be applied for Maven jobs")
+        checkState(!runHeadlessAdded, "runHeadless can only be applied once")
         runHeadlessAdded = true
-        execute {
-            def node = methodMissing('runHeadless', runHeadless.toString())
-            it / node
+        execute { Node node ->
+            appendOrReplaceNode node, 'runHeadless', runHeadless
         }
     }
 
@@ -123,12 +118,11 @@ class MavenHelper extends AbstractHelper {
      * @param ignoreUpstreamChanges set to <code>true</code> to ignore SNAPSHOT dependencies
      */
     def ignoreUpstreamChanges(boolean ignoreUpstreamChanges) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "ignoreUpstreamChanges can only be applied for Maven jobs")
-        Preconditions.checkState(!ignoreUpstreamChangesAdded, "ignoreUpstreamChanges can only be applied once")
+        checkState jobArguments['type'] == maven, "ignoreUpstreamChanges can only be applied for Maven jobs"
+        checkState !ignoreUpstreamChangesAdded, "ignoreUpstreamChanges can only be applied once"
         ignoreUpstreamChangesAdded = true
-        execute {
-            def node = methodMissing('ignoreUpstremChanges', ignoreUpstreamChanges.toString())
-            it / node
+        execute { Node node ->
+            appendOrReplaceNode node, 'ignoreUpstremChanges', ignoreUpstreamChanges
         }
     }
 
@@ -137,12 +131,16 @@ class MavenHelper extends AbstractHelper {
      * @param jdk name of the JDK installation to use for this job.
      */
     def jdk(String jdk) {
-        Preconditions.checkState(jobArguments['type'] == JobParent.maven, "jdk can only be applied for Maven jobs")
-        Preconditions.checkState(!jdkAdded, "jdk can only be applied once")
+        checkState jobArguments['type'] == maven, "jdk can only be applied for Maven jobs"
+        checkState !jdkAdded, "jdk can only be applied once"
         jdkAdded = true
-        execute {
-            def node = methodMissing('jdk', jdk)
-            it / node
+        execute { Node node ->
+            appendOrReplaceNode node, 'jdk', jdk
         }
+    }
+
+    private static void appendOrReplaceNode(Node node, String name, Object value) {
+        node.children().removeAll { it instanceof Node && it.name() == name }
+        node.appendNode name, value
     }
 }
