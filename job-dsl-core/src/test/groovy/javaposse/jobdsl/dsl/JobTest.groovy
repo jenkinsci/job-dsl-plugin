@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl
 
 import spock.lang.*
 import org.custommonkey.xmlunit.XMLUnit
+
+import static javaposse.jobdsl.dsl.JobParent.getMaven
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 import java.util.concurrent.atomic.AtomicBoolean
@@ -201,6 +203,34 @@ class JobTest extends Specification {
 
         then:
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, xml
+    }
+
+    def 'free-style job extends Maven template and fails to generate xml'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm)
+
+        when:
+        job.using('TMPL')
+        job.getXml()
+
+        then:
+        1 * jm.getConfig('TMPL') >> mavenXml
+        thrown(JobTypeMismatchException)
+    }
+
+    def 'Maven job extends free-style template and fails to generate xml'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm, [type: maven])
+
+        when:
+        job.using('TMPL')
+        job.getXml()
+
+        then:
+        1 * jm.getConfig('TMPL') >> minimalXml
+        thrown(JobTypeMismatchException)
     }
 
     final minimalXml = '''

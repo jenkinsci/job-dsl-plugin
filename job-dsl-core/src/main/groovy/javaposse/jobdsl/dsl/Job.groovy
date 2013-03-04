@@ -3,6 +3,8 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.helpers.*
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 
+import static javaposse.jobdsl.dsl.JobParent.getMaven
+
 /**
  * DSL Element representing a Jenkins Job
  *
@@ -11,10 +13,10 @@ import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
  */
 public class Job {
     JobManagement jobManagement
-    Map<String, Object> arguments
 
     String name // Required
     String templateName = null // Optional
+    String type = null // Optional
     List<WithXmlAction> withXmlActions = []
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
@@ -30,7 +32,7 @@ public class Job {
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
-        this.arguments = arguments
+        this.type = arguments['type']
         helperAuthorization = new AuthorizationContextHelper(withXmlActions)
         helperScm = new ScmContextHelper(withXmlActions)
         helperMultiscm = new MultiScmContextHelper(withXmlActions)
@@ -123,10 +125,6 @@ public class Job {
         }
     }
 
-    private isMavenJob() {
-       return arguments['type'] == JobParent.maven
-    }
-
     // TODO record which templates are used to generate jobs, so that they can be connected to this job
     private executeUsing() {
         String configXml
@@ -141,6 +139,10 @@ public class Job {
 
         def templateNode = new XmlParser().parse(new StringReader(configXml))
 
+        if (type != getJobType(templateNode)) {
+            throw new JobTypeMismatchException(name, templateName);
+        }
+
         // Clean up our own indication that a job is a template
         List<Node> seedJobProperties = templateNode.depthFirst().findAll { it.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty' }
         seedJobProperties.each { Node node -> node.parent().remove(node) }
@@ -150,6 +152,17 @@ public class Job {
 
     private executeEmptyTemplate() {
         return new XmlParser().parse(new StringReader(isMavenJob() ? emptyMavenTemplate : emptyTemplate))
+    }
+
+    private isMavenJob() {
+        return type == maven
+    }
+
+    /**
+     * Determines the job type from the given config XML.
+     */
+    private static String getJobType(Node node) {
+        return node.name() == "maven2-moduleset" ? maven : null
     }
 
     def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
