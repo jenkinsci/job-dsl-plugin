@@ -332,6 +332,45 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         }
 
         /**
+         * Clone Workspace SCM
+         *
+         * <hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
+         * <workspaceGlob></workspaceGlob>
+         * <workspaceExcludeGlob></workspaceExcludeGlob>
+         * <criteria>Any</criteria>
+         * <archiveMethod>TAR</archiveMethod>
+         * <overrideDefaultExcludes>true</overrideDefaultExcludes>
+         * </hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
+         */
+        def publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure) {
+            publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, null)
+        }
+
+        def publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any', String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false, Closure cloneWorkspaceClosure = null) {
+            CloneWorkspaceContext cloneWorkspaceContext = new CloneWorkspaceContext()
+            cloneWorkspaceContext.criteria = criteriaArg ?: 'Any'
+            cloneWorkspaceContext.archiveMethod = archiveMethodArg ?: 'TAR'
+            AbstractContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
+
+            // Validate values
+            assert validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria), "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
+            assert validCloneWorkspaceArchiveMethods.contains(cloneWorkspaceContext.archiveMethod), "Clone Workspace Archive Method needs to be one of these values: ${validCloneWorkspaceArchiveMethods.join(',')}"
+
+            def nodeBuilder = NodeBuilder.newInstance()
+            def publishNode = nodeBuilder.'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
+                workspaceGlob workspaceGlobArg
+                workspaceExcludeGlob workspaceExcludeGlobArg
+                criteria criteriaArg
+                archiveMethod archiveMethodArg
+                overrideDefaultExcludes overrideDefaultExcludesArg
+            }
+            publisherNodes << publishNode
+        }
+
+        def validCloneWorkspaceCriteria = ['Any', 'Not Failed', 'Successful']
+        def validCloneWorkspaceArchiveMethods = ['TAR', 'ZIP']
+
+        /**
          * Downstream build
          *
          <hudson.tasks.BuildTrigger>

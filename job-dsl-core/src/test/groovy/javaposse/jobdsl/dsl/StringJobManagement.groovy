@@ -47,8 +47,7 @@ public class StringJobManagement extends AbstractJobManagement {
         }
     }
 
-    @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException {
+    boolean createOrUpdateConfig(String jobName, String config,def boolean ignoreExisting) {
         validateUpdateArgs(jobName, config);
 
         savedConfigs[jobName] = config
