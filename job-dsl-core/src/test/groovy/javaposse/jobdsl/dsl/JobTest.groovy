@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl
 
 import spock.lang.*
 import org.custommonkey.xmlunit.XMLUnit
+
+import static javaposse.jobdsl.dsl.JobParent.maven
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 import java.util.concurrent.atomic.AtomicBoolean
@@ -191,6 +193,46 @@ class JobTest extends Specification {
         project.actions[0].children().size() == 2
     }
 
+    def 'construct simple Maven job and generate xml from it'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm, [type: 'maven'])
+
+        when:
+        def xml = job.getXml()
+
+        then:
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, xml
+    }
+
+    def 'free-style job extends Maven template and fails to generate xml'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm)
+
+        when:
+        job.using('TMPL')
+        job.getXml()
+
+        then:
+        1 * jm.getConfig('TMPL') >> mavenXml
+        thrown(JobTypeMismatchException)
+    }
+
+    def 'Maven job extends free-style template and fails to generate xml'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm, [type: maven])
+
+        when:
+        job.using('TMPL')
+        job.getXml()
+
+        then:
+        1 * jm.getConfig('TMPL') >> minimalXml
+        thrown(JobTypeMismatchException)
+    }
+
     final minimalXml = '''
 <project>
   <actions/>
@@ -200,4 +242,30 @@ class JobTest extends Specification {
 </project>
 '''
 
+    final mavenXml = '''
+<maven2-moduleset>
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>false</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class="vector"/>
+    <concurrentBuild>false</concurrentBuild>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <perModuleEmail>true</perModuleEmail>
+    <ignoreUpstremChanges>false</ignoreUpstremChanges>
+    <archivingDisabled>false</archivingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>false</runHeadless>
+    <publishers/>
+    <buildWrappers/>
+</maven2-moduleset>
+'''
 }

@@ -3,6 +3,8 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.helpers.*
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 
+import static javaposse.jobdsl.dsl.JobParent.maven
+
 /**
  * DSL Element representing a Jenkins Job
  *
@@ -14,6 +16,7 @@ public class Job {
 
     String name // Required
     String templateName = null // Optional
+    String type = null // Optional
     List<WithXmlAction> withXmlActions = []
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
@@ -25,16 +28,19 @@ public class Job {
     @Delegate PublisherContextHelper helperPublisher
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
+    @Delegate MavenHelper helperMaven
 
-    public Job(JobManagement jobManagement) {
+    public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
+        this.type = arguments['type']
         helperAuthorization = new AuthorizationContextHelper(withXmlActions)
         helperScm = new ScmContextHelper(withXmlActions)
         helperMultiscm = new MultiScmContextHelper(withXmlActions)
-        helperTrigger = new TriggerContextHelper(withXmlActions)
-        helperStep = new StepContextHelper(withXmlActions)
+        helperTrigger = new TriggerContextHelper(withXmlActions, arguments)
+        helperStep = new StepContextHelper(withXmlActions, arguments)
         helperPublisher = new PublisherContextHelper(withXmlActions)
         helperTopLevel = new TopLevelHelper(withXmlActions)
+        helperMaven = new MavenHelper(withXmlActions, arguments)
     }
 
     /**
@@ -133,6 +139,10 @@ public class Job {
 
         def templateNode = new XmlParser().parse(new StringReader(configXml))
 
+        if (type != getJobType(templateNode)) {
+            throw new JobTypeMismatchException(name, templateName);
+        }
+
         // Clean up our own indication that a job is a template
         List<Node> seedJobProperties = templateNode.depthFirst().findAll { it.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty' }
         seedJobProperties.each { Node node -> node.parent().remove(node) }
@@ -141,7 +151,18 @@ public class Job {
     }
 
     private executeEmptyTemplate() {
-        return new XmlParser().parse(new StringReader(emptyTemplate))
+        return new XmlParser().parse(new StringReader(isMavenJob() ? emptyMavenTemplate : emptyTemplate))
+    }
+
+    private isMavenJob() {
+        return type == maven
+    }
+
+    /**
+     * Determines the job type from the given config XML.
+     */
+    private static String getJobType(Node node) {
+        return node.name() == "maven2-moduleset" ? maven : null
     }
 
     def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
@@ -161,5 +182,32 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </project>
+'''
+
+    def emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <perModuleEmail>true</perModuleEmail>
+  <ignoreUpstremChanges>false</ignoreUpstremChanges>
+  <archivingDisabled>false</archivingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <publishers/>
+  <buildWrappers/>
+</maven2-moduleset>
 '''
 }
