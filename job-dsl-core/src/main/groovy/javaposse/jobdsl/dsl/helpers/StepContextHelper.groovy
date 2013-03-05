@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl.helpers
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 
-import static javaposse.jobdsl.dsl.JobParent.getMaven
+import static javaposse.jobdsl.dsl.JobParent.maven
 
 class StepContextHelper extends AbstractContextHelper<StepContext> {
 

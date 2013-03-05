@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 import spock.lang.*
 import org.custommonkey.xmlunit.XMLUnit
 
-import static javaposse.jobdsl.dsl.JobParent.getMaven
+import static javaposse.jobdsl.dsl.JobParent.maven
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 import java.util.concurrent.atomic.AtomicBoolean

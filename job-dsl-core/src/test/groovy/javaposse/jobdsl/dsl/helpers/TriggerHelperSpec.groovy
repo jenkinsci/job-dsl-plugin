@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.JobParent.getMaven
+import static javaposse.jobdsl.dsl.JobParent.maven
 
 public class TriggerHelperSpec extends Specification {
 

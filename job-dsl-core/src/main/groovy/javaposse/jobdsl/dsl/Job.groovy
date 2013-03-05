@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.helpers.*
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 
-import static javaposse.jobdsl.dsl.JobParent.getMaven
+import static javaposse.jobdsl.dsl.JobParent.maven
 
 /**
  * DSL Element representing a Jenkins Job

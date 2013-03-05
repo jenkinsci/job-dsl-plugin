@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.WithXmlAction
 
 import static com.google.common.base.Preconditions.checkState
-import static javaposse.jobdsl.dsl.JobParent.getMaven
+import static javaposse.jobdsl.dsl.JobParent.maven
 
 class MavenHelper extends AbstractHelper {
 
@@ -15,7 +15,6 @@ class MavenHelper extends AbstractHelper {
     boolean perModuleEmailAdded = false
     boolean archivingDisabledAdded = false
     boolean runHeadlessAdded = false
-    boolean ignoreUpstreamChangesAdded = false
     boolean jdkAdded = false
 
     MavenHelper(List<WithXmlAction> withXmlActions, Map<String, Object> jobArguments = [:]) {
