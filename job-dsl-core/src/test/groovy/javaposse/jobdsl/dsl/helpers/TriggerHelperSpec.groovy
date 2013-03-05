@@ -4,6 +4,8 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
+import static javaposse.jobdsl.dsl.JobParent.maven
+
 public class TriggerHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
@@ -120,10 +122,28 @@ public class TriggerHelperSpec extends Specification {
         }
 
         when:
-        def withXmlAction = helper.generateWithXmlAction(new TriggerContext([triggerNode]))
+        def withXmlAction = helper.generateWithXmlAction(new TriggerContext([], [triggerNode]))
         withXmlAction.execute(root)
 
         then:
         root.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
+    }
+
+    def 'call snapshotDependencies for free-style job fails'() {
+        when:
+        context.snapshotDependencies(false)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'call snapshotDependencies for Maven job succeeds'() {
+        when:
+        TriggerContext context = new TriggerContext([], [], [type: maven])
+        context.snapshotDependencies(false)
+
+        then:
+        context.withXmlActions != null
+        context.withXmlActions.size() == 1
     }
 }
