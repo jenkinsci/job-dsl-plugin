@@ -58,16 +58,6 @@ class TopLevelHelper extends AbstractHelper {
             pluginNode / failBuild(shoudFailBuild?'true':'false')
         }
     }
-    /*
-    <hudson.plugins.chucknorris.CordellWalkerRecorder>
-      <factGenerator/>
-    </hudson.plugins.chucknorris.CordellWalkerRecorder>
-     */
-    def chucknorris() {
-        execute {
-            it / 'hudson.plugins.chucknorris.CordellWalkerRecorder' / factGenerator
-        }
-    }
 
     /*
     <disabled>true</disabled>

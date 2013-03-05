@@ -499,6 +499,18 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             publisherNodes << publishNode
         }
 
+        /*
+        <hudson.plugins.chucknorris.CordellWalkerRecorder>
+          <factGenerator/>
+        </hudson.plugins.chucknorris.CordellWalkerRecorder>
+         */
+        def chucknorris() {
+            def nodeBuilder = NodeBuilder.newInstance()
+            def publishNode = nodeBuilder.'hudson.plugins.chucknorris.CordellWalkerRecorder' {
+                'factGenerator' ''
+            }
+            publisherNodes << publishNode
+        }
     }
 }
 
