@@ -122,7 +122,7 @@ public class TriggerHelperSpec extends Specification {
         }
 
         when:
-        def withXmlAction = helper.generateWithXmlAction(new TriggerContext([triggerNode]))
+        def withXmlAction = helper.generateWithXmlAction(new TriggerContext([], [triggerNode]))
         withXmlAction.execute(root)
 
         then:
@@ -139,7 +139,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call snapshotDependencies for Maven job succeeds'() {
         when:
-        TriggerContext context = new TriggerContext([type: maven])
+        TriggerContext context = new TriggerContext([], [], [type: maven])
         context.snapshotDependencies(false)
 
         then:

@@ -26,7 +26,7 @@ class TriggerContextHelper extends AbstractContextHelper<TriggerContext> {
      * @return
      */
     def triggers(Closure closure) {
-        execute(closure, new TriggerContext(jobArguments))
+        execute(closure, new TriggerContext(withXmlActions, [], jobArguments))
     }
 
     Closure generateWithXmlClosure(TriggerContext context) {
@@ -39,9 +39,6 @@ class TriggerContextHelper extends AbstractContextHelper<TriggerContext> {
             }
             context.triggerNodes.each {
                 triggersNode << it
-            }
-            context.withXmlActions.each {
-                it.execute(project)
             }
         }
     }
@@ -96,15 +93,13 @@ class GerritContext implements Context {
 }
 
 class TriggerContext implements Context {
+    List<WithXmlAction> withXmlActions
     Map<String, Object> jobArguments
-    List<Node> triggerNodes = []
-    List<WithXmlAction> withXmlActions = []
+    List<Node> triggerNodes
 
-    TriggerContext(Map<String, Object> jobArguments=[:]) {
+    TriggerContext(List<WithXmlAction> withXmlActions = [], List<Node> triggerNodes = [], Map<String, Object> jobArguments = [:]) {
+        this.withXmlActions = withXmlActions
         this.jobArguments = jobArguments
-    }
-
-    TriggerContext(List<Node> triggerNodes) {
         this.triggerNodes = triggerNodes
     }
 
