@@ -113,7 +113,8 @@ class TopLevelHelper extends AbstractHelper {
      */
     def jdk(String jdkArg) {
         execute {
-            it / jdkArg(jdkArg)
+            def jdkNode = methodMissing('jdk', jdkArg)
+            it / jdkNode
         }
     }
 
