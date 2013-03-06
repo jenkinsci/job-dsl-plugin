@@ -106,4 +106,16 @@ class TopLevelHelper extends AbstractHelper {
             }
         }
     }
+
+    /**
+     * Name of the JDK installation to use for this job.
+     * @param jdkArg name of the JDK installation to use for this job.
+     */
+    def jdk(String jdkArg) {
+        execute {
+            def jdkNode = methodMissing('jdk', jdkArg)
+            it / jdkNode
+        }
+    }
+
 }
