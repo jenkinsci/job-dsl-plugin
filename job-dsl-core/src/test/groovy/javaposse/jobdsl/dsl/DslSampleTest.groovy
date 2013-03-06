@@ -266,14 +266,14 @@ job(type: maven) {
     rootPOM 'my_module/pom.xml'
     goals 'clean verify'
     mavenOpts '-Xmx1024m'
-    perModuleEmail false
+    perModuleEmail true
     archivingDisabled true
     runHeadless true
     scm {
         git(gitUrl)
     }
     triggers {
-        snapshotDependencies false
+        snapshotDependencies true
     }
 }
 
@@ -304,8 +304,8 @@ job(type: maven) {
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
-    <perModuleEmail>false</perModuleEmail>
-    <ignoreUpstremChanges>true</ignoreUpstremChanges>
+    <perModuleEmail>true</perModuleEmail>
+    <ignoreUpstremChanges>false</ignoreUpstremChanges>
     <archivingDisabled>true</archivingDisabled>
     <resolveDependencies>false</resolveDependencies>
     <processPlugins>false</processPlugins>
