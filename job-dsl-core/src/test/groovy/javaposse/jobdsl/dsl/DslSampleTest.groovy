@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl
 
 import spock.lang.*
 
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
+
 /**
  * Attempt to execute the sample page in README.md
  */
@@ -11,18 +13,23 @@ class DslSampleTest extends Specification {
         setup:
         StringJobManagement jm = new StringJobManagement()
         jm.addConfig('TMPL-test', sampleTemplate)
+        jm.addConfig('TMPL-test-maven', sampleMavenTemplate)
 
         when:
         Set<GeneratedJob> results = DslScriptLoader.runDslShell(sampleDsl, jm)
 
         then:
         results != null
-        results.size() == 4
-        jm.savedConfigs.size() == 4
+        results.size() == 6
+        jm.savedConfigs.size() == 6
         def firstJob = jm.savedConfigs['PROJ-unit-tests']
         firstJob != null
         // TODO Review actual results
         println(firstJob)
+        def mavenJob = jm.savedConfigs['PROJ-maven']
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, mavenJob
+        def mavenJobWithTemplate = jm.savedConfigs['PROJ-maven-with-template']
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXmlWithTemplate, mavenJobWithTemplate
     }
 
     def 'use parameters when loading script'() {
@@ -123,6 +130,60 @@ class DslSampleTest extends Specification {
   <buildWrappers/>
 </project>
 '''
+
+    def sampleMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset>
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <canRoam>false</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class="vector"/>
+    <concurrentBuild>false</concurrentBuild>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <perModuleEmail>false</perModuleEmail>
+    <ignoreUpstremChanges>true</ignoreUpstremChanges>
+    <archivingDisabled>true</archivingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>true</runHeadless>
+    <publishers/>
+    <buildWrappers/>
+    <rootPOM>my_module/pom.xml</rootPOM>
+    <goals>clean verify</goals>
+    <mavenOpts>-Xmx1024m</mavenOpts>
+    <scm class='hudson.plugins.git.GitSCM'>
+        <configVersion>2</configVersion>
+        <disableSubmodules>false</disableSubmodules>
+        <recursiveSubmodules>false</recursiveSubmodules>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <authorOrCommitter>false</authorOrCommitter>
+        <clean>false</clean>
+        <wipeOutWorkspace>false</wipeOutWorkspace>
+        <pruneBranches>false</pruneBranches>
+        <remotePoll>false</remotePoll>
+        <ignoreNotifyCommit>false</ignoreNotifyCommit>
+        <gitTool>Default</gitTool>
+        <skipTag>false</skipTag>
+        <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+                <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>
+            </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+            <hudson.plugins.git.BranchSpec>
+                <name>**</name>
+            </hudson.plugins.git.BranchSpec>
+        </branches>
+    </scm>
+</maven2-moduleset>
+'''
+
     def sampleVarDsl = '''
 job {
     name "PROJ-${REPO}"
@@ -199,5 +260,140 @@ job {
         shell('cleanup.sh')
     }
 }
+
+job(type: maven) {
+    name 'PROJ-maven'
+    rootPOM 'my_module/pom.xml'
+    goals 'clean verify'
+    mavenOpts '-Xmx1024m'
+    perModuleEmail false
+    archivingDisabled true
+    runHeadless true
+    scm {
+        git(gitUrl)
+    }
+    triggers {
+        snapshotDependencies false
+    }
+}
+
+job(type: maven) {
+    using 'TMPL-test-maven'
+    name 'PROJ-maven-with-template'
+    rootPOM 'other_module/pom.xml'
+    goals 'clean'
+    goals 'install'
+    mavenOpts '-Xms128m'
+    mavenOpts '-Xmx512m'
+    perModuleEmail true
+    jdk 'JDK1.7.0_12'
+}
+'''
+
+    final mavenXml = '''
+<maven2-moduleset>
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <canRoam>false</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class="vector"/>
+    <concurrentBuild>false</concurrentBuild>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <perModuleEmail>false</perModuleEmail>
+    <ignoreUpstremChanges>true</ignoreUpstremChanges>
+    <archivingDisabled>true</archivingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>true</runHeadless>
+    <publishers/>
+    <buildWrappers/>
+    <rootPOM>my_module/pom.xml</rootPOM>
+    <goals>clean verify</goals>
+    <mavenOpts>-Xmx1024m</mavenOpts>
+    <scm class='hudson.plugins.git.GitSCM'>
+        <configVersion>2</configVersion>
+        <disableSubmodules>false</disableSubmodules>
+        <recursiveSubmodules>false</recursiveSubmodules>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <authorOrCommitter>false</authorOrCommitter>
+        <clean>false</clean>
+        <wipeOutWorkspace>false</wipeOutWorkspace>
+        <pruneBranches>false</pruneBranches>
+        <remotePoll>false</remotePoll>
+        <ignoreNotifyCommit>false</ignoreNotifyCommit>
+        <gitTool>Default</gitTool>
+        <skipTag>false</skipTag>
+        <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+                <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>
+            </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+            <hudson.plugins.git.BranchSpec>
+                <name>**</name>
+            </hudson.plugins.git.BranchSpec>
+        </branches>
+    </scm>
+</maven2-moduleset>
+'''
+
+    final mavenXmlWithTemplate = '''
+<maven2-moduleset>
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <canRoam>false</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class="vector"/>
+    <concurrentBuild>false</concurrentBuild>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <perModuleEmail>true</perModuleEmail>
+    <ignoreUpstremChanges>true</ignoreUpstremChanges>
+    <archivingDisabled>true</archivingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>true</runHeadless>
+    <publishers/>
+    <buildWrappers/>
+    <rootPOM>other_module/pom.xml</rootPOM>
+    <goals>clean install</goals>
+    <mavenOpts>-Xms128m -Xmx512m</mavenOpts>
+    <jdk>JDK1.7.0_12</jdk>
+    <scm class='hudson.plugins.git.GitSCM'>
+        <configVersion>2</configVersion>
+        <disableSubmodules>false</disableSubmodules>
+        <recursiveSubmodules>false</recursiveSubmodules>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <authorOrCommitter>false</authorOrCommitter>
+        <clean>false</clean>
+        <wipeOutWorkspace>false</wipeOutWorkspace>
+        <pruneBranches>false</pruneBranches>
+        <remotePoll>false</remotePoll>
+        <ignoreNotifyCommit>false</ignoreNotifyCommit>
+        <gitTool>Default</gitTool>
+        <skipTag>false</skipTag>
+        <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+                <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>
+            </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+            <hudson.plugins.git.BranchSpec>
+                <name>**</name>
+            </hudson.plugins.git.BranchSpec>
+        </branches>
+    </scm>
+</maven2-moduleset>
 '''
 }

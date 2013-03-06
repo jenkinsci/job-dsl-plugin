@@ -271,4 +271,16 @@ public class StepHelperSpec extends Specification {
         then:
         root.builders[0].'hudson.tasks.Shell'[0].command[0].text() == 'ls'
     }
+
+    def 'no steps for Maven jobs'() {
+        setup:
+        List<WithXmlAction> mockActions = Mock()
+        StepContextHelper helper = new StepContextHelper(mockActions, [type: 'maven'])
+
+        when:
+        helper.steps {}
+
+        then:
+        thrown(IllegalStateException)
+    }
 }
