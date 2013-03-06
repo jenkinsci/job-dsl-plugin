@@ -137,7 +137,7 @@ class DslSampleTest extends Specification {
     <description></description>
     <keepDependencies>false</keepDependencies>
     <properties/>
-    <canRoam>false</canRoam>
+    <canRoam>true</canRoam>
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -296,7 +296,7 @@ job(type: maven) {
     <description></description>
     <keepDependencies>false</keepDependencies>
     <properties/>
-    <canRoam>false</canRoam>
+    <canRoam>true</canRoam>
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -349,7 +349,7 @@ job(type: maven) {
     <description></description>
     <keepDependencies>false</keepDependencies>
     <properties/>
-    <canRoam>false</canRoam>
+    <canRoam>true</canRoam>
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
