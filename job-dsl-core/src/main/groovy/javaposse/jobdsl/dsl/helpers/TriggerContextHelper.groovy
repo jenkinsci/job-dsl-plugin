@@ -234,8 +234,8 @@ class TriggerContext implements Context {
      * If set to <code>true</code>, Jenkins will parse the POMs of this project, and see if any of its snapshot
      * dependencies are built on this Jenkins as well. If so, Jenkins will set up build dependency relationship so that
      * whenever the dependency job is built and a new SNAPSHOT jar is created, Jenkins will schedule a build of this
-     * project. Defaults to <code>true</code>.
-     * @param checkSnapshotDependencies set to <code>false</code> to ignore snapshot dependencies
+     * project. Defaults to <code>false</code>.
+     * @param checkSnapshotDependencies set to <code>true</code> to check snapshot dependencies
      */
     def snapshotDependencies(boolean checkSnapshotDependencies) {
         Preconditions.checkState(jobArguments['type'] == maven, "snapshotDependencies can only be applied for Maven jobs")
