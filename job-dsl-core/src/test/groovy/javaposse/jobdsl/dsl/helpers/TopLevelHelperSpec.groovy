@@ -123,10 +123,16 @@ public class TopLevelHelperSpec extends Specification {
     def 'can run jdk twice'() {
         when:
         helper.jdk("JDK1.6.0_16").execute(root)
-        helper.jdk("JDK1.6.0_32").execute(root)
 
         then:
-        root.jdk[0].value() == "JDK1.6.0_32"
+        root.jdk[0].value() == "JDK1.6.0_16"
+
+        when:
+        helper.jdk("JDK1.6.0_17").execute(root)
+
+        then:
+        root.jdk.size() == 1
+        root.jdk[0].value() == "JDK1.6.0_17"
     }
 
 }
