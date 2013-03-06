@@ -109,19 +109,6 @@ class MavenHelper extends AbstractHelper {
         }
     }
 
-    /**
-     * Name of the JDK installation to use for this job.
-     * @param jdk name of the JDK installation to use for this job.
-     */
-    def jdk(String jdk) {
-        checkState jobArguments['type'] == maven, "jdk can only be applied for Maven jobs"
-        checkState !jdkAdded, "jdk can only be applied once"
-        jdkAdded = true
-        execute { Node node ->
-            appendOrReplaceNode node, 'jdk', jdk
-        }
-    }
-
     private static void appendOrReplaceNode(Node node, String name, Object value) {
         node.children().removeAll { it instanceof Node && it.name() == name }
         node.appendNode name, value
