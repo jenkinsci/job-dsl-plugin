@@ -244,41 +244,4 @@ public class MavenHelperSpec extends Specification {
         root.runHeadless[0].value() == true
     }
 
-    def 'can run jdk'() {
-        when:
-        helper.jdk("JDK1.6.0_32")
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'cannot run jdk twice'() {
-        when:
-        helper.jdk("JDK1.6.0_32")
-        helper.jdk("JDK1.7.0_12")
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'cannot run jdk for free style jobs'() {
-        setup:
-        MavenHelper helper = new MavenHelper(mockActions)
-
-        when:
-        helper.jdk("foo")
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'jdk constructs xml'() {
-        when:
-        def action = helper.jdk("JDK1.7.0_12")
-        action.execute(root)
-
-        then:
-        root.jdk.size() == 1
-        root.jdk[0].value() == "JDK1.7.0_12"
-    }
 }

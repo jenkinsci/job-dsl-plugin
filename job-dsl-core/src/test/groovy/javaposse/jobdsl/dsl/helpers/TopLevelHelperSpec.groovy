@@ -110,4 +110,23 @@ public class TopLevelHelperSpec extends Specification {
         root.'hudson.plugins.buildblocker.BuildBlockerProperty'[0].useBuildBlocker[0].value() == 'true'
         root.'hudson.plugins.buildblocker.BuildBlockerProperty'[0].blockingJobs[0].value() == 'MyProject'
     }
+
+    def 'can run jdk'() {
+        when:
+        def action = helper.jdk("JDK1.6.0_32")
+        action.execute(root)
+
+        then:
+        root.jdk[0].value() == "JDK1.6.0_32"
+    }
+
+    def 'can run jdk twice'() {
+        when:
+        helper.jdk("JDK1.6.0_16").execute(root)
+        helper.jdk("JDK1.6.0_32").execute(root)
+
+        then:
+        root.jdk[0].value() == "JDK1.6.0_32"
+    }
+
 }
