@@ -199,8 +199,8 @@ public class Job {
   <concurrentBuild>false</concurrentBuild>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
-  <perModuleEmail>true</perModuleEmail>
-  <ignoreUpstremChanges>false</ignoreUpstremChanges>
+  <perModuleEmail>false</perModuleEmail>
+  <ignoreUpstremChanges>true</ignoreUpstremChanges>
   <archivingDisabled>false</archivingDisabled>
   <resolveDependencies>false</resolveDependencies>
   <processPlugins>false</processPlugins>
