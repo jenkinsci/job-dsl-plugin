@@ -222,7 +222,6 @@ public class PublisherHelperSpec extends Specification {
 
     }
 
-
     def 'call Jabber publish with all args'() {
         when:
         context.publishJabber('me@gmail.com *tools@hipchat.com', 'ANY_FAILURE', 'SummaryOnly' )
@@ -290,6 +289,48 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(AssertionError)
 
+    }
+
+    def 'call Clone Workspace publish with minimal args'() {
+        when:
+        context.publishCloneWorkspace('*/**')
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.cloneworkspace.CloneWorkspacePublisher'
+        publisherNode.workspaceGlob[0].value() == '*/**'
+        publisherNode.workspaceExcludeGlob[0].value() == ''
+        publisherNode.criteria[0].value() == 'Any'
+        publisherNode.archiveMethod[0].value() == 'TAR'
+        publisherNode.overrideDefaultExcludes[0].value() == false
+    }
+
+    def 'call Clone Workspace publish with all args'() {
+        when:
+        context.publishCloneWorkspace('*/**', '*/.svn', 'Not Failed', 'ZIP', true)
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.cloneworkspace.CloneWorkspacePublisher'
+        publisherNode.workspaceGlob[0].value() == '*/**'
+        publisherNode.workspaceExcludeGlob[0].value() == '*/.svn'
+        publisherNode.criteria[0].value() == 'Not Failed'
+        publisherNode.archiveMethod[0].value() == 'ZIP'
+        publisherNode.overrideDefaultExcludes[0].value() == true
+    }
+
+    def 'call Clone Workspace publish to get exceptions'() {
+        when:
+        context.publishCloneWorkspace('*/**', '*/.svn', 'Quite plainly wrong', 'ZIP', true)
+
+        then:
+        thrown(AssertionError)
+
+        when:
+        context.publishCloneWorkspace('*/**', '*/.svn', 'Not Failed', 'ZAP', true)
+
+        then:
+        thrown(AssertionError)
     }
 
     def 'call scp publish with not enough entries'() {
