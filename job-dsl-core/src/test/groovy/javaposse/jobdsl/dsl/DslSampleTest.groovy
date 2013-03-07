@@ -137,7 +137,7 @@ class DslSampleTest extends Specification {
     <description></description>
     <keepDependencies>false</keepDependencies>
     <properties/>
-    <canRoam>false</canRoam>
+    <canRoam>true</canRoam>
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -266,14 +266,14 @@ job(type: maven) {
     rootPOM 'my_module/pom.xml'
     goals 'clean verify'
     mavenOpts '-Xmx1024m'
-    perModuleEmail false
+    perModuleEmail true
     archivingDisabled true
     runHeadless true
     scm {
         git(gitUrl)
     }
     triggers {
-        snapshotDependencies false
+        snapshotDependencies true
     }
 }
 
@@ -296,7 +296,7 @@ job(type: maven) {
     <description></description>
     <keepDependencies>false</keepDependencies>
     <properties/>
-    <canRoam>false</canRoam>
+    <canRoam>true</canRoam>
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -304,8 +304,8 @@ job(type: maven) {
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
-    <perModuleEmail>false</perModuleEmail>
-    <ignoreUpstremChanges>true</ignoreUpstremChanges>
+    <perModuleEmail>true</perModuleEmail>
+    <ignoreUpstremChanges>false</ignoreUpstremChanges>
     <archivingDisabled>true</archivingDisabled>
     <resolveDependencies>false</resolveDependencies>
     <processPlugins>false</processPlugins>
@@ -349,7 +349,7 @@ job(type: maven) {
     <description></description>
     <keepDependencies>false</keepDependencies>
     <properties/>
-    <canRoam>false</canRoam>
+    <canRoam>true</canRoam>
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>

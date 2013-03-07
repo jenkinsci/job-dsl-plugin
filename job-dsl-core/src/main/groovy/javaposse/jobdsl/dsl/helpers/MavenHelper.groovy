@@ -70,8 +70,8 @@ class MavenHelper extends AbstractHelper {
     }
 
     /**
-     * If set, Jenkins will send an e-mail notifications for each module, defaults to <code>true</code>.
-     * @param perModuleEmail set to <code>false</code> to disable per module e-mail notifications
+     * If set, Jenkins will send an e-mail notifications for each module, defaults to <code>false</code>.
+     * @param perModuleEmail set to <code>true</code> to enable per module e-mail notifications
      */
     def perModuleEmail(boolean perModuleEmail) {
         checkState jobArguments['type'] == maven, "perModuleEmail can only be applied for Maven jobs"
