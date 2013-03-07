@@ -555,4 +555,25 @@ public class PublisherHelperSpec extends Specification {
         then:
         1 * mockActions.add(_)
     }
+
+    def 'can run cordell walker'() {
+        when:
+        helper.publishers {
+            chucknorris()
+        }
+
+        then:
+        1 * mockActions.add(_)
+    }
+
+    def 'cordell walker constructs xml'() {
+        when:
+        context.chucknorris()
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.chucknorris.CordellWalkerRecorder'
+        publisherNode.value()[0].name() == "factGenerator"
+        publisherNode.value()[0].value() == ""
+    }
 }
