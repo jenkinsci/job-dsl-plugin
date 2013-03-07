@@ -335,15 +335,23 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          * Clone Workspace SCM
          *
          * <hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
-         * <workspaceGlob></workspaceGlob>
-         * <workspaceExcludeGlob></workspaceExcludeGlob>
-         * <criteria>Any</criteria>
-         * <archiveMethod>TAR</archiveMethod>
-         * <overrideDefaultExcludes>true</overrideDefaultExcludes>
+         *     <workspaceGlob></workspaceGlob>
+         *     <workspaceExcludeGlob></workspaceExcludeGlob>
+         *     <criteria>Any</criteria>
+         *     <archiveMethod>TAR</archiveMethod>
+         *     <overrideDefaultExcludes>true</overrideDefaultExcludes>
          * </hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
          */
         def publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure) {
             publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, null)
+        }
+
+        def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, Closure cloneWorkspaceClosure) {
+            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, null)
+        }
+
+        def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod, Closure cloneWorkspaceClosure) {
+            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, null)
         }
 
         def publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any', String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false, Closure cloneWorkspaceClosure = null) {
