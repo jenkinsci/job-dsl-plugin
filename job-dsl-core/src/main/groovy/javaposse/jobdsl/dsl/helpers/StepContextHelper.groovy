@@ -223,9 +223,54 @@ multiline=true</properties>
            <classpath/>
          </hudson.plugins.groovy.SystemGroovy>
          */
-//        def systemGroovy() {
-//                         node / builders / 'hudson.plugins.groovy.SystemGroovy' / scriptSource(class:"hudson.plugins.groovy.StringScriptSource") / command(lastSuccessfulBuildScript)
-//        }
+        def systemGroovyCommand(String command, Closure systemGroovyClosure = null) {
+            systemGroovy(command, true, systemGroovyClosure)
+        }
+
+        /**
+         <hudson.plugins.groovy.SystemGroovy>
+           <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+             <scriptFile>System Groovy</scriptFile>
+           </scriptSource>
+           <bindings/>
+           <classpath/>
+         </hudson.plugins.groovy.SystemGroovy>
+         */
+        def systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
+            systemGroovy(fileName, false, systemGroovyClosure)
+        }
+
+        private def systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
+            def systemGroovyContext = new SystemGroovyContext()
+            AbstractContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
+
+            def systemGroovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.SystemGroovy' {
+                scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
+                    if (isCommand) {
+                        command commandOrFileName
+                    } else {
+                        scriptFile commandOrFileName
+                    }
+                }
+                bindings systemGroovyContext.bindings.collect({ key, value -> "${key}=${value}" }).join(System.getProperty("line.separator"))
+                classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
+            }
+
+            stepNodes << systemGroovyNode
+        }
+
+        def static class SystemGroovyContext implements Context {
+            Map<String, String> bindings = [:]
+            List<String> classpathEntries = []
+
+            def binding(String name, String value) {
+                bindings[name] = value
+            }
+
+            def classpath(String classpath) {
+                classpathEntries << classpath
+            }
+        }
 
         /**
          <hudson.tasks.Maven>

@@ -138,6 +138,88 @@ public class StepHelperSpec extends Specification {
         antClosure.'properties'[0].value() == 'test.size=4\nlogging=info\ntest.threads=10\ninput.status=release'
     }
 
+    def 'call systemGroovyCommand methods'() {
+        when:
+        context.systemGroovyCommand("println 'Hello World!'")
+
+        then:
+        context.stepNodes.size() == 1
+        def systemGroovyNode = context.stepNodes[0]
+        systemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        systemGroovyNode.bindings.size() == 1
+        systemGroovyNode.bindings[0].value() == ''
+        systemGroovyNode.classpath.size() == 1
+        systemGroovyNode.classpath[0].value() == ''
+        systemGroovyNode.scriptSource.size() == 1
+        def scriptSourceNode = systemGroovyNode.scriptSource[0]
+        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        scriptSourceNode.command.size() == 1
+        scriptSourceNode.command[0].value() == "println 'Hello World!'"
+
+        when:
+        context.systemGroovyCommand("acme.Acme.doSomething()") {
+            binding("foo", "bar")
+            binding("test", "0815")
+            classpath("/foo/acme.jar")
+            classpath("/foo/test.jar")
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def acmeSystemGroovyNode = context.stepNodes[1]
+        acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        acmeSystemGroovyNode.bindings.size() == 1
+        acmeSystemGroovyNode.bindings[0].value() == "foo=bar${System.getProperty("line.separator")}test=0815"
+        acmeSystemGroovyNode.classpath.size() == 1
+        acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeSystemGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        acmeScriptSourceNode.command.size() == 1
+        acmeScriptSourceNode.command[0].value() == "acme.Acme.doSomething()"
+    }
+
+    def 'call systemGroovyScriptFile methods'() {
+        when:
+        context.systemGroovyScriptFile("scripts/hello.groovy")
+
+        then:
+        context.stepNodes.size() == 1
+        def systemGroovyNode = context.stepNodes[0]
+        systemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        systemGroovyNode.bindings.size() == 1
+        systemGroovyNode.bindings[0].value() == ''
+        systemGroovyNode.classpath.size() == 1
+        systemGroovyNode.classpath[0].value() == ''
+        systemGroovyNode.scriptSource.size() == 1
+        def scriptSourceNode = systemGroovyNode.scriptSource[0]
+        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
+        scriptSourceNode.scriptFile.size() == 1
+        scriptSourceNode.scriptFile[0].value() == "scripts/hello.groovy"
+
+        when:
+        context.systemGroovyScriptFile("acme.groovy") {
+            binding("foo", "bar")
+            binding("test", "0815")
+            classpath("/foo/acme.jar")
+            classpath("/foo/test.jar")
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def acmeSystemGroovyNode = context.stepNodes[1]
+        acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        acmeSystemGroovyNode.bindings.size() == 1
+        acmeSystemGroovyNode.bindings[0].value() == "foo=bar${System.getProperty("line.separator")}test=0815"
+        acmeSystemGroovyNode.classpath.size() == 1
+        acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeSystemGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
+        acmeScriptSourceNode.scriptFile.size() == 1
+        acmeScriptSourceNode.scriptFile[0].value() == "acme.groovy"
+    }
+
     def 'call minimal copyArtifacts'() {
         when: 'Least arguments'
         context.copyArtifacts('upstream', '**/*.xml') {
