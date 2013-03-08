@@ -41,7 +41,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine'() {
         setup:
-        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir.toURL());
+        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir.toURL(), false);
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm)
@@ -54,7 +54,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine with reference to other class'() {
         setup:
-        ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir.toURL());
+        ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir.toURL(), false);
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm)
@@ -75,7 +75,7 @@ public class DslScriptLoaderTest extends Specification {
 
 Callee.makeJob(this, 'test2')
 '''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL())
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm)
