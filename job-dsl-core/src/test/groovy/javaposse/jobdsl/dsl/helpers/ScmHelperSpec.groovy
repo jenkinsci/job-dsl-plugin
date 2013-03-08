@@ -120,6 +120,34 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
     }
 
+    def 'call svn with browser - Fisheye example'() {
+        when:
+        context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
+            svnNode / browser(class:'hudson.scm.browsers.FishEyeSVN') {
+                url 'http://mycompany.com/fisheye/repo_name'
+                rootModule 'my_root_module'
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.browser[0].attributes()['class'] == 'hudson.scm.browsers.FishEyeSVN'
+        context.scmNode.browser[0].url[0].value() == 'http://mycompany.com/fisheye/repo_name'
+        context.scmNode.browser[0].rootModule[0].value() == 'my_root_module'
+    }
+
+    def 'call svn with browser - ViewSVN example'() {
+        when:
+        context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
+            svnNode / browser(class:'hudson.scm.browsers.ViewSVN') / url << 'http://mycompany.com/viewsvn/repo_name'
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.browser[0].attributes()['class'] == 'hudson.scm.browsers.ViewSVN'
+        context.scmNode.browser[0].url[0].value() == 'http://mycompany.com/viewsvn/repo_name'
+    }
+
     def 'call p4 with all parameters'() {
         setup:
         def viewspec = '//depot/Tools/build/...\n//depot/webapplications/helloworld/...'
