@@ -20,16 +20,16 @@ f.radioBlock(name: 'scriptLocation', value: 'false', title: 'Look on Filesystem'
     }
 }
 
-f.entry(field: 'ignoreExisting') {
-    f.checkbox(name: 'ignoreExisting', title: 'Ignore changes to existing jobs', checked: instance.ignoreExisting,
-		description: "What to do with previously generated jobs when generated config is not the same?")
+f.entry(title: 'Action for existings jobs:', field: 'ignoreExisting') {
+    f.checkbox(name: 'ignoreExisting', title: 'Ignore changes', checked: instance.ignoreExisting,
+		description: 'What to do with previously generated jobs when generated config is not the same?')
 }
 
-f.entry(title: "Action for removed jobs:", field:"removedJobAction",
-	description: "What to do when a previously generated job is not referenced anymore?") {
-	select(name:"removedJobAction") {
-		f.option(value:"IGNORE",  selected:instance.removedJobAction==RemovedJobAction.IGNORE,  "Ignore")
-		f.option(value:"DISABLE", selected:instance.removedJobAction==RemovedJobAction.DISABLE, "Disable")
-		f.option(value:"DELETE", selected:instance.removedJobAction==RemovedJobAction.DELETE, "Delete")
+f.entry(title: 'Action for removed jobs:', field:'removedJobAction',
+	description: 'What to do when a previously generated job is not referenced anymore?') {
+	select(name:'removedJobAction') {
+		f.option(value:'IGNORE', selected:instance.removedJobAction==RemovedJobAction.IGNORE, 'Ignore')
+		f.option(value:'DISABLE', selected:instance.removedJobAction==RemovedJobAction.DISABLE, 'Disable')
+		f.option(value:'DELETE', selected:instance.removedJobAction==RemovedJobAction.DELETE, 'Delete')
 	}
 }

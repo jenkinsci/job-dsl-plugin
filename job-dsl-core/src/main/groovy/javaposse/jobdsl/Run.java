@@ -3,6 +3,7 @@ package javaposse.jobdsl;
 import javaposse.jobdsl.dsl.*;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,6 +22,9 @@ public class Run {
         ScriptRequest request = new ScriptRequest(scriptName, null, cwd.toURL(), false);
         FileJobManagement jm = new FileJobManagement(cwd);
         jm.getParameters().putAll(System.getenv());
+        for(Map.Entry entry: System.getProperties().entrySet()) {
+            jm.getParameters().put(entry.getKey().toString(), entry.getValue().toString());
+        }
         Set<GeneratedJob> generatedJobs = DslScriptLoader.runDslEngine(request, jm);
 
         for(GeneratedJob job: generatedJobs) {
