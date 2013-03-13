@@ -461,7 +461,8 @@ multiline=true</properties>
 
             def nodeBuilder = NodeBuilder.newInstance()
             def copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
-                projectName jobName
+                projectName jobName // Older name for field
+                project jobName // Newer name for field
                 filter includeGlob
                 target targetPath?:''
 
