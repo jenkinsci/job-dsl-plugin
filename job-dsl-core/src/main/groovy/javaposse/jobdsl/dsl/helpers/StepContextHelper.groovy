@@ -197,6 +197,7 @@ multiline=true</properties>
                 antName = antInstallationName
             }
         }
+
         /**
          <hudson.plugins.groovy.Groovy>
            <scriptSource class="hudson.plugins.groovy.StringScriptSource">
@@ -210,8 +211,115 @@ multiline=true</properties>
            <classPath/>
          </hudson.plugins.groovy.Groovy>
          */
-        def groovy(String script) {
+        def groovyCommand(String command, Closure groovyClosure = null) {
+            groovy(command, true, null, groovyClosure)
+        }
 
+        def groovyCommand(String command, String groovyName, Closure groovyClosure = null) {
+            groovy(command, true, groovyName, groovyClosure)
+        }
+
+        /**
+         <hudson.plugins.groovy.Groovy>
+           <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+             <scriptFile>acme.groovy</scriptFile>
+           </scriptSource>
+           <groovyName>(Default)</groovyName>
+           <parameters/>
+           <scriptParameters/>
+           <properties/>
+           <javaOpts/>
+           <classPath/>
+         </hudson.plugins.groovy.Groovy>
+         */
+        def groovyScriptFile(String fileName, Closure groovyClosure = null) {
+            groovy(fileName, false, null, groovyClosure)
+        }
+
+        def groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null) {
+            groovy(fileName, false, groovyName, groovyClosure)
+        }
+
+        private def groovyScriptSource(String commandOrFileName, boolean isCommand) {
+            def nodeBuilder = new NodeBuilder()
+            nodeBuilder.scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
+                if (isCommand) {
+                    command commandOrFileName
+                } else {
+                    scriptFile commandOrFileName
+                }
+            }
+        }
+
+        private def groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
+            def groovyContext = new GroovyContext()
+            AbstractContextHelper.executeInContext(groovyClosure, groovyContext)
+
+            def groovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.Groovy' {
+                groovyName groovyInstallation ?: groovyContext.groovyInstallation ?: '(Default)'
+                parameters groovyContext.groovyParams.join('\n')
+                scriptParameters groovyContext.scriptParams.join('\n')
+                javaOpts groovyContext.javaOpts.join(' ')
+                classPath groovyContext.classpathEntries.join(File.pathSeparator)
+            }
+            groovyNode.append(groovyScriptSource(commandOrFileName, isCommand))
+            groovyNode.appendNode('properties', groovyContext.props.join('\n'))
+
+            stepNodes << groovyNode
+        }
+
+        def static abstract class AbstractGroovyContext implements Context {
+            def classpathEntries = []
+
+            def classpath(String classpath) {
+                classpathEntries << classpath
+            }
+        }
+
+        def static class GroovyContext extends AbstractGroovyContext {
+            def groovyParams = []
+            def scriptParams = []
+            def props = []
+            def javaOpts = []
+            def groovyInstallation = null
+
+            def groovyParam(String param) {
+                groovyParams << param
+            }
+
+            def groovyParams(Iterable<String> params) {
+                params.each { groovyParam(it) }
+            }
+
+            def scriptParam(String param) {
+                scriptParams << param
+            }
+
+            def scriptParams(Iterable<String> params) {
+                params.each { scriptParam(it) }
+            }
+
+            def prop(String key, String value) {
+                props << "${key}=${value}"
+            }
+
+            def props(Map<String, String> map) {
+                map.entrySet().each {
+                    prop(it.key, it.value)
+                }
+            }
+
+            def javaOpt(String opt) {
+                javaOpts << opt
+            }
+
+            def javaOpts(Iterable<String> opts) {
+                opts.each { javaOpt(it) }
+            }
+
+            def groovyInstallation(String groovyInstallationName) {
+                groovyInstallation = groovyInstallationName
+            }
         }
 
         /**
@@ -223,9 +331,43 @@ multiline=true</properties>
            <classpath/>
          </hudson.plugins.groovy.SystemGroovy>
          */
-//        def systemGroovy() {
-//                         node / builders / 'hudson.plugins.groovy.SystemGroovy' / scriptSource(class:"hudson.plugins.groovy.StringScriptSource") / command(lastSuccessfulBuildScript)
-//        }
+        def systemGroovyCommand(String command, Closure systemGroovyClosure = null) {
+            systemGroovy(command, true, systemGroovyClosure)
+        }
+
+        /**
+         <hudson.plugins.groovy.SystemGroovy>
+           <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+             <scriptFile>System Groovy</scriptFile>
+           </scriptSource>
+           <bindings/>
+           <classpath/>
+         </hudson.plugins.groovy.SystemGroovy>
+         */
+        def systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
+            systemGroovy(fileName, false, systemGroovyClosure)
+        }
+
+        private def systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
+            def systemGroovyContext = new SystemGroovyContext()
+            AbstractContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
+
+            def systemGroovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.SystemGroovy' {
+                bindings systemGroovyContext.bindings.collect({ key, value -> "${key}=${value}" }).join('\n')
+                classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
+            }
+            systemGroovyNode.append(groovyScriptSource(commandOrFileName, isCommand))
+
+            stepNodes << systemGroovyNode
+        }
+
+        def static class SystemGroovyContext extends AbstractGroovyContext {
+            Map<String, String> bindings = [:]
+
+            def binding(String name, String value) {
+                bindings[name] = value
+            }
+        }
 
         /**
          <hudson.tasks.Maven>
@@ -319,7 +461,8 @@ multiline=true</properties>
 
             def nodeBuilder = NodeBuilder.newInstance()
             def copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
-                projectName jobName
+                projectName jobName // Older name for field
+                project jobName // Newer name for field
                 filter includeGlob
                 target targetPath?:''
 

@@ -138,6 +138,225 @@ public class StepHelperSpec extends Specification {
         antClosure.'properties'[0].value() == 'test.size=4\nlogging=info\ntest.threads=10\ninput.status=release'
     }
 
+    def 'call groovyCommand methods'() {
+        when:
+        context.groovyCommand("println 'Hello World!'")
+
+        then:
+        context.stepNodes.size() == 1
+        def groovyNode = context.stepNodes[0]
+        groovyNode.name() == 'hudson.plugins.groovy.Groovy'
+        groovyNode.groovyName.size() == 1
+        groovyNode.groovyName[0].value() == '(Default)'
+        groovyNode.parameters.size() == 1
+        groovyNode.parameters[0].value() == ''
+        groovyNode.classPath.size() == 1
+        groovyNode.classPath[0].value() == ''
+        groovyNode.scriptParameters.size() == 1
+        groovyNode.scriptParameters[0].value() == ''
+        groovyNode.properties.size() == 1
+        groovyNode.properties[0].value() == ''
+        groovyNode.javaOpts.size() == 1
+        groovyNode.javaOpts[0].value() == ''
+        groovyNode.scriptSource.size() == 1
+        def scriptSourceNode = groovyNode.scriptSource[0]
+        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        scriptSourceNode.command.size() == 1
+        scriptSourceNode.command[0].value() == "println 'Hello World!'"
+
+        when:
+        context.groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
+            groovyParam('foo')
+            groovyParams(['bar', 'baz'])
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
+            scriptParam('alfa')
+            scriptParams(['bravo', 'charlie'])
+            prop('one', 'two')
+            props([three: 'four', five: 'six'])
+            javaOpt('test')
+            javaOpts(['me', 'too'])
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def acmeGroovyNode = context.stepNodes[1]
+        acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
+        acmeGroovyNode.groovyName.size() == 1
+        acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
+        acmeGroovyNode.parameters.size() == 1
+        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.classPath.size() == 1
+        acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeGroovyNode.scriptParameters.size() == 1
+        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.properties.size() == 1
+        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.javaOpts.size() == 1
+        acmeGroovyNode.javaOpts[0].value() == 'test me too'
+        acmeGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        acmeScriptSourceNode.command.size() == 1
+        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
+    }
+
+    def 'call groovyScriptFile methods'() {
+        when:
+        context.groovyScriptFile('scripts/hello.groovy')
+
+        then:
+        context.stepNodes.size() == 1
+        def groovyNode = context.stepNodes[0]
+        groovyNode.name() == 'hudson.plugins.groovy.Groovy'
+        groovyNode.groovyName.size() == 1
+        groovyNode.groovyName[0].value() == '(Default)'
+        groovyNode.parameters.size() == 1
+        groovyNode.parameters[0].value() == ''
+        groovyNode.classPath.size() == 1
+        groovyNode.classPath[0].value() == ''
+        groovyNode.scriptParameters.size() == 1
+        groovyNode.scriptParameters[0].value() == ''
+        groovyNode.properties.size() == 1
+        groovyNode.properties[0].value() == ''
+        groovyNode.javaOpts.size() == 1
+        groovyNode.javaOpts[0].value() == ''
+        groovyNode.scriptSource.size() == 1
+        def scriptSourceNode = groovyNode.scriptSource[0]
+        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
+        scriptSourceNode.scriptFile.size() == 1
+        scriptSourceNode.scriptFile[0].value() == 'scripts/hello.groovy'
+
+        when:
+        context.groovyScriptFile('acme.groovy', 'Groovy 2.0') {
+            groovyParam('foo')
+            groovyParams(['bar', 'baz'])
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
+            scriptParam('alfa')
+            scriptParams(['bravo', 'charlie'])
+            prop('one', 'two')
+            props([three: 'four', five: 'six'])
+            javaOpt('test')
+            javaOpts(['me', 'too'])
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def acmeGroovyNode = context.stepNodes[1]
+        acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
+        acmeGroovyNode.groovyName.size() == 1
+        acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
+        acmeGroovyNode.parameters.size() == 1
+        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.classPath.size() == 1
+        acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeGroovyNode.scriptParameters.size() == 1
+        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.properties.size() == 1
+        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.javaOpts.size() == 1
+        acmeGroovyNode.javaOpts[0].value() == 'test me too'
+        acmeGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
+        acmeScriptSourceNode.scriptFile.size() == 1
+        acmeScriptSourceNode.scriptFile[0].value() == 'acme.groovy'
+
+        when:
+        context.groovyScriptFile('foo.groovy') {
+            groovyInstallation('Groovy 2.1')
+        }
+
+        then:
+        context.stepNodes.size() == 3
+        def groovy21Node = context.stepNodes[2]
+        groovy21Node.groovyName.size() == 1
+        groovy21Node.groovyName[0].value() == 'Groovy 2.1'
+    }
+
+    def 'call systemGroovyCommand methods'() {
+        when:
+        context.systemGroovyCommand("println 'Hello World!'")
+
+        then:
+        context.stepNodes.size() == 1
+        def systemGroovyNode = context.stepNodes[0]
+        systemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        systemGroovyNode.bindings.size() == 1
+        systemGroovyNode.bindings[0].value() == ''
+        systemGroovyNode.classpath.size() == 1
+        systemGroovyNode.classpath[0].value() == ''
+        systemGroovyNode.scriptSource.size() == 1
+        def scriptSourceNode = systemGroovyNode.scriptSource[0]
+        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        scriptSourceNode.command.size() == 1
+        scriptSourceNode.command[0].value() == "println 'Hello World!'"
+
+        when:
+        context.systemGroovyCommand("acme.Acme.doSomething()") {
+            binding("foo", "bar")
+            binding("test", "0815")
+            classpath("/foo/acme.jar")
+            classpath("/foo/test.jar")
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def acmeSystemGroovyNode = context.stepNodes[1]
+        acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        acmeSystemGroovyNode.bindings.size() == 1
+        acmeSystemGroovyNode.bindings[0].value() == "foo=bar\ntest=0815"
+        acmeSystemGroovyNode.classpath.size() == 1
+        acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeSystemGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        acmeScriptSourceNode.command.size() == 1
+        acmeScriptSourceNode.command[0].value() == "acme.Acme.doSomething()"
+    }
+
+    def 'call systemGroovyScriptFile methods'() {
+        when:
+        context.systemGroovyScriptFile("scripts/hello.groovy")
+
+        then:
+        context.stepNodes.size() == 1
+        def systemGroovyNode = context.stepNodes[0]
+        systemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        systemGroovyNode.bindings.size() == 1
+        systemGroovyNode.bindings[0].value() == ''
+        systemGroovyNode.classpath.size() == 1
+        systemGroovyNode.classpath[0].value() == ''
+        systemGroovyNode.scriptSource.size() == 1
+        def scriptSourceNode = systemGroovyNode.scriptSource[0]
+        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
+        scriptSourceNode.scriptFile.size() == 1
+        scriptSourceNode.scriptFile[0].value() == "scripts/hello.groovy"
+
+        when:
+        context.systemGroovyScriptFile("acme.groovy") {
+            binding("foo", "bar")
+            binding("test", "0815")
+            classpath("/foo/acme.jar")
+            classpath("/foo/test.jar")
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def acmeSystemGroovyNode = context.stepNodes[1]
+        acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        acmeSystemGroovyNode.bindings.size() == 1
+        acmeSystemGroovyNode.bindings[0].value() == "foo=bar\ntest=0815"
+        acmeSystemGroovyNode.classpath.size() == 1
+        acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeSystemGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
+        acmeScriptSourceNode.scriptFile.size() == 1
+        acmeScriptSourceNode.scriptFile[0].value() == "acme.groovy"
+    }
+
     def 'call minimal copyArtifacts'() {
         when: 'Least arguments'
         context.copyArtifacts('upstream', '**/*.xml') {
