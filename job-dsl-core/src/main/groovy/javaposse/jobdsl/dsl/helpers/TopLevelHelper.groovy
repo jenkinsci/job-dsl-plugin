@@ -59,6 +59,47 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * Add environment variables to the build.
+     *
+     * Another build wrapper hidden in the top level.
+     <hudson.plugins.setenv.SetEnvBuildWrapper>
+         <localVarText>P4TICKETS=$WORKSPACE/.p4tickets</localVarText>
+     </hudson.plugins.setenv.SetEnvBuildWrapper>
+     */
+    def environmentVariables(Closure envClosure) {
+        environmentVariables(null, envClosure)
+    }
+
+    def environmentVariables(Map<Object,Object> vars, Closure envClosure = null) {
+        EnvironmentVariableContext envContext = new EnvironmentVariableContext()
+        if (vars) {
+            envContext.envs(vars)
+        }
+        AbstractContextHelper.executeInContext(envClosure, envContext)
+
+        execute {
+            def pluginNode = it / buildWrappers / 'hudson.plugins.setenv.SetEnvBuildWrapper'
+            pluginNode / localVarText(envContext.props.join('\n'))
+        }
+    }
+
+    def static class EnvironmentVariableContext implements Context {
+        def props = []
+
+        def env(Object key, Object value) {
+            props << "${key}=${value}"
+        }
+
+        def envs(Map<Object, Object> map) {
+            map.entrySet().each {
+                env(it.key, it.value)
+            }
+        }
+
+
+    }
+
     /*
     <disabled>true</disabled>
      */

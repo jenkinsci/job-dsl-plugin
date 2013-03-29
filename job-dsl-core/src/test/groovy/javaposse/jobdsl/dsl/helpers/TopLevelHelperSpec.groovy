@@ -46,6 +46,46 @@ public class TopLevelHelperSpec extends Specification {
         root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'true'
     }
 
+    def 'environments work with map arg'() {
+        when:
+        def action = helper.environmentVariables([
+                key1: 'val1',
+                key2: 'val2'
+        ])
+        action.execute(root)
+
+        then:
+        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key1=val1')
+        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key2=val2')
+    }
+
+    def 'environments work with context'() {
+        when:
+        def action = helper.environmentVariables {
+            envs([key1: 'val1', key2: 'val2'])
+            env 'key3', 'val3'
+        }
+        action.execute(root)
+
+        then:
+        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key1=val1')
+        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key2=val2')
+        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key3=val3')
+    }
+
+
+    def 'environments work with combination'() {
+        when:
+        def action = helper.environmentVariables([key4: 'val4']) {
+            env 'key3', 'val3'
+        }
+        action.execute(root)
+
+        then:
+        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key3=val3')
+        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key4=val4')
+    }
+
     def 'can run label'() {
         when:
         helper.label('RPM')
