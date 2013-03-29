@@ -42,7 +42,7 @@ class TopLevelHelper extends AbstractHelper {
       <hudson.plugins.build__timeout.BuildTimeoutWrapper>
         <timeoutMinutes>15</timeoutMinutes>
         <failBuild>true</failBuild>
-        <!-- Missing from DSL Call -->
+        <!-- Missing from DSL Call, Elastic and Likely stuck are radio buttons to Absolute -->
         <writingDescription>false</writingDescription>
         <timeoutPercentage>0</timeoutPercentage>
         <timeoutType>absolute</timeoutType>
