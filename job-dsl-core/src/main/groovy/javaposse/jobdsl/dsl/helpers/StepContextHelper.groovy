@@ -130,7 +130,7 @@ multiline=true</properties>
             }
 
             def propertiesList = []
-            propertiesList += antContext.properties
+            propertiesList += antContext.props
 
             def nodeBuilder = NodeBuilder.newInstance()
             def antNode = nodeBuilder.'hudson.tasks.Ant' {
@@ -156,7 +156,7 @@ multiline=true</properties>
 
         def static class AntContext implements Context {
             def targets = []
-            def properties = []
+            def props = []
             def buildFile = null
             def antOpts = []
             def antName = null
@@ -172,7 +172,7 @@ multiline=true</properties>
             }
 
             def prop(Object key, Object value) {
-                properties << "${key}=${value}"
+                props << "${key}=${value}"
             }
 
             def props(Map<String, String> map) {
