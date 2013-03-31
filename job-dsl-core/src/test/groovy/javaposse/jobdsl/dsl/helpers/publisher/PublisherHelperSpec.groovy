@@ -627,4 +627,42 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes[0].notifyFixers[0].value() == 'true'
     }
+
+    def 'irc notification message is set'() {
+        when:
+        context.irc {
+            channel('#c1')
+            notificationMessage('Just summary')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        Node ircPublisher = context.publisherNodes[0]
+        ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
+        ircPublisher.getAt('buildToChatNotifier')[0].attributes()['class'] == 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
+    }
+
+    def 'default notification message is set if not specified'() {
+        when:
+        context.irc {
+            channel('#c1')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        Node ircPublisher = context.publisherNodes[0]
+        ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
+        ircPublisher.getAt('buildToChatNotifier')[0].attributes()['class'] == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+    }
+
+    def 'default notification strategy is set if not specified'() {
+        when:
+        context.irc {
+            channel('#c1')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].strategy[0].value() == 'ALL'
+    }
 }
