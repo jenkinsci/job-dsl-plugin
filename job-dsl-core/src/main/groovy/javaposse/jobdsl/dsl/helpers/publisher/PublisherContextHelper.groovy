@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
@@ -559,7 +560,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             publisherNodes << publishNode
         }
 
-        def irc(Closure ircClosure = null) {
+        def irc(Closure ircClosure) {
             IrcContext ircContext = new IrcContext()
             AbstractContextHelper.executeInContext(ircClosure, ircContext)
 
@@ -569,6 +570,8 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                     ircContext.channels.each { IrcContext.IrcPublisherChannel channel ->
                         'hudson.plugins.im.GroupChatIMMessageTarget' {
                             delegate.createNode('name', channel.name)
+                            password channel.password
+                            notificationOnly channel.notificationOnly ? 'true' : 'false'
                         }
                     }
                 }
@@ -578,7 +581,10 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 notifyCulprits ircContext.notifyScmCulprits ? 'true' : 'false'
                 notifyFixers ircContext.notifyScmFixers ? 'true' : 'false'
                 notifyUpstreamCommitters ircContext.notifyUpstreamCommitters ? 'true' : 'false'
-                buildToChatNotifier(class: ircContext.notificationMessages[ircContext.notificationMessage])
+
+                def notificationMessage = ircContext.notificationMessages[ircContext.notificationMessage]
+                def className = "hudson.plugins.im.build_notify.${notificationMessage}BuildToChatNotifier"
+                buildToChatNotifier(class: className)
             }
 
             publisherNodes << publishNode

@@ -14,10 +14,10 @@ class IrcContext implements Context {
             change: 'STATECHANGE_ONLY']
 
     def notificationMessages = [
-        'Summary + SCM changes': 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier',
-        'Just summary': 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier',
-        'Summary and build parameters': 'hudson.plugins.im.build_notify.BuildParametersBuildToChatNotifier',
-        'Summary, SCM changes and failed tests': 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
+        'Summary + SCM changes': 'Default',
+        'Just summary': 'SummaryOnly',
+        'Summary and build parameters': 'BuildParameters',
+        'Summary, SCM changes and failed tests': 'PrintFailingTests'
     ]
 
     def strategy
@@ -41,9 +41,7 @@ class IrcContext implements Context {
 
 
     def channel(String name, String password = '', boolean notificationOnly = false) {
-        if (!name) {
-            throw new RuntimeException("Channel name for irc channel is required!")
-        }
+        Preconditions.checkArgument(name != null && name.length() > 0, "Channel name for irc channel is required!")
 
         channels << new IrcPublisherChannel(
             name: name,
@@ -73,19 +71,19 @@ class IrcContext implements Context {
         this.notificationMessage = notificationMessage
     }
 
-    def notifyScmCommitters(boolean value) {
+    def notifyScmCommitters(boolean value = true) {
         notifyScmCommitters = value
     }
 
-    def notifyScmCulprits(boolean value) {
+    def notifyScmCulprits(boolean value = true) {
         notifyScmCulprits = value
     }
 
-    def notifyUpstreamCommitters(boolean value) {
+    def notifyUpstreamCommitters(boolean value = true) {
         notifyUpstreamCommitters = value
     }
 
-    def notifyScmFixers(boolean value) {
+    def notifyScmFixers(boolean value = true) {
         notifyScmFixers = value
     }
 
