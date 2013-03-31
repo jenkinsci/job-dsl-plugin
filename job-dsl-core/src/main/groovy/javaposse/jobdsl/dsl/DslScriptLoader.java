@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl;
 import groovy.lang.GroovyClassLoader;
 import groovy.util.GroovyScriptEngine;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import com.google.common.collect.Sets;
 
@@ -11,6 +12,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -25,12 +27,17 @@ import java.util.logging.Logger;
 public class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.class.getName());
 
-    public static Set<GeneratedJob> runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+    public static JobParent runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.class.getClassLoader();
         CompilerConfiguration config = createCompilerConfiguration(jobManagement);
 
         // Otherwise baseScript won't take effect
         GroovyClassLoader cl = new GroovyClassLoader(parentClassLoader, config);
+
+        // Add static imports of a few common types, like JobType
+        ImportCustomizer icz = new ImportCustomizer();
+        icz.addStaticStars("javaposse.jobdsl.dsl.JobType");
+        config.addCompilationCustomizers(icz);
 
         GroovyScriptEngine engine = //scriptRequest.resourceConnector!=null?
                 //new GroovyScriptEngine(scriptRequest.resourceConnector, parentClassLoader):
@@ -64,43 +71,53 @@ public class DslScriptLoader {
                 throw new IOException("Unable to run script", e);
             }
         }
+        return jp;
+    }
 
+    /**
+     * For testing a string directly.
+     * @param scriptBody
+     * @param jobManagement
+     * @return
+     * @throws IOException
+     */
+    static Set<GeneratedJob> runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
+        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURL() );
+        return runDslEngine(scriptRequest, jobManagement);
+    }
+
+    public static Set<GeneratedJob> runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+        JobParent jp = runDslEngineForParent(scriptRequest, jobManagement);
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
 
         Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, scriptRequest.ignoreExisting);
         return generatedJobs;
-
     }
-    /**
-     * Runs the provided DSL script through the provided job manager.
-     *
-     * @param scriptContent the contents of the DSL script
-     * @param jobManagement the instance of JobManagement which processes the resulting Jenkins job config changes
-     */
-    @Deprecated
-    public static Set<GeneratedJob> runDslShell(String scriptContent, JobManagement jobManagement) {
-        Binding binding = createBinding(jobManagement);
 
-        CompilerConfiguration config = createCompilerConfiguration(jobManagement);
-
-        // TODO Setup different classloader, especially for Grape to work, which needs a RootLoader or a GroovyLoader
-        ClassLoader parent = DslScriptLoader.class.getClassLoader();
-
-        GroovyShell shell = new GroovyShell(parent, binding, config);
-        Script script = shell.parse(scriptContent);
-        if (!(script instanceof JobParent)) {
-            // Assume an empty script
-            return null;
-        }
-        ((JobParent) script).setJm(jobManagement);
-        Object result = script.run(); // Probably the last job
-        LOGGER.log(Level.FINE, String.format("Ran script and got back %s", result));
-        JobParent jp =  (JobParent) script;
-
-        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, false);
-
-        return generatedJobs;
-    }
+//    @Deprecated
+//    public static Set<GeneratedJob> runDslShell(String scriptContent, JobManagement jobManagement) {
+//        Binding binding = createBinding(jobManagement);
+//
+//        CompilerConfiguration config = createCompilerConfiguration(jobManagement);
+//
+//        // TODO Setup different classloader, especially for Grape to work, which needs a RootLoader or a GroovyLoader
+//        ClassLoader parent = DslScriptLoader.class.getClassLoader();
+//
+//        GroovyShell shell = new GroovyShell(parent, binding, config);
+//        Script script = shell.parse(scriptContent);
+//        if (!(script instanceof JobParent)) {
+//            // Assume an empty script
+//            return null;
+//        }
+//        ((JobParent) script).setJm(jobManagement);
+//        Object result = script.run(); // Probably the last job
+//        LOGGER.log(Level.FINE, String.format("Ran script and got back %s", result));
+//        JobParent jp =  (JobParent) script;
+//
+//        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, false);
+//
+//        return generatedJobs;
+//    }
 
     private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) {
         // Iterate jobs which were setup, save them, and convert to a serializable form

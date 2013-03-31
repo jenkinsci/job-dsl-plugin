@@ -1,13 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
 class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelper.PublisherContext> {
 
-    PublisherContextHelper(List<WithXmlAction> withXmlActions) {
-        super(withXmlActions)
+    PublisherContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     def publishers(Closure closure) {

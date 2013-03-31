@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
@@ -10,7 +11,7 @@ public class ScmHelperSpec extends Specification {
     private static final String HG_REPO_URL = 'http://selenic.com/repo/hello'
 
     List<WithXmlAction> mockActions = Mock()
-    ScmContextHelper helper = new ScmContextHelper(mockActions)
+    ScmContextHelper helper = new ScmContextHelper(mockActions, JobType.Freeform)
     ScmContext context = new ScmContext()
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 

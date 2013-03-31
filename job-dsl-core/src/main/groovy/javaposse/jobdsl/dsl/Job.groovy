@@ -3,8 +3,6 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.helpers.*
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 
-import static javaposse.jobdsl.dsl.JobParent.maven
-
 /**
  * DSL Element representing a Jenkins Job
  *
@@ -16,7 +14,7 @@ public class Job {
 
     String name // Required
     String templateName = null // Optional
-    String type = null // Optional
+    JobType type = null // Required
     List<WithXmlAction> withXmlActions = []
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
@@ -33,15 +31,18 @@ public class Job {
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
-        this.type = arguments['type']
-        helperAuthorization = new AuthorizationContextHelper(withXmlActions)
-        helperScm = new ScmContextHelper(withXmlActions)
-        helperMultiscm = new MultiScmContextHelper(withXmlActions)
-        helperTrigger = new TriggerContextHelper(withXmlActions, arguments)
-        helperStep = new StepContextHelper(withXmlActions, arguments)
-        helperPublisher = new PublisherContextHelper(withXmlActions)
-        helperTopLevel = new TopLevelHelper(withXmlActions)
-        helperMaven = new MavenHelper(withXmlActions, arguments)
+        def typeArg = arguments['type']?:JobType.Freeform
+        this.type = (typeArg instanceof JobType)?typeArg:JobType.find(typeArg)
+
+        // Helpers
+        helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
+        helperScm = new ScmContextHelper(withXmlActions, type)
+        helperMultiscm = new MultiScmContextHelper(withXmlActions, type)
+        helperTrigger = new TriggerContextHelper(withXmlActions, type)
+        helperStep = new StepContextHelper(withXmlActions, type)
+        helperPublisher = new PublisherContextHelper(withXmlActions, type)
+        helperTopLevel = new TopLevelHelper(withXmlActions, type)
+        helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions)
     }
 
@@ -153,18 +154,24 @@ public class Job {
     }
 
     private executeEmptyTemplate() {
-        return new XmlParser().parse(new StringReader(isMavenJob() ? emptyMavenTemplate : emptyTemplate))
+        return new XmlParser().parse(new StringReader(getTemplate(type)))
     }
 
-    private isMavenJob() {
-        return type == maven
+    private String getTemplate(JobType type) {
+        // TODO Move this logic to the JobType Enum
+        switch(type) {
+            case JobType.Freeform: return emptyTemplate
+            case JobType.Maven: return emptyMavenTemplate
+            case JobType.Multijob: return emptyMultijobTemplate
+        }
     }
 
     /**
      * Determines the job type from the given config XML.
      */
-    private static String getJobType(Node node) {
-        return node.name() == "maven2-moduleset" ? maven : null
+    private static JobType getJobType(Node node) {
+        def nodeElement = node.name()
+        return JobType.values().find { it.elementName == nodeElement }
     }
 
     def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
@@ -211,5 +218,24 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </maven2-moduleset>
+'''
+
+    def emptyMultijobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.tikal.jenkins.plugins.multijob.MultiJobProject plugin="jenkins-multijob-plugin@1.8">
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+</com.tikal.jenkins.plugins.multijob.MultiJobProject>
 '''
 }

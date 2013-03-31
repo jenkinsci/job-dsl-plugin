@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class AuthorizationContextHelper extends AbstractContextHelper<AuthorizationContext> {
@@ -7,8 +8,8 @@ class AuthorizationContextHelper extends AbstractContextHelper<AuthorizationCont
      * Per-execution state, cleared each time, look for STATEFUL
      * TOOD initialize and support permission methods being called directly
      */
-    AuthorizationContextHelper(List<WithXmlAction> withXmlActions) {
-        super(withXmlActions)
+    AuthorizationContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     // STATEFUL

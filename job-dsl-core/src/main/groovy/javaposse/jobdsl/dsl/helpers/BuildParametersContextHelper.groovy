@@ -2,12 +2,13 @@ package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class BuildParametersContextHelper extends AbstractContextHelper<BuildParametersContext> {
 
-    BuildParametersContextHelper(List<WithXmlAction> withXmlActions) {
-        super(withXmlActions)
+    BuildParametersContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     def parameters(Closure closure) {
