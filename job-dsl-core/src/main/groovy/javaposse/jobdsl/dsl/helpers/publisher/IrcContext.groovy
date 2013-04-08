@@ -13,12 +13,7 @@ class IrcContext implements Context {
     def strategies = [all: 'ALL', failure: 'ANY_FAILURE', 'failure and fixed': 'FAILURE_AND_FIXED',
             change: 'STATECHANGE_ONLY']
 
-    def notificationMessages = [
-        'Summary + SCM changes': 'Default',
-        'Just summary': 'SummaryOnly',
-        'Summary and build parameters': 'BuildParameters',
-        'Summary, SCM changes and failed tests': 'PrintFailingTests'
-    ]
+    def notificationMessages = ['Default',  'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
     def strategy
 
@@ -36,7 +31,7 @@ class IrcContext implements Context {
 
     public IrcContext() {
         strategy = strategies.keySet().toArray()[0];
-        notificationMessage = notificationMessages.keySet().toArray()[0];
+        notificationMessage = notificationMessages[0];
     }
 
 
@@ -64,8 +59,8 @@ class IrcContext implements Context {
 
     def notificationMessage(String notificationMessage) {
         Preconditions.checkArgument(
-            notificationMessages.keySet().contains(notificationMessage),
-            "Possible values: ${notificationMessages.keySet().join(',')}"
+            notificationMessages.contains(notificationMessage),
+            "Possible values: ${notificationMessages.join(',')}"
         )
 
         this.notificationMessage = notificationMessage

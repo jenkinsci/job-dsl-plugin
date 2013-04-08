@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
@@ -582,8 +581,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 notifyFixers ircContext.notifyScmFixers ? 'true' : 'false'
                 notifyUpstreamCommitters ircContext.notifyUpstreamCommitters ? 'true' : 'false'
 
-                def notificationMessage = ircContext.notificationMessages[ircContext.notificationMessage]
-                def className = "hudson.plugins.im.build_notify.${notificationMessage}BuildToChatNotifier"
+                def className = "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
                 buildToChatNotifier(class: className)
             }
 

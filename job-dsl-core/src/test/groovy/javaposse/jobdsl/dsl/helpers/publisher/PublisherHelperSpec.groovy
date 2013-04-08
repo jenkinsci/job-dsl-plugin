@@ -632,7 +632,7 @@ public class PublisherHelperSpec extends Specification {
         when:
         context.irc {
             channel('#c1')
-            notificationMessage('Just summary')
+            notificationMessage('SummaryOnly')
         }
 
         then:
