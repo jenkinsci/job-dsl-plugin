@@ -35,7 +35,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @param description (optional)
          * @return
          */
-        def booleanParam(String parameterName, boolean defaultValue, String description) {
+        def booleanParam(String parameterName, boolean defaultValue = false, String description) {
 
         }
 
@@ -52,7 +52,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @param description (optional)
          * @return
          */
-        def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst, boolean sortZtoA , String defaultValue, String maxTagsToDisplay, String description) {
+        def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false, boolean sortZtoA = false, String defaultValue, String maxTagsToDisplay = "all", String description) {
 
         }
 
@@ -64,7 +64,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @param description (optional)
          * @return
          */
-        def choiceParam (String parameterName, String[] options , String description) {
+        def choiceParam (String parameterName, List<String> options , String description) {
 
         }
 
@@ -76,7 +76,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @param description (optional)
          * @return
          */
-        def fileParam (String parameterName, File fileLocation_relativeToTheWorkspace, String description) {
+        def fileParam (String parameterName, String fileLocation_relativeToTheWorkspace, String description) {
 
         }
 
