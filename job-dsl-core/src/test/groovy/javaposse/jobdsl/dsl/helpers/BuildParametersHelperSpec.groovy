@@ -20,7 +20,33 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].name.text() == "myParameterName"
         context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].defaultValue.text() == "true"
         context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].description.text() == "myBooleanParameterDescription"
-//        context.scmNode.modules[0].text() == ''
+    }
+
+    def 'simplified booleanParam usage'() {
+        when:
+        context.booleanParam("myParameterName", false)
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].name.text() == 'myParameterName'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].defaultValue.text() == 'false'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].description.text() == ''
+    }
+
+    def 'booleanParam name cant be null'() {
+        when:
+        context.booleanParam(null, false)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'booleanParam name cant be empty'() {
+        when:
+        context.booleanParam('', false)
+
+        then:
+        System.out.print("HELLO")
     }
 
     def 'base listTagsParam usage'() {
