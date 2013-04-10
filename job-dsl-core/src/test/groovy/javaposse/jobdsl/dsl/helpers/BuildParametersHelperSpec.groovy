@@ -13,11 +13,13 @@ public class BuildParametersHelperSpec extends Specification {
 
     def 'base booleanParam usage'() {
         when:
-        context.booleanParam("myParameterName", true, "myBooleanParamDescription")
+        context.booleanParam("myParameterName", true, "myBooleanParameterDescription")
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].name.text() == "myParameterName"
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].defaultValue.text() == "true"
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.BooleanParameterDefinition'[0].description.text() == "myBooleanParameterDescription"
 //        context.scmNode.modules[0].text() == ''
     }
 

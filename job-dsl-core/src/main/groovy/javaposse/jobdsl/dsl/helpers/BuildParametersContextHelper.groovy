@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
+import com.google.common.base.Preconditions
+
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class BuildParametersContextHelper extends AbstractContextHelper<BuildParametersContext> {
@@ -28,15 +30,47 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
 
         /**
-         * ...
+         * <project>
+         *     <properties>
+         *         <hudson.model.ParametersDefinitionProperty>
+         *             <parameterDefinitions>
+         *                 <hudson.model.BooleanParameterDefinition>
+         *                     <name>booleanValue</name>
+         *                     <description>ths description of the boolean value</description>
+         *                     <defaultValue>true</defaultValue>
+         *                 </hudson.model.BooleanParameterDefinition>
          *
          * @param parameterName name of the parameter
          * @param defaultValue "false" if not specified
          * @param description (optional)
          * @return
          */
-        def booleanParam(String parameterName, boolean defaultValue = false, String description) {
+        def booleanParam(String parameterName, boolean defaultValue = false, Closure configure = null) {
+            booleanParam(parameterName, defaultValue, '')
+        }
+        def booleanParam(String parameterName, boolean defaultValue = false, String description, Closure configure = null) {
+            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
 
+            def nodeBuilder = new NodeBuilder()
+
+            Node buildParametersNode = nodeBuilder.properties {
+                'hudson.model.ParametersPropertyDefinition' {
+                    parameterDefinitions {
+                        'hudson.model.BooleanParameterDefinition' { }
+                    }
+                }
+            }
+
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('name', parameterName)
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('defaultValue', defaultValue)
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('description', description)
+
+            // Apply Context
+            if (configure) {
+                WithXmlAction action = new WithXmlAction(configure)
+                action.execute(buildParametersNode)
+            }
+            buildParameterNodes << buildParametersNode
         }
 
         /**
