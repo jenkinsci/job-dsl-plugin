@@ -184,20 +184,44 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
 
         /**
-         * <hudson.model.TextParameterDefinition>
-                  					<name>textValue</name>
-                  					<description>the description of the text value</description>
-                  					<defaultValue>defaultTextValue</defaultValue>
-                  				</hudson.model.TextParameterDefinition>
+         * <project>
+         *     <properties>
+         *         <hudson.model.ParametersDefinitionProperty>
+         *             <parameterDefinitions>
+         *                 <hudson.model.TextParameterDefinition>
+         *                     <name>textValue</name>
+         *                     <description>the description of the text value</description>
+         *                     <defaultValue>defaultTextValue</defaultValue>
+         *                 </hudson.model.TextParameterDefinition>
          *
          * @param parameterName
          * @param defaultValue (optional)
          * @param description (optional)
          * @return
          */
-        def textParam(String parameterName, String defaultValue, String description) {
+        def textParam(String parameterName, Closure configure = null) {
+            textParam(parameterName, '', '')
+        }
+        def textParam(String parameterName, String defaultValue, Closure configure = null) {
+            textParam(parameterName, defaultValue, '')
+        }
+        def textParam(String parameterName, String defaultValue, String description, Closure configure = null) {
+            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
+            Preconditions.checkState(parameterName.length() > 0)
 
+            Node buildParametersNode = getListOfBuildParameterNodes()
+
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition')
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition').appendNode('name', parameterName)
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition').appendNode('defaultValue', defaultValue)
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition').appendNode('description', description)
+
+            // Apply Context
+            if (configure) {
+                WithXmlAction action = new WithXmlAction(configure)
+                action.execute(buildParametersNode)
+            }
+            buildParameterNodes << buildParametersNode
         }
     }
 }
-

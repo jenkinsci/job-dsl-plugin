@@ -124,50 +124,99 @@ public class BuildParametersHelperSpec extends Specification {
     }
 
     def 'simplified stringParam usage'() {
-            when:
-            context.stringParam("myParameterName", "my default stringParam value")
-
-            then:
-            context.buildParameterNodes != null
-            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].name.text() == 'myParameterName'
-            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].defaultValue.text() == 'my default stringParam value'
-            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].description.text() == ''
-        }
-
-        def 'simplest stringParam usage'() {
-            when:
-            context.stringParam("myParameterName")
-
-            then:
-            context.buildParameterNodes != null
-            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].name.text() == 'myParameterName'
-            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].defaultValue.text() == ''
-            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StirngParameterDefinition'[0].description.text() == ''
-        }
-
-        def 'stringParam name argument cant be null'() {
-            when:
-            context.stringParam(null)
-
-            then:
-            thrown(NullPointerException)
-        }
-
-        def 'stringParam name argument cant be empty'() {
-            when:
-            context.stringParam('')
-
-            then:
-            thrown(IllegalStateException)
-        }
-
-    def 'base textParam usage'() {
         when:
-        context.textParam("myParameterName", "my default textParam value", "myTextParamDescription")
+        context.stringParam("myParameterName", "my default stringParam value")
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-//        context.scmNode.modules[0].text() == ''
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].name.text() == 'myParameterName'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].defaultValue.text() == 'my default stringParam value'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].description.text() == ''
+    }
+
+    def 'simplest stringParam usage'() {
+        when:
+        context.stringParam("myParameterName")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].name.text() == 'myParameterName'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].defaultValue.text() == ''
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].description.text() == ''
+    }
+
+    def 'stringParam name argument cant be null'() {
+        when:
+        context.stringParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'stringParam name argument cant be empty'() {
+        when:
+        context.stringParam('')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+//    def 'base textParam usage'() {
+//        when:
+//        context.textParam("myParameterName", "my default textParam value", "myTextParamDescription")
+//
+//        then:
+//        context.buildParameterNodes != null
+////        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
+////        context.scmNode.modules[0].text() == ''
+//    }
+
+    def 'base textParam usage'() {
+        when:
+        context.textParam("myParameterName", "my default textParam value", "myTextParameterDescription")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].name.text() == 'myParameterName'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].defaultValue.text() == 'my default textParam value'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].description.text() == 'myTextParameterDescription'
+    }
+
+    def 'simplified textParam usage'() {
+        when:
+        context.textParam("myParameterName", "my default textParam value")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].name.text() == 'myParameterName'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].defaultValue.text() == 'my default textParam value'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].description.text() == ''
+    }
+
+    def 'simplest textParam usage'() {
+        when:
+        context.textParam("myParameterName")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].name.text() == 'myParameterName'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].defaultValue.text() == ''
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.TextParameterDefinition'[0].description.text() == ''
+    }
+
+    def 'textParam name argument cant be null'() {
+        when:
+        context.textParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'textParam name argument cant be empty'() {
+        when:
+        context.textParam('')
+
+        then:
+        thrown(IllegalStateException)
     }
 }
