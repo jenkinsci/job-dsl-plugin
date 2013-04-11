@@ -11,6 +11,8 @@ public class BuildParametersHelperSpec extends Specification {
     BuildParametersContextHelper helper = new BuildParametersContextHelper(mockActions)
     BuildParametersContext context = new BuildParametersContext()
 
+    // TODO: Add tests for multiples (homogeneous and heterogeneous)
+
     def 'base booleanParam usage'() {
         when:
         context.booleanParam("myParameterName", true, "myBooleanParameterDescription")
@@ -112,12 +114,13 @@ public class BuildParametersHelperSpec extends Specification {
 
     def 'base stringParam usage'() {
         when:
-        context.stringParam("myParameterName", "my default stringParam value", "myStringParamDescription")
+        context.stringParam("myParameterName", "my default stringParam value", "myStringParameterDescription")
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-//        context.scmNode.modules[0].text() == ''
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].name.text() == 'myParameterName'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].defaultValue.text() == 'my default stringParam value'
+        context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].description.text() == 'myStringParameterDescription'
     }
 
     def 'base textParam usage'() {

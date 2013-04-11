@@ -29,6 +29,16 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             this.buildParameterNodes = buildParameterNodes
         }
 
+        def getListOfBuildParameterNodes() {
+            def nodeBuilder = new NodeBuilder()
+
+            return nodeBuilder.properties {
+                'hudson.model.ParametersPropertyDefinition' {
+                    parameterDefinitions { }
+                }
+            }
+        }
+
         /**
          * <project>
          *     <properties>
@@ -52,16 +62,9 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
             Preconditions.checkState(parameterName.length() > 0)
 
-            def nodeBuilder = new NodeBuilder()
+            Node buildParametersNode = getListOfBuildParameterNodes()
 
-            Node buildParametersNode = nodeBuilder.properties {
-                'hudson.model.ParametersPropertyDefinition' {
-                    parameterDefinitions {
-                        'hudson.model.BooleanParameterDefinition' { }
-                    }
-                }
-            }
-
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition')
             buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('name', parameterName)
             buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('defaultValue', defaultValue)
             buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('description', description)
@@ -140,19 +143,52 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
 
         /**
-         * ...
+         * <project>
+         *     <properties>
+         *         <hudson.model.ParametersDefinitionProperty>
+         *             <parameterDefinitions>
+         *                 <hudson.model.StringParameterDefinition>
+         *                     <name>stringValue</name>
+         *                     <description>the description of the string value</description>
+         *                     <defaultValue>theDefaultStringValue</defaultValue>
+         *                 </hudson.model.StringParameterDefinition>
          *
          * @param parameterName
          * @param defaultValue (optional)
          * @param description (optional)
          * @return
          */
-        def stringParam(String parameterName, String defaultValue, String description) {
+        def stringParam(String parameterName, Closure configure = null) {
+            stringParam(parameterName, '', '')
+        }
+        def stringParam(String parameterName, String defaultValue, Closure configure = null) {
+            stringParam(parameterName, defaultValue, '')
+        }
+        def stringParam(String parameterName, String defaultValue, String description, Closure configure = null) {
+            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
+            Preconditions.checkState(parameterName.length() > 0)
 
+            Node buildParametersNode = getListOfBuildParameterNodes()
+
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition')
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition').appendNode('name', parameterName)
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition').appendNode('defaultValue', defaultValue)
+            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition').appendNode('description', description)
+
+            // Apply Context
+            if (configure) {
+                WithXmlAction action = new WithXmlAction(configure)
+                action.execute(buildParametersNode)
+            }
+            buildParameterNodes << buildParametersNode
         }
 
         /**
-         * ...
+         * <hudson.model.TextParameterDefinition>
+                  					<name>textValue</name>
+                  					<description>the description of the text value</description>
+                  					<defaultValue>defaultTextValue</defaultValue>
+                  				</hudson.model.TextParameterDefinition>
          *
          * @param parameterName
          * @param defaultValue (optional)
