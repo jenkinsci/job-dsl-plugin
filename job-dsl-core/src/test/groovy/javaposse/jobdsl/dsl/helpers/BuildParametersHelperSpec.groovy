@@ -123,6 +123,44 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].description.text() == 'myStringParameterDescription'
     }
 
+    def 'simplified stringParam usage'() {
+            when:
+            context.stringParam("myParameterName", "my default stringParam value")
+
+            then:
+            context.buildParameterNodes != null
+            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].name.text() == 'myParameterName'
+            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].defaultValue.text() == 'my default stringParam value'
+            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].description.text() == ''
+        }
+
+        def 'simplest stringParam usage'() {
+            when:
+            context.stringParam("myParameterName")
+
+            then:
+            context.buildParameterNodes != null
+            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].name.text() == 'myParameterName'
+            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StringParameterDefinition'[0].defaultValue.text() == ''
+            context.buildParameterNodes.'hudson.model.ParametersPropertyDefinition'.parameterDefinitions.'hudson.model.StirngParameterDefinition'[0].description.text() == ''
+        }
+
+        def 'stringParam name argument cant be null'() {
+            when:
+            context.stringParam(null)
+
+            then:
+            thrown(NullPointerException)
+        }
+
+        def 'stringParam name argument cant be empty'() {
+            when:
+            context.stringParam('')
+
+            then:
+            thrown(IllegalStateException)
+        }
+
     def 'base textParam usage'() {
         when:
         context.textParam("myParameterName", "my default textParam value", "myTextParamDescription")
