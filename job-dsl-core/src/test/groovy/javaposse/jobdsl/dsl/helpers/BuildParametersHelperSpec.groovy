@@ -161,16 +161,6 @@ public class BuildParametersHelperSpec extends Specification {
         thrown(IllegalStateException)
     }
 
-//    def 'base textParam usage'() {
-//        when:
-//        context.textParam("myParameterName", "my default textParam value", "myTextParamDescription")
-//
-//        then:
-//        context.buildParameterNodes != null
-////        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-////        context.scmNode.modules[0].text() == ''
-//    }
-
     def 'base textParam usage'() {
         when:
         context.textParam("myParameterName", "my default textParam value", "myTextParameterDescription")
