@@ -50,6 +50,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
         def booleanParam(String parameterName, boolean defaultValue = false, String description, Closure configure = null) {
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
+            Preconditions.checkState(parameterName.length() > 0)
 
             def nodeBuilder = new NodeBuilder()
 
