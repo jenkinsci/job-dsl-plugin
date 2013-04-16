@@ -42,6 +42,11 @@ jenkinsPlugin {
             name 'Emil Sit'
             email 'sit@hadapt.com'
         }
+        developer {
+            id 'daspilker'
+            name 'Daniel Spilker'
+            email 'mail@daniel-spilker.com'
+        }
     }
 }
 
