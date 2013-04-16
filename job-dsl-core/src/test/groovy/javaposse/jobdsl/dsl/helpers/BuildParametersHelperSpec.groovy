@@ -82,8 +82,70 @@ public class BuildParametersHelperSpec extends Specification {
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-//        context.scmNode.modules[0].text() == ''
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.ChoiceParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].description.text() == 'myChoiceParamDescription'
+        context.buildParameterNodes[0].choices.size() == 1
+        context.buildParameterNodes[0].choices[0].attribute('class') == 'java.util.Arrays$ArrayList'
+        context.buildParameterNodes[0].choices[0].a.size() == 1
+        context.buildParameterNodes[0].choices[0].a[0].attribute('class') == 'string-array'
+        context.buildParameterNodes[0].choices[0].a[0].string.size() == 3
+        context.buildParameterNodes[0].choices[0].a[0].string[0].text() == 'option 1 (default)'
+        context.buildParameterNodes[0].choices[0].a[0].string[1].text() == 'option 2'
+        context.buildParameterNodes[0].choices[0].a[0].string[2].text() == 'option 3'
+    }
+
+    def 'simplified choiceParam usage'() {
+        when:
+        context.choiceParam("myParameterName", ["option 1 (default)", "option 2", "option 3"])
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.ChoiceParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].description.text() == ''
+        context.buildParameterNodes[0].choices.size() == 1
+        context.buildParameterNodes[0].choices[0].attribute('class') == 'java.util.Arrays$ArrayList'
+        context.buildParameterNodes[0].choices[0].a.size() == 1
+        context.buildParameterNodes[0].choices[0].a[0].attribute('class') == 'string-array'
+        context.buildParameterNodes[0].choices[0].a[0].string.size() == 3
+        context.buildParameterNodes[0].choices[0].a[0].string[0].text() == 'option 1 (default)'
+        context.buildParameterNodes[0].choices[0].a[0].string[1].text() == 'option 2'
+        context.buildParameterNodes[0].choices[0].a[0].string[2].text() == 'option 3'
+    }
+
+    def 'choiceParam name argument cant be null'() {
+        when:
+        context.choiceParam(null, ['option 1'])
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'choiceParam name argument cant be empty'() {
+        when:
+        context.choiceParam('', ['option 1'])
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'choiceParam options argument cant be null'() {
+        when:
+        context.choiceParam('myParameterName', null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'choiceParam options argument cant be empty'() {
+        when:
+        context.choiceParam('myParameterName', [])
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'base fileParam usage'() {

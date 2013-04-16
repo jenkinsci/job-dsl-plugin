@@ -27,12 +27,6 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
 
         List<Node> buildParameterNodes = []
 
-        BuildParametersContext() {}
-
-        BuildParametersContext(List<Node> buildParameterNodes) {
-            this.buildParameterNodes = buildParameterNodes
-        }
-
         /**
          * <project>
          *     <properties>
@@ -71,15 +65,48 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
 
         /**
-         * ...
+         * <project>
+         *   <properties>
+         *     <hudson.model.ParametersDefinitionProperty>
+         *       <parameterDefinitions>
+         *         <hudson.model.ChoiceParameterDefinition>
+         *           <name>choice</name>
+         *           <description>test</description>
+         *           <choices class="java.util.Arrays$ArrayList">
+         *             <a class="string-array">
+         *               <string>one</string>
+         *               <string>two</string>
+         *               <string>three</string>
+         *             </a>
+         *           </choices>
+         *         </hudson.model.ChoiceParameterDefinition>
          *
          * @param parameterName
-         * @param options {choiceA_Default, choiceB, choiceC}
+         * @param options{choiceA_Default, choiceB, choiceC}
          * @param description (optional)
          * @return
          */
-        def choiceParam (String parameterName, List<String> options , String description) {
+        def choiceParam(String parameterName, List<String> options, String description = null) {
+            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
+            Preconditions.checkArgument(parameterName.length() > 0)
+            Preconditions.checkNotNull(options, 'options cannot be null')
+            Preconditions.checkArgument(options.size() > 0, 'at least one option must be specified')
 
+            def definitionNode = NodeBuilder.newInstance().'hudson.model.ChoiceParameterDefinition' {
+                choices(class: 'java.util.Arrays\$ArrayList') {
+                    a(class: 'string-array') {
+                        options.each {
+                            string(it)
+                        }
+                    }
+                }
+            }
+            definitionNode.appendNode('name', parameterName)
+            if (description != null) {
+                definitionNode.appendNode('description', description)
+            }
+
+            buildParameterNodes << definitionNode
         }
 
         /**
@@ -166,7 +193,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             definitionNode.appendNode('name', parameterName)
             definitionNode.appendNode('defaultValue', defaultValue)
             if (description != null) {
-              definitionNode.appendNode('description', description)
+                definitionNode.appendNode('description', description)
             }
 
             buildParameterNodes << definitionNode
