@@ -10,12 +10,16 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         super(withXmlActions)
     }
 
+    def parameters(Closure closure) {
+        execute(closure, new BuildParametersContext())
+    }
+
     Closure generateWithXmlClosure(BuildParametersContext context) {
         return { Node project ->
-            // TODO This will create it if it doesn't exist, seems like we wouldn't need to do this, but dealing with NodeList is a pain
-            def parameters = project/properties/hudson.model.ParametersDefinitionProperty/parameterDefinitions
-
-            project << context.buildParametersNodes
+            def parameterDefinitions = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / parameterDefinitions
+            context.buildParameterNodes.each {
+                parameterDefinitions << it
+            }
         }
     }
 
@@ -27,16 +31,6 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
 
         BuildParametersContext(List<Node> buildParameterNodes) {
             this.buildParameterNodes = buildParameterNodes
-        }
-
-        def getListOfBuildParameterNodes() {
-            def nodeBuilder = new NodeBuilder()
-
-            return nodeBuilder.properties {
-                'hudson.model.ParametersPropertyDefinition' {
-                    parameterDefinitions { }
-                }
-            }
         }
 
         /**
@@ -55,26 +49,8 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @param description (optional)
          * @return
          */
-        def booleanParam(String parameterName, boolean defaultValue = false, Closure configure = null) {
-            booleanParam(parameterName, defaultValue, '')
-        }
-        def booleanParam(String parameterName, boolean defaultValue = false, String description, Closure configure = null) {
-            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-            Preconditions.checkState(parameterName.length() > 0)
-
-            Node buildParametersNode = getListOfBuildParameterNodes()
-
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition')
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('name', parameterName)
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('defaultValue', defaultValue)
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.BooleanParameterDefinition').appendNode('description', description)
-
-            // Apply Context
-            if (configure) {
-                WithXmlAction action = new WithXmlAction(configure)
-                action.execute(buildParametersNode)
-            }
-            buildParameterNodes << buildParametersNode
+        def booleanParam(String parameterName, boolean defaultValue = false, String description = null) {
+            simpleParam('hudson.model.BooleanParameterDefinition', parameterName, defaultValue, description)
         }
 
         /**
@@ -158,29 +134,8 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @param description (optional)
          * @return
          */
-        def stringParam(String parameterName, Closure configure = null) {
-            stringParam(parameterName, '', '')
-        }
-        def stringParam(String parameterName, String defaultValue, Closure configure = null) {
-            stringParam(parameterName, defaultValue, '')
-        }
-        def stringParam(String parameterName, String defaultValue, String description, Closure configure = null) {
-            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-            Preconditions.checkState(parameterName.length() > 0)
-
-            Node buildParametersNode = getListOfBuildParameterNodes()
-
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition')
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition').appendNode('name', parameterName)
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition').appendNode('defaultValue', defaultValue)
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.StringParameterDefinition').appendNode('description', description)
-
-            // Apply Context
-            if (configure) {
-                WithXmlAction action = new WithXmlAction(configure)
-                action.execute(buildParametersNode)
-            }
-            buildParameterNodes << buildParametersNode
+        def stringParam(String parameterName, String defaultValue = null, String description = null) {
+            simpleParam('hudson.model.StringParameterDefinition', parameterName, defaultValue, description)
         }
 
         /**
@@ -199,29 +154,22 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @param description (optional)
          * @return
          */
-        def textParam(String parameterName, Closure configure = null) {
-            textParam(parameterName, '', '')
+        def textParam(String parameterName, String defaultValue = null, String description = null) {
+            simpleParam('hudson.model.TextParameterDefinition', parameterName, defaultValue, description)
         }
-        def textParam(String parameterName, String defaultValue, Closure configure = null) {
-            textParam(parameterName, defaultValue, '')
-        }
-        def textParam(String parameterName, String defaultValue, String description, Closure configure = null) {
+
+        private def simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-            Preconditions.checkState(parameterName.length() > 0)
+            Preconditions.checkArgument(parameterName.length() > 0)
 
-            Node buildParametersNode = getListOfBuildParameterNodes()
-
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition')
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition').appendNode('name', parameterName)
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition').appendNode('defaultValue', defaultValue)
-            buildParametersNode.appendNode('hudson.model.ParametersPropertyDefinition').appendNode('parameterDefinitions').appendNode('hudson.model.TextParameterDefinition').appendNode('description', description)
-
-            // Apply Context
-            if (configure) {
-                WithXmlAction action = new WithXmlAction(configure)
-                action.execute(buildParametersNode)
+            Node definitionNode = new Node(null, type)
+            definitionNode.appendNode('name', parameterName)
+            definitionNode.appendNode('defaultValue', defaultValue)
+            if (description != null) {
+              definitionNode.appendNode('description', description)
             }
-            buildParameterNodes << buildParametersNode
+
+            buildParameterNodes << definitionNode
         }
     }
 }
