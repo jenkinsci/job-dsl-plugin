@@ -175,4 +175,12 @@ public class TopLevelHelperSpec extends Specification {
         root.jdk[0].value() == "JDK1.6.0_17"
     }
 
+    def 'priority constructs xml'() {
+        when:
+        def action = helper.priority(99)
+        action.execute(root)
+
+        then:
+        root.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
+    }
 }

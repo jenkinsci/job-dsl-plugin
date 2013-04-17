@@ -159,4 +159,21 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * Priority of this job.
+     * Requires the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
+     * Default value is 100.
+     *
+     * <properties>
+     *   <hudson.queueSorter.PrioritySorterJobProperty plugin="PrioritySorter@1.3">
+     *     <priority>100</priority>
+     *   </hudson.queueSorter.PrioritySorterJobProperty>
+     * </properties>
+     */
+    def priority(int value) {
+        execute {
+            def node = new Node(it / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
+            node.appendNode('priority', value)
+        }
+    }
 }
