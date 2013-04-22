@@ -9,6 +9,8 @@ public class BuildParametersHelperSpec extends Specification {
     BuildParametersContextHelper helper = new BuildParametersContextHelper(mockActions)
     BuildParametersContext context = new BuildParametersContext()
 
+    // TODO: ListTags, File, Password, and Run parameter tests
+
     def 'base booleanParam usage'() {
         when:
         context.booleanParam("myParameterName", true, "myBooleanParameterDescription")
@@ -186,12 +188,60 @@ public class BuildParametersHelperSpec extends Specification {
 
     def 'base runParam usage'() {
         when:
-        context.runParam("myParameterName", "myJobToRun", "myRunParamDescription")
+        context.runParam("myParameterName", "myJobName", "myRunParamDescription")
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-//        context.scmNode.modules[0].text() == ''
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.RunParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].projectName.text() == 'myJobName'
+        context.buildParameterNodes[0].description.text() == 'myRunParamDescription'
+    }
+
+    def 'simplest runParam usage'() {
+        when:
+        context.runParam("myParameterName", "myJobName")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.RunParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].projectName.text() == 'myJobName'
+        context.buildParameterNodes[0].description.text() == ''
+    }
+
+    def 'runParam name argument cant be null'() {
+        when:
+        context.runParam(null, null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'runParam name argument cant be empty'() {
+        when:
+        context.runParam('', '')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'runParam jobToRun argument cant be null'() {
+        when:
+        context.runParam('myParameterName', null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'runParam jobToRun argument cant be empty'() {
+        when:
+        context.runParam('myParameterName', '')
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'base stringParam usage'() {
