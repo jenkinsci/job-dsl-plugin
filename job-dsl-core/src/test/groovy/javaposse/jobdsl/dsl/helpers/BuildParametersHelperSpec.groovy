@@ -9,8 +9,6 @@ public class BuildParametersHelperSpec extends Specification {
     BuildParametersContextHelper helper = new BuildParametersContextHelper(mockActions)
     BuildParametersContext context = new BuildParametersContext()
 
-    // TODO: Add tests for multiples (homogeneous and heterogeneous)
-
     def 'base booleanParam usage'() {
         when:
         context.booleanParam("myParameterName", true, "myBooleanParameterDescription")
@@ -64,6 +62,24 @@ public class BuildParametersHelperSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'multiple booleanParams is just fine'() {
+        when:
+        context.booleanParam('myFirstBooleanParameter')
+        context.booleanParam('mySecondBooleanParameter')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 2
+        context.buildParameterNodes[0].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myFirstBooleanParameter'
+        context.buildParameterNodes[0].defaultValue.text() == 'false'
+        context.buildParameterNodes[0].description.text() == ''
+        context.buildParameterNodes[1].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes[1].name.text() == 'mySecondBooleanParameter'
+        context.buildParameterNodes[1].defaultValue.text() == 'false'
+        context.buildParameterNodes[1].description.text() == ''
     }
 
     def 'base listTagsParam usage'() {
@@ -286,5 +302,28 @@ public class BuildParametersHelperSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'multiple mixed Param types is just fine'() {
+        when:
+        context.booleanParam('myFirstBooleanParameter')
+        context.textParam('myFirstTextParam')
+        context.booleanParam('mySecondBooleanParameter')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 3
+        context.buildParameterNodes[0].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myFirstBooleanParameter'
+        context.buildParameterNodes[0].defaultValue.text() == 'false'
+        context.buildParameterNodes[0].description.text() == ''
+        context.buildParameterNodes[1].name() == 'hudson.model.TextParameterDefinition'
+        context.buildParameterNodes[1].name.text() == 'myFirstTextParam'
+        context.buildParameterNodes[1].defaultValue.text() == ''
+        context.buildParameterNodes[1].description.text() == ''
+        context.buildParameterNodes[2].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes[2].name.text() == 'mySecondBooleanParameter'
+        context.buildParameterNodes[2].defaultValue.text() == 'false'
+        context.buildParameterNodes[2].description.text() == ''
     }
 }
