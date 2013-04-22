@@ -182,8 +182,40 @@ public class BuildParametersHelperSpec extends Specification {
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-//        context.scmNode.modules[0].text() == ''
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.PasswordParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].defaultValue.text() == 'myDefaultPassword'
+        context.buildParameterNodes[0].description.text() == 'myPasswordParamDescription'
+    }
+
+    def 'simplest passwordParam usage'() {
+        when:
+        context.passwordParam("myParameterName", "myDefaultPassword")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.PasswordParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].defaultValue.text() == 'myDefaultPassword'
+        context.buildParameterNodes[0].description.text() == ''
+    }
+
+    def 'passwordParam name argument cant be null'() {
+        when:
+        context.passwordParam(null, null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'passwordParam name argument cant be empty'() {
+        when:
+        context.passwordParam('', '')
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'base runParam usage'() {

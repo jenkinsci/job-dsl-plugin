@@ -124,13 +124,24 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         /**
          * WARNING - the current implementation stores the password in the DSL script in CLEAR TEXT
          *
+         * <project>
+         *     <properties>
+         *         <hudson.model.ParametersDefinitionProperty>
+         *             <hudson.model.PasswordParameterDefinition>
+         *                 <name>passwordValue</name>
+         *                 <description>the description of the password value</description>
+         *                 <defaultValue>2PlY1mNgLa3LS0Rn35RTsQAxYSbWbMCi3sS3h6TfS9A=</defaultValue>
+         *
          * @param parameterName
          * @param defaultValue
          * @param description (optional)
          * @return
          */
-        def passwordParam (String parameterName, String defaultValue, String description) {
+        def passwordParam (String parameterName, String defaultValue, String description = null) {
+            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
+            Preconditions.checkArgument(parameterName.length() > 0)
 
+            simpleParam('hudson.model.PasswordParameterDefinition', parameterName, defaultValue, description)
         }
 
         /**
