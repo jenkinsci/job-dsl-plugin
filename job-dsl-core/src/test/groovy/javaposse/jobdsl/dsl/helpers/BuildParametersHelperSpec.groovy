@@ -9,7 +9,7 @@ public class BuildParametersHelperSpec extends Specification {
     BuildParametersContextHelper helper = new BuildParametersContextHelper(mockActions)
     BuildParametersContext context = new BuildParametersContext()
 
-    // TODO: ListTags, File, Password, and Run parameter tests
+    // TODO: ListTags parameter tests
 
     def 'base booleanParam usage'() {
         when:
@@ -168,12 +168,42 @@ public class BuildParametersHelperSpec extends Specification {
 
     def 'base fileParam usage'() {
         when:
-        context.fileParam("myParameterName", "my/file/location.txt", "myFileParamDescription")
+        context.fileParam("test/upload.zip", "myFileParamDescription")
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-//        context.scmNode.modules[0].text() == ''
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.FileParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'test/upload.zip'
+        context.buildParameterNodes[0].description.text() == 'myFileParamDescription'
+    }
+
+    def 'simplified fileParam usage'() {
+        when:
+        context.fileParam("test/upload.zip")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.model.FileParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'test/upload.zip'
+        context.buildParameterNodes[0].description.text() == ''
+    }
+
+    def 'fileParam fileLocation argument cant be null'() {
+        when:
+        context.fileParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'fileParam fileLocation argument cant be empty'() {
+        when:
+        context.fileParam('')
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'base passwordParam usage'() {

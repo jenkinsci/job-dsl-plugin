@@ -110,15 +110,31 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
 
         /**
-         * ...
+         * <project>
+         *     <properties>
+         *         <hudson.model.ParametersDefinitionProperty>
+         *             <parameterDefinitions>
+         *                 <hudson.model.FileParameterDefinition>
+         *                     <name>test/upload.zip</name>
+         *                     <description>lalala</description>
+         *                 </hudson.model.FileParameterDefinition>
          *
          * @param parameterName
          * @param fileLocation_relativeToTheWorkspace
          * @param description (optional)
          * @return
          */
-        def fileParam (String parameterName, String fileLocation_relativeToTheWorkspace, String description) {
+        def fileParam(String fileLocation, String description = null) {
+            Preconditions.checkNotNull(fileLocation, 'fileLocation cannot be null')
+            Preconditions.checkArgument(fileLocation.length() > 0)
 
+            Node definitionNode = new Node(null, 'hudson.model.FileParameterDefinition')
+            definitionNode.appendNode('name', fileLocation)
+            if (description != null) {
+                definitionNode.appendNode('description', description)
+            }
+
+            buildParameterNodes << definitionNode
         }
 
         /**
