@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -159,6 +160,18 @@ public class ExecuteDslScripts extends Builder {
 
                 freshJobs.addAll(dslJobs);
             }
+        }
+
+        Set<GeneratedJob> failedJobs = new HashSet<GeneratedJob>();
+        for (GeneratedJob gj: freshJobs) {
+            if (gj.isCreated()) {
+                failedJobs.add(gj);
+            }
+        }
+
+        if (!failedJobs.isEmpty()) {
+            listener.getLogger().println("Failed jobs: " + Joiner.on(",").join(failedJobs));
+            build.setResult(Result.UNSTABLE);
         }
 
         // TODO Pull all this out, so that it can run outside of the plugin, e.g. JenkinsRestApiJobManagement
