@@ -62,10 +62,18 @@ class TopLevelHelper extends AbstractHelper {
     /**
      * Add environment variables to the build.
      *
-     * Another build wrapper hidden in the top level.
-     <hudson.plugins.setenv.SetEnvBuildWrapper>
-         <localVarText>P4TICKETS=$WORKSPACE/.p4tickets</localVarText>
-     </hudson.plugins.setenv.SetEnvBuildWrapper>
+     * <project>
+     *   <properties>
+     *     <EnvInjectJobProperty>
+     *       <info>
+     *         <propertiesContent>TEST=foo BAR=123</propertiesContent>
+     *         <loadFilesFromMaster>false</loadFilesFromMaster>
+     *       </info>
+     *       <on>true</on>
+     *       <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+     *       <keepBuildVariables>true</keepBuildVariables>
+     *       <contributors/>
+     *     </EnvInjectJobProperty>
      */
     def environmentVariables(Closure envClosure) {
         environmentVariables(null, envClosure)
@@ -79,8 +87,16 @@ class TopLevelHelper extends AbstractHelper {
         AbstractContextHelper.executeInContext(envClosure, envContext)
 
         execute {
-            def pluginNode = it / buildWrappers / 'hudson.plugins.setenv.SetEnvBuildWrapper'
-            pluginNode / localVarText(envContext.props.join('\n'))
+            it / 'properties' / 'EnvInjectJobProperty' {
+                info {
+                    propertiesContent(envContext.props.join('\n'))
+                    loadFilesFromMaster(false)
+                }
+                on(true)
+                keepJenkinsSystemVariables(true)
+                keepBuildVariables(true)
+                contributors()
+            }
         }
     }
 
