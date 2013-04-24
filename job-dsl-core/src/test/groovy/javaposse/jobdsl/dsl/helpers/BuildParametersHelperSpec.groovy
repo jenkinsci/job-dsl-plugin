@@ -9,8 +9,6 @@ public class BuildParametersHelperSpec extends Specification {
     BuildParametersContextHelper helper = new BuildParametersContextHelper(mockActions)
     BuildParametersContext context = new BuildParametersContext()
 
-    // TODO: ListTags parameter tests
-
     def 'base booleanParam usage'() {
         when:
         context.booleanParam("myParameterName", true, "myBooleanParameterDescription")
@@ -86,12 +84,103 @@ public class BuildParametersHelperSpec extends Specification {
 
     def 'base listTagsParam usage'() {
         when:
-        context.listTagsParam("myParameterName", "http://mysvmurl", "my tag filer regex", true, false, "myDefaultValue", "myMaxTagsToDisplay", "myListTagsParamDescription")
+        context.listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true, "maximumNumberOfTagsToDisplay", "theDefaultValue", "myListTagsParameterDescription")
 
         then:
         context.buildParameterNodes != null
-//        context.buildParameterNodes.hudson.model.BooleanParameterDefinition[0].name.text() == "myParameterName"
-//        context.scmNode.modules[0].text() == ''
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].defaultValue.text() == 'theDefaultValue'
+        context.buildParameterNodes[0].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+        context.buildParameterNodes[0].tagsFilter.text() == '^mytagsfilterregex'
+        context.buildParameterNodes[0].reverseByDate.text() == 'true'
+        context.buildParameterNodes[0].reverseByName.text() == 'true'
+        context.buildParameterNodes[0].maxTags.text() == 'maximumNumberOfTagsToDisplay'
+        context.buildParameterNodes[0].uuid.text() == 'e434beb2-10dd-4444-a054-44fec8c86ff8'
+        context.buildParameterNodes[0].description.text() == 'myListTagsParameterDescription'
+    }
+
+    def 'simplified listTagsParam usage'() {
+        when:
+        context.listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true)
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+        context.buildParameterNodes[0].tagsFilter.text() == '^mytagsfilterregex'
+        context.buildParameterNodes[0].reverseByDate.text() == 'true'
+        context.buildParameterNodes[0].reverseByName.text() == 'true'
+        context.buildParameterNodes[0].maxTags.text() == 'all'
+        context.buildParameterNodes[0].uuid.text() == 'e434beb2-10dd-4444-a054-44fec8c86ff8'
+    }
+
+    def 'simplest listTagsParam usage'() {
+        when:
+        context.listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes[0].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+        context.buildParameterNodes[0].name.text() == 'myParameterName'
+        context.buildParameterNodes[0].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+        context.buildParameterNodes[0].tagsFilter.text() == '^mytagsfilterregex'
+        context.buildParameterNodes[0].reverseByDate.text() == 'false'
+        context.buildParameterNodes[0].reverseByName.text() == 'false'
+        context.buildParameterNodes[0].maxTags.text() == 'all'
+        context.buildParameterNodes[0].uuid.text() == 'e434beb2-10dd-4444-a054-44fec8c86ff8'
+    }
+
+    def 'listTagsParam name argument cant be null'() {
+        when:
+        context.listTagsParam(null, "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex")
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'listTagsParam name argument cant be empty'() {
+        when:
+        context.listTagsParam('', "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex")
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'listTagsParam scmUrl argument cant be null'() {
+        when:
+        context.listTagsParam("myParameterName", null, "^mytagsfilterregex")
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'listTagsParam scmUrl argument cant be empty'() {
+        when:
+        context.listTagsParam("myParameterName", '', "^mytagsfilterregex")
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'listTagsParam tagFilterRegex argument cant be null'() {
+        when:
+        context.listTagsParam('myParameterName', "http://kenai.com/svn/myProject/tags", null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'listTagsParam tagFilterRegex argument cant be empty'() {
+        when:
+        context.listTagsParam('myParameterName', "http://kenai.com/svn/myProject/tags", '')
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'base choiceParam usage'() {

@@ -48,20 +48,56 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
 
         /**
-         * ...
+         * <project>
+         *     <properties>
+         *         <hudson.model.ParametersDefinitionProperty>
+         *             <parameterDefinitions>
+         *                 <hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition>
+         *                     <name>listSvnTagsValue</name>
+         *                     <description>Select a Subversion entry</description>
+         *                     <tagsDir>http://kenai.com/svn</tagsDir>
+         *                     <tagsFilter>theTagFilterRegex</tagsFilter>
+         *                     <reverseByDate>true</reverseByDate>
+         *                     <reverseByName>true</reverseByName>
+         *                     <defaultValue>theDefaultValue</defaultValue>
+         *                     <maxTags>maxTagsToDisplayValue</maxTags>
+         *                     <uuid>e434beb2-10dd-4444-a054-44fec8c86ff8</uuid>
+         *                 </hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition>
          *
          * @param parameterName
          * @param scmUrl
          * @param tagFilterRegex
          * @param sortNewestFirst (default = "false")
          * @param sortZtoA (default = "false")
-         * @param defaultValue (optional)
          * @param maxTagsToDisplay (optional - "all" if not specified)
+         * @param defaultValue (optional)
          * @param description (optional)
          * @return
          */
-        def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false, boolean sortZtoA = false, String defaultValue, String maxTagsToDisplay = "all", String description) {
+        def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false, boolean sortZtoA = false, String maxTagsToDisplay = "all", String defaultValue = null, String description = null) {
+            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
+            Preconditions.checkArgument(parameterName.length() > 0)
+            Preconditions.checkNotNull(scmUrl, 'scmUrl cannot be null')
+            Preconditions.checkArgument(scmUrl.length() > 0)  // TODO: use regex to check this is a valid URL?
+            Preconditions.checkNotNull(tagFilterRegex, 'tagFilterRegex cannot be null')
+            Preconditions.checkArgument(tagFilterRegex.length() > 0)
 
+            Node definitionNode = new Node(null, 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition')
+            definitionNode.appendNode('name', parameterName)
+            definitionNode.appendNode('tagsDir', scmUrl)
+            definitionNode.appendNode('tagsFilter', tagFilterRegex)
+            definitionNode.appendNode('reverseByDate', sortNewestFirst)
+            definitionNode.appendNode('reverseByName', sortZtoA)
+            definitionNode.appendNode('maxTags', maxTagsToDisplay)
+            if (description != null) {
+                definitionNode.appendNode('defaultValue', defaultValue)
+            }
+            if (description != null) {
+                definitionNode.appendNode('description', description)
+            }
+            definitionNode.appendNode('uuid', 'e434beb2-10dd-4444-a054-44fec8c86ff8') // TODO: Not sure about this. What does it do?
+
+            buildParameterNodes << definitionNode
         }
 
         /**
