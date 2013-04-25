@@ -558,6 +558,35 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             }
             publisherNodes << publishNode
         }
+
+        def irc(Closure ircClosure) {
+            IrcContext ircContext = new IrcContext()
+            AbstractContextHelper.executeInContext(ircClosure, ircContext)
+
+            def nodeBuilder = NodeBuilder.newInstance()
+            def publishNode = nodeBuilder.'hudson.plugins.ircbot.IrcPublisher' {
+                targets {
+                    ircContext.channels.each { IrcContext.IrcPublisherChannel channel ->
+                        'hudson.plugins.im.GroupChatIMMessageTarget' {
+                            delegate.createNode('name', channel.name)
+                            password channel.password
+                            notificationOnly channel.notificationOnly ? 'true' : 'false'
+                        }
+                    }
+                }
+                strategy ircContext.strategy
+                notifyOnBuildStart ircContext.notifyOnBuildStarts ? 'true' : 'false'
+                notifySuspects  ircContext.notifyScmCommitters ? 'true' : 'false'
+                notifyCulprits ircContext.notifyScmCulprits ? 'true' : 'false'
+                notifyFixers ircContext.notifyScmFixers ? 'true' : 'false'
+                notifyUpstreamCommitters ircContext.notifyUpstreamCommitters ? 'true' : 'false'
+
+                def className = "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
+                buildToChatNotifier(class: className)
+            }
+
+            publisherNodes << publishNode
+        }
     }
 }
 
