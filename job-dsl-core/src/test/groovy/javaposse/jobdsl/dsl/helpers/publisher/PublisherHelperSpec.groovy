@@ -576,4 +576,93 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.value()[0].name() == "factGenerator"
         publisherNode.value()[0].value() == ""
     }
+
+    def 'irc channels are added'() {
+        when:
+        context.irc {
+            channel('#c1')
+            channel('#c2')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        Node ircPublisher = context.publisherNodes[0]
+        ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
+        def targets = ircPublisher.value()[0]
+        targets.value().size == 2
+        targets.value()[0].name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
+        targets.value()[0].value()[0].name() == 'name'
+        targets.value()[0].value()[0].value() == '#c1'
+        targets.value()[1].name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
+        targets.value()[1].value()[0].name() == 'name'
+        targets.value()[1].value()[0].value() == '#c2'
+    }
+
+    def 'irc notification strategy is set'() {
+        when:
+        context.irc {
+            strategy('STATECHANGE_ONLY')
+        }
+
+        then:
+        context.publisherNodes[0].strategy[0].value() == 'STATECHANGE_ONLY'
+    }
+
+    def 'irc notification invalid strategy triggers exception'() {
+        when:
+        context.irc {
+            strategy('invalid')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'notifyScmFixers is set'() {
+        when:
+        context.irc {
+            notifyScmFixers(true)
+        }
+
+        then:
+        context.publisherNodes[0].notifyFixers[0].value() == 'true'
+    }
+
+    def 'irc notification message is set'() {
+        when:
+        context.irc {
+            channel('#c1')
+            notificationMessage('SummaryOnly')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        Node ircPublisher = context.publisherNodes[0]
+        ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
+        ircPublisher.getAt('buildToChatNotifier')[0].attributes()['class'] == 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
+    }
+
+    def 'default notification message is set if not specified'() {
+        when:
+        context.irc {
+            channel('#c1')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        Node ircPublisher = context.publisherNodes[0]
+        ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
+        ircPublisher.getAt('buildToChatNotifier')[0].attributes()['class'] == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+    }
+
+    def 'default notification strategy is set if not specified'() {
+        when:
+        context.irc {
+            channel('#c1')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].strategy[0].value() == 'ALL'
+    }
 }
