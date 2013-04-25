@@ -574,7 +574,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                         }
                     }
                 }
-                strategy ircContext.strategies[ircContext.strategy]
+                strategy ircContext.strategy
                 notifyOnBuildStart ircContext.notifyOnBuildStarts ? 'true' : 'false'
                 notifySuspects  ircContext.notifyScmCommitters ? 'true' : 'false'
                 notifyCulprits ircContext.notifyScmCulprits ? 'true' : 'false'

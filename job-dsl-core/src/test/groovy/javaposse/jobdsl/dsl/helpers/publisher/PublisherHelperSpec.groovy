@@ -601,7 +601,7 @@ public class PublisherHelperSpec extends Specification {
     def 'irc notification strategy is set'() {
         when:
         context.irc {
-            strategy('change')
+            strategy('STATECHANGE_ONLY')
         }
 
         then:

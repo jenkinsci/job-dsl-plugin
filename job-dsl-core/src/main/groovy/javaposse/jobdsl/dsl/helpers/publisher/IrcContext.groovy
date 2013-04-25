@@ -10,8 +10,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 class IrcContext implements Context {
     def channels = []
 
-    def strategies = [all: 'ALL', failure: 'ANY_FAILURE', 'failure and fixed': 'FAILURE_AND_FIXED',
-            change: 'STATECHANGE_ONLY']
+    def strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
 
     def notificationMessages = ['Default',  'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
@@ -30,7 +29,7 @@ class IrcContext implements Context {
     def notifyScmFixers = false
 
     public IrcContext() {
-        strategy = strategies.keySet().toArray()[0];
+        strategy = strategies[0];
         notificationMessage = notificationMessages[0];
     }
 
@@ -51,7 +50,7 @@ class IrcContext implements Context {
 
     def strategy(String strategy) {
         Preconditions.checkArgument(
-            strategies.keySet().contains(strategy), "Possible values: ${strategies.keySet().join(',')}"
+            strategies.contains(strategy), "Possible values: ${strategies.join(',')}"
         )
 
         this.strategy = strategy
