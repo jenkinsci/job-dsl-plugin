@@ -21,7 +21,7 @@ class MultiScmContextHelper extends AbstractContextHelper<ScmContext> {
      * @return
      */
     def multiscm(Closure closure) {
-        execute(closure, new ScmContext(true))
+        execute(closure, new ScmContext(true, withXmlActions))
     }
 
 
