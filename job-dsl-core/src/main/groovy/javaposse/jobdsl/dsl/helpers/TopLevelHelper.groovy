@@ -90,6 +90,9 @@ class TopLevelHelper extends AbstractHelper {
             it / 'properties' / 'EnvInjectJobProperty' {
                 info {
                     propertiesContent(envContext.props.join('\n'))
+                    if (envContext.groovyScript) {
+                        groovyScriptContent(envContext.groovyScript)
+                    }
                     loadFilesFromMaster(false)
                 }
                 on(true)
@@ -102,6 +105,7 @@ class TopLevelHelper extends AbstractHelper {
 
     def static class EnvironmentVariableContext implements Context {
         def props = []
+        def groovyScript
 
         def env(Object key, Object value) {
             props << "${key}=${value}"
@@ -113,7 +117,9 @@ class TopLevelHelper extends AbstractHelper {
             }
         }
 
-
+        def groovy(String script) {
+            groovyScript = script
+        }
     }
 
     /*
