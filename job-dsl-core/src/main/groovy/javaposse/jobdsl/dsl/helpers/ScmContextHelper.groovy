@@ -33,7 +33,7 @@ class ScmContextHelper extends AbstractContextHelper<ScmContext> {
      * @return
      */
     def scm(Closure closure) {
-        execute(closure, new ScmContext())
+        execute(closure, new ScmContext(false, withXmlActions))
     }
 
     Closure generateWithXmlClosure(ScmContext context) {

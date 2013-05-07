@@ -8,9 +8,11 @@ import hudson.plugins.perforce.PerforcePasswordEncryptor
 class ScmContext implements Context {
     boolean multiEnabled
     List<Node> scmNodes = []
+    List<WithXmlAction> withXmlActions = []
 
-    ScmContext(multiEnabled = false) {
+    ScmContext(multiEnabled = false, withXmlActions = []) {
         this.multiEnabled = multiEnabled
+        this.withXmlActions = withXmlActions
     }
 
     // Package scope
@@ -162,6 +164,36 @@ class ScmContext implements Context {
             action.execute(gitNode)
         }
         scmNodes << gitNode
+    }
+
+    def github(String ownerAndProject, String branch = null, String protocol = "https", Closure closure) {
+        github(ownerAndProject, branch, protocol, "github.com", closure)
+    }
+
+    def github(String ownerAndProject, String branch = null, String protocol = "https", String host = "github.com", Closure closure = null) {
+        def url
+        def webUrl = "https://${host}/${ownerAndProject}/"
+
+        switch (protocol) {
+            case 'https':
+                url = "https://${host}/${ownerAndProject}.git"
+                break
+            case 'ssh':
+                url = "git@${host}:${ownerAndProject}.git"
+                break
+            case 'git':
+                url = "git://${host}/${ownerAndProject}.git"
+                break
+            default:
+                throw new IllegalArgumentException("Invalid protocol ${protocol}. Only https, ssh or git are allowed.")
+        }
+        git(url, branch, closure)
+        scmNodes.last().appendNode('browser', [class: 'hudson.plugins.git.browser.GithubWeb']).appendNode('url', webUrl)
+        withXmlActions << new WithXmlAction({ project ->
+            project / 'properties' / 'com.coravy.hudson.plugins.github.GithubProjectProperty' {
+                projectUrl webUrl
+            }
+        })
     }
 
     /**
