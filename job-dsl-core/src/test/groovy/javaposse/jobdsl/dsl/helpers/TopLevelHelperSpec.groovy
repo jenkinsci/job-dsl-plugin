@@ -55,8 +55,8 @@ public class TopLevelHelperSpec extends Specification {
         action.execute(root)
 
         then:
-        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key1=val1')
-        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key2=val2')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
     }
 
     def 'environments work with context'() {
@@ -68,9 +68,9 @@ public class TopLevelHelperSpec extends Specification {
         action.execute(root)
 
         then:
-        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key1=val1')
-        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key2=val2')
-        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key3=val3')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
     }
 
 
@@ -82,8 +82,35 @@ public class TopLevelHelperSpec extends Specification {
         action.execute(root)
 
         then:
-        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key3=val3')
-        root.buildWrappers[0].'hudson.plugins.setenv.SetEnvBuildWrapper'[0].localVarText[0].value().contains('key4=val4')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key4=val4')
+    }
+
+    def 'environment from groovy script'() {
+        when:
+        def action = helper.environmentVariables {
+            groovy '[foo: "bar"]'
+        }
+        action.execute(root)
+
+        then:
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+    }
+
+    def 'environment from map and groovy script'() {
+        when:
+        def action = helper.environmentVariables {
+            envs([key1: 'val1', key2: 'val2'])
+            env 'key3', 'val3'
+            groovy '[foo: "bar"]'
+        }
+        action.execute(root)
+
+        then:
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
+        root.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
     }
 
     def 'can run label'() {
