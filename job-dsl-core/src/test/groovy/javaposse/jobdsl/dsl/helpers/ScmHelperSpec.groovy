@@ -12,6 +12,7 @@ public class ScmHelperSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
     ScmContextHelper helper = new ScmContextHelper(mockActions)
     ScmContext context = new ScmContext()
+    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 
     def 'base hg configuration'() {
         when:
@@ -96,6 +97,163 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.gitConfigEmail[0].text() == 'john@gmail.com'
         context.scmNode.scmName.size() == 1
         context.scmNode.scmName[0].text() == 'Kittner'
+    }
+
+    def 'call github scm method'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin')
+
+        then:
+        context.scmNode != null
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin.git'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == '**'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+        context.withXmlActions.size() == 1
+
+        when:
+        context.withXmlActions[0].execute(root)
+
+        then:
+        root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+    }
+
+    def 'call github scm method with branch'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master')
+
+        then:
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+    }
+
+    def 'call github scm method with ssh protocol'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master', 'ssh')
+
+        then:
+        context.scmNode != null
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == 'git@github.com:jenkinsci/job-dsl-plugin.git'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+        context.withXmlActions.size() == 1
+
+        when:
+        context.withXmlActions[0].execute(root)
+
+        then:
+        root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+    }
+
+    def 'call github scm method with git protocol'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master', 'git')
+
+        then:
+        context.scmNode != null
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == 'git://github.com/jenkinsci/job-dsl-plugin.git'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+        context.withXmlActions.size() == 1
+
+        when:
+        context.withXmlActions[0].execute(root)
+
+        then:
+        root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+    }
+
+    def 'call github scm method with unknown protocol'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master', 'unknown')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call github scm method with protocol and host'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master', 'ssh', 'github.acme.com')
+
+        then:
+        context.scmNode != null
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == 'git@github.acme.com:jenkinsci/job-dsl-plugin.git'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
+        context.withXmlActions.size() == 1
+
+        when:
+        context.withXmlActions[0].execute(root)
+
+        then:
+        root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
+    }
+
+    def 'call github scm with closure'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin') { gitNode ->
+            gitNode << gitConfigName('john') // Always append
+        }
+
+        then:
+        context.scmNode.gitConfigName.size() == 1
+        context.scmNode.gitConfigName[0].text() == 'john'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+    }
+
+    def 'call github scm with branch and closure'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master') { gitNode ->
+            gitNode << gitConfigName('john') // Always append
+        }
+
+        then:
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+        context.scmNode.gitConfigName.size() == 1
+        context.scmNode.gitConfigName[0].text() == 'john'
+    }
+
+    def 'call github scm with branch, protocol and closure'() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master', 'ssh') { gitNode ->
+            gitNode << gitConfigName('john') // Always append
+        }
+
+        then:
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == 'git@github.com:jenkinsci/job-dsl-plugin.git'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
+        context.scmNode.gitConfigName.size() == 1
+        context.scmNode.gitConfigName[0].text() == 'john'
+    }
+
+    def 'call github scm method with protocol, host and closure '() {
+        when:
+        context.github('jenkinsci/job-dsl-plugin', 'master', 'ssh', 'github.acme.com') { gitNode ->
+            gitNode << gitConfigName('john') // Always append
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == 'git@github.acme.com:jenkinsci/job-dsl-plugin.git'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNode.browser[0].url[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
+        context.scmNode.gitConfigName.size() == 1
+        context.scmNode.gitConfigName[0].text() == 'john'
+        context.withXmlActions.size() == 1
+
+        when:
+        context.withXmlActions[0].execute(root)
+
+        then:
+        root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
     }
 
     def 'call svn'() {
