@@ -62,7 +62,7 @@ project(':job-dsl-core') {
     }
 
     artifacts {
-        compile oneJar
+        archives oneJar
     }
 }
 
