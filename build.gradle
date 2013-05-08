@@ -17,8 +17,9 @@ subprojects {
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
     dependencies {
-        //groovy localGroovy() // Can't guarantee 1.8.6
-        groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+        //groovy localGroovy() // Can't guarantee 1.8.6, which is what Jenkins is going to use
+        compile 'org.codehaus.groovy:groovy-all:1.8.6'
+        compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.1' // For runtime use, not just for testing
         compile 'com.google.guava:guava:13.0.1'
         testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
@@ -31,14 +32,17 @@ subprojects {
 
 buildscript {
     repositories {
-        mavenRepo url:'http://repo.smokejumperit.com'
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.8.2'
+        classpath 'com.github.rholder:gradle-one-jar:1.0.3'
     }
 }
 
 project(':job-dsl-core') {
+    apply plugin: 'application'
+    apply plugin: 'maven' // For artifactory publishing
+
     description = "Generates Jenkins jobs via a DSL"
     dependencies {
         compile 'org.slf4j:slf4j-simple:1.4.3' // For perforce
@@ -49,13 +53,16 @@ project(':job-dsl-core') {
             attributes('Main-Class': 'javaposse.jobdsl.Run')
         }
     }
+    mainClassName = 'javaposse.jobdsl.Run'
 
-    apply plugin:com.smokejumperit.gradle.OneJarPlugin
+    apply plugin: 'gradle-one-jar'
 
-    task run(type:JavaExec, dependsOn:build) {
-        classpath sourceSets.main.runtimeClasspath
-        main 'javaposse.jobdsl.Run'
-        args rootProject.hasProperty('args')?rootProject.args:'test.dsl'
+    task oneJar(type: OneJar) {
+        mainClass = project.mainClassName
+    }
+
+    artifacts {
+        compile oneJar
     }
 }
 
