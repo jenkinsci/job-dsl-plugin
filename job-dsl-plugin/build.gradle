@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenCentral()
         maven {
             name 'jenkins-ci-plugins'
             url('http://maven.jenkins-ci.org/content/repositories/releases')
@@ -11,7 +12,7 @@ apply plugin: 'jpi'
 
 repositories {
     maven {
-        name 'jenkin-ci'
+        name 'jenkins-ci'
         url 'http://maven.jenkins-ci.org/content/repositories/releases'
     }
 }
@@ -26,6 +27,7 @@ jenkinsPlugin {
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
+    maskClasses = 'groovy.grape'
     developers {
         developer {
             id 'quidryan'
@@ -49,5 +51,7 @@ jenkinsPlugin {
         }
     }
 }
+
+tasks.jpi.manifest.attributes(["PluginFirstClassLoader": "true" ])
 
 //apply from: 'ide.gradle'

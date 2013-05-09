@@ -1,9 +1,4 @@
 allprojects {
-    buildscript {
-        repositories {
-            mavenCentral()
-        }
-    }
     repositories {
         mavenCentral()
     }
@@ -17,11 +12,8 @@ subprojects {
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
     dependencies {
-        //groovy localGroovy() // Can't guarantee 1.8.6, which is what Jenkins is going to use
         compile 'org.codehaus.groovy:groovy-all:1.8.6'
-        compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
-        compile 'xmlunit:xmlunit:1.1' // For runtime use, not just for testing
-        compile 'com.google.guava:guava:13.0.1'
+        compile 'com.google.guava:guava:14.0.1'
         testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
         testCompile 'junit:junit:4.10'
     }
@@ -47,6 +39,8 @@ project(':job-dsl-core') {
     dependencies {
         compile 'org.slf4j:slf4j-simple:1.4.3' // For perforce
         compile 'commons-codec:commons-codec:1.4' // For perforce
+        compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
+        compile 'xmlunit:xmlunit:1.1' // For runtime use, not just for testing
     }
     jar {
         manifest {
