@@ -12,9 +12,10 @@ class FileJobManagement extends AbstractJobManagement {
      */
     String ext
 
-    public FileJobManagement(File root, String ext = ".xml") {
+    public FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
+        super(out)
         this.root = root
-        this.ext = ext
+        this.ext = ext?:".xml"
     }
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
@@ -35,7 +36,7 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
-		throws JobNameNotProvidedException, JobConfigurationMissingException {
+        throws JobNameNotProvidedException, JobConfigurationMissingException {
         validateUpdateArgs(jobName, config);
 
         new File(jobName + ext).write(config)
