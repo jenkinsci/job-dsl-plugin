@@ -4,7 +4,14 @@ import spock.lang.*
 
 public class DslScriptLoaderTest extends Specification {
     def resourcesDir = new File("src/test/resources")
-    JobManagement jm = new FileJobManagement(resourcesDir)
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    PrintStream ps = new PrintStream(baos);
+    JobManagement jm = new FileJobManagement(resourcesDir, null, ps)
+
+    @Ignore
+    def getContent() {
+        return baos.toString()  // Could send ISO-8859-1
+    }
 
     def 'load template from MarkupBuilder'() {
         setup:
@@ -87,6 +94,25 @@ Callee.makeJob(this, 'test2')
         jobs.any { it.jobName == 'test2'}
 
     }
+
+
+    def 'use @Grab'() {
+        setup:
+        def scriptStr = '''@Grab(group='commons-lang', module='commons-lang', version='2.4')
+import org.apache.commons.lang.WordUtils
+println "Hello ${WordUtils.capitalize('world')}"
+'''
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        def results = getContent()
+        results != null
+        results.contains("Hello World")
+    }
+
 //
 //    def 'Able to run engine for string'() {
 //        setup:
