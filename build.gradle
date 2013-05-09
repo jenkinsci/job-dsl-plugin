@@ -15,7 +15,7 @@ subprojects {
         compile 'org.codehaus.groovy:groovy-all:1.8.6'
         compile 'com.google.guava:guava:14.0.1'
         testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
-        testCompile 'junit:junit:4.10'
+        testCompile 'junit:junit-dep:4.10'
     }
     test {
         useJUnit() // Causes "failed to create temp file to extract class from jar into"
@@ -38,9 +38,9 @@ project(':job-dsl-core') {
     description = "Generates Jenkins jobs via a DSL"
     dependencies {
         compile 'org.slf4j:slf4j-simple:1.4.3' // For perforce
-        compile 'commons-codec:commons-codec:1.4' // For perforce
+        compile 'commons-codec:commons-codec:1.8' // For perforce
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
-        compile 'xmlunit:xmlunit:1.1' // For runtime use, not just for testing
+        compile 'xmlunit:xmlunit:1.4' // For runtime use, not just for testing
     }
     jar {
         manifest {
