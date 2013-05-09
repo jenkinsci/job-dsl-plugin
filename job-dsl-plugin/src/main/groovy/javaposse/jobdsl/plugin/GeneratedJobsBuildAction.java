@@ -7,7 +7,7 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 import java.util.Collection;
 import java.util.Set;
 
-class GeneratedJobsBuildAction implements Action {
+public class GeneratedJobsBuildAction implements Action {
     public final Set<GeneratedJob> modifiedJobs;
 
     public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs) {

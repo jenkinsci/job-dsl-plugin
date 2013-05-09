@@ -1,0 +1,23 @@
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:radioBlock name="scriptLocation" value="true" title="Use the provided DSL script" checked="${instance.isUsingScriptText()}">
+        <f:entry title='DSL Script' field='scriptText'>
+            <!-- TODO CodeMirror support for text/x-groovy. It was unclear how do it from a .groovy stapler script -->
+            <f:textarea style="width:100%; height:10em"/>
+        </f:entry>
+    </f:radioBlock>
+
+    <f:radioBlock name="scriptLocation" value="false" title="Look on Filesystem" checked="${!instance.isUsingScriptText()}">
+        <f:entry title="DSL Scripts" field="targets">
+            <f:expandableTextbox/>
+        </f:entry>
+    </f:radioBlock>
+    <f:entry title="Action for existings jobs:" field="ignoreExisting">
+        <f:checkbox name="ignoreExisting" title="Ignore changes" checked="${instance.ignoreExisting}"
+                    description="What to do with previously generated jobs when generated config is not the same?"/>
+    </f:entry>
+    <f:entry title="Action for removed jobs:" field="removedJobAction"
+        description='What to do when a previously generated job is not referenced anymore?'>
+        <f:select/>
+    </f:entry>
+</j:jelly>
