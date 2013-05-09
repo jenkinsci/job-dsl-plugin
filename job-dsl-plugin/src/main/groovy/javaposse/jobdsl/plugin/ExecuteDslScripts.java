@@ -15,6 +15,7 @@ import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
+import hudson.util.ListBoxModel;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -365,6 +366,13 @@ public class ExecuteDslScripts extends Builder {
             return super.configure(req, json);
         }
         */
+        public ListBoxModel doFillRemovedJobActionItems() {
+            ListBoxModel items = new ListBoxModel();
+            for (RemovedJobAction action : RemovedJobAction.values()) {
+                items.add(action.getDisplayName(), action.name());
+            }
+            return items;
+        }
     }
 
     private static class SeedNamePredicate implements Predicate<SeedReference> {
