@@ -19,7 +19,7 @@ public class Run {
         String scriptName = args[0];
 
         File cwd = new File(".");
-        ScriptRequest request = new ScriptRequest(scriptName, null, cwd.toURL(), false);
+        ScriptRequest request = new ScriptRequest(scriptName, null, cwd.toURI().toURL(), false);
         FileJobManagement jm = new FileJobManagement(cwd);
         jm.getParameters().putAll(System.getenv());
         for(Map.Entry entry: System.getProperties().entrySet()) {

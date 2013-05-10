@@ -26,7 +26,6 @@ public class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.class.getName());
 
     public static Set<GeneratedJob> runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        // TODO Setup different classloader, especially for Grape to work, which needs a RootLoader or a GroovyLoader
         ClassLoader parentClassLoader = DslScriptLoader.class.getClassLoader();
         CompilerConfiguration config = createCompilerConfiguration(jobManagement);
 
@@ -128,10 +127,7 @@ public class DslScriptLoader {
 
     private static Binding createBinding(JobManagement jobManagement) {
         Binding binding = new Binding();
-        //binding.setVariable("secretJobManagement", jobManagement); // TODO Find better way of getting this variable into JobParent
         binding.setVariable("out", jobManagement.getOutputStream() ); // Works for println, but not System.out
-
-        binding.setVariable("testing", "THe string which says testing" );
 
         Map<String, String> params = jobManagement.getParameters();
         for(Map.Entry<String,String> entry: params.entrySet()) {
