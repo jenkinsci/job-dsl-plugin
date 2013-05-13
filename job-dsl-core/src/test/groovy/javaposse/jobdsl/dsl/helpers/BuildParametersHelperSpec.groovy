@@ -599,4 +599,17 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes["mySecondBooleanParameter"].defaultValue.text() == 'false'
         context.buildParameterNodes["mySecondBooleanParameter"].description.text() == ''
     }
+
+    def 'call parameters via helper'() {
+        when:
+        helper.parameters {
+            booleanParam('myBooleanParam', true)
+            choiceParam("myChoiceParam", ["option 1", "option 2"])
+            stringParam('myStringParam', 'foo')
+            textParam('myTextParam', 'bar')
+        }
+
+        then:
+        1 * mockActions.add(_)
+    }
 }
