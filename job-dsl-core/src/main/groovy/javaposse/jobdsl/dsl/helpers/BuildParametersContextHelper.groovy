@@ -17,7 +17,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
     Closure generateWithXmlClosure(BuildParametersContext context) {
         return { Node project ->
             def parameterDefinitions = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / parameterDefinitions
-            context.buildParameterNodes.each {
+            context.buildParameterNodes.values().each {
                 parameterDefinitions << it
             }
         }
@@ -25,7 +25,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
 
     static class BuildParametersContext implements Context {
 
-        List<Node> buildParameterNodes = []
+        Map<String, Node> buildParameterNodes = [:]
 
         /**
          * <project>
@@ -75,6 +75,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @return
          */
         def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false, boolean sortZtoA = false, String maxTagsToDisplay = "all", String defaultValue = null, String description = null) {
+            Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
             Preconditions.checkArgument(parameterName.length() > 0)
             Preconditions.checkNotNull(scmUrl, 'scmUrl cannot be null')
@@ -97,7 +98,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             }
             definitionNode.appendNode('uuid', 'e434beb2-10dd-4444-a054-44fec8c86ff8') // TODO: Not sure about this. What does it do?
 
-            buildParameterNodes << definitionNode
+            buildParameterNodes[parameterName] = definitionNode
         }
 
         /**
@@ -123,6 +124,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @return
          */
         def choiceParam(String parameterName, List<String> options, String description = null) {
+            Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
             Preconditions.checkArgument(parameterName.length() > 0)
             Preconditions.checkNotNull(options, 'options cannot be null')
@@ -142,7 +144,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
                 definitionNode.appendNode('description', description)
             }
 
-            buildParameterNodes << definitionNode
+            buildParameterNodes[parameterName] = definitionNode
         }
 
         /**
@@ -161,6 +163,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @return
          */
         def fileParam(String fileLocation, String description = null) {
+            Preconditions.checkArgument(!buildParameterNodes.containsKey(fileLocation), 'parameter $fileLocation already defined')
             Preconditions.checkNotNull(fileLocation, 'fileLocation cannot be null')
             Preconditions.checkArgument(fileLocation.length() > 0)
 
@@ -170,7 +173,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
                 definitionNode.appendNode('description', description)
             }
 
-            buildParameterNodes << definitionNode
+            buildParameterNodes[fileLocation] = definitionNode
         }
 
         /**
@@ -190,9 +193,6 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @return
          */
         def passwordParam (String parameterName, String defaultValue, String description = null) {
-            Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-            Preconditions.checkArgument(parameterName.length() > 0)
-
             simpleParam('hudson.model.PasswordParameterDefinition', parameterName, defaultValue, description)
         }
 
@@ -212,6 +212,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          * @return
          */
         def runParam(String parameterName, String jobToRun, String description = null) {
+            Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
             Preconditions.checkArgument(parameterName.length() > 0)
             Preconditions.checkNotNull(jobToRun, 'jobToRun cannot be null')
@@ -224,7 +225,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
                 definitionNode.appendNode('description', description)
             }
 
-            buildParameterNodes << definitionNode
+            buildParameterNodes[parameterName] = definitionNode
         }
 
         /**
@@ -268,6 +269,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
 
         private def simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
+            Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
             Preconditions.checkArgument(parameterName.length() > 0)
 
@@ -278,7 +280,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
                 definitionNode.appendNode('description', description)
             }
 
-            buildParameterNodes << definitionNode
+            buildParameterNodes[parameterName] = definitionNode
         }
     }
 }
