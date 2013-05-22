@@ -58,6 +58,13 @@ project(':job-dsl-core') {
     artifacts {
         archives oneJar
     }
+
+    run {
+        if ( project.hasProperty('args') ) {
+            args project.args.split('\\s+')
+        }
+    }
+
 }
 
 project(':job-dsl-plugin') {
