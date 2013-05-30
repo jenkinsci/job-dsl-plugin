@@ -106,7 +106,6 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes["myParameterName"].reverseByDate.text() == 'true'
         context.buildParameterNodes["myParameterName"].reverseByName.text() == 'true'
         context.buildParameterNodes["myParameterName"].maxTags.text() == 'maximumNumberOfTagsToDisplay'
-        context.buildParameterNodes["myParameterName"].uuid.text() == 'e434beb2-10dd-4444-a054-44fec8c86ff8'
         context.buildParameterNodes["myParameterName"].description.text() == 'myListTagsParameterDescription'
     }
 
@@ -124,7 +123,6 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes["myParameterName"].reverseByDate.text() == 'true'
         context.buildParameterNodes["myParameterName"].reverseByName.text() == 'true'
         context.buildParameterNodes["myParameterName"].maxTags.text() == 'all'
-        context.buildParameterNodes["myParameterName"].uuid.text() == 'e434beb2-10dd-4444-a054-44fec8c86ff8'
     }
 
     def 'simplest listTagsParam usage'() {
@@ -141,7 +139,6 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes["myParameterName"].reverseByDate.text() == 'false'
         context.buildParameterNodes["myParameterName"].reverseByName.text() == 'false'
         context.buildParameterNodes["myParameterName"].maxTags.text() == 'all'
-        context.buildParameterNodes["myParameterName"].uuid.text() == 'e434beb2-10dd-4444-a054-44fec8c86ff8'
     }
 
     def 'listTagsParam name argument cant be null'() {

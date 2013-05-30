@@ -96,7 +96,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             if (description != null) {
                 definitionNode.appendNode('description', description)
             }
-            definitionNode.appendNode('uuid', 'e434beb2-10dd-4444-a054-44fec8c86ff8') // TODO: Not sure about this. What does it do?
+            definitionNode.appendNode('uuid', java.util.UUID.randomUUID())
 
             buildParameterNodes[parameterName] = definitionNode
         }
