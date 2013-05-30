@@ -328,57 +328,6 @@ public class BuildParametersHelperSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'base passwordParam usage'() {
-        when:
-        context.passwordParam("myParameterName", "myDefaultPassword", "myPasswordParamDescription")
-
-        then:
-        context.buildParameterNodes != null
-        context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.PasswordParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'myDefaultPassword'
-        context.buildParameterNodes["myParameterName"].description.text() == 'myPasswordParamDescription'
-    }
-
-    def 'simplest passwordParam usage'() {
-        when:
-        context.passwordParam("myParameterName", "myDefaultPassword")
-
-        then:
-        context.buildParameterNodes != null
-        context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.PasswordParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'myDefaultPassword'
-        context.buildParameterNodes["myParameterName"].description.text() == ''
-    }
-
-    def 'passwordParam name argument cant be null'() {
-        when:
-        context.passwordParam(null, null)
-
-        then:
-        thrown(NullPointerException)
-    }
-
-    def 'passwordParam name argument cant be empty'() {
-        when:
-        context.passwordParam('', '')
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
-    def 'passwordParam already defined'() {
-        when:
-        context.booleanParam('one')
-        context.passwordParam('one', 'secret')
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
     def 'base runParam usage'() {
         when:
         context.runParam("myParameterName", "myJobName", "myRunParamDescription")
