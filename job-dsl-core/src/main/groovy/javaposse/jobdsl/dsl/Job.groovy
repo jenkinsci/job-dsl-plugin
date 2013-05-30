@@ -29,6 +29,7 @@ public class Job {
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
+    @Delegate BuildParametersContextHelper helperBuildParameters
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
@@ -41,6 +42,7 @@ public class Job {
         helperPublisher = new PublisherContextHelper(withXmlActions)
         helperTopLevel = new TopLevelHelper(withXmlActions)
         helperMaven = new MavenHelper(withXmlActions, arguments)
+        helperBuildParameters = new BuildParametersContextHelper(withXmlActions)
     }
 
     /**
