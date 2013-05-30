@@ -90,7 +90,7 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             definitionNode.appendNode('reverseByDate', sortNewestFirst)
             definitionNode.appendNode('reverseByName', sortZtoA)
             definitionNode.appendNode('maxTags', maxTagsToDisplay)
-            if (description != null) {
+            if (defaultValue != null) {
                 definitionNode.appendNode('defaultValue', defaultValue)
             }
             if (description != null) {
