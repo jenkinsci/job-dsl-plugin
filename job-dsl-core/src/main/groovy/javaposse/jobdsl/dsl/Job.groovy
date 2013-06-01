@@ -43,7 +43,7 @@ public class Job {
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)
         helperMaven = new MavenHelper(withXmlActions, type)
-        helperBuildParameters = new BuildParametersContextHelper(withXmlActions)
+        helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
     }
 
     /**
