@@ -55,7 +55,7 @@ class TopLevelHelper extends AbstractHelper {
         execute {
             def pluginNode = it / buildWrappers / 'hudson.plugins.build__timeout.BuildTimeoutWrapper'
             pluginNode / timeoutMinutes(Integer.toString(timeoutInMinutes))
-            pluginNode / failBuild(shoudFailBuild?'true':'false')
+            pluginNode / failBuild(shouldFailBuild?'true':'false')
         }
     }
 

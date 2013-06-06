@@ -46,6 +46,15 @@ public class TopLevelHelperSpec extends Specification {
         root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'true'
     }
 
+    def 'timeout failBuild parameter works'() {
+        when:
+        def action = helper.timeout(15, false)
+        action.execute(root)
+
+        then:
+        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'false'
+    }
+
     def 'environments work with map arg'() {
         when:
         def action = helper.environmentVariables([
