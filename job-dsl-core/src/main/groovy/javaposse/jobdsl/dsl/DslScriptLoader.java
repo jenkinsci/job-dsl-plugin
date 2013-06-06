@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl;
 
+import com.google.common.collect.Lists;
 import groovy.lang.GroovyClassLoader;
 import groovy.util.GroovyScriptEngine;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -16,8 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -123,7 +123,15 @@ public class DslScriptLoader {
         // Iterate jobs which were setup, save them, and convert to a serializable form
         Set<GeneratedJob> generatedJobs = Sets.newLinkedHashSet();
         if (jp != null) {
-            for(Job job: jp.getReferencedJobs()) {
+            List<Job> refJobs = Lists.newArrayList(jp.getReferencedJobs()); // As List
+            Collections.sort(refJobs, new Comparator<Job>() {
+                // Sort by the job type, so that normal (Maven and Freeform) are done before Multijob
+                @Override
+                public int compare(Job o1, Job o2) {
+                    return o1.getType().ordinal() - o2.getType().ordinal();
+                }
+            });
+            for(Job job: refJobs) {
                 try {
                     String xml = job.getXml();
                     LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));

@@ -650,7 +650,7 @@ class StepContext implements Context {
                                 }
                             }
                         } else {
-                            configs(class:'empty-list')
+                            configs(class:'java.util.Collections$EmptyList')
                         }
                     }
                 }
