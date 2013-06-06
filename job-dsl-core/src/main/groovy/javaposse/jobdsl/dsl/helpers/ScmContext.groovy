@@ -1,6 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
+import java.util.Map;
+
 import com.google.common.base.Preconditions
+
+import groovy.lang.Closure;
 import groovy.transform.PackageScope
 import javaposse.jobdsl.dsl.WithXmlAction
 import hudson.plugins.perforce.PerforcePasswordEncryptor
@@ -256,7 +260,53 @@ class ScmContext implements Context {
         scmNodes << svnNode
 
     }
+    
+    def svn(Closure svnClosure) {
+        validateMulti()
+        
+        SvnContext svnContext = new SvnContext()
+        AbstractContextHelper.executeInContext(svnClosure, svnContext)
 
+        Preconditions.checkState(svnContext.locations.size() != 0, 'One or more locations must be specified')
+        
+        def nodeBuilder = NodeBuilder.newInstance()
+        Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
+            excludedRegions ''
+            includedRegions ''
+            excludedUsers ''
+            excludedRevprop ''
+            excludedCommitMessages ''
+            workspaceUpdater(class:'hudson.scm.subversion.UpdateUpdater')
+            
+            svnContext.locations.each {
+                svnNode / locations . 'hudson.scm.SubversionSCM_-ModuleLocation' {
+                    remote 'abc'//it.url
+                    local 'N'
+                }
+            }
+        }
+
+        scmNodes << svnNode
+    }
+
+    def static class SvnContext implements Context {
+        def locations = []
+
+        def location(Closure locClosure) {
+            LocationContext locContext = new LocationContext()
+            AbstractContextHelper.executeInContext(locClosure, locContext)
+            locations << locContext
+        }
+    }
+
+    def static class LocationContext implements Context {
+        String url
+        
+        def url(String url) {
+            this.url = url
+        }
+    }
+    
     /**
      <scm class="hudson.plugins.perforce.PerforceSCM">
        <p4User>rolem</p4User>

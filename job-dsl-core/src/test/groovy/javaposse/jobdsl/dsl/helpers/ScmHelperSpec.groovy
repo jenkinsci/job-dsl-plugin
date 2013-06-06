@@ -256,6 +256,20 @@ public class ScmHelperSpec extends Specification {
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
     }
 
+    def 'call svn with context'() {
+        when:
+        context.svn() {
+            location {
+                url 'abc'
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'abc'
+    }
+
     def 'call svn'() {
         when:
         context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
