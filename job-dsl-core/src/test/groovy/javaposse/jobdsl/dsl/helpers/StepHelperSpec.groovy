@@ -480,7 +480,7 @@ public class StepHelperSpec extends Specification {
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == 'true'
         jobNode.exposedSCM[0].value() == 'true'
-        jobNode.configs[0].attribute('class') == 'empty-list'
+        jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
     }
 
     def 'call phases with multiple jobs'() {
