@@ -1,14 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext
 import spock.lang.Specification
 
 public class PublisherHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    PublisherContextHelper helper = new PublisherContextHelper(mockActions)
+    PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform)
     PublisherContext context = new PublisherContext()
 
     def 'empty call extended email method'() {

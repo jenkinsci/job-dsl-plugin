@@ -1,5 +1,6 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
+import com.google.common.collect.Iterables;
 import spock.lang.*
 
 public class DslScriptLoaderTest extends Specification {
@@ -72,6 +73,26 @@ public class DslScriptLoaderTest extends Specification {
         jobs.any { it.jobName == 'test'}
         jobs.any { it.jobName == 'test2'}
 
+    }
+
+    def 'run engine that uses static import'() {
+        setup:
+        def scriptStr = '''job(type: Maven) {
+    name 'test'
+}
+'''
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
+
+        then:
+        jp != null
+        def jobs = jp.getReferencedJobs()
+        jobs.size() == 1
+        def job = Iterables.get(jobs, 0)
+        job.name == 'test'
+        job.type == JobType.Maven
     }
 
     def 'run engine with reference to other class from a string'() {

@@ -8,9 +8,6 @@ import com.google.common.collect.Sets;
 public abstract class JobParent extends Script {
     private static final Logger LOGGER = Logger.getLogger(JobParent.getName());
 
-    // job types
-    static String maven = 'maven'
-
     JobManagement jm;
     Set<Job> referencedJobs
 

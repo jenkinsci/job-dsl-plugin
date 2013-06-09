@@ -1,9 +1,10 @@
 package javaposse.jobdsl.dsl
 
+import org.custommonkey.xmlunit.DetailedDiff
+import org.custommonkey.xmlunit.Diff
 import spock.lang.*
 import org.custommonkey.xmlunit.XMLUnit
 
-import static javaposse.jobdsl.dsl.JobParent.maven
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 import java.util.concurrent.atomic.AtomicBoolean
@@ -222,7 +223,7 @@ class JobTest extends Specification {
     def 'Maven job extends free-style template and fails to generate xml'() {
         setup:
         JobManagement jm = Mock()
-        Job job = new Job(jm, [type: maven])
+        Job job = new Job(jm, [type: JobType.Maven])
 
         when:
         job.using('TMPL')

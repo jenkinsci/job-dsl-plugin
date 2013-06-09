@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers;
 
-import groovy.lang.Closure;
+import groovy.lang.Closure
+import javaposse.jobdsl.dsl.JobType;
 import javaposse.jobdsl.dsl.WithXmlAction;
 
 import java.util.List;
@@ -17,8 +18,11 @@ public class AbstractHelper implements Helper {
      */
     List<WithXmlAction> withXmlActions
 
-    AbstractHelper(List<WithXmlAction> withXmlActions) {
+    JobType type
+
+    AbstractHelper(List<WithXmlAction> withXmlActions, JobType type) {
         this.withXmlActions = withXmlActions
+        this.type = type
     }
 
 
