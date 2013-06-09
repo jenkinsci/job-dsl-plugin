@@ -134,6 +134,26 @@ println "Hello ${WordUtils.capitalize('world')}"
         results.contains("Hello World")
     }
 
+    def 'jobs scheduled to build'() {
+        setup:
+        def scriptStr = '''
+def jobA = job {
+    name 'JobA'
+}
+queue jobA
+queue 'JobB'
+'''
+        jm = new StringJobManagement();
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        jm.jobScheduled.size() == 2
+        jm.jobScheduled.contains('JobA')
+        jm.jobScheduled.contains('JobB')
+    }
 //
 //    def 'Able to run engine for string'() {
 //        setup:

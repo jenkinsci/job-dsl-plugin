@@ -6,8 +6,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import hudson.EnvVars;
 import hudson.XmlFile;
-import hudson.model.AbstractProject;
-import hudson.model.TopLevelItem;
+import hudson.model.*;
 import javaposse.jobdsl.dsl.*;
 import jenkins.model.Jenkins;
 import org.custommonkey.xmlunit.Diff;
@@ -90,6 +89,24 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public Map<String, String> getParameters() {
         return envVars;
     }
+
+    @Override
+    public void queueJob(String jobName) throws JobNameNotProvidedException {
+        validateJobNameArg(jobName);
+
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+
+        Object build = ((Executor) Thread.currentThread()).getCurrentExecutable();
+        if(build != null && build instanceof Run) {
+            Run run = (Run) build;
+            LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", jobName, run.getParent().getName()));
+            project.scheduleBuild(new Cause.UpstreamCause(run));
+        } else {
+            LOGGER.log(Level.INFO, String.format("Scheduling build of %s", jobName));
+            project.scheduleBuild(new Cause.UserCause());
+        }
+    }
+
 
     private String lookupJob(String jobName) throws IOException {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));

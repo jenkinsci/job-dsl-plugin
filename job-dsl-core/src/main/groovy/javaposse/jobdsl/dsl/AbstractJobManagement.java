@@ -32,9 +32,22 @@ public abstract class AbstractJobManagement implements JobManagement {
         return Maps.newHashMap();
     }
 
+    @Override
+    public void queueJob(String jobName) throws JobNameNotProvidedException {
+        validateJobNameArg(jobName);
+    }
+
     protected void validateUpdateArgs(String jobName, String config) {
-        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
+        validateJobNameArg(jobName);
+        validateConfigArg(config);
+    }
+
+    protected void validateConfigArg(String config) {
         if (config == null || config.isEmpty()) throw new JobConfigurationMissingException();
+    }
+
+    protected void validateJobNameArg(String jobName) {
+        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
     }
 
 }

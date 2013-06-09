@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import groovy.lang.GroovyClassLoader;
 import groovy.util.GroovyScriptEngine;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -91,33 +92,11 @@ public class DslScriptLoader {
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
 
         Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, scriptRequest.ignoreExisting);
+
+        scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
+
         return generatedJobs;
     }
-
-//    @Deprecated
-//    public static Set<GeneratedJob> runDslShell(String scriptContent, JobManagement jobManagement) {
-//        Binding binding = createBinding(jobManagement);
-//
-//        CompilerConfiguration config = createCompilerConfiguration(jobManagement);
-//
-//        // TODO Setup different classloader, especially for Grape to work, which needs a RootLoader or a GroovyLoader
-//        ClassLoader parent = DslScriptLoader.class.getClassLoader();
-//
-//        GroovyShell shell = new GroovyShell(parent, binding, config);
-//        Script script = shell.parse(scriptContent);
-//        if (!(script instanceof JobParent)) {
-//            // Assume an empty script
-//            return null;
-//        }
-//        ((JobParent) script).setJm(jobManagement);
-//        Object result = script.run(); // Probably the last job
-//        LOGGER.log(Level.FINE, String.format("Ran script and got back %s", result));
-//        JobParent jp =  (JobParent) script;
-//
-//        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, false);
-//
-//        return generatedJobs;
-//    }
 
     private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) {
         // Iterate jobs which were setup, save them, and convert to a serializable form
@@ -150,6 +129,22 @@ public class DslScriptLoader {
         return generatedJobs;
     }
 
+    static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {
+        Map<String, Throwable> exceptions = Maps.newHashMap();
+        for(String jobName: jobNames) {
+            try {
+                jobManagement.queueJob(jobName);
+            } catch(Exception e) {
+                exceptions.put(jobName, e);
+            }
+        }
+        if(!exceptions.isEmpty()) {
+            LOGGER.warning("Trouble schedule some jobs");
+            for(Map.Entry<String, Throwable> entry: exceptions.entrySet()) {
+                LOGGER.throwing("DslScriptLoader", entry.getKey(), entry.getValue());
+            }
+        }
+    }
     private static Binding createBinding(JobManagement jobManagement) {
         Binding binding = new Binding();
         binding.setVariable("out", jobManagement.getOutputStream() ); // Works for println, but not System.out
