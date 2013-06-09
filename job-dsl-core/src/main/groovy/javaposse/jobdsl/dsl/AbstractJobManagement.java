@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl;
 
 import com.google.common.collect.Maps;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
@@ -35,6 +37,16 @@ public abstract class AbstractJobManagement implements JobManagement {
     @Override
     public void queueJob(String jobName) throws JobNameNotProvidedException {
         validateJobNameArg(jobName);
+    }
+
+    @Override
+    public InputStream streamFileInWorkspace(String filePath) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String readFileInWorkspace(String filePath) throws IOException {
+        throw new UnsupportedOperationException();
     }
 
     protected void validateUpdateArgs(String jobName, String config) {

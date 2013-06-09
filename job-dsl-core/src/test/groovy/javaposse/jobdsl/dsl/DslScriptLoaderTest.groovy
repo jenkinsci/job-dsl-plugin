@@ -154,6 +154,48 @@ queue 'JobB'
         jm.jobScheduled.contains('JobA')
         jm.jobScheduled.contains('JobB')
     }
+
+    def 'files read through to JobManagement'() {
+        setup:
+        def scriptStr = '''
+def jobA = job {
+    name 'JobA'
+}
+
+def content = readFileFromWorkspace('foo.txt')
+println content
+'''
+        StringJobManagement sm = new StringJobManagement(ps);
+        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, sm)
+
+        then:
+        noExceptionThrown()
+        getContent().contains('bar')
+        getContent().count('bar') == 3
+    }
+
+
+    def 'read nonexistant file'() {
+        setup:
+        def scriptStr = '''
+readFileFromWorkspace('bar.txt')
+'''
+        StringJobManagement sm = new StringJobManagement(ps);
+        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, sm)
+
+        then:
+        thrown(IOException)
+    }
 //
 //    def 'Able to run engine for string'() {
 //        setup:

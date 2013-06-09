@@ -140,7 +140,7 @@ public class ExecuteDslScripts extends Builder {
         env.putAll(build.getBuildVariables());
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env);
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build);
 
         Set<GeneratedJob> freshJobs;
         String jobName = build.getProject().getName();
