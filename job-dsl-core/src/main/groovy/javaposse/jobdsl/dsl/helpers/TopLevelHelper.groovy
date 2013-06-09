@@ -157,16 +157,27 @@ class TopLevelHelper extends AbstractHelper {
 
     /**
      * Block build if certain jobs are running
-     <hudson.plugins.buildblocker.BuildBlockerProperty>
-        <useBuildBlocker>true</useBuildBlocker> <!-- Always true -->
-        <blockingJobs>API-SmokeTests-TestBranchAPI-NightlyTests-TestBranchAPI-Sync-Instances</blockingJobs>
-     </hudson.plugins.buildblocker.BuildBlockerProperty>
+     <properties>
+         <hudson.plugins.buildblocker.BuildBlockerProperty>
+             <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
+             <blockingJobs>JobA</blockingJobs>
+         </hudson.plugins.buildblocker.BuildBlockerProperty>
+     </properties>
      */
-    def blockOn(String projectNames) {
+    def blockOn(Iterable<String> projectNames) {
+        blockOn( projectNames.join('\n'))
+    }
+
+    /**
+     * Block build if certain jobs are running.
+     * @param projectName Can be regular expressions. Newline delimited.
+     * @return
+     */
+    def blockOn(String projectName) {
         execute {
-            it / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
+            it / 'properties'/ 'hudson.plugins.buildblocker.BuildBlockerProperty' {
                 useBuildBlocker 'true'
-                blockingJobs projectNames
+                blockingJobs projectName
             }
         }
     }
