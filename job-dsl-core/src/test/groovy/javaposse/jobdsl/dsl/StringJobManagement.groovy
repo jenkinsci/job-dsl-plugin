@@ -11,7 +11,7 @@ public class StringJobManagement extends AbstractJobManagement {
     /**
      * XML to return by default
      */
-    String defaultXml
+    String defaultXml = null
 
     Map<String,String> availableConfigs = [:]
     Map<String,String> savedConfigs = [:]
@@ -20,12 +20,15 @@ public class StringJobManagement extends AbstractJobManagement {
     Map<String,String> params = [:]
     List<String> jobScheduled = []
 
+    public StringJobManagement(PrintStream out) {
+        super(out)
+    }
+
     public StringJobManagement(String defaultXml) {
         this.defaultXml = defaultXml
     }
 
     public StringJobManagement() {
-        this.defaultXml = null
     }
 
     public StringJobManagement(Closure closure) {
@@ -67,16 +70,21 @@ public class StringJobManagement extends AbstractJobManagement {
         jobScheduled << jobName
     }
 
-
     @Override
     public InputStream streamFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
+        if (body==null) {
+            throw new FileNotFoundException(filePath);
+        }
         return new InputStreamReader(new StringReader(body));
     }
 
     @Override
     public String readFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
+        if (body==null) {
+            throw new FileNotFoundException(filePath);
+        }
         return body
     }
 }
