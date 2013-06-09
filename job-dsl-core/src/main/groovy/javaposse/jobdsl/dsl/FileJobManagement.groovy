@@ -42,5 +42,15 @@ class FileJobManagement extends AbstractJobManagement {
         new File(jobName + ext).write(config)
         return true
     }
+
+    @Override
+    public InputStream streamFileInWorkspace(String filePath) {
+        return new FileInputStream(new File(root, filePath));
+    }
+
+    @Override
+    public String readFileInWorkspace(String filePath) {
+        new File(root, filePath).text
+    }
 }
 

@@ -53,4 +53,14 @@ public abstract class JobParent extends Script {
         Preconditions.checkArgument(job.name as Boolean)
         queueToBuild << job.name
     }
+
+    public InputStream streamFileFromWorkspace(String filePath) throws IOException {
+        Preconditions.checkArgument(filePath as Boolean)
+        return jm.streamFileInWorkspace(filePath);
+    }
+
+    public String readFileFromWorkspace(String filePath) throws IOException {
+        Preconditions.checkArgument(filePath as Boolean)
+        return jm.readFileInWorkspace(filePath);
+    }
 }
