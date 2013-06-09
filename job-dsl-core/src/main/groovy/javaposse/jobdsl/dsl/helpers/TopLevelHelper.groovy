@@ -1,12 +1,13 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class TopLevelHelper extends AbstractHelper {
 
-    TopLevelHelper(List<WithXmlAction> withXmlActions) {
-        super(withXmlActions)
+    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     def description(String descriptionString) {

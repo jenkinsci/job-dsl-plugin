@@ -1,9 +1,8 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-
-import static javaposse.jobdsl.dsl.JobParent.maven
 
 /**
  triggers {
@@ -13,11 +12,8 @@ import static javaposse.jobdsl.dsl.JobParent.maven
  */
 class TriggerContextHelper extends AbstractContextHelper<TriggerContext> {
 
-    Map<String, Object> jobArguments
-
-    TriggerContextHelper(List<WithXmlAction> withXmlActions, Map<String, Object> jobArguments=[:]) {
-        super(withXmlActions)
-        this.jobArguments = jobArguments
+    TriggerContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     /**
@@ -26,7 +22,7 @@ class TriggerContextHelper extends AbstractContextHelper<TriggerContext> {
      * @return
      */
     def triggers(Closure closure) {
-        execute(closure, new TriggerContext(withXmlActions, [], jobArguments))
+        execute(closure, new TriggerContext(withXmlActions, type, []))
     }
 
     Closure generateWithXmlClosure(TriggerContext context) {
@@ -94,12 +90,12 @@ class GerritContext implements Context {
 
 class TriggerContext implements Context {
     List<WithXmlAction> withXmlActions
-    Map<String, Object> jobArguments
+    JobType jobType
     List<Node> triggerNodes
 
-    TriggerContext(List<WithXmlAction> withXmlActions = [], List<Node> triggerNodes = [], Map<String, Object> jobArguments = [:]) {
+    TriggerContext(List<WithXmlAction> withXmlActions = [], JobType jobType = JobType.Freeform, List<Node> triggerNodes = []) {
         this.withXmlActions = withXmlActions
-        this.jobArguments = jobArguments
+        this.jobType = jobType
         this.triggerNodes = triggerNodes
     }
 
@@ -238,7 +234,7 @@ class TriggerContext implements Context {
      * @param checkSnapshotDependencies set to <code>true</code> to check snapshot dependencies
      */
     def snapshotDependencies(boolean checkSnapshotDependencies) {
-        Preconditions.checkState(jobArguments['type'] == maven, "snapshotDependencies can only be applied for Maven jobs")
+        Preconditions.checkState jobType == JobType.Maven, "snapshotDependencies can only be applied for Maven jobs"
         withXmlActions << new WithXmlAction({
             it.children().removeAll { it instanceof Node && it.name() == "ignoreUpstremChanges" }
             it.appendNode "ignoreUpstremChanges", !checkSnapshotDependencies

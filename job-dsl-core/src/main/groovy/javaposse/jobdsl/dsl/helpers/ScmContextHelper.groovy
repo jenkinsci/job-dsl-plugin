@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 /**
@@ -23,8 +24,8 @@ import javaposse.jobdsl.dsl.WithXmlAction
  */
 class ScmContextHelper extends AbstractContextHelper<ScmContext> {
 
-    ScmContextHelper(List<WithXmlAction> withXmlActions) {
-        super(withXmlActions)
+    ScmContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     /**

@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl
 
+import org.custommonkey.xmlunit.DetailedDiff
+import org.custommonkey.xmlunit.Diff
 import spock.lang.*
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
@@ -16,7 +18,7 @@ class DslSampleTest extends Specification {
         jm.addConfig('TMPL-test-maven', sampleMavenTemplate)
 
         when:
-        Set<GeneratedJob> results = DslScriptLoader.runDslShell(sampleDsl, jm)
+        Set<GeneratedJob> results = DslScriptLoader.runDslEngine(sampleDsl, jm)
 
         then:
         results != null
@@ -27,6 +29,7 @@ class DslSampleTest extends Specification {
         // TODO Review actual results
         println(firstJob)
         def mavenJob = jm.savedConfigs['PROJ-maven']
+
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, mavenJob
         def mavenJobWithTemplate = jm.savedConfigs['PROJ-maven-with-template']
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXmlWithTemplate, mavenJobWithTemplate
@@ -39,7 +42,7 @@ class DslSampleTest extends Specification {
         jm.params.REPO = 'JavaPosseRoundup'
 
         when:
-        Set<GeneratedJob> results = DslScriptLoader.runDslShell(sampleVarDsl, jm)
+        Set<GeneratedJob> results = DslScriptLoader.runDslEngine(sampleVarDsl, jm)
 
         then:
         results != null
@@ -261,7 +264,7 @@ job {
     }
 }
 
-job(type: maven) {
+job(type: Maven) {
     name 'PROJ-maven'
     rootPOM 'my_module/pom.xml'
     goals 'clean verify'
@@ -277,7 +280,7 @@ job(type: maven) {
     }
 }
 
-job(type: maven) {
+job(type: Maven) {
     using 'TMPL-test-maven'
     name 'PROJ-maven-with-template'
     rootPOM 'other_module/pom.xml'

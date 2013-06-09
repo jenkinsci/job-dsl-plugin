@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import spock.lang.Specification
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -8,7 +9,7 @@ import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper.AuthorizationCont
 public class AuthorizationHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    AuthorizationContextHelper helper = new AuthorizationContextHelper(mockActions)
+    AuthorizationContextHelper helper = new AuthorizationContextHelper(mockActions, JobType.Freeform)
     AuthorizationContext context = new AuthorizationContext()
 
     def 'call permission methods'() {
