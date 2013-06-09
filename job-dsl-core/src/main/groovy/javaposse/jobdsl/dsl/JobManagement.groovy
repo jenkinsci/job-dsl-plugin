@@ -31,6 +31,9 @@ public interface JobManagement {
      */
     void queueJob(String jobName) throws JobNameNotProvidedException;
 
+    InputStream streamFileInWorkspace(String filePath) throws IOException;
+    String readFileInWorkspace(String filePath) throws IOException;
+
     /**
      * Stream to write to, for stdout.
      * @return PrintWriter

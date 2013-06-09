@@ -15,6 +15,7 @@ public class StringJobManagement extends AbstractJobManagement {
 
     Map<String,String> availableConfigs = [:]
     Map<String,String> savedConfigs = [:]
+    Map<String,String> availableFiles = [:]
 
     Map<String,String> params = [:]
     List<String> jobScheduled = []
@@ -64,6 +65,19 @@ public class StringJobManagement extends AbstractJobManagement {
     @Override
     void queueJob(String jobName) throws JobNameNotProvidedException {
         jobScheduled << jobName
+    }
+
+
+    @Override
+    public InputStream streamFileInWorkspace(String filePath) {
+        String body = availableFiles.get(filePath)
+        return new InputStreamReader(new StringReader(body));
+    }
+
+    @Override
+    public String readFileInWorkspace(String filePath) {
+        String body = availableFiles.get(filePath)
+        return body
     }
 }
 

@@ -5,6 +5,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.XmlFile;
 import hudson.model.*;
 import javaposse.jobdsl.dsl.*;
@@ -29,6 +30,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     Jenkins jenkins = Jenkins.getInstance();
     EnvVars envVars;
     Set<GeneratedJob> modifiedJobs;
+    AbstractBuild<?, ?> build;
 
     JenkinsJobManagement() {
         super();
@@ -36,10 +38,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         modifiedJobs = Sets.newHashSet();
     }
 
-    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars) {
+    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build) {
         super(outputLogger);
         this.envVars = envVars;
-        modifiedJobs = Sets.newHashSet();
+        this.modifiedJobs = Sets.newHashSet();
+        this.build = build;
     }
 
     @Override
@@ -96,7 +99,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
 
-        Object build = ((Executor) Thread.currentThread()).getCurrentExecutable();
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
             LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", jobName, run.getParent().getName()));
@@ -107,6 +109,30 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
+
+    @Override
+    public InputStream streamFileInWorkspace(String relLocation) throws IOException {
+        FilePath filePath = locateValidFileInWorkspace(relLocation);
+        return filePath.read();
+    }
+
+    @Override
+    public String readFileInWorkspace(String relLocation) throws IOException {
+        FilePath filePath = locateValidFileInWorkspace(relLocation);
+        return filePath.readToString();
+    }
+
+    private FilePath locateValidFileInWorkspace(String relLocation) throws IOException {
+        FilePath filePath = build.getWorkspace().child(relLocation);
+        try {
+            if (!filePath.exists()) {
+                throw new IllegalStateException("File does not exists");
+            }
+        } catch(InterruptedException ie) {
+            throw new RuntimeException(ie);
+        }
+        return filePath;
+    }
 
     private String lookupJob(String jobName) throws IOException {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
