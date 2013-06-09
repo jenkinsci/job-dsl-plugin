@@ -17,6 +17,7 @@ public class StringJobManagement extends AbstractJobManagement {
     Map<String,String> savedConfigs = [:]
 
     Map<String,String> params = [:]
+    List<String> jobScheduled = []
 
     public StringJobManagement(String defaultXml) {
         this.defaultXml = defaultXml
@@ -58,6 +59,11 @@ public class StringJobManagement extends AbstractJobManagement {
     @Override
     Map<String, String> getParameters() {
         return params
+    }
+
+    @Override
+    void queueJob(String jobName) throws JobNameNotProvidedException {
+        jobScheduled << jobName
     }
 }
 
