@@ -303,7 +303,7 @@ class ScmContext implements Context {
             locations << locContext
         }
         
-        def location(String svnUrl, String localDir) {
+        def location(String svnUrl, String localDir = '.') {
             locations << new LocationContext(url:svnUrl, local:localDir)
         }
     }
