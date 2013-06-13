@@ -261,12 +261,12 @@ class ScmContext implements Context {
 
     }
     
-    def svn(Closure svnClosure) {
+    def subversion(Closure svnClosure) {
         validateMulti()
         
         SvnContext svnContext = new SvnContext()
         AbstractContextHelper.executeInContext(svnClosure, svnContext)
-
+        
         Preconditions.checkState(svnContext.locations.size() != 0, 'One or more locations must be specified')
         
         def nodeBuilder = NodeBuilder.newInstance()
@@ -278,10 +278,12 @@ class ScmContext implements Context {
             excludedCommitMessages ''
             workspaceUpdater(class:'hudson.scm.subversion.UpdateUpdater')
             
-            svnContext.locations.each {
-                svnNode / locations . 'hudson.scm.SubversionSCM_-ModuleLocation' {
-                    remote 'abc'//it.url
-                    local 'N'
+            locations {
+                svnContext.locations.each { currLoc ->
+                    'hudson.scm.SubversionSCM_-ModuleLocation' {
+                        remote currLoc.url
+                        local currLoc.local
+                    }
                 }
             }
         }
@@ -295,15 +297,27 @@ class ScmContext implements Context {
         def location(Closure locClosure) {
             LocationContext locContext = new LocationContext()
             AbstractContextHelper.executeInContext(locClosure, locContext)
+
+            Preconditions.checkState(locContext.url != null, "A URL must be specified in the declaration of a location")
+
             locations << locContext
+        }
+        
+        def location(String svnUrl, String localDir) {
+            locations << new LocationContext(url:svnUrl, local:localDir)
         }
     }
 
     def static class LocationContext implements Context {
-        String url
+        String url = null
+        String local = '.'
         
-        def url(String url) {
-            this.url = url
+        def url(String svnUrl) {
+            this.url = svnUrl
+        }
+
+        def local(String localDir) {
+            this.local = localDir
         }
     }
     

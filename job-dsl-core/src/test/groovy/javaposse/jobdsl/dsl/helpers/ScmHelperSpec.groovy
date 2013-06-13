@@ -256,18 +256,106 @@ public class ScmHelperSpec extends Specification {
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
     }
 
-    def 'call svn with context'() {
+    def void hasValidSvnScmNode(scmNode) {
+        assert scmNode != null
+        assert scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
+        assert scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() > 0
+    }
+        
+    def 'call subversion with no locations'() {
         when:
-        context.svn() {
+        context.subversion {}
+        
+        then:
+        thrown(IllegalStateException)
+    }
+    
+    def 'call subversion with one location'() {
+        when:
+        context.subversion() {
+            location("url", "dir")
+        }
+
+        then:
+        hasValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
+    }
+    
+    def 'call subversion with multiple locations'() {
+        when:
+        context.subversion() {
+            location("url1", "dir1")
+            location("url2", "dir2")
+            location('url3', 'dir3')
+        }
+
+        then:
+        hasValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 3
+        
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url1'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir1'
+        
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].remote[0].value() == 'url2'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].local[0].value() == 'dir2'
+        
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].remote[0].value() == 'url3'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].local[0].value() == 'dir3'
+    }
+
+    def 'call subversion with empty location context'() {
+        when:
+        context.subversion() {
+            location {}
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'call subversion with location context, no url'() {
+        when:
+        context.subversion() {
             location {
-                url 'abc'
+                local 'dir'
             }
         }
 
         then:
-        context.scmNode != null
-        context.scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'abc'
+        thrown(IllegalStateException)
+    }
+
+    def 'call subversion with location context, no local'() {
+        when:
+        context.subversion() {
+            location {
+                url 'url'
+            }
+        }
+
+        then:
+        hasValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1        
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
+    }
+
+    def 'call subversion with full location context'() {
+        when:
+        context.subversion() {
+            location {
+                url 'url'
+                local 'dir'
+            }
+        }
+
+        then:
+        hasValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1        
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
     }
 
     def 'call svn'() {
