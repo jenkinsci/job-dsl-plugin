@@ -654,7 +654,7 @@ public class StepHelperSpec extends Specification {
 
     def 'call sbt method action only'() {
         when:
-        context.sbt('SBT 0.12.3', null, null, 'test')
+        context.sbt('SBT 0.12.3', 'test')
 
         then:
         context.stepNodes != null
@@ -670,7 +670,7 @@ public class StepHelperSpec extends Specification {
     }
     def 'call sbt method full'() {
         when:
-        context.sbt('SBT 0.12.3', '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', '-Dsbt.log.noformat=true', 'test', 'subproject')
+        context.sbt('SBT 0.12.3','test', '-Dsbt.log.noformat=true',  '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', 'subproject')
 
         then:
         context.stepNodes != null
