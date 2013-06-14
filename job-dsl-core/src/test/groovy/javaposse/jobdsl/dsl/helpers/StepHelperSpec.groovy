@@ -635,9 +635,42 @@ public class StepHelperSpec extends Specification {
         thrown(IllegalStateException)
     }
 
-    def 'call sbt method'() {
+    def 'call sbt method minimal'() {
         when:
-        context.sbt('SBT 0.12.3', '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', '-Dsbt.log.noformat=true', 'test')
+        context.sbt('SBT 0.12.3')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def sbtStep = context.stepNodes[0]
+        sbtStep.name() == 'org.jvnet.hudson.plugins.SbtPluginBuilder'
+        sbtStep.attribute('plugin') == 'sbt@1.4'
+        sbtStep.name[0].value() == 'SBT 0.12.3'
+        sbtStep.jvmFlags[0].value() == ''
+        sbtStep.sbtFlags[0].value() == ''
+        sbtStep.actions[0].value() == ''
+        sbtStep.subdirPath[0].value() == ''
+    }
+
+    def 'call sbt method action only'() {
+        when:
+        context.sbt('SBT 0.12.3', null, null, 'test')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def sbtStep = context.stepNodes[0]
+        sbtStep.name() == 'org.jvnet.hudson.plugins.SbtPluginBuilder'
+        sbtStep.attribute('plugin') == 'sbt@1.4'
+        sbtStep.name[0].value() == 'SBT 0.12.3'
+        sbtStep.jvmFlags[0].value() == ''
+        sbtStep.sbtFlags[0].value() == ''
+        sbtStep.actions[0].value() == 'test'
+        sbtStep.subdirPath[0].value() == ''
+    }
+    def 'call sbt method full'() {
+        when:
+        context.sbt('SBT 0.12.3', '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', '-Dsbt.log.noformat=true', 'test', 'subproject')
 
         then:
         context.stepNodes != null
@@ -649,6 +682,6 @@ public class StepHelperSpec extends Specification {
         sbtStep.jvmFlags[0].value() == '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M'
         sbtStep.sbtFlags[0].value() == '-Dsbt.log.noformat=true'
         sbtStep.actions[0].value() == 'test'
-        sbtStep.subdirPath[0].value() == ''
+        sbtStep.subdirPath[0].value() == 'subproject'
     }
 }
