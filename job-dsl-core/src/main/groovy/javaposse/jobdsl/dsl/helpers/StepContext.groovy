@@ -73,6 +73,38 @@ class StepContext implements Context {
     }
 
     /**
+     <org.jvnet.hudson.plugins.SbtPluginBuilder plugin="sbt@1.4">
+     <name>SBT 0.12.3</name>
+     <jvmFlags>-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M</jvmFlags>
+     <sbtFlags>-Dsbt.log.noformat=true</sbtFlags>
+     <actions>clean update &quot;env development&quot; test dist publish</actions>
+     <subdirPath></subdirPath>
+     </org.jvnet.hudson.plugins.SbtPluginBuilder>
+     */
+    def sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null, String subdirPathArg=null, Closure configure = null) {
+
+        def nodeBuilder = new NodeBuilder()
+
+        def attributes = [plugin:'sbt@1.4']
+        def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder'(attributes) {
+            name Preconditions.checkNotNull(sbtNameArg, "Please provide the name of the SBT to use" as Object)
+            jvmFlags jvmFlagsArg?:''
+            sbtFlags sbtFlagsArg?:''
+            actions actionsArg?:''
+            subdirPath subdirPathArg?:''
+        }
+
+        // Apply Context
+        if (configure) {
+            WithXmlAction action = new WithXmlAction(configure)
+            action.execute(sbtNode)
+        }
+
+        stepNodes << sbtNode
+
+    }
+
+    /**
      <hudson.tasks.Ant>
      <targets>target</targets>
      <antName>Ant 1.8</antName>
