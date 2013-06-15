@@ -276,7 +276,7 @@ class ScmContext implements Context {
             excludedUsers ''
             excludedRevprop ''
             excludedCommitMessages ''
-            workspaceUpdater(class:'hudson.scm.subversion.UpdateUpdater')
+            workspaceUpdater(class:svnContext.checkoutstrategy.longForm)
             
             locations {
                 svnContext.locations.each { currLoc ->
@@ -292,26 +292,27 @@ class ScmContext implements Context {
     }
 
     def static class SvnContext implements Context {
-        def locations = []
-
-        def location(Closure locClosure) {
-            LocationContext locContext = new LocationContext()
-            AbstractContextHelper.executeInContext(locClosure, locContext)
-
-            Preconditions.checkState(locContext.url != null, "A URL must be specified in the declaration of a location")
-
-            locations << locContext
+        def class Location {
+            String url = null
+            String local = '.'
         }
-        
+
+        def locations = []
+        def checkoutstrategy = CheckoutStrategy.Update
+
         def location(String svnUrl, String localDir = '.') {
-            locations << new LocationContext(url:svnUrl, local:localDir)
+            locations << new Location(url:svnUrl, local:localDir)
+        }
+
+        def checkoutStrategy(CheckoutStrategy strategy) {
+            checkoutstrategy = strategy
         }
     }
 
     def static class LocationContext implements Context {
         String url = null
         String local = '.'
-        
+
         def url(String svnUrl) {
             this.url = svnUrl
         }
@@ -320,7 +321,7 @@ class ScmContext implements Context {
             this.local = localDir
         }
     }
-    
+
     /**
      <scm class="hudson.plugins.perforce.PerforceSCM">
        <p4User>rolem</p4User>

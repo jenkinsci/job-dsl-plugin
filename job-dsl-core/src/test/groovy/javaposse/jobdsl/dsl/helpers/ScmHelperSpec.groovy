@@ -272,7 +272,7 @@ public class ScmHelperSpec extends Specification {
     
     def 'call subversion with one location'() {
         when:
-        context.subversion() {
+        context.subversion {
             location("url", "dir")
         }
 
@@ -285,7 +285,7 @@ public class ScmHelperSpec extends Specification {
     
     def 'call subversion with multiple locations'() {
         when:
-        context.subversion() {
+        context.subversion {
             location("url1", "dir1")
             location("url2", "dir2")
             location('url3', 'dir3')
@@ -305,57 +305,23 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].local[0].value() == 'dir3'
     }
 
-    def 'call subversion with empty location context'() {
+    def 'call subversion with checkout strategy'() {
         when:
-        context.subversion() {
-            location {}
-        }
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'call subversion with location context, no url'() {
-        when:
-        context.subversion() {
-            location {
-                local 'dir'
-            }
-        }
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'call subversion with location context, no local'() {
-        when:
-        context.subversion() {
-            location {
-                url 'url'
-            }
+        context.subversion {
+            location 'url'
+            checkoutStrategy strategy
         }
 
         then:
         hasValidSvnScmNode(context.scmNode)
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1        
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
-    }
+        context.scmNode.workspaceUpdater[0].attributes()['class'] == wuClass
 
-    def 'call subversion with full location context'() {
-        when:
-        context.subversion() {
-            location {
-                url 'url'
-                local 'dir'
-            }
-        }
-
-        then:
-        hasValidSvnScmNode(context.scmNode)
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1        
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
+        where:
+        strategy                          | wuClass
+        CheckoutStrategy.Update           | 'hudson.scm.subversion.UpdateUpdater'
+        CheckoutStrategy.Checkout         | 'hudson.scm.subversion.CheckoutUpdater'
+        CheckoutStrategy.EmulateCheckout  | 'hudson.scm.subversion.UpdateWithCleanUpdater'
+        CheckoutStrategy.UpdateWithRevert | 'hudson.scm.subversion.UpdateWithRevertUpdater'
     }
 
     def 'call svn'() {
