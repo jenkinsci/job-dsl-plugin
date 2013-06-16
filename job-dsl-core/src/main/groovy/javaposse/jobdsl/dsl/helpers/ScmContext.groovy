@@ -309,19 +309,6 @@ class ScmContext implements Context {
         }
     }
 
-    def static class LocationContext implements Context {
-        String url = null
-        String local = '.'
-
-        def url(String svnUrl) {
-            this.url = svnUrl
-        }
-
-        def local(String localDir) {
-            this.local = localDir
-        }
-    }
-
     /**
      <scm class="hudson.plugins.perforce.PerforceSCM">
        <p4User>rolem</p4User>
