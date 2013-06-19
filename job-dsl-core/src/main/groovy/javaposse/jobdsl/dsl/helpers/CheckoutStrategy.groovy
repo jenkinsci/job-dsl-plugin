@@ -6,9 +6,9 @@ enum CheckoutStrategy {
     EmulateCheckout('hudson.scm.subversion.UpdateWithCleanUpdater'),
     UpdateWithRevert('hudson.scm.subversion.UpdateWithRevertUpdater')
 
-    final String longForm
+    final String className
 
-    CheckoutStrategy(String longForm) {
-        this.longForm = longForm
+    CheckoutStrategy(String className) {
+        this.className = className
     }
 }

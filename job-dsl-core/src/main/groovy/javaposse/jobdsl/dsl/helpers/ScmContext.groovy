@@ -261,7 +261,7 @@ class ScmContext implements Context {
 
     }
     
-    def subversion(Closure svnClosure) {
+    def svn(Closure svnClosure) {
         validateMulti()
         
         SvnContext svnContext = new SvnContext()
@@ -271,13 +271,6 @@ class ScmContext implements Context {
         
         def nodeBuilder = NodeBuilder.newInstance()
         Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
-            excludedRegions ''
-            includedRegions ''
-            excludedUsers ''
-            excludedRevprop ''
-            excludedCommitMessages ''
-            workspaceUpdater(class:svnContext.checkoutstrategy.longForm)
-            
             locations {
                 svnContext.locations.each { currLoc ->
                     'hudson.scm.SubversionSCM_-ModuleLocation' {
@@ -286,6 +279,13 @@ class ScmContext implements Context {
                     }
                 }
             }
+            workspaceUpdater(class:svnContext.checkoutstrategy.className)
+
+            excludedRegions ''
+            includedRegions ''
+            excludedUsers ''
+            excludedRevprop ''
+            excludedCommitMessages ''
         }
 
         scmNodes << svnNode
@@ -299,6 +299,7 @@ class ScmContext implements Context {
 
         def locations = []
         def checkoutstrategy = CheckoutStrategy.Update
+        def excludedregions = []
 
         def location(String svnUrl, String localDir = '.') {
             locations << new Location(url:svnUrl, local:localDir)
@@ -306,6 +307,10 @@ class ScmContext implements Context {
 
         def checkoutStrategy(CheckoutStrategy strategy) {
             checkoutstrategy = strategy
+        }
+
+        def excludedRegion(String pattern) {
+            excludedregions << pattern
         }
     }
 

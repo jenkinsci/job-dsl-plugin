@@ -263,17 +263,17 @@ public class ScmHelperSpec extends Specification {
         assert scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() > 0
     }
         
-    def 'call subversion with no locations'() {
+    def 'call svn with no locations'() {
         when:
-        context.subversion {}
+        context.svn {}
         
         then:
         thrown(IllegalStateException)
     }
     
-    def 'call subversion with one location'() {
+    def 'call svn with one location'() {
         when:
-        context.subversion {
+        context.svn {
             location("url", "dir")
         }
 
@@ -284,9 +284,9 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
     }
     
-    def 'call subversion with multiple locations'() {
+    def 'call svn with multiple locations'() {
         when:
-        context.subversion {
+        context.svn {
             location("url1", "dir1")
             location("url2", "dir2")
             location('url3', 'dir3')
@@ -306,9 +306,9 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].local[0].value() == 'dir3'
     }
 
-    def 'call subversion with checkout strategy'() {
+    def 'call svn with checkout strategy'() {
         when:
-        context.subversion {
+        context.svn {
             location 'url'
             checkoutStrategy strategy
         }
