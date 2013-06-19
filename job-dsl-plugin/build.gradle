@@ -23,7 +23,7 @@ configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-
 description = "Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins."
 
 jenkinsPlugin {
-    coreVersion = '1.456'
+    coreVersion = '1.462'
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'

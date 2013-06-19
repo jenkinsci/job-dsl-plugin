@@ -1,15 +1,14 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.JobParent.maven
-
 public class TriggerHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    TriggerContextHelper helper = new TriggerContextHelper(mockActions)
+    TriggerContextHelper helper = new TriggerContextHelper(mockActions, JobType.Freeform)
     TriggerContext context = new TriggerContext()
 
     def 'call cron trigger methods'() {
@@ -122,7 +121,7 @@ public class TriggerHelperSpec extends Specification {
         }
 
         when:
-        def withXmlAction = helper.generateWithXmlAction(new TriggerContext([], [triggerNode]))
+        def withXmlAction = helper.generateWithXmlAction(new TriggerContext([], JobType.Freeform, [triggerNode]))
         withXmlAction.execute(root)
 
         then:
@@ -139,7 +138,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call snapshotDependencies for Maven job succeeds'() {
         when:
-        TriggerContext context = new TriggerContext([], [], [type: maven])
+        TriggerContext context = new TriggerContext([], JobType.Maven, [])
         context.snapshotDependencies(false)
 
         then:

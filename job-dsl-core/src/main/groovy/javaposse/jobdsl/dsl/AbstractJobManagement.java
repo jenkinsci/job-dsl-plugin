@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl;
 
 import com.google.common.collect.Maps;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
@@ -32,9 +34,32 @@ public abstract class AbstractJobManagement implements JobManagement {
         return Maps.newHashMap();
     }
 
+    @Override
+    public void queueJob(String jobName) throws JobNameNotProvidedException {
+        validateJobNameArg(jobName);
+    }
+
+    @Override
+    public InputStream streamFileInWorkspace(String filePath) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String readFileInWorkspace(String filePath) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
     protected void validateUpdateArgs(String jobName, String config) {
-        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
+        validateJobNameArg(jobName);
+        validateConfigArg(config);
+    }
+
+    protected void validateConfigArg(String config) {
         if (config == null || config.isEmpty()) throw new JobConfigurationMissingException();
+    }
+
+    protected void validateJobNameArg(String jobName) {
+        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
     }
 
 }

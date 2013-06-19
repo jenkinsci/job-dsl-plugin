@@ -1,13 +1,11 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 import static com.google.common.base.Preconditions.checkState
-import static javaposse.jobdsl.dsl.JobParent.maven
 
 class MavenHelper extends AbstractHelper {
-
-    Map<String, Object> jobArguments
 
     StringBuilder allGoals = new StringBuilder()
     StringBuilder allMavenOpts = new StringBuilder()
@@ -15,11 +13,9 @@ class MavenHelper extends AbstractHelper {
     boolean perModuleEmailAdded = false
     boolean archivingDisabledAdded = false
     boolean runHeadlessAdded = false
-    boolean jdkAdded = false
 
-    MavenHelper(List<WithXmlAction> withXmlActions, Map<String, Object> jobArguments = [:]) {
-        super(withXmlActions)
-        this.jobArguments = jobArguments
+    MavenHelper(List<WithXmlAction> withXmlActions, JobType type) {
+        super(withXmlActions, type)
     }
 
     /**
@@ -27,7 +23,7 @@ class MavenHelper extends AbstractHelper {
      * @param rootPOM path to the root POM
      */
     def rootPOM(String rootPOM) {
-        checkState jobArguments['type'] == maven, "rootPOM can only be applied for Maven jobs"
+        checkState type == JobType.Maven, "rootPOM can only be applied for Maven jobs"
         checkState !rootPOMAdded, "rootPOM can only be applied once"
         rootPOMAdded = true
         execute { Node node ->
@@ -40,7 +36,7 @@ class MavenHelper extends AbstractHelper {
      * @param goals the goals to execute
      */
     def goals(String goals) {
-        checkState jobArguments['type'] == maven, "goals can only be applied for Maven jobs"
+        checkState type == JobType.Maven, "goals can only be applied for Maven jobs"
         if (allGoals.length() == 0) {
             allGoals.append goals
             execute { Node node ->
@@ -57,7 +53,7 @@ class MavenHelper extends AbstractHelper {
      * @param mavenOpts JVM options needed when launching Maven
      */
     def mavenOpts(String mavenOpts) {
-        checkState jobArguments['type'] == maven, "mavenOpts can only be applied for Maven jobs"
+        checkState type == JobType.Maven, "mavenOpts can only be applied for Maven jobs"
         if (allMavenOpts.length() == 0) {
             allMavenOpts.append mavenOpts
             execute { Node node ->
@@ -74,7 +70,7 @@ class MavenHelper extends AbstractHelper {
      * @param perModuleEmail set to <code>true</code> to enable per module e-mail notifications
      */
     def perModuleEmail(boolean perModuleEmail) {
-        checkState jobArguments['type'] == maven, "perModuleEmail can only be applied for Maven jobs"
+        checkState type == JobType.Maven, "perModuleEmail can only be applied for Maven jobs"
         checkState !perModuleEmailAdded, "perModuleEmail can only be applied once"
         perModuleEmailAdded = true
         execute { Node node ->
@@ -88,7 +84,7 @@ class MavenHelper extends AbstractHelper {
      * @param archivingDisabled set to <code>true</code> to disable automatic archiving
      */
     def archivingDisabled(boolean archivingDisabled) {
-        checkState jobArguments['type'] == maven, "archivingDisabled can only be applied for Maven jobs"
+        checkState type == JobType.Maven, "archivingDisabled can only be applied for Maven jobs"
         checkState !archivingDisabledAdded, "archivingDisabled can only be applied once"
         archivingDisabledAdded = true
         execute { Node node ->
@@ -101,8 +97,8 @@ class MavenHelper extends AbstractHelper {
      * @param runHeadless set to <code>true</code> to run the build process in headless mode
      */
     def runHeadless(boolean runHeadless) {
-        checkState(jobArguments['type'] == maven, "runHeadless can only be applied for Maven jobs")
-        checkState(!runHeadlessAdded, "runHeadless can only be applied once")
+        checkState type == JobType.Maven, "runHeadless can only be applied for Maven jobs"
+        checkState !runHeadlessAdded, "runHeadless can only be applied once"
         runHeadlessAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'runHeadless', runHeadless

@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
@@ -7,7 +8,7 @@ import spock.lang.Specification
 public class TopLevelHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    TopLevelHelper helper = new TopLevelHelper(mockActions)
+    TopLevelHelper helper = new TopLevelHelper(mockActions, JobType.Freeform)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 
     def 'add description'() {
@@ -44,6 +45,15 @@ public class TopLevelHelperSpec extends Specification {
         then:
         root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].timeoutMinutes[0].value() == '15'
         root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'true'
+    }
+
+    def 'timeout failBuild parameter works'() {
+        when:
+        def action = helper.timeout(15, false)
+        action.execute(root)
+
+        then:
+        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'false'
     }
 
     def 'environments work with map arg'() {

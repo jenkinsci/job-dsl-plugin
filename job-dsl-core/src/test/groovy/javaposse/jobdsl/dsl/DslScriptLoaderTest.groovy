@@ -1,5 +1,6 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
+import com.google.common.collect.Iterables;
 import spock.lang.*
 
 public class DslScriptLoaderTest extends Specification {
@@ -74,6 +75,26 @@ public class DslScriptLoaderTest extends Specification {
 
     }
 
+    def 'run engine that uses static import'() {
+        setup:
+        def scriptStr = '''job(type: Maven) {
+    name 'test'
+}
+'''
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
+
+        then:
+        jp != null
+        def jobs = jp.getReferencedJobs()
+        jobs.size() == 1
+        def job = Iterables.get(jobs, 0)
+        job.name == 'test'
+        job.type == JobType.Maven
+    }
+
     def 'run engine with reference to other class from a string'() {
         setup:
         def scriptStr = '''job {
@@ -113,6 +134,68 @@ println "Hello ${WordUtils.capitalize('world')}"
         results.contains("Hello World")
     }
 
+    def 'jobs scheduled to build'() {
+        setup:
+        def scriptStr = '''
+def jobA = job {
+    name 'JobA'
+}
+queue jobA
+queue 'JobB'
+'''
+        jm = new StringJobManagement();
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        jm.jobScheduled.size() == 2
+        jm.jobScheduled.contains('JobA')
+        jm.jobScheduled.contains('JobB')
+    }
+
+    def 'files read through to JobManagement'() {
+        setup:
+        def scriptStr = '''
+def jobA = job {
+    name 'JobA'
+}
+
+def content = readFileFromWorkspace('foo.txt')
+println content
+'''
+        StringJobManagement sm = new StringJobManagement(ps);
+        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, sm)
+
+        then:
+        noExceptionThrown()
+        getContent().contains('bar')
+        getContent().count('bar') == 3
+    }
+
+
+    def 'read nonexistant file'() {
+        setup:
+        def scriptStr = '''
+readFileFromWorkspace('bar.txt')
+'''
+        StringJobManagement sm = new StringJobManagement(ps);
+        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, sm)
+
+        then:
+        thrown(IOException)
+    }
 //
 //    def 'Able to run engine for string'() {
 //        setup:

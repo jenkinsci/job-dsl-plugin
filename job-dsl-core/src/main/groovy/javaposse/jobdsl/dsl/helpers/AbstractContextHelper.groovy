@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 /**
@@ -9,8 +10,8 @@ import javaposse.jobdsl.dsl.WithXmlAction
  */
 abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
 
-    AbstractContextHelper(List<WithXmlAction> withXmlActions) {
-        super(withXmlActions)
+    AbstractContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     static def executeInContext(Closure closure, Context freshContext) {

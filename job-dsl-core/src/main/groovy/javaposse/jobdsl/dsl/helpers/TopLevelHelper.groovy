@@ -1,12 +1,13 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class TopLevelHelper extends AbstractHelper {
 
-    TopLevelHelper(List<WithXmlAction> withXmlActions) {
-        super(withXmlActions)
+    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+        super(withXmlActions, jobType)
     }
 
     def description(String descriptionString) {
@@ -55,7 +56,7 @@ class TopLevelHelper extends AbstractHelper {
         execute {
             def pluginNode = it / buildWrappers / 'hudson.plugins.build__timeout.BuildTimeoutWrapper'
             pluginNode / timeoutMinutes(Integer.toString(timeoutInMinutes))
-            pluginNode / failBuild(shoudFailBuild?'true':'false')
+            pluginNode / failBuild(shouldFailBuild?'true':'false')
         }
     }
 
@@ -156,16 +157,27 @@ class TopLevelHelper extends AbstractHelper {
 
     /**
      * Block build if certain jobs are running
-     <hudson.plugins.buildblocker.BuildBlockerProperty>
-        <useBuildBlocker>true</useBuildBlocker> <!-- Always true -->
-        <blockingJobs>API-SmokeTests-TestBranchAPI-NightlyTests-TestBranchAPI-Sync-Instances</blockingJobs>
-     </hudson.plugins.buildblocker.BuildBlockerProperty>
+     <properties>
+         <hudson.plugins.buildblocker.BuildBlockerProperty>
+             <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
+             <blockingJobs>JobA</blockingJobs>
+         </hudson.plugins.buildblocker.BuildBlockerProperty>
+     </properties>
      */
-    def blockOn(String projectNames) {
+    def blockOn(Iterable<String> projectNames) {
+        blockOn( projectNames.join('\n'))
+    }
+
+    /**
+     * Block build if certain jobs are running.
+     * @param projectName Can be regular expressions. Newline delimited.
+     * @return
+     */
+    def blockOn(String projectName) {
         execute {
-            it / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
+            it / 'properties'/ 'hudson.plugins.buildblocker.BuildBlockerProperty' {
                 useBuildBlocker 'true'
-                blockingJobs projectNames
+                blockingJobs projectName
             }
         }
     }
