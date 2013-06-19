@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 import java.io.IOException;
@@ -144,6 +145,11 @@ public class DslScriptLoader {
     private static CompilerConfiguration createCompilerConfiguration(JobManagement jobManagement) {
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
         config.setScriptBaseClass("javaposse.jobdsl.dsl.JobParent");
+
+        // Import some of our helper classes so that user doesn't have to.
+        ImportCustomizer icz = new ImportCustomizer();
+        icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
+        config.addCompilationCustomizers(icz);
 
         config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
         return config;
