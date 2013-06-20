@@ -93,7 +93,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 emailContext.emailTriggers << new EmailContext.EmailTrigger('Success')
             }
 
-            recipients = recipients ?: '$DEFAULT_RECIPIENTS'
+            recipients = recipients != null ? recipients: '$DEFAULT_RECIPIENTS'
             subjectTemplate = subjectTemplate ?: '$DEFAULT_SUBJECT'
             contentTemplate = contentTemplate ?: '$DEFAULT_CONTENT'
 
