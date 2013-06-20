@@ -70,6 +70,82 @@ class GerritContext implements Context {
     Closure configureClosure
     def projects = []
 
+    int startedCodeReview =0
+    int startedVerified =0
+
+    int successfulCodeReview =0
+    int successfulVerified =1
+
+    int failedCodeReview =0
+    int failedVerified = -1
+
+    int unstableCodeReview =0
+    int unstableVerified =0
+
+    int notBuiltCodeReview =0
+    int notBuiltVerified =0
+
+    def buildStarted(int verified, int codeReview){
+        startedVerified = verified
+        startedCodeReview = codeReview
+    }
+
+    def buildStarted(Object verified, Object codeReview){
+        buildStarted(
+            Integer.parseInt(verified.toString()),
+            Integer.parseInt(codeReview.toString())
+        )
+    }
+
+
+    def buildSuccessful(int verified, int codeReview){
+        successfulVerified = verified
+        successfulCodeReview = codeReview
+    }
+
+    def buildSuccessful(Object verified, Object codeReview){
+        buildSuccessful(
+            Integer.parseInt(verified.toString()),
+            Integer.parseInt(codeReview.toString())
+        )
+    }
+
+    def buildFailed(int verified, int codeReview){
+        failedVerified = verified
+        failedCodeReview = codeReview
+    }
+
+    def buildFailed(Object verified, Object codeReview){
+        buildFailed(
+            Integer.parseInt(verified.toString()),
+            Integer.parseInt(codeReview.toString())
+        )
+    }
+
+    def buildUnstable(int verified, int codeReview){
+        unstableVerified = verified
+        unstableCodeReview = codeReview
+    }
+
+    def buildUnstable(Object verified, Object codeReview){
+        buildUnstable(
+            Integer.parseInt(verified.toString()),
+            Integer.parseInt(codeReview.toString())
+        )
+    }
+
+    def buildNotBuilt(int verified, int codeReview){
+        notBuiltVerified = verified
+        notBuiltCodeReview = codeReview
+    }
+
+    def buildNotBuilt(Object verified, Object codeReview){
+        buildNotBuilt(
+            Integer.parseInt(verified.toString()),
+            Integer.parseInt(codeReview.toString())
+        )
+    }
+
     def configure(Closure configureClosure) {
         // save for later
         this.configureClosure = configureClosure
@@ -201,16 +277,16 @@ class TriggerContext implements Context {
                     }
                 }
             }
-            gerritBuildStartedVerifiedValue 0
-            gerritBuildStartedCodeReviewValue 0
-            gerritBuildSuccessfulVerifiedValue 1
-            gerritBuildSuccessfulCodeReviewValue 2
-            gerritBuildFailedVerifiedValue '-2'
-            gerritBuildFailedCodeReviewValue '-2'
-            gerritBuildUnstableVerifiedValue '-1'
-            gerritBuildUnstableCodeReviewValue '-1'
-            gerritBuildNotBuiltVerifiedValue 0
-            gerritBuildNotBuiltCodeReviewValue 0
+            gerritBuildStartedVerifiedValue Integer.toString(gerritContext.startedVerified)
+            gerritBuildStartedCodeReviewValue Integer.toString(gerritContext.startedCodeReview)
+            gerritBuildSuccessfulVerifiedValue Integer.toString(gerritContext.successfulVerified)
+            gerritBuildSuccessfulCodeReviewValue Integer.toString(gerritContext.successfulCodeReview)
+            gerritBuildFailedVerifiedValue Integer.toString(gerritContext.failedVerified)
+            gerritBuildFailedCodeReviewValue Integer.toString(gerritContext.failedCodeReview)
+            gerritBuildUnstableVerifiedValue Integer.toString(gerritContext.unstableVerified)
+            gerritBuildUnstableCodeReviewValue Integer.toString(gerritContext.unstableCodeReview)
+            gerritBuildNotBuiltVerifiedValue Integer.toString(gerritContext.notBuiltVerified)
+            gerritBuildNotBuiltCodeReviewValue Integer.toString(gerritContext.notBuiltCodeReview)
             dynamicTriggerConfiguration false
             triggerConfigURL ''
             triggerInformationAction ''
