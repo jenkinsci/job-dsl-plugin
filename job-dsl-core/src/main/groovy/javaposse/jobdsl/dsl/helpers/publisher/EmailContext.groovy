@@ -15,7 +15,7 @@ class EmailContext implements Context {
     }
 
     def trigger(String triggerName, String subject = null, String body = null, String recipientList = null,
-                Boolean sendToDevelopers = null, Boolean sendToRequester = null, includeCulprits = null, Boolean sendToRecipientList = null) {
+                Boolean sendToDevelopers = null, Boolean sendToRequester = null, Boolean includeCulprits = null, Boolean sendToRecipientList = null) {
         Preconditions.checkArgument(emailTriggerNames.contains(triggerName), "Possible values: ${emailTriggerNames.join(',')}")
 
         emailTriggers << new EmailTrigger(triggerName, recipientList, subject, body, sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList)
@@ -27,21 +27,24 @@ class EmailContext implements Context {
         this.configureClosure = configureClosure
     }
 
-    @Canonical
     static class EmailTrigger {
-        EmailTrigger(triggerShortName, recipientList = null, subject = null, body = null, sendToDevelopers = null, sendToRequester = null, includeCulprits = null, sendToRecipientList = null) {
+        EmailTrigger(String triggerShortName, String recipientList = null, String subject = null, String body = null,
+                     Boolean sendToDevelopers = null, Boolean sendToRequester = null,
+                     Boolean includeCulprits = null, Boolean sendToRecipientList = null) {
             // Use elvis operator to assign default values if needed
             this.triggerShortName = triggerShortName
             this.recipientList = recipientList ?: ''
             this.subject = subject ?: '$PROJECT_DEFAULT_SUBJECT'
             this.body = body ?: '$PROJECT_DEFAULT_CONTENT'
-            this.sendToDevelopers = sendToDevelopers == null ? false : sendToDevelopers
-            this.sendToRequester = sendToRequester == null ? false : sendToDevelopers
-            this.includeCulprits = includeCulprits == null ? false : includeCulprits
-            this.sendToRecipientList = sendToRecipientList == null ? true : sendToRecipientList
+            this.sendToDevelopers = (sendToDevelopers == null) ? false : sendToDevelopers
+            this.sendToRequester = (sendToRequester == null) ? false : sendToRequester
+            this.includeCulprits = (includeCulprits == null) ? false : includeCulprits
+            this.sendToRecipientList = (sendToRecipientList == null) ? true : sendToRecipientList
         }
 
-        def triggerShortName, recipientList, subject, body
-        def sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList
+        String triggerShortName, recipientList, subject, body
+        boolean sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList
+
     }
+
 }

@@ -113,10 +113,10 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                                 recipientList trigger.recipientList
                                 subject trigger.subject
                                 body trigger.body
-                                sendToDevelopers trigger.sendToDevelopers
-                                sendToRequester trigger.sendToRequester
-                                includeCulprits trigger.includeCulprits
-                                sendToRecipientList trigger.sendToRecipientList
+                                sendToDevelopers trigger.sendToDevelopers as String
+                                sendToRequester trigger.sendToRequester as String
+                                includeCulprits trigger.includeCulprits as String
+                                sendToRecipientList trigger.sendToRecipientList as String
                             }
                         }
                     }
