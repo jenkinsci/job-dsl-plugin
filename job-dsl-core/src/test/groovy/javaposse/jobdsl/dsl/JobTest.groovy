@@ -217,7 +217,7 @@ class JobTest extends Specification {
 
         then:
         1 * jm.getConfig('TMPL') >> mavenXml
-        thrown(JobTypeMismatchException)
+        thrown(JobTypeMismatchException.class)
     }
 
     def 'Maven job extends free-style template and fails to generate xml'() {
@@ -231,7 +231,7 @@ class JobTest extends Specification {
 
         then:
         1 * jm.getConfig('TMPL') >> minimalXml
-        thrown(JobTypeMismatchException)
+        thrown(JobTypeMismatchException.class)
     }
 
     final minimalXml = '''
