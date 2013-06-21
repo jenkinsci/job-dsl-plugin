@@ -95,34 +95,21 @@ class GerritContext implements Context {
     }
 }
 
-/**
- <inspectingContent>true</inspectingContent>
- <contentTypes>
- <org.jenkinsci.plugins.urltrigger.content.JSONContentType>
- <jsonPaths>
- <org.jenkinsci.plugins.urltrigger.content.JSONContentEntry>
- <jsonPath>/foo/bar</jsonPath>
- </org.jenkinsci.plugins.urltrigger.content.JSONContentEntry>
- <org.jenkinsci.plugins.urltrigger.content.JSONContentEntry>
- <jsonPath>/foo/</jsonPath>
- </org.jenkinsci.plugins.urltrigger.content.JSONContentEntry>
- </jsonPaths>
- </org.jenkinsci.plugins.urltrigger.content.JSONContentType>
- <org.jenkinsci.plugins.urltrigger.content.TEXTContentType>
- <regExElements>
- <org.jenkinsci.plugins.urltrigger.content.TEXTContentEntry>
- <regEx>.*</regEx>
- </org.jenkinsci.plugins.urltrigger.content.TEXTContentEntry>
- </regExElements>
- </org.jenkinsci.plugins.urltrigger.content.TEXTContentType>
- </contentTypes>
- */
+/** Context for configuring inspections that support paths/RegExps. */
 class UrlTriggerInspectionContext implements Context {
 
+    /** Enumeration of inspections with their respective element names in XML */
     enum Inspection {
+        /** Simple monitor for change of MD5 hash. no nested elements.*/
         change('org.jenkinsci.plugins.urltrigger.content.SimpleContentType', null, null, null),
+
+        /** JSON content */
         json('org.jenkinsci.plugins.urltrigger.content.JSONContentType', 'jsonPaths', 'org.jenkinsci.plugins.urltrigger.content.JSONContentEntry', 'jsonPath'),
+
+        /** TEXT content */
         text('org.jenkinsci.plugins.urltrigger.content.TEXTContentType', 'regExElements', 'org.jenkinsci.plugins.urltrigger.content.TEXTContentEntry', 'regEx'),
+
+        /** XML content */
         xml('org.jenkinsci.plugins.urltrigger.content.XMLContentType', 'xPaths', 'org.jenkinsci.plugins.urltrigger.content.XMLContentEntry', 'xPath')
 
         final String node
@@ -141,16 +128,28 @@ class UrlTriggerInspectionContext implements Context {
     Inspection type
     def expressions = []
 
+
     UrlTriggerInspectionContext(Inspection type) {
         this.type = Preconditions.checkNotNull(type, "Inspection type must not be null!")
     }
 
+    /**
+     * Adds a JSON/XPATH path expression to the inspection.
+     * @param path expression to add
+     */
     def path(String path) {
         String p = Preconditions.checkNotNull(path, "Path must not be null")
         Preconditions.checkArgument(!p.empty, "Path given must not be empty")
         expressions << p
     }
 
+    /**
+     * Adds a RegExp for TEXT inspections.
+     *
+     * Checks that the given Regexp is actually compilable to a Java RegExp.
+     *
+     * @param exp regular expression to add
+     */
     def regexp(String exp) {
         def expr = Preconditions.checkNotNull(exp, "Regular expression must not be null")
         Preconditions.checkArgument(!expr.empty, "Regular expressions must not be empty")
@@ -165,29 +164,25 @@ class UrlTriggerInspectionContext implements Context {
 
 }
 
-/**
- <org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
- <url>http://source-1.search.dev.fra1.xing.com/content/repositories/snapshots/com/xing/dia/tagindex-common/maven-metadata.xml</url>
- <proxyActivated>false</proxyActivated>
- <checkStatus>false</checkStatus>
- <statusCode>200</statusCode>
- <timeout>300</timeout>
- <checkETag>false</checkETag>
- <checkLastModificationDate>false</checkLastModificationDate>
- <inspectingContent>false</inspectingContent>
- <contentTypes/>
- </org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
- */
+/** Configuration container for a monitored URL.*/
 class UrlTriggerEntryContext implements Context {
 
+    /** Enumeration of defined checks */
     enum Check {
+        /** Check the response status */
         status,
+
+        /** Check the ETag information of the URL*/
         etag,
+
+        /** Check the last modified date */
         lastModified
     }
 
+    /* Currently not usable due to encryption dependencies on Jenkins instance
     def username
     def password
+    */
 
     def url
     def statusCode = 200
@@ -196,6 +191,11 @@ class UrlTriggerEntryContext implements Context {
     EnumSet<Check> checks = EnumSet.noneOf(Check)
     def inspections = []
 
+    /**
+     * Creates a new entry for a monitored URL.
+     *
+     * @param url Required URL to monitor
+     */
     UrlTriggerEntryContext(String url) {
         this.url = Preconditions.checkNotNull(url, "The URL is required for urlTrigger()")
         Preconditions.checkArgument(url != "", "URL must not be empty.")
@@ -203,32 +203,91 @@ class UrlTriggerEntryContext implements Context {
         this.timeout = timeout
     }
 
+    /**
+     * Enables/Disables the use of the global proxy that is configured for Jenkins.
+     *
+     * Defaults to <code>false</code>
+     * @param active <code>true</code> to use a proxy
+     */
     def proxy(boolean active) {
         this.proxyActivated = active
     }
 
+    /**
+     * Define the expected status code of the response.
+     *
+     * Defaults to 200.
+     * Needs to be used with check('status') to be useful.
+     *
+     * @param statusCode status code to expect from URL
+     */
     def status(int statusCode) {
         this.statusCode = statusCode
     }
 
+    /**
+     * Defines how many seconds the trigger will wait when checking the URL.
+     *
+     * Defaults to 300 seconds.
+     *
+     * @param timeout number of seconds to wait for response
+     */
     def timeout(long timeout) {
         this.timeout = timeout
     }
 
+    /**
+     * Enables checks to perform for URL.
+     *
+     * Can be one of:
+     *
+     * 'status' (Check status code)
+     * 'etag' (Check the ETag)
+     * 'lastModified' (Check the last modified date)
+     *
+     * @param performCheck check to perform
+     */
     def check(String performCheck) {
-        Check check = Preconditions.checkNotNull(Check.valueOf(performCheck), "Check must be one of: ${Check.values()}" as Object)
+        Check check
+
+        try {
+            check = Preconditions.checkNotNull(Check.valueOf(performCheck), 'Check must not be null' as Object)
+        } catch (IllegalArgumentException iae) {
+            throw new IllegalArgumentException("Check must be one of: ${Check.values()}")
+        }
+
         checks << check
     }
 
+    /**
+     * Adds inspections of the returned content.
+     *
+     * Can be one of:
+     * 'change'
+     * 'json'
+     * 'xml'
+     * 'text'
+     *
+     * @param type type of inspection to use
+     * @param inspectionClosure for configuring RegExps/Path expressions for xml, text and json
+     * @return
+     */
     def inspection(String type, Closure inspectionClosure = null) {
-        UrlTriggerInspectionContext.Inspection itype = Preconditions.checkNotNull(
+
+        UrlTriggerInspectionContext.Inspection itype
+        try {
+        itype = Preconditions.checkNotNull(
                 UrlTriggerInspectionContext.Inspection.valueOf(type),
-                "Inspection must be one of ${UrlTriggerInspectionContext.Inspection.values()}" as Object)
+                'Inspection must not be null' as Object)
+        } catch (IllegalArgumentException iae) {
+            throw new IllegalArgumentException("Inspection must be one of ${UrlTriggerInspectionContext.Inspection.values()}")
+        }
 
         UrlTriggerInspectionContext inspection = new UrlTriggerInspectionContext(itype)
         AbstractContextHelper.executeInContext(inspectionClosure, inspection)
 
         inspections << inspection
+
     }
 
     /* *
@@ -242,6 +301,9 @@ class UrlTriggerEntryContext implements Context {
 
 }
 
+/**
+ * Top level context for configuring the URL trigger functionality.
+ */
 class UrlTriggerContext implements Context {
     Closure configureClosure
     def label
@@ -252,18 +314,22 @@ class UrlTriggerContext implements Context {
         if (cron) this.crontab = cron
     }
 
+    /** Adds configure closure for overriding the generated XML */
     def configure(Closure configureClosure) {
         this.configureClosure = configureClosure
     }
 
+    /** restrict execution to label */
     def restrictToLabel(String label) {
         this.label = label
     }
 
+    /** Sets the cron schedule */
     def cron(String cron) {
         this.crontab = cron
     }
 
+    /** adds a monitored URL to the trigger. */
     def url(String url, Closure entryClosure = null) {
         UrlTriggerEntryContext entryContext = new UrlTriggerEntryContext(url)
         AbstractContextHelper.executeInContext(entryClosure, entryContext)
@@ -284,51 +350,22 @@ class TriggerContext implements Context {
     }
 
     /**
-     <org.jenkinsci.plugins.urltrigger.URLTrigger plugin="urltrigger@0.31">
-     <spec>H/5 * * * *</spec>
-     <entries>
-     <org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
-     <url>http://source-1.search.dev.fra1.xing.com/content/repositories/snapshots/com/xing/dia/recommenders-common/maven-metadata.xml</url>
-     <proxyActivated>false</proxyActivated>
-     <checkStatus>false</checkStatus>
-     <statusCode>200</statusCode>
-     <timeout>300</timeout>
-     <checkETag>false</checkETag>
-     <checkLastModificationDate>false</checkLastModificationDate>
-     <inspectingContent>false</inspectingContent>
-     <contentTypes/>
-     </org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
-     <org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
-     <url>http://source-1.search.dev.fra1.xing.com/content/repositories/snapshots/com/xing/ds/ds-services/maven-metadata.xml</url>
-     <proxyActivated>false</proxyActivated>
-     <checkStatus>false</checkStatus>
-     <statusCode>200</statusCode>
-     <timeout>300</timeout>
-     <checkETag>false</checkETag>
-     <checkLastModificationDate>false</checkLastModificationDate>
-     <inspectingContent>false</inspectingContent>
-     <contentTypes/>
-     </org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
-     <org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
-     <url>http://source-1.search.dev.fra1.xing.com/content/repositories/snapshots/com/xing/dia/tagindex-common/maven-metadata.xml</url>
-     <proxyActivated>false</proxyActivated>
-     <checkStatus>false</checkStatus>
-     <statusCode>200</statusCode>
-     <timeout>300</timeout>
-     <checkETag>false</checkETag>
-     <checkLastModificationDate>false</checkLastModificationDate>
-     <inspectingContent>false</inspectingContent>
-     <contentTypes/>
-     </org.jenkinsci.plugins.urltrigger.URLTriggerEntry>
-     </entries>
-     <labelRestriction>false</labelRestriction>
-     </org.jenkinsci.plugins.urltrigger.URLTrigger>
-     </triggers>
+     * Adds DSL  for adding and configuring the URL trigger plugin to a job.
+     *
+     * Uses a default cron execution schedule "H/5 * * * *", every 5 minutes with some jitter to prevent load pikes.
+     *
+     * @param contextClosure closure for configuring the context
      */
     def urlTrigger(Closure contextClosure) {
         urlTrigger(null, contextClosure)
     }
 
+    /**
+     * Adds DSL  for adding and configuring the URL trigger plugin to a job.
+     *
+     * @param crontab crontab execution spec
+     * @param contextClosure closure for configuring the context
+     */
     def urlTrigger(String crontab, Closure contextClosure) {
 
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
@@ -421,9 +458,7 @@ class TriggerContext implements Context {
     }
 
     /**
-     <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.6">
-     <spec></spec>
-     </com.cloudbees.jenkins.GitHubPushTrigger>
+     * Trigger that runs jobs on push notifications from Github/Github enterprise
      */
     def githubPush() {
         def attributes = [plugin: 'github@1.6']

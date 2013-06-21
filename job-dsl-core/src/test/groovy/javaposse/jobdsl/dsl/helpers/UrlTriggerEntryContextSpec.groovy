@@ -35,4 +35,28 @@ class UrlTriggerEntryContextSpec extends Specification {
         !ctx.proxyActivated
         ctx.inspections.empty
     }
+
+    def 'check invalid inspection causes exception'() {
+        setup:
+        def ctx = new UrlTriggerEntryContext('http://www.example.com/')
+
+        when:
+        ctx.inspection('foo')
+
+        then:
+        thrown(IllegalArgumentException)
+
+    }
+
+    def 'check invalid check causes exception'() {
+        setup:
+        def ctx = new UrlTriggerEntryContext('http://www.example.com/')
+
+        when:
+        ctx.check('foo')
+
+        then:
+        thrown(IllegalArgumentException)
+
+    }
 }
