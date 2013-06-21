@@ -11,6 +11,229 @@ public class TriggerHelperSpec extends Specification {
     TriggerContextHelper helper = new TriggerContextHelper(mockActions, JobType.Freeform)
     TriggerContext context = new TriggerContext()
 
+    def 'call github trigger methods'() {
+        when:
+        context.githubPush()
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def githubPushTrigger = context.triggerNodes[0]
+        githubPushTrigger.name() == 'com.cloudbees.jenkins.GitHubPushTrigger'
+        githubPushTrigger.attribute('plugin') == "github@1.6"
+        githubPushTrigger.spec[0].value() == ''
+    }
+
+    def 'call urltrigger with proxy, etag and last modified check'() {
+        when:
+        context.urlTrigger {
+
+            url('http://www.example.com/some/url') {
+                proxy true
+                check 'etag'
+                check 'lastModified'
+            }
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+    }
+
+    def 'call urltrigger with inspection for content change'() {
+        when:
+        context.urlTrigger {
+
+            url('http://www.example.com/some/other/url') {
+                inspection 'change'
+            }
+
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.entries != null
+        utc.entries.size() == 1
+
+        def entry = utc.entries[0].'org.jenkinsci.plugins.urltrigger.URLTriggerEntry'[0]
+        entry.inspectingContent[0].value() == true
+        entry.contentTypes != null
+        entry.contentTypes.size() == 1
+        entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.SimpleContentType' != null
+    }
+
+    def 'call urltrigger with JSON path inspection'() {
+
+        when:
+        context.urlTrigger {
+
+            url('http://www.example.com/some/other/url') {
+                inspection('json') {
+                    path('/foo/bar')
+                    path('/*/baz')
+                }
+            }
+
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.entries != null
+        utc.entries.size() == 1
+
+        def entry = utc.entries[0].'org.jenkinsci.plugins.urltrigger.URLTriggerEntry'[0]
+        entry.inspectingContent[0].value() == true
+        entry.contentTypes != null
+        entry.contentTypes.size() == 1
+        entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.JSONContentType' != null
+
+        def ct =  entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.JSONContentType'[0]
+        ct.jsonPaths != null
+        ct.jsonPaths.size() == 1
+
+        def paths = ct.jsonPaths[0]
+        def contentEntries = paths.'org.jenkinsci.plugins.urltrigger.content.JSONContentEntry'
+        contentEntries!= null
+        contentEntries.size() == 2
+        contentEntries[0].jsonPath != null
+        contentEntries[0].jsonPath[0].value() == '/foo/bar'
+        contentEntries[1].jsonPath != null
+        contentEntries[1].jsonPath[0].value() == '/*/baz'
+
+    }
+
+    def 'call urltrigger with XML path inspection'() {
+
+        when:
+        context.urlTrigger {
+            url('http://www.example.com/some/other/url') {
+                inspection('xml') {
+                    path('//*[@name="foo"]')
+                }
+            }
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.entries != null
+        utc.entries.size() == 1
+
+        def entry = utc.entries[0].'org.jenkinsci.plugins.urltrigger.URLTriggerEntry'[0]
+        entry.inspectingContent[0].value() == true
+        entry.contentTypes != null
+        entry.contentTypes.size() == 1
+        entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.XMLContentType' != null
+
+        def ct =  entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.XMLContentType'[0]
+        ct.xPaths != null
+        ct.xPaths.size() == 1
+
+        def paths = ct.xPaths[0]
+        def contentEntries = paths.'org.jenkinsci.plugins.urltrigger.content.XMLContentEntry'
+        contentEntries!= null
+        contentEntries.size() == 1
+        contentEntries[0].xPath != null
+        contentEntries[0].xPath[0].value() == '//*[@name="foo"]'
+
+    }
+
+    def 'call urltrigger methods with defaults and check for response status'() {
+        when:
+        context.urlTrigger() {
+            url('http://www.example.com/some/url') {
+                check 'status'
+            }
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.spec[0].value() == 'H/5 * * * *'
+        utc.labelRestriction != null
+        utc.labelRestriction.size() == 1
+        utc.labelRestriction[0].value() == false
+        utc.entries != null
+        utc.entries.size() == 1
+
+        def entry = utc.entries[0].'org.jenkinsci.plugins.urltrigger.URLTriggerEntry'[0]
+        entry.url != null
+        entry.url.size() == 1
+        entry.url[0].value() == 'http://www.example.com/some/url'
+        entry.statusCode[0].value() == 200
+        entry.timeout[0].value() == 300
+        entry.checkStatus[0].value() == true
+    }
+
+    def 'call urltrigger methods with non-default status code and timeout'() {
+        when:
+        context.urlTrigger() {
+            url('http://www.example.com/some/url') {
+                status 404
+                timeout 6000
+            }
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.entries != null
+        utc.entries.size() == 1
+
+        def entry = utc.entries[0].'org.jenkinsci.plugins.urltrigger.URLTriggerEntry'[0]
+        entry.url != null
+        entry.url.size() == 1
+        entry.url[0].value() == 'http://www.example.com/some/url'
+        entry.statusCode[0].value() == 404
+        entry.timeout[0].value() == 6000
+    }
+
+    def 'call urltrigger methods with non-default cron'() {
+        when:
+        context.urlTrigger() {
+            cron '* 0 * 0 *'
+            url 'http://www.example.com/some/url'
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.spec[0].value() == '* 0 * 0 *'
+    }
+
+    def 'call urltrigger methods with label restriction'() {
+        when:
+        context.urlTrigger() {
+            restrictToLabel "foo"
+            url 'http://www.example.com/some/url'
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.labelRestriction[0].value() == true
+        utc.triggerLabel[0].value() == 'foo'
+    }
+
     def 'call cron trigger methods'() {
         when:
         context.cron('*/10 * * * *')
