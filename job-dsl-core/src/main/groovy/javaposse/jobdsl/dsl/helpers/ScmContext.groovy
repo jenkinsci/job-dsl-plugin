@@ -115,7 +115,11 @@ class ScmContext implements Context {
      * @param configure
      * @return
      */
-    def git(String url, String branch = null, Closure configure = null) {
+    def git(String url, Closure configure = null) {
+        git(url, null, configure)
+    }
+
+    def git(String url, String branch, Closure configure = null) {
         Preconditions.checkNotNull(url)
         validateMulti()
         // TODO Validate url as a git url (e.g. https or git)

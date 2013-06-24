@@ -71,6 +71,27 @@ public class PublisherHelperSpec extends Specification {
         email.sendToRecipientList[0].value() as String == 'false'
     }
 
+
+    def 'loop triggers to set send to requester'() {
+        when:
+        // Given by Thaddeus Diamond <thaddeus@hadapt.com> in mailing list
+        def triggerNames = ['Unstable', 'Aborted', 'Success', 'Failure']
+        context.extendedEmail('', '$DEFAULT_SUBJECT', '$DEFAULT_CONTENT') {
+            triggerNames.each { result -> trigger triggerName: result, sendToRequester: true }
+        }
+
+        then:
+        Node emailPublisher = context.publisherNodes[0]
+
+        emailPublisher.recipientList[0].value() == '' // Not $DEFAULT_RECIPIENTS, not sure if this is valid
+
+        Node triggers = emailPublisher.configuredTriggers[0]
+        triggers.children().size() == triggerNames.size()
+        Node emailDefault = triggers.children()[0].email[0]
+        emailDefault.sendToDevelopers[0].value() == 'false'
+        emailDefault.sendToRequester[0].value() == 'true'
+    }
+
     def 'call archive artifacts with all args'() {
         when:
         context.archiveArtifacts('include/*', 'exclude/*', true)
@@ -665,4 +686,5 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         context.publisherNodes[0].strategy[0].value() == 'ALL'
     }
+
 }
