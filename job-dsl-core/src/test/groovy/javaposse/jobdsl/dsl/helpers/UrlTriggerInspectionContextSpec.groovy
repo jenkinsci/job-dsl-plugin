@@ -5,7 +5,6 @@ import spock.lang.Specification
 import static javaposse.jobdsl.dsl.helpers.UrlTriggerInspectionContext.Inspection.json
 import static javaposse.jobdsl.dsl.helpers.UrlTriggerInspectionContext.Inspection.text
 
-
 /**
  * UrlTriggerEntryContextSpec
  */
@@ -39,7 +38,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         then: thrown(IllegalArgumentException)
     }
 
-    def 'ensure that regexps are not null'() {
+    def 'ensure that RegExps are not null'() {
         setup:
         def ctx = new UrlTriggerInspectionContext(text)
 
@@ -50,7 +49,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def 'ensure that regexps are not empty'() {
+    def 'ensure that RegExps are not empty'() {
         setup:
         def ctx = new UrlTriggerInspectionContext(text)
 
@@ -61,7 +60,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'ensure that regexps are compileable' () {
+    def 'ensure that RegExps are compileable' () {
         setup:
         def ctx = new UrlTriggerInspectionContext(text)
 
