@@ -149,6 +149,44 @@ public class TriggerHelperSpec extends Specification {
 
     }
 
+    def 'call urltrigger with TEXT regex inspection'() {
+
+        when:
+        context.urlTrigger {
+            url('http://www.example.com/some/other/url') {
+                inspection('text') {
+                    regexp('_(foo|bar).+')
+                }
+            }
+        }
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+
+        def utc = context.triggerNodes[0]
+        utc.attribute('plugin') == 'urltrigger@0.31'
+        utc.entries != null
+        utc.entries.size() == 1
+
+        def entry = utc.entries[0].'org.jenkinsci.plugins.urltrigger.URLTriggerEntry'[0]
+        entry.inspectingContent[0].value() == true
+        entry.contentTypes != null
+        entry.contentTypes.size() == 1
+        entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.TEXTContentType' != null
+
+        def ct =  entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.TEXTContentType'[0]
+        ct.regExElements != null
+        ct.regExElements.size() == 1
+
+        def paths = ct.regExElements[0]
+        def contentEntries = paths.'org.jenkinsci.plugins.urltrigger.content.TEXTContentEntry'
+        contentEntries!= null
+        contentEntries.size() == 1
+        contentEntries[0].regEx != null
+        contentEntries[0].regEx[0].value() == '_(foo|bar).+'
+    }
+
     def 'call urltrigger methods with defaults and check for response status'() {
         when:
         context.urlTrigger() {
