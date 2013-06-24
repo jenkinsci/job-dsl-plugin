@@ -1,10 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
-import java.util.Map;
-
 import com.google.common.base.Preconditions
-
-import groovy.lang.Closure;
 import groovy.transform.PackageScope
 import javaposse.jobdsl.dsl.WithXmlAction
 import hudson.plugins.perforce.PerforcePasswordEncryptor
