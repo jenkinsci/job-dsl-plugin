@@ -1,6 +1,9 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
+import hudson.util.Secret
+import jenkins.security.ConfidentialStore
+import jenkins.security.DefaultConfidentialStore
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -175,6 +178,35 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             }
 
             buildParameterNodes[fileLocation] = definitionNode
+        }
+
+        /**
+         * WARNING - the current implementation stores the password in the DSL script in CLEAR TEXT but not in the
+         * generated jobs. For that, it is encrypted.
+         *
+         * <project>
+         *     <properties>
+         *         <hudson.model.ParametersDefinitionProperty>
+         *             <hudson.model.PasswordParameterDefinition>
+         *                 <name>passwordValue</name>
+         *                 <description>the description of the password value</description>
+         *                 <defaultValue>2PlY1mNgLa3LS0Rn35RTsQAxYSbWbMCi3sS3h6TfS9A=</defaultValue>
+         *
+         * @param parameterName
+         * @param defaultValue
+         * @param description (optional)
+         * @return
+         */
+        def passwordParam (String parameterName, String defaultValue, String description = null) {
+
+            Preconditions.checkNotNull(defaultValue, 'defaultValue cannot be null')
+            Preconditions.checkArgument(defaultValue.length() > 0)
+
+            ConfidentialStore.TEST = new ThreadLocal()
+            ConfidentialStore.TEST.set(new DefaultConfidentialStore(new File(System.getProperty("user.home"))))
+            Secret mySecret = new Secret(defaultValue);
+
+            simpleParam('hudson.model.PasswordParameterDefinition', parameterName, mySecret.getEncryptedValue(), description)
         }
 
         /**

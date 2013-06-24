@@ -1,5 +1,8 @@
 package javaposse.jobdsl.dsl.helpers
 
+import spock.lang.Specification
+import hudson.util.Secret
+
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper.BuildParametersContext
@@ -328,6 +331,67 @@ public class BuildParametersHelperSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'base passwordParam usage'() {
+
+        when:
+        jenkins.security.ConfidentialStore.TEST = new ThreadLocal()
+        jenkins.security.ConfidentialStore.TEST.set(new jenkins.security.DefaultConfidentialStore(new File(System.getProperty("user.home"))))
+        Secret mySecret = new Secret("myDefaultPassword");
+        context.passwordParam("myParameterName", "myDefaultPassword", "myPasswordParamDescription")
+
+        then:
+
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.PasswordParameterDefinition'
+        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
+        context.buildParameterNodes["myParameterName"].defaultValue.text() != 'myDefaultPassword'
+        context.buildParameterNodes["myParameterName"].defaultValue.text() == mySecret.getEncryptedValue()
+        context.buildParameterNodes["myParameterName"].description.text() == 'myPasswordParamDescription'
+    }
+
+    def 'simplest passwordParam usage'() {
+        when:
+        jenkins.security.ConfidentialStore.TEST = new ThreadLocal()
+        jenkins.security.ConfidentialStore.TEST.set(new jenkins.security.DefaultConfidentialStore(new File(System.getProperty("user.home"))))
+        Secret mySecret = new Secret("myDefaultPassword");
+        context.passwordParam("myParameterName", "myDefaultPassword")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.PasswordParameterDefinition'
+        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
+        context.buildParameterNodes["myParameterName"].defaultValue.text() != 'myDefaultPassword'
+        context.buildParameterNodes["myParameterName"].defaultValue.text() == mySecret.getEncryptedValue()
+        context.buildParameterNodes["myParameterName"].description.text() == ''
+    }
+
+    def 'passwordParam name argument cant be null'() {
+         when:
+         context.passwordParam(null, null)
+
+         then:
+         thrown(NullPointerException)
+    }
+
+    def 'passwordParam name argument cant be empty'() {
+         when:
+         context.passwordParam('', '')
+
+         then:
+         thrown(IllegalArgumentException)
+    }
+
+    def 'passwordParam already defined'() {
+         when:
+         context.booleanParam('one')
+         context.passwordParam('one', 'secret')
+
+         then:
+         thrown(IllegalArgumentException)
     }
 
     def 'base runParam usage'() {

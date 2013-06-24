@@ -1,6 +1,10 @@
 allprojects {
     repositories {
         mavenCentral()
+        maven {
+            name 'jenkins-ci-plugins'
+            url('http://maven.jenkins-ci.org/content/repositories/releases')
+        }
     }
 }
 
@@ -41,6 +45,50 @@ project(':job-dsl-core') {
         compile 'commons-codec:commons-codec:1.8' // For perforce
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // For runtime use, not just for testing
+        compile 'javax.servlet:servlet-api:2.4' // Side-effect of bringing in jenkins-core (below)
+        compile 'org.jvnet.hudson:trilead-ssh2:build212-hudson-1' // Side-effect of bringing in jenkins-core (below)
+        compile 'org.springframework:spring-core:3.2.3.RELEASE' // Side-effect of bringing in jenkins-core (below)
+        testRuntime ('commons-jelly:commons-jelly:1.0') { transitive = false } // Side-effect of bringing in jenkins-core (below)
+        testRuntime 'org.jruby.ext.posix:jna-posix:1.0.3' // Side-effect of bringing in jenkins-core (below)
+        compile ('org.jenkins-ci.main:jenkins-core:1.512') { // For BuildParameters.PasswordParam
+            exclude group: 'org.jenkins-ci'
+            exclude group: 'org.jvnet.hudson'
+            exclude group: 'org.sonatype.sisu'
+            exclude group: 'org.jruby.ext.posix'
+            exclude group: 'com.github.jnr'
+            exclude group: 'org.kohsuke'
+            exclude group: 'com.infradna.tool'
+            exclude group: 'commons-httpclient'
+            exclude group: 'args4j'
+            exclude group: 'jfree'
+            exclude group: 'javax.servlet'
+            exclude group: 'commons-digester'
+            exclude group: 'javax.mail'
+            exclude group: 'jaxen'
+            exclude group: 'commons-jelly'
+            exclude group: 'org.codehaus.groovy'
+            exclude group: 'jline'
+            exclude group: 'org.fusesource.jansi'
+            exclude group: 'org.springframework'
+            exclude group: 'xpp3'
+            exclude group: 'junit'
+            exclude group: 'org.mockito'
+            exclude group: 'org.powermock'
+            exclude group: 'com.sun.xml.txw2'
+            exclude group: 'commons-collections'
+            exclude group: 'org.jvnet.winp'
+            exclude group: 'org.codehaus.woodstox'
+            exclude group: 'net.java.dev.jna'
+            exclude group: 'org.jvnet.libzfs'
+            exclude group: 'com.sun.solaris'
+            exclude group: 'net.java.sezpoz'
+            exclude group: 'org.kohsuke.metainf-services'
+            exclude group: 'org.jvnet.robust-http-client'
+            exclude group: 'commons-codec'
+            exclude group: 'findbugs'
+            exclude group: 'org.mindrot'
+            exclude group: 'com.google.guava'
+        }
     }
     jar {
         manifest {
