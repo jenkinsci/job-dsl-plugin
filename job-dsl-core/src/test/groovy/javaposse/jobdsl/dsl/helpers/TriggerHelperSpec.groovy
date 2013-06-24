@@ -308,7 +308,7 @@ public class TriggerHelperSpec extends Specification {
         gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '10'
 
         gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() == '-2'
+        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() == '0'
 
         Node gerritEvents = gerritTrigger.triggerOnEvents[0]
         gerritEvents.children().size() == 2
@@ -333,6 +333,89 @@ public class TriggerHelperSpec extends Specification {
         gerritProjectSimple.pattern[0].value() == 'test-project'
         gerritProjectSimple.branches[0].children().size() == 1
         // Assume branch is fine
+    }
+
+
+    def 'call gerrit trigger and verify build status value settings'() {
+      when:
+        context.gerrit {
+            events {
+                PatchsetCreated
+                DraftPublished
+            }
+
+            project('test-project', '**')
+        }
+      then:
+        def gerritTrigger = context.triggerNodes[0]
+        gerritTrigger.gerritBuildSuccessfulCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildSuccessfulCodeReviewValue[0].value() == '0'
+
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '1'
+
+        gerritTrigger.gerritBuildFailedVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildFailedVerifiedValue[0].value() as String == '-1'
+
+        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() as String == '0'
+
+        gerritTrigger.gerritBuildUnstableVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildUnstableVerifiedValue[0].value() as String == '0'
+
+        gerritTrigger.gerritBuildUnstableCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildUnstableCodeReviewValue[0].value() == '0'
+    }
+
+
+    def 'call gerrit trigger and verify build status value methods'() {
+      when:
+        context.gerrit {
+            events {
+                PatchsetCreated
+                DraftPublished
+            }
+
+            project('test-project', '**')
+
+            buildSuccessful(11,10)
+            buildFailed('-21',20)
+            buildUnstable(30,'32')
+            buildNotBuilt('40','42')
+            buildStarted('50','55')
+        }
+      then:
+        def gerritTrigger = context.triggerNodes[0]
+        gerritTrigger.gerritBuildSuccessfulCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildSuccessfulCodeReviewValue[0].value() == '10'
+
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '11'
+
+        gerritTrigger.gerritBuildFailedVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildFailedVerifiedValue[0].value() as String == '-21'
+
+        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() as String == '20'
+
+        gerritTrigger.gerritBuildUnstableVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildUnstableVerifiedValue[0].value() as String == '30'
+
+        gerritTrigger.gerritBuildUnstableCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildUnstableCodeReviewValue[0].value() == '32'
+
+        gerritTrigger.gerritBuildNotBuiltVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildNotBuiltVerifiedValue[0].value() as String == '40'
+
+        gerritTrigger.gerritBuildNotBuiltCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildNotBuiltCodeReviewValue[0].value() == '42'
+
+        gerritTrigger.gerritBuildStartedVerifiedValue.size() == 1
+        gerritTrigger.gerritBuildStartedVerifiedValue[0].value() as String == '50'
+
+        gerritTrigger.gerritBuildStartedCodeReviewValue.size() == 1
+        gerritTrigger.gerritBuildStartedCodeReviewValue[0].value() == '55'
+
     }
 
     def 'execute withXml Action'() {

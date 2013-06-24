@@ -81,7 +81,7 @@ class StepContext implements Context {
      <subdirPath></subdirPath>
      </org.jvnet.hudson.plugins.SbtPluginBuilder>
      */
-    def sbt(String sbtNameArg = null, String jvmFlagsArg=null, String sbtFlagsArg=null, String actionsArg=null, String subdirPathArg=null, Closure configure = null) {
+    def sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null, String subdirPathArg=null, Closure configure = null) {
 
         def nodeBuilder = new NodeBuilder()
 

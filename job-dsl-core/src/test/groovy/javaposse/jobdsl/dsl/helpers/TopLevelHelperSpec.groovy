@@ -184,8 +184,8 @@ public class TopLevelHelperSpec extends Specification {
         action.execute(root)
 
         then:
-        root.'hudson.plugins.buildblocker.BuildBlockerProperty'[0].useBuildBlocker[0].value() == 'true'
-        root.'hudson.plugins.buildblocker.BuildBlockerProperty'[0].blockingJobs[0].value() == 'MyProject'
+        root.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0].useBuildBlocker[0].value() == 'true'
+        root.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0].blockingJobs[0].value() == 'MyProject'
     }
 
     def 'can run jdk'() {
