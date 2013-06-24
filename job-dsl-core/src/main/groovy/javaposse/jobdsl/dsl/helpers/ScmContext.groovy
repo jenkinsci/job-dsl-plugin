@@ -266,9 +266,9 @@ class ScmContext implements Context {
         
         SvnContext svnContext = new SvnContext()
         AbstractContextHelper.executeInContext(svnClosure, svnContext)
-        
+
         Preconditions.checkState(svnContext.locations.size() != 0, 'One or more locations must be specified')
-        
+
         def nodeBuilder = NodeBuilder.newInstance()
         Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
             locations {
@@ -280,12 +280,11 @@ class ScmContext implements Context {
                 }
             }
             workspaceUpdater(class:svnContext.checkoutstrategy.className)
-
-            excludedRegions ''
-            includedRegions ''
-            excludedUsers ''
-            excludedRevprop ''
-            excludedCommitMessages ''
+            excludedRegions svnContext.excludedregions.join("\n")
+            includedRegions svnContext.includedregions.join("\n")
+            excludedUsers svnContext.excludedusers.join("\n")
+            excludedCommitMessages svnContext.excludedcommitmsgs.join("\n")
+            excludedRevprop svnContext.excludedrevprop
         }
 
         scmNodes << svnNode
@@ -300,6 +299,10 @@ class ScmContext implements Context {
         def locations = []
         def checkoutstrategy = CheckoutStrategy.Update
         def excludedregions = []
+        def includedregions = []
+        def excludedusers = []
+        def excludedcommitmsgs = []
+        def excludedrevprop = ''
 
         def location(String svnUrl, String localDir = '.') {
             locations << new Location(url:svnUrl, local:localDir)
@@ -311,6 +314,46 @@ class ScmContext implements Context {
 
         def excludedRegion(String pattern) {
             excludedregions << pattern
+        }
+
+        def excludedRegions(Iterable<String> patterns) {
+            patterns.each {
+                excludedRegion(it)
+            }
+        }
+
+        def includedRegion(String pattern) {
+            includedregions << pattern
+        }
+
+        def includedRegions(Iterable<String> patterns) {
+            patterns.each {
+                includedRegion(it)
+            }
+        }
+
+        def excludedUser(String pattern) {
+            excludedusers << pattern
+        }
+
+        def excludedUsers(Iterable<String> patterns) {
+            patterns.each {
+                excludedUser(it)
+            }
+        }
+
+        def excludedCommitMsg(String pattern) {
+            excludedcommitmsgs << pattern
+        }
+
+        def excludedCommitMsgs(Iterable<String> patterns) {
+            patterns.each {
+                excludedCommitMsg(it)
+            }
+        }
+
+        def excludedRevProp(String revisionProperty) {
+            excludedrevprop = revisionProperty
         }
     }
 

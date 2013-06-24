@@ -166,7 +166,8 @@ public class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports(
                 "javaposse.jobdsl.dsl.helpers.Permissions",
-                "javaposse.jobdsl.dsl.helpers.CheckoutStrategy");
+                "javaposse.jobdsl.dsl.helpers.CheckoutStrategy"
+        );
         config.addCompilationCustomizers(icz);
 
         config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

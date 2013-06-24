@@ -116,14 +116,18 @@ public class StepHelperSpec extends Specification {
         context.ant('build') {
             target 'test'
             target 'integTest'
-            targets(['publish', 'deploy']) // FIXME: I have no idea why the parens are needed
+            targets(['publish', 'deploy']) // In Groovy, parenthesis are required for
+                                           // zero-argument methods or if the first
+                                           // argument is a list or map.
             prop 'test.size', 4
             prop 'logging', 'info'
             props 'test.threads': 10, 'input.status':'release'
             buildFile 'dir2/build.xml'
             buildFile 'dir1/build.xml'
             javaOpt '-Xmx1g'
-            javaOpts(['-Dprop2=value2', '-Dprop3=value3']) // FIXME: I have no idea why the parens are needed
+            javaOpts(['-Dprop2=value2', '-Dprop3=value3']) // In Groovy, parenthesis are required for
+                                                           // zero-argument methods or if the first
+                                                           // argument is a list or map.
             antInstallation 'Ant 1.6'
             antInstallation 'Ant 1.7'
         }
