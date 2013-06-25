@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
+import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.absolute
+
 class TopLevelHelper extends AbstractHelper {
 
     TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
@@ -24,6 +26,7 @@ class TopLevelHelper extends AbstractHelper {
      * @return
      */
     boolean labelAlreadyAdded = false
+
     def label(String labelExpression = null) {
         Preconditions.checkState(!labelAlreadyAdded, "Label can only be appplied once")
         labelAlreadyAdded = true
@@ -51,7 +54,6 @@ class TopLevelHelper extends AbstractHelper {
       </hudson.plugins.build__timeout.BuildTimeoutWrapper>
     </buildWrappers>
     */
-
     def timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) {
         execute {
             def pluginNode = it / buildWrappers / 'hudson.plugins.build__timeout.BuildTimeoutWrapper'
@@ -59,6 +61,77 @@ class TopLevelHelper extends AbstractHelper {
             pluginNode / failBuild(shouldFailBuild?'true':'false')
         }
     }
+
+    /** Enumeration of timeout types for parsing and error reporting*/
+    def static enum Timeout {
+        absolute,
+        elastic,
+        likelyStuck
+    }
+
+    /** Context to configure timeout */
+    def static class TimeoutContext implements Context {
+
+        Timeout type
+        def limit  = 3
+        def failBuild = false
+        def writeDescription = false
+        def percentage = 0
+
+        TimeoutContext(Timeout type) {
+            this.type = type
+        }
+
+        def limit(int limit) {
+            this.limit = limit
+        }
+
+        def failBuild(boolean fail) {
+            this.failBuild = fail
+        }
+
+        def writeDescription(boolean writeDesc) {
+            this.writeDescription = writeDesc
+        }
+
+        def percentage(int percentage) {
+            this.percentage = percentage
+        }
+
+    }
+
+    /**
+     * Add a timeout to the build job.
+     *
+     * May be an absolute, elastic or likely Stuck timeout.
+     *
+     * @param type type of timeout defaults to absolute
+     *
+     * @param timeoutClosure optional closure for configuring the timeout
+     */
+    def timeout(String type = absolute, Closure timeoutClosure = null) {
+        Timeout ttype
+        try {
+            ttype = Timeout.valueOf(type)
+        } catch (IllegalArgumentException iae) {
+            throw new IllegalArgumentException("Timeout type must be one of: ${Timeout.values()}")
+        }
+
+        TimeoutContext ctx = new TimeoutContext(ttype)
+        AbstractContextHelper.executeInContext(timeoutClosure, ctx)
+
+        execute {
+            it / buildWrappers / 'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
+                timeoutMinutes ctx.limit
+                failBuild ctx.failBuild
+                writingDescription ctx.writeDescription
+                timeoutPercentage ctx.percentage
+                timeoutType ctx.type
+                timeoutMinutesElasticDefault ctx.limit
+            }
+        }
+    }
+
 
     /**
      * Add environment variables to the build.
@@ -80,7 +153,7 @@ class TopLevelHelper extends AbstractHelper {
         environmentVariables(null, envClosure)
     }
 
-    def environmentVariables(Map<Object,Object> vars, Closure envClosure = null) {
+    def environmentVariables(Map<Object, Object> vars, Closure envClosure = null) {
         EnvironmentVariableContext envContext = new EnvironmentVariableContext()
         if (vars) {
             envContext.envs(vars)
@@ -126,12 +199,12 @@ class TopLevelHelper extends AbstractHelper {
     /*
     <disabled>true</disabled>
      */
+
     def disabled(boolean shouldDisable = true) {
         execute {
             it / disabled(shouldDisable?'true':'false')
         }
     }
-
 
     /**
      <logRotator>
@@ -158,14 +231,14 @@ class TopLevelHelper extends AbstractHelper {
     /**
      * Block build if certain jobs are running
      <properties>
-         <hudson.plugins.buildblocker.BuildBlockerProperty>
-             <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
-             <blockingJobs>JobA</blockingJobs>
-         </hudson.plugins.buildblocker.BuildBlockerProperty>
+     <hudson.plugins.buildblocker.BuildBlockerProperty>
+     <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
+     <blockingJobs>JobA</blockingJobs>
+     </hudson.plugins.buildblocker.BuildBlockerProperty>
      </properties>
      */
     def blockOn(Iterable<String> projectNames) {
-        blockOn( projectNames.join('\n'))
+        blockOn(projectNames.join('\n'))
     }
 
     /**
@@ -175,7 +248,7 @@ class TopLevelHelper extends AbstractHelper {
      */
     def blockOn(String projectName) {
         execute {
-            it / 'properties'/ 'hudson.plugins.buildblocker.BuildBlockerProperty' {
+            it / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
                 useBuildBlocker 'true'
                 blockingJobs projectName
             }
@@ -209,5 +282,70 @@ class TopLevelHelper extends AbstractHelper {
             def node = new Node(it / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
             node.appendNode('priority', value)
         }
+    }
+
+    /**
+     * Adds a link to a github project.
+     * @param url github project url
+     */
+    def githubProject(String url) {
+        Preconditions.checkNotNull(url, 'URL is required for adding a github project reference.')
+        execute {
+            it / 'properties' / 'com.coravy.hudson.plugins.github.GithubProjectProperty' {
+                projectUrl url
+            }
+        }
+    }
+
+    /**
+     * Adds a quiet period to the project.
+     *
+     * @param seconds number of seconds to wait
+     */
+    def quietPeriod(int seconds = 5) {
+        execute {
+            def node = methodMissing('quietPeriod', seconds)
+            it / node
+        }
+    }
+
+    /**
+     * Sets the number of times the SCM checkout is retried on errors.
+     *
+     * @param times number of attempts
+     */
+    def checkoutRetryCount(int times = 3) {
+        execute {
+            def node = methodMissing('scmCheckoutRetryCount', times)
+            it / node
+        }
+    }
+
+    /**
+     * Sets a display name for the project.
+     *
+     * @param displayName name to display
+     */
+    def displayName(String displayName) {
+        def name = Preconditions.checkNotNull(displayName, 'Display name must not be null.')
+        execute {
+            def node = methodMissing('displayName', name)
+            it / node
+        }
+
+    }
+
+    /**
+     * Configures a custom workspace for the project.
+     *
+     * @param workspacePath workspace path to use
+     */
+    def customWorkspace(String workspacePath) {
+        def workspace = Preconditions.checkNotNull(workspacePath,"Workspace path must not be null")
+        execute {
+            def node = methodMissing('customWorkspace', workspace)
+            it / node
+        }
+
     }
 }
