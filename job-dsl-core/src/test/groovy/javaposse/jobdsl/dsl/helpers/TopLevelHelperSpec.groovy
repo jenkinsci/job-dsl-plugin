@@ -348,4 +348,20 @@ public class TopLevelHelperSpec extends Specification {
         then:
         root.customWorkspace[0].value() == '/var/lib/jenkins/foobar'
     }
+
+    def 'add block for up and downstream projects' () {
+        when:
+        def action = helper.blockOnUpstreamProjects()
+        action.execute(root)
+
+        then:
+        root.blockBuildWhenDownstreamBuilding[0].value() == true
+
+        when:
+        action = helper.blockOnDownstreamProjects()
+        action.execute(root)
+
+        then:
+        root.blockBuildWhenUpstreamBuilding[0].value() == true
+    }
 }

@@ -348,4 +348,17 @@ class TopLevelHelper extends AbstractHelper {
         }
 
     }
+
+    def blockOnUpstreamProjects() {
+        execute {
+            it / blockBuildWhenDownstreamBuilding(true)
+        }
+    }
+
+    def blockOnDownstreamProjects() {
+        execute {
+            it / blockBuildWhenUpstreamBuilding(true)
+        }
+    }
+
 }
