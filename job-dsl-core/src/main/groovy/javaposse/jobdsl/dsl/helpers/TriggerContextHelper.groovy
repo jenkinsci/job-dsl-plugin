@@ -428,7 +428,7 @@ class TriggerContext implements Context {
     /**
      * Adds DSL  for adding and configuring the URL trigger plugin to a job.
      *
-     * Uses a default cron execution schedule "H/5 * * * *", every 5 minutes with some jitter to prevent load pikes.
+     * Uses a default cron execution schedule "H/5 * * * *", every 5 minutes with some jitter to prevent load spikes.
      *
      * @param contextClosure closure for configuring the context
      */
@@ -500,8 +500,6 @@ class TriggerContext implements Context {
                 }
             }
         }
-
-        //println XmlUtil.serialize(urlTriggerNode)
 
         // Apply their overrides
         if (urlTriggerContext.configureClosure) {
