@@ -285,19 +285,6 @@ class TopLevelHelper extends AbstractHelper {
     }
 
     /**
-     * Adds a link to a github project.
-     * @param url github project url
-     */
-    def githubProject(String url) {
-        Preconditions.checkNotNull(url, 'URL is required for adding a github project reference.')
-        execute {
-            it / 'properties' / 'com.coravy.hudson.plugins.github.GithubProjectProperty' {
-                projectUrl url
-            }
-        }
-    }
-
-    /**
      * Adds a quiet period to the project.
      *
      * @param seconds number of seconds to wait
@@ -349,12 +336,21 @@ class TopLevelHelper extends AbstractHelper {
 
     }
 
+    /**
+     * Configures the job to block when upstream projects are building.
+     *
+     * @return
+     */
     def blockOnUpstreamProjects() {
         execute {
             it / blockBuildWhenDownstreamBuilding(true)
         }
     }
 
+    /**
+     * Configures the job to block when downstream projects are building.
+     * @return
+     */
     def blockOnDownstreamProjects() {
         execute {
             it / blockBuildWhenUpstreamBuilding(true)

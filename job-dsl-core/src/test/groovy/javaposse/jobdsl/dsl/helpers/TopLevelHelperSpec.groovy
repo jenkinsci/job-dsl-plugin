@@ -290,15 +290,6 @@ public class TopLevelHelperSpec extends Specification {
         root.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
     }
 
-    def 'add a github project URL'() {
-        when:
-        def action = helper.githubProject('https://github.com/jenkinsci/job-dsl-plugin/')
-        action.execute(root)
-
-        then:
-        root.properties.'com.coravy.hudson.plugins.github.GithubProjectProperty'.projectUrl[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
-    }
-
     def 'add a quiet period'() {
         when:
         def action = helper.quietPeriod()
