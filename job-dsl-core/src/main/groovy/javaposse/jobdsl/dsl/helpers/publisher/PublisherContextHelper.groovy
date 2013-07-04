@@ -588,6 +588,37 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
 
             publisherNodes << publishNode
         }
+
+        def cobertura(String reportFile, Closure coberturaClosure = null) {
+
+            CoberturaContext coberturaContext = new CoberturaContext()
+            AbstractContextHelper.executeInContext(coberturaClosure, coberturaContext)
+
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.cobertura.CoberturaPublisher' {
+                coberturaReportFile(reportFile)
+                onlyStable(coberturaContext.onlyStable)
+                failUnhealthy(coberturaContext.failUnhealthy)
+                failUnstable(coberturaContext.failUnstable)
+                autoUpdateHealth(coberturaContext.autoUpdateHealth)
+                autoUpdateStability(coberturaContext.autoUpdateStability)
+                zoomCoverageChart(coberturaContext.zoomCoverageChart)
+                failNoReports(coberturaContext.failNoReports)
+                ['healthyTarget', 'unhealthyTarget', 'failingTarget'].each { targetName ->
+                    "$targetName" {
+                        targets(class: "enum-map", 'enum-type': "hudson.plugins.cobertura.targets.CoverageMetric") {
+                            println coberturaContext.targets
+                            coberturaContext.targets.values().each { target ->
+                                entry {
+                                    'hudson.plugins.cobertura.targets.CoverageMetric' target.targetType
+                                    'int' target."$targetName"
+                                }
+                            }
+                        }
+                    }
+                }
+                sourceEncoding(coberturaContext.sourceEncoding)
+            }
+        }
     }
 }
 
