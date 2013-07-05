@@ -119,7 +119,7 @@ class StepContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
         def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
-            targets context.targets()
+            targets context.targets
             usingScriptText context.useScriptText()
             scriptText context.scriptText
             ignoreExisting context.ignoreExisting
@@ -154,7 +154,7 @@ class StepContext implements Context {
             externalScripts.addAll(dslScripts)
         }
 
-        def targets() {
+        def getTargets() {
             externalScripts.join('\n')
         }
 
