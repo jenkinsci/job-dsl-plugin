@@ -109,7 +109,7 @@ class TopLevelHelper extends AbstractHelper {
      *
      * @param timeoutClosure optional closure for configuring the timeout
      */
-    def timeout(String type = absolute, Closure timeoutClosure = null) {
+    def timeout(String type = absolute.toString(), Closure timeoutClosure = null) {
         Timeout ttype
         try {
             ttype = Timeout.valueOf(type)
@@ -231,10 +231,10 @@ class TopLevelHelper extends AbstractHelper {
     /**
      * Block build if certain jobs are running
      <properties>
-     <hudson.plugins.buildblocker.BuildBlockerProperty>
-     <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
-     <blockingJobs>JobA</blockingJobs>
-     </hudson.plugins.buildblocker.BuildBlockerProperty>
+         <hudson.plugins.buildblocker.BuildBlockerProperty>
+             <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
+             <blockingJobs>JobA</blockingJobs>
+         </hudson.plugins.buildblocker.BuildBlockerProperty>
      </properties>
      */
     def blockOn(Iterable<String> projectNames) {
