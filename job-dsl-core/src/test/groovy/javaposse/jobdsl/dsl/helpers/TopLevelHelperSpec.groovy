@@ -5,6 +5,10 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
+import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.absolute
+import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.elastic
+import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.likelyStuck
+
 public class TopLevelHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
@@ -56,6 +60,72 @@ public class TopLevelHelperSpec extends Specification {
         root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'false'
     }
 
+    def 'default timeout works' () {
+        when:
+        def action = helper.timeout()
+        action.execute(root)
+
+        then:
+        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
+        timeout.timeoutMinutes[0].value() == 3
+        timeout.failBuild[0].value() == false
+        timeout.writingDescription[0].value() == false
+        timeout.timeoutPercentage[0].value() ==  0
+        timeout.timeoutType[0].value() == absolute
+        timeout.timeoutMinutesElasticDefault[0].value() == 3
+    }
+
+    def 'absolute timeout configuration working' () {
+        when:
+        def action = helper.timeout('absolute') {
+            limit 5
+        }
+        action.execute(root)
+
+        then:
+        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
+        timeout.timeoutMinutes[0].value() == 5
+        timeout.failBuild[0].value() == false
+        timeout.writingDescription[0].value() == false
+        timeout.timeoutPercentage[0].value() ==  0
+        timeout.timeoutType[0].value() == absolute
+        timeout.timeoutMinutesElasticDefault[0].value() == 5
+    }
+
+
+    def 'elastic timeout configuration working' () {
+        when:
+        def action = helper.timeout('elastic') {
+            limit 15
+            percentage 200
+        }
+        action.execute(root)
+
+        then:
+        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
+        timeout.timeoutMinutes[0].value() == 15
+        timeout.failBuild[0].value() == false
+        timeout.writingDescription[0].value() == false
+        timeout.timeoutPercentage[0].value() ==  200
+        timeout.timeoutType[0].value() == elastic
+        timeout.timeoutMinutesElasticDefault[0].value() == 15
+    }
+
+    def 'likelyStuck timeout configuration working' () {
+        when:
+        def action = helper.timeout('likelyStuck')
+        action.execute(root)
+
+        then:
+        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
+        timeout.timeoutMinutes[0].value() == 3
+        timeout.failBuild[0].value() == false
+        timeout.writingDescription[0].value() == false
+        timeout.timeoutPercentage[0].value() ==  0
+        timeout.timeoutType[0].value() == likelyStuck
+        timeout.timeoutMinutesElasticDefault[0].value() == 3
+    }
+
     def 'environments work with map arg'() {
         when:
         def action = helper.environmentVariables([
@@ -82,7 +152,6 @@ public class TopLevelHelperSpec extends Specification {
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
     }
-
 
     def 'environments work with combination'() {
         when:
@@ -219,5 +288,71 @@ public class TopLevelHelperSpec extends Specification {
 
         then:
         root.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
+    }
+
+    def 'add a quiet period'() {
+        when:
+        def action = helper.quietPeriod()
+        action.execute(root)
+
+        then:
+        root.quietPeriod[0].value() == 5
+
+        when:
+        action = helper.quietPeriod(10)
+        action.execute(root)
+
+        then:
+        root.quietPeriod[0].value() == 10
+    }
+
+    def 'add SCM retry count' () {
+        when:
+        def action = helper.checkoutRetryCount()
+        action.execute(root)
+
+        then:
+        root.scmCheckoutRetryCount[0].value() == 3
+
+        when:
+        action = helper.checkoutRetryCount(6)
+        action.execute(root)
+
+        then:
+        root.scmCheckoutRetryCount[0].value() == 6
+    }
+
+    def 'add display name' () {
+        when:
+        def action = helper.displayName('FooBar')
+        action.execute(root)
+
+        then:
+        root.displayName[0].value() == 'FooBar'
+    }
+
+    def 'add custom workspace' () {
+        when:
+        def action = helper.customWorkspace('/var/lib/jenkins/foobar')
+        action.execute(root)
+
+        then:
+        root.customWorkspace[0].value() == '/var/lib/jenkins/foobar'
+    }
+
+    def 'add block for up and downstream projects' () {
+        when:
+        def action = helper.blockOnUpstreamProjects()
+        action.execute(root)
+
+        then:
+        root.blockBuildWhenDownstreamBuilding[0].value() == true
+
+        when:
+        action = helper.blockOnDownstreamProjects()
+        action.execute(root)
+
+        then:
+        root.blockBuildWhenUpstreamBuilding[0].value() == true
     }
 }
