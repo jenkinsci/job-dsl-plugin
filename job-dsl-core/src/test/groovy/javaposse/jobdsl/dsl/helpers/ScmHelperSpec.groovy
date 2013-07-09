@@ -332,7 +332,7 @@ public class ScmHelperSpec extends Specification {
         strategy                          | wuClass
         CheckoutStrategy.Update           | 'hudson.scm.subversion.UpdateUpdater'
         CheckoutStrategy.Checkout         | 'hudson.scm.subversion.CheckoutUpdater'
-        CheckoutStrategy.EmulateCheckout  | 'hudson.scm.subversion.UpdateWithCleanUpdater'
+        CheckoutStrategy.UpdateWithClean  | 'hudson.scm.subversion.UpdateWithCleanUpdater'
         CheckoutStrategy.UpdateWithRevert | 'hudson.scm.subversion.UpdateWithRevertUpdater'
     }
 
