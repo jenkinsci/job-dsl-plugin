@@ -606,7 +606,6 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 ['healthyTarget', 'unhealthyTarget', 'failingTarget'].each { targetName ->
                     "$targetName" {
                         targets(class: "enum-map", 'enum-type': "hudson.plugins.cobertura.targets.CoverageMetric") {
-                            println coberturaContext.targets
                             coberturaContext.targets.values().each { target ->
                                 entry {
                                     'hudson.plugins.cobertura.targets.CoverageMetric' target.targetType

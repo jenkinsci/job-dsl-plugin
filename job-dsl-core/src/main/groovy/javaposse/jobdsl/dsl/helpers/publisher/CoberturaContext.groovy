@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.Context
+import groovy.transform.PackageScope
 
 class CoberturaContext implements Context {
 
@@ -223,16 +224,16 @@ class CoberturaContext implements Context {
      *     </entry>
      *     <targets>
      *    </failingTarget>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
      *
      * @param targetType
      * @param healthy
      * @param unhealthy
      * @param failing
      */
+    @PackageScope
     void target(String targetType, Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         Preconditions.checkArgument(
-            TargetType.values().count { it.toString() == targetType } == 1, "Invalid target type: $targetType " +
+            TargetType.values().any { it.toString() == targetType }, "Invalid target type: $targetType " +
             'Available target types: ' + TargetType.values())
         this.targets.put(targetType, new Target(
             targetType: targetType,
@@ -240,10 +241,6 @@ class CoberturaContext implements Context {
             unhealthyTarget: unhealthy,
             failingTarget: failing
         ))
-    }
-
-    void targets(targets) {
-        this.targets = targets;
     }
 
     /**
