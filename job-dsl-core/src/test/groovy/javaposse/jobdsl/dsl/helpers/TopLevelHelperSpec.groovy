@@ -33,6 +33,23 @@ public class TopLevelHelperSpec extends Specification {
 
     }
 
+    def 'add rvm-controlled ruby version'() {
+        when:
+        def action = helper.rvm('ruby-1.9.3')
+        action.execute(root)
+
+        then:
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
+    }
+
+    def 'rvm exception on empty param'() {
+        when:
+        def action = helper.rvm()
+
+        then:
+        thrown(NullPointerException)
+    }
+
     def 'can run timeout'() {
         when:
         helper.timeout(15)
