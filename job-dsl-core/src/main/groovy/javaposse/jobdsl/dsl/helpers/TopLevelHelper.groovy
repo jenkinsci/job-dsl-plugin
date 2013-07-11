@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
+import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
@@ -284,6 +285,97 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /*
+    <org.jvnet.hudson.plugins.port__allocator.PortAllocator plugin="port-allocator@1.5">
+        <ports>
+            <org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
+                <name>HTTP</name>
+            </org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
+            <org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
+                <name>8080</name>
+            </org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
+            <org.jvnet.hudson.plugins.port__allocator.GlassFishJmxPortType>
+                <name>JMX_PORT</name>
+                <userName>admin</userName>
+                <password>adminadmin</password>
+            </org.jvnet.hudson.plugins.port__allocator.GlassFishJmxPortType>
+            <org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType>
+                <name>SHUTDOWN_PORT</name>
+                <password>SHUTDOWN</password>
+            </org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType>
+        </ports>
+    </org.jvnet.hudson.plugins.port__allocator.PortAllocator>
+
+     */
+
+    def allocatePorts(String[] portsArg, Closure closure = null) {
+        PortsContext portContext = new PortsContext()
+        AbstractContextHelper.executeInContext(closure, portContext)
+
+        execute {
+            it / 'buildWrappers' / 'org.jvnet.hudson.plugins.port__allocator.PortAllocator' / ports {
+
+                if (portsArg)
+                    for (p in portsArg)
+                        'org.jvnet.hudson.plugins.port__allocator.DefaultPortType' {
+                            name p
+                        }
+
+                for (p in portContext.simplePorts)
+                    'org.jvnet.hudson.plugins.port__allocator.DefaultPortType' {
+                        name p.port
+                    }
+
+                for (p in portContext.glassfishPorts)
+                    'org.jvnet.hudson.plugins.port__allocator.GlassFishJmxPortType' {
+                        name p.port
+                        userName p.username
+                        password p.password
+                    }
+
+                for (p in portContext.tomcatPorts)
+                    'org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType' {
+                        name p.port
+                        password p.password
+                    }
+            }
+
+        }
+    }
+
+    def allocatePorts(Closure cl = null) {
+        allocatePorts(new String[0], cl)
+    }
+
+    @Canonical
+    def static class Port {
+        String port
+        String username
+        String password
+    }
+
+
+    @Canonical
+    def static class PortsContext implements Context {
+        def simplePorts = []
+        def glassfishPorts = []
+        def tomcatPorts = []
+
+        def port(String port, String... ports) {
+            simplePorts << new Port(port: port)
+            ports.each {
+                simplePorts << new Port(port: port)
+            }
+        }
+
+        def glassfish(String port, String user, String password) {
+            glassfishPorts << new Port(port: port, username: user, password: password)
+        }
+
+        def tomcat(String port, String password) {
+            tomcatPorts << new Port(port: port, password: password)
+        }
+    }
     /**
      * Adds a quiet period to the project.
      *
