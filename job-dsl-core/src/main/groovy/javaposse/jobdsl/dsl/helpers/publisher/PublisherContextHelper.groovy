@@ -188,6 +188,70 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         }
 
         /**
+        <hudson.plugins.jacoco.JacocoPublisher>
+          <execPattern>"target/*.exec"</execPattern>
+          <classPattern>"target/classes"</classPattern>
+          <sourcePattern>"src/main/java"</sourcePattern>
+          <inclusionPattern>"*.class"</inclusionPattern>
+          <exclusionPattern>"*.Test*"</exclusionPattern>
+          <minimumInstructionCoverage>0</minimumInstructionCoverage>
+          <minimumBranchCoverage>0</minimumBranchCoverage>
+          <minimumComplexityCoverage>0</minimumComplexityCoverage>
+          <minimumLineCoverage>0</minimumLineCoverage>
+          <minimumMethodCoverage>0</minimumMethodCoverage>
+          <minimumClassCoverage>0</minimumClassCoverage>
+          <maximumInstructionCoverage>0</maximumInstructionCoverage>
+          <maximumBranchCoverage>0</maximumBranchCoverage>
+          <maximumComplexityCoverage>0</maximumComplexityCoverage>
+          <maximumLineCoverage>0</maximumLineCoverage>
+          <maximumMethodCoverage>0</maximumMethodCoverage>
+          <maximumClassCoverage>0</maximumClassCoverage>
+        </hudson.plugins.jacoco.JacocoPublisher>
+        **/
+        def jacocoCodeCoverage(String execFileGlob = "**/target/**/**.exec", 
+                               String classDirGlob = "**/target/**/classes",
+                               String sourceDirGlob = "**/src/main/java",
+                               String inclusionGlob = "**/*.class",
+                               String exclusionGlob = "**/*.Test*",
+                               String minimumInstructionCoveragePercentage = "0",
+                               String minimumBranchCoveragePercentage = "0",
+                               String minimumComplexityCoveragePercentage = "0",
+                               String minimumLineCoveragePercentage = "0",
+                               String minimumMethodCoveragePercentage = "0",
+                               String minimumClassCoveragePercentage = "0",
+                               String maximumInstructionCoveragePercentage = "0",
+                               String maximumBranchCoveragePercentage = "0",
+                               String maximumComplexityCoveragePercentage = "0",
+                               String maximumLineCoveragePercentage = "0",
+                               String maximumMethodCoveragePercentage = "0",
+                               String maximumClassCoveragePercentage = "0") {
+
+            def nodeBuilder = new NodeBuilder()
+
+            Node jacocoNode = nodeBuilder.'hudson.plugins.jacoco.JacocoPublisher' {
+                execPattern execFileGlob
+                classPattern classDirGlob
+                sourcePattern sourceDirGlob
+                inclusionPattern inclusionGlob
+                exclusionPattern exclusionGlob
+                minimumInstructionCoverage minimumInstructionCoveragePercentage
+                minimumBranchCoverage minimumBranchCoveragePercentage
+                minimumComplexityCoverage minimumComplexityCoveragePercentage
+                minimumLineCoverage minimumLineCoveragePercentage
+                minimumMethodCoverage minimumMethodCoveragePercentage
+                minimumClassCoverage minimumClassCoveragePercentage
+                maximumInstructionCoverage maximumInstructionCoveragePercentage
+                maximumBranchCoverage maximumBranchCoveragePercentage
+                maximumComplexityCoverage maximumComplexityCoveragePercentage
+                maximumLineCoverage maximumLineCoveragePercentage
+                maximumMethodCoverage maximumMethodCoveragePercentage
+                maximumClassCoverage maximumClassCoveragePercentage
+            }
+
+            publisherNodes << jacocoNode
+        }
+
+        /**
          <htmlpublisher.HtmlPublisher>
          <reportTargets>
          <htmlpublisher.HtmlPublisherTarget>
