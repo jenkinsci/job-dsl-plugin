@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.PropertiesContext
 import spock.lang.Specification
 
 import static org.codehaus.groovy.runtime.InvokerHelper.createScript
@@ -48,12 +49,23 @@ class AbstractJobManagementSpec extends Specification {
         version == null
     }
 
+    def 'callExtension'() {
+        setup:
+        AbstractJobManagement jobManagement = new TestJobManagement()
+
+        when:
+        Node node = jobManagement.callExtension('foo', PropertiesContext)
+
+        then:
+        node == null
+    }
+
     static class TestJobManagement extends AbstractJobManagement {
-        TestJobManagement() {
+        protected TestJobManagement() {
             super()
         }
 
-        TestJobManagement(PrintStream out) {
+        protected TestJobManagement(PrintStream out) {
             super(out)
         }
 

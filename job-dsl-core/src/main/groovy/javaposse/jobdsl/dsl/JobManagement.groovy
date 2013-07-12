@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
 
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+
 /**
  * Interface to manage jobs, which the DSL needs to do.
  */
@@ -79,4 +81,6 @@ interface JobManagement {
      * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
      */
     VersionNumber getPluginVersion(String pluginShortName)
+
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args)
 }

@@ -7,6 +7,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
+import groovy.lang.Closure;
+import groovy.util.Node;
+import groovy.util.XmlParser;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Plugin;
@@ -15,18 +18,22 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
 import hudson.model.BuildableItem;
 import hudson.model.Cause;
+import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Run;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.util.VersionNumber;
+import hudson.util.XStream2;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
+import org.apache.commons.lang.ClassUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -38,21 +45,27 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
+import static org.apache.commons.lang.reflect.MethodUtils.getMatchingAccessibleMethod;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
  */
 public final class JenkinsJobManagement extends AbstractJobManagement {
     private static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
+    private static final XStream2 XSTREAM = new XStream2();
 
     private final EnvVars envVars;
     private final AbstractBuild<?, ?> build;
@@ -258,6 +271,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Source streamSource = new StreamSource(new StringReader(config));
         try {
             item.updateByXml(streamSource);
+
+            Jenkins jenkins = Jenkins.getInstance();
+            for (ContextExtensionPoint extensionPoint : jenkins.getExtensionList(ContextExtensionPoint.class)) {
+                extensionPoint.notifyItemUpdated(item);
+            }
+
             created = true;
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, String.format("Error writing updated item to file."), e);
@@ -276,7 +295,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
             String itemName = getItemNameFromPath(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
-                ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+                Item item = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+
+                Jenkins jenkins = Jenkins.getInstance();
+                for (ContextExtensionPoint extensionPoint : jenkins.getExtensionList(ContextExtensionPoint.class)) {
+                    extensionPoint.notifyItemCreated(item);
+                }
+
                 created = true;
             } else {
                 LOGGER.log(Level.WARNING, String.format("Could not create item within %s", parent.getClass()));
@@ -296,6 +321,77 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
+    }
+
+    @Override
+    public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+        SortedMap<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
+        if (candidates.isEmpty()) {
+            LOGGER.fine(
+                    "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
+            );
+            return null;
+        } else if (candidates.size() > 1) {
+            throw new ExtensionPointException(
+                    "Found multiple extensions which provide method " + name + " with arguments " +
+                            Arrays.toString(args) + ": " +
+                            Arrays.toString(ClassUtils.toClass(candidates.keySet().toArray()))
+            );
+        }
+
+        try {
+            ContextExtensionPoint extensionPoint = candidates.firstKey();
+            Method method = candidates.get(extensionPoint);
+            Object result = method.invoke(extensionPoint, args);
+
+            String xml;
+            if (result instanceof String) {
+                // if the result is already a String, this String is supposed to be (or better: must be) correct XML
+                xml = (String) result;
+            } else {
+                // otherwise transform object to XML ...
+                xml = XSTREAM.toXML(result);
+            }
+            LOGGER.fine(
+                    "Call to extension " + extensionPoint.getClass().getName() + "." + name + " with arguments " +
+                            Arrays.toString(args) + " produced " + xml
+            );
+            return new XmlParser().parseText(xml);
+        } catch (Exception e) {
+            throw new ExtensionPointException("Error calling extension", e);
+        }
+    }
+
+    private static SortedMap<ContextExtensionPoint, Method> findExtensionPoints(String name,
+                                                                                      Class<? extends ExtensibleContext> contextType,
+                                                                                      Object... args) {
+        Jenkins jenkins = Jenkins.getInstance();
+        Class[] parameterTypes = getParameterTypes(args);
+        SortedMap<ContextExtensionPoint, Method> candidates = new TreeMap<ContextExtensionPoint, Method>();
+
+        // Find extensions that match any @DslMethod annotated method with the given name and parameters
+        for (ContextExtensionPoint extensionPoint : jenkins.getExtensionList(ContextExtensionPoint.class)) {
+            Method candidateMethod = getMatchingAccessibleMethod(extensionPoint.getClass(), name, parameterTypes);
+            DslMethod annotation = candidateMethod.getAnnotation(DslMethod.class);
+            if (annotation != null && annotation.context().isAssignableFrom(contextType)) {
+                candidates.put(extensionPoint, candidateMethod);
+            }
+        }
+
+        return candidates;
+    }
+
+    private static Class[] getParameterTypes(Object... args) {
+        Class[] parameterTypes = ClassUtils.toClass(args);
+
+        // Switch Closure type to Runnable, so that extension must not include Closure as import type
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (Closure.class.isAssignableFrom(parameterTypes[i])) {
+                parameterTypes[i] = Runnable.class;
+            }
+        }
+
+        return parameterTypes;
     }
 
     public static class ExtractTemplate implements Function<GeneratedJob, String> {

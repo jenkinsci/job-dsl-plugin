@@ -1,7 +1,9 @@
 package javaposse.jobdsl.dsl;
 
 import com.google.common.collect.Maps;
+import groovy.util.Node;
 import hudson.util.VersionNumber;
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,8 +69,11 @@ public abstract class AbstractJobManagement implements JobManagement {
         getOutputStream().println("Warning: " + stackTrace.get(0).getMethodName() + " is deprecated (" + details + ")");
     }
 
-    @Override
     public VersionNumber getPluginVersion(String pluginShortName) {
+        return null;
+    }
+
+    public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         return null;
     }
 
