@@ -347,7 +347,6 @@ class TopLevelHelper extends AbstractHelper {
         allocatePorts(new String[0], cl)
     }
 
-    @Canonical
     def static class Port {
         String port
         String username
