@@ -148,7 +148,13 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call jacoco code coverage with default args'() {
         when:
-        context.jacocoCodeCoverage()
+
+        context.jacocoCodeCoverage {
+            execPattern "**/target/**/**.exec" 
+            classPattern "**/target/**/classes"
+            minimumInstructionCoverage "0"
+            minimumBranchCoverage "0"
+        }
 
         then:
         Node jacocoNode = context.publisherNodes[0]
@@ -159,7 +165,25 @@ public class PublisherHelperSpec extends Specification {
    
     def 'call jacoco code coverage with all args'() {
         when:
-        context.jacocoCodeCoverage('execfiles', 'classdir', 'sourcedir', 'inclusiondir', 'exclusiondir', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')
+        context.jacocoCodeCoverage {
+            execPattern 'execfiles'
+            classPattern 'classdir'
+            sourcePattern 'sourcedir'
+            inclusionPattern 'inclusiondir'
+            exclusionPattern 'exclusiondir'
+            minimumInstructionCoverage '1'
+            minimumBranchCoverage '2'
+            minimumComplexityCoverage '3' 
+            minimumLineCoverage '4' 
+            minimumMethodCoverage '5' 
+            minimumClassCoverage '6' 
+            maximumInstructionCoverage '7' 
+            maximumBranchCoverage '8' 
+            maximumComplexityCoverage '9' 
+            maximumLineCoverage '10' 
+            maximumMethodCoverage '11' 
+            maximumClassCoverage '12'
+        }
 
         then:
         Node jacocoNode = context.publisherNodes[0]

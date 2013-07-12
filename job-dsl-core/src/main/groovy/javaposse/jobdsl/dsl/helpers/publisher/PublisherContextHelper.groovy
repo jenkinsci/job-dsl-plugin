@@ -208,44 +208,31 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
           <maximumClassCoverage>0</maximumClassCoverage>
         </hudson.plugins.jacoco.JacocoPublisher>
         **/
-        def jacocoCodeCoverage(String execFileGlob = "**/target/**/**.exec", 
-                               String classDirGlob = "**/target/**/classes",
-                               String sourceDirGlob = "**/src/main/java",
-                               String inclusionGlob = "**/*.class",
-                               String exclusionGlob = "**/*.Test*",
-                               String minimumInstructionCoveragePercentage = "0",
-                               String minimumBranchCoveragePercentage = "0",
-                               String minimumComplexityCoveragePercentage = "0",
-                               String minimumLineCoveragePercentage = "0",
-                               String minimumMethodCoveragePercentage = "0",
-                               String minimumClassCoveragePercentage = "0",
-                               String maximumInstructionCoveragePercentage = "0",
-                               String maximumBranchCoveragePercentage = "0",
-                               String maximumComplexityCoveragePercentage = "0",
-                               String maximumLineCoveragePercentage = "0",
-                               String maximumMethodCoveragePercentage = "0",
-                               String maximumClassCoveragePercentage = "0") {
+        def jacocoCodeCoverage(Closure jacocoClosure =  null) {
 
-            def nodeBuilder = new NodeBuilder()
+            JacocoContext jacocoContext = new JacocoContext()
+            AbstractContextHelper.executeInContext(jacocoClosure, jacocoContext)
+
+            def nodeBuilder = NodeBuilder.newInstance()
 
             Node jacocoNode = nodeBuilder.'hudson.plugins.jacoco.JacocoPublisher' {
-                execPattern execFileGlob
-                classPattern classDirGlob
-                sourcePattern sourceDirGlob
-                inclusionPattern inclusionGlob
-                exclusionPattern exclusionGlob
-                minimumInstructionCoverage minimumInstructionCoveragePercentage
-                minimumBranchCoverage minimumBranchCoveragePercentage
-                minimumComplexityCoverage minimumComplexityCoveragePercentage
-                minimumLineCoverage minimumLineCoveragePercentage
-                minimumMethodCoverage minimumMethodCoveragePercentage
-                minimumClassCoverage minimumClassCoveragePercentage
-                maximumInstructionCoverage maximumInstructionCoveragePercentage
-                maximumBranchCoverage maximumBranchCoveragePercentage
-                maximumComplexityCoverage maximumComplexityCoveragePercentage
-                maximumLineCoverage maximumLineCoveragePercentage
-                maximumMethodCoverage maximumMethodCoveragePercentage
-                maximumClassCoverage maximumClassCoveragePercentage
+                execPattern jacocoContext.execPattern
+                classPattern jacocoContext.classPattern
+                sourcePattern jacocoContext.sourcePattern
+                inclusionPattern jacocoContext.inclusionPattern
+                exclusionPattern jacocoContext.exclusionPattern
+                minimumInstructionCoverage jacocoContext.minimumInstructionCoverage
+                minimumBranchCoverage jacocoContext.minimumBranchCoverage
+                minimumComplexityCoverage jacocoContext.minimumComplexityCoverage
+                minimumLineCoverage jacocoContext.minimumLineCoverage
+                minimumMethodCoverage jacocoContext.minimumMethodCoverage
+                minimumClassCoverage jacocoContext.minimumClassCoverage
+                maximumInstructionCoverage jacocoContext.maximumInstructionCoverage
+                maximumBranchCoverage jacocoContext.maximumBranchCoverage
+                maximumComplexityCoverage jacocoContext.maximumComplexityCoverage
+                maximumLineCoverage jacocoContext.maximumLineCoverage
+                maximumMethodCoverage jacocoContext.maximumMethodCoverage
+                maximumClassCoverage jacocoContext.maximumClassCoverage
             }
 
             publisherNodes << jacocoNode
