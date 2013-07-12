@@ -107,16 +107,36 @@ class StepContext implements Context {
     }
 
     /**
-     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16-SNAPSHOT">
-     <targets>sbt-template.groovy</targets>
-     <usingScriptText>false</usingScriptText>
-     <ignoreExisting>false</ignoreExisting>
-     <removedJobAction>IGNORE</removedJobAction>
+     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16">
+        <targets>sbt-template.groovy</targets>
+        <usingScriptText>false</usingScriptText>
+        <ignoreExisting>false</ignoreExisting>
+        <removedJobAction>IGNORE</removedJobAction>
      </javaposse.jobdsl.plugin.ExecuteDslScripts>     */
     def dsl(Closure configure = null) {
         DslContext context = new DslContext()
         AbstractContextHelper.executeInContext(configure, context)
+        buildDslNode(context)
+    }
 
+    def dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.text(scriptText)
+        ctx.removeAction(removedJobAction)
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+    }
+
+    def dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.external(externalScripts.toArray(new String[0]))
+        ctx.removeAction(removedJobAction)
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+
+    }
+
+    private void buildDslNode(context) {
         def nodeBuilder = new NodeBuilder()
         def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
             targets context.targets

@@ -703,6 +703,31 @@ public class StepHelperSpec extends Specification {
         dslStep.removedJobAction[0].value() == IGNORE
         dslStep.scriptText[0].value() == ''
     }
+
+
+    def 'call dsl method external script ignoring existing' () {
+        when:
+        context.dsl {
+            removeAction 'DISABLE'
+            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'still-another-dsl.groovy'
+            ignoreExisting()
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.removedJobAction[0].value() == DISABLE
+        dslStep.scriptText[0].value() == ''
+    }
+
     def 'call dsl method external script' () {
         when:
         context.dsl {
@@ -756,6 +781,68 @@ still-another-dsl.groovy'''
 '''
     }
 
+    def 'call dsl method external script as parameters' () {
+        when:
+        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE')
 
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == DISABLE
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method external script as parameters full' () {
+        when:
+        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE', true)
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.removedJobAction[0].value() == DISABLE
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method with script text as parameters'() {
+        when:
+        context.dsl('''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+''', 'DELETE')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == true
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == DELETE
+        dslStep.scriptText[0].value() == '''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+'''
+    }
 
 }
