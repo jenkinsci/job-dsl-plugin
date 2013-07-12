@@ -47,7 +47,7 @@ public class TopLevelHelperSpec extends Specification {
         def action = helper.rvm()
 
         then:
-        thrown(NullPointerException)
+        thrown(IllegalArgumentException)
     }
 
     def 'can run timeout'() {
