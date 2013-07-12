@@ -235,11 +235,14 @@ class CoberturaContext implements Context {
         Preconditions.checkArgument(
             TargetType.values().any { it.toString() == targetType }, "Invalid target type: $targetType " +
             'Available target types: ' + TargetType.values())
+        Preconditions.checkArgument((0..100).contains(healthy), 'Invalid healthyTarget treshold, percentage (0-100) expected')
+        Preconditions.checkArgument((0..100).contains(unhealthy), 'Invalid unhealthyTarget treshold, percentage (0-100) expected')
+        Preconditions.checkArgument((0..100).contains(failing), 'Invalid failingTarget treshold, percentage (0-100) expected')
         this.targets.put(targetType, new Target(
             targetType: targetType,
-            healthyTarget: healthy,
-            unhealthyTarget: unhealthy,
-            failingTarget: failing
+            healthyTarget: healthy * 100000,
+            unhealthyTarget: unhealthy * 100000,
+            failingTarget: failing * 100000
         ))
     }
 

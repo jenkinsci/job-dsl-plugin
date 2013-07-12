@@ -755,15 +755,15 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].children().size() == 12
-        assertTarget('healthyTarget', 0, 'METHOD', '1')
-        assertTarget('unhealthyTarget', 0, 'METHOD', '2')
-        assertTarget('failingTarget', 0, 'METHOD', '3')
-        assertTarget('healthyTarget', 1, 'LINE', '4')
-        assertTarget('unhealthyTarget', 1, 'LINE', '5')
-        assertTarget('failingTarget', 1, 'LINE', '6')
-        assertTarget('healthyTarget', 2, 'CONDITIONAL', '7')
-        assertTarget('unhealthyTarget', 2, 'CONDITIONAL', '8')
-        assertTarget('failingTarget', 2, 'CONDITIONAL', '9')
+        assertTarget('healthyTarget', 0, 'METHOD', '100000')
+        assertTarget('unhealthyTarget', 0, 'METHOD', '200000')
+        assertTarget('failingTarget', 0, 'METHOD', '300000')
+        assertTarget('healthyTarget', 1, 'LINE', '400000')
+        assertTarget('unhealthyTarget', 1, 'LINE', '500000')
+        assertTarget('failingTarget', 1, 'LINE', '600000')
+        assertTarget('healthyTarget', 2, 'CONDITIONAL', '700000')
+        assertTarget('unhealthyTarget', 2, 'CONDITIONAL', '800000')
+        assertTarget('failingTarget', 2, 'CONDITIONAL', '900000')
     }
 
     def 'adding cobertura extra targets'() {
@@ -777,15 +777,15 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].children().size() == 12
-        assertTarget('healthyTarget', 3, 'FILES', '1')
-        assertTarget('unhealthyTarget', 3, 'FILES', '2')
-        assertTarget('failingTarget', 3, 'FILES', '3')
-        assertTarget('healthyTarget', 4, 'PACKAGES', '4')
-        assertTarget('unhealthyTarget', 4, 'PACKAGES', '5')
-        assertTarget('failingTarget', 4, 'PACKAGES', '6')
-        assertTarget('healthyTarget', 5, 'CLASSES', '7')
-        assertTarget('unhealthyTarget', 5, 'CLASSES', '8')
-        assertTarget('failingTarget', 5, 'CLASSES', '9')
+        assertTarget('healthyTarget', 3, 'FILES', '100000')
+        assertTarget('unhealthyTarget', 3, 'FILES', '200000')
+        assertTarget('failingTarget', 3, 'FILES', '300000')
+        assertTarget('healthyTarget', 4, 'PACKAGES', '400000')
+        assertTarget('unhealthyTarget', 4, 'PACKAGES', '500000')
+        assertTarget('failingTarget', 4, 'PACKAGES', '600000')
+        assertTarget('healthyTarget', 5, 'CLASSES', '700000')
+        assertTarget('unhealthyTarget', 5, 'CLASSES', '800000')
+        assertTarget('failingTarget', 5, 'CLASSES', '900000')
     }
 
     def 'checking for invalid cobertura target type'() {
@@ -795,6 +795,34 @@ public class PublisherHelperSpec extends Specification {
         }
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'checking for invalid cobertura target treshold: negative'() {
+        when:
+            context.cobertura('reportfilename') {
+                target('invalid', h, u, f)
+            }
+        then:
+            thrown(IllegalArgumentException)
+        where:
+            h  |  u |  f
+            -1 |  1 |  1
+            1  | -1 |  1
+            1  |  1 | -1
+    }
+
+    def 'checking for invalid cobertura target treshold: more than 100 percent'() {
+        when:
+            context.cobertura('reportfilename') {
+                target('invalid', h, u, f)
+            }
+        then:
+            thrown(IllegalArgumentException)
+        where:
+            h  |  u  |  f
+           101 |  1  |  1
+            1  | 101 |  1
+            1  |  1  | 101
     }
 
     def 'null source encoding for cobertura'() {
