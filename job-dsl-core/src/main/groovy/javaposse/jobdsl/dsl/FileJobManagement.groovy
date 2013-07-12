@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 class FileJobManagement extends AbstractJobManagement {
     /**
@@ -98,6 +99,11 @@ class FileJobManagement extends AbstractJobManagement {
 
     @Override
     String getConfigFileId(ConfigFileType type, String name) {
+        null
+    }
+
+    @Override
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         null
     }
 }

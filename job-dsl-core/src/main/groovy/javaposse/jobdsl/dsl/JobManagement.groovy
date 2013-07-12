@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
 
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+
 /**
  * Interface to manage jobs, which the DSL needs to do.
  */
@@ -106,4 +108,6 @@ interface JobManagement {
      *         be found
      */
     String getConfigFileId(ConfigFileType type, String name)
+
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args)
 }

@@ -1,6 +1,8 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+import javaposse.jobdsl.dsl.helpers.PropertiesContext
 import spock.lang.Specification
 
 import static org.codehaus.groovy.runtime.InvokerHelper.createScript
@@ -60,12 +62,23 @@ class AbstractJobManagementSpec extends Specification {
         thrown(UnsupportedOperationException)
     }
 
+    def 'callExtension'() {
+        setup:
+        AbstractJobManagement jobManagement = new TestJobManagement()
+
+        when:
+        Node node = jobManagement.callExtension('foo', PropertiesContext)
+
+        then:
+        node == null
+    }
+
     static class TestJobManagement extends AbstractJobManagement {
-        TestJobManagement() {
+        protected TestJobManagement() {
             super()
         }
 
-        TestJobManagement(PrintStream out) {
+        protected TestJobManagement(PrintStream out) {
             super(out)
         }
 
@@ -111,6 +124,11 @@ class AbstractJobManagementSpec extends Specification {
 
         @Override
         String getConfigFileId(ConfigFileType type, String name) {
+            null
+        }
+
+        @Override
+        Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
             null
         }
 

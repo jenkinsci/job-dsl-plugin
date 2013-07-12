@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 /**
  * Testing JobManagement which will deal with a single template and single saved job. Useful for testing
@@ -101,6 +102,11 @@ class StringJobManagement extends AbstractJobManagement {
 
     @Override
     String getConfigFileId(ConfigFileType type, String name) {
+        null
+    }
+
+    @Override
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         null
     }
 }

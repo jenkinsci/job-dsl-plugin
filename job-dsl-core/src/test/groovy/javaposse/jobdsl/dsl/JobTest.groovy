@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.helpers.PropertiesContext
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
@@ -126,6 +127,25 @@ class JobTest extends Specification {
 
         then:
         !job.withXmlActions.empty
+    }
+
+    def 'job with properties extension'() {
+        setup:
+        Node node = new Node(null, 'fooNode')
+        JobManagement jm = Mock(JobManagement)
+        jm.callExtension('foo', PropertiesContext, 'bar') >> node
+        Job job = new Job(jm)
+
+        when:
+        job.properties {
+            foo('bar')
+        }
+
+        then:
+        def result = job.node
+        result.'properties'.size() == 1
+        result.'properties'[0].children().size() == 1
+        result.'properties'[0].fooNode.size() == 1
     }
 
     class JobParentConcrete extends JobParent {
