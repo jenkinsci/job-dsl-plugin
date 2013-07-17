@@ -42,6 +42,38 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * Support for builds using a rvm environment.
+     *
+     * @param rubySpecification Specification of the required ruby version,
+     *                          optionally containing a gemset
+     *                          (i.e. ruby-1.9.3, ruby-2.0.0@gemset-foo)
+     *
+     * Generates XML:
+     * <ruby-proxy-object>
+     *   <ruby-object ruby-class="Jenkins::Plugin::Proxies::BuildWrapper" pluginid="rvm">
+     *     <pluginid pluginid="rvm" ruby-class="String">rvm</pluginid>
+     *     <object ruby-class="RvmWrapper" pluginid="rvm">
+     *       <impl pluginid="rvm" ruby-class="String">ruby-1.9.2-p290</impl>
+     *     </object>
+     *   </ruby-object>
+     * </ruby-proxy-object>
+     */
+    def rvm(String rubySpecification) {
+        Preconditions.checkArgument(rubySpecification as Boolean, "Please specify at least the ruby version")
+        execute {
+            it / buildWrappers / 'ruby-proxy-object' {
+                'ruby-object'('ruby-class': 'Jenkins::Plugin::Proxies::BuildWrapper', pluginid: 'rvm') {
+
+                    pluginid('rvm', [pluginid: 'rvm', 'ruby-class': 'String'])
+                    object('ruby-class': 'RvmWrapper', pluginid: 'rvm') {
+                        impl(rubySpecification, [pluginid: 'rvm', 'ruby-class': 'String'])
+                    }
+                }
+            }
+        }
+    }
+
     /*
     <buildWrappers>
       <hudson.plugins.build__timeout.BuildTimeoutWrapper>
