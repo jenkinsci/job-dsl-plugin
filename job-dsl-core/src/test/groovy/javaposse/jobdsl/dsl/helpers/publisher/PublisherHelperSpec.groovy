@@ -687,4 +687,159 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].strategy[0].value() == 'ALL'
     }
 
+    def 'given the required cobertura report file name all defaults are set for your pleasure'() {
+        when:
+        context.cobertura('reportfilename')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].children().size() == 12
+        context.publisherNodes[0].coberturaReportFile[0].value() == 'reportfilename'
+        context.publisherNodes[0].onlyStable[0].value() == false
+        context.publisherNodes[0].failUnhealthy[0].value() == false
+        context.publisherNodes[0].failUnstable[0].value() == false
+        context.publisherNodes[0].autoUpdateHealth[0].value() == false
+        context.publisherNodes[0].autoUpdateStability[0].value() == false
+        context.publisherNodes[0].zoomCoverageChart[0].value() == false
+        context.publisherNodes[0].failNoReports[0].value() == true
+        assertTarget('healthyTarget', 0, 'METHOD', '8000000')
+        assertTarget('healthyTarget', 1, 'LINE', '8000000')
+        assertTarget('healthyTarget', 2, 'CONDITIONAL', '7000000')
+        assertTarget('unhealthyTarget', 0, 'METHOD', '0')
+        assertTarget('unhealthyTarget', 1, 'LINE', '0')
+        assertTarget('unhealthyTarget', 2, 'CONDITIONAL', '0')
+        assertTarget('failingTarget', 0, 'METHOD', '0')
+        assertTarget('failingTarget', 1, 'LINE', '0')
+        assertTarget('failingTarget', 2, 'CONDITIONAL', '0')
+        context.publisherNodes[0].sourceEncoding[0].value() == 'ASCII'
+    }
+
+    private void assertTarget(String targetName, int position, String type, String value) {
+        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].getAt('hudson.plugins.cobertura.targets.CoverageMetric')[0].value() == type
+        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].getAt('int')[0].value() == value
+    }
+
+    def 'the closure makes it possible to override all the cobertura flags'() {
+        when:
+        context.cobertura('reportfilename') {
+            onlyStable(true)
+            failUnhealthy(true)
+            failUnstable(true)
+            autoUpdateHealth(true)
+            autoUpdateStability(true)
+            zoomCoverageChart(true)
+            failNoReports(false)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].children().size() == 12
+        context.publisherNodes[0].coberturaReportFile[0].value() == 'reportfilename'
+        context.publisherNodes[0].onlyStable[0].value() == true
+        context.publisherNodes[0].failUnhealthy[0].value() == true
+        context.publisherNodes[0].failUnstable[0].value() == true
+        context.publisherNodes[0].autoUpdateHealth[0].value() == true
+        context.publisherNodes[0].autoUpdateStability[0].value() == true
+        context.publisherNodes[0].zoomCoverageChart[0].value() == true
+        context.publisherNodes[0].failNoReports[0].value() == false
+    }
+
+    def 'overriding cobertura default targets'() {
+        when:
+        context.cobertura('reportfilename') {
+            methodTarget(1, 2, 3)
+            lineTarget(4, 5, 6)
+            conditionalTarget(7, 8, 9)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].children().size() == 12
+        assertTarget('healthyTarget', 0, 'METHOD', '100000')
+        assertTarget('unhealthyTarget', 0, 'METHOD', '200000')
+        assertTarget('failingTarget', 0, 'METHOD', '300000')
+        assertTarget('healthyTarget', 1, 'LINE', '400000')
+        assertTarget('unhealthyTarget', 1, 'LINE', '500000')
+        assertTarget('failingTarget', 1, 'LINE', '600000')
+        assertTarget('healthyTarget', 2, 'CONDITIONAL', '700000')
+        assertTarget('unhealthyTarget', 2, 'CONDITIONAL', '800000')
+        assertTarget('failingTarget', 2, 'CONDITIONAL', '900000')
+    }
+
+    def 'adding cobertura extra targets'() {
+        when:
+        context.cobertura('reportfilename') {
+            fileTarget(1, 2, 3)
+            packageTarget(4, 5, 6)
+            classTarget(7, 8, 9)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].children().size() == 12
+        assertTarget('healthyTarget', 3, 'FILES', '100000')
+        assertTarget('unhealthyTarget', 3, 'FILES', '200000')
+        assertTarget('failingTarget', 3, 'FILES', '300000')
+        assertTarget('healthyTarget', 4, 'PACKAGES', '400000')
+        assertTarget('unhealthyTarget', 4, 'PACKAGES', '500000')
+        assertTarget('failingTarget', 4, 'PACKAGES', '600000')
+        assertTarget('healthyTarget', 5, 'CLASSES', '700000')
+        assertTarget('unhealthyTarget', 5, 'CLASSES', '800000')
+        assertTarget('failingTarget', 5, 'CLASSES', '900000')
+    }
+
+    def 'checking for invalid cobertura target type'() {
+        when:
+        context.cobertura('reportfilename') {
+            target('invalid', 1, 2, 3)
+        }
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'checking for invalid cobertura target treshold: negative'() {
+        when:
+            context.cobertura('reportfilename') {
+                target('invalid', h, u, f)
+            }
+        then:
+            thrown(IllegalArgumentException)
+        where:
+            h  |  u |  f
+            -1 |  1 |  1
+            1  | -1 |  1
+            1  |  1 | -1
+    }
+
+    def 'checking for invalid cobertura target treshold: more than 100 percent'() {
+        when:
+            context.cobertura('reportfilename') {
+                target('invalid', h, u, f)
+            }
+        then:
+            thrown(IllegalArgumentException)
+        where:
+            h  |  u  |  f
+           101 |  1  |  1
+            1  | 101 |  1
+            1  |  1  | 101
+    }
+
+    def 'null source encoding for cobertura'() {
+        when:
+        context.cobertura('reportfilename') {
+            sourceEncoding(null)
+        }
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'UTF-8 source encoding for cobertura should be the default instead of ASCII'() {
+        when:
+        context.cobertura('reportfilename') {
+            sourceEncoding('UTF-8')
+        }
+        then:
+        context.publisherNodes[0].sourceEncoding[0].value() == 'UTF-8'
+    }
 }
