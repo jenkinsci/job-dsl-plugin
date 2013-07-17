@@ -5,6 +5,8 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
+import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.IGNORE
+
 class StepContext implements Context {
     List<Node> stepNodes = []
     JobType type
@@ -101,6 +103,95 @@ class StepContext implements Context {
         }
 
         stepNodes << sbtNode
+
+    }
+
+    /**
+     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16">
+        <targets>sbt-template.groovy</targets>
+        <usingScriptText>false</usingScriptText>
+        <ignoreExisting>false</ignoreExisting>
+        <removedJobAction>IGNORE</removedJobAction>
+     </javaposse.jobdsl.plugin.ExecuteDslScripts>     */
+    def dsl(Closure configure = null) {
+        DslContext context = new DslContext()
+        AbstractContextHelper.executeInContext(configure, context)
+        buildDslNode(context)
+    }
+
+    def dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.text(scriptText)
+        ctx.removeAction(removedJobAction)
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+    }
+
+    def dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.external(externalScripts.toArray(new String[0]))
+        ctx.removeAction(removedJobAction)
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+
+    }
+
+    private void buildDslNode(context) {
+        def nodeBuilder = new NodeBuilder()
+        def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
+            targets context.targets
+            usingScriptText context.useScriptText()
+            scriptText context.scriptText
+            ignoreExisting context.ignoreExisting
+            removedJobAction context.removedJobAction
+        }
+
+        stepNodes << dslNode
+    }
+
+    def static class DslContext implements Context {
+
+        enum RemovedJobAction {
+            IGNORE,
+            DISABLE,
+            DELETE
+        }
+
+        String scriptText = ''
+        RemovedJobAction removedJobAction = IGNORE
+        def externalScripts = []
+        def ignoreExisting = false
+
+        def text(String text) {
+            this.scriptText = Preconditions.checkNotNull(text)
+        }
+
+        def useScriptText() {
+            scriptText.length()>0
+        }
+
+        def external(String... dslScripts) {
+            externalScripts.addAll(dslScripts)
+        }
+
+        def getTargets() {
+            externalScripts.join('\n')
+        }
+
+        def ignoreExisting(boolean ignore = true) {
+            this.ignoreExisting = ignore
+        }
+
+        def removeAction(String action) {
+
+            try {
+                this.removedJobAction = RemovedJobAction.valueOf(action)
+            } catch (IllegalArgumentException iae) {
+                throw new IllegalArgumentException("removeAction must be one of: ${RemovedJobAction.values()}")
+            }
+
+
+        }
 
     }
 
