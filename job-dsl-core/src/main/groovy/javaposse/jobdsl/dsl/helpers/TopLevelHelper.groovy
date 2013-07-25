@@ -206,6 +206,15 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /*
+    <concurrentBuild>true</concurrentBuild>
+     */
+
+    def concurrentBuild(boolean canRunConcurrent = false) {
+        execute {
+            it / concurrentBuild(canRunConcurrent?'true':'false')
+        }
+    }
     /**
      <logRotator>
      <daysToKeep>14</daysToKeep>
