@@ -502,4 +502,16 @@ class TopLevelHelper extends AbstractHelper {
             }
         }
     }
+
+    /**
+     * Configures the keep Dependencies Flag which can be set in the Fingerprinting action
+     *
+     * <keepDependencies>true</keepDependencies>
+     */
+    def keepDependencies(boolean keep = true) {
+        execute {
+            def node = methodMissing('keepDependencies', keep)
+            it / node
+        }
+    }
 }

@@ -676,6 +676,22 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def allowBrokenBuildClaiming() {
             publisherNodes << NodeBuilder.newInstance().'hudson.plugins.claim.ClaimPublisher'()
         }
+
+        /**
+         * Configures Fingerprinting
+         *
+         * <hudson.tasks.Fingerprinter>
+         *    <targets>**</targets>
+         *    <recordBuildArtifacts>true</recordBuildArtifacts>
+         * </hudson.tasks.Fingerprinter>
+         *
+         */
+        def fingerprint(String targets, boolean recordBuildArtifacts = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.tasks.Fingerprinter' {
+                delegate.targets(targets ?: '')
+                delegate.recordBuildArtifacts(recordBuildArtifacts)
+            }
+        }
     }
 }
 

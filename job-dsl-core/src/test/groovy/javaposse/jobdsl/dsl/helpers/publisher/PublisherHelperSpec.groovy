@@ -907,4 +907,22 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.claim.ClaimPublisher'
     }
+
+    def 'add fingerprinting'(targets, recordArtifacts) {
+        when:
+        context.fingerprint(targets, recordArtifacts)
+
+        then:
+        context.publisherNodes.size() == 1
+        def fingerprintNode = context.publisherNodes[0]
+        fingerprintNode.targets[0].value() == targets
+        fingerprintNode.recordBuildArtifacts[0].value() == recordArtifacts
+
+        where:
+        targets    | recordArtifacts
+        '**/*'     | false
+        ''         | true
+        '**/*arst' | false
+        'whatever' | true
+    }
 }

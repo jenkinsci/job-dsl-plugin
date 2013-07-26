@@ -431,4 +431,17 @@ public class TopLevelHelperSpec extends Specification {
         wrapper.job[0].value() == 'testJob'
         wrapper.shareWorkspace[0].value() == true
     }
+
+    def 'set keep Dependencies'(keep) {
+        when:
+        def action = helper.keepDependencies(keep)
+        action.execute(root)
+
+        then:
+        root.keepDependencies.size() == 1
+        root.keepDependencies[0].value() == keep
+
+        where:
+        keep << [true, false]
+    }
 }
