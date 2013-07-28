@@ -61,6 +61,72 @@ public class StepHelperSpec extends Specification {
         gradleStep2.useWrapper[0].value() == 'false'
     }
 
+    def 'call grails methods'() {
+        when:
+        context.grails('compile')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def grailsStep0 = context.stepNodes[0]
+        grailsStep0.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep0.targets[0].value() == 'compile'
+        grailsStep0.useWrapper[0].value() == 'false'
+        grailsStep0.grailsWorkDir[0].value() == null
+        grailsStep0.projectWorkDir[0].value() == null
+        grailsStep0.projectBaseDir[0].value() == null
+        grailsStep0.serverPort[0].value() == null
+        grailsStep0.'properties'[0].value() == ''
+        grailsStep0.forceUpgrade[0].value() == 'false'
+        grailsStep0.nonInteractive[0].value() == 'true'
+
+        when:
+        context.grails('compile', true)
+
+        then:
+        context.stepNodes.size() == 2
+        def grailsStep1 = context.stepNodes[1]
+        grailsStep1.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep1.targets[0].value() == 'compile'
+        grailsStep1.useWrapper[0].value() == 'true'
+        grailsStep1.grailsWorkDir[0].value() == null
+        grailsStep1.projectWorkDir[0].value() == null
+        grailsStep1.projectBaseDir[0].value() == null
+        grailsStep1.serverPort[0].value() == null
+        grailsStep1.'properties'[0].value() == ''
+        grailsStep1.forceUpgrade[0].value() == 'false'
+        grailsStep1.nonInteractive[0].value() == 'true'
+
+        when:
+        context.grails {
+            target 'clean'
+            targets(['compile', 'test-app'])
+            useWrapper true
+            grailsWorkDir 'work'
+            projectWorkDir 'project'
+            projectBaseDir  'base'
+            serverPort  '1111'
+            props  prop1: 'val1', prop2: 'val2'
+            prop 'prop3', 'val3'
+            forceUpgrade  true
+            nonInteractive  false
+        }
+
+        then:
+        context.stepNodes.size() == 3
+        def grailsStep2 = context.stepNodes[2]
+        grailsStep2.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep2.targets[0].value() == 'clean compile test-app'
+        grailsStep2.useWrapper[0].value() == 'true'
+        grailsStep2.grailsWorkDir[0].value() == 'work'
+        grailsStep2.projectWorkDir[0].value() == 'project'
+        grailsStep2.projectBaseDir[0].value() == 'base'
+        grailsStep2.serverPort[0].value() == '1111'
+        grailsStep2.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
+        grailsStep2.forceUpgrade[0].value() == 'true'
+        grailsStep2.nonInteractive[0].value() == 'false'
+    }
+
     def 'call maven methods'() {
         when:
         context.maven('install')
