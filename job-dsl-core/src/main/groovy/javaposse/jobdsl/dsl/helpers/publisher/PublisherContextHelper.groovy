@@ -376,7 +376,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             publisherNodes << publishNode
         }
 
-        def validCloneWorkspaceCriteria = ['Any', 'Not Failed', 'Successful']
+        static List<String> validCloneWorkspaceCriteria = ['Any', 'Not Failed', 'Successful']
         def validCloneWorkspaceArchiveMethods = ['TAR', 'ZIP']
 
         /**

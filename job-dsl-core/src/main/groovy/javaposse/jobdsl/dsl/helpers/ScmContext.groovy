@@ -1,9 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
-import groovy.transform.PackageScope
-import javaposse.jobdsl.dsl.WithXmlAction
 import hudson.plugins.perforce.PerforcePasswordEncryptor
+import javaposse.jobdsl.dsl.WithXmlAction
+
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.getValidCloneWorkspaceCriteria
 
 class ScmContext implements Context {
     boolean multiEnabled
@@ -352,5 +353,24 @@ class ScmContext implements Context {
             action.execute(p4Node)
         }
         scmNodes << p4Node
+    }
+
+    /**
+     * <scm class="hudson.plugins.cloneworkspace.CloneWorkspaceSCM">
+     *   <parentJobName>test-job</parentJobName>
+     *   <criteria>Successful</criteria>
+     * </scm>
+     */
+    def cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
+        Preconditions.checkNotNull(parentProject)
+        Preconditions.checkArgument(
+                validCloneWorkspaceCriteria.contains(criteriaArg),
+                "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}")
+        validateMulti()
+
+        scmNodes << NodeBuilder.newInstance().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
+            parentJobName(parentProject)
+            criteria(criteriaArg)
+        }
     }
 }
