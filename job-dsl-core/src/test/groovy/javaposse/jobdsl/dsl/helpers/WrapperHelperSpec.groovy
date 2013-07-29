@@ -4,19 +4,19 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
-class BuildWrapperHelperSpec extends Specification {
+class WrapperHelperSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
-    BuildWrapperContextHelper helper = new BuildWrapperContextHelper(mockActions, JobType.Freeform)
-    BuildWrapperContext context = new BuildWrapperContext(JobType.Freeform)
+    WrapperContextHelper helper = new WrapperContextHelper(mockActions, JobType.Freeform)
+    WrapperContext context = new WrapperContext(JobType.Freeform)
 
     def 'call timestamps method'() {
         when:
         context.timestamps()
 
         then:
-        context.buildWrapperNodes?.size() == 1
+        context.wrapperNodes?.size() == 1
 
-        def timestampWrapper = context.buildWrapperNodes[0]
+        def timestampWrapper = context.wrapperNodes[0]
         timestampWrapper.name() == 'hudson.plugins.timestamper.TimestamperBuildWrapper'
     }
 }
