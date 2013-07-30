@@ -98,6 +98,26 @@ public class StepHelperSpec extends Specification {
         grailsStep1.nonInteractive[0].value() == 'true'
 
         when:
+        context.grails('compile', false) {
+            grailsWorkDir 'work1'
+            nonInteractive false
+        }
+
+        then:
+        context.stepNodes.size() == 3
+        def grailsStep2 = context.stepNodes[2]
+        grailsStep2.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep2.targets[0].value() == 'compile'
+        grailsStep2.useWrapper[0].value() == 'false'
+        grailsStep2.grailsWorkDir[0].value() == 'work1'
+        grailsStep2.projectWorkDir[0].value() == null
+        grailsStep2.projectBaseDir[0].value() == null
+        grailsStep2.serverPort[0].value() == null
+        grailsStep2.'properties'[0].value() == ''
+        grailsStep2.forceUpgrade[0].value() == 'false'
+        grailsStep2.nonInteractive[0].value() == 'false'
+
+        when:
         context.grails {
             target 'clean'
             targets(['compile', 'test-app'])
@@ -113,18 +133,43 @@ public class StepHelperSpec extends Specification {
         }
 
         then:
-        context.stepNodes.size() == 3
-        def grailsStep2 = context.stepNodes[2]
-        grailsStep2.name() == 'com.g2one.hudson.grails.GrailsBuilder'
-        grailsStep2.targets[0].value() == 'clean compile test-app'
-        grailsStep2.useWrapper[0].value() == 'true'
-        grailsStep2.grailsWorkDir[0].value() == 'work'
-        grailsStep2.projectWorkDir[0].value() == 'project'
-        grailsStep2.projectBaseDir[0].value() == 'base'
-        grailsStep2.serverPort[0].value() == '1111'
-        grailsStep2.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
-        grailsStep2.forceUpgrade[0].value() == 'true'
-        grailsStep2.nonInteractive[0].value() == 'false'
+        context.stepNodes.size() == 4
+        def grailsStep3 = context.stepNodes[3]
+        grailsStep3.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep3.targets[0].value() == 'clean compile test-app'
+        grailsStep3.useWrapper[0].value() == 'true'
+        grailsStep3.grailsWorkDir[0].value() == 'work'
+        grailsStep3.projectWorkDir[0].value() == 'project'
+        grailsStep3.projectBaseDir[0].value() == 'base'
+        grailsStep3.serverPort[0].value() == '1111'
+        grailsStep3.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
+        grailsStep3.forceUpgrade[0].value() == 'true'
+        grailsStep3.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails '"test-app --stacktrace"', {
+            useWrapper true
+            grailsWorkDir 'work'
+            projectWorkDir 'project'
+            projectBaseDir  'base'
+            serverPort  '8080'
+            forceUpgrade  true
+            nonInteractive  false
+        }
+
+        then:
+        context.stepNodes.size() == 5
+        def grailsStep4 = context.stepNodes[4]
+        grailsStep4.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep4.targets[0].value() == '"test-app --stacktrace"'
+        grailsStep4.useWrapper[0].value() == 'true'
+        grailsStep4.grailsWorkDir[0].value() == 'work'
+        grailsStep4.projectWorkDir[0].value() == 'project'
+        grailsStep4.projectBaseDir[0].value() == 'base'
+        grailsStep4.serverPort[0].value() == '8080'
+        grailsStep4.'properties'[0].value() == ''
+        grailsStep4.forceUpgrade[0].value() == 'true'
+        grailsStep4.nonInteractive[0].value() == 'false'
     }
 
     def 'call maven methods'() {

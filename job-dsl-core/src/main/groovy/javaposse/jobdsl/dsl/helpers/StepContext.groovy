@@ -526,11 +526,17 @@ class StepContext implements Context {
      </com.g2one.hudson.grails.GrailsBuilder>
      */
     def grails(Closure grailsClosure) {
-        grails null, null, grailsClosure
+        grails null, false, grailsClosure
     }
 
-    def grails(String targetsArg = null, Boolean useWrapperArg = null, Closure grailsClosure = null) {
-        GrailsContext grailsContext = new GrailsContext()
+    def grails(String targetsArg, Closure grailsClosure) {
+        grails targetsArg, false, grailsClosure
+    }
+
+    def grails(String targetsArg = null, boolean useWrapperArg = false, Closure grailsClosure = null) {
+        GrailsContext grailsContext = new GrailsContext(
+            useWrapper: useWrapperArg
+        )
         AbstractContextHelper.executeInContext(grailsClosure, grailsContext)
 
         def nodeBuilder = new NodeBuilder()
@@ -544,7 +550,7 @@ class StepContext implements Context {
             'properties' grailsContext.propertiesString
             forceUpgrade grailsContext.forceUpgrade.toString()
             nonInteractive grailsContext.nonInteractive.toString()
-            useWrapper useWrapperArg != null ? useWrapperArg.toString() : grailsContext.useWrapper.toString()
+            useWrapper grailsContext.useWrapper.toString()
         }
 
         stepNodes << grailsNode
