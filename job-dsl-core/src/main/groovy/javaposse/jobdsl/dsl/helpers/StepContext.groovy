@@ -499,7 +499,9 @@ class StepContext implements Context {
         def mavenNode = nodeBuilder.'hudson.tasks.Maven' {
             targets targetsArg?:''
             mavenName '(Default)' // TODO
-            pom pomArg?:''
+            if (pomArg) {
+              pom pomArg
+            }
             usePrivateRepository 'false'
         }
         // Apply Context
