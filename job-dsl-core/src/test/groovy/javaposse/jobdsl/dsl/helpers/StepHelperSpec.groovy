@@ -71,7 +71,7 @@ public class StepHelperSpec extends Specification {
         def mavenStep = context.stepNodes[0]
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
-        mavenStep.pom[0].value() == ''
+        mavenStep.pom[0] == null
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
