@@ -370,4 +370,18 @@ public class ScmHelperSpec extends Specification {
         then:
         root.scm[0].wipeOutWorkspace[0].text() == 'true'
     }
+
+    def 'call cloneWorkspace'(parentJob, criteria) {
+        when:
+        context.cloneWorkspace(parentJob, criteria)
+
+        then:
+        context.scmNode.parentJobName.text() == parentJob
+        context.scmNode.criteria.text() == criteria
+
+        where:
+        parentJob | criteria
+        'parent'  | 'Any'
+        'some'    | 'Successful'
+    }
 }
