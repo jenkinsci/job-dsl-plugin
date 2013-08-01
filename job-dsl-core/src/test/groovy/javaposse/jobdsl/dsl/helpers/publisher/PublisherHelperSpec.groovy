@@ -842,4 +842,13 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes[0].sourceEncoding[0].value() == 'UTF-8'
     }
+
+    def 'call allowBrokenBuildClaiming'() {
+        when:
+        context.allowBrokenBuildClaiming()
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.claim.ClaimPublisher'
+    }
 }
