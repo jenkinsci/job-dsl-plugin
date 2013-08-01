@@ -811,7 +811,7 @@ public class StepHelperSpec extends Specification {
         dslStep.targets[0].value() == ''
         dslStep.usingScriptText[0].value() == false
         dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == IGNORE
+        dslStep.removedJobAction[0].value() == 'IGNORE'
         dslStep.scriptText[0].value() == ''
     }
 
@@ -835,7 +835,7 @@ some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
         dslStep.ignoreExisting[0].value() ==  true
-        dslStep.removedJobAction[0].value() == DISABLE
+        dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
 
@@ -857,7 +857,7 @@ some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
         dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == DISABLE
+        dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
 
@@ -882,7 +882,7 @@ still-another-dsl.groovy'''
         dslStep.targets[0].value() == ''
         dslStep.usingScriptText[0].value() == true
         dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == DELETE
+        dslStep.removedJobAction[0].value() == 'DELETE'
         dslStep.scriptText[0].value() == '''job {
   foo()
   bar {
@@ -906,7 +906,7 @@ some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
         dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == DISABLE
+        dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
 
@@ -924,7 +924,7 @@ some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
         dslStep.ignoreExisting[0].value() ==  true
-        dslStep.removedJobAction[0].value() == DISABLE
+        dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
 
@@ -946,7 +946,7 @@ still-another-dsl.groovy'''
         dslStep.targets[0].value() == ''
         dslStep.usingScriptText[0].value() == true
         dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == DELETE
+        dslStep.removedJobAction[0].value() == 'DELETE'
         dslStep.scriptText[0].value() == '''job {
   foo()
   bar {

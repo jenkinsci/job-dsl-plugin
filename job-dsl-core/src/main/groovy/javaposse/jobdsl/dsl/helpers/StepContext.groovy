@@ -122,7 +122,9 @@ class StepContext implements Context {
     def dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
         DslContext ctx = new DslContext()
         ctx.text(scriptText)
-        ctx.removeAction(removedJobAction)
+        if (removedJobAction) {
+            ctx.removeAction(removedJobAction)
+        }
         ctx.ignoreExisting = ignoreExisting
         buildDslNode(ctx)
     }
@@ -130,7 +132,9 @@ class StepContext implements Context {
     def dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
         DslContext ctx = new DslContext()
         ctx.external(externalScripts.toArray(new String[0]))
-        ctx.removeAction(removedJobAction)
+        if (removedJobAction) {
+            ctx.removeAction(removedJobAction)
+        }
         ctx.ignoreExisting = ignoreExisting
         buildDslNode(ctx)
 
@@ -143,7 +147,7 @@ class StepContext implements Context {
             usingScriptText context.useScriptText()
             scriptText context.scriptText
             ignoreExisting context.ignoreExisting
-            removedJobAction context.removedJobAction
+            removedJobAction context.removedJobAction.name()
         }
 
         stepNodes << dslNode
