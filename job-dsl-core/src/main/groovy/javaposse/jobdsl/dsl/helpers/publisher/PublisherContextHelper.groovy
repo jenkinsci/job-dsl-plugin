@@ -618,6 +618,13 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 sourceEncoding(coberturaContext.sourceEncoding)
             }
         }
+
+        /**
+         * <hudson.plugins.claim.ClaimPublisher/>
+         */
+        def allowBrokenBuildClaiming() {
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.claim.ClaimPublisher'()
+        }
     }
 }
 
