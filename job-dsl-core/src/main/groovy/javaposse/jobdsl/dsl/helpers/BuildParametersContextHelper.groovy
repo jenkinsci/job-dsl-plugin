@@ -185,14 +185,16 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
          *                 <name>runValue</name>
          *                 <projectName>2</projectName>
          *                 <description>the description of the run value</description>
+         *                 <filter>SUCCESSFUL</filter>
          *         </hudson.model.RunParameterDefinition>
          *
          * @param parameterName
          * @param jobToRun
          * @param description (optional)
+         * @param filter (optional, one of "ALL", "COMPLETED", "SUCCESSFUL" or "STABLE")
          * @return
          */
-        def runParam(String parameterName, String jobToRun, String description = null) {
+        def runParam(String parameterName, String jobToRun, String description = null, String filter = null) {
             Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
             Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
             Preconditions.checkArgument(parameterName.length() > 0)
@@ -204,6 +206,9 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
             definitionNode.appendNode('projectName', jobToRun)
             if (description != null) {
                 definitionNode.appendNode('description', description)
+            }
+            if (filter != null) {
+                definitionNode.appendNode('filter', filter)
             }
 
             buildParameterNodes[parameterName] = definitionNode
