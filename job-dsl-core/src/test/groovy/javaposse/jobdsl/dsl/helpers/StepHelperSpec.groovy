@@ -72,10 +72,10 @@ public class StepHelperSpec extends Specification {
         grailsStep0.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep0.targets[0].value() == 'compile'
         grailsStep0.useWrapper[0].value() == 'false'
-        grailsStep0.grailsWorkDir[0].value() == null
-        grailsStep0.projectWorkDir[0].value() == null
-        grailsStep0.projectBaseDir[0].value() == null
-        grailsStep0.serverPort[0].value() == null
+        grailsStep0.grailsWorkDir[0].value() == ''
+        grailsStep0.projectWorkDir[0].value() == ''
+        grailsStep0.projectBaseDir[0].value() == ''
+        grailsStep0.serverPort[0].value() == ''
         grailsStep0.'properties'[0].value() == ''
         grailsStep0.forceUpgrade[0].value() == 'false'
         grailsStep0.nonInteractive[0].value() == 'true'
@@ -89,10 +89,10 @@ public class StepHelperSpec extends Specification {
         grailsStep1.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep1.targets[0].value() == 'compile'
         grailsStep1.useWrapper[0].value() == 'true'
-        grailsStep1.grailsWorkDir[0].value() == null
-        grailsStep1.projectWorkDir[0].value() == null
-        grailsStep1.projectBaseDir[0].value() == null
-        grailsStep1.serverPort[0].value() == null
+        grailsStep1.grailsWorkDir[0].value() == ''
+        grailsStep1.projectWorkDir[0].value() == ''
+        grailsStep1.projectBaseDir[0].value() == ''
+        grailsStep1.serverPort[0].value() == ''
         grailsStep1.'properties'[0].value() == ''
         grailsStep1.forceUpgrade[0].value() == 'false'
         grailsStep1.nonInteractive[0].value() == 'true'
@@ -110,9 +110,9 @@ public class StepHelperSpec extends Specification {
         grailsStep2.targets[0].value() == 'compile'
         grailsStep2.useWrapper[0].value() == 'false'
         grailsStep2.grailsWorkDir[0].value() == 'work1'
-        grailsStep2.projectWorkDir[0].value() == null
-        grailsStep2.projectBaseDir[0].value() == null
-        grailsStep2.serverPort[0].value() == null
+        grailsStep2.projectWorkDir[0].value() == ''
+        grailsStep2.projectBaseDir[0].value() == ''
+        grailsStep2.serverPort[0].value() == ''
         grailsStep2.'properties'[0].value() == ''
         grailsStep2.forceUpgrade[0].value() == 'false'
         grailsStep2.nonInteractive[0].value() == 'false'
@@ -170,6 +170,23 @@ public class StepHelperSpec extends Specification {
         grailsStep4.'properties'[0].value() == ''
         grailsStep4.forceUpgrade[0].value() == 'true'
         grailsStep4.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails {}
+
+        then:
+        context.stepNodes.size() == 6
+        def grailsStep5 = context.stepNodes[5]
+        grailsStep5.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep5.targets[0].value() == ''
+        grailsStep5.useWrapper[0].value() == 'false'
+        grailsStep5.grailsWorkDir[0].value() == ''
+        grailsStep5.projectWorkDir[0].value() == ''
+        grailsStep5.projectBaseDir[0].value() == ''
+        grailsStep5.serverPort[0].value() == ''
+        grailsStep5.'properties'[0].value() == ''
+        grailsStep5.forceUpgrade[0].value() == 'false'
+        grailsStep5.nonInteractive[0].value() == 'true'
     }
 
     def 'call maven methods'() {

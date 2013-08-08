@@ -565,10 +565,10 @@ class StepContext implements Context {
     def static class GrailsContext implements Context {
         List<String> targets = []
         String name = '(Default)'
-        String grailsWorkDir
-        String projectWorkDir
-        String projectBaseDir
-        String serverPort
+        String grailsWorkDir = ''
+        String projectWorkDir = ''
+        String projectBaseDir = ''
+        String serverPort = ''
         Map<String, String> props = [:]
         boolean forceUpgrade = false
         boolean nonInteractive = true
