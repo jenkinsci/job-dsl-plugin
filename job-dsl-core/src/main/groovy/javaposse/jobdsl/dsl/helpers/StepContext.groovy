@@ -5,6 +5,8 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
+import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.IGNORE
+
 class StepContext implements Context {
     List<Node> stepNodes = []
     JobType type
@@ -101,6 +103,99 @@ class StepContext implements Context {
         }
 
         stepNodes << sbtNode
+
+    }
+
+    /**
+     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16">
+        <targets>sbt-template.groovy</targets>
+        <usingScriptText>false</usingScriptText>
+        <ignoreExisting>false</ignoreExisting>
+        <removedJobAction>IGNORE</removedJobAction>
+     </javaposse.jobdsl.plugin.ExecuteDslScripts>     */
+    def dsl(Closure configure = null) {
+        DslContext context = new DslContext()
+        AbstractContextHelper.executeInContext(configure, context)
+        buildDslNode(context)
+    }
+
+    def dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.text(scriptText)
+        if (removedJobAction) {
+            ctx.removeAction(removedJobAction)
+        }
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+    }
+
+    def dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.external(externalScripts.toArray(new String[0]))
+        if (removedJobAction) {
+            ctx.removeAction(removedJobAction)
+        }
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+
+    }
+
+    private void buildDslNode(context) {
+        def nodeBuilder = new NodeBuilder()
+        def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
+            targets context.targets
+            usingScriptText context.useScriptText()
+            scriptText context.scriptText
+            ignoreExisting context.ignoreExisting
+            removedJobAction context.removedJobAction.name()
+        }
+
+        stepNodes << dslNode
+    }
+
+    def static class DslContext implements Context {
+
+        enum RemovedJobAction {
+            IGNORE,
+            DISABLE,
+            DELETE
+        }
+
+        String scriptText = ''
+        RemovedJobAction removedJobAction = IGNORE
+        def externalScripts = []
+        def ignoreExisting = false
+
+        def text(String text) {
+            this.scriptText = Preconditions.checkNotNull(text)
+        }
+
+        def useScriptText() {
+            scriptText.length()>0
+        }
+
+        def external(String... dslScripts) {
+            externalScripts.addAll(dslScripts)
+        }
+
+        def getTargets() {
+            externalScripts.join('\n')
+        }
+
+        def ignoreExisting(boolean ignore = true) {
+            this.ignoreExisting = ignore
+        }
+
+        def removeAction(String action) {
+
+            try {
+                this.removedJobAction = RemovedJobAction.valueOf(action)
+            } catch (IllegalArgumentException iae) {
+                throw new IllegalArgumentException("removeAction must be one of: ${RemovedJobAction.values()}")
+            }
+
+
+        }
 
     }
 
@@ -408,7 +503,9 @@ class StepContext implements Context {
         def mavenNode = nodeBuilder.'hudson.tasks.Maven' {
             targets targetsArg?:''
             mavenName '(Default)' // TODO
-            pom pomArg?:''
+            if (pomArg) {
+              pom pomArg
+            }
             usePrivateRepository 'false'
         }
         // Apply Context
@@ -423,7 +520,7 @@ class StepContext implements Context {
     /**
      <com.g2one.hudson.grails.GrailsBuilder>
      <targets/>
-     <name>Grails 2.0.3</name>
+     <name>(Default)</name>
      <grailsWorkDir/>
      <projectWorkDir/>
      <projectBaseDir/>
@@ -431,11 +528,111 @@ class StepContext implements Context {
      <properties/>
      <forceUpgrade>false</forceUpgrade>
      <nonInteractive>true</nonInteractive>
+     <useWrapper>false</useWrapper>
      </com.g2one.hudson.grails.GrailsBuilder>
      */
-//        def grails() {
-//
-//        }
+    def grails(Closure grailsClosure) {
+        grails null, false, grailsClosure
+    }
+
+    def grails(String targetsArg, Closure grailsClosure) {
+        grails targetsArg, false, grailsClosure
+    }
+
+    def grails(String targetsArg = null, boolean useWrapperArg = false, Closure grailsClosure = null) {
+        GrailsContext grailsContext = new GrailsContext(
+            useWrapper: useWrapperArg
+        )
+        AbstractContextHelper.executeInContext(grailsClosure, grailsContext)
+
+        def nodeBuilder = new NodeBuilder()
+        def grailsNode = nodeBuilder.'com.g2one.hudson.grails.GrailsBuilder' {
+            targets targetsArg ?: grailsContext.targetsString
+            name grailsContext.name
+            grailsWorkDir grailsContext.grailsWorkDir
+            projectWorkDir grailsContext.projectWorkDir
+            projectBaseDir grailsContext.projectBaseDir
+            serverPort grailsContext.serverPort
+            'properties' grailsContext.propertiesString
+            forceUpgrade grailsContext.forceUpgrade.toString()
+            nonInteractive grailsContext.nonInteractive.toString()
+            useWrapper grailsContext.useWrapper.toString()
+        }
+
+        stepNodes << grailsNode
+    }
+
+    def static class GrailsContext implements Context {
+        List<String> targets = []
+        String name = '(Default)'
+        String grailsWorkDir = ''
+        String projectWorkDir = ''
+        String projectBaseDir = ''
+        String serverPort = ''
+        Map<String, String> props = [:]
+        boolean forceUpgrade = false
+        boolean nonInteractive = true
+        boolean useWrapper = false
+
+        def target(String target) {
+            targets << target
+        }
+
+        def targets(Iterable<String> addlTargets) {
+            addlTargets.each {
+                target(it)
+            }
+        }
+
+        String getTargetsString() {
+            targets.join(' ')
+        }
+
+        def name(String name) {
+            this.name = name
+        }
+
+        def grailsWorkDir(String grailsWorkDir) {
+            this.grailsWorkDir = grailsWorkDir
+        }
+
+        def projectWorkDir(String projectWorkDir) {
+            this.projectWorkDir = projectWorkDir
+        }
+
+        def projectBaseDir(String projectBaseDir) {
+            this.projectBaseDir = projectBaseDir
+        }
+
+        def serverPort(String serverPort) {
+            this.serverPort = serverPort
+        }
+
+        def prop(String key, String value) {
+            props[key] = value
+        }
+
+        def props(Map<String, String> map) {
+            props += map
+        }
+
+        String getPropertiesString() {
+            props.collect { k, v -> "$k=$v" }.join('\n')
+        }
+
+        def forceUpgrade(boolean forceUpgrade) {
+            this.forceUpgrade = forceUpgrade
+        }
+
+        def nonInteractive(boolean nonInteractive) {
+            this.nonInteractive = nonInteractive
+        }
+
+        def useWrapper(boolean useWrapper) {
+            this.useWrapper = useWrapper
+        }
+
+    }
 
     /**
      <hudson.plugins.copyartifact.CopyArtifact>

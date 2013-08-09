@@ -5,6 +5,10 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
+import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.DELETE
+import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.DISABLE
+import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.IGNORE
+
 public class StepHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
@@ -57,6 +61,134 @@ public class StepHelperSpec extends Specification {
         gradleStep2.useWrapper[0].value() == 'false'
     }
 
+    def 'call grails methods'() {
+        when:
+        context.grails('compile')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def grailsStep0 = context.stepNodes[0]
+        grailsStep0.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep0.targets[0].value() == 'compile'
+        grailsStep0.useWrapper[0].value() == 'false'
+        grailsStep0.grailsWorkDir[0].value() == ''
+        grailsStep0.projectWorkDir[0].value() == ''
+        grailsStep0.projectBaseDir[0].value() == ''
+        grailsStep0.serverPort[0].value() == ''
+        grailsStep0.'properties'[0].value() == ''
+        grailsStep0.forceUpgrade[0].value() == 'false'
+        grailsStep0.nonInteractive[0].value() == 'true'
+
+        when:
+        context.grails('compile', true)
+
+        then:
+        context.stepNodes.size() == 2
+        def grailsStep1 = context.stepNodes[1]
+        grailsStep1.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep1.targets[0].value() == 'compile'
+        grailsStep1.useWrapper[0].value() == 'true'
+        grailsStep1.grailsWorkDir[0].value() == ''
+        grailsStep1.projectWorkDir[0].value() == ''
+        grailsStep1.projectBaseDir[0].value() == ''
+        grailsStep1.serverPort[0].value() == ''
+        grailsStep1.'properties'[0].value() == ''
+        grailsStep1.forceUpgrade[0].value() == 'false'
+        grailsStep1.nonInteractive[0].value() == 'true'
+
+        when:
+        context.grails('compile', false) {
+            grailsWorkDir 'work1'
+            nonInteractive false
+        }
+
+        then:
+        context.stepNodes.size() == 3
+        def grailsStep2 = context.stepNodes[2]
+        grailsStep2.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep2.targets[0].value() == 'compile'
+        grailsStep2.useWrapper[0].value() == 'false'
+        grailsStep2.grailsWorkDir[0].value() == 'work1'
+        grailsStep2.projectWorkDir[0].value() == ''
+        grailsStep2.projectBaseDir[0].value() == ''
+        grailsStep2.serverPort[0].value() == ''
+        grailsStep2.'properties'[0].value() == ''
+        grailsStep2.forceUpgrade[0].value() == 'false'
+        grailsStep2.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails {
+            target 'clean'
+            targets(['compile', 'test-app'])
+            useWrapper true
+            grailsWorkDir 'work'
+            projectWorkDir 'project'
+            projectBaseDir  'base'
+            serverPort  '1111'
+            props  prop1: 'val1', prop2: 'val2'
+            prop 'prop3', 'val3'
+            forceUpgrade  true
+            nonInteractive  false
+        }
+
+        then:
+        context.stepNodes.size() == 4
+        def grailsStep3 = context.stepNodes[3]
+        grailsStep3.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep3.targets[0].value() == 'clean compile test-app'
+        grailsStep3.useWrapper[0].value() == 'true'
+        grailsStep3.grailsWorkDir[0].value() == 'work'
+        grailsStep3.projectWorkDir[0].value() == 'project'
+        grailsStep3.projectBaseDir[0].value() == 'base'
+        grailsStep3.serverPort[0].value() == '1111'
+        grailsStep3.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
+        grailsStep3.forceUpgrade[0].value() == 'true'
+        grailsStep3.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails '"test-app --stacktrace"', {
+            useWrapper true
+            grailsWorkDir 'work'
+            projectWorkDir 'project'
+            projectBaseDir  'base'
+            serverPort  '8080'
+            forceUpgrade  true
+            nonInteractive  false
+        }
+
+        then:
+        context.stepNodes.size() == 5
+        def grailsStep4 = context.stepNodes[4]
+        grailsStep4.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep4.targets[0].value() == '"test-app --stacktrace"'
+        grailsStep4.useWrapper[0].value() == 'true'
+        grailsStep4.grailsWorkDir[0].value() == 'work'
+        grailsStep4.projectWorkDir[0].value() == 'project'
+        grailsStep4.projectBaseDir[0].value() == 'base'
+        grailsStep4.serverPort[0].value() == '8080'
+        grailsStep4.'properties'[0].value() == ''
+        grailsStep4.forceUpgrade[0].value() == 'true'
+        grailsStep4.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails {}
+
+        then:
+        context.stepNodes.size() == 6
+        def grailsStep5 = context.stepNodes[5]
+        grailsStep5.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep5.targets[0].value() == ''
+        grailsStep5.useWrapper[0].value() == 'false'
+        grailsStep5.grailsWorkDir[0].value() == ''
+        grailsStep5.projectWorkDir[0].value() == ''
+        grailsStep5.projectBaseDir[0].value() == ''
+        grailsStep5.serverPort[0].value() == ''
+        grailsStep5.'properties'[0].value() == ''
+        grailsStep5.forceUpgrade[0].value() == 'false'
+        grailsStep5.nonInteractive[0].value() == 'true'
+    }
+
     def 'call maven methods'() {
         when:
         context.maven('install')
@@ -67,7 +199,7 @@ public class StepHelperSpec extends Specification {
         def mavenStep = context.stepNodes[0]
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
-        mavenStep.pom[0].value() == ''
+        mavenStep.pom[0] == null
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
@@ -564,7 +696,6 @@ public class StepHelperSpec extends Specification {
         propStr.contains('prop4=value4')
     }
 
-
     def 'call phases with multiple calls'() {
         when:
         context.phase('Third') {
@@ -684,4 +815,162 @@ public class StepHelperSpec extends Specification {
         sbtStep.actions[0].value() == 'test'
         sbtStep.subdirPath[0].value() == 'subproject'
     }
+
+    def 'call dsl method defaults' () {
+        when:
+        context.dsl()
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'IGNORE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+
+    def 'call dsl method external script ignoring existing' () {
+        when:
+        context.dsl {
+            removeAction 'DISABLE'
+            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'still-another-dsl.groovy'
+            ignoreExisting()
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method external script' () {
+        when:
+        context.dsl {
+            removeAction 'DISABLE'
+            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'still-another-dsl.groovy'
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method with script text' () {
+        when:
+        context.dsl {
+            removeAction('DELETE')
+            text '''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+'''
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == true
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DELETE'
+        dslStep.scriptText[0].value() == '''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+'''
+    }
+
+    def 'call dsl method external script as parameters' () {
+        when:
+        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method external script as parameters full' () {
+        when:
+        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE', true)
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method with script text as parameters'() {
+        when:
+        context.dsl('''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+''', 'DELETE')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == true
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DELETE'
+        dslStep.scriptText[0].value() == '''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+'''
+    }
+
 }

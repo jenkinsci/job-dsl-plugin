@@ -33,6 +33,23 @@ public class TopLevelHelperSpec extends Specification {
 
     }
 
+    def 'add rvm-controlled ruby version'() {
+        when:
+        def action = helper.rvm('ruby-1.9.3')
+        action.execute(root)
+
+        then:
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
+    }
+
+    def 'rvm exception on empty param'() {
+        when:
+        def action = helper.rvm()
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'can run timeout'() {
         when:
         helper.timeout(15)
@@ -288,6 +305,43 @@ public class TopLevelHelperSpec extends Specification {
 
         then:
         root.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
+    }
+
+    def 'port allocator string list'() {
+        when:
+        def action = helper.allocatePorts 'HTTP', '8080'
+        action.execute(root)
+
+        then:
+        def ports = root.buildWrappers.'org.jvnet.hudson.plugins.port__allocator.PortAllocator'.ports
+        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
+        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
+    }
+
+    def 'port allocator closure'() {
+        when:
+        def action = helper.allocatePorts {
+            port 'HTTP'
+            port '8080'
+            glassfish '1234', 'user', 'password'
+            tomcat '1234', 'password'
+        }
+
+        action.execute(root)
+
+        then:
+        def ports = root.buildWrappers[0].'org.jvnet.hudson.plugins.port__allocator.PortAllocator'[0].ports
+        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
+        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
+
+        /*def glassfish  = ports['org.jvnet.hudson.plugins.port__allocator.GlassfishJmxPortType']
+        glassfish.name[0].value()== '1234'
+        glassfish.userName[0].value()== 'username'
+        glassfish.password[0].value()== 'password'
+
+        def tomcat = ports.'org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType'
+        tomcat.name[0].value()== '1234'
+        tomcat.password[0].value()== 'password' */
     }
 
     def 'add a quiet period'() {
