@@ -480,4 +480,22 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * Block build if certain jobs are running
+     <buildWrappers>
+       <com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper plugin="job-node-stalker@1.0.1">
+         <job>test</job>
+         <shareWorkspace>true</shareWorkspace>
+       </com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper>
+     </buildWrappers>
+     */
+    def runOnSameNodeAs(String jobName, boolean useSameWorkspace = false) {
+        Preconditions.checkNotNull(jobName, "Job name must not be null")
+        execute {
+            it / buildWrappers / 'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper' {
+                job jobName
+                shareWorkspace useSameWorkspace
+            }
+        }
+    }
 }
