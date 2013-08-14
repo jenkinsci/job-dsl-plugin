@@ -245,4 +245,38 @@ public class MavenHelperSpec extends Specification {
         root.runHeadless[0].value() == true
     }
 
+    def 'cannot run localRepository for free style jobs'() {
+        setup:
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+
+        when:
+        helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToExecutor)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'cannot run localRepository with null argument'() {
+        when:
+        helper.localRepository(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'localRepository constructs xml'() {
+        when:
+        def action = helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToExecutor)
+        action.execute(root)
+
+        then:
+        root.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'
+
+        when:
+        action = helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToWorkspace)
+        action.execute(root)
+
+        then:
+        root.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
+    }
 }
