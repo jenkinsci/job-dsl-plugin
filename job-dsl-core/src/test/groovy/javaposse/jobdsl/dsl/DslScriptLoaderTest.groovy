@@ -95,6 +95,24 @@ public class DslScriptLoaderTest extends Specification {
         job.type == JobType.Maven
     }
 
+    def 'run engine that uses static import for LocalRepositoryLocation'() {
+        setup:
+        def scriptStr = '''job(type: Maven) {
+    name 'test'
+    localRepository LocalToExecutor
+}
+'''
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
+
+        then:
+        jp != null
+        def jobs = jp.getReferencedJobs()
+        jobs.size() == 1
+    }
+
     def 'run engine with reference to other class from a string'() {
         setup:
         def scriptStr = '''job {
