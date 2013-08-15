@@ -480,4 +480,26 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * <project>
+     *   <buildWrappers>
+     *     <com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper plugin="job-node-stalker@1.0.1">
+     *       <job>test</job>
+     *       <shareWorkspace>true</shareWorkspace>
+     *     </com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper>
+     *   </buildWrappers>
+
+     * Build the job on the same node as another job and optionally use the same workspace as the other job.
+     * @param jobName name of the job
+     * @param useSameWorkspace set to <code>true</code> to share the workspace with the given job
+     */
+    def runOnSameNodeAs(String jobName, boolean useSameWorkspace = false) {
+        Preconditions.checkNotNull(jobName, "Job name must not be null")
+        execute {
+            it / buildWrappers / 'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper' {
+                job jobName
+                shareWorkspace useSameWorkspace
+            }
+        }
+    }
 }
