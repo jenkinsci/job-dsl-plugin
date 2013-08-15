@@ -146,20 +146,15 @@ public class PublisherHelperSpec extends Specification {
         !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
     }
 
-    def 'call jacoco code coverage with default args'() {
+    def 'call jacoco code coverage with no args'() {
         when:
 
-        context.jacocoCodeCoverage {
-            execPattern "**/target/**/**.exec" 
-            classPattern "**/target/**/classes"
-            minimumInstructionCoverage "0"
-            minimumBranchCoverage "0"
-        }
+        context.jacocoCodeCoverage()
 
         then:
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
-        jacocoNode.execPattern[0].value() == '**/target/**/**.exec'
+        jacocoNode.execPattern[0].value() == '**/target/**.exec'
         jacocoNode.minimumInstructionCoverage[0].value() == "0"             
     }
    

@@ -3,23 +3,23 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.helpers.Context
 
 class JacocoContext implements Context {
-    String execPattern
-    String classPattern
-    String sourcePattern
-    String inclusionPattern
-    String exclusionPattern
-    String minimumInstructionCoverage
-    String minimumBranchCoverage
-    String minimumComplexityCoverage
-    String minimumLineCoverage
-    String minimumMethodCoverage 
-    String minimumClassCoverage
-    String maximumInstructionCoverage
-    String maximumBranchCoverage 
-    String maximumComplexityCoverage
-    String maximumLineCoverage 
-    String maximumMethodCoverage
-    String maximumClassCoverage
+    String execPattern = "**/target/**.exec"
+    String classPattern = "**/classes"
+    String sourcePattern = "**/src/main/java"
+    String inclusionPattern = "**/*.class"
+    String exclusionPattern = "**/*Test*"
+    String minimumInstructionCoverage = "0"
+    String minimumBranchCoverage = "0"
+    String minimumComplexityCoverage = "0"
+    String minimumLineCoverage = "0"
+    String minimumMethodCoverage = "0"
+    String minimumClassCoverage = "0"
+    String maximumInstructionCoverage = "0"
+    String maximumBranchCoverage  = "0"
+    String maximumComplexityCoverage = "0"
+    String maximumLineCoverage  = "0"
+    String maximumMethodCoverage = "0"
+    String maximumClassCoverage = "0"
 
     void execPattern(String execPattern) {
         this.execPattern = execPattern
