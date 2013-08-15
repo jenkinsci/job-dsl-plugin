@@ -264,16 +264,18 @@ public class MavenHelperSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def 'localRepository constructs xml'() {
+    def 'localRepository constructs xml for LocalToExecutor'() {
         when:
         def action = helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToExecutor)
         action.execute(root)
 
         then:
         root.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'
+    }
 
+    def 'localRepository constructs xml for LocalToWorkspace'() {
         when:
-        action = helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToWorkspace)
+        def action = helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToWorkspace)
         action.execute(root)
 
         then:

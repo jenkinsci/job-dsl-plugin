@@ -107,6 +107,8 @@ class MavenHelper extends AbstractHelper {
     }
 
     /**
+     * <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
+     *
      * Set to use isolated local Maven repositories.
      * @param location the local repository to use for isolation
      */
