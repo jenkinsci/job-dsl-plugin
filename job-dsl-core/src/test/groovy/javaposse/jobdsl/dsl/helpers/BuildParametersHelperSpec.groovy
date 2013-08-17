@@ -356,6 +356,20 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes["myParameterName"].description.text() == ''
     }
 
+    def 'fullest runParam usage'() {
+        when:
+        context.runParam("myParameterName", "myJobName", "my description with spaces", "SUCCESSFUL")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.RunParameterDefinition'
+        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
+        context.buildParameterNodes["myParameterName"].projectName.text() == 'myJobName'
+        context.buildParameterNodes["myParameterName"].description.text() == 'my description with spaces'
+        context.buildParameterNodes["myParameterName"].filter.text() == 'SUCCESSFUL'
+    }
+
     def 'runParam name argument cant be null'() {
         when:
         context.runParam(null, null)

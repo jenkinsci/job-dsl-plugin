@@ -409,4 +409,26 @@ public class TopLevelHelperSpec extends Specification {
         then:
         root.blockBuildWhenUpstreamBuilding[0].value() == true
     }
+
+    def 'run on same node' () {
+        when:
+        def action = helper.runOnSameNodeAs('testJob')
+        action.execute(root)
+
+        then:
+        def wrapper = root.buildWrappers[0].'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
+        wrapper.job[0].value() == 'testJob'
+        wrapper.shareWorkspace[0].value() == false
+    }
+
+    def 'run on same node and use same workspace' () {
+        when:
+        def action = helper.runOnSameNodeAs('testJob', true)
+        action.execute(root)
+
+        then:
+        def wrapper = root.buildWrappers[0].'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
+        wrapper.job[0].value() == 'testJob'
+        wrapper.shareWorkspace[0].value() == true
+    }
 }
