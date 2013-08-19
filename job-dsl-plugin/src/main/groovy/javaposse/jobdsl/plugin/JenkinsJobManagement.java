@@ -194,8 +194,16 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
             int i = jobName.lastIndexOf('/');
             Jenkins jenkins = Jenkins.getInstance();
-            ModifiableTopLevelItemGroup ctx = (ModifiableTopLevelItemGroup) ((i < 0) ? jenkins : jenkins.getItemByFullName(jobName.substring(0, i)));
-            TopLevelItem item = ctx.createProjectFromXML(jobName.substring(i+1), is);
+            ModifiableTopLevelItemGroup ctx = jenkins;
+            if (i > 0) {
+                String contextName = jobName.substring(0, i);
+                jobName = jobName.substring(i+1);
+                Item contextItem = jenkins.getItemByFullName(contextName);
+                if (contextItem instanceof  ModifiableItemGroup) {
+                    ctx = (ModifiableTopLevelItemGroup) contextItem;
+                }
+            }
+            TopLevelItem item = ctx.createProjectFromXML(jobName, is);
             created = true;
         } catch (UnsupportedEncodingException ueex) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
