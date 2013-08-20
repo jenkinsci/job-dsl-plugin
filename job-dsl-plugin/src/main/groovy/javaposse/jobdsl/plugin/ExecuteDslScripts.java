@@ -14,9 +14,12 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.DataBoundConstructor;
 import hudson.util.ListBoxModel;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -151,7 +154,11 @@ public class ExecuteDslScripts extends Builder {
         } else {
             String targetsStr = env.expand(this.targets);
             LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
-            String[] targets = targetsStr.split("\n");
+
+            String includes = targetsStr.replace("\n", ",");
+            FileSet fileSet = Util.createFileSet(new File(build.getWorkspace().toURI()), includes);
+            DirectoryScanner resultScanner = fileSet.getDirectoryScanner();
+            String[] targets =  resultScanner.getIncludedFiles();
 
             freshJobs = Sets.newHashSet();
             for (String target : targets) {
