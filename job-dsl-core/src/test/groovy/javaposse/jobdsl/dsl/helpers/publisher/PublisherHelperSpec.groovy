@@ -91,6 +91,33 @@ public class PublisherHelperSpec extends Specification {
         emailDefault.sendToDevelopers[0].value() == 'false'
         emailDefault.sendToRequester[0].value() == 'true'
     }
+    def 'call standard mailer method'() {
+        when:
+        context.mailer('recipient')
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        Node mailerPublisher = context.publisherNodes[0]
+        mailerPublisher.name() == 'hudson.tasks.Mailer'
+        mailerPublisher.recipients[0].value() as String == 'recipient'
+        mailerPublisher.dontNotifyEveryUnstableBuild[0].value() as Boolean == false
+        mailerPublisher.sendToIndividuals[0].value() as Boolean == false
+    }
+
+    def 'call standard mailer method with all args'() {
+        when:
+        context.mailer('recipient2', true, true)
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        Node mailerPublisher = context.publisherNodes[0]
+        mailerPublisher.name() == 'hudson.tasks.Mailer'
+        mailerPublisher.recipients[0].value() as String == 'recipient2'
+        mailerPublisher.dontNotifyEveryUnstableBuild[0].value() as Boolean == true
+        mailerPublisher.sendToIndividuals[0].value() as Boolean == true
+    }
 
     def 'call archive artifacts with all args'() {
         when:
