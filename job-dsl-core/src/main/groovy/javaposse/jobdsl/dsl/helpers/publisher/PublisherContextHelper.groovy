@@ -188,6 +188,57 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         }
 
         /**
+        <hudson.plugins.jacoco.JacocoPublisher>
+          <execPattern>"target/*.exec"</execPattern>
+          <classPattern>"target/classes"</classPattern>
+          <sourcePattern>"src/main/java"</sourcePattern>
+          <inclusionPattern>"*.class"</inclusionPattern>
+          <exclusionPattern>"*.Test*"</exclusionPattern>
+          <minimumInstructionCoverage>0</minimumInstructionCoverage>
+          <minimumBranchCoverage>0</minimumBranchCoverage>
+          <minimumComplexityCoverage>0</minimumComplexityCoverage>
+          <minimumLineCoverage>0</minimumLineCoverage>
+          <minimumMethodCoverage>0</minimumMethodCoverage>
+          <minimumClassCoverage>0</minimumClassCoverage>
+          <maximumInstructionCoverage>0</maximumInstructionCoverage>
+          <maximumBranchCoverage>0</maximumBranchCoverage>
+          <maximumComplexityCoverage>0</maximumComplexityCoverage>
+          <maximumLineCoverage>0</maximumLineCoverage>
+          <maximumMethodCoverage>0</maximumMethodCoverage>
+          <maximumClassCoverage>0</maximumClassCoverage>
+        </hudson.plugins.jacoco.JacocoPublisher>
+        **/
+        def jacocoCodeCoverage(Closure jacocoClosure =  null) {
+
+            JacocoContext jacocoContext = new JacocoContext()
+            AbstractContextHelper.executeInContext(jacocoClosure, jacocoContext)
+
+            def nodeBuilder = NodeBuilder.newInstance()
+
+            Node jacocoNode = nodeBuilder.'hudson.plugins.jacoco.JacocoPublisher' {
+                execPattern jacocoContext.execPattern
+                classPattern jacocoContext.classPattern
+                sourcePattern jacocoContext.sourcePattern
+                inclusionPattern jacocoContext.inclusionPattern
+                exclusionPattern jacocoContext.exclusionPattern
+                minimumInstructionCoverage jacocoContext.minimumInstructionCoverage
+                minimumBranchCoverage jacocoContext.minimumBranchCoverage
+                minimumComplexityCoverage jacocoContext.minimumComplexityCoverage
+                minimumLineCoverage jacocoContext.minimumLineCoverage
+                minimumMethodCoverage jacocoContext.minimumMethodCoverage
+                minimumClassCoverage jacocoContext.minimumClassCoverage
+                maximumInstructionCoverage jacocoContext.maximumInstructionCoverage
+                maximumBranchCoverage jacocoContext.maximumBranchCoverage
+                maximumComplexityCoverage jacocoContext.maximumComplexityCoverage
+                maximumLineCoverage jacocoContext.maximumLineCoverage
+                maximumMethodCoverage jacocoContext.maximumMethodCoverage
+                maximumClassCoverage jacocoContext.maximumClassCoverage
+            }
+
+            publisherNodes << jacocoNode
+        }
+
+        /**
          <htmlpublisher.HtmlPublisher>
          <reportTargets>
          <htmlpublisher.HtmlPublisherTarget>
