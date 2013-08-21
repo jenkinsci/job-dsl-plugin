@@ -2,7 +2,6 @@ package javaposse.jobdsl.plugin
 
 import spock.lang.Specification
 
-@SuppressWarnings("GroovyAccessibility")
 class JobDslPluginUtilSpec extends Specification {
 
     def 'getJobNameFromFullName'() {
