@@ -77,9 +77,12 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine with dependent jobs'() {
         setup:
-        def scriptStr = '''
-job { name 'project-a' }
-job { name 'project-b' }
+        def scriptStr = '''job {
+    name 'project-a'
+}
+job {
+  name 'project-b'
+}
 '''
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
 
