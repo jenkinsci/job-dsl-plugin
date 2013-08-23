@@ -5,10 +5,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.absolute
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.elastic
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.likelyStuck
-
 public class TopLevelHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
@@ -31,116 +27,6 @@ public class TopLevelHelperSpec extends Specification {
         root.description.size() == 1
         root.description[0].value() == 'Description2'
 
-    }
-
-    def 'add rvm-controlled ruby version'() {
-        when:
-        def action = helper.rvm('ruby-1.9.3')
-        action.execute(root)
-
-        then:
-        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
-    }
-
-    def 'rvm exception on empty param'() {
-        when:
-        def action = helper.rvm()
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
-    def 'can run timeout'() {
-        when:
-        helper.timeout(15)
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'timeout constructs xml'() {
-        when:
-        def action = helper.timeout(15)
-        action.execute(root)
-
-        then:
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].timeoutMinutes[0].value() == '15'
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'true'
-    }
-
-    def 'timeout failBuild parameter works'() {
-        when:
-        def action = helper.timeout(15, false)
-        action.execute(root)
-
-        then:
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'false'
-    }
-
-    def 'default timeout works' () {
-        when:
-        def action = helper.timeout()
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 3
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == absolute
-        timeout.timeoutMinutesElasticDefault[0].value() == 3
-    }
-
-    def 'absolute timeout configuration working' () {
-        when:
-        def action = helper.timeout('absolute') {
-            limit 5
-        }
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 5
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == absolute
-        timeout.timeoutMinutesElasticDefault[0].value() == 5
-    }
-
-
-    def 'elastic timeout configuration working' () {
-        when:
-        def action = helper.timeout('elastic') {
-            limit 15
-            percentage 200
-        }
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 15
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  200
-        timeout.timeoutType[0].value() == elastic
-        timeout.timeoutMinutesElasticDefault[0].value() == 15
-    }
-
-    def 'likelyStuck timeout configuration working' () {
-        when:
-        def action = helper.timeout('likelyStuck')
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 3
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == likelyStuck
-        timeout.timeoutMinutesElasticDefault[0].value() == 3
     }
 
     def 'environments work with map arg'() {
@@ -307,43 +193,6 @@ public class TopLevelHelperSpec extends Specification {
         root.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
     }
 
-    def 'port allocator string list'() {
-        when:
-        def action = helper.allocatePorts 'HTTP', '8080'
-        action.execute(root)
-
-        then:
-        def ports = root.buildWrappers.'org.jvnet.hudson.plugins.port__allocator.PortAllocator'.ports
-        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
-        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
-    }
-
-    def 'port allocator closure'() {
-        when:
-        def action = helper.allocatePorts {
-            port 'HTTP'
-            port '8080'
-            glassfish '1234', 'user', 'password'
-            tomcat '1234', 'password'
-        }
-
-        action.execute(root)
-
-        then:
-        def ports = root.buildWrappers[0].'org.jvnet.hudson.plugins.port__allocator.PortAllocator'[0].ports
-        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
-        ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
-
-        /*def glassfish  = ports['org.jvnet.hudson.plugins.port__allocator.GlassfishJmxPortType']
-        glassfish.name[0].value()== '1234'
-        glassfish.userName[0].value()== 'username'
-        glassfish.password[0].value()== 'password'
-
-        def tomcat = ports.'org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType'
-        tomcat.name[0].value()== '1234'
-        tomcat.password[0].value()== 'password' */
-    }
-
     def 'add a quiet period'() {
         when:
         def action = helper.quietPeriod()
@@ -410,25 +259,4 @@ public class TopLevelHelperSpec extends Specification {
         root.blockBuildWhenUpstreamBuilding[0].value() == true
     }
 
-    def 'run on same node' () {
-        when:
-        def action = helper.runOnSameNodeAs('testJob')
-        action.execute(root)
-
-        then:
-        def wrapper = root.buildWrappers[0].'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
-        wrapper.job[0].value() == 'testJob'
-        wrapper.shareWorkspace[0].value() == false
-    }
-
-    def 'run on same node and use same workspace' () {
-        when:
-        def action = helper.runOnSameNodeAs('testJob', true)
-        action.execute(root)
-
-        then:
-        def wrapper = root.buildWrappers[0].'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
-        wrapper.job[0].value() == 'testJob'
-        wrapper.shareWorkspace[0].value() == true
-    }
 }
