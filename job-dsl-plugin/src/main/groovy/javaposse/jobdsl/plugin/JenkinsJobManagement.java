@@ -69,20 +69,20 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public boolean createOrUpdateConfig(String fullName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String fullJobName, String config, boolean ignoreExisting)
             throws JobNameNotProvidedException, JobConfigurationMissingException {
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullName));
+        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullJobName));
         boolean created = false;
 
-        validateUpdateArgs(fullName, config);
+        validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullName);
-        String jobName = JobDslPluginUtil.getJobNameFromFullName(fullName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullJobName);
+        String jobName = JobDslPluginUtil.getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
         if (project == null) {
-            created = createNewJob(fullName, config);
+            created = createNewJob(fullJobName, config);
         } else if (!ignoreExisting) {
             created = updateExistingJob(project, config);
         }
@@ -186,15 +186,15 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
-    private boolean createNewJob(String fullName, String config) {
+    private boolean createNewJob(String fullJobName, String config) {
         LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
         boolean created;
 
         try {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
 
-            ModifiableTopLevelItemGroup ctx = JobDslPluginUtil.getContextFromFullName(fullName);
-            String jobName = JobDslPluginUtil.getJobNameFromFullName(fullName);
+            ModifiableTopLevelItemGroup ctx = JobDslPluginUtil.getContextFromFullName(fullJobName);
+            String jobName = JobDslPluginUtil.getJobNameFromFullName(fullJobName);
             ctx.createProjectFromXML(jobName, is);
 
             created = true;
@@ -202,7 +202,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
             created = false;
         } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", fullName), ioex);
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", fullJobName), ioex);
             created = false;
         }
         return created;
