@@ -3,10 +3,7 @@ package javaposse.jobdsl.plugin;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
-import hudson.EnvVars;
-import hudson.Extension;
-import hudson.Launcher;
-import hudson.Util;
+import hudson.*;
 import hudson.model.*;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslScriptLoader;
@@ -22,6 +19,7 @@ import hudson.util.ListBoxModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -144,29 +142,12 @@ public class ExecuteDslScripts extends Builder {
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
         JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build);
+        Set<ScriptRequest> scriptRequests = getScriptRequests(build, env);
 
-        Set<GeneratedJob> freshJobs;
-        String jobName = build.getProject().getName();
-        URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
-        if(usingScriptText) {
-            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl, ignoreExisting);
-            freshJobs = DslScriptLoader.runDslEngine(request, jm);
-        } else {
-            String targetsStr = env.expand(this.targets);
-            LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
-
-            String includes = targetsStr.replace("\n", ",");
-            FileSet fileSet = Util.createFileSet(new File(build.getWorkspace().toURI()), includes);
-            DirectoryScanner resultScanner = fileSet.getDirectoryScanner();
-            String[] targets =  resultScanner.getIncludedFiles();
-
-            freshJobs = Sets.newHashSet();
-            for (String target : targets) {
-                ScriptRequest request = new ScriptRequest(target, null, workspaceUrl, ignoreExisting);
-                Set<GeneratedJob> dslJobs = DslScriptLoader.runDslEngine(request, jm);
-
-                freshJobs.addAll(dslJobs);
-            }
+        Set<GeneratedJob> freshJobs = Sets.newHashSet();
+        for (ScriptRequest request : scriptRequests) {
+            Set<GeneratedJob> dslJobs = DslScriptLoader.runDslEngine(request, jm);
+            freshJobs.addAll(dslJobs);
         }
 
         Set<GeneratedJob> failedJobs = new HashSet<GeneratedJob>();
@@ -194,6 +175,35 @@ public class ExecuteDslScripts extends Builder {
         Jenkins.getInstance().rebuildDependencyGraph();
 
         return true;
+    }
+
+    private Set<ScriptRequest> getScriptRequests(final AbstractBuild<?, ?> build, EnvVars env) throws IOException, InterruptedException {
+        Set<ScriptRequest> scriptRequests = Sets.newHashSet();
+
+        String jobName = build.getProject().getName();
+        URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
+
+        if(usingScriptText) {
+            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl, ignoreExisting);
+            scriptRequests.add(request);
+        } else {
+            String targetsStr = env.expand(this.targets);
+            LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
+
+            String[] targets =  getIncludedFiles(targetsStr, new File(build.getWorkspace().toURI()));
+            for (String target : targets) {
+                ScriptRequest request = new ScriptRequest(target, null, workspaceUrl, ignoreExisting);
+                scriptRequests.add(request);
+            }
+        }
+        return scriptRequests;
+    }
+
+    private String[] getIncludedFiles(String targetsStr, File workspace) {
+        String includes = targetsStr.replace("\n", ",");
+        FileSet fileSet = Util.createFileSet(workspace, includes);
+        DirectoryScanner resultScanner = fileSet.getDirectoryScanner();
+        return resultScanner.getIncludedFiles();
     }
 
 //    private List<String> collectBodies(AbstractBuild<?, ?> build, BuildListener listener, EnvVars env) throws IOException, InterruptedException {
