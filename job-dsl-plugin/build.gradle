@@ -52,6 +52,10 @@ jenkinsPlugin {
     }
 }
 
+dependencies {
+    optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'credentials', version: '1.6', ext: 'jar'])
+}
+
 tasks.jpi.manifest.attributes(["PluginFirstClassLoader": "true" ])
 
 //apply from: 'ide.gradle'
