@@ -78,7 +78,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         validateUpdateArgs(fullJobName, config);
 
         AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullJobName);
-        String jobName = JobDslPluginUtil.getJobNameFromFullName(fullJobName);
+        String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
         if (project == null) {
@@ -193,8 +193,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
 
-            ModifiableTopLevelItemGroup ctx = JobDslPluginUtil.getContextFromFullName(fullJobName);
-            String jobName = JobDslPluginUtil.getJobNameFromFullName(fullJobName);
+            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
+            String jobName = getJobNameFromFullName(fullJobName);
             ctx.createProjectFromXML(jobName, is);
 
             created = true;
@@ -206,6 +206,25 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             created = false;
         }
         return created;
+    }
+
+    private static ModifiableTopLevelItemGroup getContextFromFullName(String fullName) {
+        int i = fullName.lastIndexOf('/');
+        Jenkins jenkins = Jenkins.getInstance();
+        ModifiableTopLevelItemGroup ctx = jenkins;
+        if (i > 0) {
+            String contextName = fullName.substring(0, i);
+            Item contextItem = jenkins.getItemByFullName(contextName);
+            if (contextItem instanceof ModifiableTopLevelItemGroup) {
+                ctx = (ModifiableTopLevelItemGroup) contextItem;
+            }
+        }
+        return ctx;
+    }
+
+    private static String getJobNameFromFullName(String fullName) {
+        int i = fullName.lastIndexOf('/');
+        return i > 0 ? fullName.substring(i+1) : fullName;
     }
 
 //    @SuppressWarnings("rawtypes")

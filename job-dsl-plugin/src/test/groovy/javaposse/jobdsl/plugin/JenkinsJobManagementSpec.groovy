@@ -2,11 +2,11 @@ package javaposse.jobdsl.plugin
 
 import spock.lang.Specification
 
-class JobDslPluginUtilSpec extends Specification {
+class JenkinsJobManagementSpec extends Specification {
 
     def 'getJobNameFromFullName'() {
         expect:
-        JobDslPluginUtil.getJobNameFromFullName(fullName) == jobName
+        JenkinsJobManagement.getJobNameFromFullName(fullName) == jobName
 
         where:
         fullName     || jobName
