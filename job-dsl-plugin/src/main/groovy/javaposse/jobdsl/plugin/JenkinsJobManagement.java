@@ -1,13 +1,17 @@
 package javaposse.jobdsl.plugin;
 
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import hudson.EnvVars;
 import hudson.FilePath;
+import hudson.Plugin;
 import hudson.XmlFile;
 import hudson.model.*;
+import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.*;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
@@ -21,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static hudson.security.ACL.SYSTEM;
 
 /**
  * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
@@ -91,6 +97,21 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public Map<String, String> getParameters() {
         return envVars;
+    }
+
+    @Override
+    public String getCredentialsId(String credentialsDescription) {
+        Plugin credentialsPlugin = jenkins.getPlugin("credentials");
+        if (credentialsPlugin != null && !credentialsPlugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber("1.6"))) {
+            for (CredentialsProvider credentialsProvider : jenkins.getExtensionList(CredentialsProvider.class)) {
+                for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, jenkins, SYSTEM)) {
+                    if (credentials.getDescription().equals(credentialsDescription)) {
+                        return credentials.getId();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override

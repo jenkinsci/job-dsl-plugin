@@ -41,7 +41,7 @@ public class Job {
         helperTrigger = new TriggerContextHelper(withXmlActions, type)
         helperStep = new StepContextHelper(withXmlActions, type)
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
-        helperTopLevel = new TopLevelHelper(withXmlActions, type)
+        helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
     }
