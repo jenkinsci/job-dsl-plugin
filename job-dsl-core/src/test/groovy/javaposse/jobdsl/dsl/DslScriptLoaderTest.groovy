@@ -75,6 +75,32 @@ public class DslScriptLoaderTest extends Specification {
 
     }
 
+    def 'run engine with dependent jobs'() {
+        setup:
+        def scriptStr = '''job {
+    name 'project-a'
+}
+job {
+  name 'project-b'
+}
+'''
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+
+        when:
+        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
+
+        then:
+        jp != null
+        def jobs = jp.getReferencedJobs()
+        jobs.size() == 2
+        def job = Iterables.get(jobs, 0)
+        // If this one fails periodically, then it is because the referenced jobs are
+        // Not in definition order, but rather in hash order. Hence, predictability.
+        job.name == 'project-a'
+        where:
+          x << [1..25]
+    }
+
     def 'run engine that uses static import'() {
         setup:
         def scriptStr = '''job(type: Maven) {

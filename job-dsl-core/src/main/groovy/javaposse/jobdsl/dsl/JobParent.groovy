@@ -16,7 +16,7 @@ public abstract class JobParent extends Script {
     List<String> queueToBuild
 
     public JobParent() {
-        referencedJobs = Sets.newHashSet()
+        referencedJobs = Sets.newLinkedHashSet()
         queueToBuild = Lists.newArrayList()
     }
 
