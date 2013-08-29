@@ -45,4 +45,10 @@ public interface JobManagement {
      */
     Map<String,String> getParameters();
 
+    /**
+     * Returns the id of a Credentials object.
+     * @param credentialsDescription the description of the credentials to lookup
+     * @return id of Credentials or <code>null</code> if no credentials could be found
+     */
+    String getCredentialsId(String credentialsDescription);
 }

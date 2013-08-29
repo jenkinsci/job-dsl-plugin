@@ -134,6 +134,24 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         }
 
         /**
+          <hudson.tasks.Mailer>
+          <recipients>nbn@nineconsult.dk</recipients>
+          <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+          <sendToIndividuals>true</sendToIndividuals>
+           </hudson.tasks.Mailer>
+         */
+         def mailer(String mailRecipients, Boolean dontNotifyEveryUnstableBuildBoolean = false, Boolean sendToIndividualsBoolean = false) {
+            def nodeBuilder = new NodeBuilder()
+            Node mailerNode = nodeBuilder.'hudson.tasks.Mailer' {
+              recipients(mailRecipients)
+              dontNotifyEveryUnstableBuild(dontNotifyEveryUnstableBuildBoolean)
+              sendToIndividuals(sendToIndividualsBoolean)
+            }
+            publisherNodes << mailerNode
+         }
+
+
+        /**
          <hudson.tasks.ArtifactArchiver>
          <artifacts>build/libs/*</artifacts>
          <latestOnly>false</latestOnly>
