@@ -75,19 +75,20 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String fullJobName, String config, boolean ignoreExisting)
             throws JobNameNotProvidedException, JobConfigurationMissingException {
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
+        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullJobName));
         boolean created = false;
 
-        validateUpdateArgs(jobName, config);
+        validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullJobName);
+        String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
         if (project == null) {
-            created = createNewJob(jobName, config);
+            created = createNewJob(fullJobName, config);
         } else if (!ignoreExisting) {
             created = updateExistingJob(project, config);
         }
@@ -206,34 +207,45 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
-    private boolean createNewJob(String jobName, String config) {
+    private boolean createNewJob(String fullJobName, String config) {
         LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
         boolean created;
 
         try {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
 
-            int i = jobName.lastIndexOf('/');
-            Jenkins jenkins = Jenkins.getInstance();
-            ModifiableTopLevelItemGroup ctx = jenkins;
-            if (i > 0) {
-                String contextName = jobName.substring(0, i);
-                jobName = jobName.substring(i+1);
-                Item contextItem = jenkins.getItemByFullName(contextName);
-                if (contextItem instanceof  ModifiableItemGroup) {
-                    ctx = (ModifiableTopLevelItemGroup) contextItem;
-                }
-            }
-            TopLevelItem item = ctx.createProjectFromXML(jobName, is);
+            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
+            String jobName = getJobNameFromFullName(fullJobName);
+            ctx.createProjectFromXML(jobName, is);
+
             created = true;
         } catch (UnsupportedEncodingException ueex) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
             created = false;
         } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", jobName), ioex);
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", fullJobName), ioex);
             created = false;
         }
         return created;
+    }
+
+    private static ModifiableTopLevelItemGroup getContextFromFullName(String fullName) {
+        int i = fullName.lastIndexOf('/');
+        Jenkins jenkins = Jenkins.getInstance();
+        ModifiableTopLevelItemGroup ctx = jenkins;
+        if (i > 0) {
+            String contextName = fullName.substring(0, i);
+            Item contextItem = jenkins.getItemByFullName(contextName);
+            if (contextItem instanceof ModifiableTopLevelItemGroup) {
+                ctx = (ModifiableTopLevelItemGroup) contextItem;
+            }
+        }
+        return ctx;
+    }
+
+    private static String getJobNameFromFullName(String fullName) {
+        int i = fullName.lastIndexOf('/');
+        return i > 0 ? fullName.substring(i+1) : fullName;
     }
 
 //    @SuppressWarnings("rawtypes")
