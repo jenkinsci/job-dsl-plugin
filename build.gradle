@@ -74,6 +74,6 @@ project(':job-dsl-plugin') {
     }
 }
 
-task wrapper(type: Wrapper) { gradleVersion = '1.4' }
+task wrapper(type: Wrapper) { gradleVersion = '1.7' }
 
 apply from: './job-dsl-plugin/ide.gradle'
