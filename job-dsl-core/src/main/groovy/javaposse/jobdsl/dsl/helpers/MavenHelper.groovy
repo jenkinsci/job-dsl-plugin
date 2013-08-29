@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
+import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
 
 class MavenHelper extends AbstractHelper {
@@ -102,6 +103,31 @@ class MavenHelper extends AbstractHelper {
         runHeadlessAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'runHeadless', runHeadless
+        }
+    }
+
+    /**
+     * <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
+     *
+     * Set to use isolated local Maven repositories.
+     * @param location the local repository to use for isolation
+     */
+    def localRepository(LocalRepositoryLocation location) {
+        checkState type == JobType.Maven, "localRepository can only be applied for Maven jobs"
+        checkNotNull location, "localRepository can not be null"
+        execute { Node node ->
+            appendOrReplaceNode node, 'localRepository', [class: location.type]
+        }
+    }
+
+    public enum LocalRepositoryLocation {
+        LocalToExecutor('hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'),
+        LocalToWorkspace('hudson.maven.local_repo.PerJobLocalRepositoryLocator')
+
+        String type
+
+        public LocalRepositoryLocation(String type) {
+            this.type = type
         }
     }
 

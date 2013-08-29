@@ -91,6 +91,33 @@ public class PublisherHelperSpec extends Specification {
         emailDefault.sendToDevelopers[0].value() == 'false'
         emailDefault.sendToRequester[0].value() == 'true'
     }
+    def 'call standard mailer method'() {
+        when:
+        context.mailer('recipient')
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        Node mailerPublisher = context.publisherNodes[0]
+        mailerPublisher.name() == 'hudson.tasks.Mailer'
+        mailerPublisher.recipients[0].value() as String == 'recipient'
+        mailerPublisher.dontNotifyEveryUnstableBuild[0].value() as Boolean == false
+        mailerPublisher.sendToIndividuals[0].value() as Boolean == false
+    }
+
+    def 'call standard mailer method with all args'() {
+        when:
+        context.mailer('recipient2', true, true)
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        Node mailerPublisher = context.publisherNodes[0]
+        mailerPublisher.name() == 'hudson.tasks.Mailer'
+        mailerPublisher.recipients[0].value() as String == 'recipient2'
+        mailerPublisher.dontNotifyEveryUnstableBuild[0].value() as Boolean == true
+        mailerPublisher.sendToIndividuals[0].value() as Boolean == true
+    }
 
     def 'call archive artifacts with all args'() {
         when:
@@ -144,6 +171,62 @@ public class PublisherHelperSpec extends Specification {
         archiveNode.testDataPublishers[0] != null
         !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
         !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
+    }
+
+    def 'call jacoco code coverage with no args'() {
+        when:
+
+        context.jacocoCodeCoverage()
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.execPattern[0].value() == '**/target/**.exec'
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"             
+    }
+   
+    def 'call jacoco code coverage with all args'() {
+        when:
+        context.jacocoCodeCoverage {
+            execPattern 'execfiles'
+            classPattern 'classdir'
+            sourcePattern 'sourcedir'
+            inclusionPattern 'inclusiondir'
+            exclusionPattern 'exclusiondir'
+            minimumInstructionCoverage '1'
+            minimumBranchCoverage '2'
+            minimumComplexityCoverage '3' 
+            minimumLineCoverage '4' 
+            minimumMethodCoverage '5' 
+            minimumClassCoverage '6' 
+            maximumInstructionCoverage '7' 
+            maximumBranchCoverage '8' 
+            maximumComplexityCoverage '9' 
+            maximumLineCoverage '10' 
+            maximumMethodCoverage '11' 
+            maximumClassCoverage '12'
+        }
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.execPattern[0].value() == 'execfiles'
+        jacocoNode.classPattern[0].value() == 'classdir'
+        jacocoNode.sourcePattern[0].value() == 'sourcedir'
+        jacocoNode.inclusionPattern[0].value() == 'inclusiondir'
+        jacocoNode.exclusionPattern[0].value() == 'exclusiondir'
+        jacocoNode.minimumInstructionCoverage[0].value() == "1"
+        jacocoNode.minimumBranchCoverage[0].value() == "2"
+        jacocoNode.minimumComplexityCoverage[0].value() == "3"
+        jacocoNode.minimumLineCoverage[0].value() == "4"
+        jacocoNode.minimumMethodCoverage[0].value() == "5"
+        jacocoNode.minimumClassCoverage[0].value() == "6"
+        jacocoNode.maximumInstructionCoverage[0].value() == "7"
+        jacocoNode.maximumBranchCoverage[0].value() == "8"
+        jacocoNode.maximumComplexityCoverage[0].value() == "9"
+        jacocoNode.maximumLineCoverage[0].value() == "10"
+        jacocoNode.maximumMethodCoverage[0].value() == "11"
+        jacocoNode.maximumClassCoverage[0].value() == "12"
     }
 
     def 'calling minimal html publisher'() {

@@ -1,15 +1,20 @@
 package javaposse.jobdsl.plugin;
 
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import hudson.EnvVars;
 import hudson.FilePath;
+import hudson.Plugin;
 import hudson.XmlFile;
 import hudson.model.*;
+import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.*;
 import jenkins.model.Jenkins;
+import jenkins.model.ModifiableTopLevelItemGroup;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -21,13 +26,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.security.ACL.SYSTEM;
+
 /**
  * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
  */
 public final class JenkinsJobManagement extends AbstractJobManagement {
     static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
-    Jenkins jenkins = Jenkins.getInstance();
     EnvVars envVars;
     Set<GeneratedJob> modifiedJobs;
     AbstractBuild<?, ?> build;
@@ -77,7 +83,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         validateUpdateArgs(jobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
         Jenkins.checkGoodName(jobName);
 
         if (project == null) {
@@ -94,10 +100,25 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    public String getCredentialsId(String credentialsDescription) {
+        Plugin credentialsPlugin = jenkins.getPlugin("credentials");
+        if (credentialsPlugin != null && !credentialsPlugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber("1.6"))) {
+            for (CredentialsProvider credentialsProvider : jenkins.getExtensionList(CredentialsProvider.class)) {
+                for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, jenkins, SYSTEM)) {
+                    if (credentials.getDescription().equals(credentialsDescription)) {
+                        return credentials.getId();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void queueJob(String jobName) throws JobNameNotProvidedException {
         validateJobNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
 
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
@@ -138,7 +159,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
@@ -191,7 +212,19 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         try {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-            TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
+
+            int i = jobName.lastIndexOf('/');
+            Jenkins jenkins = Jenkins.getInstance();
+            ModifiableTopLevelItemGroup ctx = jenkins;
+            if (i > 0) {
+                String contextName = jobName.substring(0, i);
+                jobName = jobName.substring(i+1);
+                Item contextItem = jenkins.getItemByFullName(contextName);
+                if (contextItem instanceof  ModifiableItemGroup) {
+                    ctx = (ModifiableTopLevelItemGroup) contextItem;
+                }
+            }
+            TopLevelItem item = ctx.createProjectFromXML(jobName, is);
             created = true;
         } catch (UnsupportedEncodingException ueex) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");

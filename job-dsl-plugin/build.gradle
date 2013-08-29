@@ -23,7 +23,7 @@ configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-
 description = "Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins."
 
 jenkinsPlugin {
-    coreVersion = '1.462'
+    coreVersion = '1.480'
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
@@ -50,6 +50,10 @@ jenkinsPlugin {
             email 'mail@daniel-spilker.com'
         }
     }
+}
+
+dependencies {
+    optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'credentials', version: '1.6', ext: 'jar'])
 }
 
 tasks.jpi.manifest.attributes(["PluginFirstClassLoader": "true" ])

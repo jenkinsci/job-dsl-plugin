@@ -35,6 +35,11 @@ public abstract class AbstractJobManagement implements JobManagement {
     }
 
     @Override
+    public String getCredentialsId(String credentialsDescription) {
+        return null;
+    }
+
+    @Override
     public void queueJob(String jobName) throws JobNameNotProvidedException {
         validateJobNameArg(jobName);
     }
