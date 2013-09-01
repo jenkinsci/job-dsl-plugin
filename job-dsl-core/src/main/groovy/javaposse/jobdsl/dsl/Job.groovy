@@ -163,6 +163,7 @@ public class Job {
             case JobType.Freeform: return emptyTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
+            case JobType.Matrixjob: return emptyMatrixjobTemplate
         }
     }
 
@@ -237,5 +238,27 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
+'''
+
+    def emptyMatrixjobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<matrix-project>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <axes/>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+  <runSequentially>false</runSequentially>
+  </executionStrategy>
+</matrix-project>
 '''
 }

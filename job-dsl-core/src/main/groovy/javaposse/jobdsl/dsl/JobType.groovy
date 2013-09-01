@@ -3,7 +3,8 @@ package javaposse.jobdsl.dsl
 public enum JobType {
     Freeform('project'),
     Maven('maven2-moduleset'),
-    Multijob('com.tikal.jenkins.plugins.multijob.MultiJobProject')
+    Multijob('com.tikal.jenkins.plugins.multijob.MultiJobProject'),
+    Matrixjob('matrix-project')
 
     String elementName
 
