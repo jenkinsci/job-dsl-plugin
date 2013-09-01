@@ -101,10 +101,10 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public String getCredentialsId(String credentialsDescription) {
-        Plugin credentialsPlugin = jenkins.getPlugin("credentials");
+        Plugin credentialsPlugin = Jenkins.getInstance().getPlugin("credentials");
         if (credentialsPlugin != null && !credentialsPlugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber("1.6"))) {
-            for (CredentialsProvider credentialsProvider : jenkins.getExtensionList(CredentialsProvider.class)) {
-                for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, jenkins, SYSTEM)) {
+            for (CredentialsProvider credentialsProvider : Jenkins.getInstance().getExtensionList(CredentialsProvider.class)) {
+                for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, Jenkins.getInstance(), SYSTEM)) {
                     if (credentials.getDescription().equals(credentialsDescription)) {
                         return credentials.getId();
                     }
