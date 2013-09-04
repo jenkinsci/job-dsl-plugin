@@ -1,9 +1,9 @@
 package javaposse.jobdsl.dsl
 
 public enum AxisType {
-    TEXT('hudson.matrix.TextAxis'),
-    LABEL('hudson.matrix.LabelAxis'),
-    LABELEXP('hudson.matrix.LabelExpAxis')
+    Text('hudson.matrix.TextAxis'),
+    Label('hudson.matrix.LabelAxis'),
+    LabelExp('hudson.matrix.LabelExpAxis')
 
     String axisName
 

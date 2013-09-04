@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions
 import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.AxisType
 
 import javaposse.jobdsl.dsl.WithXmlAction
 
@@ -538,51 +537,4 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
-
-     /**
-     * <project>
-     *     <axes>
-     *       <hudson.matrix.LabelAxis>
-     *           <name>label</name>
-     *           <values>
-     *               <string>linux</string>
-     *               <string>mac</string>
-     *               <string>lamp</string>
-     *               <string>master</string>
-     *           </values>
-     *       </hudson.matrix.LabelAxis>
-     *       <hudson.matrix.LabelExpAxis>
-     *           <name>label_exp</name>
-     *           <values>
-     *               <string>linux</string>
-     *               <string>mac</string>
-     *           </values>
-     *       </hudson.matrix.LabelExpAxis>
-     *       <hudson.matrix.TextAxis>
-     *           <name>aaa</name>
-     *           <values>
-     *               <string>a</string>
-     *               <string>b</string>
-     *               <string>c</string>
-     *           </values>
-     *       </hudson.matrix.TextAxis>
-     *     </axes>
-     *  </project>
-     * Provide axis for matrix (multi configuration job)
-     */
-    def axis( AxisType axis, String n, Iterable<String> v) {
-        //String axisClass = type.find()
-        //def a = 'Text'.toLowerCase() as AxisType
-        println "axis ==== ${axis}"
-        println axis.getAxisName();
-        def an = axis.getAxisName()
-        execute {
-            it / axes << "${an}" {
-                name n
-                values {
-                    v.each(){ string it}
-                }
-            }
-        }
-    }
 }

@@ -28,6 +28,7 @@ public class Job {
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
     @Delegate BuildParametersContextHelper helperBuildParameters
+    @Delegate MatrixHelper helperMatrix
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
@@ -44,6 +45,7 @@ public class Job {
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
+        helperMatrix = new MatrixHelper(withXmlActions, type, jobManagement)
     }
 
     /**
