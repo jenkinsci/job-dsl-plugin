@@ -1497,4 +1497,24 @@ public class PublisherHelperSpec extends Specification {
         node.onlyCritical[0].value() == false
         node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
     }
+
+    def 'call buildPipelineTrigger'() {
+        when:
+        context.buildPipelineTrigger('next')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+        context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
+    }
+
+    def 'call buildPipelineTrigger with null argument'() {
+        when:
+        context.buildPipelineTrigger(null)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+        context.publisherNodes[0].downstreamProjectNames[0].value() == ''
+    }
 }
