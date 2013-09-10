@@ -1022,4 +1022,74 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].descriptionForFailed[0].value() == 'NOES!'
         context.publisherNodes[0].setForMatrix[0].value() == true
     }
+
+    def 'call textFinder with one argument'() {
+        when:
+        context.textFinder('foo')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == ''
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == false
+        context.publisherNodes[0].succeedIfFound[0].value() == false
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with two arguments'() {
+        when:
+        context.textFinder('foo', '*.txt')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == false
+        context.publisherNodes[0].succeedIfFound[0].value() == false
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with three arguments'() {
+        when:
+        context.textFinder('foo', '*.txt', true)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
+        context.publisherNodes[0].succeedIfFound[0].value() == false
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with four arguments'() {
+        when:
+        context.textFinder('foo', '*.txt', true, true)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
+        context.publisherNodes[0].succeedIfFound[0].value() == true
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with five arguments'() {
+        when:
+        context.textFinder('foo', '*.txt', true, true, true)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
+        context.publisherNodes[0].succeedIfFound[0].value() == true
+        context.publisherNodes[0].unstableIfFound[0].value() == true
+    }
 }
