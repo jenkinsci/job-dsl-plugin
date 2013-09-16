@@ -963,7 +963,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == ''
         context.publisherNodes[0].description[0].value() == ''
-        context.publisherNodes[0].descriptionForFailed[0].value() == ''
+        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -977,7 +977,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == ''
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
-        context.publisherNodes[0].descriptionForFailed[0].value() == ''
+        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -991,7 +991,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
-        context.publisherNodes[0].descriptionForFailed[0].value() == ''
+        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 

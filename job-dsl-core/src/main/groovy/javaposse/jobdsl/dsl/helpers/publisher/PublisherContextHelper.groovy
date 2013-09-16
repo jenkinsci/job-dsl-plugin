@@ -728,7 +728,9 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 regexp(regularExpression)
                 regexpForFailed(regularExpressionForFailed)
                 delegate.description(description)
-                delegate.descriptionForFailed(descriptionForFailed)
+                if (descriptionForFailed) {
+                    delegate.descriptionForFailed(descriptionForFailed)
+                }
                 setForMatrix(multiConfigurationBuild)
             }
         }
