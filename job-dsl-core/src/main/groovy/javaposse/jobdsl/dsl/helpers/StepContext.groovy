@@ -1002,20 +1002,47 @@ class StepContext implements Context {
      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@0.10"/>
      </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
       */
-    def buildConditionalStepSingle(String conditionNameArg = 'String', String firstArgument = null, String secondArgument = null, String ignoreCaseArgument = 'true', String conditionSuccess, Collection<String> conditionSuccessArguments, String conditionFailure = "Fail" ) {
+    def buildConditionalStepSingle(String conditionNameArgument,
+                                   Collection<String> conditionArguments,
+                                   String conditionSuccess,
+                                   Collection<String> conditionSuccessArguments,
+                                   String conditionFailure = "Fail" ) {
+                                   
 
         def nodeBuilder = new NodeBuilder()
         def attributes = [plugin:'conditional-buildstep@1.2.2']
         def buildConditionalStepSingleNode = nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'(attributes)
-
         def nodeBuilderCondition = new NodeBuilder()
-        def conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition', plugin:'run-condition@0.10']
-        def conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
-            arg1 firstArgument?:''
-            arg2 secondArgument?:''
-            ignoreCase ignoreCaseArgument?:'false'
-        }
+        def conditionAttributes
+        def conditionNode
 
+        if (conditionNameArgument == 'StringsMatchCondition') {
+
+            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition', plugin:'run-condition@0.10']
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+                arg1 conditionArguments[0]?:''
+                arg2 conditionArguments[1]?:''
+                ignoreCase conditionArguments[2]?:'false'
+            }
+
+        } else if (conditionNameArgument == 'AlwaysRunCondition') {
+
+            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition', plugin:'run-condition@0.10']
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
+
+        } else if (conditionNameArgument == 'NeverRunCondition') {
+
+            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition', plugin:'run-condition@0.10']
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
+
+        } else if (conditionNameArgument == 'BooleanCondition') {
+
+            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition', plugin:'run-condition@0.10']
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+                token conditionArguments[0]?:''
+            }
+            
+        }
         buildConditionalStepSingleNode.append(conditionNode)
         
         if (conditionSuccess == 'shell') {

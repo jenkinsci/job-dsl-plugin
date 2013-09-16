@@ -975,7 +975,7 @@ still-another-dsl.groovy'''
 
     def 'call Conditional step (single)'() {
         when:
-        context.buildConditionalStepSingle('StringsMatchCondition', 'firstArgument', 'secondArgument', 'true', 'shell', ['echo "hi"'], "Fail")
+        context.buildConditionalStepSingle('StringsMatchCondition', ['firstArgument', 'secondArgument', 'true'], 'shell', ['echo "hi"'], "Fail")
 
         then:
         context.stepNodes != null
@@ -998,6 +998,74 @@ still-another-dsl.groovy'''
         def nodeBuilderFailure = conditionalStepSingle.runner[0]
         nodeBuilderFailure.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
         nodeBuilderFailure.attribute('plugin') == 'run-condition@0.10'
+
+        when:
+        context.buildConditionalStepSingle('AlwaysRunCondition', [], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 2
+        def conditionalStepSingle1 = context.stepNodes[1]
+        conditionalStepSingle1.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle1.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition1 = conditionalStepSingle1.condition[0]
+        nodeBuilderCondition1.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
+        nodeBuilderCondition1.attribute('plugin') == 'run-condition@0.10'
+
+        def nodeBuilderSuccess1 = conditionalStepSingle1.buildStep[0]
+        nodeBuilderSuccess1.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess1.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure1 = conditionalStepSingle1.runner[0]
+        nodeBuilderFailure1.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure1.attribute('plugin') == 'run-condition@0.10'
+
+        when:
+        context.buildConditionalStepSingle('NeverRunCondition', [], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 3
+        def conditionalStepSingle2 = context.stepNodes[2]
+        conditionalStepSingle2.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle2.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition2 = conditionalStepSingle2.condition[0]
+        nodeBuilderCondition2.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'
+        nodeBuilderCondition2.attribute('plugin') == 'run-condition@0.10'
+
+        def nodeBuilderSuccess2 = conditionalStepSingle2.buildStep[0]
+        nodeBuilderSuccess2.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess2.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure2 = conditionalStepSingle2.runner[0]
+        nodeBuilderFailure2.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure2.attribute('plugin') == 'run-condition@0.10'
+
+
+        when:
+        context.buildConditionalStepSingle('BooleanCondition', ['fullName'], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 4
+        def conditionalStepSingle3 = context.stepNodes[3]
+        conditionalStepSingle3.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle3.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition3 = conditionalStepSingle3.condition[0]
+        nodeBuilderCondition3.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'
+        nodeBuilderCondition3.attribute('plugin') == 'run-condition@0.10'
+        nodeBuilderCondition3.token[0].value() == 'fullName'
+
+        def nodeBuilderSuccess3 = conditionalStepSingle3.buildStep[0]
+        nodeBuilderSuccess3.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess3.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure3 = conditionalStepSingle3.runner[0]
+        nodeBuilderFailure3.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure3.attribute('plugin') == 'run-condition@0.10'
 
     }
 }
