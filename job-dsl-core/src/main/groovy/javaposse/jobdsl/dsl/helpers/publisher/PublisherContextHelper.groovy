@@ -710,16 +710,29 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 delegate.recordBuildArtifacts(recordBuildArtifacts)
             }
         }
+
+        /**
+         * Configures the Description Setter Plugin
+         *
+         * <publishers>
+         *     <hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+         *         <regexp>foo</regexp>
+         *         <regexpForFailed>bar</regexpForFailed>
+         *         <description>Hello</description>
+         *         <descriptionForFailed>World</descriptionForFailed>
+         *         <setForMatrix>false</setForMatrix>
+         *     </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+         */
+        def buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '', String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
+                regexp(regularExpression)
+                regexpForFailed(regularExpressionForFailed)
+                delegate.description(description)
+                if (descriptionForFailed) {
+                    delegate.descriptionForFailed(descriptionForFailed)
+                }
+                setForMatrix(multiConfigurationBuild)
+            }
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
