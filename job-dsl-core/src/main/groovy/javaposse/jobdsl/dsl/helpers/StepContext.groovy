@@ -1016,16 +1016,7 @@ class StepContext implements Context {
         def conditionAttributes
         def conditionNode
 
-        if (conditionNameArgument == 'StringsMatchCondition') {
-
-            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition', plugin:'run-condition@0.10']
-            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
-                arg1 conditionArguments[0]?:''
-                arg2 conditionArguments[1]?:''
-                ignoreCase conditionArguments[2]?:'false'
-            }
-
-        } else if (conditionNameArgument == 'AlwaysRunCondition') {
+        if (conditionNameArgument == 'AlwaysRunCondition') {
 
             conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition', plugin:'run-condition@0.10']
             conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
@@ -1042,7 +1033,71 @@ class StepContext implements Context {
                 token conditionArguments[0]?:''
             }
             
+        } else if (conditionNameArgument == 'StringsMatchCondition') {
+
+            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition', plugin:'run-condition@0.10']
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+                arg1 conditionArguments[0]?:''
+                arg2 conditionArguments[1]?:''
+                ignoreCase conditionArguments[2]?:'false'
+            }
+
+        } else if (conditionNameArgument == 'CauseCondition') {
+
+            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.CauseCondition', plugin:'run-condition@0.10']
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+                buildCause conditionArguments[0]?:''
+                exclusiveCause conditionArguments[1]?:''
+            }
+        } else if (conditionNameArgument == 'StatusCondition') {
+
+            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.StatusCondition', plugin:'run-condition@0.10']
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+            }
+            def nodeBuilderWorst = new NodeBuilder()
+            def worstNode = nodeBuilderWorst.'worstResult'() {
+                name conditionArguments[0]?:''
+                if (conditionArguments[0] == 'SUCCESS') {
+                    ordinal '0'
+                    color 'BLUE'
+                } else if (conditionArguments[0] == 'UNSTABLE') {
+                    ordinal '1'
+                    color 'YELLOW'
+                } else if (conditionArguments[0] == 'FAILURE') {
+                    ordinal '2'
+                    color 'RED'
+                } else if (conditionArguments[0] == 'NOT_BUILT') {
+                    ordinal '3'
+                    color 'NOTBUILT'
+                } else if (conditionArguments[0] == 'ABORTED') {
+                    ordinal '4'
+                    color 'ABORTED'
+                }
+            }
+            conditionNode.append(worstNode)
+            def nodeBuilderBest = new NodeBuilder()
+            def bestNode = nodeBuilderBest.'bestResult'() {
+                name conditionArguments[1]?:''
+                if (conditionArguments[0] == 'SUCCESS') {
+                    ordinal '0'
+                    color 'BLUE'
+                } else if (conditionArguments[0] == 'UNSTABLE') {
+                    ordinal '1'
+                    color 'YELLOW'
+                } else if (conditionArguments[0] == 'FAILURE') {
+                    ordinal '2'
+                    color 'RED'
+                } else if (conditionArguments[0] == 'NOT_BUILT') {
+                    ordinal '3'
+                    color 'NOTBUILT'
+                } else if (conditionArguments[0] == 'ABORTED') {
+                    ordinal '4'
+                    color 'ABORTED'
+                }
+            }
+            conditionNode.append(bestNode)
         }
+
         buildConditionalStepSingleNode.append(conditionNode)
         
         if (conditionSuccess == 'shell') {
