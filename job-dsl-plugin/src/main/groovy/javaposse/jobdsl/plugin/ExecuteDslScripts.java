@@ -190,20 +190,13 @@ public class ExecuteDslScripts extends Builder {
             String targetsStr = env.expand(this.targets);
             LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
 
-            String[] targets =  getIncludedFiles(targetsStr, new File(build.getWorkspace().toURI()));
-            for (String target : targets) {
-                ScriptRequest request = new ScriptRequest(target, null, workspaceUrl, ignoreExisting);
+            FilePath[] filePaths =  build.getWorkspace().list(targetsStr.replace("\n", ","));
+            for (FilePath filePath : filePaths) {
+                ScriptRequest request = new ScriptRequest(null, filePath.readToString(), workspaceUrl, ignoreExisting);
                 scriptRequests.add(request);
             }
         }
         return scriptRequests;
-    }
-
-    private String[] getIncludedFiles(String targetsStr, File workspace) {
-        String includes = targetsStr.replace("\n", ",");
-        FileSet fileSet = Util.createFileSet(workspace, includes);
-        DirectoryScanner resultScanner = fileSet.getDirectoryScanner();
-        return resultScanner.getIncludedFiles();
     }
 
 //    private List<String> collectBodies(AbstractBuild<?, ?> build, BuildListener listener, EnvVars env) throws IOException, InterruptedException {
