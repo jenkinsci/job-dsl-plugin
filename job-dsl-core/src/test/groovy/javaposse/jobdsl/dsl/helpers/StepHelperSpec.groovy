@@ -1054,7 +1054,7 @@ still-another-dsl.groovy'''
         conditionalStepSingle3.attribute('plugin') == 'conditional-buildstep@1.2.2'
 
         def nodeBuilderCondition3 = conditionalStepSingle3.condition[0]
-        nodeBuilderCondition3.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'
+        nodeBuilderCondition3.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'
         nodeBuilderCondition3.attribute('plugin') == 'run-condition@0.10'
         nodeBuilderCondition3.token[0].value() == 'fullName'
 

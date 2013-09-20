@@ -1013,29 +1013,25 @@ class StepContext implements Context {
         def attributes = [plugin:'conditional-buildstep@1.2.2']
         def buildConditionalStepSingleNode = nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'(attributes)
         def nodeBuilderCondition = new NodeBuilder()
-        def conditionAttributes
+        def conditionAttributes = [class:"org.jenkins_ci.plugins.run_condition.core.${conditionNameArgument}", plugin:'run-condition@0.10']
         def conditionNode
 
         if (conditionNameArgument == 'AlwaysRunCondition') {
 
-            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition', plugin:'run-condition@0.10']
             conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
 
         } else if (conditionNameArgument == 'NeverRunCondition') {
 
-            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition', plugin:'run-condition@0.10']
             conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
 
         } else if (conditionNameArgument == 'BooleanCondition') {
 
-            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition', plugin:'run-condition@0.10']
             conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
                 token conditionArguments[0]?:''
             }
             
         } else if (conditionNameArgument == 'StringsMatchCondition') {
 
-            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition', plugin:'run-condition@0.10']
             conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
                 arg1 conditionArguments[0]?:''
                 arg2 conditionArguments[1]?:''
@@ -1044,16 +1040,14 @@ class StepContext implements Context {
 
         } else if (conditionNameArgument == 'CauseCondition') {
 
-            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.CauseCondition', plugin:'run-condition@0.10']
             conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
                 buildCause conditionArguments[0]?:''
                 exclusiveCause conditionArguments[1]?:''
             }
         } else if (conditionNameArgument == 'StatusCondition') {
 
-            conditionAttributes = [class:'org.jenkins_ci.plugins.run_condition.core.StatusCondition', plugin:'run-condition@0.10']
-            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
-            }
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
+            
             def nodeBuilderWorst = new NodeBuilder()
             def worstNode = nodeBuilderWorst.'worstResult'() {
                 name conditionArguments[0]?:''
