@@ -2,6 +2,49 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
+/**
+ * This class adds support for the Publishers from
+ * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Static+Code+Analysis+Plug-ins">Static Code Analysis Plugins</a>
+ *
+ * The class {@link javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext} uses this class
+ * as a delegate to make the corresponding methods appear as methods of the <code>publishers</code> Closure.
+ *
+ * Every Publisher has the following common set of xml, which is not added to the corresponding xml struckture in the javadoc
+ * of the method:
+ * <pre>
+ * {@code
+ * <healthy></healthy>
+ * <unHealthy></unHealthy>
+ * <thresholdLimit>low</thresholdLimit>
+ * <pluginName><<Name of the plugin>> </pluginName>
+ * <defaultEncoding></defaultEncoding>
+ * <canRunOnFailed>false</canRunOnFailed>
+ * <useStableBuildAsReference>false</useStableBuildAsReference>
+ * <useDeltaValues>false</useDeltaValues>
+ * <thresholds>
+ *   <unstableTotalAll>1</unstableTotalAll>
+ *   <unstableTotalHigh>2</unstableTotalHigh>
+ *   <unstableTotalNormal>3</unstableTotalNormal>
+ *   <unstableTotalLow>4</unstableTotalLow>
+ *   <unstableNewAll>9</unstableNewAll>
+ *   <unstableNewHigh>10</unstableNewHigh>
+ *   <unstableNewNormal>11</unstableNewNormal>
+ *   <unstableNewLow>12</unstableNewLow>
+ *   <failedTotalAll>5</failedTotalAll>
+ *   <failedTotalHigh>6</failedTotalHigh>
+ *   <failedTotalNormal>7</failedTotalNormal>
+ *   <failedTotalLow>8</failedTotalLow>
+ *   <failedNewAll>13</failedNewAll>
+ *   <failedNewHigh>14</failedNewHigh>
+ *   <failedNewNormal>15</failedNewNormal>
+ *   <failedNewLow>16</failedNewLow>
+ * </thresholds>
+ * <shouldDetectModules>false</shouldDetectModules>
+ * <dontComputeNew>false</dontComputeNew>
+ * <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+ * }
+ * </pre>
+ */
 class StaticAnalysisPublisherContext {
     List<Node> publisherNodes
 
@@ -15,46 +58,19 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <hudson.plugins.findbugs.FindBugsPublisher>
-     *   <healthy/>
-     *   <unHealthy/>
-     *   <thresholdLimit>low</thresholdLimit>
-     *   <defaultEncoding/>
-     *   <canRunOnFailed>false</canRunOnFailed>
-     *   <useStableBuildAsReference>false</useStableBuildAsReference>
-     *   <useDeltaValues>false</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>false</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
-     *   <pattern>**findbugsXml.xml</pattern>
+     *   ...
+     *   <pattern>**&#47;findbugsXml.xml</pattern>
      *   <isRankActivated>false</isRankActivated>
      * </hudson.plugins.findbugs.FindBugsPublisher>
      * }
      * </pre>
      **/
-    def findbugs(String pattern, boolean isRankActivated = false, Closure findbugsClosure = null) {
-        StaticAnalysisContext findbugsContext = new StaticAnalysisContext()
-        AbstractContextHelper.executeInContext(findbugsClosure, findbugsContext)
+    def findbugs(String pattern, boolean isRankActivated = false, Closure staticAnalysisClosure = null) {
+        StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
+        AbstractContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.findbugs.FindBugsPublisher' {
-            addStaticAnalysisContextAndPattern(delegate, findbugsContext, pattern)
+            addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
             delegate.isRankActivated(isRankActivated)
         }
     }
@@ -65,34 +81,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <hudson.plugins.pmd.PmdPublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *   ...
      *   <pattern>pmd.xml</pattern>
      * </hudson.plugins.pmd.PmdPublisher>
      * }
@@ -112,34 +101,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <hudson.plugins.checkstyle.CheckStylePublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *   ...
      *   <pattern>checkstyle.xml</pattern>
      * </hudson.plugins.checkstyle.CheckStylePublisher>
      * }
@@ -159,34 +121,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <hudson.plugins.dry.DryPublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *   ...
      *   <pattern>cpd.xml</pattern>
      *   <highThreshold>85</highThreshold>
      *   <normalThreshold>13</normalThreshold>
@@ -194,9 +129,9 @@ class StaticAnalysisPublisherContext {
      * }
      * </pre>
      */
-    def dry(String pattern, highThreshold = 50, normalThreshold = 25, Closure dryClosure = null) {
+    def dry(String pattern, highThreshold = 50, normalThreshold = 25, Closure staticAnalysisClosure = null) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
-        AbstractContextHelper.executeInContext(dryClosure, staticAnalysisContext)
+        AbstractContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.dry.DryPublisher' {
             addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
@@ -211,34 +146,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <hudson.plugins.tasks.TasksPublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *   ...
      *   <pattern>*.java</pattern>
      *   <high>FIXM</high>
      *   <normal>TOD</normal>
@@ -269,34 +177,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <hudson.plugins.ccm.CcmPublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *   ...
      *   <pattern>ccm.xml</pattern>
      * </hudson.plugins.ccm.CcmPublisher>
      * }
@@ -316,34 +197,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <org.jenkinsci.plugins.android__lint.LintPublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *   ...
      *   <pattern>lint.xml</pattern>
      * </org.jenkinsci.plugins.android__lint.LintPublisher>
      * }
@@ -363,34 +217,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <org.jenkinsci.plugins.DependencyCheck.DependencyCheckPublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *   ...
      *   <pattern>dep.xml</pattern>
      * </org.jenkinsci.plugins.DependencyCheck.DependencyCheckPublisher>
      * }
@@ -410,34 +237,7 @@ class StaticAnalysisPublisherContext {
      * <pre>
      * {@code
      * <hudson.plugins.warnings.WarningsPublisher>
-     *   <healthy>3</healthy>
-     *   <unHealthy>20</unHealthy>
-     *   <thresholdLimit>high</thresholdLimit>
-     *   <defaultEncoding>UTF-8</defaultEncoding>
-     *   <canRunOnFailed>true</canRunOnFailed>
-     *   <useStableBuildAsReference>true</useStableBuildAsReference>
-     *   <useDeltaValues>true</useDeltaValues>
-     *   <thresholds>
-     *     <unstableTotalAll>1</unstableTotalAll>
-     *     <unstableTotalHigh>2</unstableTotalHigh>
-     *     <unstableTotalNormal>3</unstableTotalNormal>
-     *     <unstableTotalLow>4</unstableTotalLow>
-     *     <failedTotalAll>5</failedTotalAll>
-     *     <failedTotalHigh>6</failedTotalHigh>
-     *     <failedTotalNormal>7</failedTotalNormal>
-     *     <failedTotalLow>8</failedTotalLow>
-     *     <unstableNewAll>9</unstableNewAll>
-     *     <unstableNewHigh>10</unstableNewHigh>
-     *     <unstableNewNormal>11</unstableNewNormal>
-     *     <unstableNewLow>12</unstableNewLow>
-     *     <failedNewAll>13</failedNewAll>
-     *     <failedNewHigh>14</failedNewHigh>
-     *     <failedNewNormal>15</failedNewNormal>
-     *     <failedNewLow>16</failedNewLow>
-     *   </thresholds>
-     *   <shouldDetectModules>true</shouldDetectModules>
-     *   <dontComputeNew>false</dontComputeNew>
-     *   <doNotResolveRelativePaths>false</doNotResolveRelativePaths>
+     *   ...
      *   <includePattern>.*include.*</includePattern>
      *   <excludePattern>.*exclude.*</excludePattern>
      *   <consoleParsers>
@@ -492,23 +292,25 @@ class StaticAnalysisPublisherContext {
     }
 
     private def addStaticAnalysisContext(nodeBuilder, StaticAnalysisContext context) {
-        nodeBuilder.healthy(context.healthy)
-        nodeBuilder.unHealthy(context.unHealthy)
-        nodeBuilder.thresholdLimit(context.thresholdLimit)
-        nodeBuilder.defaultEncoding(context.defaultEncoding)
-        nodeBuilder.canRunOnFailed(context.canRunOnFailed)
-        nodeBuilder.useStableBuildAsReference(context.useStableBuildAsReference)
-        nodeBuilder.useDeltaValues(context.useDeltaValues)
-        nodeBuilder.thresholds {
-            context.thresholdMap.each { threshold, values ->
-                values.each { value, num ->
-                    nodeBuilder."${threshold}${value.capitalize()}"(num)
+        nodeBuilder.with {
+            healthy(context.healthy)
+            unHealthy(context.unHealthy)
+            thresholdLimit(context.thresholdLimit)
+            defaultEncoding(context.defaultEncoding)
+            canRunOnFailed(context.canRunOnFailed)
+            useStableBuildAsReference(context.useStableBuildAsReference)
+            useDeltaValues(context.useDeltaValues)
+            thresholds {
+                context.thresholdMap.each { threshold, values ->
+                    values.each { value, num ->
+                        nodeBuilder."${threshold}${value.capitalize()}"(num)
+                    }
                 }
             }
+            shouldDetectModules(context.shouldDetectModules)
+            dontComputeNew(context.dontComputeNew)
+            doNotResolveRelativePaths(context.doNotResolveRelativePaths)
         }
-        nodeBuilder.shouldDetectModules(context.shouldDetectModules)
-        nodeBuilder.dontComputeNew(context.dontComputeNew)
-        nodeBuilder.doNotResolveRelativePaths(context.doNotResolveRelativePaths)
     }
 
     private def addStaticAnalysisPattern(nodeBuilder, String pattern) {
