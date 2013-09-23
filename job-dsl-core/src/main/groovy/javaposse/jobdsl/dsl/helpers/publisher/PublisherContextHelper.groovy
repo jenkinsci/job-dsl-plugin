@@ -32,11 +32,17 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
     static class PublisherContext implements Context {
         List<Node> publisherNodes = []
 
+        @Delegate
+        StaticAnalysisPublisherContext staticAnalysisPublisherHelper
+
+
         PublisherContext() {
+            staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes)
         }
 
         PublisherContext(List<Node> publisherNodes) {
             this.publisherNodes = publisherNodes
+            staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(this.publisherNodes)
         }
 
         /**
