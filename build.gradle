@@ -58,9 +58,12 @@ buildscript {
 private Properties loadDotJenkinsOrg() {
     Properties props = new Properties()
     def dot = new File(new File(System.getProperty("user.home")), ".jenkins-ci.org")
-    if (!dot.exists())
-        throw new Exception("Trying to deploy to Jenkins community repository but there's no credential file ${dot}. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
-    dot.withInputStream { i -> props.load(i) }
+//    if (!dot.exists()) {
+//        throw new Exception("Trying to deploy to Jenkins community repository but there's no credential file ${dot}. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
+//    }
+    if (dot.exists()) {
+        dot.withInputStream { i -> props.load(i) }
+    }
     return props
 }
 
@@ -96,10 +99,10 @@ project(':job-dsl-core') {
             mavenDeployer {
                 def props = loadDotJenkinsOrg()
                 repository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/releases') {
-                    authentication(userName:props["userName"], password:props["password"])
+                    authentication(userName: props["userName"], password: props["password"])
                 }
                 snapshotRepository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots') {
-                    authentication(userName:props["userName"], password:props["password"])
+                    authentication(userName: props["userName"], password: props["password"])
                 }
             }
         }
