@@ -55,16 +55,16 @@ buildscript {
     }
 }
 
-private Properties loadDotJenkinsOrg() {
+private Map loadCredentialsForJenkinsCommunityRepository() {
     Properties props = new Properties()
-    def dot = new File(new File(System.getProperty("user.home")), ".jenkins-ci.org")
-//    if (!dot.exists()) {
-//        throw new Exception("Trying to deploy to Jenkins community repository but there's no credential file ${dot}. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
-//    }
-    if (dot.exists()) {
-        dot.withInputStream { i -> props.load(i) }
+    def dot = new File(System.getProperty("user.home"), ".jenkins-ci.org")
+
+    if ( ! dot.exists() ) {
+        throw new Exception("Trying to deploy to Jenkins community repository but there's no credential file ${dot}. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
     }
-    return props
+
+    dot.withInputStream { i -> props.load(i) }
+    return [userName: props["userName"], password: props["password"]]
 }
 
 project(':job-dsl-core') {
@@ -94,24 +94,27 @@ project(':job-dsl-core') {
         archives oneJar
     }
 
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                def props = loadDotJenkinsOrg()
-                repository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/releases') {
-                    authentication(userName: props["userName"], password: props["password"])
-                }
-                snapshotRepository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots') {
-                    authentication(userName: props["userName"], password: props["password"])
-                }
-            }
-        }
-    }
-
-
     run {
         if ( project.hasProperty('args') ) {
             args project.args.split('\\s+')
+        }
+    }
+
+    gradle.taskGraph.whenReady { taskGraph ->
+        if ( taskGraph.hasTask(uploadArchives) ) {
+            uploadArchives {
+                repositories {
+                    mavenDeployer {
+                        def credentials = loadCredentialsForJenkinsCommunityRepository()
+                        repository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/releases') {
+                            authentication(credentials)
+                        }
+                        snapshotRepository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots') {
+                            authentication(credentials)
+                        }
+                    }
+                }
+            }
         }
     }
 
