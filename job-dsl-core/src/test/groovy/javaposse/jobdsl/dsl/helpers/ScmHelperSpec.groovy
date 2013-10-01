@@ -264,20 +264,20 @@ public class ScmHelperSpec extends Specification {
     }
         
     def 'call svn with no locations'() {
-        when:
+        when: 'svn is called without specifying any locations'
         context.svn {}
         
-        then:
+        then: 'an IllegalStateException should be thrown'
         thrown(IllegalStateException)
     }
     
     def 'call svn with one location'() {
-        when:
+        when: 'svn is called with a single location'
         context.svn {
             location("url", "dir")
         }
 
-        then:
+        then: 'the svn node should contain that single location'
         isValidSvnScmNode(context.scmNode)
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
@@ -285,14 +285,14 @@ public class ScmHelperSpec extends Specification {
     }
     
     def 'call svn with multiple locations'() {
-        when:
+        when: 'svn is called with multiple locations'
         context.svn {
             location("url1", "dir1")
             location("url2", "dir2")
             location('url3', 'dir3')
         }
 
-        then:
+        then: 'the svn node should contain those locations'
         isValidSvnScmNode(context.scmNode)
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 3
         
@@ -304,6 +304,19 @@ public class ScmHelperSpec extends Specification {
         
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].remote[0].value() == 'url3'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].local[0].value() == 'dir3'
+    }
+
+    def 'call svn without specifying a local dir for the location'() {
+        when: 'svn is called without a local dir for the location'
+        context.svn {
+            location('url')
+        }
+
+        then: 'the svn node should contain a location with a local dir of .'
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
     }
 
     def 'call svn without checkout strategy'() {
@@ -318,13 +331,13 @@ public class ScmHelperSpec extends Specification {
     }
 
     def 'call svn with checkout strategy'() {
-        when:
+        when: 'svn is called with a checkout strategy'
         context.svn {
             location 'url'
             checkoutStrategy strategy
         }
 
-        then:
+        then: 'then the workspace updater class for that strategy should be used'
         isValidSvnScmNode(context.scmNode)
         context.scmNode.workspaceUpdater[0].attributes()['class'] == wuClass
 
