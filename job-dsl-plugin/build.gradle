@@ -17,6 +17,10 @@ repositories {
     }
 }
 
+artifacts {
+    archives jar
+}
+
 configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'instance-identity'
 configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-cli-auth'
 
