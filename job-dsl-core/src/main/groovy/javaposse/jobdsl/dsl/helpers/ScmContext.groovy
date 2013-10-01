@@ -291,7 +291,7 @@ class ScmContext implements Context {
     }
 
     def static class SvnContext implements Context {
-        def class Location {
+        def static class Location {
             String url = null
             String local = '.'
         }
