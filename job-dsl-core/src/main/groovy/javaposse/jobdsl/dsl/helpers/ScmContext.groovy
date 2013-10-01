@@ -304,54 +304,142 @@ class ScmContext implements Context {
         def excludedcommitmsgs = []
         def excludedrevprop = ''
 
+        /*
+         * At least one location MUST be specified.
+         * Additional locations can be specified by calling location() multiple times.
+         *   svnUrl   - What to checkout from SVN.
+         *   localDir - Destination directory relative to workspace.
+         *              If not specified, defaults to '.'.
+         */
         def location(String svnUrl, String localDir = '.') {
             locations << new Location(url:svnUrl, local:localDir)
         }
 
+        /*
+         * The checkout strategy that should be used.  This is a global setting for all
+         * locations.
+         *   strategy - Strategy to use. Possible values:
+         *                CheckoutStrategy.Update
+         *                CheckoutStrategy.Checkout
+         *                CheckoutStrategy.UpdateWithClean
+         *                CheckoutStrategy.UpdateWithRevert
+         */
         def checkoutStrategy(CheckoutStrategy strategy) {
             checkoutstrategy = strategy
         }
 
+        /*
+         * Add an excluded region.  Each call to excludedRegion() adds to the list of
+         * excluded regions.
+         * If excluded regions are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any files and/or folders that match the specified
+         * patterns when determining if a build needs to be triggered.
+         *   pattern - RegEx
+         */
         def excludedRegion(String pattern) {
             excludedregions << pattern
         }
 
+        /*
+         * Add a list of excluded regions.  Each call to excludedRegions() adds to the
+         * list of excluded regions.
+         * If excluded regions are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any files and/or folders that match the specified
+         * patterns when determining if a build needs to be triggered.
+         *   patterns - RegEx
+         */
         def excludedRegions(Iterable<String> patterns) {
             patterns.each {
                 excludedRegion(it)
             }
         }
 
+        /*
+         * Add an included region.  Each call to includedRegion() adds to the list of
+         * included regions.
+         * If included regions are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any files and/or folders that do _not_ match the specified
+         * patterns when determining if a build needs to be triggered.
+         *   pattern - RegEx
+         */
         def includedRegion(String pattern) {
             includedregions << pattern
         }
 
+        /*
+         * Add a list of included regions.  Each call to includedRegions() adds to the
+         * list of included regions.
+         * If included regions are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any files and/or folders that do _not_ match the specified
+         * patterns when determining if a build needs to be triggered.
+         *   patterns - RegEx
+         */
         def includedRegions(Iterable<String> patterns) {
             patterns.each {
                 includedRegion(it)
             }
         }
 
-        def excludedUser(String pattern) {
-            excludedusers << pattern
+        /*
+         * Add an excluded user.  Each call to excludedUser() adds to the list of
+         * excluded users.
+         * If excluded users are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any revisions committed by the specified users when
+         * determining if a build needs to be triggered.
+         *   user - User to ignore when triggering builds
+         */
+        def excludedUser(String user) {
+            excludedusers << user
         }
 
-        def excludedUsers(Iterable<String> patterns) {
-            patterns.each {
+        /*
+         * Add a list of excluded users.  Each call to excludedUsers() adds to the
+         * list of excluded users.
+         * If excluded users are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any revisions committed by the specified users when
+         * determining if a build needs to be triggered.
+         *   users - Users to ignore when triggering builds
+         */
+        def excludedUsers(Iterable<String> users) {
+            users.each {
                 excludedUser(it)
             }
         }
 
+        /*
+         * Add an exluded commit message.  Each call to excludedCommitMsg() adds to the list of
+         * excluded commit messages.
+         * If excluded messages are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any revisions with commit messages that match the specified
+         * patterns when determining if a build needs to be triggered.
+         *   pattern - RegEx
+         */
         def excludedCommitMsg(String pattern) {
             excludedcommitmsgs << pattern
         }
 
+        /*
+         * Add a list of excluded commit messages.  Each call to excludedCommitMsgs() adds to the
+         * list of excluded commit messages.
+         * If excluded messages are configured, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any revisions with commit messages that match the specified
+         * patterns when determining if a build needs to be triggered.
+         *   patterns - RegEx
+         */
         def excludedCommitMsgs(Iterable<String> patterns) {
             patterns.each {
                 excludedCommitMsg(it)
             }
         }
 
+        /*
+         * Set an excluded revision property.
+         * If an excluded revision property is set, and Jenkins is set to poll for changes,
+         * Jenkins will ignore any revisions that are marked with the specified
+         * revision property when determining if a build needs to be triggered.
+         * This only works in Subversion 1.5 servers or greater.
+         *   pattern - RegEx
+         */
         def excludedRevProp(String revisionProperty) {
             excludedrevprop = revisionProperty
         }
