@@ -28,7 +28,7 @@ class NodeEnhancement {
             Node found = children[0]
 
             // Copy over value and attribute from orphan if it has one.
-            if(orphan.value()) {
+            if(orphan.value() != null) {
                 found.setValue(orphan.value())
             }
             orphan.attributes().each { k, v ->
