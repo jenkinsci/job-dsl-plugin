@@ -6,9 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.absolute
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.elastic
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.likelyStuck
+import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.*
 
 public class TopLevelHelperSpec extends Specification {
 

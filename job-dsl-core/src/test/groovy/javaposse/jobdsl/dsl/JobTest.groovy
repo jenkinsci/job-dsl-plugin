@@ -1,13 +1,11 @@
 package javaposse.jobdsl.dsl
 
-import org.custommonkey.xmlunit.DetailedDiff
-import org.custommonkey.xmlunit.Diff
-import spock.lang.*
 import org.custommonkey.xmlunit.XMLUnit
-
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
+import spock.lang.Specification
 
 import java.util.concurrent.atomic.AtomicBoolean
+
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobTest extends Specification {
     def setup() {

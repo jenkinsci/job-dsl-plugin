@@ -1,17 +1,13 @@
 package javaposse.jobdsl.plugin;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.Maps;
 import hudson.Extension;
-import hudson.model.JobProperty;
 import hudson.model.AbstractProject;
+import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
-
-import com.google.common.collect.Sets;
 import jenkins.YesNoMaybe;
+
+import java.util.Map;
 
 /**
  * Seed Jobs which reference this template.
