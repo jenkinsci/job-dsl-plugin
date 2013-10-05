@@ -22,7 +22,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.listeners.SaveableListener;
 
-import javaposse.jobdsl.plugin.ExecuteDslScripts.DescriptorImpl;
+import javaposse.jobdsl.plugin.DescriptorImpl;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public class MonitorTemplateJobs extends SaveableListener {
