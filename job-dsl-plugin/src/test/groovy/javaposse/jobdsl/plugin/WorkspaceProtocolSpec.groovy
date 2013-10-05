@@ -1,10 +1,10 @@
 package javaposse.jobdsl.plugin
 
-import spock.lang.*
 import javaposse.jobdsl.dsl.DslScriptLoader
-import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.FileJobManagement
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.ScriptRequest
+import spock.lang.Specification
 
 class WorkspaceProtocolSpec  extends Specification {
 

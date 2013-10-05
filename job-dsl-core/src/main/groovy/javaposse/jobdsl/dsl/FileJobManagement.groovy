@@ -1,8 +1,6 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Maps;
-
-import java.util.Map;
+import com.google.common.collect.Maps
 
 class FileJobManagement extends AbstractJobManagement {
     /**

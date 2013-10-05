@@ -1,28 +1,26 @@
 package javaposse.jobdsl.plugin;
 
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import hudson.Extension;
+import hudson.Util;
+import hudson.XmlFile;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Cause;
+import hudson.model.Saveable;
+import hudson.model.listeners.SaveableListener;
+import jenkins.YesNoMaybe;
+import jenkins.model.Jenkins;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import com.google.common.base.Function;
-import static com.google.common.collect.Collections2.*;
-
-import com.google.common.base.Predicates;
-import hudson.Util;
-import jenkins.YesNoMaybe;
-import jenkins.model.Jenkins;
-
-import hudson.Extension;
-import hudson.XmlFile;
-import hudson.model.Cause;
-import hudson.model.Saveable;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.listeners.SaveableListener;
-
-import javaposse.jobdsl.plugin.DescriptorImpl;
+import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Collections2.transform;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public class MonitorTemplateJobs extends SaveableListener {
