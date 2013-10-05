@@ -1,7 +1,8 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Iterables;
-import spock.lang.*
+import com.google.common.collect.Iterables
+import spock.lang.Ignore
+import spock.lang.Specification
 
 public class DslScriptLoaderTest extends Specification {
     def resourcesDir = new File("src/test/resources")

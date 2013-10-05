@@ -2,25 +2,22 @@ package javaposse.jobdsl.plugin;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
-import hudson.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import hudson.EnvVars;
+import hudson.Launcher;
+import hudson.Util;
 import hudson.model.*;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.ScriptRequest;
-import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.DataBoundConstructor;
-import hudson.util.ListBoxModel;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -142,10 +139,14 @@ public class ExecuteDslScripts extends Builder {
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
         JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build);
-        Set<ScriptRequest> scriptRequests = getScriptRequests(build, env);
 
-        Set<GeneratedJob> freshJobs = Sets.newHashSet();
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
+        Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
+
+        Set< GeneratedJob > freshJobs = Sets.newHashSet();
         for (ScriptRequest request : scriptRequests) {
+            LOGGER.log(Level.FINE, String.format("Request for %s", request.location));
+
             Set<GeneratedJob> dslJobs = DslScriptLoader.runDslEngine(request, jm);
             freshJobs.addAll(dslJobs);
         }
@@ -177,68 +178,6 @@ public class ExecuteDslScripts extends Builder {
         return true;
     }
 
-    private Set<ScriptRequest> getScriptRequests(final AbstractBuild<?, ?> build, EnvVars env) throws IOException, InterruptedException {
-        Set<ScriptRequest> scriptRequests = Sets.newHashSet();
-
-        String jobName = build.getProject().getName();
-        URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
-
-        if(usingScriptText) {
-            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl, ignoreExisting);
-            scriptRequests.add(request);
-        } else {
-            String targetsStr = env.expand(this.targets);
-            LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
-
-            FilePath[] filePaths =  build.getWorkspace().list(targetsStr.replace("\n", ","));
-            for (FilePath filePath : filePaths) {
-                ScriptRequest request = new ScriptRequest(null, filePath.readToString(), workspaceUrl, ignoreExisting);
-                scriptRequests.add(request);
-            }
-        }
-        return scriptRequests;
-    }
-
-//    private List<String> collectBodies(AbstractBuild<?, ?> build, BuildListener listener, EnvVars env) throws IOException, InterruptedException {
-//        List<String> bodies = Lists.newArrayList();
-//        if (usingScriptText) {
-//            listener.getLogger().println("Using dsl from string");
-//            bodies.add(scriptText);
-//        } else {
-//            String targetsStr = env.expand(this.targets);
-//            LOGGER.log(Level.FINE, String.format("Expanded targets to %s", targetsStr));
-//            String[] targets = targetsStr.split("\n");
-//
-//            for (String target : targets) {
-//                FilePath targetPath = build.getModuleRoot().child(target);
-//                if (!targetPath.exists()) {
-//                    targetPath = build.getWorkspace().child(target);
-//                    if (!targetPath.exists()) {
-//                        throw new FileNotFoundException("Unable to find DSL script at " + target);
-//                    }
-//                }
-//                listener.getLogger().println(String.format("Running dsl from %s", targetPath));
-//
-//                String dslBody = targetPath.readToString();
-//                bodies.add(dslBody);
-//            }
-//        }
-//        return bodies;
-//    }
-//
-//    private Set<GeneratedJob> executeBodies(List<String> bodies, JenkinsJobManagement jm) {
-//        Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
-//        for (String dslBody: bodies) {
-//            LOGGER.log(Level.FINE, String.format("DSL Content: %s", dslBody));
-//
-//            // Room for one dsl to succeed and another to fail, yet jobs from the first will finish
-//            // TODO postpone saving jobs even later
-//            Set<GeneratedJob> dslJobs = DslScriptLoader.runDslShell(dslBody, jm);
-//
-//            freshJobs.addAll(dslJobs);
-//        }
-//        return freshJobs;
-//    }
 
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
@@ -349,52 +288,6 @@ public class ExecuteDslScripts extends Builder {
             return Sets.newHashSet();
         } else {
             return gja.findLastGeneratedJobs();
-        }
-    }
-
-    @Extension(dynamicLoadable = YesNoMaybe.YES)
-    public static final class DescriptorImpl extends Descriptor<Builder> {
-
-        private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed
-
-        public DescriptorImpl() {
-            super(ExecuteDslScripts.class);
-            load();
-        }
-
-        public String getDisplayName() {
-            return "Process Job DSLs";
-        }
-
-        public Multimap<String, SeedReference> getTemplateJobMap() {
-            if (templateJobMap == null) {
-                templateJobMap = HashMultimap.create();
-            }
-
-            return templateJobMap;
-        }
-
-        public void setTemplateJobMap(Multimap<String, SeedReference> templateJobMap) {
-            this.templateJobMap = templateJobMap;
-        }
-
-        /*
-        @Override
-        public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            return super.newInstance(req, formData);
-        }
-
-        @Override
-        public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-            return super.configure(req, json);
-        }
-        */
-        public ListBoxModel doFillRemovedJobActionItems() {
-            ListBoxModel items = new ListBoxModel();
-            for (RemovedJobAction action : RemovedJobAction.values()) {
-                items.add(action.getDisplayName(), action.name());
-            }
-            return items;
         }
     }
 

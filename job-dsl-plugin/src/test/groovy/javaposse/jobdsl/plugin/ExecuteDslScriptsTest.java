@@ -82,8 +82,77 @@ public class ExecuteDslScriptsTest {
         assertTrue(jenkinsRule.getInstance().getItem("test-job") instanceof FreeStyleProject);
     }
 
+    @Test
+    public void scheduleBuildOnSlaveUsingGlob() throws Exception {
+        // setup
+        DumbSlave slave = jenkinsRule.createSlave("Node2", "label2", null);
+        new FilePath(new File(slave.getRemoteFS())).child("workspace/seed/dslscripts/jobs.groovy").write(SCRIPT, "UTF-8");
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "**/*.groovy", null), true, IGNORE));
+        job.setAssignedLabel(Label.get("label2"));
+
+        // when
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get();
+
+        // then
+        assertEquals(SUCCESS, freeStyleBuild.getResult());
+        assertTrue(jenkinsRule.getInstance().getItem("test-job") instanceof FreeStyleProject);
+    }
+
+    @Test
+    public void scheduleBuildOnSlaveUsingGroovyEngineLoading() throws Exception {
+        // setup
+        DumbSlave slave = jenkinsRule.createSlave("Node3", "label3", null);
+        new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/jobs.groovy").write(UTIL_SCRIPT, "UTF-8");
+        new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/util/Util.groovy").write(UTIL_CLASS, "UTF-8");
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("groovyengine");
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "jobs.groovy", null), true, IGNORE));
+        job.setAssignedLabel(Label.get("label3"));
+
+        // when
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get();
+
+        // then
+        assertEquals(SUCCESS, freeStyleBuild.getResult());
+        assertTrue(jenkinsRule.getInstance().getItem("test-job") instanceof FreeStyleProject);
+    }
+
+
+    @Test
+    public void scheduleBuildOnSlaveUsingGroovyEngineInSubdirectory() throws Exception {
+        // setup
+        DumbSlave slave = jenkinsRule.createSlave("Node4", "label4", null);
+        new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/mydsl/jobs.groovy").write(UTIL_SCRIPT, "UTF-8");
+        new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/mydsl/util/Util.groovy").write(UTIL_CLASS, "UTF-8");
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("groovyengine");
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "mydsl/jobs.groovy", null), true, IGNORE));
+        job.setAssignedLabel(Label.get("label4"));
+
+        // when
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get();
+
+        // then
+        assertEquals(SUCCESS, freeStyleBuild.getResult());
+        assertTrue(jenkinsRule.getInstance().getItem("test-job") instanceof FreeStyleProject);
+    }
+
     private static final String SCRIPT = "" +
-            "job {" +
-            "  name('test-job')" +
+            "job {\n" +
+            "  name('test-job')\n" +
             "}";
+
+    private static final String UTIL_SCRIPT = "" +
+        "import util.Util\n" +
+        "def u = new Util().getName()\n" +
+        "\n" +
+        "job {\n" +
+        "  name(u)\n" +
+        "}";
+
+    private static final String UTIL_CLASS = "" +
+        "package util;\n" +
+        "public class Util {\n" +
+        "    String getName() { return \"test-job\" }\n" +
+        "}";
+
 }

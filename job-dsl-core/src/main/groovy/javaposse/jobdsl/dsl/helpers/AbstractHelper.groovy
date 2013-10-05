@@ -1,10 +1,7 @@
-package javaposse.jobdsl.dsl.helpers;
+package javaposse.jobdsl.dsl.helpers
 
-import groovy.lang.Closure
-import javaposse.jobdsl.dsl.JobType;
-import javaposse.jobdsl.dsl.WithXmlAction;
-
-import java.util.List;
+import javaposse.jobdsl.dsl.JobType
+import javaposse.jobdsl.dsl.WithXmlAction
 
 /**
  * Base for all helpers, providing an easy ability to create WithXmlActions

@@ -1,12 +1,11 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
-import com.google.common.collect.Lists;
+import com.google.common.collect.Lists
+import com.google.common.collect.Sets
 
-import java.util.logging.Logger
 import java.util.logging.Level
-
-import com.google.common.collect.Sets;
+import java.util.logging.Logger
 
 public abstract class JobParent extends Script {
     private static final Logger LOGGER = Logger.getLogger(JobParent.getName());

@@ -5,10 +5,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.DELETE
-import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.DISABLE
-import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.IGNORE
-
 public class StepHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
