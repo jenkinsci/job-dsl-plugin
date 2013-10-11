@@ -56,7 +56,7 @@ project(':job-dsl-core') {
 
     task jarSources(type:Jar){
         from sourceSets.main.allSource
-        classifier = 'source'
+        classifier = 'sources'
     }
 
     task jarJavadocs (type: Jar, dependsOn: 'javadoc') {
@@ -127,6 +127,6 @@ project(':job-dsl-plugin') {
     }
 }
 
-task wrapper(type: Wrapper) { gradleVersion = '1.6' }
+task wrapper(type: Wrapper) { gradleVersion = '1.8' }
 
 apply from: './job-dsl-plugin/ide.gradle'
