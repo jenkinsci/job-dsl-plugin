@@ -1,57 +1,56 @@
 package javaposse.jobdsl.dsl.helpers
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
-import static javaposse.jobdsl.dsl.helpers.EnvironmentContext.Timeout.absolute
+import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.absolute
 
-class EnvironmentContextHelper extends AbstractContextHelper<EnvironmentContext> {
+class WrapperContextHelper extends AbstractContextHelper<WrapperContext> {
 
-    EnvironmentContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+    WrapperContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)
     }
 
-    def environment(Closure closure) {
-        execute(closure, new EnvironmentContext(type))
+    def wrappers(Closure closure) {
+        execute(closure, new WrapperContext(type))
     }
 
     def runOnSameNodeAs(String jobName, boolean useSameWorkspace = false) {
-        environment {
+        wrappers {
             delegate.runOnSameNodeAs(jobName, useSameWorkspace)
         }
     }
 
     def rvm(String rubySpecification) {
-        environment {
+        wrappers {
             delegate.rvm(rubySpecification)
         }
     }
     def timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) {
-        environment {
+        wrappers {
             delegate.timeout(timeoutInMinutes, shouldFailBuild)
         }
     }
 
     def timeout(String type = absolute.toString(), Closure timeoutClosure = null) {
-        environment {
+        wrappers {
             delegate.timeout(type, timeoutClosure)
         }
     }
 
     def allocatePorts(String[] portsArg, Closure closure = null) {
-        environment {
+        wrappers {
             delegate.allocatePorts(portsArg, closure)
         }
     }
 
     def allocatePorts(Closure cl = null) {
-        environment {
+        wrappers {
             delegate.allocatePorts(cl)
         }
     }
 
-    Closure generateWithXmlClosure(EnvironmentContext context) {
+    Closure generateWithXmlClosure(WrapperContext context) {
         return { Node project ->
             def wrapperNode
             if (project.buildWrappers.isEmpty()) {

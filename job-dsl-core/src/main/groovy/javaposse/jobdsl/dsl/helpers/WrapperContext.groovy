@@ -4,15 +4,15 @@ import com.google.common.base.Preconditions
 import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.JobType
 
-class EnvironmentContext implements Context {
+class WrapperContext implements Context {
     List<Node> wrapperNodes = []
     JobType type
 
-    EnvironmentContext(JobType jobType) {
+    WrapperContext(JobType jobType) {
         this.type = jobType
     }
 
-    EnvironmentContext(List<Node> wrapperNodes, JobType jobType) {
+    WrapperContext(List<Node> wrapperNodes, JobType jobType) {
         this(jobType)
         this.wrapperNodes = wrapperNodes
     }

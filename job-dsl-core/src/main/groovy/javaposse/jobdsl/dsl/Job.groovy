@@ -22,7 +22,7 @@ public class Job {
     @Delegate AuthorizationContextHelper helperAuthorization
     @Delegate ScmContextHelper helperScm
     @Delegate TriggerContextHelper helperTrigger
-    @Delegate EnvironmentContextHelper helperEnvironment
+    @Delegate WrapperContextHelper helperWrapper
     @Delegate StepContextHelper helperStep
     @Delegate PublisherContextHelper helperPublisher
     @Delegate MultiScmContextHelper helperMultiscm
@@ -40,7 +40,7 @@ public class Job {
         helperScm = new ScmContextHelper(withXmlActions, type)
         helperMultiscm = new MultiScmContextHelper(withXmlActions, type)
         helperTrigger = new TriggerContextHelper(withXmlActions, type)
-        helperEnvironment = new EnvironmentContextHelper(withXmlActions, type)
+        helperWrapper = new WrapperContextHelper(withXmlActions, type)
         helperStep = new StepContextHelper(withXmlActions, type)
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)

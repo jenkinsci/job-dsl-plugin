@@ -5,14 +5,14 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.helpers.EnvironmentContext.Timeout.absolute
-import static javaposse.jobdsl.dsl.helpers.EnvironmentContext.Timeout.elastic
-import static javaposse.jobdsl.dsl.helpers.EnvironmentContext.Timeout.likelyStuck
+import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.absolute
+import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.elastic
+import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.likelyStuck
 
-class EnvironmentHelperSpec extends Specification {
+class WrapperHelperSpec extends Specification {
     List<WithXmlAction> mockActions = new ArrayList()
-    EnvironmentContextHelper helper = new EnvironmentContextHelper(mockActions, JobType.Freeform)
-    EnvironmentContext context = new EnvironmentContext(JobType.Freeform)
+    WrapperContextHelper helper = new WrapperContextHelper(mockActions, JobType.Freeform)
+    WrapperContext context = new WrapperContext(JobType.Freeform)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 
     def 'call timestamps method'() {
