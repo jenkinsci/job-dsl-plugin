@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers
 
-import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -9,8 +8,7 @@ import spock.lang.Specification
 public class TopLevelHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    JobManagement mockJobManagement = Mock()
-    TopLevelHelper helper = new TopLevelHelper(mockActions, JobType.Freeform, mockJobManagement)
+    TopLevelHelper helper = new TopLevelHelper(mockActions, JobType.Freeform)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 
     def 'add description'() {
@@ -272,39 +270,5 @@ public class TopLevelHelperSpec extends Specification {
 
         where:
         keep << [true, false]
-    }
-
-    def 'sshAgent without credentials' () {
-        when:
-        def action = helper.sshAgent(null)
-        action.execute(root)
-
-        then:
-        thrown(NullPointerException)
-    }
-
-    def 'sshAgent with invalid credentials' () {
-        setup:
-        mockJobManagement.getCredentialsId('foo') >> null
-
-        when:
-        def action = helper.sshAgent('foo')
-        action.execute(root)
-
-        then:
-        thrown(NullPointerException)
-    }
-
-    def 'sshAgent' () {
-        setup:
-        mockJobManagement.getCredentialsId('acme') >> '4711'
-
-        when:
-        def action = helper.sshAgent('acme')
-        action.execute(root)
-
-        then:
-        def wrapper = root.buildWrappers[0].'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
-        wrapper.user[0].value() == '4711'
     }
 }

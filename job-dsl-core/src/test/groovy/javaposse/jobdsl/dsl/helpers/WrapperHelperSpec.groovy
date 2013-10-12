@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -11,8 +12,9 @@ import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.likelyStuck
 
 class WrapperHelperSpec extends Specification {
     List<WithXmlAction> mockActions = new ArrayList()
-    WrapperContextHelper helper = new WrapperContextHelper(mockActions, JobType.Freeform)
-    WrapperContext context = new WrapperContext(JobType.Freeform)
+    JobManagement mockJobManagement = Mock()
+    WrapperContextHelper helper = new WrapperContextHelper(mockActions, JobType.Freeform, mockJobManagement)
+    WrapperContext context = new WrapperContext(JobType.Freeform, mockJobManagement)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 
     def 'call timestamps method'() {
@@ -28,7 +30,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'run on same node' () {
         when:
-        helper.runOnSameNodeAs('testJob')
+        helper.wrappers {
+            runOnSameNodeAs('testJob')
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -39,7 +43,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'run on same node and use same workspace' () {
         when:
-        helper.runOnSameNodeAs('testJob', true)
+        helper.wrappers {
+            runOnSameNodeAs('testJob', true)
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -56,7 +62,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'add rvm-controlled ruby version'() {
         when:
-        helper.rvm('ruby-1.9.3')
+        helper.wrappers {
+            rvm('ruby-1.9.3')
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -65,7 +73,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'rvm exception on empty param'() {
         when:
-        helper.rvm()
+        helper.wrappers {
+            rvm()
+        }
 
         then:
         thrown(IllegalArgumentException)
@@ -73,7 +83,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'can run timeout'() {
         when:
-        helper.timeout(15)
+        helper.wrappers {
+            timeout(15)
+        }
 
         then:
         mockActions.size() == 1
@@ -81,7 +93,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'timeout constructs xml'() {
         when:
-        helper.timeout(15)
+        helper.wrappers {
+            timeout(15)
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -91,7 +105,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'timeout failBuild parameter works'() {
         when:
-        helper.timeout(15, false)
+        helper.wrappers {
+            timeout(15, false)
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -100,7 +116,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'default timeout works' () {
         when:
-        helper.timeout()
+        helper.wrappers {
+            timeout()
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -115,8 +133,10 @@ class WrapperHelperSpec extends Specification {
 
     def 'absolute timeout configuration working' () {
         when:
-        helper.timeout('absolute') {
-            limit 5
+        helper.wrappers {
+            timeout('absolute') {
+                limit 5
+            }
         }
         executeHelperActionsOnRootNode()
 
@@ -133,9 +153,11 @@ class WrapperHelperSpec extends Specification {
 
     def 'elastic timeout configuration working' () {
         when:
-        helper.timeout('elastic') {
-            limit 15
-            percentage 200
+        helper.wrappers {
+            timeout('elastic') {
+                limit 15
+                percentage 200
+            }
         }
         executeHelperActionsOnRootNode()
 
@@ -151,7 +173,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'likelyStuck timeout configuration working' () {
         when:
-        helper.timeout('likelyStuck')
+        helper.wrappers {
+            timeout('likelyStuck')
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -166,7 +190,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'port allocator string list'() {
         when:
-        helper.allocatePorts 'HTTP', '8080'
+        helper.wrappers {
+            allocatePorts 'HTTP', '8080'
+        }
         executeHelperActionsOnRootNode()
 
         then:
@@ -177,11 +203,13 @@ class WrapperHelperSpec extends Specification {
 
     def 'port allocator closure'() {
         when:
-        helper.allocatePorts {
-            port 'HTTP'
-            port '8080'
-            glassfish '1234', 'user', 'password'
-            tomcat '1234', 'password'
+        helper.wrappers {
+            allocatePorts {
+                port 'HTTP'
+                port '8080'
+                glassfish '1234', 'user', 'password'
+                tomcat '1234', 'password'
+            }
         }
         executeHelperActionsOnRootNode()
 
@@ -200,4 +228,42 @@ class WrapperHelperSpec extends Specification {
         tomcat.password[0].value()== 'password' */
     }
 
+
+    def 'sshAgent without credentials' () {
+        when:
+        helper.wrappers {
+            sshAgent(null)
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'sshAgent with invalid credentials' () {
+        setup:
+        mockJobManagement.getCredentialsId('foo') >> null
+
+        when:
+        helper.wrappers {
+            sshAgent('foo')
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'sshAgent' () {
+        setup:
+        mockJobManagement.getCredentialsId('acme') >> '4711'
+
+        when:
+        helper.wrappers {
+            sshAgent('acme')
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
+        wrapper.user[0].value() == '4711'
+    }
 }

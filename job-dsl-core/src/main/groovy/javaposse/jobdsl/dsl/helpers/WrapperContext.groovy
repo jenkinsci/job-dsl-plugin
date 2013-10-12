@@ -2,18 +2,23 @@ package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
 import groovy.transform.Canonical
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
+
+import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.absolute
 
 class WrapperContext implements Context {
     List<Node> wrapperNodes = []
     JobType type
+    JobManagement jobManagement
 
-    WrapperContext(JobType jobType) {
+    WrapperContext(JobType jobType, JobManagement jobManagement) {
+        this.jobManagement = jobManagement
         this.type = jobType
     }
 
-    WrapperContext(List<Node> wrapperNodes, JobType jobType) {
-        this(jobType)
+    WrapperContext(List<Node> wrapperNodes, JobType jobType, JobManagement jobManagement) {
+        this(jobType, jobManagement)
         this.wrapperNodes = wrapperNodes
     }
 
@@ -251,6 +256,29 @@ class WrapperContext implements Context {
 
         def tomcat(String port, String password) {
             tomcatPorts << new Port(port: port, password: password)
+        }
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <buildWrappers>
+     *         <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
+     *             <user>25899f16-1b91-4656-90cd-3f1c26ef6292</user>
+     *         </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
+     * }
+     * </pre>
+     * Provide SSH credentials to builds via a ssh-agent in Jenkins.
+     * @param credentials name of the credentials to use
+     */
+    def sshAgent(String credentials) {
+        Preconditions.checkNotNull(credentials, "credentials must not be null")
+        String id = jobManagement.getCredentialsId(credentials)
+        Preconditions.checkNotNull(id, "credentials not found")
+        def nodeBuilder = new NodeBuilder()
+        wrapperNodes << nodeBuilder.'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
+            user id
         }
     }
 }
