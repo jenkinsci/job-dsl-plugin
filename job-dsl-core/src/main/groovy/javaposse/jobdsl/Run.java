@@ -1,11 +1,16 @@
 package javaposse.jobdsl;
 
-import javaposse.jobdsl.dsl.*;
+import javaposse.jobdsl.dsl.DslScriptLoader;
+import javaposse.jobdsl.dsl.FileJobManagement;
+import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.ScriptRequest;
 
-import javax.annotation.Generated;
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Able to run from the command line to test out. Leverage FileJobManagement

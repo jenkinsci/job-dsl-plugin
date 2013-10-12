@@ -1,10 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.JobType
-import spock.lang.Specification
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper.AuthorizationContext
+import spock.lang.Specification
 
 public class AuthorizationHelperSpec extends Specification {
 

@@ -32,11 +32,17 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
     static class PublisherContext implements Context {
         List<Node> publisherNodes = []
 
+        @Delegate
+        StaticAnalysisPublisherContext staticAnalysisPublisherHelper
+
+
         PublisherContext() {
+            staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes)
         }
 
         PublisherContext(List<Node> publisherNodes) {
             this.publisherNodes = publisherNodes
+            staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(this.publisherNodes)
         }
 
         /**
@@ -132,6 +138,24 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
 
             publisherNodes << emailNode
         }
+
+        /**
+          <hudson.tasks.Mailer>
+          <recipients>nbn@nineconsult.dk</recipients>
+          <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+          <sendToIndividuals>true</sendToIndividuals>
+           </hudson.tasks.Mailer>
+         */
+         def mailer(String mailRecipients, Boolean dontNotifyEveryUnstableBuildBoolean = false, Boolean sendToIndividualsBoolean = false) {
+            def nodeBuilder = new NodeBuilder()
+            Node mailerNode = nodeBuilder.'hudson.tasks.Mailer' {
+              recipients(mailRecipients)
+              dontNotifyEveryUnstableBuild(dontNotifyEveryUnstableBuildBoolean)
+              sendToIndividuals(sendToIndividualsBoolean)
+            }
+            publisherNodes << mailerNode
+         }
+
 
         /**
          <hudson.tasks.ArtifactArchiver>
@@ -676,16 +700,45 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def allowBrokenBuildClaiming() {
             publisherNodes << NodeBuilder.newInstance().'hudson.plugins.claim.ClaimPublisher'()
         }
+
+        /**
+         * Configures Fingerprinting
+         *
+         * <hudson.tasks.Fingerprinter>
+         *    <targets>**</targets>
+         *    <recordBuildArtifacts>true</recordBuildArtifacts>
+         * </hudson.tasks.Fingerprinter>
+         *
+         */
+        def fingerprint(String targets, boolean recordBuildArtifacts = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.tasks.Fingerprinter' {
+                delegate.targets(targets ?: '')
+                delegate.recordBuildArtifacts(recordBuildArtifacts)
+            }
+        }
+
+        /**
+         * Configures the Description Setter Plugin
+         *
+         * <publishers>
+         *     <hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+         *         <regexp>foo</regexp>
+         *         <regexpForFailed>bar</regexpForFailed>
+         *         <description>Hello</description>
+         *         <descriptionForFailed>World</descriptionForFailed>
+         *         <setForMatrix>false</setForMatrix>
+         *     </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+         */
+        def buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '', String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
+                regexp(regularExpression)
+                regexpForFailed(regularExpressionForFailed)
+                delegate.description(description)
+                if (descriptionForFailed) {
+                    delegate.descriptionForFailed(descriptionForFailed)
+                }
+                setForMatrix(multiConfigurationBuild)
+            }
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-

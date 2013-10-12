@@ -1,11 +1,12 @@
 package javaposse.jobdsl.dsl
 
-import spock.lang.Specification
 import com.google.common.base.Preconditions
-import java.util.logging.LogManager
-import java.util.logging.Level
-import java.util.logging.Logger
+import spock.lang.Specification
+
 import java.util.logging.Handler
+import java.util.logging.Level
+import java.util.logging.LogManager
+import java.util.logging.Logger
 
 /**
  * Work through the additional functionality we're offer over node
