@@ -15,15 +15,15 @@ public class ScriptRequest {
     }
 
     // Starting Object
-    String location;
+    public String location;
 
     // Starting Script
-    String body;
+    public String body;
 
     // Where can we load objects from
     //ResourceConnector resourceConnector; // OR
-    URL urlRoot; // file://. or http://server/ or workspace://JOBNAME/
+    public URL urlRoot; // file://. or http://server/ or workspace://JOBNAME/
 
     // Ignore existing jobs
-    boolean ignoreExisting;
+    public boolean ignoreExisting;
 }

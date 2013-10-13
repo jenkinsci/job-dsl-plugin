@@ -934,4 +934,92 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.claim.ClaimPublisher'
     }
+
+    def 'add fingerprinting'(targets, recordArtifacts) {
+        when:
+        context.fingerprint(targets, recordArtifacts)
+
+        then:
+        context.publisherNodes.size() == 1
+        def fingerprintNode = context.publisherNodes[0]
+        fingerprintNode.targets[0].value() == targets
+        fingerprintNode.recordBuildArtifacts[0].value() == recordArtifacts
+
+        where:
+        targets    | recordArtifacts
+        '**/*'     | false
+        ''         | true
+        '**/*arst' | false
+        'whatever' | true
+    }
+
+    def 'call buildDescription with one argument'() {
+        when:
+        context.buildDescription('success')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'success'
+        context.publisherNodes[0].regexpForFailed[0].value() == ''
+        context.publisherNodes[0].description[0].value() == ''
+        context.publisherNodes[0].descriptionForFailed == []
+        context.publisherNodes[0].setForMatrix[0].value() == false
+    }
+
+    def 'call buildDescription with two arguments'() {
+        when:
+        context.buildDescription('success', 'AWSUM!')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'success'
+        context.publisherNodes[0].regexpForFailed[0].value() == ''
+        context.publisherNodes[0].description[0].value() == 'AWSUM!'
+        context.publisherNodes[0].descriptionForFailed == []
+        context.publisherNodes[0].setForMatrix[0].value() == false
+    }
+
+    def 'call buildDescription with three arguments'() {
+        when:
+        context.buildDescription('success', 'AWSUM!', 'failed')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'success'
+        context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
+        context.publisherNodes[0].description[0].value() == 'AWSUM!'
+        context.publisherNodes[0].descriptionForFailed == []
+        context.publisherNodes[0].setForMatrix[0].value() == false
+    }
+
+    def 'call buildDescription with four arguments'() {
+        when:
+        context.buildDescription('success', 'AWSUM!', 'failed', 'NOES!')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'success'
+        context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
+        context.publisherNodes[0].description[0].value() == 'AWSUM!'
+        context.publisherNodes[0].descriptionForFailed[0].value() == 'NOES!'
+        context.publisherNodes[0].setForMatrix[0].value() == false
+    }
+
+    def 'call buildDescription with five arguments'() {
+        when:
+        context.buildDescription('success', 'AWSUM!', 'failed', 'NOES!', true)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'success'
+        context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
+        context.publisherNodes[0].description[0].value() == 'AWSUM!'
+        context.publisherNodes[0].descriptionForFailed[0].value() == 'NOES!'
+        context.publisherNodes[0].setForMatrix[0].value() == true
+    }
 }

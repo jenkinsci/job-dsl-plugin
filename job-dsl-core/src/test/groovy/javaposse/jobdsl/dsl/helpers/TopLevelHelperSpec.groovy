@@ -6,9 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.absolute
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.elastic
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.likelyStuck
+import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.*
 
 public class TopLevelHelperSpec extends Specification {
 
@@ -432,6 +430,19 @@ public class TopLevelHelperSpec extends Specification {
         def wrapper = root.buildWrappers[0].'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
         wrapper.job[0].value() == 'testJob'
         wrapper.shareWorkspace[0].value() == true
+    }
+
+    def 'set keep Dependencies'(keep) {
+        when:
+        def action = helper.keepDependencies(keep)
+        action.execute(root)
+
+        then:
+        root.keepDependencies.size() == 1
+        root.keepDependencies[0].value() == keep
+
+        where:
+        keep << [true, false]
     }
 
     def 'sshAgent without credentials' () {

@@ -1,11 +1,6 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin
 
-import org.jvnet.hudson.test.JenkinsRule;
-import org.apache.commons.io.FileUtils;
-import hudson.model.*;
-import hudson.tasks.Shell;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.Test
 
 public class SeedJobTest { //  extends HudsonTestCase {
 //    @Rule

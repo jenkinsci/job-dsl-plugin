@@ -6,19 +6,9 @@ buildscript {
             url('http://maven.jenkins-ci.org/content/repositories/releases')
         }
     }
-    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.4.0') }
+    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.5.0') }
 }
 apply plugin: 'jpi'
-
-repositories {
-    maven {
-        name 'jenkins-ci'
-        url 'http://maven.jenkins-ci.org/content/repositories/releases'
-    }
-}
-
-configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'instance-identity'
-configurations.testCompile.exclude group: 'org.jenkins-ci.modules', module:'ssh-cli-auth'
 
 description = "Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins."
 
@@ -53,9 +43,8 @@ jenkinsPlugin {
 }
 
 dependencies {
+    compile project(':job-dsl-core')
     optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'credentials', version: '1.6', ext: 'jar'])
 }
 
 tasks.jpi.manifest.attributes(["PluginFirstClassLoader": "true" ])
-
-//apply from: 'ide.gradle'
