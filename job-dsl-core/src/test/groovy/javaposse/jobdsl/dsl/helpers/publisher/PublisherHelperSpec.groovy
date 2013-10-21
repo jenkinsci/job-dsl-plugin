@@ -437,6 +437,25 @@ public class PublisherHelperSpec extends Specification {
         thrown(AssertionError)
     }
 
+    def 'call Clone Workspace with Closure'() {
+        when:
+        context.publishCloneWorkspace('*/**') {
+            criteria 'Not Failed'
+            archiveMethod 'ZIP'
+            workspaceExcludeGlob '*/.svn'
+            overrideDefaultExcludes true
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.cloneworkspace.CloneWorkspacePublisher'
+        publisherNode.workspaceGlob[0].value() == '*/**'
+        publisherNode.workspaceExcludeGlob[0].value() == '*/.svn'
+        publisherNode.criteria[0].value() == 'Not Failed'
+        publisherNode.archiveMethod[0].value() == 'ZIP'
+        publisherNode.overrideDefaultExcludes[0].value() == true
+    }
+
     def 'call scp publish with not enough entries'() {
         when:
         context.publishScp('javadoc', null)

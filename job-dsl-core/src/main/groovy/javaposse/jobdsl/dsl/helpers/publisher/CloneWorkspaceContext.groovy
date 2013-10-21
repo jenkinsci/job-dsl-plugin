@@ -4,15 +4,10 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 class CloneWorkspaceContext implements Context {
 
-    String workspaceGlob = ''
     String workspaceExcludeGlob = ''
     String criteria = 'Any' // 'Not Failed', 'Successful'
     String archiveMethod = 'TAR' // 'ZIP'
     boolean overrideDefaultExcludes = false
-
-    void workspaceGlob(String workspaceGlob) {
-        this.workspaceGlob = workspaceGlob
-    }
 
     void workspaceExcludeGlob(String workspaceExcludeGlob) {
         this.workspaceExcludeGlob = workspaceExcludeGlob
