@@ -1,5 +1,6 @@
 package javaposse.jobdsl.plugin;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -14,6 +15,7 @@ import java.io.File;
 import static hudson.model.Result.SUCCESS;
 import static javaposse.jobdsl.plugin.RemovedJobAction.IGNORE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ExecuteDslScriptsTest {
@@ -134,6 +136,48 @@ public class ExecuteDslScriptsTest {
         // then
         assertEquals(SUCCESS, freeStyleBuild.getResult());
         assertTrue(jenkinsRule.getInstance().getItem("test-job") instanceof FreeStyleProject);
+    }
+
+    @Test
+    public void deleteJobInFolder() throws Exception {
+        // setup
+        jenkinsRule.jenkins.createProject(Folder.class, "folder");
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "job { name '/folder/test-job' }";
+        job.getBuildersList().add(
+                new ExecuteDslScripts(
+                        new ExecuteDslScripts.ScriptLocation("true", null, script1),
+                        false,
+                        RemovedJobAction.DELETE
+                )
+        );
+        job.onCreatedFromScratch(); // need this to updateTransientActions
+
+        FreeStyleBuild build1 = job.scheduleBuild2(0).get();
+
+        // then
+        assertEquals(SUCCESS, build1.getResult());
+        assertTrue(jenkinsRule.jenkins.getItemByFullName("/folder/test-job") instanceof FreeStyleProject);
+
+        // when
+        String script2 = "job { name '/folder/different-job' }";
+        job.getBuildersList().clear();
+        job.getBuildersList().add(
+                new ExecuteDslScripts(
+                        new ExecuteDslScripts.ScriptLocation("true", null, script2),
+                        false,
+                        RemovedJobAction.DELETE
+                )
+        );
+
+        FreeStyleBuild build2 = job.scheduleBuild2(0).get();
+
+        // then
+        assertEquals(SUCCESS, build2.getResult());
+        assertTrue(jenkinsRule.jenkins.getItemByFullName("/folder/different-job") instanceof FreeStyleProject);
+        assertNull(jenkinsRule.jenkins.getItemByFullName("/folder/test-job"));
     }
 
     private static final String SCRIPT = "" +
