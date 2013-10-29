@@ -742,5 +742,27 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 setForMatrix(multiConfigurationBuild)
             }
         }
+
+        /**
+         * Configures the Jenkins Text Finder plugin
+         *
+         * <publishers>
+         *     <hudson.plugins.textfinder.TextFinderPublisher>
+         *         <fileSet>*.txt</fileSet>
+         *         <regexp/>
+         *         <succeedIfFound>false</succeedIfFound>
+         *         <unstableIfFound>false</unstableIfFound>
+         *         <alsoCheckConsoleOutput>false</alsoCheckConsoleOutput>
+         *     </hudson.plugins.textfinder.TextFinderPublisher>
+         */
+        def textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false, boolean succeedIfFound = false, unstableIfFound = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.textfinder.TextFinderPublisher' {
+                delegate.fileSet(fileSet)
+                delegate.regexp(regularExpression)
+                delegate.alsoCheckConsoleOutput(alsoCheckConsoleOutput)
+                delegate.succeedIfFound(succeedIfFound)
+                delegate.unstableIfFound(unstableIfFound)
+            }
+        }
     }
 }
