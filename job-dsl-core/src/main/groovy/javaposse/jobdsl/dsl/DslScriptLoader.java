@@ -39,6 +39,7 @@ public class DslScriptLoader {
         // Add static imports of a few common types, like JobType
         ImportCustomizer icz = new ImportCustomizer();
         icz.addStaticStars("javaposse.jobdsl.dsl.JobType");
+        icz.addStaticStars("javaposse.jobdsl.dsl.ViewType");
         icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
@@ -84,20 +85,22 @@ public class DslScriptLoader {
      * @return
      * @throws IOException
      */
-    static Set<GeneratedJob> runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
+    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
         ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURL() );
         return runDslEngine(scriptRequest, jobManagement);
     }
 
-    public static Set<GeneratedJob> runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+    public static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
         JobParent jp = runDslEngineForParent(scriptRequest, jobManagement);
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
 
-        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(jp, scriptRequest.ignoreExisting);
+        GeneratedItems generatedItems = new GeneratedItems();
+        generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.ignoreExisting));
+        generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.ignoreExisting));
 
         scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
 
-        return generatedJobs;
+        return generatedItems;
     }
 
     private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) {
@@ -129,6 +132,18 @@ public class DslScriptLoader {
             }
         }
         return generatedJobs;
+    }
+
+    private static Set<GeneratedView> extractGeneratedViews(JobParent jp, boolean ignoreExisting) {
+        Set<GeneratedView> generatedViews = Sets.newLinkedHashSet();
+        for (View view : jp.getReferencedViews()) {
+            String xml = view.getXml();
+            LOGGER.log(Level.FINE, String.format("Saving view %s as %s", view.getName(), xml));
+            jp.getJm().createOrUpdateView(view.getName(), xml, ignoreExisting);
+            GeneratedView gv = new GeneratedView(view.getName());
+            generatedViews.add(gv);
+        }
+        return generatedViews;
     }
 
     static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {
@@ -167,6 +182,7 @@ public class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
+        icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
         config.addCompilationCustomizers(icz);
 
         config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

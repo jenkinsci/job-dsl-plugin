@@ -53,7 +53,7 @@ public class DslScriptLoaderTest extends Specification {
         ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir.toURL(), false);
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(request, jm)
+        def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
 
         then:
         jobs != null
@@ -66,7 +66,7 @@ public class DslScriptLoaderTest extends Specification {
         ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir.toURL(), false);
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(request, jm)
+        def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
 
         then:
         jobs != null
@@ -151,7 +151,7 @@ Callee.makeJob(this, 'test2')
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(request, jm)
+        def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
 
         then:
         jobs != null
@@ -251,4 +251,22 @@ readFileFromWorkspace('bar.txt')
 //
 //    }
 
+    def 'run engine with views'() {
+        setup:
+        def scriptStr = '''view {
+    name 'view-a'
+}
+view(type: ListView) {
+    name 'view-b'
+}
+'''
+
+        when:
+        def views = DslScriptLoader.runDslEngine(scriptStr, jm).views
+
+        then:
+        views.size() == 2
+        views.any { it.name == 'view-a' }
+        views.any { it.name == 'view-b' }
+    }
 }
