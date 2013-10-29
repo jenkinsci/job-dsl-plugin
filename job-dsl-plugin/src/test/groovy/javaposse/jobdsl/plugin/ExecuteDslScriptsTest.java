@@ -139,6 +139,29 @@ public class ExecuteDslScriptsTest {
     }
 
     @Test
+    public void deleteJob() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "job { name 'test-job' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        // then
+        assertTrue(jenkinsRule.jenkins.getItemByFullName("test-job") instanceof FreeStyleProject);
+
+        // when
+        String script2 = "job { name 'different-job' }";
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE);
+        runBuild(job, builder2);
+
+        // then
+        assertTrue(jenkinsRule.jenkins.getItemByFullName("different-job") instanceof FreeStyleProject);
+        assertNull(jenkinsRule.jenkins.getItemByFullName("test-job"));
+    }
+
+    @Test
     public void deleteJobInFolder() throws Exception {
         // setup
         jenkinsRule.jenkins.createProject(Folder.class, "folder");
@@ -146,38 +169,31 @@ public class ExecuteDslScriptsTest {
 
         // when
         String script1 = "job { name '/folder/test-job' }";
-        job.getBuildersList().add(
-                new ExecuteDslScripts(
-                        new ExecuteDslScripts.ScriptLocation("true", null, script1),
-                        false,
-                        RemovedJobAction.DELETE
-                )
-        );
-        job.onCreatedFromScratch(); // need this to updateTransientActions
-
-        FreeStyleBuild build1 = job.scheduleBuild2(0).get();
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
 
         // then
-        assertEquals(SUCCESS, build1.getResult());
         assertTrue(jenkinsRule.jenkins.getItemByFullName("/folder/test-job") instanceof FreeStyleProject);
 
         // when
         String script2 = "job { name '/folder/different-job' }";
-        job.getBuildersList().clear();
-        job.getBuildersList().add(
-                new ExecuteDslScripts(
-                        new ExecuteDslScripts.ScriptLocation("true", null, script2),
-                        false,
-                        RemovedJobAction.DELETE
-                )
-        );
-
-        FreeStyleBuild build2 = job.scheduleBuild2(0).get();
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE);
+        runBuild(job, builder2);
 
         // then
-        assertEquals(SUCCESS, build2.getResult());
         assertTrue(jenkinsRule.jenkins.getItemByFullName("/folder/different-job") instanceof FreeStyleProject);
         assertNull(jenkinsRule.jenkins.getItemByFullName("/folder/test-job"));
+    }
+
+    private FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) throws Exception {
+        job.getBuildersList().clear();
+        job.getBuildersList().add(builder);
+        job.onCreatedFromScratch(); // need this to updateTransientActions
+
+        FreeStyleBuild build = job.scheduleBuild2(0).get();
+
+        assertEquals(SUCCESS, build.getResult());
+        return build;
     }
 
     private static final String SCRIPT = "" +
