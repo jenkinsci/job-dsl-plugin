@@ -757,7 +757,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false, boolean succeedIfFound = false, unstableIfFound = false) {
             publisherNodes << NodeBuilder.newInstance().'hudson.plugins.textfinder.TextFinderPublisher' {
-                delegate.fileSet(fileSet)
+                if (fileSet) delegate.fileSet(fileSet)
                 delegate.regexp(regularExpression)
                 delegate.alsoCheckConsoleOutput(alsoCheckConsoleOutput)
                 delegate.succeedIfFound(succeedIfFound)
