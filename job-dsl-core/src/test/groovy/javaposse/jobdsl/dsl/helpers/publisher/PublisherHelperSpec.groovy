@@ -1050,7 +1050,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
         context.publisherNodes[0].regexp[0].value() == 'foo'
-        context.publisherNodes[0].fileSet[0].value() == ''
+        context.publisherNodes[0].fileSet.size() == 0
         context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == false
         context.publisherNodes[0].succeedIfFound[0].value() == false
         context.publisherNodes[0].unstableIfFound[0].value() == false
