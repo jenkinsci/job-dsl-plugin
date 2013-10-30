@@ -469,7 +469,7 @@ class TopLevelHelper extends AbstractHelper {
      */
     def blockOnUpstreamProjects() {
         execute {
-            it / blockBuildWhenDownstreamBuilding(true)
+            it / blockBuildWhenUpstreamBuilding(true)
         }
     }
 
@@ -479,7 +479,7 @@ class TopLevelHelper extends AbstractHelper {
      */
     def blockOnDownstreamProjects() {
         execute {
-            it / blockBuildWhenUpstreamBuilding(true)
+            it / blockBuildWhenDownstreamBuilding(true)
         }
     }
 
