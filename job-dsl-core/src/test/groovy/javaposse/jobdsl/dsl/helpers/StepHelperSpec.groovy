@@ -210,6 +210,32 @@ public class StepHelperSpec extends Specification {
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
     }
 
+    def 'call maven methods with maven name'() {
+        when:
+        context.namedMaven('3.1.1', 'install')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def mavenStep = context.stepNodes[0]
+        mavenStep.name() == 'hudson.tasks.Maven'
+        mavenStep.mavenName[0].value() == '3.1.1'
+        mavenStep.targets[0].value() == 'install'
+        mavenStep.pom[0] == null
+
+        when:
+        context.namedMaven('3.1.1','install', 'pom.xml') { mavenNode ->
+            def nameNode = mavenNode/mavenName
+            nameNode.value = '3.1.1'
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def mavenStep2 = context.stepNodes[1]
+        mavenStep2.pom[0].value() == 'pom.xml'
+        mavenStep2.mavenName[0].value() == '3.1.1'
+    }
+
     def 'call ant methods'() {
         when:
         context.ant()

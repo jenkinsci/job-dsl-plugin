@@ -49,6 +49,44 @@ public class MavenHelperSpec extends Specification {
         root.rootPOM[0].value() == "my_module/pom.xml"
     }
 
+    def 'can run maven'() {
+        when:
+        helper.maven("my_module/pom.xml")
+
+        then:
+        1 * mockActions.add(_)
+    }
+
+    def 'cannot run maven twice'() {
+        when:
+        helper.maven("pom.xml")
+        helper.maven("my_module/pom.xml")
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'cannot run maven for free style jobs'() {
+        setup:
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+
+        when:
+        helper.maven("pom.xml")
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'maven constructs xml'() {
+        when:
+        def action = helper.maven("my_module/pom.xml")
+        action.execute(root)
+
+        then:
+        root.maven.size() == 1
+        root.maven[0].value() == "my_module/pom.xml"
+    }
+
     def 'can run goals'() {
         when:
         helper.goals("clean verify")
