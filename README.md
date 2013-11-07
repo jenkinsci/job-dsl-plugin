@@ -1,4 +1,4 @@
-[![Build Status](https://buildhive.cloudbees.com/job/jenkinsci/job/job-dsl-plugin/badge/icon)](https://buildhive.cloudbees.com/job/jenkinsci/job/job-dsl-plugin/)
+[![Build Status](https://jenkins.ci.cloudbees.com/job/plugins/job/job-dsl-plugin/badge/icon)](https://jenkins.ci.cloudbees.com/job/plugins/job/job-dsl-plugin/)
 
 Jenkins Job DSL / Plugin
 ========================

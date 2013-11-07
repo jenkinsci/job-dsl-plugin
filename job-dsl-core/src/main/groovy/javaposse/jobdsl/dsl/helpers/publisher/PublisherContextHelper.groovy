@@ -419,21 +419,23 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          * </hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
          */
         def publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure) {
-            publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, null)
+            publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, cloneWorkspaceClosure)
         }
 
         def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, Closure cloneWorkspaceClosure) {
-            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, null)
+            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, cloneWorkspaceClosure)
         }
 
         def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod, Closure cloneWorkspaceClosure) {
-            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, null)
+            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, cloneWorkspaceClosure)
         }
 
         def publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any', String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false, Closure cloneWorkspaceClosure = null) {
             CloneWorkspaceContext cloneWorkspaceContext = new CloneWorkspaceContext()
             cloneWorkspaceContext.criteria = criteriaArg ?: 'Any'
             cloneWorkspaceContext.archiveMethod = archiveMethodArg ?: 'TAR'
+            cloneWorkspaceContext.workspaceExcludeGlob = workspaceExcludeGlobArg ?: ''
+            cloneWorkspaceContext.overrideDefaultExcludes = overrideDefaultExcludesArg ?: false
             AbstractContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
 
             // Validate values
@@ -443,10 +445,10 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
                 workspaceGlob workspaceGlobArg
-                workspaceExcludeGlob workspaceExcludeGlobArg
-                criteria criteriaArg
-                archiveMethod archiveMethodArg
-                overrideDefaultExcludes overrideDefaultExcludesArg
+                workspaceExcludeGlob cloneWorkspaceContext.workspaceExcludeGlob
+                criteria cloneWorkspaceContext.criteria
+                archiveMethod cloneWorkspaceContext.archiveMethod
+                overrideDefaultExcludes cloneWorkspaceContext.overrideDefaultExcludes
             }
             publisherNodes << publishNode
         }
@@ -738,6 +740,28 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                     delegate.descriptionForFailed(descriptionForFailed)
                 }
                 setForMatrix(multiConfigurationBuild)
+            }
+        }
+
+        /**
+         * Configures the Jenkins Text Finder plugin
+         *
+         * <publishers>
+         *     <hudson.plugins.textfinder.TextFinderPublisher>
+         *         <fileSet>*.txt</fileSet>
+         *         <regexp/>
+         *         <succeedIfFound>false</succeedIfFound>
+         *         <unstableIfFound>false</unstableIfFound>
+         *         <alsoCheckConsoleOutput>false</alsoCheckConsoleOutput>
+         *     </hudson.plugins.textfinder.TextFinderPublisher>
+         */
+        def textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false, boolean succeedIfFound = false, unstableIfFound = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.textfinder.TextFinderPublisher' {
+                if (fileSet) delegate.fileSet(fileSet)
+                delegate.regexp(regularExpression)
+                delegate.alsoCheckConsoleOutput(alsoCheckConsoleOutput)
+                delegate.succeedIfFound(succeedIfFound)
+                delegate.unstableIfFound(unstableIfFound)
             }
         }
     }

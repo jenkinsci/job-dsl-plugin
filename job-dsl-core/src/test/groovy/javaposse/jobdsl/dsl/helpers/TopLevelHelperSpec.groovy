@@ -400,14 +400,14 @@ public class TopLevelHelperSpec extends Specification {
         action.execute(root)
 
         then:
-        root.blockBuildWhenDownstreamBuilding[0].value() == true
+        root.blockBuildWhenUpstreamBuilding[0].value() == true
 
         when:
         action = helper.blockOnDownstreamProjects()
         action.execute(root)
 
         then:
-        root.blockBuildWhenUpstreamBuilding[0].value() == true
+        root.blockBuildWhenDownstreamBuilding[0].value() == true
     }
 
     def 'run on same node' () {

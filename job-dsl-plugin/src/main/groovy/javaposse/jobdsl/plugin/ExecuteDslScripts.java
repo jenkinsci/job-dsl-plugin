@@ -262,7 +262,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName());
+            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
             if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
