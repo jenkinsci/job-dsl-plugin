@@ -266,4 +266,28 @@ class WrapperHelperSpec extends Specification {
         def wrapper = root.buildWrappers[0].'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
         wrapper.user[0].value() == '4711'
     }
+
+    def 'ansiColor with map' () {
+        when:
+        helper.wrappers {
+            colorizeOutput('foo')
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.ansicolor.AnsiColorBuildWrapper'.'colorMapName'
+        wrapper[0].value() == 'foo'
+    }
+
+    def 'ansiColor without map should fall back to default xterm' () {
+        when:
+        helper.wrappers {
+            colorizeOutput()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.ansicolor.AnsiColorBuildWrapper'.'colorMapName'
+        wrapper[0].value() == 'xterm'
+    }
 }
