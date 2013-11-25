@@ -98,6 +98,16 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    def colorizeOutput(String colorMap) {
+        if (colorMap == null)
+            colorMap = "xterm"
+
+        execute {
+            def pluginNode = it / 'buildWrappers' / 'hudson.plugins.ansicolor.AnsiColorBuildWrapper'
+            pluginNode / 'colorMapName'(colorMap)
+        }
+    }
+
     /** Enumeration of timeout types for parsing and error reporting*/
     def static enum Timeout {
         absolute,
