@@ -989,4 +989,129 @@ class StepContext implements Context {
             return !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null || gitRevision != null || !props.isEmpty()
         }
     }
+    
+    /**
+     <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.2.2">
+     <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@0.10">
+     <arg1/><arg2/>
+     <ignoreCase>false</ignoreCase>
+     </condition>
+     <buildStep class="hudson.tasks.Shell">
+     <command/>
+     </buildStep>
+     <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@0.10"/>
+     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+      */
+    def buildConditionalStepSingle(String conditionNameArgument,
+                                   Collection<String> conditionArguments,
+                                   String conditionSuccess,
+                                   Collection<String> conditionSuccessArguments,
+                                   String conditionFailure = "Fail" ) {
+                                   
+
+        def nodeBuilder = new NodeBuilder()
+        def attributes = [plugin:'conditional-buildstep@1.2.2']
+        def buildConditionalStepSingleNode = nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'(attributes)
+        def nodeBuilderCondition = new NodeBuilder()
+        def conditionAttributes = [class:"org.jenkins_ci.plugins.run_condition.core.${conditionNameArgument}", plugin:'run-condition@0.10']
+        def conditionNode
+
+        if (conditionNameArgument == 'AlwaysRunCondition') {
+
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
+
+        } else if (conditionNameArgument == 'NeverRunCondition') {
+
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
+
+        } else if (conditionNameArgument == 'BooleanCondition') {
+
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+                token conditionArguments[0]?:''
+            }
+            
+        } else if (conditionNameArgument == 'StringsMatchCondition') {
+
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+                arg1 conditionArguments[0]?:''
+                arg2 conditionArguments[1]?:''
+                ignoreCase conditionArguments[2]?:'false'
+            }
+
+        } else if (conditionNameArgument == 'CauseCondition') {
+
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes) {
+                buildCause conditionArguments[0]?:''
+                exclusiveCause conditionArguments[1]?:''
+            }
+        } else if (conditionNameArgument == 'StatusCondition') {
+
+            conditionNode = nodeBuilderCondition.'condition'(conditionAttributes)
+            
+            def nodeBuilderWorst = new NodeBuilder()
+            def worstNode = nodeBuilderWorst.'worstResult'() {
+                name conditionArguments[0]?:''
+                if (conditionArguments[0] == 'SUCCESS') {
+                    ordinal '0'
+                    color 'BLUE'
+                } else if (conditionArguments[0] == 'UNSTABLE') {
+                    ordinal '1'
+                    color 'YELLOW'
+                } else if (conditionArguments[0] == 'FAILURE') {
+                    ordinal '2'
+                    color 'RED'
+                } else if (conditionArguments[0] == 'NOT_BUILT') {
+                    ordinal '3'
+                    color 'NOTBUILT'
+                } else if (conditionArguments[0] == 'ABORTED') {
+                    ordinal '4'
+                    color 'ABORTED'
+                }
+            }
+            conditionNode.append(worstNode)
+            def nodeBuilderBest = new NodeBuilder()
+            def bestNode = nodeBuilderBest.'bestResult'() {
+                name conditionArguments[1]?:''
+                if (conditionArguments[0] == 'SUCCESS') {
+                    ordinal '0'
+                    color 'BLUE'
+                } else if (conditionArguments[0] == 'UNSTABLE') {
+                    ordinal '1'
+                    color 'YELLOW'
+                } else if (conditionArguments[0] == 'FAILURE') {
+                    ordinal '2'
+                    color 'RED'
+                } else if (conditionArguments[0] == 'NOT_BUILT') {
+                    ordinal '3'
+                    color 'NOTBUILT'
+                } else if (conditionArguments[0] == 'ABORTED') {
+                    ordinal '4'
+                    color 'ABORTED'
+                }
+            }
+            conditionNode.append(bestNode)
+        }
+
+        buildConditionalStepSingleNode.append(conditionNode)
+        
+        if (conditionSuccess == 'shell') {
+            def nodeBuilderSuccess = new NodeBuilder()
+            def successAttributes = [class:'hudson.tasks.Shell']
+            def successNode = nodeBuilderSuccess.'buildStep'(successAttributes) {
+                command conditionSuccessArguments[0]
+            }
+
+            buildConditionalStepSingleNode.append(successNode)
+        }
+        
+        if (conditionFailure == 'Fail') {
+            def nodeBuilderFailure = new NodeBuilder()
+            def failureAttributes = [class:'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail', 'plugin':'run-condition@0.10']
+            def failureNode = nodeBuilderFailure.'runner'(failureAttributes)
+            buildConditionalStepSingleNode.append(failureNode)
+        }
+
+        stepNodes << buildConditionalStepSingleNode
+
+    }
 }

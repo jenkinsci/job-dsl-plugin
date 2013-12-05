@@ -969,4 +969,154 @@ still-another-dsl.groovy'''
 '''
     }
 
+    def 'call Conditional step (single)'() {
+        when:
+        context.buildConditionalStepSingle('StringsMatchCondition', ['firstArgument', 'secondArgument', 'true'], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def conditionalStepSingle = context.stepNodes[0]
+        conditionalStepSingle.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle.attribute('plugin') == 'conditional-buildstep@1.2.2'
+        
+        def nodeBuilderCondition = conditionalStepSingle.condition[0]
+        nodeBuilderCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+        nodeBuilderCondition.attribute('plugin') == 'run-condition@0.10'
+        nodeBuilderCondition.arg1[0].value() == 'firstArgument'
+        nodeBuilderCondition.arg2[0].value() == 'secondArgument'
+        nodeBuilderCondition.ignoreCase[0].value() == 'true'
+        
+        def nodeBuilderSuccess = conditionalStepSingle.buildStep[0]
+        nodeBuilderSuccess.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure = conditionalStepSingle.runner[0]
+        nodeBuilderFailure.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure.attribute('plugin') == 'run-condition@0.10'
+
+        when:
+        context.buildConditionalStepSingle('AlwaysRunCondition', [], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 2
+        def conditionalStepSingle1 = context.stepNodes[1]
+        conditionalStepSingle1.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle1.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition1 = conditionalStepSingle1.condition[0]
+        nodeBuilderCondition1.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
+        nodeBuilderCondition1.attribute('plugin') == 'run-condition@0.10'
+
+        def nodeBuilderSuccess1 = conditionalStepSingle1.buildStep[0]
+        nodeBuilderSuccess1.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess1.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure1 = conditionalStepSingle1.runner[0]
+        nodeBuilderFailure1.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure1.attribute('plugin') == 'run-condition@0.10'
+
+        when:
+        context.buildConditionalStepSingle('NeverRunCondition', [], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 3
+        def conditionalStepSingle2 = context.stepNodes[2]
+        conditionalStepSingle2.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle2.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition2 = conditionalStepSingle2.condition[0]
+        nodeBuilderCondition2.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'
+        nodeBuilderCondition2.attribute('plugin') == 'run-condition@0.10'
+
+        def nodeBuilderSuccess2 = conditionalStepSingle2.buildStep[0]
+        nodeBuilderSuccess2.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess2.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure2 = conditionalStepSingle2.runner[0]
+        nodeBuilderFailure2.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure2.attribute('plugin') == 'run-condition@0.10'
+
+        when:
+        context.buildConditionalStepSingle('BooleanCondition', ['fullName'], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 4
+        def conditionalStepSingle3 = context.stepNodes[3]
+        conditionalStepSingle3.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle3.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition3 = conditionalStepSingle3.condition[0]
+        nodeBuilderCondition3.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'
+        nodeBuilderCondition3.attribute('plugin') == 'run-condition@0.10'
+        nodeBuilderCondition3.token[0].value() == 'fullName'
+
+        def nodeBuilderSuccess3 = conditionalStepSingle3.buildStep[0]
+        nodeBuilderSuccess3.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess3.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure3 = conditionalStepSingle3.runner[0]
+        nodeBuilderFailure3.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure3.attribute('plugin') == 'run-condition@0.10'
+
+        when:
+        context.buildConditionalStepSingle('CauseCondition', ['BUILDRESULT_CAUSE', 'false'], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 5
+        def conditionalStepSingle4 = context.stepNodes[4]
+        conditionalStepSingle3.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle3.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition4 = conditionalStepSingle4.condition[0]
+        nodeBuilderCondition4.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'
+        nodeBuilderCondition4.attribute('plugin') == 'run-condition@0.10'
+        nodeBuilderCondition4.buildCause[0].value() == 'BUILDRESULT_CAUSE'
+        nodeBuilderCondition4.exclusiveCause[0].value() == 'false'
+
+        def nodeBuilderSuccess4 = conditionalStepSingle4.buildStep[0]
+        nodeBuilderSuccess4.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess4.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure4 = conditionalStepSingle4.runner[0]
+        nodeBuilderFailure4.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure4.attribute('plugin') == 'run-condition@0.10'
+
+        when:
+        context.buildConditionalStepSingle('StatusCondition', ['SUCCESS', 'SUCCESS'], 'shell', ['echo "hi"'], "Fail")
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 6
+        def conditionalStepSingle5 = context.stepNodes[5]
+        conditionalStepSingle5.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        conditionalStepSingle5.attribute('plugin') == 'conditional-buildstep@1.2.2'
+
+        def nodeBuilderCondition5 = conditionalStepSingle5.condition[0]
+        nodeBuilderCondition5.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'
+        nodeBuilderCondition5.attribute('plugin') == 'run-condition@0.10'
+
+        def nodeBuilderWorst = nodeBuilderCondition5.worstResult[0]
+        nodeBuilderWorst.name[0].value() == 'SUCCESS'
+        nodeBuilderWorst.ordinal[0].value() == '0'
+        nodeBuilderWorst.color[0].value() == 'BLUE'
+
+        def nodeBuilderBest = nodeBuilderCondition5.bestResult[0]
+        nodeBuilderBest.name[0].value() == 'SUCCESS'
+        nodeBuilderBest.ordinal[0].value() == '0'
+        nodeBuilderBest.color[0].value() == 'BLUE'
+
+        def nodeBuilderSuccess5 = conditionalStepSingle5.buildStep[0]
+        nodeBuilderSuccess5.attribute('class') == 'hudson.tasks.Shell'
+        nodeBuilderSuccess5.command[0].value() == 'echo "hi"'
+
+        def nodeBuilderFailure5 = conditionalStepSingle5.runner[0]
+        nodeBuilderFailure5.attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+        nodeBuilderFailure5.attribute('plugin') == 'run-condition@0.10'
+
+    }
 }
