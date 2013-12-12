@@ -1111,4 +1111,20 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].succeedIfFound[0].value() == true
         context.publisherNodes[0].unstableIfFound[0].value() == true
     }
+
+	def 'call postBuildTask with two arguments'() {
+        when:
+        context.postBuildTask() {
+	        task('BUILD SUCCESSFUL', 'git clean -fdx')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.postbuildtask.PostbuildTask'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'logTexts'[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'logTexts'[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'EscalateStatus'[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'RunIfJobSuccessful'[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].script[0].value() == 'git clean -fdx'
+    }
 }
