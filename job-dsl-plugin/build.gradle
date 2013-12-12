@@ -18,6 +18,7 @@ jenkinsPlugin {
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
     maskClasses = 'groovy.grape'
+    compatibleSinceVersion = '1.19'
     developers {
         developer {
             id 'quidryan'
