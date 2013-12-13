@@ -991,15 +991,17 @@ class StepContext implements Context {
     }
 
     /**
-     <dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder plugin="prereq-buildstep@1.1">
-	    <projects>project-A,project-B</projects>
-	    <warningOnly>false</warningOnly>
-	 </dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder>
+     <dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder>
+        <projects>project-A,project-B</projects>
+        <warningOnly>false</warningOnly>
+     </dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder>
      */
     def prerequisite(String projectList = '', boolean warningOnlyBool = false) {
         def nodeBuilder = new NodeBuilder()
-        def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder'(plugin: 'prereq-buildstep@1.1') {
-            projects(projectList) // Important that there are no spaces for comma delimited values, plugin doesn't handle by trimming
+        def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
+             // Important that there are no spaces for comma delimited values, plugin doesn't handle by trimming, so we will
+            projectList = projectList.tokenize(',').collect{ it.trim() }.join(',')
+            projects(projectList)
             'warningOnly' warningOnlyBool
         }
         stepNodes << preReqNode

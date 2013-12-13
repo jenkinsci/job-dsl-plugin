@@ -969,7 +969,7 @@ still-another-dsl.groovy'''
 '''
     }
 
-	def 'call prerequisite method with single project'() {
+    def 'call prerequisite method with single project'() {
         when:
         context.prerequisite('project-A')
 
@@ -982,7 +982,7 @@ still-another-dsl.groovy'''
         prerequisiteStep.warningOnly[0].value() == false
     }
 
-	def 'call prerequisite method with multiple projects'() {
+    def 'call prerequisite method with multiple projects'() {
         when:
         context.prerequisite('project-A,project-B')
 
@@ -995,7 +995,20 @@ still-another-dsl.groovy'''
         prerequisiteStep.warningOnly[0].value() == false
     }
 
-	def 'call prerequisite method with single project and overriden warning only flag'() {
+        def 'call prerequisite method with multiple projects containing leading spaces'() {
+        when:
+        context.prerequisite(' project-A, project-B ,project-C ')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def prerequisiteStep = context.stepNodes[0]
+        prerequisiteStep.name() == 'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder'
+        prerequisiteStep.projects[0].value() == 'project-A,project-B,project-C'
+        prerequisiteStep.warningOnly[0].value() == false
+    }
+
+    def 'call prerequisite method with single project and overriden warning only flag'() {
         when:
         context.prerequisite('project-A', true)
 
