@@ -1112,10 +1112,10 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].unstableIfFound[0].value() == true
     }
 
-	def 'call postBuildTask with two arguments'() {
+    def 'call postBuildTask with two arguments'() {
         when:
         context.postBuildTask() {
-	        task('BUILD SUCCESSFUL', 'git clean -fdx')
+            task('BUILD SUCCESSFUL', 'git clean -fdx')
         }
 
         then:
@@ -1126,5 +1126,28 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'EscalateStatus'[0].value() == false
         context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'RunIfJobSuccessful'[0].value() == false
         context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].script[0].value() == 'git clean -fdx'
+    }
+
+    def 'call postBuildTask with two tasks'() {
+        when:
+        context.postBuildTask() {
+            task('BUILD SUCCESSFUL', 'git clean -fdx')
+            task('BUILD FAILED', 'git gc', 'OR', true, true)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.postbuildtask.PostbuildTask'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'logTexts'[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'logTexts'[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'EscalateStatus'[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].'RunIfJobSuccessful'[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].script[0].value() == 'git clean -fdx'
+
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].'logTexts'[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD FAILED'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].'logTexts'[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'OR'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].'EscalateStatus'[0].value() == true
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].'RunIfJobSuccessful'[0].value() == true
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].script[0].value() == 'git gc'
     }
 }

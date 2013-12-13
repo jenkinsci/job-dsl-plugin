@@ -5,10 +5,10 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.helpers.Context
 
 class PostBuildTaskContext implements Context {
-	def tasks = []
-	
-	// TODO Allow for multiple pairs of logText and operator! Can we add a smart dsl method for the two operators: AND and OR?
-	def task(String logText, String script, String operator = 'AND', boolean escalate = false, boolean runIfSuccessful = false) {
+    def tasks = []
+
+    // TODO Allow for multiple pairs of logText and operator! Can we add a smart dsl method for the two operators: AND and OR?
+    def task(String logText, String script, String operator = 'AND', boolean escalate = false, boolean runIfSuccessful = false) {
         Preconditions.checkArgument(logText != null && logText.length() > 0, "Log Text to match is required!")
         Preconditions.checkArgument(script != null && script.length() > 0, "Script to run is required!")
 
