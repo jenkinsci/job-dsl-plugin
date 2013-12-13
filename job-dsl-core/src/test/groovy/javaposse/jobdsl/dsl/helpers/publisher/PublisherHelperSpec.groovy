@@ -1112,7 +1112,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].unstableIfFound[0].value() == true
     }
 
-	def 'call aggregate downstream test results with no args'() {
+    def 'call aggregate downstream test results with no args'() {
         when:
         context.aggregateDownstreamTestResults()
 
@@ -1123,7 +1123,7 @@ public class PublisherHelperSpec extends Specification {
         aggregateNode.includeFailedBuilds[0].value() == false
     }
 
-	def 'call aggregate downstream test results with job listing'() {
+    def 'call aggregate downstream test results with job listing'() {
         when:
         context.aggregateDownstreamTestResults('project-A, project-B')
 
@@ -1134,7 +1134,7 @@ public class PublisherHelperSpec extends Specification {
         aggregateNode.includeFailedBuilds[0].value() == false
     }
 
-	def 'call aggregate downstream test results with null job listing and overriden includeFailedBuilds'() {
+    def 'call aggregate downstream test results with null job listing and overriden includeFailedBuilds'() {
         when:
         context.aggregateDownstreamTestResults(null, true)
 
@@ -1145,7 +1145,7 @@ public class PublisherHelperSpec extends Specification {
         aggregateNode.includeFailedBuilds[0].value() == true
     }
 
-	def 'call aggregate downstream test results with job listing and overriden includeFailedBuilds'() {
+    def 'call aggregate downstream test results with job listing and overriden includeFailedBuilds'() {
         when:
         context.aggregateDownstreamTestResults('project-A, project-B', true)
 
