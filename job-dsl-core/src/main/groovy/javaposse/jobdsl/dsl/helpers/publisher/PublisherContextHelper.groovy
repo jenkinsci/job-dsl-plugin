@@ -764,5 +764,27 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 delegate.unstableIfFound(unstableIfFound)
             }
         }
+
+        /**
+         * Configures the Groovy Postbuild script plugin
+         *
+         * <publishers>
+         *     <org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+         *         <groovyScript>
+         *         script
+         *         </groovyScript>
+         *         <behavior>0</behavior>
+         *     </org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+         *     If script fails, behavior values:
+         *     0 = Do nothing
+         *     1 = Mark build as unstable
+         *     2 = Mark build as failed
+         */
+        def groovyPostBuild(String script, int behavior = 0) {
+            publisherNodes << NodeBuilder.newInstance().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
+                delegate.groovyScript(script)
+                delegate.behavior(behavior)
+            }
+        }
     }
 }
