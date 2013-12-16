@@ -781,7 +781,9 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def aggregateDownstreamTestResults(String jobs = null, boolean includeFailedBuilds = false) {
             publisherNodes << NodeBuilder.newInstance().'hudson.tasks.test.AggregatedTestResultPublisher' {
-                if (jobs) delegate.jobs(jobs)
+                if (jobs) {
+                    delegate.jobs(jobs)
+                }
                 delegate.includeFailedBuilds(includeFailedBuilds)
             }
         }
