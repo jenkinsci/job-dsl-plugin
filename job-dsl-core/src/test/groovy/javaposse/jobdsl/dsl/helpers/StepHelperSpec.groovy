@@ -995,7 +995,7 @@ still-another-dsl.groovy'''
         prerequisiteStep.warningOnly[0].value() == false
     }
 
-        def 'call prerequisite method with multiple projects containing leading spaces'() {
+    def 'call prerequisite method with multiple projects containing leading spaces'() {
         when:
         context.prerequisite(' project-A, project-B ,project-C ')
 
