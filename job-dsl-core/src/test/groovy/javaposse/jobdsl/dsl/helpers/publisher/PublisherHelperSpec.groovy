@@ -1111,4 +1111,26 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].succeedIfFound[0].value() == true
         context.publisherNodes[0].unstableIfFound[0].value() == true
     }
+
+    def 'call groovyPostBuild'() {
+        when:
+        context.groovyPostBuild('foo')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
+        context.publisherNodes[0].behavior[0].value() == 0
+    }
+
+        def 'call groovyPostBuild with overriden failure behavior'() {
+        when:
+        context.groovyPostBuild('foo', 1)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
+        context.publisherNodes[0].behavior[0].value() == 1
+    }
 }
