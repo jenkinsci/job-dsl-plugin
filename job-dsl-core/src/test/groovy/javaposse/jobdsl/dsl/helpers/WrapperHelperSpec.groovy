@@ -290,4 +290,28 @@ class WrapperHelperSpec extends Specification {
         def wrapper = root.buildWrappers[0].'hudson.plugins.ansicolor.AnsiColorBuildWrapper'.'colorMapName'
         wrapper[0].value() == 'xterm'
     }
+
+    def 'xvnc' () {
+        when:
+        helper.wrappers {
+            xvnc()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.'takeScreenshot'
+        wrapper[0].value() == false
+    }
+
+    def 'xvnc with takeScreenshot arg' () {
+        when:
+        helper.wrappers {
+            xvnc(true)
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.'takeScreenshot'
+        wrapper[0].value() == true
+    }
 }
