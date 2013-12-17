@@ -1300,4 +1300,44 @@ public class PublisherHelperSpec extends Specification {
         associatedFilesNode.name() == 'org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher'
         associatedFilesNode.associatedFiles[0].value() == '/foo/file/${VARIABLE}'
     }
+
+    def 'call emma with one argument'() {
+        when:
+        context.emma('coverage-results/coverage.xml')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.emma.EmmaPublisher'
+        context.publisherNodes[0].includes[0].value() == 'coverage-results/coverage.xml'
+        context.publisherNodes[0].healthReports[0].minClass[0].value() == 0
+        context.publisherNodes[0].healthReports[0].maxClass[0].value() == 100
+        context.publisherNodes[0].healthReports[0].minMethod[0].value() == 0
+        context.publisherNodes[0].healthReports[0].maxMethod[0].value() == 70
+        context.publisherNodes[0].healthReports[0].minBlock[0].value() == 0
+        context.publisherNodes[0].healthReports[0].maxBlock[0].value() == 80
+        context.publisherNodes[0].healthReports[0].minLine[0].value() == 0
+        context.publisherNodes[0].healthReports[0].maxLine[0].value() == 80
+        context.publisherNodes[0].healthReports[0].minCondition[0].value() == 0
+        context.publisherNodes[0].healthReports[0].maxCondition[0].value() == 0
+    }
+
+    def 'call emma with thresholds'() {
+        when:
+        context.emma('coverage-results/coverage.xml', 5..90, 10..80, 15..75, 20..70, 25..65)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.emma.EmmaPublisher'
+        context.publisherNodes[0].includes[0].value() == 'coverage-results/coverage.xml'
+        context.publisherNodes[0].healthReports[0].minClass[0].value() == 5
+        context.publisherNodes[0].healthReports[0].maxClass[0].value() == 90
+        context.publisherNodes[0].healthReports[0].minMethod[0].value() == 10
+        context.publisherNodes[0].healthReports[0].maxMethod[0].value() == 80
+        context.publisherNodes[0].healthReports[0].minBlock[0].value() == 15
+        context.publisherNodes[0].healthReports[0].maxBlock[0].value() == 75
+        context.publisherNodes[0].healthReports[0].minLine[0].value() == 20
+        context.publisherNodes[0].healthReports[0].maxLine[0].value() == 70
+        context.publisherNodes[0].healthReports[0].minCondition[0].value() == 25
+        context.publisherNodes[0].healthReports[0].maxCondition[0].value() == 65
+    }
 }

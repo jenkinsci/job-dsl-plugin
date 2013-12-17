@@ -28,5 +28,3 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
         }
     }
 }
-
-
