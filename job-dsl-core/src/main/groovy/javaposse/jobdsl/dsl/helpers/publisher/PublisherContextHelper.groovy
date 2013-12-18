@@ -764,5 +764,48 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 delegate.unstableIfFound(unstableIfFound)
             }
         }
+
+        /**
+         * Configures the Jenkins Post Build Task plugin
+         *
+         * <publishers>
+         *     <hudson.plugins.postbuildtask.PostbuildTask>
+         *          <tasks>
+         *              <hudson.plugins.postbuildtask.TaskProperties>
+         *                  <logTexts>
+         *                      <hudson.plugins.postbuildtask.LogProperties>
+         *                          <logText>BUILD SUCCESSFUL</logText>
+         *                          <operator>AND</operator>
+         *                      </hudson.plugins.postbuildtask.LogProperties>
+         *                  </logTexts>
+         *                  <EscalateStatus>false</EscalateStatus>
+         *                  <RunIfJobSuccessful>false</RunIfJobSuccessful>
+         *                  <script>git clean -fdx</script>
+         *              </hudson.plugins.postbuildtask.TaskProperties>
+         *          </tasks>
+         *      </hudson.plugins.postbuildtask.PostbuildTask>
+         */
+        def postBuildTask(Closure postBuildClosure) {
+            PostBuildTaskContext postBuildContext = new PostBuildTaskContext()
+            AbstractContextHelper.executeInContext(postBuildClosure, postBuildContext)
+
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.postbuildtask.PostbuildTask' {
+                tasks {
+                    postBuildContext.tasks.each { PostBuildTaskContext.PostBuildTask task ->
+                        'hudson.plugins.postbuildtask.TaskProperties' {
+                            logTexts {
+                                'hudson.plugins.postbuildtask.LogProperties' {
+                                    logText(task.logText)
+                                    operator(task.operator)
+                                }
+                            }
+                            EscalateStatus(task.escalateStatus)
+                            RunIfJobSuccessful(task.runIfJobSuccessful)
+                            script(task.script)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
