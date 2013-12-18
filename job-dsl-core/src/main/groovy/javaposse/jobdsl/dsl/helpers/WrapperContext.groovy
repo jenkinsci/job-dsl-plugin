@@ -326,7 +326,7 @@ class WrapperContext implements Context {
     def xvnc(boolean takeScreenshotAtEndOfBuild = false) {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.xvnc.Xvnc' {
-            'takeScreenshot'(takeScreenshotAtEndOfBuild)
+            takeScreenshot(takeScreenshotAtEndOfBuild)
         }
     }
 }

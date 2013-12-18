@@ -299,7 +299,7 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.'takeScreenshot'
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.takeScreenshot
         wrapper[0].value() == false
     }
 
@@ -311,7 +311,7 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.'takeScreenshot'
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.takeScreenshot
         wrapper[0].value() == true
     }
 }
