@@ -1150,4 +1150,48 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].RunIfJobSuccessful[0].value() == true
         context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].script[0].value() == 'git gc'
     }
+
+    def 'call aggregate downstream test results with no args'() {
+        when:
+        context.aggregateDownstreamTestResults()
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0] == null
+        aggregateNode.includeFailedBuilds[0].value() == false
+    }
+
+    def 'call aggregate downstream test results with job listing'() {
+        when:
+        context.aggregateDownstreamTestResults('project-A, project-B')
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0].value() == 'project-A, project-B'
+        aggregateNode.includeFailedBuilds[0].value() == false
+    }
+
+    def 'call aggregate downstream test results with null job listing and overriden includeFailedBuilds'() {
+        when:
+        context.aggregateDownstreamTestResults(null, true)
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0] == null
+        aggregateNode.includeFailedBuilds[0].value() == true
+    }
+
+    def 'call aggregate downstream test results with job listing and overriden includeFailedBuilds'() {
+        when:
+        context.aggregateDownstreamTestResults('project-A, project-B', true)
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0].value() == 'project-A, project-B'
+        aggregateNode.includeFailedBuilds[0].value() == true
+    }
 }

@@ -807,5 +807,28 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 }
             }
         }
+
+        /**
+         * Configures Aggregate Downstream Test Results. Pass no args or null for jobs (first arg) to
+         * automatically aggregate downstream test results. Pass in comma-delimited list for first arg to manually choose jobs.
+         * Second argument is optional and sets whether failed builds are included.
+         *
+         * <publishers>
+         *     ...
+         *     <hudson.tasks.test.AggregatedTestResultPublisher>
+         *         <jobs>some-downstream-test</jobs>
+         *         <includeFailedBuilds>false</includeFailedBuilds>
+         *     </hudson.tasks.test.AggregatedTestResultPublisher>
+         *     ...
+         * </publishers>
+         */
+        def aggregateDownstreamTestResults(String jobs = null, boolean includeFailedBuilds = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.tasks.test.AggregatedTestResultPublisher' {
+                if (jobs) {
+                    delegate.jobs(jobs)
+                }
+                delegate.includeFailedBuilds(includeFailedBuilds)
+            }
+        }
     }
 }
