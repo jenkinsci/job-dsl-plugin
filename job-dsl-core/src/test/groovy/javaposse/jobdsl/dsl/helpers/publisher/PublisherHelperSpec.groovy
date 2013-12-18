@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.Behavior.MarkUnstable
 import spock.lang.Specification
 
 public class PublisherHelperSpec extends Specification {
@@ -1125,7 +1126,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call groovyPostBuild with overriden failure behavior'() {
         when:
-        context.groovyPostBuild('foo', Behavior.MarkUnstable)
+        context.groovyPostBuild('foo', MarkUnstable)
 
         then:
         context.publisherNodes.size() == 1

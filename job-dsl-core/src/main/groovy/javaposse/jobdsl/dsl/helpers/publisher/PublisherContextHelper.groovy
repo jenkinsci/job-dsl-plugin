@@ -765,6 +765,17 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             }
         }
 
+        def static enum Behavior {
+            DoNothing(0),
+            MarkUnstable(1),
+            MarkFailed(2)
+
+            final int value
+            Behavior(int value) {
+                this.value = value
+            }
+        }
+
         /**
          * Configures the Groovy Postbuild script plugin
          *
