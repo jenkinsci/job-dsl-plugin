@@ -21,7 +21,7 @@ class WorkspaceProtocol {
      */
     static URL createWorkspaceUrl(AbstractBuild build, FilePath filePath) {
         String relativePath = filePath.getRemote() - build.workspace.getRemote()
-        relativePath = relativePath.replaceAll('\\\\', '/')
+        relativePath = relativePath.replaceAll('\\\\', '/') // normalize for Windows
         new URL(createWorkspaceUrl(build.project), "$relativePath/", new WorkspaceUrlHandler())
     }
 
@@ -45,7 +45,7 @@ class WorkspaceProtocol {
     static FilePath getFilePathFromUrl(URL url) {
         AbstractProject project = getProjectFromWorkspaceUrl(url)
         FilePath workspace = project.someWorkspace
-        String relativePath = url.file[1..-1]
+        String relativePath = url.file[1..-1] // remove leading slash
         workspace.child relativePath
     }
 }
