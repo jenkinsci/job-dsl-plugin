@@ -162,6 +162,7 @@ public class DslScriptLoader {
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.Behavior");
         config.addCompilationCustomizers(icz);
 
         config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

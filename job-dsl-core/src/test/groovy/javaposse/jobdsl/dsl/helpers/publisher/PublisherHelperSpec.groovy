@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.Behavior.MarkUnstable
 import spock.lang.Specification
 
 public class PublisherHelperSpec extends Specification {
@@ -1193,5 +1194,27 @@ public class PublisherHelperSpec extends Specification {
         aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
         aggregateNode.jobs[0].value() == 'project-A, project-B'
         aggregateNode.includeFailedBuilds[0].value() == true
+    }
+
+    def 'call groovyPostBuild'() {
+        when:
+        context.groovyPostBuild('foo')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
+        context.publisherNodes[0].behavior[0].value() == 0
+    }
+
+    def 'call groovyPostBuild with overriden failure behavior'() {
+        when:
+        context.groovyPostBuild('foo', MarkUnstable)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
+        context.publisherNodes[0].behavior[0].value() == 1
     }
 }

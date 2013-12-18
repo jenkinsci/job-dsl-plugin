@@ -830,5 +830,35 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
                 delegate.includeFailedBuilds(includeFailedBuilds)
             }
         }
+
+        def static enum Behavior {
+            DoNothing(0),
+            MarkUnstable(1),
+            MarkFailed(2)
+
+            final int value
+
+            Behavior(int value) {
+                this.value = value
+            }
+        }
+
+        /**
+         * Configures the Groovy Postbuild script plugin
+         *
+         * <publishers>
+         *     <org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+         *         <groovyScript>
+         *         script
+         *         </groovyScript>
+         *         <behavior>0</behavior>
+         *     </org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+         */
+        def groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
+            publisherNodes << NodeBuilder.newInstance().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
+                delegate.groovyScript(script)
+                delegate.behavior(behavior.value)
+            }
+        }
     }
 }
