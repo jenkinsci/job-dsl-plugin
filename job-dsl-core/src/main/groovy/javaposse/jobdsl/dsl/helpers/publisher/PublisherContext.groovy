@@ -872,20 +872,23 @@ class PublisherContext implements Context {
      *         </healthReports>
      *     </hudson.plugins.emma.EmmaPublisher>
      */
-    def emma(String fileSet = '', IntRange classThreshold = 0..100, IntRange methodThreshold = 0..70, IntRange blockThreshold = 0..80, IntRange lineThreshold = 0..80, IntRange conditionThreshold = 0..<1) {
+    def emma(String fileSet = '', Closure emmaClosure = null) {
+        EmmaContext emmaContext = new EmmaContext()
+        AbstractContextHelper.executeInContext(emmaClosure, emmaContext)
+
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.emma.EmmaPublisher' {
             includes(fileSet)
             healthReports {
-                minClass(classThreshold.getFrom())
-                maxClass(classThreshold.getTo())
-                minMethod(methodThreshold.getFrom())
-                maxMethod(methodThreshold.getTo())
-                minBlock(blockThreshold.getFrom())
-                maxBlock(blockThreshold.getTo())
-                minLine(lineThreshold.getFrom())
-                maxLine(lineThreshold.getTo())
-                minCondition(conditionThreshold.getFrom())
-                maxCondition(conditionThreshold.getTo())
+                minClass(emmaContext.classThreshold.getFrom())
+                maxClass(emmaContext.classThreshold.getTo())
+                minMethod(emmaContext.methodThreshold.getFrom())
+                maxMethod(emmaContext.methodThreshold.getTo())
+                minBlock(emmaContext.blockThreshold.getFrom())
+                maxBlock(emmaContext.blockThreshold.getTo())
+                minLine(emmaContext.lineThreshold.getFrom())
+                maxLine(emmaContext.lineThreshold.getTo())
+                minCondition(emmaContext.conditionThreshold.getFrom())
+                maxCondition(emmaContext.conditionThreshold.getTo())
             }
         }
     }
