@@ -307,4 +307,26 @@ class WrapperContext implements Context {
             'colorMapName'(colorMap)
         }
     }
+
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <buildWrappers>
+     *         <hudson.plugins.xvnc.Xvnc>
+     *             <takeScreenshot>false</takeScreenshot>
+     *         </hudson.plugins.xvnc.Xvnc>
+     *     </buildWrappers>
+     * </project>
+     * }
+     *
+     * Runs build under XVNC.
+     * @param takeScreenshotAtEndOfBuild If a screenshot should be taken at the end of the build
+     */
+    def xvnc(boolean takeScreenshotAtEndOfBuild = false) {
+        def nodeBuilder = new NodeBuilder()
+        wrapperNodes << nodeBuilder.'hudson.plugins.xvnc.Xvnc' {
+            takeScreenshot(takeScreenshotAtEndOfBuild)
+        }
+    }
 }
