@@ -1125,7 +1125,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call groovyPostBuild with overriden failure behavior'() {
         when:
-        context.groovyPostBuild('foo', 1)
+        context.groovyPostBuild('foo', Behavior.MarkUnstable)
 
         then:
         context.publisherNodes.size() == 1
