@@ -1123,7 +1123,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].behavior[0].value() == 0
     }
 
-        def 'call groovyPostBuild with overriden failure behavior'() {
+    def 'call groovyPostBuild with overriden failure behavior'() {
         when:
         context.groovyPostBuild('foo', 1)
 
