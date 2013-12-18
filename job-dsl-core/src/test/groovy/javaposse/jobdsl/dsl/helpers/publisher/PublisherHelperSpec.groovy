@@ -1194,4 +1194,30 @@ public class PublisherHelperSpec extends Specification {
         aggregateNode.jobs[0].value() == 'project-A, project-B'
         aggregateNode.includeFailedBuilds[0].value() == true
     }
+
+    def 'call javadoc archiver with no args'() {
+        when:
+
+        context.archiveJavadoc()
+
+        then:
+        Node javadocNode = context.publisherNodes[0]
+        javadocNode.name() == 'hudson.tasks.JavadocArchiver'
+        javadocNode.javadocDir[0].value() == ''
+        javadocNode.keepAll[0].value() == false
+    }
+
+    def 'call javadoc archiver with all args'() {
+        when:
+        context.archiveJavadoc {
+            javadocDir 'build/javadoc'
+            keepAll true
+        }
+
+        then:
+        Node javadocNode = context.publisherNodes[0]
+        javadocNode.name() == 'hudson.tasks.JavadocArchiver'
+        javadocNode.javadocDir[0].value() == 'build/javadoc'
+        javadocNode.keepAll[0].value() == true
+    }
 }
