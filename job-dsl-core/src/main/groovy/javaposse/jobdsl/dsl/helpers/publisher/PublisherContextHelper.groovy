@@ -5,17 +5,17 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelper.PublisherContext> {
+class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
 
     PublisherContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)
     }
 
     def publishers(Closure closure) {
-        execute(closure, new PublisherContextHelper.PublisherContext())
+        execute(closure, new PublisherContext())
     }
 
-    Closure generateWithXmlClosure(PublisherContextHelper.PublisherContext context) {
+    Closure generateWithXmlClosure(PublisherContext context) {
         return { Node project ->
             def publishersNode
             if (project.publishers.isEmpty()) {
@@ -91,7 +91,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
 
         def extendedEmail(String recipients, String subjectTemplate, String contentTemplate, Closure emailClosure = null) {
             EmailContext emailContext = new EmailContext()
-            AbstractContextHelper.executeInContext(emailClosure, emailContext)
+            executeInContext(emailClosure, emailContext)
 
             // Validate that we have the typical triggers, if nothing is provided
             if (emailContext.emailTriggers.isEmpty()) {
@@ -235,7 +235,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def jacocoCodeCoverage(Closure jacocoClosure =  null) {
 
             JacocoContext jacocoContext = new JacocoContext()
-            AbstractContextHelper.executeInContext(jacocoClosure, jacocoContext)
+            executeInContext(jacocoClosure, jacocoContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
 
@@ -277,7 +277,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def publishHtml(Closure htmlReportContext) {
             HtmlReportContext reportContext = new HtmlReportContext()
-            AbstractContextHelper.executeInContext(htmlReportContext, reportContext)
+            executeInContext(htmlReportContext, reportContext)
 
             // Now that the context has what we need
             def nodeBuilder = NodeBuilder.newInstance()
@@ -336,7 +336,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             JabberContext jabberContext = new JabberContext()
             jabberContext.strategyName = strategyName ?: 'ALL'
             jabberContext.channelNotificationName = channelNotificationName ?: 'Default'
-            AbstractContextHelper.executeInContext(jabberClosure, jabberContext)
+            executeInContext(jabberClosure, jabberContext)
 
             // Validate values
             assert validJabberStrategyNames.contains(jabberContext.strategyName), "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
@@ -385,7 +385,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def publishScp(String site, Closure scpClosure) {
             ScpContext scpContext = new ScpContext()
-            AbstractContextHelper.executeInContext(scpClosure, scpContext)
+            executeInContext(scpClosure, scpContext)
 
             // Validate values
             assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
@@ -436,7 +436,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             cloneWorkspaceContext.archiveMethod = archiveMethodArg ?: 'TAR'
             cloneWorkspaceContext.workspaceExcludeGlob = workspaceExcludeGlobArg ?: ''
             cloneWorkspaceContext.overrideDefaultExcludes = overrideDefaultExcludesArg ?: false
-            AbstractContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
+            executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
 
             // Validate values
             assert validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria), "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
@@ -528,7 +528,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def downstreamParameterized(Closure downstreamClosure) {
             DownstreamContext downstreamContext = new DownstreamContext()
-            AbstractContextHelper.executeInContext(downstreamClosure, downstreamContext)
+            executeInContext(downstreamClosure, downstreamContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.parameterizedtrigger.BuildTrigger' {
@@ -590,7 +590,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def violations(int perFileDisplayLimit, Closure violationsClosure = null) {
             ViolationsContext violationsContext = new ViolationsContext()
             violationsContext.perFileDisplayLimit = perFileDisplayLimit
-            AbstractContextHelper.executeInContext(violationsClosure, violationsContext)
+            executeInContext(violationsClosure, violationsContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher'(plugin: 'violations@0.7.11') {
@@ -639,7 +639,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
 
         def irc(Closure ircClosure) {
             IrcContext ircContext = new IrcContext()
-            AbstractContextHelper.executeInContext(ircClosure, ircContext)
+            executeInContext(ircClosure, ircContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.ircbot.IrcPublisher' {
@@ -669,7 +669,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def cobertura(String reportFile, Closure coberturaClosure = null) {
 
             CoberturaContext coberturaContext = new CoberturaContext()
-            AbstractContextHelper.executeInContext(coberturaClosure, coberturaContext)
+            executeInContext(coberturaClosure, coberturaContext)
 
             publisherNodes << NodeBuilder.newInstance().'hudson.plugins.cobertura.CoberturaPublisher' {
                 coberturaReportFile(reportFile)
@@ -787,7 +787,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def postBuildTask(Closure postBuildClosure) {
             PostBuildTaskContext postBuildContext = new PostBuildTaskContext()
-            AbstractContextHelper.executeInContext(postBuildClosure, postBuildContext)
+            executeInContext(postBuildClosure, postBuildContext)
 
             publisherNodes << NodeBuilder.newInstance().'hudson.plugins.postbuildtask.PostbuildTask' {
                 tasks {
