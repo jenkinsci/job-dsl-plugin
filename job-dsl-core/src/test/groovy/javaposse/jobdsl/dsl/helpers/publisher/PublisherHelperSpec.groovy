@@ -1324,11 +1324,11 @@ public class PublisherHelperSpec extends Specification {
     def 'call emma with range thresholds'() {
         when:
         context.emma('coverage-results/coverage.xml') {
-            'class'(5..90)
-            method(10..80)
-            block(15..75)
-            line(20..70)
-            condition(25..65)
+            classThreshold(5..90)
+            methodThreshold(10..80)
+            blockThreshold(15..75)
+            lineThreshold(20..70)
+            conditionThreshold(25..65)
         }
 
         then:

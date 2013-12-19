@@ -1,77 +1,89 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import com.google.common.base.Preconditions
+
 import javaposse.jobdsl.dsl.helpers.Context
 
 class EmmaContext implements Context {
 
-    IntRange classThreshold = 0..100
-    IntRange methodThreshold = 0..70
-    IntRange blockThreshold = 0..80
-    IntRange lineThreshold = 0..80
-    IntRange conditionThreshold = 0..<1
+    IntRange classRange = 0..100
+    IntRange methodRange = 0..70
+    IntRange blockRange = 0..80
+    IntRange lineRange = 0..80
+    IntRange conditionRange = 0..<1
 
     void minClass(int min) {
-        this.classThreshold.from = min
+        classThreshold(min..Math.max(this.classRange.to, min))
     }
 
     void maxClass(int max) {
-        this.classThreshold.to = max
+        classThreshold(this.classRange.from..max)
     }
 
-    void 'class'(IntRange range)
-    {
-        this.classThreshold = range
+    void classThreshold(IntRange range) {
+        checkRange('class', range)
+
+        this.classRange = range
     }
 
     void minMethod(int min) {
-        this.methodThreshold.from = min
+        methodThreshold(min..Math.max(this.methodRange.to, min))
     }
 
     void maxMethod(int max) {
-        this.methodThreshold.to = max
+        methodThreshold(this.methodRange.from..max)
     }
 
-    void method(IntRange range)
-    {
-        this.methodThreshold = range
+    void methodThreshold(IntRange range) {
+        checkRange('method', range)
+
+        this.methodRange = range
     }
 
     void minBlock(int min) {
-        this.blockThreshold.from = min
+        blockThreshold(min..Math.max(this.blockRange.to, min))
     }
 
     void maxBlock(int max) {
-        this.blockThreshold.to = max
+        blockThreshold(this.blockRange.from..max)
     }
 
-    void block(IntRange range)
-    {
-        this.blockThreshold = range
+    void blockThreshold(IntRange range) {
+        checkRange('block', range)
+
+        this.blockRange = range
     }
 
     void minLine(int min) {
-        this.lineThreshold.from = min
+        lineThreshold(min..Math.max(this.lineRange.to, min))
     }
 
     void maxLine(int max) {
-        this.lineThreshold.to = max
+        lineThreshold(this.lineRange.from..max)
     }
 
-    void line(IntRange range)
-    {
-        this.lineThreshold = range
+    void lineThreshold(IntRange range) {
+        checkRange('line', range)
+
+        this.lineRange = range
     }
 
     void minCondition(int min) {
-        this.conditionThreshold.from = min
+        conditionThreshold(min..Math.max(this.conditionRange.to, min))
     }
 
     void maxCondition(int max) {
-        this.conditionThreshold.to = max
+        conditionThreshold(this.conditionRange.from..max)
     }
 
-    void condition(IntRange range)
-    {
-        this.conditionThreshold = range
+    void conditionThreshold(IntRange range) {
+        checkRange('condition', range)
+
+        this.conditionRange = range
+    }
+
+    private void checkRange(String type, IntRange range) {
+        Preconditions.checkArgument((0..100).contains(range.getFrom()), "Invalid ${type} threshold minimum, percentage (0-100) expected")
+        Preconditions.checkArgument((0..100).contains(range.getTo()), "Invalid ${type} threshold maximum, percentage (0-100) expected")
     }
 }

@@ -879,16 +879,16 @@ class PublisherContext implements Context {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.emma.EmmaPublisher' {
             includes(fileSet)
             healthReports {
-                minClass(emmaContext.classThreshold.getFrom())
-                maxClass(emmaContext.classThreshold.getTo())
-                minMethod(emmaContext.methodThreshold.getFrom())
-                maxMethod(emmaContext.methodThreshold.getTo())
-                minBlock(emmaContext.blockThreshold.getFrom())
-                maxBlock(emmaContext.blockThreshold.getTo())
-                minLine(emmaContext.lineThreshold.getFrom())
-                maxLine(emmaContext.lineThreshold.getTo())
-                minCondition(emmaContext.conditionThreshold.getFrom())
-                maxCondition(emmaContext.conditionThreshold.getTo())
+                minClass(emmaContext.classRange.getFrom())
+                maxClass(emmaContext.classRange.getTo())
+                minMethod(emmaContext.methodRange.getFrom())
+                maxMethod(emmaContext.methodRange.getTo())
+                minBlock(emmaContext.blockRange.getFrom())
+                maxBlock(emmaContext.blockRange.getTo())
+                minLine(emmaContext.lineRange.getFrom())
+                maxLine(emmaContext.lineRange.getTo())
+                minCondition(emmaContext.conditionRange.getFrom())
+                maxCondition(emmaContext.conditionRange.getTo())
             }
         }
     }
