@@ -860,5 +860,31 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
                 delegate.behavior(behavior.value)
             }
         }
+
+        /**
+         * Configures the Javadoc Plugin, used to archive Javadoc artifacts.
+         *
+         * Uses the Jenkins Javadoc Plugin: https://wiki.jenkins-ci.org/display/JENKINS/Javadoc+Plugin
+         *
+         * <publishers>
+         *     <hudson.tasks.JavadocArchiver>
+         *         <javadocDir>foo</javadocDir>
+         *         <keepAll>false</keepAll>
+         *     </hudson.tasks.JavadocArchiver>
+         * </publishers>
+         */
+        def archiveJavadoc(Closure javadocClosure = null) {
+            JavadocContext javadocContext = new JavadocContext()
+            executeInContext(javadocClosure, javadocContext)
+
+            def nodeBuilder = NodeBuilder.newInstance()
+
+            Node javadocNode = nodeBuilder.'hudson.tasks.JavadocArchiver' {
+                javadocDir javadocContext.javadocDir
+                keepAll javadocContext.keepAll
+            }
+
+            publisherNodes << javadocNode
+        }
     }
 }

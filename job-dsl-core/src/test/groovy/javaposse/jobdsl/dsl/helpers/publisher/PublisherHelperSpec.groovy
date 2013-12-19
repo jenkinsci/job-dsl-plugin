@@ -1217,4 +1217,29 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].groovyScript[0].value() == 'foo'
         context.publisherNodes[0].behavior[0].value() == 1
     }
+
+    def 'call javadoc archiver with no args'() {
+        when:
+        context.archiveJavadoc()
+
+        then:
+        Node javadocNode = context.publisherNodes[0]
+        javadocNode.name() == 'hudson.tasks.JavadocArchiver'
+        javadocNode.javadocDir[0].value() == ''
+        javadocNode.keepAll[0].value() == false
+    }
+
+    def 'call javadoc archiver with all args'() {
+        when:
+        context.archiveJavadoc {
+            javadocDir 'build/javadoc'
+            keepAll true
+        }
+
+        then:
+        Node javadocNode = context.publisherNodes[0]
+        javadocNode.name() == 'hudson.tasks.JavadocArchiver'
+        javadocNode.javadocDir[0].value() == 'build/javadoc'
+        javadocNode.keepAll[0].value() == true
+    }
 }
