@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.Behavior.MarkUnstable
 import spock.lang.Specification
 
 public class PublisherHelperSpec extends Specification {
@@ -435,6 +436,25 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         thrown(AssertionError)
+    }
+
+    def 'call Clone Workspace with Closure'() {
+        when:
+        context.publishCloneWorkspace('*/**') {
+            criteria 'Not Failed'
+            archiveMethod 'ZIP'
+            workspaceExcludeGlob '*/.svn'
+            overrideDefaultExcludes true
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.cloneworkspace.CloneWorkspacePublisher'
+        publisherNode.workspaceGlob[0].value() == '*/**'
+        publisherNode.workspaceExcludeGlob[0].value() == '*/.svn'
+        publisherNode.criteria[0].value() == 'Not Failed'
+        publisherNode.archiveMethod[0].value() == 'ZIP'
+        publisherNode.overrideDefaultExcludes[0].value() == true
     }
 
     def 'call scp publish with not enough entries'() {
@@ -1021,5 +1041,205 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
         context.publisherNodes[0].descriptionForFailed[0].value() == 'NOES!'
         context.publisherNodes[0].setForMatrix[0].value() == true
+    }
+
+    def 'call textFinder with one argument'() {
+        when:
+        context.textFinder('foo')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet.size() == 0
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == false
+        context.publisherNodes[0].succeedIfFound[0].value() == false
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with two arguments'() {
+        when:
+        context.textFinder('foo', '*.txt')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == false
+        context.publisherNodes[0].succeedIfFound[0].value() == false
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with three arguments'() {
+        when:
+        context.textFinder('foo', '*.txt', true)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
+        context.publisherNodes[0].succeedIfFound[0].value() == false
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with four arguments'() {
+        when:
+        context.textFinder('foo', '*.txt', true, true)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
+        context.publisherNodes[0].succeedIfFound[0].value() == true
+        context.publisherNodes[0].unstableIfFound[0].value() == false
+    }
+
+    def 'call textFinder with five arguments'() {
+        when:
+        context.textFinder('foo', '*.txt', true, true, true)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.textfinder.TextFinderPublisher'
+        context.publisherNodes[0].regexp[0].value() == 'foo'
+        context.publisherNodes[0].fileSet[0].value() == '*.txt'
+        context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
+        context.publisherNodes[0].succeedIfFound[0].value() == true
+        context.publisherNodes[0].unstableIfFound[0].value() == true
+    }
+
+    def 'call postBuildTask with two arguments'() {
+        when:
+        context.postBuildTask() {
+            task('BUILD SUCCESSFUL', 'git clean -fdx')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.postbuildtask.PostbuildTask'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].EscalateStatus[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].RunIfJobSuccessful[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].script[0].value() == 'git clean -fdx'
+    }
+
+    def 'call postBuildTask with two tasks'() {
+        when:
+        context.postBuildTask() {
+            task('BUILD SUCCESSFUL', 'git clean -fdx')
+            task('BUILD FAILED', 'git gc', true, true)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.postbuildtask.PostbuildTask'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].EscalateStatus[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].RunIfJobSuccessful[0].value() == false
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].script[0].value() == 'git clean -fdx'
+
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD FAILED'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].EscalateStatus[0].value() == true
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].RunIfJobSuccessful[0].value() == true
+        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].script[0].value() == 'git gc'
+    }
+
+    def 'call aggregate downstream test results with no args'() {
+        when:
+        context.aggregateDownstreamTestResults()
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0] == null
+        aggregateNode.includeFailedBuilds[0].value() == false
+    }
+
+    def 'call aggregate downstream test results with job listing'() {
+        when:
+        context.aggregateDownstreamTestResults('project-A, project-B')
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0].value() == 'project-A, project-B'
+        aggregateNode.includeFailedBuilds[0].value() == false
+    }
+
+    def 'call aggregate downstream test results with null job listing and overriden includeFailedBuilds'() {
+        when:
+        context.aggregateDownstreamTestResults(null, true)
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0] == null
+        aggregateNode.includeFailedBuilds[0].value() == true
+    }
+
+    def 'call aggregate downstream test results with job listing and overriden includeFailedBuilds'() {
+        when:
+        context.aggregateDownstreamTestResults('project-A, project-B', true)
+
+        then:
+        Node aggregateNode = context.publisherNodes[0]
+        aggregateNode.name() == 'hudson.tasks.test.AggregatedTestResultPublisher'
+        aggregateNode.jobs[0].value() == 'project-A, project-B'
+        aggregateNode.includeFailedBuilds[0].value() == true
+    }
+
+    def 'call groovyPostBuild'() {
+        when:
+        context.groovyPostBuild('foo')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
+        context.publisherNodes[0].behavior[0].value() == 0
+    }
+
+    def 'call groovyPostBuild with overriden failure behavior'() {
+        when:
+        context.groovyPostBuild('foo', MarkUnstable)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
+        context.publisherNodes[0].behavior[0].value() == 1
+    }
+
+    def 'call javadoc archiver with no args'() {
+        when:
+        context.archiveJavadoc()
+
+        then:
+        Node javadocNode = context.publisherNodes[0]
+        javadocNode.name() == 'hudson.tasks.JavadocArchiver'
+        javadocNode.javadocDir[0].value() == ''
+        javadocNode.keepAll[0].value() == false
+    }
+
+    def 'call javadoc archiver with all args'() {
+        when:
+        context.archiveJavadoc {
+            javadocDir 'build/javadoc'
+            keepAll true
+        }
+
+        then:
+        Node javadocNode = context.publisherNodes[0]
+        javadocNode.name() == 'hudson.tasks.JavadocArchiver'
+        javadocNode.javadocDir[0].value() == 'build/javadoc'
+        javadocNode.keepAll[0].value() == true
     }
 }

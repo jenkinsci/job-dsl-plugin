@@ -5,17 +5,17 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelper.PublisherContext> {
+class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
 
     PublisherContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)
     }
 
     def publishers(Closure closure) {
-        execute(closure, new PublisherContextHelper.PublisherContext())
+        execute(closure, new PublisherContext())
     }
 
-    Closure generateWithXmlClosure(PublisherContextHelper.PublisherContext context) {
+    Closure generateWithXmlClosure(PublisherContext context) {
         return { Node project ->
             def publishersNode
             if (project.publishers.isEmpty()) {
@@ -91,7 +91,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
 
         def extendedEmail(String recipients, String subjectTemplate, String contentTemplate, Closure emailClosure = null) {
             EmailContext emailContext = new EmailContext()
-            AbstractContextHelper.executeInContext(emailClosure, emailContext)
+            executeInContext(emailClosure, emailContext)
 
             // Validate that we have the typical triggers, if nothing is provided
             if (emailContext.emailTriggers.isEmpty()) {
@@ -235,7 +235,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def jacocoCodeCoverage(Closure jacocoClosure =  null) {
 
             JacocoContext jacocoContext = new JacocoContext()
-            AbstractContextHelper.executeInContext(jacocoClosure, jacocoContext)
+            executeInContext(jacocoClosure, jacocoContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
 
@@ -277,7 +277,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def publishHtml(Closure htmlReportContext) {
             HtmlReportContext reportContext = new HtmlReportContext()
-            AbstractContextHelper.executeInContext(htmlReportContext, reportContext)
+            executeInContext(htmlReportContext, reportContext)
 
             // Now that the context has what we need
             def nodeBuilder = NodeBuilder.newInstance()
@@ -336,7 +336,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             JabberContext jabberContext = new JabberContext()
             jabberContext.strategyName = strategyName ?: 'ALL'
             jabberContext.channelNotificationName = channelNotificationName ?: 'Default'
-            AbstractContextHelper.executeInContext(jabberClosure, jabberContext)
+            executeInContext(jabberClosure, jabberContext)
 
             // Validate values
             assert validJabberStrategyNames.contains(jabberContext.strategyName), "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
@@ -385,7 +385,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def publishScp(String site, Closure scpClosure) {
             ScpContext scpContext = new ScpContext()
-            AbstractContextHelper.executeInContext(scpClosure, scpContext)
+            executeInContext(scpClosure, scpContext)
 
             // Validate values
             assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
@@ -419,22 +419,24 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          * </hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
          */
         def publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure) {
-            publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, null)
+            publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, cloneWorkspaceClosure)
         }
 
         def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, Closure cloneWorkspaceClosure) {
-            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, null)
+            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, cloneWorkspaceClosure)
         }
 
         def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod, Closure cloneWorkspaceClosure) {
-            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, null)
+            publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, cloneWorkspaceClosure)
         }
 
         def publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any', String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false, Closure cloneWorkspaceClosure = null) {
             CloneWorkspaceContext cloneWorkspaceContext = new CloneWorkspaceContext()
             cloneWorkspaceContext.criteria = criteriaArg ?: 'Any'
             cloneWorkspaceContext.archiveMethod = archiveMethodArg ?: 'TAR'
-            AbstractContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
+            cloneWorkspaceContext.workspaceExcludeGlob = workspaceExcludeGlobArg ?: ''
+            cloneWorkspaceContext.overrideDefaultExcludes = overrideDefaultExcludesArg ?: false
+            executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
 
             // Validate values
             assert validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria), "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
@@ -443,10 +445,10 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
                 workspaceGlob workspaceGlobArg
-                workspaceExcludeGlob workspaceExcludeGlobArg
-                criteria criteriaArg
-                archiveMethod archiveMethodArg
-                overrideDefaultExcludes overrideDefaultExcludesArg
+                workspaceExcludeGlob cloneWorkspaceContext.workspaceExcludeGlob
+                criteria cloneWorkspaceContext.criteria
+                archiveMethod cloneWorkspaceContext.archiveMethod
+                overrideDefaultExcludes cloneWorkspaceContext.overrideDefaultExcludes
             }
             publisherNodes << publishNode
         }
@@ -526,7 +528,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
          */
         def downstreamParameterized(Closure downstreamClosure) {
             DownstreamContext downstreamContext = new DownstreamContext()
-            AbstractContextHelper.executeInContext(downstreamClosure, downstreamContext)
+            executeInContext(downstreamClosure, downstreamContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.parameterizedtrigger.BuildTrigger' {
@@ -588,7 +590,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def violations(int perFileDisplayLimit, Closure violationsClosure = null) {
             ViolationsContext violationsContext = new ViolationsContext()
             violationsContext.perFileDisplayLimit = perFileDisplayLimit
-            AbstractContextHelper.executeInContext(violationsClosure, violationsContext)
+            executeInContext(violationsClosure, violationsContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher'(plugin: 'violations@0.7.11') {
@@ -637,7 +639,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
 
         def irc(Closure ircClosure) {
             IrcContext ircContext = new IrcContext()
-            AbstractContextHelper.executeInContext(ircClosure, ircContext)
+            executeInContext(ircClosure, ircContext)
 
             def nodeBuilder = NodeBuilder.newInstance()
             def publishNode = nodeBuilder.'hudson.plugins.ircbot.IrcPublisher' {
@@ -667,7 +669,7 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
         def cobertura(String reportFile, Closure coberturaClosure = null) {
 
             CoberturaContext coberturaContext = new CoberturaContext()
-            AbstractContextHelper.executeInContext(coberturaClosure, coberturaContext)
+            executeInContext(coberturaClosure, coberturaContext)
 
             publisherNodes << NodeBuilder.newInstance().'hudson.plugins.cobertura.CoberturaPublisher' {
                 coberturaReportFile(reportFile)
@@ -739,6 +741,150 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContextHelpe
                 }
                 setForMatrix(multiConfigurationBuild)
             }
+        }
+
+        /**
+         * Configures the Jenkins Text Finder plugin
+         *
+         * <publishers>
+         *     <hudson.plugins.textfinder.TextFinderPublisher>
+         *         <fileSet>*.txt</fileSet>
+         *         <regexp/>
+         *         <succeedIfFound>false</succeedIfFound>
+         *         <unstableIfFound>false</unstableIfFound>
+         *         <alsoCheckConsoleOutput>false</alsoCheckConsoleOutput>
+         *     </hudson.plugins.textfinder.TextFinderPublisher>
+         */
+        def textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false, boolean succeedIfFound = false, unstableIfFound = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.textfinder.TextFinderPublisher' {
+                if (fileSet) delegate.fileSet(fileSet)
+                delegate.regexp(regularExpression)
+                delegate.alsoCheckConsoleOutput(alsoCheckConsoleOutput)
+                delegate.succeedIfFound(succeedIfFound)
+                delegate.unstableIfFound(unstableIfFound)
+            }
+        }
+
+        /**
+         * Configures the Jenkins Post Build Task plugin
+         *
+         * <publishers>
+         *     <hudson.plugins.postbuildtask.PostbuildTask>
+         *          <tasks>
+         *              <hudson.plugins.postbuildtask.TaskProperties>
+         *                  <logTexts>
+         *                      <hudson.plugins.postbuildtask.LogProperties>
+         *                          <logText>BUILD SUCCESSFUL</logText>
+         *                          <operator>AND</operator>
+         *                      </hudson.plugins.postbuildtask.LogProperties>
+         *                  </logTexts>
+         *                  <EscalateStatus>false</EscalateStatus>
+         *                  <RunIfJobSuccessful>false</RunIfJobSuccessful>
+         *                  <script>git clean -fdx</script>
+         *              </hudson.plugins.postbuildtask.TaskProperties>
+         *          </tasks>
+         *      </hudson.plugins.postbuildtask.PostbuildTask>
+         */
+        def postBuildTask(Closure postBuildClosure) {
+            PostBuildTaskContext postBuildContext = new PostBuildTaskContext()
+            executeInContext(postBuildClosure, postBuildContext)
+
+            publisherNodes << NodeBuilder.newInstance().'hudson.plugins.postbuildtask.PostbuildTask' {
+                tasks {
+                    postBuildContext.tasks.each { PostBuildTaskContext.PostBuildTask task ->
+                        'hudson.plugins.postbuildtask.TaskProperties' {
+                            logTexts {
+                                'hudson.plugins.postbuildtask.LogProperties' {
+                                    logText(task.logText)
+                                    operator(task.operator)
+                                }
+                            }
+                            EscalateStatus(task.escalateStatus)
+                            RunIfJobSuccessful(task.runIfJobSuccessful)
+                            script(task.script)
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Configures Aggregate Downstream Test Results. Pass no args or null for jobs (first arg) to
+         * automatically aggregate downstream test results. Pass in comma-delimited list for first arg to manually choose jobs.
+         * Second argument is optional and sets whether failed builds are included.
+         *
+         * <publishers>
+         *     ...
+         *     <hudson.tasks.test.AggregatedTestResultPublisher>
+         *         <jobs>some-downstream-test</jobs>
+         *         <includeFailedBuilds>false</includeFailedBuilds>
+         *     </hudson.tasks.test.AggregatedTestResultPublisher>
+         *     ...
+         * </publishers>
+         */
+        def aggregateDownstreamTestResults(String jobs = null, boolean includeFailedBuilds = false) {
+            publisherNodes << NodeBuilder.newInstance().'hudson.tasks.test.AggregatedTestResultPublisher' {
+                if (jobs) {
+                    delegate.jobs(jobs)
+                }
+                delegate.includeFailedBuilds(includeFailedBuilds)
+            }
+        }
+
+        def static enum Behavior {
+            DoNothing(0),
+            MarkUnstable(1),
+            MarkFailed(2)
+
+            final int value
+
+            Behavior(int value) {
+                this.value = value
+            }
+        }
+
+        /**
+         * Configures the Groovy Postbuild script plugin
+         *
+         * <publishers>
+         *     <org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+         *         <groovyScript>
+         *         script
+         *         </groovyScript>
+         *         <behavior>0</behavior>
+         *     </org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+         */
+        def groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
+            publisherNodes << NodeBuilder.newInstance().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
+                delegate.groovyScript(script)
+                delegate.behavior(behavior.value)
+            }
+        }
+
+        /**
+         * Configures the Javadoc Plugin, used to archive Javadoc artifacts.
+         *
+         * Uses the Jenkins Javadoc Plugin: https://wiki.jenkins-ci.org/display/JENKINS/Javadoc+Plugin
+         *
+         * <publishers>
+         *     <hudson.tasks.JavadocArchiver>
+         *         <javadocDir>foo</javadocDir>
+         *         <keepAll>false</keepAll>
+         *     </hudson.tasks.JavadocArchiver>
+         * </publishers>
+         */
+        def archiveJavadoc(Closure javadocClosure = null) {
+            JavadocContext javadocContext = new JavadocContext()
+            executeInContext(javadocClosure, javadocContext)
+
+            def nodeBuilder = NodeBuilder.newInstance()
+
+            Node javadocNode = nodeBuilder.'hudson.tasks.JavadocArchiver' {
+                javadocDir javadocContext.javadocDir
+                keepAll javadocContext.keepAll
+            }
+
+            publisherNodes << javadocNode
         }
     }
 }

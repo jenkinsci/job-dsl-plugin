@@ -1,8 +1,6 @@
 package javaposse.jobdsl.plugin;
 
 import hudson.FilePath;
-import hudson.model.AbstractProject;
-import jenkins.model.Jenkins;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,22 +17,12 @@ public class WorkspaceUrlConnection extends URLConnection {
 
     @Override
     public void connect() throws IOException {
-        String jobName = url.getHost();
-        Jenkins jenkins = Jenkins.getInstance();
-        if(jenkins == null) {
-            throw new IllegalStateException("Not in a running Jenkins");
-        }
-        AbstractProject project = (AbstractProject) jenkins.getItem(jobName);
-        FilePath workspace = project.getSomeWorkspace();
-
-        String path = url.getFile();
-        String relativePath = path.substring(1, path.length());
-        FilePath targetPath = workspace.child(relativePath);
+        FilePath targetPath = WorkspaceProtocol.getFilePathFromUrl(url);
 
         // Make sure we can find the file
         try {
             if (!targetPath.exists()) {
-                throw new FileNotFoundException("Unable to find file at " + path);
+                throw new FileNotFoundException("Unable to find file at " + targetPath);
             }
         } catch (InterruptedException e) {
             throw new IOException(e);
