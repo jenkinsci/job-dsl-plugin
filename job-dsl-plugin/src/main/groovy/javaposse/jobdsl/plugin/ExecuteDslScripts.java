@@ -77,7 +77,7 @@ public class ExecuteDslScripts extends Builder {
         this.removedJobAction = removedJobAction;
     }
 
-    public ExecuteDslScripts(String scriptText) {
+    ExecuteDslScripts(String scriptText) {
         this.usingScriptText = true;
         this.scriptText = scriptText;
         this.targets = null;
@@ -85,7 +85,7 @@ public class ExecuteDslScripts extends Builder {
         this.removedJobAction = RemovedJobAction.DISABLE;
     }
 
-    public ExecuteDslScripts() { /// Where is the empty constructor called?
+    ExecuteDslScripts() { /// Where is the empty constructor called?
         super();
         this.usingScriptText = true;
         this.scriptText = null;
