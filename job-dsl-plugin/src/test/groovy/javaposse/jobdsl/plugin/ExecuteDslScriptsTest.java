@@ -1,16 +1,22 @@
 package javaposse.jobdsl.plugin;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
+import hudson.model.AbstractItem;
+import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Label;
 import hudson.slaves.DumbSlave;
+import hudson.util.StreamTaskListener;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 
 import static hudson.model.Result.SUCCESS;
 import static javaposse.jobdsl.plugin.RemovedJobAction.IGNORE;
@@ -183,6 +189,97 @@ public class ExecuteDslScriptsTest {
         // then
         assertTrue(jenkinsRule.jenkins.getItemByFullName("/folder/different-job") instanceof FreeStyleProject);
         assertNull(jenkinsRule.jenkins.getItemByFullName("/folder/test-job"));
+    }
+
+    @Test
+    public void useTemplateInFolder() throws Exception {
+        // setup
+        jenkinsRule.jenkins.createProject(Folder.class, "folder");
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+        jenkinsRule.jenkins.getExtensionList(Descriptor.class).add(new DescriptorImpl());
+
+        String script1 = "job { name '/folder/test-template'; description 'useTemplateInFolder' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        // when
+        String script = "job { name '/folder/test-job'; using '/folder/test-template' }";
+        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script), false, RemovedJobAction.DELETE);
+        runBuild(job, builder);
+
+        // then
+        assertEquals("useTemplateInFolder", jenkinsRule.jenkins.getItemByFullName("/folder/test-job", AbstractItem.class).getDescription());
+    }
+
+    @Test
+    public void updateGeneratedFolder() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "job(type: Folder) { name 'folder' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+        assertEquals(null, jenkinsRule.jenkins.getItemByFullName("folder", AbstractItem.class).getDescription());
+
+        String script2 = "job(type: Folder) { name 'folder'; description 'updateGeneratedFolder' }";
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE);
+        runBuild(job, builder2);
+
+        // then
+        assertEquals("updateGeneratedFolder", jenkinsRule.jenkins.getItemByFullName("folder", AbstractItem.class).getDescription());
+    }
+
+    @Test
+	public void createFolderUsingTemplate() throws Exception {
+		// setup
+        jenkinsRule.jenkins.createProject(Folder.class, "folder-template").setDescription("createFolderUsingTemplate");;
+        jenkinsRule.jenkins.getExtensionList(Descriptor.class).add(new DescriptorImpl());
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "job(type: Folder) { name 'folder'; using 'folder-template' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        // then
+        assertEquals("createFolderUsingTemplate", jenkinsRule.jenkins.getItemByFullName("folder", AbstractItem.class).getDescription());
+	}
+
+    @Test
+	public void removeGeneratedFolder() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "job(type: Folder) { name 'folder' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        String script2 = "job { name 'dummy' }";
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE);
+        runBuild(job, builder2);
+
+        // then
+        assertNull(jenkinsRule.jenkins.getItemByFullName("folder"));
+	}
+
+    @Test
+    public void queueFolderJob() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+        ByteArrayOutputStream logStream = new ByteArrayOutputStream();
+
+        // when
+        String script1 = "job(type: Folder) { name 'folder' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        FreeStyleBuild build = runBuild(job, builder1);
+        EnvVars envVars = build.getEnvironment(StreamTaskListener.fromStdout());
+        JenkinsJobManagement jobManagement = new JenkinsJobManagement(new PrintStream(logStream), envVars, build);
+        jobManagement.queueJob("folder");
+
+        // then
+        assertTrue(logStream.toString().matches("(^|.*\\s)folder(\\s.*|$)\n"));
     }
 
     private FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) throws Exception {

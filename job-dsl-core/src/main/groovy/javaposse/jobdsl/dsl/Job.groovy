@@ -173,7 +173,8 @@ public class Job {
             case JobType.Freeform: return emptyTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
-        }
+            case JobType.Folder: return emptyFolderTemplate
+       }
     }
 
     /**
@@ -248,4 +249,40 @@ public class Job {
   <buildWrappers/>
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
 '''
+
+    def emptyFolderTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.hudson.plugins.folder.Folder plugin='cloudbees-folder@4.1'>
+    <properties></properties>
+    <icon class='com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon'></icon>
+    <views>
+        <hudson.model.ListView>
+            <owner class='com.cloudbees.hudson.plugins.folder.Folder' reference='../../..'></owner>
+            <name>All</name>
+            <filterExecutors>false</filterExecutors>
+            <filterQueue>false</filterQueue>
+            <properties class='hudson.model.View$PropertyList'></properties>
+            <jobNames class='tree-set'>
+                <comparator class='hudson.util.CaseInsensitiveComparator'></comparator>
+            </jobNames>
+            <jobFilters></jobFilters>
+            <columns>
+                <hudson.views.StatusColumn></hudson.views.StatusColumn>
+                <hudson.views.WeatherColumn></hudson.views.WeatherColumn>
+                <hudson.views.JobColumn></hudson.views.JobColumn>
+                <hudson.views.LastSuccessColumn></hudson.views.LastSuccessColumn>
+                <hudson.views.LastFailureColumn></hudson.views.LastFailureColumn>
+                <hudson.views.LastDurationColumn></hudson.views.LastDurationColumn>
+                <hudson.views.BuildButtonColumn></hudson.views.BuildButtonColumn>
+            </columns>
+            <includeRegex>.*</includeRegex>
+        </hudson.model.ListView>
+    </views>
+    <viewsTabBar class='hudson.views.DefaultViewsTabBar'></viewsTabBar>
+    <primaryView>All</primaryView>
+    <healthMetrics>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric></com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+    </healthMetrics>
+</com.cloudbees.hudson.plugins.folder.Folder>
+'''
+
 }
