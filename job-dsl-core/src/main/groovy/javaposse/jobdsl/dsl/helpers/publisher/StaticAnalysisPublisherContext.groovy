@@ -127,7 +127,7 @@ class StaticAnalysisPublisherContext {
 	 * }
 	 * </pre>
 	 */
-	def checkstyle(String pattern, Closure staticAnalysisClosure = null) {
+	def jshint(String pattern, Closure staticAnalysisClosure = null) {
 		publisherNodes << createDefaultStaticAnalysisNode(
 				'hudson.plugins.jshint.CheckStylePublisher',
 				staticAnalysisClosure,
