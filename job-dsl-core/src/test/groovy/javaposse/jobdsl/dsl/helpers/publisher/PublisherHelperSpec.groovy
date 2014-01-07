@@ -183,9 +183,9 @@ public class PublisherHelperSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
-        jacocoNode.minimumInstructionCoverage[0].value() == "0"             
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"
     }
-   
+
     def 'call jacoco code coverage with all args'() {
         when:
         context.jacocoCodeCoverage {
@@ -196,15 +196,15 @@ public class PublisherHelperSpec extends Specification {
             exclusionPattern 'exclusiondir'
             minimumInstructionCoverage '1'
             minimumBranchCoverage '2'
-            minimumComplexityCoverage '3' 
-            minimumLineCoverage '4' 
-            minimumMethodCoverage '5' 
-            minimumClassCoverage '6' 
-            maximumInstructionCoverage '7' 
-            maximumBranchCoverage '8' 
-            maximumComplexityCoverage '9' 
-            maximumLineCoverage '10' 
-            maximumMethodCoverage '11' 
+            minimumComplexityCoverage '3'
+            minimumLineCoverage '4'
+            minimumMethodCoverage '5'
+            minimumClassCoverage '6'
+            maximumInstructionCoverage '7'
+            maximumBranchCoverage '8'
+            maximumComplexityCoverage '9'
+            maximumLineCoverage '10'
+            maximumMethodCoverage '11'
             maximumClassCoverage '12'
         }
 
@@ -604,7 +604,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].fauxProjectPath[0].value() == ''
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
-        typeConfigsNode.entry.size() == 16
+        typeConfigsNode.entry.size() == 17
         def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian'}
         simianNode != null
         def typeConfigNode = simianNode.'hudson.plugins.violations.TypeConfig'[0]
@@ -623,6 +623,7 @@ public class PublisherHelperSpec extends Specification {
             fauxProjectPath 'faux path'
             perFileDisplayLimit 51
             checkstyle(10, 11, 10, 'test-report/*.xml')
+			jshint(10, 11, 10, 'test-report/*.xml')
             findbugs(12, 13, 12)
         }
 
@@ -635,7 +636,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].fauxProjectPath[0].value() == 'faux path'
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
-        typeConfigsNode.entry.size() == 16
+        typeConfigsNode.entry.size() == 17
         def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle'}
         checkstyleNode != null
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'checkstyle'
@@ -644,6 +645,14 @@ public class PublisherHelperSpec extends Specification {
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
+		def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint'}
+		jshintNode != null
+		jshintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jshint'
+		jshintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
+		jshintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '11'
+		jshintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
+		jshintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
+		jshintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
         def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs'}
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'findbugs'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '12'
