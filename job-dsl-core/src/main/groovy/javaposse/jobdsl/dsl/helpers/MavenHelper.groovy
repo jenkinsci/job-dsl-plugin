@@ -38,7 +38,7 @@ class MavenHelper extends AbstractHelper {
      *
      * @param mavenName name of maven installation
      */
-    def maven(String mavenName) {
+    def mavenName(String mavenName) {
         checkState type == JobType.Maven, "maven can only be applied for Maven jobs"
         checkState !mavenNameAdded, "mavenName can only be applied once"
         mavenNameAdded = true

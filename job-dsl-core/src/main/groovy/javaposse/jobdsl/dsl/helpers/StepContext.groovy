@@ -498,7 +498,7 @@ class StepContext implements Context {
      <usePrivateRepository>false</usePrivateRepository>
      </hudson.tasks.Maven>
      */
-    def namedMaven(String name = '(Default)', String targetsArg = null, String pomArg = null, Closure configure = null) {
+    def namedMaven(String name, String targetsArg = null, String pomArg = null, Closure configure = null) {
         def nodeBuilder = new NodeBuilder()
         def mavenNode = nodeBuilder.'hudson.tasks.Maven' {
             targets targetsArg?:''
@@ -521,28 +521,13 @@ class StepContext implements Context {
     /**
      <hudson.tasks.Maven>
      <targets>install</targets>
-     <mavenName>3.1.1</mavenName>
+     <mavenName>(Default)</mavenName>
      <pom>pom.xml</pom>
      <usePrivateRepository>false</usePrivateRepository>
      </hudson.tasks.Maven>
      */
     def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
-        def nodeBuilder = new NodeBuilder()
-        def mavenNode = nodeBuilder.'hudson.tasks.Maven' {
-            targets targetsArg?:''
-            mavenName '(Default)' // TODO
-            if (pomArg) {
-              pom pomArg
-            }
-            usePrivateRepository 'false'
-        }
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(mavenNode)
-        }
-        stepNodes << mavenNode
-
+        namedMaven("(Default)", targetsArg, pomArg, configure)
     }
 
     /**
