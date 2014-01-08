@@ -18,6 +18,7 @@ gradle-app.setting
 /local*
 build
 /out
+/classes
 
 */test.xml
 */test2.xml
