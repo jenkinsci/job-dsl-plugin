@@ -183,9 +183,9 @@ public class PublisherHelperSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
-        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"             
     }
-
+   
     def 'call jacoco code coverage with all args'() {
         when:
         context.jacocoCodeCoverage {
@@ -196,15 +196,15 @@ public class PublisherHelperSpec extends Specification {
             exclusionPattern 'exclusiondir'
             minimumInstructionCoverage '1'
             minimumBranchCoverage '2'
-            minimumComplexityCoverage '3'
-            minimumLineCoverage '4'
-            minimumMethodCoverage '5'
-            minimumClassCoverage '6'
-            maximumInstructionCoverage '7'
-            maximumBranchCoverage '8'
-            maximumComplexityCoverage '9'
-            maximumLineCoverage '10'
-            maximumMethodCoverage '11'
+            minimumComplexityCoverage '3' 
+            minimumLineCoverage '4' 
+            minimumMethodCoverage '5' 
+            minimumClassCoverage '6' 
+            maximumInstructionCoverage '7' 
+            maximumBranchCoverage '8' 
+            maximumComplexityCoverage '9' 
+            maximumLineCoverage '10' 
+            maximumMethodCoverage '11' 
             maximumClassCoverage '12'
         }
 
