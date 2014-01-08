@@ -886,5 +886,23 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
 
             publisherNodes << javadocNode
         }
+
+        /**
+         * Configures the Associated Files plugin to associate archived files from
+         * outside Jenkins proper.
+         *
+         * See https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin
+         *
+         * <publishers>
+         *     <org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher>
+         *         <associatedFiles>/mnt/jenkins-staging/binary-staging/${JOB_NAME}-${BUILD_ID}</associatedFiles>
+         *     </org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher>
+         * </publishers>
+         */
+        def associatedFiles(String files = null) {
+            publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher' {
+                delegate.associatedFiles(files)
+            }
+        }
     }
 }

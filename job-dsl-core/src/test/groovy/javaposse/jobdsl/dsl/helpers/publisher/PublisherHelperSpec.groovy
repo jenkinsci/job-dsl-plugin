@@ -1242,4 +1242,14 @@ public class PublisherHelperSpec extends Specification {
         javadocNode.javadocDir[0].value() == 'build/javadoc'
         javadocNode.keepAll[0].value() == true
     }
+
+    def 'call associated files with normal args'() {
+        when:
+        context.associatedFiles('/foo/file/${VARIABLE}')
+
+        then:
+        Node associatedFilesNode = context.publisherNodes[0]
+        associatedFilesNode.name() == 'org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher'
+        associatedFilesNode.associatedFiles[0].value() == '/foo/file/${VARIABLE}'
+    }
 }
