@@ -128,13 +128,12 @@ class StaticAnalysisPublisherContext {
      * </pre>
      */
     def jshint(String pattern, Closure staticAnalysisClosure = null) {
-    publisherNodes << createDefaultStaticAnalysisNode(
-          'hudson.plugins.jshint.CheckStylePublisher',
-          staticAnalysisClosure,
-          pattern
-       )
+        publisherNodes << createDefaultStaticAnalysisNode(
+            'hudson.plugins.jshint.CheckStylePublisher',
+             staticAnalysisClosure,
+             pattern
+        )
     }
-
 
     /**
      * Configures the DRY Publisher
