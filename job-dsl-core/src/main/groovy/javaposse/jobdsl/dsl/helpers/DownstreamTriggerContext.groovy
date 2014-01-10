@@ -6,36 +6,38 @@ import com.google.common.base.Preconditions
 
 class DownstreamTriggerContext implements Context {
     def blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
-    def blockingThresholds = []
 
+    def blockingThresholds = []
+    List<String> predefinedProps = []
+    String propFile
     String projects
     String condition
-    boolean triggerWithNoParameters
+    String matrixSubsetFilter
+    Map<String, Boolean> boolParams = [:]
 
+    boolean triggerWithNoParameters
+    boolean usingSubversionRevision = false
     boolean usingCurrentBuild = false
+    boolean usingPropertiesFile = false
+    boolean usingGitRevision = false
+    boolean combineQueuedCommits = false
+    boolean usingPredefined = false
+    boolean usingMatrixSubset = false
+    boolean sameNode = false
 
     def currentBuild() {
         usingCurrentBuild = true
     }
-
-    boolean usingPropertiesFile = false
-    String propFile
 
     def propertiesFile(String propFile) {
         usingPropertiesFile = true
         this.propFile = propFile
     }
 
-    boolean usingGitRevision = false
-    boolean combineQueuedCommits = false
-
     def gitRevision(boolean combineQueuedCommits = false) {
         usingGitRevision = true
         this.combineQueuedCommits = combineQueuedCommits
     }
-
-    boolean usingPredefined = false
-    List<String> predefinedProps = []
 
     def predefinedProp(String key, String value) {
         usingPredefined = true
@@ -53,18 +55,21 @@ class DownstreamTriggerContext implements Context {
         this.predefinedProps.addAll(predefinedProps.split('\n'))
     }
 
-    boolean usingMatrixSubset = false
-    String matrixSubsetFilter
-
     def matrixSubset(String groovyFilter) {
         usingMatrixSubset = true
         matrixSubsetFilter = groovyFilter
     }
 
-    boolean usingSubversionRevision = false
-
     def subversionRevision() {
         usingSubversionRevision = true
+    }
+
+    def boolParam(String paramName, boolean defaultValue = false) {
+        boolParams[paramName] = defaultValue
+    }
+
+    def sameNode(boolean sameNode = true) {
+        this.sameNode = sameNode
     }
 
     def blockingThresholdsFromMap(Map<String, String> thresholdMap) {
@@ -84,7 +89,8 @@ class DownstreamTriggerContext implements Context {
 
     boolean hasParameter() {
         return (usingCurrentBuild || usingGitRevision || usingMatrixSubset
-                || usingPredefined || usingPropertiesFile || usingSubversionRevision)
+                || usingPredefined || usingPropertiesFile || usingSubversionRevision
+                || !boolParams.isEmpty() || sameNode)
     }
 
     static class BlockingThreshold {

@@ -92,6 +92,24 @@ class DownstreamContext implements Context {
                                 if (trigger.usingSubversionRevision) {
                                     'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {}
                                 }
+
+                                if (trigger.sameNode) {
+                                    'hudson.plugins.parameterizedtrigger.NodeParameters' {}
+                                }
+
+                                if (!trigger.boolParams.isEmpty()) {
+                                    'hudson.plugins.parameterizedtrigger.BooleanParameters' {
+                                        configs {
+                                            trigger.boolParams.each { k, v ->
+                                                def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
+                                                    value(v?'true':'false')
+                                                }
+                                                boolConfigNode.appendNode('name', k)
+                                            }
+                                        }
+                                    }
+                                }
+
                             }
                         } else {
                             configs('class': 'java.util.Collections$EmptyList')
