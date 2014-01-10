@@ -59,62 +59,12 @@ class DownstreamContext implements Context {
                         projects trigger.projects
                         condition trigger.condition
                         triggerWithNoParameters trigger.triggerWithNoParameters ? 'true' : 'false'
+
                         if (trigger.hasParameter()) {
-                            configs {
-                                if (trigger.usingCurrentBuild) {
-                                    'hudson.plugins.parameterizedtrigger.CurrentBuildParameters' ''
-                                }
-
-                                if (trigger.usingPropertiesFile) {
-                                    'hudson.plugins.parameterizedtrigger.FileBuildParameters' {
-                                        propertiesFile trigger.propFile
-                                    }
-                                }
-
-                                if (trigger.usingGitRevision) {
-                                    'hudson.plugins.git.GitRevisionBuildParameters' {
-                                        'combineQueuedCommits' trigger.combineQueuedCommits ? 'true' : 'false'
-                                    }
-                                }
-
-                                if (trigger.usingPredefined) {
-                                    'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters' {
-                                        delegate.createNode('properties', trigger.predefinedProps.join('\n'))
-                                    }
-                                }
-
-                                if (trigger.usingMatrixSubset) {
-                                    'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters' {
-                                        filter trigger.matrixSubsetFilter
-                                    }
-                                }
-
-                                if (trigger.usingSubversionRevision) {
-                                    'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {}
-                                }
-
-                                if (trigger.sameNode) {
-                                    'hudson.plugins.parameterizedtrigger.NodeParameters' {}
-                                }
-
-                                if (!trigger.boolParams.isEmpty()) {
-                                    'hudson.plugins.parameterizedtrigger.BooleanParameters' {
-                                        configs {
-                                            trigger.boolParams.each { k, v ->
-                                                def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
-                                                    value(v?'true':'false')
-                                                }
-                                                boolConfigNode.appendNode('name', k)
-                                            }
-                                        }
-                                    }
-                                }
-
-                            }
+                            configs(trigger.createParametersNode().children())
                         } else {
                             configs('class': 'java.util.Collections$EmptyList')
                         }
-
                         if (isStep && !trigger.blockingThresholds.isEmpty()) {
                             block {
                                 trigger.blockingThresholds.each { t ->

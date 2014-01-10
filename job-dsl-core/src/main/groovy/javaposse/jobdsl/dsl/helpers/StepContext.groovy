@@ -831,55 +831,9 @@ class StepContext implements Context {
                         currParams jobInPhase.currentJobParameters?'true':'false'
                         exposedSCM jobInPhase.exposedScm?'true':'false'
                         if (jobInPhase.hasConfig()) {
-                            configs {
-                                if (!jobInPhase.boolParams.isEmpty()) {
-                                    'hudson.plugins.parameterizedtrigger.BooleanParameters'(plugin:'parameterized-trigger@2.17') {
-                                        configs {
-                                            jobInPhase.boolParams.each { k, v ->
-                                                def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
-                                                    value(v?'true':'false')
-                                                }
-                                                boolConfigNode.appendNode('name', k)
-                                            }
-                                        }
-                                    }
-                                }
-                                if (jobInPhase.fileParam) {
-                                    'hudson.plugins.parameterizedtrigger.FileBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        propertiesFile jobInPhase.fileParam
-                                        failTriggerOnMissing jobInPhase.failTriggerOnMissing?'true':'false'
-                                    }
-                                }
-                                if (jobInPhase.nodeParam) {
-                                    'hudson.plugins.parameterizedtrigger.NodeParameters'(plugin:'parameterized-trigger@2.17')
-                                }
-                                if (jobInPhase.currentJobParameters) {
-                                    // Not sure how this differs from currParams
-                                    'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'(plugin:'parameterized-trigger@2.17')
-                                }
-                                if (jobInPhase.matrixFilter) {
-                                    'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        filter jobInPhase.matrixFilter
-                                    }
-                                }
-                                if (jobInPhase.subversionRevision != null) {
-                                    'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        includeUpstreamParameters jobInPhase.subversionRevision?'true':'false'
-                                    }
-                                }
-                                if (jobInPhase.gitRevision != null) {
-                                    'hudson.plugins.git.GitRevisionBuildParameters'(plugin:'git@1.3.0') {
-                                        combineQueuedCommits jobInPhase.gitRevision?'true':'false'
-                                    }
-                                }
-                                if (jobInPhase.props) {
-                                    'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        'properties'(jobInPhase.props.join('\n'))
-                                    }
-                                }
-                            }
+                            configs(jobInPhase.configAsNode().children())
                         } else {
-                            configs(class:'java.util.Collections$EmptyList')
+                            configs('class': 'java.util.Collections$EmptyList')
                         }
                     }
                 }
@@ -926,7 +880,7 @@ class StepContext implements Context {
         String jobName
         boolean currentJobParameters = true
         boolean exposedScm = true
-
+        DownstreamTriggerContext paramTrigger = new DownstreamTriggerContext()
         Map<String, Boolean> boolParams = [:]
         String fileParam
         boolean failTriggerOnMissing
@@ -936,12 +890,14 @@ class StepContext implements Context {
         Boolean gitRevision
         def props = []
 
+
         void jobName(String jobName) {
             this.jobName = jobName
         }
 
         def currentJobParameters(boolean currentJobParameters = true) {
             this.currentJobParameters = currentJobParameters
+            paramTrigger.currentBuild()
         }
 
         def exposedScm(boolean exposedScm = true) {
@@ -950,39 +906,51 @@ class StepContext implements Context {
 
         def boolParam(String paramName, boolean defaultValue = false) {
             boolParams[paramName] = defaultValue
+            paramTrigger.boolParam(paramName, defaultValue)
         }
 
         def fileParam(String propertyFile, boolean failTriggerOnMissing = false) {
             Preconditions.checkState(!fileParam, "File parameter already set with ${fileParam}")
             this.fileParam = propertyFile
             this.failTriggerOnMissing = failTriggerOnMissing
+            paramTrigger.propertiesFile(propertyFile, failTriggerOnMissing)
         }
 
         def sameNode(boolean nodeParam = true) {
             this.nodeParam = nodeParam
+            paramTrigger.sameNode(nodeParam)
         }
 
         def matrixParam(String filter) {
             Preconditions.checkState(!matrixFilter, "Matrix parameter already set with ${matrixFilter}")
             this.matrixFilter = filter
+            paramTrigger.matrixSubset(filter)
         }
 
         def subversionRevision(boolean includeUpstreamParameters = false) {
             this.subversionRevision = includeUpstreamParameters
+            paramTrigger.subversionRevision(includeUpstreamParameters)
         }
 
         def gitRevision(boolean combineQueuedCommits = false) {
             this.gitRevision = combineQueuedCommits
+            paramTrigger.gitRevision(combineQueuedCommits)
         }
 
         def prop(Object key, Object value) {
             props << "${key}=${value}"
+            paramTrigger.predefinedProp(key, value)
         }
 
         def props(Map<String, String> map) {
             map.entrySet().each {
                 prop(it.key, it.value)
             }
+            paramTrigger.predefinedProps(map)
+        }
+
+        def configAsNode() {
+            return paramTrigger.createParametersNode()
         }
 
         def hasConfig() {
