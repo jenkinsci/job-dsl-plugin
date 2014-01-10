@@ -1,9 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.publisher
+import static javaposse.jobdsl.dsl.helpers.DownstreamContext.THRESHOLD_COLOR_MAP
+import static javaposse.jobdsl.dsl.helpers.DownstreamContext.THRESHOLD_ORDINAL_MAP
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.DownstreamContext
 
 class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
 
@@ -473,17 +476,15 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
          </hudson.tasks.BuildTrigger>
          */
         def downstream(String projectName, String thresholdName = 'SUCCESS') {
-            def thresholdColorMap = ['SUCCESS': 'BLUE', 'UNSTABLE': 'YELLOW', 'FAILURE': 'RED']
-            def thresholdOrdinalMap = ['SUCCESS': '0', 'UNSTABLE': '1', 'FAILURE': '2']
-            assert thresholdColorMap.containsKey(thresholdName), "thresholdName must be one of these values ${thresholdColorMap.keySet().join(',')}"
+            assert THRESHOLD_COLOR_MAP.containsKey(thresholdName), "thresholdName must be one of these values ${THRESHOLD_COLOR_MAP.keySet().join(',')}"
 
             def nodeBuilder = new NodeBuilder()
             Node publishNode = nodeBuilder.'hudson.tasks.BuildTrigger' {
                 childProjects projectName
                 threshold {
                     delegate.createNode('name', thresholdName)
-                    ordinal thresholdOrdinalMap[thresholdName]
-                    color thresholdColorMap[thresholdName]
+                    ordinal THRESHOLD_ORDINAL_MAP[thresholdName]
+                    color THRESHOLD_COLOR_MAP[thresholdName]
                 }
             }
 
@@ -530,57 +531,8 @@ class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
             DownstreamContext downstreamContext = new DownstreamContext()
             executeInContext(downstreamClosure, downstreamContext)
 
-            def nodeBuilder = NodeBuilder.newInstance()
-            def publishNode = nodeBuilder.'hudson.plugins.parameterizedtrigger.BuildTrigger' {
-                configs {
-                    downstreamContext.triggers.each { DownstreamTriggerContext trigger ->
-                        'hudson.plugins.parameterizedtrigger.BuildTriggerConfig' {
-                            projects trigger.projects
-                            condition trigger.condition
-                            triggerWithNoParameters trigger.triggerWithNoParameters ? 'true' : 'false'
-                            if (trigger.hasParameter()) {
-                                configs {
-                                    if (trigger.usingCurrentBuild) {
-                                        'hudson.plugins.parameterizedtrigger.CurrentBuildParameters' ''
-                                    }
-
-                                    if (trigger.usingPropertiesFile) {
-                                        'hudson.plugins.parameterizedtrigger.FileBuildParameters' {
-                                            propertiesFile trigger.propFile
-                                        }
-                                    }
-
-                                    if (trigger.usingGitRevision) {
-                                        'hudson.plugins.git.GitRevisionBuildParameters' {
-                                            'combineQueuedCommits' trigger.combineQueuedCommits ? 'true' : 'false'
-                                        }
-                                    }
-
-                                    if (trigger.usingPredefined) {
-                                        'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters' {
-                                            delegate.createNode('properties', trigger.predefinedProps.join('\n'))
-                                        }
-                                    }
-
-                                    if (trigger.usingMatrixSubset) {
-                                        'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters' {
-                                            filter trigger.matrixSubsetFilter
-                                        }
-                                    }
-
-                                    if (trigger.usingSubversionRevision) {
-                                        'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {}
-                                    }
-                                }
-                            } else {
-                                configs('class': 'java.util.Collections$EmptyList')
-                            }
-                        }
-                    }
-                }
-            }
+            def publishNode = downstreamContext.createDownstreamNode(false)
             publisherNodes << publishNode
-
         }
 
         def violations(Closure violationsClosure = null) {

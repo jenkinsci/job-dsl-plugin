@@ -1006,4 +1006,58 @@ class StepContext implements Context {
         }
         stepNodes << preReqNode
     }
+
+    /**
+     <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.21">
+     <configs>
+     <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+     <configs>
+     <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/> // Current build parameters
+     <hudson.plugins.parameterizedtrigger.FileBuildParameters> // Parameters from properties file
+     <propertiesFile>some.properties</propertiesFile>
+     </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+     <hudson.plugins.git.GitRevisionBuildParameters> // Pass-through Git commit that was built
+     <combineQueuedCommits>false</combineQueuedCommits>
+     </hudson.plugins.git.GitRevisionBuildParameters>
+     <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters> // Predefined properties
+     <properties>prop1=value1
+     prop2=value2</properties>
+     </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     <hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters> // Restrict matrix execution to a subset
+     <filter>label=="${TARGET}"</filter>
+     </hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters>
+     <hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters/> // Subversion revision
+     <projects>one-project,another-project</projects>
+     <condition>ALWAYS</condition>
+     <triggerWithNoParameters>false</triggerWithNoParameters>
+     <block>
+     <unstableThreshold>
+     <name>UNSTABLE</name>
+     <ordinal>1</ordinal>
+     <color>YELLOW</color>
+     </unstableThreshold>
+     <buildStepFailureThreshold>
+     <name>FAILURE</name>
+     <ordinal>2</ordinal>
+     <color>RED</color>
+     </buildStepFailureThreshold>
+     <failureThreshold>
+     <name>FAILURE</name>
+     <ordinal>2</ordinal>
+     <color>RED</color>
+     </failureThreshold>
+     </block>
+     <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+     </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+     </configs>
+     </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+     */
+    def downstreamParameterized(Closure downstreamClosure) {
+        DownstreamContext downstreamContext = new DownstreamContext()
+        AbstractContextHelper.executeInContext(downstreamClosure, downstreamContext)
+
+        def stepNode = downstreamContext.createDownstreamNode(true)
+        stepNodes << stepNode
+    }
+
 }
