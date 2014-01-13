@@ -11,7 +11,7 @@ public abstract class JobParent extends Script {
     private static final Logger LOGGER = Logger.getLogger(JobParent.getName());
 
     JobManagement jm;
-    Set<Job> referencedJobs
+    Set<JobItem> referencedJobs
     List<String> queueToBuild
 
     public JobParent() {
@@ -20,8 +20,16 @@ public abstract class JobParent extends Script {
     }
 
     public Job job(Map<String, Object> arguments=[:], Closure closure) {
+        return job(jm, referencedJobs, arguments, closure, null)
+    }
+
+    public Folder folder(Closure closure) {
+        return folder(jm, referencedJobs, closure, null)
+    }
+
+    public static Job job(JobManagement jm, Set<JobItem> referencedJobs, Map<String, Object> arguments, Closure closure, JobItem parent) {
         LOGGER.log(Level.FINE, "Got closure and have ${jm}")
-        Job job = new Job(jm, arguments)
+        Job job = new Job(jm, arguments, parent)
 
         // Configure with what we have already
         job.with(closure)
@@ -31,6 +39,20 @@ public abstract class JobParent extends Script {
 
         // This job can have .configure { } called on
         return job
+    }
+
+    public static Folder folder(JobManagement jm, Set<JobItem> referencedJobs, Closure closure, JobItem parent) {
+        LOGGER.log(Level.FINE, "Got closure and have ${jm}")
+        Folder folder = new Folder(jm, referencedJobs, parent)
+
+        // Configure with what we have already
+        folder.with(closure)
+
+        // Save folders, so that we know what to extract XML from
+        referencedJobs << folder
+
+        // This folder can have .configure { } called on
+        return folder
     }
 
     /**

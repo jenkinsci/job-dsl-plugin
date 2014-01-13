@@ -104,20 +104,37 @@ public class DslScriptLoader {
         // Iterate jobs which were setup, save them, and convert to a serializable form
         Set<GeneratedJob> generatedJobs = Sets.newLinkedHashSet();
         if (jp != null) {
-            List<Job> refJobs = Lists.newArrayList(jp.getReferencedJobs()); // As List
-            Collections.sort(refJobs, new Comparator<Job>() {
-                // Sort by the job type, so that normal (Maven and Freeform) are done before Multijob
+            List<JobItem> refJobs = Lists.newArrayList(jp.getReferencedJobs()); // As List
+            Collections.sort(refJobs, new Comparator<JobItem>() {
+                // Put folders  in front and make sure that parent folders go before child folders
+                // Then sort by the job type, so that normal (Maven and Freeform) are done before Multijob
                 @Override
-                public int compare(Job o1, Job o2) {
-                    return o1.getType().ordinal() - o2.getType().ordinal();
+                public int compare(JobItem o1, JobItem o2) {
+                    if (o1 instanceof Folder) {
+                        if (o2 instanceof Job) {
+                            return -1;
+                        }
+                        if (o2 instanceof Folder) {
+                            return o1.getFullName().compareTo(o2.getFullName());
+                        }
+                    }
+                    if (o1 instanceof Job) {
+                        if (o2 instanceof Folder) {
+                            return 1;
+                        }
+                        if (o2 instanceof Job) {
+                            return ((Job) o1).getType().ordinal() - ((Job) o2).getType().ordinal();
+                        }
+                    }
+                    return 0;
                 }
             });
-            for(Job job: refJobs) {
+            for(JobItem job: refJobs) {
                 try {
                     String xml = job.getXml();
-                    LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
-                    GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
+                    LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getFullName(), xml));
+                    boolean created = jp.getJm().createOrUpdateConfig(job.getFullName(), xml, ignoreExisting);
+                    GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getFullName(), created);
                     generatedJobs.add(gj);
                 } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException
                     if (e instanceof RuntimeException) {

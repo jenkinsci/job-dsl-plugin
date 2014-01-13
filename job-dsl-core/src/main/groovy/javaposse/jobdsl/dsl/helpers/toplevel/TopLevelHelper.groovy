@@ -1,21 +1,16 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
+
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
+import javaposse.jobdsl.dsl.helpers.AbstractJobHelper;
 
-class TopLevelHelper extends AbstractHelper {
+class TopLevelHelper extends AbstractJobHelper {
 
     TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)
-    }
-
-    def description(String descriptionString) {
-        execute {
-            def descNode = methodMissing('description', descriptionString)
-            it / descNode
-        }
     }
 
     /**
@@ -236,20 +231,6 @@ class TopLevelHelper extends AbstractHelper {
             def node = methodMissing('scmCheckoutRetryCount', times)
             it / node
         }
-    }
-
-    /**
-     * Sets a display name for the project.
-     *
-     * @param displayName name to display
-     */
-    def displayName(String displayName) {
-        def name = Preconditions.checkNotNull(displayName, 'Display name must not be null.')
-        execute {
-            def node = methodMissing('displayName', name)
-            it / node
-        }
-
     }
 
     /**

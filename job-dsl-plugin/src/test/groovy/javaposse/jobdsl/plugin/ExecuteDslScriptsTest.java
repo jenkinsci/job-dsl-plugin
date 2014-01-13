@@ -212,17 +212,83 @@ public class ExecuteDslScriptsTest {
     }
 
     @Test
+    public void createJobInFolder() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "folder { name 'folder'}; job { name 'folder/job' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        // then
+        assertEquals(3, jenkinsRule.jenkins.getAllItems().size());
+        assertEquals(Folder.class, jenkinsRule.jenkins.getItemByFullName("folder").getClass());
+        assertEquals(FreeStyleProject.class, jenkinsRule.jenkins.getItemByFullName("folder/job").getClass());
+    }
+
+    @Test
+    public void createJobInFolderNested() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "folder { name 'folder'; job { name 'job' } }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        // then
+        assertEquals(3, jenkinsRule.jenkins.getAllItems().size());
+        assertEquals(Folder.class, jenkinsRule.jenkins.getItemByFullName("folder").getClass());
+        assertEquals(FreeStyleProject.class, jenkinsRule.jenkins.getItemByFullName("folder/job").getClass());
+    }
+
+    @Test
+    public void createJobInFolderInFolder() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "folder { name 'folder1'; folder { name 'folder2' } }; job { name '/folder1/folder2/job' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        // then
+        assertEquals(4, jenkinsRule.jenkins.getAllItems().size());
+        assertEquals(Folder.class, jenkinsRule.jenkins.getItemByFullName("folder1").getClass());
+        assertEquals(Folder.class, jenkinsRule.jenkins.getItemByFullName("folder1/folder2").getClass());
+        assertEquals(FreeStyleProject.class, jenkinsRule.jenkins.getItemByFullName("folder1/folder2/job").getClass());
+    }
+
+    @Test
+    public void createJobInFolderInFolderNested() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script1 = "folder { name 'folder1'; folder { name 'folder2'; job { name 'job' } } }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        runBuild(job, builder1);
+
+        // then
+        assertEquals(4, jenkinsRule.jenkins.getAllItems().size());
+        assertEquals(Folder.class, jenkinsRule.jenkins.getItemByFullName("folder1").getClass());
+        assertEquals(Folder.class, jenkinsRule.jenkins.getItemByFullName("folder1/folder2").getClass());
+        assertEquals(FreeStyleProject.class, jenkinsRule.jenkins.getItemByFullName("folder1/folder2/job").getClass());
+    }
+
+    @Test
     public void updateGeneratedFolder() throws Exception {
         // setup
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
 
         // when
-        String script1 = "job(type: Folder) { name 'folder' }";
+        String script1 = "folder() { name 'folder' }";
         ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
         runBuild(job, builder1);
         assertEquals(null, jenkinsRule.jenkins.getItemByFullName("folder", AbstractItem.class).getDescription());
 
-        String script2 = "job(type: Folder) { name 'folder'; description 'updateGeneratedFolder' }";
+        String script2 = "folder() { name 'folder'; description 'updateGeneratedFolder' }";
         ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE);
         runBuild(job, builder2);
 
@@ -238,7 +304,7 @@ public class ExecuteDslScriptsTest {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
 
         // when
-        String script1 = "job(type: Folder) { name 'folder'; using 'folder-template' }";
+        String script1 = "folder() { name 'folder'; using 'folder-template' }";
         ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
         runBuild(job, builder1);
 
@@ -252,7 +318,7 @@ public class ExecuteDslScriptsTest {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
 
         // when
-        String script1 = "job(type: Folder) { name 'folder' }";
+        String script1 = "folder() { name 'folder' }";
         ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
         runBuild(job, builder1);
 
@@ -271,7 +337,7 @@ public class ExecuteDslScriptsTest {
         ByteArrayOutputStream logStream = new ByteArrayOutputStream();
 
         // when
-        String script1 = "job(type: Folder) { name 'folder' }";
+        String script1 = "folder() { name 'folder' }";
         ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
         FreeStyleBuild build = runBuild(job, builder1);
         EnvVars envVars = build.getEnvironment(StreamTaskListener.fromStdout());

@@ -8,7 +8,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
  * object. Once we have the actually root, we run again via the generateWithXmlClosure.
  * @param < T >
  */
-abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
+abstract class AbstractContextHelper<T extends Context> extends AbstractJobHelper {
 
     AbstractContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)

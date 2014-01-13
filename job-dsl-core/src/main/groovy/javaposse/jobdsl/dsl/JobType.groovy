@@ -4,7 +4,6 @@ public enum JobType {
     Freeform('project'),
     Maven('maven2-moduleset'),
     Multijob('com.tikal.jenkins.plugins.multijob.MultiJobProject'),
-	Folder('com.cloudbees.hudson.plugins.folder.Folder')
 
     String elementName
 

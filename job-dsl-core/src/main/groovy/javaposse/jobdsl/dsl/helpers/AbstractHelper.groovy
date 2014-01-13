@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers
 
-import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
 /**
@@ -15,13 +14,9 @@ public class AbstractHelper implements Helper {
      */
     List<WithXmlAction> withXmlActions
 
-    JobType type
-
-    AbstractHelper(List<WithXmlAction> withXmlActions, JobType type) {
+    AbstractHelper(List<WithXmlAction> withXmlActions) {
         this.withXmlActions = withXmlActions
-        this.type = type
     }
-
 
     WithXmlAction execute(Closure rootClosure) {
         rootClosure.resolveStrategy = Closure.DELEGATE_FIRST
