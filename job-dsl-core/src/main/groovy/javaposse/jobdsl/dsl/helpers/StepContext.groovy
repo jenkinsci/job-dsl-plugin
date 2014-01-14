@@ -63,7 +63,7 @@ class StepContext implements Context {
             tasks tasksArg?:''
             rootBuildScriptDir ''
             buildFile ''
-            useWrapper useWrapperArg==null?'true':useWrapperArg.toString()
+            useWrapper useWrapperArg == null?'true':useWrapperArg.toString()
             wrapperScript ''
         }
         // Apply Context
@@ -493,18 +493,18 @@ class StepContext implements Context {
     /**
      <hudson.tasks.Maven>
      <targets>install</targets>
-     <mavenName>(Default)</mavenName>
+     <mavenName>3.1.1</mavenName>
      <pom>pom.xml</pom>
      <usePrivateRepository>false</usePrivateRepository>
      </hudson.tasks.Maven>
      */
-    def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
+    def namedMaven(String name, String targetsArg = null, String pomArg = null, Closure configure = null) {
         def nodeBuilder = new NodeBuilder()
         def mavenNode = nodeBuilder.'hudson.tasks.Maven' {
             targets targetsArg?:''
-            mavenName '(Default)' // TODO
+            mavenName name
             if (pomArg) {
-              pom pomArg
+                pom pomArg
             }
             usePrivateRepository 'false'
         }
@@ -515,6 +515,19 @@ class StepContext implements Context {
         }
         stepNodes << mavenNode
 
+    }
+
+
+    /**
+     <hudson.tasks.Maven>
+     <targets>install</targets>
+     <mavenName>(Default)</mavenName>
+     <pom>pom.xml</pom>
+     <usePrivateRepository>false</usePrivateRepository>
+     </hudson.tasks.Maven>
+     */
+    def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
+        namedMaven("(Default)", targetsArg, pomArg, configure)
     }
 
     /**
@@ -689,7 +702,7 @@ class StepContext implements Context {
             filter includeGlob
             target targetPath?:''
 
-            selector('class':"hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
+            selector('class': "hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
                 if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
                     fallbackToLastSuccessful 'true'
                 }

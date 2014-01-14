@@ -11,6 +11,7 @@ class MavenHelper extends AbstractHelper {
     StringBuilder allGoals = new StringBuilder()
     StringBuilder allMavenOpts = new StringBuilder()
     boolean rootPOMAdded = false
+    boolean mavenNameAdded=false
     boolean perModuleEmailAdded = false
     boolean archivingDisabledAdded = false
     boolean runHeadlessAdded = false
@@ -29,6 +30,20 @@ class MavenHelper extends AbstractHelper {
         rootPOMAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'rootPOM', rootPOM
+        }
+    }
+
+    /**
+     * Specifies the name of the maven installation to use.
+     *
+     * @param mavenName name of maven installation
+     */
+    def mavenName(String mavenName) {
+        checkState type == JobType.Maven, "maven can only be applied for Maven jobs"
+        checkState !mavenNameAdded, "mavenName can only be applied once"
+        mavenNameAdded = true
+        execute { Node node ->
+            appendOrReplaceNode node, 'mavenName', mavenName
         }
     }
 

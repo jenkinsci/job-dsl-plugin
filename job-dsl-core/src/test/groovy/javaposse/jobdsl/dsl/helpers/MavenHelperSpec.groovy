@@ -49,6 +49,44 @@ public class MavenHelperSpec extends Specification {
         root.rootPOM[0].value() == "my_module/pom.xml"
     }
 
+    def 'can set maven name'() {
+        when:
+        helper.mavenName("3.1.1")
+
+        then:
+        1 * mockActions.add(_)
+    }
+
+    def 'cannot set maven name twice'() {
+        when:
+        helper.mavenName("3.1.1")
+        helper.mavenName("3.2")
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'cannot set maven name for free style jobs'() {
+        setup:
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+
+        when:
+        helper.mavenName("3.1.1")
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'maven name constructs xml'() {
+        when:
+        def action = helper.mavenName("3.1.1")
+        action.execute(root)
+
+        then:
+        root.mavenName.size() == 1
+        root.mavenName[0].value() == "3.1.1"
+    }
+
     def 'can run goals'() {
         when:
         helper.goals("clean verify")
