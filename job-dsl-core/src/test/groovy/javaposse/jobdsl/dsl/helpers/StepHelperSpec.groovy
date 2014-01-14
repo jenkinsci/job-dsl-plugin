@@ -1021,4 +1021,80 @@ still-another-dsl.groovy'''
         prerequisiteStep.warningOnly[0].value() == true
     }
 
+    def 'call downstream build step with all args'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
+                    ["buildStepFailure": "FAILURE",
+                            "failure": "FAILURE",
+                            "unstable": "UNSTABLE"]) {
+                currentBuild() // Current build parameters
+                propertiesFile('dir/my.properties') // Parameters from properties file
+                gitRevision(false) // Pass-through Git commit that was built
+                predefinedProp('key1', 'value1') // Predefined properties
+                predefinedProps([key2: 'value2', key3: 'value3'])
+                predefinedProps('key4=value4\nkey5=value5') // Newline separated
+                matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
+                subversionRevision() // Subversion Revision
+            }
+            trigger('Project2') {
+                currentBuild()
+            }
+        }
+
+        then:
+        Node stepNode = context.stepNodes[0]
+        stepNode.name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
+        stepNode.configs[0].children().size() == 2
+        Node first = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
+        first.projects[0].value() == 'Project1, Project2'
+        first.condition[0].value() == 'UNSTABLE_OR_BETTER'
+        first.triggerWithNoParameters[0].value() == 'true'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+        first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
+        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == 'false'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+        first.block.size() == 1
+        Node thresholds = first.block[0]
+        thresholds.children().size() == 3
+        Node unstableThreshold = thresholds.unstableThreshold[0]
+        unstableThreshold.name[0].value() == 'UNSTABLE'
+        Node failureThreshold = thresholds.failureThreshold[0]
+        failureThreshold.name[0].value() == 'FAILURE'
+        Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
+        buildStepFailureThreshold.name[0].value() == 'FAILURE'
+
+        Node second = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]
+        second.projects[0].value() == 'Project2'
+        second.condition[0].value() == 'SUCCESS'
+        second.triggerWithNoParameters[0].value() == 'false'
+        second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+        second.block.isEmpty()
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project3') {
+            }
+        }
+
+        then:
+        Node third = context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project3'
+        third.condition[0].value() == 'SUCCESS'
+        third.triggerWithNoParameters[0].value() == 'false'
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project4', 'WRONG')
+        }
+
+        then:
+        thrown(AssertionError)
+    }
+
 }

@@ -541,6 +541,10 @@ public class PublisherHelperSpec extends Specification {
                 predefinedProps('key4=value4\nkey5=value5') // Newline separated
                 matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
                 subversionRevision() // Subversion Revision
+                boolParam('aParam')
+                boolParam('bParam', false)
+                boolParam('cParam', true)
+                sameNode()
             }
             trigger('Project2') {
                 currentBuild()
@@ -563,6 +567,23 @@ public class PublisherHelperSpec extends Specification {
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
         first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+
+        def boolParams = first.configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
+        boolParams.children().size() == 3
+        def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
+        boolNode.name[0].value() == 'aParam'
+        boolNode.value[0].value() == 'false'
+        def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
+        boolNode1.name[0].value() == 'bParam'
+        boolNode1.value[0].value() == 'false'
+        def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
+        boolNode2.name[0].value() == 'cParam'
+        boolNode2.value[0].value() == 'true'
+
+        def nodeNode = first.configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
+        nodeNode != null
+
+        first.block.isEmpty()
 
         Node second = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[1]
         second.projects[0].value() == 'Project2'
