@@ -1,8 +1,9 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
 class WrapperContextHelper extends AbstractContextHelper<WrapperContext> {
 

@@ -1,9 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
-
 import com.google.common.base.Preconditions
 import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.helpers.Context
-
 /**
  * @author Zsolt Takacs <zsolt@takacs.cc>
  */
@@ -88,3 +86,4 @@ class IrcContext implements Context {
         boolean notificationOnly
     }
 }
+

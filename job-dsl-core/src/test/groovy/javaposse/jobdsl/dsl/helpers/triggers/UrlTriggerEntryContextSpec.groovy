@@ -1,5 +1,6 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerEntryContext
 import spock.lang.Specification
 
 /**

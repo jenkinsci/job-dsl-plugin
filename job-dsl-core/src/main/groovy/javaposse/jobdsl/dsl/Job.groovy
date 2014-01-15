@@ -2,6 +2,10 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.*
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
+import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
+import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
+import javaposse.jobdsl.dsl.helpers.triggers.TriggerContextHelper
+import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
 
 /**
  * DSL Element representing a Jenkins Job

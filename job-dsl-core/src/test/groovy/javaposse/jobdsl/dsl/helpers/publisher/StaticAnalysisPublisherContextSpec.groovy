@@ -8,7 +8,7 @@ import spock.lang.Unroll
 class StaticAnalysisPublisherContextSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
     PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform)
-    PublisherContextHelper.PublisherContext context = new PublisherContextHelper.PublisherContext()
+    PublisherContext context = new PublisherContext()
 
     @Unroll
     def 'add #analysisTool with default values'(analysisTool, extraNodes) {

@@ -1,8 +1,10 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
+import javaposse.jobdsl.dsl.helpers.triggers.TriggerContextHelper
 import spock.lang.Specification
 
 public class TriggerHelperSpec extends Specification {

@@ -1,8 +1,8 @@
-package javaposse.jobdsl.dsl.helpers
-import static javaposse.jobdsl.dsl.helpers.DownstreamContext.THRESHOLD_COLOR_MAP
-import static javaposse.jobdsl.dsl.helpers.DownstreamContext.THRESHOLD_ORDINAL_MAP
+package javaposse.jobdsl.dsl.helpers.common
+import static DownstreamContext.THRESHOLD_COLOR_MAP
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.helpers.Context
 
 class DownstreamTriggerContext implements Context {
     def blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
@@ -164,8 +164,10 @@ class DownstreamTriggerContext implements Context {
         BlockingThreshold(String thresholdType, String thresholdName) {
             this.thresholdType = thresholdType
             this.thresholdName = thresholdName
-            this.thresholdOrdinal = THRESHOLD_ORDINAL_MAP[thresholdName]
-            this.thresholdColor = THRESHOLD_COLOR_MAP[thresholdName]
+            this.thresholdOrdinal = DownstreamContext.THRESHOLD_ORDINAL_MAP[thresholdName]
+            this.thresholdColor = DownstreamContext.THRESHOLD_COLOR_MAP[thresholdName]
         }
     }
 }
+
+

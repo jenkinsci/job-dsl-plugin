@@ -1,8 +1,10 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.step.StepContext
+import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import spock.lang.Specification
 
 public class StepHelperSpec extends Specification {

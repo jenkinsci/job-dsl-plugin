@@ -1,8 +1,9 @@
-package javaposse.jobdsl.dsl.helpers
-
+package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.AbstractHelper
 
 class TopLevelHelper extends AbstractHelper {
 
@@ -80,25 +81,6 @@ class TopLevelHelper extends AbstractHelper {
                 keepBuildVariables(true)
                 contributors()
             }
-        }
-    }
-
-    def static class EnvironmentVariableContext implements Context {
-        def props = []
-        def groovyScript
-
-        def env(Object key, Object value) {
-            props << "${key}=${value}"
-        }
-
-        def envs(Map<Object, Object> map) {
-            map.entrySet().each {
-                env(it.key, it.value)
-            }
-        }
-
-        def groovy(String script) {
-            groovyScript = script
         }
     }
 
@@ -275,3 +257,5 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 }
+
+

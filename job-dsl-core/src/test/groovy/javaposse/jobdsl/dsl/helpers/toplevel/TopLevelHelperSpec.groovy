@@ -1,8 +1,9 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
 import spock.lang.Specification
 
 public class TopLevelHelperSpec extends Specification {

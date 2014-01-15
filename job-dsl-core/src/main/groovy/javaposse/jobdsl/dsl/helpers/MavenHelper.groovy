@@ -1,10 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
-import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.WithXmlAction
-
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
+
+import javaposse.jobdsl.dsl.JobType
+import javaposse.jobdsl.dsl.WithXmlAction
 
 class MavenHelper extends AbstractHelper {
 
