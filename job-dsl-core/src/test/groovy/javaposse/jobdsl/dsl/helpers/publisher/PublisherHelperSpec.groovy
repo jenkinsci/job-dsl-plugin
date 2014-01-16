@@ -1427,4 +1427,63 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+	
+	def 'publish Robot framework report using default values'() {
+		when:
+		context.publishRobotFrameworkReports()
+		
+		then:
+		Node node = context.publisherNodes[0]
+		node.name() == 'hudson.plugins.robot.RobotPublisher'
+		node.outputPath[0].value() == 'target/robotframework-reports'
+		node.passThreshold[0].value() == 100.0
+		node.unstableThreshold[0].value() == 0.0
+		node.reportFileName[0].value() == 'report.html'
+		node.logFileName[0].value() == 'log.html'
+		node.outputFileName[0].value() == 'output.xml'
+		node.onlyCritical[0].value() == false
+	}
+	
+	def 'publish Robot framework report using specific value for outputPath'() {
+		when:
+		context.publishRobotFrameworkReports(100.0, 0.0, false, "/path/to/foo")
+		
+		then:
+		Node node = context.publisherNodes[0]
+		node.name() == 'hudson.plugins.robot.RobotPublisher'
+		node.outputPath[0].value() == '/path/to/foo'
+	}
+	
+	def 'publish Robot framework report using specific value for passThreshold'() {
+		when:
+		context.publishRobotFrameworkReports(75.0)
+				
+		then:
+		Node node = context.publisherNodes[0]
+		node.name() == 'hudson.plugins.robot.RobotPublisher'
+		node.passThreshold[0].value() == 75.0
+	}
+	
+	def 'publish Robot framework report using specific value for unstableThreshold'() {
+		when:
+		context.publishRobotFrameworkReports(100.0, 10.0)
+			
+		then:
+		Node node = context.publisherNodes[0]
+		node.name() == 'hudson.plugins.robot.RobotPublisher'
+		node.passThreshold[0].value() == 100.0
+		node.unstableThreshold[0].value() == 10.0
+	}
+	
+	def 'publish Robot framework report using specific value for onlyCritical'() {
+		when:
+		context.publishRobotFrameworkReports(100.0, 0.0, true)
+			
+		then:
+		Node node = context.publisherNodes[0]
+		node.name() == 'hudson.plugins.robot.RobotPublisher'
+		node.passThreshold[0].value() == 100.0
+		node.unstableThreshold[0].value() == 0.0
+		node.onlyCritical[0].value() == true
+	}
 }
