@@ -32,5 +32,3 @@ class HtmlReportContext implements Context {
         String wrapperName // Not sure what this is for
     }
 }
-
-

@@ -1,6 +1,10 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.helpers.*
+import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
+import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
+import javaposse.jobdsl.dsl.helpers.MavenHelper
+import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
+import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper

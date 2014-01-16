@@ -28,5 +28,3 @@ class PostBuildTaskContext implements Context {
         boolean runIfJobSuccessful
     }
 }
-
-

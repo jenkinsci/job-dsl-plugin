@@ -77,5 +77,3 @@ class ViolationsContext implements Context {
         String pattern
     }
 }
-
-

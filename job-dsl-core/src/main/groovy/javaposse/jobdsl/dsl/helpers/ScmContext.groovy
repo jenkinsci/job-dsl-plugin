@@ -1,10 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
-import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.getValidCloneWorkspaceCriteria
-
 import com.google.common.base.Preconditions
 import hudson.plugins.perforce.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.WithXmlAction
+
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.getValidCloneWorkspaceCriteria
 
 class ScmContext implements Context {
     boolean multiEnabled

@@ -4,8 +4,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
-import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
-import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.absolute

@@ -1,12 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import static WrapperContext.Timeout.absolute
-
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+
+import static WrapperContext.Timeout.absolute
 
 class WrapperContext implements Context {
     List<Node> wrapperNodes = []
@@ -271,10 +271,3 @@ class WrapperContext implements Context {
         }
     }
 }
-
-
-
-
-
-
-

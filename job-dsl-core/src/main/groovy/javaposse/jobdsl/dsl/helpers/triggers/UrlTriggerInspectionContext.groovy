@@ -1,11 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import java.util.regex.Pattern
-import java.util.regex.PatternSyntaxException
-
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.Context
 
+import java.util.regex.Pattern
+import java.util.regex.PatternSyntaxException
 
 /** Context for configuring inspections that support paths/RegExps. */
 class UrlTriggerInspectionContext implements Context {

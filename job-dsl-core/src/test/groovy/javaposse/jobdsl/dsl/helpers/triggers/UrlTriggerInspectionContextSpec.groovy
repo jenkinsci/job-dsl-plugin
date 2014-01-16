@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection.json

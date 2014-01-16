@@ -2,11 +2,10 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
 //import groovy.xml.XmlUtil
 //import hudson.util.Secret
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
-
 /**
  triggers {scm(String cronString)
  cron(String cronString)}*/
@@ -38,10 +37,3 @@ class TriggerContextHelper extends AbstractContextHelper<TriggerContext> {
         }
     }
 }
-
-
-
-
-
-
-
