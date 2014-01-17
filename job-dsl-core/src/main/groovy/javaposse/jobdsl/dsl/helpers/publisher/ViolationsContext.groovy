@@ -69,13 +69,6 @@ class ViolationsContext implements Context {
         addEntry(key, min, max, unstable, pattern);
     }
 
-    /**
-     * Created with IntelliJ IDEA.
-     * User: jryan
-     * Date: 1/14/13
-     * Time: 9:57 AM
-     * To change this template use File | Settings | File Templates.
-     */
     @Canonical
     static class ViolationsEntry {
         int min

@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper.BuildParametersContext
 import spock.lang.Specification
 
 public class BuildParametersHelperSpec extends Specification {

@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
  * This class adds support for the Publishers from
  * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Static+Code+Analysis+Plug-ins">Static Code Analysis Plugins</a>
  *
- * The class {@link javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext} uses this class
+ * The class {@link javaposse.jobdsl.dsl.helpers.publisher.PublisherContext} uses this class
  * as a delegate to make the corresponding methods appear as methods of the <code>publishers</code> Closure.
  *
  * Every Publisher has the following common set of xml, which is not added to the corresponding xml struckture in the javadoc

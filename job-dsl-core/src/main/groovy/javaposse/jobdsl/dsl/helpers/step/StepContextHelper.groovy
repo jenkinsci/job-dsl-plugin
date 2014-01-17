@@ -1,8 +1,9 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
 class StepContextHelper extends AbstractContextHelper<StepContext> {
 

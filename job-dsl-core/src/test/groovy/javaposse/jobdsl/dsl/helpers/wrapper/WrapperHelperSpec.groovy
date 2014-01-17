@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.absolute
-import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.elastic
-import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.likelyStuck
+import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.absolute
+import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.elastic
+import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.likelyStuck
 
 class WrapperHelperSpec extends Specification {
     List<WithXmlAction> mockActions = new ArrayList()

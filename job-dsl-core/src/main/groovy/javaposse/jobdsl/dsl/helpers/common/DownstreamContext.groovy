@@ -1,4 +1,7 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.common
+
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.Context
 
 class DownstreamContext implements Context {
     public static final THRESHOLD_COLOR_MAP = ['SUCCESS': 'BLUE', 'UNSTABLE': 'YELLOW', 'FAILURE': 'RED']

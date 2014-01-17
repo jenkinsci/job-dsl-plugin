@@ -15,7 +15,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,7 +166,7 @@ public class DslScriptLoader {
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
-        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.Behavior");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
         config.addCompilationCustomizers(icz);
 
         config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

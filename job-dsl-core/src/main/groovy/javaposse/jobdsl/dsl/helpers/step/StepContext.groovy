@@ -1,11 +1,11 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
-import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-
-import static javaposse.jobdsl.dsl.helpers.StepContext.DslContext.RemovedJobAction.IGNORE
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
 class StepContext implements Context {
     List<Node> stepNodes = []
@@ -153,52 +153,6 @@ class StepContext implements Context {
         stepNodes << dslNode
     }
 
-    def static class DslContext implements Context {
-
-        enum RemovedJobAction {
-            IGNORE,
-            DISABLE,
-            DELETE
-        }
-
-        String scriptText = ''
-        RemovedJobAction removedJobAction = IGNORE
-        def externalScripts = []
-        def ignoreExisting = false
-
-        def text(String text) {
-            this.scriptText = Preconditions.checkNotNull(text)
-        }
-
-        def useScriptText() {
-            scriptText.length()>0
-        }
-
-        def external(String... dslScripts) {
-            externalScripts.addAll(dslScripts)
-        }
-
-        def getTargets() {
-            externalScripts.join('\n')
-        }
-
-        def ignoreExisting(boolean ignore = true) {
-            this.ignoreExisting = ignore
-        }
-
-        def removeAction(String action) {
-
-            try {
-                this.removedJobAction = RemovedJobAction.valueOf(action)
-            } catch (IllegalArgumentException iae) {
-                throw new IllegalArgumentException("removeAction must be one of: ${RemovedJobAction.values()}")
-            }
-
-
-        }
-
-    }
-
     /**
      <hudson.tasks.Ant>
      <targets>target</targets>
@@ -275,50 +229,6 @@ class StepContext implements Context {
         stepNodes << antNode
     }
 
-    def static class AntContext implements Context {
-        def targets = []
-        def props = []
-        def buildFile = null
-        def antOpts = []
-        def antName = null
-
-        def target(String target) {
-            targets << target
-        }
-
-        def targets(Iterable<String> addlTargets) {
-            addlTargets.each {
-                target(it)
-            }
-        }
-
-        def prop(Object key, Object value) {
-            props << "${key}=${value}"
-        }
-
-        def props(Map<String, String> map) {
-            map.entrySet().each {
-                prop(it.key, it.value)
-            }
-        }
-
-        def buildFile(String buildFile) {
-            this.buildFile = buildFile
-        }
-
-        def javaOpt(String opt) {
-            antOpts << opt
-        }
-
-        def javaOpts(Iterable<String> opts) {
-            opts.each { javaOpt(it) }
-        }
-
-        def antInstallation(String antInstallationName) {
-            antName = antInstallationName
-        }
-    }
-
     /**
      <hudson.plugins.groovy.Groovy>
      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
@@ -389,60 +299,6 @@ class StepContext implements Context {
         stepNodes << groovyNode
     }
 
-    def static abstract class AbstractGroovyContext implements Context {
-        def classpathEntries = []
-
-        def classpath(String classpath) {
-            classpathEntries << classpath
-        }
-    }
-
-    def static class GroovyContext extends AbstractGroovyContext {
-        def groovyParams = []
-        def scriptParams = []
-        def props = []
-        def javaOpts = []
-        def groovyInstallation = null
-
-        def groovyParam(String param) {
-            groovyParams << param
-        }
-
-        def groovyParams(Iterable<String> params) {
-            params.each { groovyParam(it) }
-        }
-
-        def scriptParam(String param) {
-            scriptParams << param
-        }
-
-        def scriptParams(Iterable<String> params) {
-            params.each { scriptParam(it) }
-        }
-
-        def prop(String key, String value) {
-            props << "${key}=${value}"
-        }
-
-        def props(Map<String, String> map) {
-            map.entrySet().each {
-                prop(it.key, it.value)
-            }
-        }
-
-        def javaOpt(String opt) {
-            javaOpts << opt
-        }
-
-        def javaOpts(Iterable<String> opts) {
-            opts.each { javaOpt(it) }
-        }
-
-        def groovyInstallation(String groovyInstallationName) {
-            groovyInstallation = groovyInstallationName
-        }
-    }
-
     /**
      <hudson.plugins.groovy.SystemGroovy>
      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
@@ -480,14 +336,6 @@ class StepContext implements Context {
         systemGroovyNode.append(groovyScriptSource(commandOrFileName, isCommand))
 
         stepNodes << systemGroovyNode
-    }
-
-    def static class SystemGroovyContext extends AbstractGroovyContext {
-        Map<String, String> bindings = [:]
-
-        def binding(String name, String value) {
-            bindings[name] = value
-        }
     }
 
     /**
@@ -560,78 +408,6 @@ class StepContext implements Context {
         }
 
         stepNodes << grailsNode
-    }
-
-    def static class GrailsContext implements Context {
-        List<String> targets = []
-        String name = '(Default)'
-        String grailsWorkDir = ''
-        String projectWorkDir = ''
-        String projectBaseDir = ''
-        String serverPort = ''
-        Map<String, String> props = [:]
-        boolean forceUpgrade = false
-        boolean nonInteractive = true
-        boolean useWrapper = false
-
-        def target(String target) {
-            targets << target
-        }
-
-        def targets(Iterable<String> addlTargets) {
-            addlTargets.each {
-                target(it)
-            }
-        }
-
-        String getTargetsString() {
-            targets.join(' ')
-        }
-
-        def name(String name) {
-            this.name = name
-        }
-
-        def grailsWorkDir(String grailsWorkDir) {
-            this.grailsWorkDir = grailsWorkDir
-        }
-
-        def projectWorkDir(String projectWorkDir) {
-            this.projectWorkDir = projectWorkDir
-        }
-
-        def projectBaseDir(String projectBaseDir) {
-            this.projectBaseDir = projectBaseDir
-        }
-
-        def serverPort(String serverPort) {
-            this.serverPort = serverPort
-        }
-
-        def prop(String key, String value) {
-            props[key] = value
-        }
-
-        def props(Map<String, String> map) {
-            props += map
-        }
-
-        String getPropertiesString() {
-            props.collect { k, v -> "$k=$v" }.join('\n')
-        }
-
-        def forceUpgrade(boolean forceUpgrade) {
-            this.forceUpgrade = forceUpgrade
-        }
-
-        def nonInteractive(boolean nonInteractive) {
-            this.nonInteractive = nonInteractive
-        }
-
-        def useWrapper(boolean useWrapper) {
-            this.useWrapper = useWrapper
-        }
-
     }
 
     /**
@@ -716,88 +492,6 @@ class StepContext implements Context {
 
     }
 
-    def static class CopyArtifactContext implements Context {
-        String selectedSelector
-        boolean fallback
-        String permalinkName
-        int buildNumber
-        String parameterName
-
-        private void ensureFirst() {
-            if (selectedSelector!=null) {
-                throw new IllegalStateException("Only one selector can be chosen")
-            }
-        }
-        /**
-         * Upstream build that triggered this job
-         * @arg fallback Use "Last successful build" as fallback
-         * @return
-         */
-        def upstreamBuild(boolean fallback = false) {
-            ensureFirst()
-            this.fallback = fallback
-            selectedSelector = 'TriggeredBuild'
-        }
-
-        /**
-         * Latest successful build
-         * @return
-         */
-        def latestSuccessful() {
-            ensureFirst()
-            selectedSelector = 'StatusBuild'
-        }
-        /**
-         * Latest saved build (marked "keep forever")
-         * @return
-         */
-        def latestSaved() {
-            ensureFirst()
-            selectedSelector = 'SavedBuild'
-        }
-        /**
-         * Specified by permalink
-         * @param linkName Values like lastBuild, lastStableBuild
-         * @return
-         */
-        def permalink(String linkName) {
-            ensureFirst()
-            selectedSelector = 'PermalinkBuild'
-            permalinkName = linkName
-        }
-
-        /**
-         * Specific Build
-         * @param buildNumber
-         * @return
-         */
-        def buildNumber(int buildNumber) {
-            ensureFirst()
-            selectedSelector = 'SpecificBuild'
-            this.buildNumber = buildNumber
-        }
-
-        /**
-         * Copy from WORKSPACE of latest completed build
-         * @return
-         */
-        def workspace() {
-            ensureFirst()
-            selectedSelector = 'Workspace'
-        }
-
-        /**
-         * Specified by build parameter
-         * @param parameterName
-         * @return
-         */
-        def buildParameter(String parameterName) {
-            ensureFirst()
-            selectedSelector = 'ParameterizedBuild'
-            this.parameterName = parameterName
-        }
-    }
-
     /**
      * phaseName will have to be provided in the closure
      * @param phaseContext
@@ -840,122 +534,6 @@ class StepContext implements Context {
             }
         }
         stepNodes << multiJobPhaseNode
-    }
-
-    @Canonical
-    static class PhaseContext implements Context {
-        String phaseName
-        String continuationCondition
-
-        List<PhaseJobContext> jobsInPhase = []
-
-        void phaseName(String phaseName) {
-            this.phaseName = phaseName
-        }
-
-        void continuationCondition(String continuationCondition) {
-            this.continuationCondition = continuationCondition
-        }
-
-        def job(String jobName, Closure phaseJobClosure = null) {
-            job(jobName, true, true, phaseJobClosure)
-        }
-
-        def job(String jobName, boolean currentJobParameters, Closure phaseJobClosure = null) {
-            job(jobName, currentJobParameters, true, phaseJobClosure)
-        }
-
-        def job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
-            PhaseJobContext phaseJobContext = new PhaseJobContext(jobName, currentJobParameters, exposedScm)
-            AbstractContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
-
-            jobsInPhase << phaseJobContext
-
-            return phaseJobContext
-        }
-    }
-
-    @Canonical
-    static class PhaseJobContext implements Context {
-        String jobName
-        boolean currentJobParameters = true
-        boolean exposedScm = true
-        DownstreamTriggerContext paramTrigger = new DownstreamTriggerContext()
-        Map<String, Boolean> boolParams = [:]
-        String fileParam
-        boolean failTriggerOnMissing
-        boolean nodeParam = false
-        String matrixFilter
-        Boolean subversionRevision
-        Boolean gitRevision
-        def props = []
-
-
-        void jobName(String jobName) {
-            this.jobName = jobName
-        }
-
-        def currentJobParameters(boolean currentJobParameters = true) {
-            this.currentJobParameters = currentJobParameters
-            paramTrigger.currentBuild()
-        }
-
-        def exposedScm(boolean exposedScm = true) {
-            this.exposedScm = exposedScm
-        }
-
-        def boolParam(String paramName, boolean defaultValue = false) {
-            boolParams[paramName] = defaultValue
-            paramTrigger.boolParam(paramName, defaultValue)
-        }
-
-        def fileParam(String propertyFile, boolean failTriggerOnMissing = false) {
-            Preconditions.checkState(!fileParam, "File parameter already set with ${fileParam}")
-            this.fileParam = propertyFile
-            this.failTriggerOnMissing = failTriggerOnMissing
-            paramTrigger.propertiesFile(propertyFile, failTriggerOnMissing)
-        }
-
-        def sameNode(boolean nodeParam = true) {
-            this.nodeParam = nodeParam
-            paramTrigger.sameNode(nodeParam)
-        }
-
-        def matrixParam(String filter) {
-            Preconditions.checkState(!matrixFilter, "Matrix parameter already set with ${matrixFilter}")
-            this.matrixFilter = filter
-            paramTrigger.matrixSubset(filter)
-        }
-
-        def subversionRevision(boolean includeUpstreamParameters = false) {
-            this.subversionRevision = includeUpstreamParameters
-            paramTrigger.subversionRevision(includeUpstreamParameters)
-        }
-
-        def gitRevision(boolean combineQueuedCommits = false) {
-            this.gitRevision = combineQueuedCommits
-            paramTrigger.gitRevision(combineQueuedCommits)
-        }
-
-        def prop(Object key, Object value) {
-            props << "${key}=${value}"
-            paramTrigger.predefinedProp(key, value)
-        }
-
-        def props(Map<String, String> map) {
-            map.entrySet().each {
-                prop(it.key, it.value)
-            }
-            paramTrigger.predefinedProps(map)
-        }
-
-        def configAsNode() {
-            return paramTrigger.createParametersNode()
-        }
-
-        def hasConfig() {
-            return !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null || gitRevision != null || !props.isEmpty()
-        }
     }
 
     /**
