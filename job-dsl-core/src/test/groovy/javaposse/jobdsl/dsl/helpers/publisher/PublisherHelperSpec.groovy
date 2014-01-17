@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.Behavior.MarkUnstable
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
@@ -1435,13 +1436,13 @@ public class PublisherHelperSpec extends Specification {
 		then:
 		Node node = context.publisherNodes[0]
 		node.name() == 'hudson.plugins.robot.RobotPublisher'
-		node.outputPath[0].value() == 'target/robotframework-reports'
+		node.outputPath[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_PATH
 		node.passThreshold[0].value() == 100.0
 		node.unstableThreshold[0].value() == 0.0
-		node.reportFileName[0].value() == 'report.html'
-		node.logFileName[0].value() == 'log.html'
-		node.outputFileName[0].value() == 'output.xml'
 		node.onlyCritical[0].value() == false
+		node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
+		node.logFileName[0].value() == RobotFrameworkContext.DEFAULT_LOG_FILE_NAME
+		node.outputFileName[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_FILE_NAME
 	}
 	
 	def 'publish Robot framework report using specific value for outputPath'() {
@@ -1454,17 +1455,7 @@ public class PublisherHelperSpec extends Specification {
 		node.outputPath[0].value() == '/path/to/foo'
 	}
 	
-	def 'publish Robot framework report using specific value for passThreshold'() {
-		when:
-		context.publishRobotFrameworkReports(75.0)
-				
-		then:
-		Node node = context.publisherNodes[0]
-		node.name() == 'hudson.plugins.robot.RobotPublisher'
-		node.passThreshold[0].value() == 75.0
-	}
-	
-	def 'publish Robot framework report using specific value for unstableThreshold'() {
+	def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
 		when:
 		context.publishRobotFrameworkReports(100.0, 10.0)
 			
