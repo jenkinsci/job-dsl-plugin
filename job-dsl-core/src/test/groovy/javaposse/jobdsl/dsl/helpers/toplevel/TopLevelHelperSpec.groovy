@@ -95,6 +95,58 @@ public class TopLevelHelperSpec extends Specification {
         root.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
     }
 
+    def 'throttle concurrents enabled as project alone'() {
+        when:
+        def action = helper.throttleConcurrentBuilds {
+            maxPerNode 1
+            maxTotal 2
+        }
+        action.execute(root)
+
+        then:
+        def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+
+        throttleNode.maxConcurrentPerNode[0].value() == 1
+        throttleNode.maxConcurrentTotal[0].value() == 2
+        throttleNode.throttleEnabled[0].value() == 'true'
+        throttleNode.throttleOption[0].value() == 'project'
+        throttleNode.categories[0].children().size() == 0
+    }
+
+    def 'throttle concurrents disabled'() {
+        when:
+        def action = helper.throttleConcurrentBuilds {
+            throttleDisabled()
+        }
+        action.execute(root)
+
+        then:
+        def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+
+        throttleNode.throttleEnabled[0].value() == 'false'
+    }
+
+    def 'throttle concurrents enabled as part of categories'() {
+        when:
+        def action = helper.throttleConcurrentBuilds {
+            maxPerNode 1
+            maxTotal 2
+            categories(['cat-1', 'cat-2'])
+        }
+        action.execute(root)
+
+        then:
+        def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+
+        throttleNode.maxConcurrentPerNode[0].value() == 1
+        throttleNode.maxConcurrentTotal[0].value() == 2
+        throttleNode.throttleEnabled[0].value() == 'true'
+        throttleNode.throttleOption[0].value() == 'category'
+        throttleNode.categories[0].children().size() == 2
+        throttleNode.categories[0].string[0].value() == 'cat-1'
+        throttleNode.categories[0].string[1].value() == 'cat-2'
+    }
+
     def 'can run label'() {
         when:
         helper.label('RPM')
