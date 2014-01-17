@@ -1,9 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.step
-
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
+import spock.lang.Unroll
 
 public class StepHelperSpec extends Specification {
 
@@ -1097,11 +1097,12 @@ still-another-dsl.groovy'''
         thrown(AssertionError)
     }
 
-    def 'call conditional steps for a single step'() {
+    @Unroll
+    def 'call conditional steps for a single step with #testCondition'() {
         when:
         context.conditionalSteps {
             condition {
-                stringsMatch("foo", "bar", false)
+                delegate.invokeMethod(testCondition, testConditionArgs.values().toArray())
             }
             runner("Fail")
             shell("look at me")
@@ -1110,19 +1111,59 @@ still-another-dsl.groovy'''
         then:
         Node step = context.stepNodes[0]
         step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
-        step.condition[0].children().size() == 3
+        step.condition[0].children().size() == testConditionArgs.values().size()
 
         Node condition = step.condition[0]
-        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
-        condition.arg1[0].value() == 'foo'
-        condition.arg2[0].value() == 'bar'
-        condition.ignoreCase[0].value() == 'false'
+        def condClass
+        if (testCondition == 'booleanCondition') {
+            condClass = 'Boolean'
+        } else {
+            condClass = testCondition.capitalize()
+        }
 
+        condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${condClass}Condition"
+        if (!testConditionArgs.isEmpty()) {
+            testConditionArgs.each { k, v ->
+                condition."${k}"[0].value() == "${v}"
+            }
+        }
         step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
 
         Node childStep = step.buildStep[0]
         childStep.attribute('class') == 'hudson.tasks.Shell'
         childStep.command[0].value() == 'look at me'
+
+        where:
+        testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time']
+        testConditionArgs << [['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
+                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
+                ['expression': 'some-expression', 'label': 'some-label'],
+                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false]]
+    }
+
+    @Unroll
+    def 'call conditional steps for a single step with #runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            runner(runnerName)
+            shell("look at me")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+
+        step.runner[0].attribute('class') == "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$${runnerName}"
+
+        Node childStep = step.buildStep[0]
+        childStep.attribute('class') == 'hudson.tasks.Shell'
+        childStep.command[0].value() == 'look at me'
+
+        where:
+        runnerName << ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
     }
 
     def 'call conditional steps for multiple steps'() {
