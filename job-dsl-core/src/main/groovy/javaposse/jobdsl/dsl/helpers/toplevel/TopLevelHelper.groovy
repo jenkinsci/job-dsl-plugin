@@ -84,6 +84,48 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <properties>
+     *         <hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *             <maxConcurrentPerNode>0</maxConcurrentPerNode>
+     *             <maxConcurrentTotal>0</maxConcurrentTotal>
+     *             <categories>
+     *                 <string>CDH5-repo-update</string>
+     *             </categories>
+     *             <throttleEnabled>true</throttleEnabled>
+     *             <throttleOption>category</throttleOption>
+     *         </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *     <properties>
+     * </project>
+     * }
+     * </pre>
+     */
+    def throttleConcurrentBuilds(Closure throttleClosure) {
+        ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
+        AbstractContextHelper.executeInContext(throttleClosure, throttleContext)
+
+        execute {
+            it / 'properties' / 'hudson.plugins.throttleconcurrents.ThrottleJobProperty' {
+                maxConcurrentPerNode throttleContext.maxConcurrentPerNode
+                maxConcurrentTotal throttleContext.maxConcurrentTotal
+                throttleEnabled throttleContext.throttleDisabled ? 'false' : 'true'
+                if (throttleContext.categories.isEmpty()) {
+                    throttleOption 'project'
+                } else {
+                    throttleOption 'category'
+                }
+                categories {
+                    throttleContext.categories.each { c ->
+                        string c
+                    }
+                }
+            }
+        }
+    }
+
     /*
     <disabled>true</disabled>
      */
