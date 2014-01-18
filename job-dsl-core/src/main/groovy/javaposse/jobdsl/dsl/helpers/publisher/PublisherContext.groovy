@@ -892,4 +892,72 @@ class PublisherContext implements Context {
             }
         }
     }
+	
+	/**
+	 * Configures Jenkins job to publish Robot Framework reports
+	 * 
+	 * {@code 
+	 *   <publishers>
+	 *		<hudson.plugins.robot.RobotPublisher plugin="robot@1.3.2">
+	 * 			<outputPath>target/robotframework-reports</outputPath>
+	 *			<passThreshold>100.0</passThreshold>
+	 *			<unstableThreshold>0.0</unstableThreshold>
+	 * 			<onlyCritical>false</onlyCritical>
+	 * 			<reportFileName>report.html</reportFileName>
+	 * 			<logFileName>log.html</logFileName>
+	 * 			<outputFileName>output.xml</outputFileName>
+	 * 		</hudson.plugins.robot.RobotPublisher>
+	 *	</publishers>
+	 *}
+	 * @see https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
+	 */
+	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold,
+		Boolean robotOnlyCritical, String robotOutputPath, 
+		String robotReportFileName, String robotLogFileName, String robotOutputFileName,
+		Closure robotClosure = null) {
+		
+		RobotFrameworkContext ctx = new RobotFrameworkContext()
+		ctx.passThreshold = robotPassThreshold
+		ctx.unstableThreshold = robotUnstableThreshold
+		ctx.outputPath = robotOutputPath
+		ctx.onlyCritical = robotOnlyCritical
+		ctx.reportFileName = robotReportFileName
+		ctx.logFileName = robotLogFileName
+		ctx.outputFileName = robotOutputFileName
+		
+		AbstractContextHelper.executeInContext(robotClosure, ctx)
+		
+		RobotFrameworkContext.RobotFrameworkConfiguration config = ctx.checkAndCreate()
+
+		def nodeBuilder = NodeBuilder.newInstance()
+		Node robotNode = nodeBuilder.'hudson.plugins.robot.RobotPublisher' {
+			passThreshold config.passThreshold
+			unstableThreshold config.unstableThreshold
+			outputPath config.outputPath
+			onlyCritical config.onlyCritical
+			reportFileName config.reportFileName
+			logFileName config.logFileName
+			outputFileName config.outputFileName
+		}
+		
+		publisherNodes << robotNode
+	}
+		
+	def publishRobotFrameworkReports(Closure robotClosure = null) {
+		publishRobotFrameworkReports(100.0, 0.0, false, null, null, null, null, robotClosure)
+	}
+		
+	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold, Closure robotClosure = null) {
+		publishRobotFrameworkReports(robotPassThreshold, robotUnstableThreshold, false, null, null, null, null, robotClosure)
+	}
+		
+	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold, 
+		Boolean robotOnlyCritical, Closure robotClosure = null) {
+		publishRobotFrameworkReports(robotPassThreshold, robotUnstableThreshold, robotOnlyCritical, null, null, null, null, robotClosure)
+	}
+		
+	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold, 
+		Boolean robotOnlyCritical, String robotOutputPath, Closure robotClosure = null) {
+		publishRobotFrameworkReports(robotPassThreshold, robotUnstableThreshold, robotOnlyCritical, robotOutputPath, null, null, null, robotClosure)
+	}
 }
