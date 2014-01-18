@@ -1477,4 +1477,22 @@ public class PublisherHelperSpec extends Specification {
 		node.unstableThreshold[0].value() == 0.0
 		node.onlyCritical[0].value() == true
 	}
+	
+	def 'publish Robot framework report using a configure closure'() {
+		when:
+		context.publishRobotFrameworkReports() {
+			passThreshold(50.0)
+			unstableThreshold(10.0)
+			outputPath("/path/to/foo")
+		}
+		
+		then:
+		Node node = context.publisherNodes[0]
+		node.name() == 'hudson.plugins.robot.RobotPublisher'
+		node.passThreshold[0].value() == 50.0
+		node.unstableThreshold[0].value() == 10.0
+		node.outputPath[0].value() == "/path/to/foo"
+		node.onlyCritical[0].value() == false
+		node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME 
+	}
 }

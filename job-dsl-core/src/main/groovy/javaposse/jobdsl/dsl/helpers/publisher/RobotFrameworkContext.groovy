@@ -27,6 +27,34 @@ class RobotFrameworkContext implements Context {
 	String reportFileName
 	String logFileName
 	String outputFileName
+	
+	void passThreshold(Double passThreshold) {
+		this.passThreshold = passThreshold
+	}
+	
+	void unstableThreshold(Double unstableThreshold) {
+		this.unstableThreshold = unstableThreshold
+	}
+	
+	void onlyCritical(Double onlyCritical) {
+		this.onlyCritical = onlyCritical
+	}
+	
+	void outputPath(String outputPath) {
+		this.outputPath = outputPath
+	}
+	
+	void reportFileName(String reportFileName) {
+		this.reportFileName = reportFileName
+	}
+	
+	void logFileName(String logFileName) {
+		this.logFileName = logFileName
+	}
+	
+	void outputFileName(String outputFileName) {
+		this.outputFileName = outputFileName
+	}
 
 	def checkAndCreate() {
 		this.passThreshold = this.passThreshold > 100.0 ? 100.0 : this.passThreshold
