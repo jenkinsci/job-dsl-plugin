@@ -917,27 +917,25 @@ class PublisherContext implements Context {
 		Closure robotClosure = null) {
 		
 		RobotFrameworkContext ctx = new RobotFrameworkContext()
-		ctx.passThreshold = robotPassThreshold
-		ctx.unstableThreshold = robotUnstableThreshold
-		ctx.outputPath = robotOutputPath
-		ctx.onlyCritical = robotOnlyCritical
-		ctx.reportFileName = robotReportFileName
-		ctx.logFileName = robotLogFileName
-		ctx.outputFileName = robotOutputFileName
+		ctx.passThreshold(robotPassThreshold)
+		ctx.unstableThreshold(robotUnstableThreshold)
+		ctx.outputPath(robotOutputPath)
+		ctx.onlyCritical(robotOnlyCritical)
+		ctx.reportFileName(robotReportFileName)
+		ctx.logFileName(robotLogFileName)
+		ctx.outputFileName(robotOutputFileName)
 		
 		AbstractContextHelper.executeInContext(robotClosure, ctx)
 		
-		RobotFrameworkContext.RobotFrameworkConfiguration config = ctx.checkAndCreate()
-
 		def nodeBuilder = NodeBuilder.newInstance()
 		Node robotNode = nodeBuilder.'hudson.plugins.robot.RobotPublisher' {
-			passThreshold config.passThreshold
-			unstableThreshold config.unstableThreshold
-			outputPath config.outputPath
-			onlyCritical config.onlyCritical
-			reportFileName config.reportFileName
-			logFileName config.logFileName
-			outputFileName config.outputFileName
+			passThreshold ctx.passThreshold
+			unstableThreshold ctx.unstableThreshold
+			outputPath ctx.outputPath
+			onlyCritical ctx.onlyCritical
+			reportFileName ctx.reportFileName
+			logFileName ctx.logFileName
+			outputFileName ctx.outputFileName
 		}
 		
 		publisherNodes << robotNode

@@ -20,65 +20,39 @@ class RobotFrameworkContext implements Context {
 	static String DEFAULT_OUTPUT_FILE_NAME = "output.xml"
 	static String DEFAULT_LOG_FILE_NAME = "log.html"
 
-	Double passThreshold
-	Double unstableThreshold
-	Boolean onlyCritical
-	String outputPath
-	String reportFileName
-	String logFileName
-	String outputFileName
+	Double passThreshold = 100.0
+	Double unstableThreshold = 0.0
+	Boolean onlyCritical = false
+	String outputPath = DEFAULT_OUTPUT_PATH
+	String reportFileName = DEFAULT_REPORT_FILE_NAME
+	String logFileName = DEFAULT_LOG_FILE_NAME
+	String outputFileName = DEFAULT_OUTPUT_FILE_NAME
 	
 	void passThreshold(Double passThreshold) {
-		this.passThreshold = passThreshold
+		this.passThreshold = passThreshold ?: this.passThreshold
 	}
 	
 	void unstableThreshold(Double unstableThreshold) {
-		this.unstableThreshold = unstableThreshold
+		this.unstableThreshold = unstableThreshold ?: this.unstableThreshold
 	}
 	
-	void onlyCritical(Double onlyCritical) {
-		this.onlyCritical = onlyCritical
+	void onlyCritical(Boolean onlyCritical) {
+		this.onlyCritical = onlyCritical ?: this.onlyCritical
 	}
 	
 	void outputPath(String outputPath) {
-		this.outputPath = outputPath
+		this.outputPath = outputPath ?: this.outputPath
 	}
 	
 	void reportFileName(String reportFileName) {
-		this.reportFileName = reportFileName
+		this.reportFileName = reportFileName ?: this.reportFileName
 	}
 	
 	void logFileName(String logFileName) {
-		this.logFileName = logFileName
+		this.logFileName = logFileName ?: this.logFileName
 	}
 	
 	void outputFileName(String outputFileName) {
-		this.outputFileName = outputFileName
-	}
-
-	def checkAndCreate() {
-		this.passThreshold = this.passThreshold > 100.0 ? 100.0 : this.passThreshold
-		this.unstableThreshold = this.unstableThreshold < 0.0 ? 0.0 : this.unstableThreshold
-
-		new RobotFrameworkConfiguration(
-				passThreshold: this.passThreshold ?: 100.0,
-				unstableThreshold: this.unstableThreshold ?: 0.0,
-				onlyCritical: this.onlyCritical ?: false,
-				outputPath: this.outputPath ?: DEFAULT_OUTPUT_PATH,
-				logFileName: this.logFileName ?: DEFAULT_LOG_FILE_NAME,
-				reportFileName: this.reportFileName ?: DEFAULT_REPORT_FILE_NAME,
-				outputFileName: this.outputFileName ?: DEFAULT_OUTPUT_FILE_NAME
-				)
-	}
-
-	@Canonical
-	class RobotFrameworkConfiguration {
-		Double passThreshold
-		Double unstableThreshold
-		Boolean onlyCritical
-		String outputPath
-		String reportFileName
-		String logFileName
-		String outputFileName
+		this.outputFileName = outputFileName ?: this.outputFileName
 	}
 }
