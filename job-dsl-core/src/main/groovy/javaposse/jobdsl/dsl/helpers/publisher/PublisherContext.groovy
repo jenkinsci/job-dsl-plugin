@@ -136,24 +136,40 @@ class PublisherContext implements Context {
     /**
      <hudson.tasks.ArtifactArchiver>
      <artifacts>build/libs/*</artifacts>
+     <excludes>build/libs/bad/*</excludes>
      <latestOnly>false</latestOnly>
+     <allowEmptyArchive>false</allowEmptyArchive>
      </hudson.tasks.ArtifactArchiver>
      * @param glob
      * @param excludeGlob
      * @param latestOnly
      */
-    def archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false) {
+    def archiveArtifacts(Closure artifactsClosure) {
+        ArchiveArtifactsContext artifactsContext = new ArchiveArtifactsContext()
+        AbstractContextHelper.executeInContext(artifactsClosure, artifactsContext)
+
         def nodeBuilder = new NodeBuilder()
 
         Node archiverNode = nodeBuilder.'hudson.tasks.ArtifactArchiver' {
-            artifacts glob
-            if (excludeGlob) {
-                excludes excludeGlob
+            artifacts artifactsContext.patternValue
+            latestOnly artifactsContext.latestOnlyValue ? 'true' : 'false'
+            allowEmptyArchive artifactsContext.allowEmptyValue ? 'true' : 'false'
+
+            if (artifactsContext.excludesValue) {
+                excludes artifactsContext.excludesValue
             }
-            latestOnly latestOnlyBoolean ? 'true' : 'false'
         }
 
         publisherNodes << archiverNode
+    }
+
+    def archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false) {
+        archiveArtifacts {
+            pattern glob
+            exclude excludeGlob
+            latestOnly latestOnlyBoolean
+            allowEmpty false
+        }
     }
 
     /**

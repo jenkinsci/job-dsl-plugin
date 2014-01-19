@@ -130,7 +130,7 @@ public class PublisherHelperSpec extends Specification {
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes[0].value() == 'exclude/*'
         archiveNode.latestOnly[0].value() == 'true'
-
+        archiveNode.allowEmptyArchive[0].value() == 'false'
     }
 
     def 'call archive artifacts least args'() {
@@ -143,7 +143,25 @@ public class PublisherHelperSpec extends Specification {
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes.isEmpty()
         archiveNode.latestOnly[0].value() == 'false'
+        archiveNode.allowEmptyArchive[0].value() == 'false'
+    }
 
+    def 'call archive artifacts with closure'() {
+        when:
+        context.archiveArtifacts {
+            pattern 'include/*'
+            exclude 'exclude/*'
+            allowEmpty()
+            latestOnly()
+        }
+
+        then:
+        Node archiveNode = context.publisherNodes[0]
+        archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
+        archiveNode.artifacts[0].value() == 'include/*'
+        archiveNode.excludes[0].value() == 'exclude/*'
+        archiveNode.latestOnly[0].value() == 'true'
+        archiveNode.allowEmptyArchive[0].value() == 'true'
     }
 
     def 'call junit archive with all args'() {
