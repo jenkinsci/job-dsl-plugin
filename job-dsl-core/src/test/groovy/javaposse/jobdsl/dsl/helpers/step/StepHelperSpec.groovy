@@ -1,4 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
+
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -1164,6 +1165,47 @@ still-another-dsl.groovy'''
 
         where:
         runnerName << ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
+    }
+
+    def 'call conditional steps with unknown runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            runner("invalid-runner")
+            shell("look at me")
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call conditional steps with no condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'call conditional steps with invalid condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                invalidCondition()
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        thrown(MissingMethodException)
     }
 
     def 'call conditional steps for multiple steps'() {
