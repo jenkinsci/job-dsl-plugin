@@ -143,7 +143,7 @@ public class ExecuteDslScripts extends Builder {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
         Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
 
-        Set< GeneratedJob > freshJobs = Sets.newHashSet();
+        Set< GeneratedJob > freshJobs = Sets.newLinkedHashSet();
         for (ScriptRequest request : scriptRequests) {
             LOGGER.log(Level.FINE, String.format("Request for %s", request.location));
 
@@ -285,7 +285,7 @@ public class ExecuteDslScripts extends Builder {
     private Set<GeneratedJob> extractGeneratedJobs(AbstractProject project) {
         GeneratedJobsAction gja = project.getAction(GeneratedJobsAction.class);
         if (gja==null || gja.findLastGeneratedJobs() == null) {
-            return Sets.newHashSet();
+            return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedJobs();
         }

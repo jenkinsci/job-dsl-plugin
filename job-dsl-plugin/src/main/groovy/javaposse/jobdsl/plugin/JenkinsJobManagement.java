@@ -41,13 +41,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     JenkinsJobManagement() {
         super();
         envVars = new EnvVars();
-        modifiedJobs = Sets.newHashSet();
+        modifiedJobs = Sets.newLinkedHashSet();
     }
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build) {
         super(outputLogger);
         this.envVars = envVars;
-        this.modifiedJobs = Sets.newHashSet();
+        this.modifiedJobs = Sets.newLinkedHashSet();
         this.build = build;
     }
 
@@ -259,12 +259,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 //    }
 //
 //    public Collection<AbstractProject> getJobsByGeneratedJobs(final Set<GeneratedJob> generatedJobs) {
-//        Set<String> jobNames = Sets.newHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
+//        Set<String> jobNames = Sets.newLinkedHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
 //        return getJobsByName(jobNames);
 //    }
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
-        return Sets.newHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
+        return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
     }
 
     public static class ExtractJobName implements Function<GeneratedJob, String> {
