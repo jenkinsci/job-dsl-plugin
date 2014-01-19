@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 class ViolationsContext implements Context {
     def static validTypes = ['checkstyle', 'codenarc', 'cpd', 'cpplint', 'csslint', 'findbugs', 'fxcop', 'gendarme',
-            'jcreport', 'jslint', 'pep8', 'perlcritic', 'pmd', 'pylint', 'simian', 'stylecop']
+            'jcreport', 'jslint', 'pep8', 'perlcritic', 'pmd', 'pylint', 'simian', 'stylecop', 'jshint']
 
     private Map<String, ViolationsEntry> entries = validTypes.collectEntries { String key ->
         return [key, createEntry()]

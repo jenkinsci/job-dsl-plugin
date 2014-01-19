@@ -116,6 +116,26 @@ class StaticAnalysisPublisherContext {
     }
 
     /**
+     * Configures the JsHint checkstyle Publisher
+     *
+     * <pre>
+     * {@code
+     * <hudson.plugins.jshint.CheckStylePublisher>
+     *   ...
+     *   <pattern>checkstyle.xml</pattern>
+     * </hudson.plugins.jshint.CheckStylePublisher>
+     * }
+     * </pre>
+     */
+    def jshint(String pattern, Closure staticAnalysisClosure = null) {
+        publisherNodes << createDefaultStaticAnalysisNode(
+            'hudson.plugins.jshint.CheckStylePublisher',
+             staticAnalysisClosure,
+             pattern
+        )
+    }
+
+    /**
      * Configures the DRY Publisher
      *
      * <pre>

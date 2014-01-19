@@ -625,7 +625,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].fauxProjectPath[0].value() == ''
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
-        typeConfigsNode.entry.size() == 16
+        typeConfigsNode.entry.size() == 17
         def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian'}
         simianNode != null
         def typeConfigNode = simianNode.'hudson.plugins.violations.TypeConfig'[0]
@@ -644,6 +644,7 @@ public class PublisherHelperSpec extends Specification {
             fauxProjectPath 'faux path'
             perFileDisplayLimit 51
             checkstyle(10, 11, 10, 'test-report/*.xml')
+            jshint(10, 11, 10, 'test-report/*.xml')
             findbugs(12, 13, 12)
         }
 
@@ -656,7 +657,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].fauxProjectPath[0].value() == 'faux path'
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
-        typeConfigsNode.entry.size() == 16
+        typeConfigsNode.entry.size() == 17
         def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle'}
         checkstyleNode != null
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'checkstyle'
@@ -665,6 +666,14 @@ public class PublisherHelperSpec extends Specification {
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
+        def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint'}
+        jshintNode != null
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jshint'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '11'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
         def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs'}
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'findbugs'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '12'
