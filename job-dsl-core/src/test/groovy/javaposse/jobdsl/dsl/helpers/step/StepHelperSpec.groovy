@@ -1135,11 +1135,12 @@ still-another-dsl.groovy'''
         childStep.command[0].value() == 'look at me'
 
         where:
-        testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time']
+        testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status']
         testConditionArgs << [['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
-                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false]]
+                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
+                ['worstResult': 'Success', 'bestResult': 'Success']]
     }
 
     @Unroll
