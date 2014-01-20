@@ -2,12 +2,13 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
 
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
 
-class MavenHelper extends AbstractHelper {
+class MavenHelper extends AbstractHelper implements MavenContext {
 
     StringBuilder allGoals = new StringBuilder()
     StringBuilder allMavenOpts = new StringBuilder()
@@ -113,7 +114,7 @@ class MavenHelper extends AbstractHelper {
      * Set to use isolated local Maven repositories.
      * @param location the local repository to use for isolation
      */
-    def localRepository(LocalRepositoryLocation location) {
+    def localRepository(MavenContext.LocalRepositoryLocation location) {
         checkState type == JobType.Maven, "localRepository can only be applied for Maven jobs"
         checkNotNull location, "localRepository can not be null"
         execute { Node node ->
@@ -145,14 +146,11 @@ class MavenHelper extends AbstractHelper {
         }
     }
 
-    public enum LocalRepositoryLocation {
-        LocalToExecutor('hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'),
-        LocalToWorkspace('hudson.maven.local_repo.PerJobLocalRepositoryLocator')
-
-        String type
-
-        public LocalRepositoryLocation(String type) {
-            this.type = type
+    def mavenInstallation(String name) {
+        checkState type == JobType.Maven, "mavenInstallation can only be applied for Maven jobs"
+        checkNotNull name, "name can not be null"
+        execute { Node node ->
+            appendOrReplaceNode node, 'mavenName', name
         }
     }
 

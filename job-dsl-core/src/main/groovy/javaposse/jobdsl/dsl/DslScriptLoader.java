@@ -39,7 +39,7 @@ public class DslScriptLoader {
         // Add static imports of a few common types, like JobType
         ImportCustomizer icz = new ImportCustomizer();
         icz.addStaticStars("javaposse.jobdsl.dsl.JobType");
-        icz.addStaticStars("javaposse.jobdsl.dsl.helpers.MavenHelper.LocalRepositoryLocation");
+        icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
         GroovyScriptEngine engine = //scriptRequest.resourceConnector!=null?
