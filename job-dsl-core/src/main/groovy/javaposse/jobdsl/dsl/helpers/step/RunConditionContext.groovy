@@ -45,4 +45,9 @@ class RunConditionContext implements Context {
         this.conditionName = "Time"
         this.conditionArgs = ['earliest': earliest, 'latest': latest, 'useBuildTime': useBuildTime ? 'true' : 'false']
     }
+
+    def status(String worstResult, String bestResult) {
+        this.conditionName = "Status"
+        this.conditionArgs = ['worstResult': worstResult, 'bestResult': bestResult]
+    }
 }
