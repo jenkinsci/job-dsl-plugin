@@ -6,7 +6,11 @@ class ArchiveArtifactsContext implements Context {
     String patternValue = ''
     String excludesValue = null
     Boolean latestOnlyValue = false
-    Boolean allowEmptyValue = false
+
+    // default null for compatibility with jenkins <= 1.480
+    // when not specified, the relevant child node *will not* be generated
+    // The behavior is the same when false or absent.
+    Boolean allowEmptyValue = null
 
     void pattern(String glob) {
         patternValue = glob
@@ -21,6 +25,7 @@ class ArchiveArtifactsContext implements Context {
     }
 
     void allowEmpty(Boolean val = true) {
+        // N.B. not compatible with jenkins <= 1.480
         allowEmptyValue = val
     }
 }
