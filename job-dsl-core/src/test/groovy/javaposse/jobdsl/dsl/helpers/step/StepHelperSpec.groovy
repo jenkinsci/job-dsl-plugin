@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
+import spock.lang.Unroll
 
 public class StepHelperSpec extends Specification {
 
@@ -1097,4 +1098,175 @@ still-another-dsl.groovy'''
         thrown(AssertionError)
     }
 
+    @Unroll
+    def 'call conditional steps for a single step with #testCondition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                delegate.invokeMethod(testCondition, testConditionArgs.values().toArray())
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        step.condition[0].children().size() == testConditionArgs.values().size()
+
+        Node condition = step.condition[0]
+        def condClass
+        if (testCondition == 'booleanCondition') {
+            condClass = 'Boolean'
+        } else {
+            condClass = testCondition.capitalize()
+        }
+
+        condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${condClass}Condition"
+        if (!testConditionArgs.isEmpty()) {
+            testConditionArgs.each { k, v ->
+                condition."${k}"[0].value() == "${v}"
+            }
+        }
+        step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+
+        Node childStep = step.buildStep[0]
+        childStep.attribute('class') == 'hudson.tasks.Shell'
+        childStep.command[0].value() == 'look at me'
+
+        where:
+        testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time']
+        testConditionArgs << [['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
+                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
+                ['expression': 'some-expression', 'label': 'some-label'],
+                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false]]
+    }
+
+    @Unroll
+    def 'call conditional steps for a single step with #runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            runner(runnerName)
+            shell("look at me")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+
+        step.runner[0].attribute('class') == "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$${runnerName}"
+
+        Node childStep = step.buildStep[0]
+        childStep.attribute('class') == 'hudson.tasks.Shell'
+        childStep.command[0].value() == 'look at me'
+
+        where:
+        runnerName << ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
+    }
+
+    def 'call conditional steps with unknown runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            runner("invalid-runner")
+            shell("look at me")
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call conditional steps with no condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'call conditional steps with invalid condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                invalidCondition()
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        thrown(MissingMethodException)
+    }
+
+    def 'call conditional steps for multiple steps'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                stringsMatch("foo", "bar", false)
+            }
+            runner("Fail")
+            shell("look at me")
+            groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
+                groovyParam('foo')
+                groovyParams(['bar', 'baz'])
+                classpath('/foo/acme.jar')
+                classpath('/foo/test.jar')
+                scriptParam('alfa')
+                scriptParams(['bravo', 'charlie'])
+                prop('one', 'two')
+                props([three: 'four', five: 'six'])
+                javaOpt('test')
+                javaOpts(['me', 'too'])
+            }
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+        step.runCondition[0].children().size() == 3
+
+        Node condition = step.runCondition[0]
+        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+        condition.arg1[0].value() == 'foo'
+        condition.arg2[0].value() == 'bar'
+        condition.ignoreCase[0].value() == 'false'
+
+        step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+
+        step.conditionalBuilders[0].children().size() == 2
+
+        Node shellStep = step.conditionalBuilders[0].children()[0]
+        shellStep.name() == 'hudson.tasks.Shell'
+        shellStep.command[0].value() == 'look at me'
+
+        def acmeGroovyNode = step.conditionalBuilders[0].children()[1]
+        acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
+        acmeGroovyNode.groovyName.size() == 1
+        acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
+        acmeGroovyNode.parameters.size() == 1
+        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.classPath.size() == 1
+        acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeGroovyNode.scriptParameters.size() == 1
+        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.properties.size() == 1
+        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.javaOpts.size() == 1
+        acmeGroovyNode.javaOpts[0].value() == 'test me too'
+        acmeGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        acmeScriptSourceNode.command.size() == 1
+        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
+    }
 }
