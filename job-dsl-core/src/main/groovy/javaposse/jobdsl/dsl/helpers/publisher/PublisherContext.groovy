@@ -140,6 +140,9 @@ class PublisherContext implements Context {
      <latestOnly>false</latestOnly>
      <allowEmptyArchive>false</allowEmptyArchive>
      </hudson.tasks.ArtifactArchiver>
+
+     Note: allowEmpty is not compatible with jenkins <= 1.480
+
      * @param glob
      * @param excludeGlob
      * @param latestOnly
@@ -153,7 +156,10 @@ class PublisherContext implements Context {
         Node archiverNode = nodeBuilder.'hudson.tasks.ArtifactArchiver' {
             artifacts artifactsContext.patternValue
             latestOnly artifactsContext.latestOnlyValue ? 'true' : 'false'
-            allowEmptyArchive artifactsContext.allowEmptyValue ? 'true' : 'false'
+
+            if (artifactsContext.allowEmptyValue != null) {
+                allowEmptyArchive artifactsContext.allowEmptyValue ? 'true' : 'false'
+            }
 
             if (artifactsContext.excludesValue) {
                 excludes artifactsContext.excludesValue
@@ -168,7 +174,6 @@ class PublisherContext implements Context {
             pattern glob
             exclude excludeGlob
             latestOnly latestOnlyBoolean
-            allowEmpty false
         }
     }
 
