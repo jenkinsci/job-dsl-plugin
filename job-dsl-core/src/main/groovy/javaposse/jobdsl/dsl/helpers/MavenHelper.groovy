@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
 
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
@@ -117,6 +118,30 @@ class MavenHelper extends AbstractHelper {
         checkNotNull location, "localRepository can not be null"
         execute { Node node ->
             appendOrReplaceNode node, 'localRepository', [class: location.type]
+        }
+    }
+
+    def preBuildSteps(Closure preBuildClosure) {
+        checkState type == JobType.Maven, "prebuildSteps can only be applied for Maven jobs"
+        AbstractStepContext preBuildContext = new AbstractStepContext()
+        AbstractContextHelper.executeInContext(preBuildClosure, preBuildContext)
+
+        if (!preBuildContext.stepNodes.isEmpty()) {
+            execute { Node node ->
+                appendOrReplaceNode(node, 'prebuilders', preBuildContext.stepNodes)
+            }
+        }
+    }
+
+    def postBuildSteps(Closure postBuildClosure) {
+        checkState type == JobType.Maven, "postBuildSteps can only be applied for Maven jobs"
+        AbstractStepContext postBuildContext = new AbstractStepContext()
+        AbstractContextHelper.executeInContext(postBuildClosure, postBuildContext)
+
+        if (!postBuildContext.stepNodes.isEmpty()) {
+            execute { Node node ->
+                appendOrReplaceNode(node, 'postbuilders', postBuildContext.stepNodes)
+            }
         }
     }
 
