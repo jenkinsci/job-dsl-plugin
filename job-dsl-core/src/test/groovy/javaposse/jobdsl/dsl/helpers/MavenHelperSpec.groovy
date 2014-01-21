@@ -281,4 +281,50 @@ public class MavenHelperSpec extends Specification {
         then:
         root.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
     }
+
+    def 'cannot run preBuildSteps for freestyle jobs'() {
+        setup:
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+
+        when:
+        helper.preBuildSteps {}
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'can add preBuildSteps'() {
+        when:
+        def action = helper.preBuildSteps {
+            shell("ls")
+        }
+        action.execute(root)
+
+        then:
+        root.prebuilders[0].children()[0].name() == 'hudson.tasks.Shell'
+        root.prebuilders[0].children()[0].command[0].value() == 'ls'
+    }
+
+    def 'cannot run postBuildSteps for freestyle jobs'() {
+        setup:
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+
+        when:
+        helper.postBuildSteps {}
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'can add postBuildSteps'() {
+        when:
+        def action = helper.postBuildSteps {
+            shell("ls")
+        }
+        action.execute(root)
+
+        then:
+        root.postbuilders[0].children()[0].name() == 'hudson.tasks.Shell'
+        root.postbuilders[0].children()[0].command[0].value() == 'ls'
+    }
 }
