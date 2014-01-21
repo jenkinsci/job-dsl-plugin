@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import spock.lang.Specification
 
 public class MavenHelperSpec extends Specification {
@@ -250,7 +251,7 @@ public class MavenHelperSpec extends Specification {
         MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToExecutor)
+        helper.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
 
         then:
         thrown(IllegalStateException)
@@ -266,7 +267,7 @@ public class MavenHelperSpec extends Specification {
 
     def 'localRepository constructs xml for LocalToExecutor'() {
         when:
-        def action = helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToExecutor)
+        def action = helper.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
         action.execute(root)
 
         then:
@@ -275,7 +276,7 @@ public class MavenHelperSpec extends Specification {
 
     def 'localRepository constructs xml for LocalToWorkspace'() {
         when:
-        def action = helper.localRepository(MavenHelper.LocalRepositoryLocation.LocalToWorkspace)
+        def action = helper.localRepository(MavenContext.LocalRepositoryLocation.LocalToWorkspace)
         action.execute(root)
 
         then:
@@ -326,5 +327,34 @@ public class MavenHelperSpec extends Specification {
         then:
         root.postbuilders[0].children()[0].name() == 'hudson.tasks.Shell'
         root.postbuilders[0].children()[0].command[0].value() == 'ls'
+    }
+
+    def 'can run mavenInstallation'() {
+        when:
+        helper.mavenInstallation('test')
+
+        then:
+        1 * mockActions.add(_)
+    }
+
+    def 'cannot run mavenInstallation for free style jobs'() {
+        setup:
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+
+        when:
+        helper.mavenInstallation('test')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'mavenInstallation constructs xml'() {
+        when:
+        def action = helper.mavenInstallation('test')
+        action.execute(root)
+
+        then:
+        root.mavenName.size() == 1
+        root.mavenName[0].value() == 'test'
     }
 }
