@@ -6,6 +6,8 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
+import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
+
 class AbstractStepContext implements Context {
     List<Node> stepNodes = []
 
@@ -332,30 +334,43 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.tasks.Maven>
-     <targets>install</targets>
-     <mavenName>(Default)</mavenName>
-     <pom>pom.xml</pom>
-     <usePrivateRepository>false</usePrivateRepository>
-     </hudson.tasks.Maven>
+     * <hudson.tasks.Maven>
+     *     <targets>install</targets>
+     *     <mavenName>(Default)</mavenName>
+     *     <jvmOptions>-Xmx512m</jvmOptions>
+     *     <pom>pom.xml</pom>
+     *     <usePrivateRepository>false</usePrivateRepository>
+     * </hudson.tasks.Maven>
      */
-    def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
-        def nodeBuilder = new NodeBuilder()
-        def mavenNode = nodeBuilder.'hudson.tasks.Maven' {
-            targets targetsArg?:''
-            mavenName '(Default)' // TODO
-            if (pomArg) {
-              pom pomArg
+    def maven(Closure closure) {
+        MavenContext mavenContext = new MavenContext()
+        AbstractContextHelper.executeInContext(closure, mavenContext)
+
+        Node mavenNode = new NodeBuilder().'hudson.tasks.Maven' {
+            targets mavenContext.goals.join(' ')
+            mavenName mavenContext.mavenInstallation
+            jvmOptions mavenContext.mavenOpts.join(' ')
+            if (mavenContext.rootPOM) {
+                pom mavenContext.rootPOM
             }
-            usePrivateRepository 'false'
+            usePrivateRepository mavenContext.localRepositoryLocation == LocalToWorkspace ? 'true' : 'false'
         }
+
         // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
+        if (mavenContext.configureBlock) {
+            WithXmlAction action = new WithXmlAction(mavenContext.configureBlock)
             action.execute(mavenNode)
         }
-        stepNodes << mavenNode
 
+        stepNodes << mavenNode
+    }
+
+    def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
+        maven {
+            delegate.goals(targetsArg)
+            delegate.rootPOM(pomArg)
+            delegate.configure(configure)
+        }
     }
 
     /**
