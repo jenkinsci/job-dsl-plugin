@@ -851,4 +851,45 @@ class PublisherContext implements Context {
             delegate.associatedFiles(files)
         }
     }
+
+    /**
+     * Configures the Emma Code Coverage plugin
+     *
+     * <publishers>
+     *     <hudson.plugins.emma.EmmaPublisher>
+     *         <includes>coverage-results/coverage.xml</includes>
+     *         <healthReports>
+     *             <minClass>0</minClass>
+     *             <maxClass>100</maxClass>
+     *             <minMethod>0</minMethod>
+     *             <maxMethod>70</maxMethod>
+     *             <minBlock>0</minBlock>
+     *             <maxBlock>80</maxBlock>
+     *             <minLine>0</minLine>
+     *             <maxLine>80</maxLine>
+     *             <minCondition>0</minCondition>
+     *             <maxCondition>0</maxCondition>
+     *         </healthReports>
+     *     </hudson.plugins.emma.EmmaPublisher>
+     */
+    def emma(String fileSet = '', Closure emmaClosure = null) {
+        EmmaContext emmaContext = new EmmaContext()
+        AbstractContextHelper.executeInContext(emmaClosure, emmaContext)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.emma.EmmaPublisher' {
+            includes(fileSet)
+            healthReports {
+                minClass(emmaContext.classRange.getFrom())
+                maxClass(emmaContext.classRange.getTo())
+                minMethod(emmaContext.methodRange.getFrom())
+                maxMethod(emmaContext.methodRange.getTo())
+                minBlock(emmaContext.blockRange.getFrom())
+                maxBlock(emmaContext.blockRange.getTo())
+                minLine(emmaContext.lineRange.getFrom())
+                maxLine(emmaContext.lineRange.getTo())
+                minCondition(emmaContext.conditionRange.getFrom())
+                maxCondition(emmaContext.conditionRange.getTo())
+            }
+        }
+    }
 }
