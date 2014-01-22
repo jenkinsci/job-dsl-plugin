@@ -10,14 +10,14 @@ class EmmaContext implements Context {
     IntRange methodRange = 0..70
     IntRange blockRange = 0..80
     IntRange lineRange = 0..80
-    IntRange conditionRange = 0..<1
+    IntRange conditionRange = 0..80
 
     void minClass(int min) {
         classThreshold(min..Math.max(this.classRange.to, min))
     }
 
     void maxClass(int max) {
-        classThreshold(this.classRange.from..max)
+        classThreshold(Math.min(this.classRange.from, max)..max)
     }
 
     void classThreshold(IntRange range) {
@@ -31,7 +31,7 @@ class EmmaContext implements Context {
     }
 
     void maxMethod(int max) {
-        methodThreshold(this.methodRange.from..max)
+        methodThreshold(Math.min(this.methodRange.from, max)..max)
     }
 
     void methodThreshold(IntRange range) {
@@ -45,7 +45,7 @@ class EmmaContext implements Context {
     }
 
     void maxBlock(int max) {
-        blockThreshold(this.blockRange.from..max)
+        blockThreshold(Math.min(this.blockRange.from, max)..max)
     }
 
     void blockThreshold(IntRange range) {
@@ -59,7 +59,7 @@ class EmmaContext implements Context {
     }
 
     void maxLine(int max) {
-        lineThreshold(this.lineRange.from..max)
+        lineThreshold(Math.min(this.lineRange.from, max)..max)
     }
 
     void lineThreshold(IntRange range) {
@@ -73,7 +73,7 @@ class EmmaContext implements Context {
     }
 
     void maxCondition(int max) {
-        conditionThreshold(this.conditionRange.from..max)
+        conditionThreshold(Math.min(this.conditionRange.from, max)..max)
     }
 
     void conditionThreshold(IntRange range) {
