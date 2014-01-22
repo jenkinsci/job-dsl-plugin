@@ -150,6 +150,21 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.useShallowClone[0].text() == 'true'
     }
 
+    def 'call git scm with shallowClone, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            shallowClone()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.useShallowClone.size() == 1
+        context.scmNode.useShallowClone[0].text() == 'true'
+    }
+
     def 'call git scm with second shallowClone'() {
         when:
         context.git {
@@ -173,6 +188,21 @@ public class ScmHelperSpec extends Specification {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
             skipTag(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.skipTag.size() == 1
+        context.scmNode.skipTag[0].text() == 'true'
+    }
+
+    def 'call git scm with skipTag, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            skipTag()
         }
 
         then:
@@ -212,6 +242,21 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.clean[0].text() == 'true'
     }
 
+    def 'call git scm with clean, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            clean()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.clean.size() == 1
+        context.scmNode.clean[0].text() == 'true'
+    }
+
     def 'call git scm with second clean'() {
         when:
         context.git {
@@ -243,6 +288,21 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.wipeOutWorkspace[0].text() == 'true'
     }
 
+    def 'call git scm with wipeOutWorkspace, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            wipeOutWorkspace()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.wipeOutWorkspace.size() == 1
+        context.scmNode.wipeOutWorkspace[0].text() == 'true'
+    }
+
     def 'call git scm with second wipeOutWorkspace'() {
         when:
         context.git {
@@ -266,6 +326,21 @@ public class ScmHelperSpec extends Specification {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
             remotePoll(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.remotePoll.size() == 1
+        context.scmNode.remotePoll[0].text() == 'true'
+    }
+
+    def 'call git scm with remotePoll, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            remotePoll()
         }
 
         then:

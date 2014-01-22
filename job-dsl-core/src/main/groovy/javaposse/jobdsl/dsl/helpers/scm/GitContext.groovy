@@ -67,23 +67,23 @@ class GitContext implements Context {
         this.branches.addAll(branches)
     }
 
-    void skipTag(boolean skipTag) {
+    void skipTag(boolean skipTag = true) {
         this.skipTag = skipTag
     }
 
-    void clean(boolean clean) {
+    void clean(boolean clean = true) {
         this.clean = clean
     }
 
-    void wipeOutWorkspace(boolean wipeOutWorkspace) {
+    void wipeOutWorkspace(boolean wipeOutWorkspace = true) {
         this.wipeOutWorkspace = wipeOutWorkspace
     }
 
-    void remotePoll(boolean remotePoll) {
+    void remotePoll(boolean remotePoll = true) {
         this.remotePoll = remotePoll
     }
 
-    void shallowClone(boolean shallowClone) {
+    void shallowClone(boolean shallowClone = true) {
         this.shallowClone = shallowClone
     }
 
