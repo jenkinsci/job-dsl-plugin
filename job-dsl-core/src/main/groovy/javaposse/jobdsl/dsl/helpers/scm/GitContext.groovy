@@ -12,7 +12,7 @@ class GitContext implements Context {
 
     List<Node> remoteConfigs = []
     List<String> branches = []
-    boolean skipTag = false
+    boolean createTag = false
     boolean clean = false
     boolean wipeOutWorkspace = false
     boolean remotePoll = false
@@ -32,7 +32,7 @@ class GitContext implements Context {
         RemoteContext remoteContext = new RemoteContext(withXmlActions)
         executeInContext(remoteClosure, remoteContext)
 
-        remoteConfigs << NodeBuilder.newInstance().('hudson.plugins.git.UserRemoteConfig') {
+        remoteConfigs << NodeBuilder.newInstance().'hudson.plugins.git.UserRemoteConfig' {
             if (remoteContext.name) {
                 name(remoteContext.name)
             }
@@ -51,7 +51,7 @@ class GitContext implements Context {
     }
 
     void mergeOptions(String remote = null, String branch) {
-        mergeOptions = NodeBuilder.newInstance().('userMergeOptions') {
+        mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
             if (remote) {
                 mergeRemote(remote)
             }
@@ -67,8 +67,8 @@ class GitContext implements Context {
         this.branches.addAll(branches)
     }
 
-    void skipTag(boolean skipTag = true) {
-        this.skipTag = skipTag
+    void createTag(boolean createTag = true) {
+        this.createTag = createTag
     }
 
     void clean(boolean clean = true) {

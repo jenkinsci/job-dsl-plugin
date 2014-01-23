@@ -181,19 +181,19 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.useShallowClone[0].text() == 'true'
     }
 
-    def 'call git scm with skipTag'() {
+    def 'call git scm with createTag'() {
         when:
         context.git {
             remote {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
-            skipTag(true)
+            createTag(true)
         }
 
         then:
         context.scmNode != null
         context.scmNode.skipTag.size() == 1
-        context.scmNode.skipTag[0].text() == 'true'
+        context.scmNode.skipTag[0].text() == 'false'
     }
 
     def 'call git scm with skipTag, no argument'() {
@@ -202,13 +202,13 @@ public class ScmHelperSpec extends Specification {
             remote {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
-            skipTag()
+            createTag()
         }
 
         then:
         context.scmNode != null
         context.scmNode.skipTag.size() == 1
-        context.scmNode.skipTag[0].text() == 'true'
+        context.scmNode.skipTag[0].text() == 'false'
     }
 
     def 'call git scm with second skipTag'() {
@@ -217,14 +217,14 @@ public class ScmHelperSpec extends Specification {
             remote {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
-            skipTag(false)
-            skipTag(true)
+            createTag(false)
+            createTag(true)
         }
 
         then:
         context.scmNode != null
         context.scmNode.skipTag.size() == 1
-        context.scmNode.skipTag[0].text() == 'true'
+        context.scmNode.skipTag[0].text() == 'false'
     }
 
     def 'call git scm with clean'() {

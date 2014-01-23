@@ -159,7 +159,7 @@ class ScmContext implements Context {
             //excludedUsers
             //gitConfigName
             //gitConfigEmail
-            skipTag gitContext.skipTag
+            skipTag !gitContext.createTag
             //includedRegions
             //scmName
             if (gitContext.shallowClone) {
@@ -204,6 +204,7 @@ class ScmContext implements Context {
             if (configure) {
                 delegate.configure(configure)
             }
+            delegate.createTag()
         }
     }
 
