@@ -45,6 +45,7 @@ jenkinsPlugin {
 
 dependencies {
     compile project(':job-dsl-core')
+    optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'ant', version: '1.2', ext: 'jar']) // see JENKINS-17129
     optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'cloudbees-folder', version: '4.0', ext: 'jar'])
     optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'credentials', version: '1.6', ext: 'jar'])
 }

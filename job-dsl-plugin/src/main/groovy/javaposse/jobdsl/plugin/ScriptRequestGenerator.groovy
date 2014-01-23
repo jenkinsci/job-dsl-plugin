@@ -19,10 +19,8 @@ class ScriptRequestGenerator {
     public Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText, boolean ignoreExisting) throws IOException, InterruptedException {
         Set<ScriptRequest> scriptRequests = Sets.newHashSet();
 
-        String jobName = build.getProject().getName();
-        URL workspaceUrl = new URL(null, "workspace://" + jobName + "/", new WorkspaceUrlHandler());
-
         if(usingScriptText) {
+            URL workspaceUrl = WorkspaceProtocol.createWorkspaceUrl(build.project)
             ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl, ignoreExisting);
             scriptRequests.add(request);
         } else {
@@ -30,8 +28,7 @@ class ScriptRequestGenerator {
 
             FilePath[] filePaths =  build.getWorkspace().list(targetsStr.replace("\n", ","));
             for (FilePath filePath : filePaths) {
-                String relativePath = filePath.parent.getRemote() - build.getWorkspace().getRemote()
-                URL relativeWorkspaceUrl = new URL(workspaceUrl, relativePath + "/")
+                URL relativeWorkspaceUrl = WorkspaceProtocol.createWorkspaceUrl(build, filePath.parent)
                 ScriptRequest request = new ScriptRequest(filePath.name, null, relativeWorkspaceUrl, ignoreExisting);
                 scriptRequests.add(request);
             }

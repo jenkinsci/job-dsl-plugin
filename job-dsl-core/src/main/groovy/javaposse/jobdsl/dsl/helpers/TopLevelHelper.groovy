@@ -305,5 +305,4 @@ class TopLevelHelper extends AbstractHelper {
             }
         }
     }
-
 }
