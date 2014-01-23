@@ -284,8 +284,6 @@ class TopLevelHelper extends AbstractHelper {
             it / node
         }
     }
-<<<<<<< HEAD
-=======
 
     /**
      * <project>
@@ -307,6 +305,4 @@ class TopLevelHelper extends AbstractHelper {
             }
         }
     }
-
->>>>>>> 34536a31b76282b12fe8ee697da73e9352ff3986
 }
