@@ -48,7 +48,6 @@ class MatrixHelper extends AbstractHelper {
      */
     def matrixAxis( String axis, String n, Iterable<String> v) {
         AxisType a = axis as AxisType
-        //def an = axis.getAxisName()
         def an = a.axisName
         execute {
             it / axes << "${an}" {
@@ -57,6 +56,13 @@ class MatrixHelper extends AbstractHelper {
                     v.each(){ string it}
                 }
             }
+        }
+    }
+    //or some other axis from a different plugin
+    def matrixAxis2(Closure axisClosure) {
+
+        execute {
+            it / axes << axisClosure
         }
     }
 
