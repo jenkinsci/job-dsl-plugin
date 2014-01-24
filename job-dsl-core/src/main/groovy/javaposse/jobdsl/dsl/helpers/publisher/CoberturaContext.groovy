@@ -18,19 +18,19 @@ class CoberturaContext implements Context {
         METHOD, LINE, CONDITIONAL, PACKAGES, FILES, CLASSES
     }
     def targets = [
-        "METHOD": new Target(
+        "METHOD": new CoberturaTarget(
             targetType: TargetType.METHOD,
             healthyTarget: 8000000,
             unhealthyTarget: 0,
             failingTarget: 0
         ),
-        'LINE': new Target(
+        'LINE': new CoberturaTarget(
             targetType: TargetType.LINE,
             healthyTarget: 8000000,
             unhealthyTarget: 0,
             failingTarget: 0
         ),
-        'CONDITIONAL': new Target(
+        'CONDITIONAL': new CoberturaTarget(
             targetType: TargetType.CONDITIONAL,
             healthyTarget: 7000000,
             unhealthyTarget: 0,
@@ -238,7 +238,7 @@ class CoberturaContext implements Context {
         Preconditions.checkArgument((0..100).contains(healthy), 'Invalid healthyTarget treshold, percentage (0-100) expected')
         Preconditions.checkArgument((0..100).contains(unhealthy), 'Invalid unhealthyTarget treshold, percentage (0-100) expected')
         Preconditions.checkArgument((0..100).contains(failing), 'Invalid failingTarget treshold, percentage (0-100) expected')
-        this.targets.put(targetType, new Target(
+        this.targets.put(targetType, new CoberturaTarget(
             targetType: targetType,
             healthyTarget: healthy * 100000,
             unhealthyTarget: unhealthy * 100000,
@@ -259,10 +259,12 @@ class CoberturaContext implements Context {
         this.sourceEncoding = sourceEncoding
     }
 
-    static class Target {
+    static class CoberturaTarget {
         String targetType
         String healthyTarget
         String unhealthyTarget
         String failingTarget
     }
 }
+
+

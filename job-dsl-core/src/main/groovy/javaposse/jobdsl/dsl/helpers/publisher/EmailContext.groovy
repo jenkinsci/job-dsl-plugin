@@ -45,5 +45,6 @@ class EmailContext implements Context {
         boolean sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList
 
     }
-
 }
+
+

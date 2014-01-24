@@ -58,13 +58,6 @@ class MatrixHelper extends AbstractHelper {
             }
         }
     }
-    //or some other axis from a different plugin
-    def matrixAxis2(Closure axisClosure) {
-
-        execute {
-            it / axes << axisClosure
-        }
-    }
 
     /*
      * <project>

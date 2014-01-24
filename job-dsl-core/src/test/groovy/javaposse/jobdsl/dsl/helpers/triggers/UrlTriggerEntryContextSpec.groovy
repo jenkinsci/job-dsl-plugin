@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.triggers
 
 import spock.lang.Specification
 

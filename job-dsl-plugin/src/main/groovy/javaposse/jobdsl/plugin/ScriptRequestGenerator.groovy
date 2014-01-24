@@ -17,7 +17,7 @@ class ScriptRequestGenerator {
     }
 
     public Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText, boolean ignoreExisting) throws IOException, InterruptedException {
-        Set<ScriptRequest> scriptRequests = Sets.newHashSet();
+        Set<ScriptRequest> scriptRequests = Sets.newLinkedHashSet();
 
         if(usingScriptText) {
             URL workspaceUrl = WorkspaceProtocol.createWorkspaceUrl(build.project)
