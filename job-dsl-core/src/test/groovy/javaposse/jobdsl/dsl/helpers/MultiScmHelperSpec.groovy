@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -10,7 +11,8 @@ public class MultiScmHelperSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
 
     List<WithXmlAction> mockActions = Mock()
-    MultiScmContextHelper helper = new MultiScmContextHelper(mockActions, JobType.Freeform)
+    JobManagement mockJobManagement = Mock(JobManagement)
+    MultiScmContextHelper helper = new MultiScmContextHelper(mockActions, JobType.Freeform, mockJobManagement)
     ScmContext context = new ScmContext(true)
 
     // Most tests are in ScmHelperSpec
