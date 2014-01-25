@@ -40,6 +40,44 @@ class AbstractStepContext implements Context {
         }
     }
 
+    def gradle(String tasksArg){
+        gradle(tasksArg,null,null)
+    }
+    
+    def gradle(String tasksArg=null, String switchesArg=null, Closure gradleClosure) {
+        GradleContext gradleContext = new GradleContext()
+        if(gradleClosure!=null){
+            AbstractContextHelper.executeInContext(gradleClosure, gradleContext)
+        }
+        
+        if(switchesArg){
+            gradleContext.switches = switchesArg
+        }
+        if(tasksArg){
+            gradleContext.tasks = tasksArg
+        }
+        
+        def nodeBuilder = new NodeBuilder()
+        def gradleNode = nodeBuilder.'hudson.plugins.gradle.Gradle' {
+            description gradleContext.description
+            switches gradleContext.switches
+            tasks gradleContext.tasks
+            rootBuildScriptDir gradleContext.rootBuildScriptDir
+            buildFile gradleContext.buildFile
+            useWrapper gradleContext.useWrapper.toString()
+            if(gradleContext.fromRootBuildScriptDir!=null){
+                fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir.toString()
+            }
+            if(gradleContext.makeExecutable!=null){
+                makeExecutable gradleContext.makeExecutable.toString()
+            }
+            if(gradleContext.gradleName != null){
+                gradleName gradleContext.gradleName
+            }
+        }
+        stepNodes << gradleNode
+    }
+
     /**
      <hudson.plugins.gradle.Gradle>
      <description/>
@@ -51,7 +89,7 @@ class AbstractStepContext implements Context {
      <wrapperScript/>
      </hudson.plugins.gradle.Gradle>
      */
-    def gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg = true, Closure configure = null) {
+    def gradle(String tasksArg, String switchesArg, Boolean useWrapperArg=null, Closure configure=null) {
         def nodeBuilder = new NodeBuilder()
         def gradleNode = nodeBuilder.'hudson.plugins.gradle.Gradle' {
             description ''

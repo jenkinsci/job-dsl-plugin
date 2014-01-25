@@ -58,6 +58,32 @@ public class StepHelperSpec extends Specification {
         def gradleStep2 = context.stepNodes[1]
         gradleStep2.switches[0].value() == '-I init.gradle'
         gradleStep2.useWrapper[0].value() == 'false'
+        
+        when:
+        context.gradle('tasks','switches'){
+            useWrapper  false
+            description  'desc'
+            rootBuildScriptDir  'rbsd'
+            buildFile  'bf'
+            gradleName  'gn'
+            fromRootBuildScriptDir true
+            makeExecutable true
+        }
+        
+        then:
+        context.stepNodes.size() == 3
+        def gradleStep3 = context.stepNodes[2]
+        gradleStep3.tasks[0].value() == 'tasks'
+        gradleStep3.switches[0].value() == 'switches'
+        gradleStep3.useWrapper[0].value() == 'false'
+        gradleStep3.description[0].value() == 'desc'
+        gradleStep3.rootBuildScriptDir[0].value() == 'rbsd'
+        gradleStep3.buildFile[0].value() == 'bf'
+        gradleStep3.gradleName[0].value() == 'gn'
+        gradleStep3.fromRootBuildScriptDir[0].value() == 'true'
+        gradleStep3.makeExecutable[0].value() == 'true'
+        
+        
     }
 
     def 'call grails methods'() {
