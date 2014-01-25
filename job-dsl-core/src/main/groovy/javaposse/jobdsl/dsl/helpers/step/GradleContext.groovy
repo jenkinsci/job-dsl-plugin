@@ -12,6 +12,7 @@ class GradleContext implements Context {
 	String rootBuildScriptDir = ''
 	String buildFile = ''
 	Boolean fromRootBuildScriptDir
+	String	gradleName = null
 
 
 	def tasks(String tasks){
@@ -40,5 +41,9 @@ class GradleContext implements Context {
 
 	def fromRootBuildScriptDir(Boolean fromRootBuildScriptDir) {
 		this.fromRootBuildScriptDir = fromRootBuildScriptDir
+	}
+
+	def gradleName(String gradleName) {
+		this.gradleName = gradleName
 	}
 }

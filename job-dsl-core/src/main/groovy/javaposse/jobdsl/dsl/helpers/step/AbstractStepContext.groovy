@@ -39,13 +39,9 @@ class AbstractStepContext implements Context {
         }
     }
 
-	/**
-	 * 
-	 * @return
-	 */
-	def gradle(String tasksArg , String switchesArg , Closure gradlClosure ) {
+	def gradle(String tasksArg , String switchesArg , Closure gradleClosure ) {
 		GradleContext gradleContext = new GradleContext()
-		AbstractContextHelper.executeInContext(gradlClosure, gradleContext)
+		AbstractContextHelper.executeInContext(gradleClosure, gradleContext)
 
 		if(switchesArg){
 			gradleContext.switches = switchesArg
@@ -64,6 +60,9 @@ class AbstractStepContext implements Context {
 			useWrapper gradleContext.useWrapper.toString()
 			if(gradleContext.fromRootBuildScriptDir!=null){
 				fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir.toString()
+			}
+			if(gradleContext.gradleName != null){
+				gradleName gradleContext.gradleName
 			}
 		}
 		stepNodes << gradleNode

@@ -65,6 +65,7 @@ public class StepHelperSpec extends Specification {
 			description  'desc'
 			rootBuildScriptDir  'rbsd'
 			buildFile  'bf'
+			gradleName  'gn'
 			fromRootBuildScriptDir true
 		}
 		
@@ -77,6 +78,7 @@ public class StepHelperSpec extends Specification {
 		gradleStep3.description[0].value() == 'desc'
 		gradleStep3.rootBuildScriptDir[0].value() == 'rbsd'
 		gradleStep3.buildFile[0].value() == 'bf'
+		gradleStep3.gradleName[0].value() == 'gn'
 		gradleStep3.fromRootBuildScriptDir[0].value() == 'true'
 		
     }
