@@ -38,10 +38,16 @@ class AbstractStepContext implements Context {
             'command' commandStr
         }
     }
-
-	def gradle(String tasksArg , String switchesArg , Closure gradleClosure ) {
+	
+	def gradle(String tasksArg){
+		gradle(tasksArg,null,null)
+	}
+	
+	def gradle(String tasksArg=null, String switchesArg=null, Closure gradleClosure) {
 		GradleContext gradleContext = new GradleContext()
-		AbstractContextHelper.executeInContext(gradleClosure, gradleContext)
+		if(gradleClosure!=null){
+			AbstractContextHelper.executeInContext(gradleClosure, gradleContext)
+		}
 
 		if(switchesArg){
 			gradleContext.switches = switchesArg
@@ -79,7 +85,7 @@ class AbstractStepContext implements Context {
      <wrapperScript/>
      </hudson.plugins.gradle.Gradle>
      */
-    def gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg = true, Closure configure = null) {
+    def gradle(String tasksArg, String switchesArg, Boolean useWrapperArg=null, Closure configure=null) {
         def nodeBuilder = new NodeBuilder()
         def gradleNode = nodeBuilder.'hudson.plugins.gradle.Gradle' {
             description ''
