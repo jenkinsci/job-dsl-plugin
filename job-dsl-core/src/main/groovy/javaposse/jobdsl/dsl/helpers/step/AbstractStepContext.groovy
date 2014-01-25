@@ -39,6 +39,36 @@ class AbstractStepContext implements Context {
         }
     }
 
+	/**
+	 * 
+	 * @return
+	 */
+	def gradle(String tasksArg , String switchesArg , Closure gradlClosure ) {
+		GradleContext gradleContext = new GradleContext()
+		AbstractContextHelper.executeInContext(gradlClosure, gradleContext)
+
+		if(switchesArg){
+			gradleContext.switches = switchesArg
+		}
+		if(tasksArg){
+			gradleContext.tasks = tasksArg
+		}
+
+		def nodeBuilder = new NodeBuilder()
+		def gradleNode = nodeBuilder.'hudson.plugins.gradle.Gradle' {
+			description gradleContext.description
+			switches gradleContext.switches
+			tasks gradleContext.tasks
+			rootBuildScriptDir gradleContext.rootBuildScriptDir
+			buildFile gradleContext.buildFile
+			useWrapper gradleContext.useWrapper.toString()
+			if(gradleContext.fromRootBuildScriptDir!=null){
+				fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir.toString()
+			}
+		}
+		stepNodes << gradleNode
+	}
+	
     /**
      <hudson.plugins.gradle.Gradle>
      <description/>
