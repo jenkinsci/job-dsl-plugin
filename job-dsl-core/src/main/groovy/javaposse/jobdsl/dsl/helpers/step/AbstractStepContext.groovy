@@ -67,6 +67,9 @@ class AbstractStepContext implements Context {
 			if(gradleContext.fromRootBuildScriptDir!=null){
 				fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir.toString()
 			}
+			if(gradleContext.makeExecutable!=null){
+				makeExecutable gradleContext.makeExecutable.toString()
+			}
 			if(gradleContext.gradleName != null){
 				gradleName gradleContext.gradleName
 			}

@@ -67,6 +67,7 @@ public class StepHelperSpec extends Specification {
 			buildFile  'bf'
 			gradleName  'gn'
 			fromRootBuildScriptDir true
+			makeExecutable true
 		}
 		
 		then:
@@ -80,6 +81,8 @@ public class StepHelperSpec extends Specification {
 		gradleStep3.buildFile[0].value() == 'bf'
 		gradleStep3.gradleName[0].value() == 'gn'
 		gradleStep3.fromRootBuildScriptDir[0].value() == 'true'
+		gradleStep3.makeExecutable[0].value() == 'true'
+		
 		
     }
 
