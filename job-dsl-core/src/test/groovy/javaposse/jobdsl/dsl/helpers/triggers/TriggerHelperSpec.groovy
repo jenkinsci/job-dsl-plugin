@@ -404,7 +404,23 @@ public class TriggerHelperSpec extends Specification {
         gerritTrigger.gerritBuildUnstableCodeReviewValue.size() == 1
         gerritTrigger.gerritBuildUnstableCodeReviewValue[0].value() == '0'
     }
-
+	
+    def 'call gerrit trigger and verify events are created'(){
+        when:
+        context.gerrit { events { RefUpdated } }
+        then:
+        def gerritTrigger = context.triggerNodes[0]
+        gerritTrigger.triggerOnEvents.size() == 1
+        gerritTrigger.triggerOnEvents.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginRefUpdatedEvent' != null
+    }
+    
+    def 'call gerrit trigger and verify invalid eventnames are rejected'(){
+        when:
+        context.gerrit { events { UnknownEvent } }
+        then:
+        thrown(IllegalArgumentException)
+    }
+    
 
     def 'call gerrit trigger and verify build status value methods'() {
       when:
