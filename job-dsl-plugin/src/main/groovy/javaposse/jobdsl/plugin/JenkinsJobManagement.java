@@ -11,6 +11,7 @@ import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
 import hudson.model.*;
+import hudson.model.AbstractItem;
 import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.*;
 import jenkins.model.Jenkins;
@@ -83,7 +84,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullJobName);
+        AbstractItem project = Jenkins.getInstance().getItemByFullName(fullJobName, AbstractItem.class);
         String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
@@ -120,7 +121,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public void queueJob(String jobName) throws JobNameNotProvidedException {
         validateJobNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
+        Item item = Jenkins.getInstance().getItemByFullName(jobName);
+        if (!(item instanceof AbstractProject<?, ?>)) {
+            getOutputStream().println(String.format("Scheduling build is not possible: %s", jobName));;
+            return;
+        }
+
+        AbstractProject<?,?> project = (AbstractProject<?,?>) item;
 
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
@@ -161,7 +168,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
+        AbstractItem project = Jenkins.getInstance().getItemByFullName(jobName, AbstractItem.class);
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
@@ -175,7 +182,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return jobXml;
     }
 
-    private boolean updateExistingJob(AbstractProject<?, ?> project, String config) {
+    private boolean updateExistingJob(AbstractItem project, String config) {
         boolean created;
 
         // Leverage XMLUnit to perform diffs

@@ -217,7 +217,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = (AbstractProject) Jenkins.getInstance().getItem(templateName);
+            AbstractItem templateProject = Jenkins.getInstance().getItemByFullName(templateName, AbstractItem.class);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -262,18 +262,26 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
+            Item removedProject = Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
             if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
+                boolean disableJob = false;
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
                         removedProject.delete();
                     } catch(InterruptedException e) {
                         listener.getLogger().println(String.format("Delete job failed: %s", removedJob));
                         listener.getLogger().println(String.format("Disabling job instead: %s", removedJob));
-                        removedProject.disable();
+                        disableJob = true;
                     }
                 } else {
-                    removedProject.disable();
+                	disableJob = true;
+                }
+                if (disableJob) {
+                    if (removedProject instanceof AbstractProject<?,?>) {
+                        ((AbstractProject<?,?>)removedProject).disable();
+                    } else {
+                        listener.getLogger().println(String.format("Disable job failed: %s", removedJob));
+                    }
                 }
             }
         }
