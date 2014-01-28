@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 
@@ -23,9 +24,11 @@ import javaposse.jobdsl.dsl.WithXmlAction
  }
  */
 class ScmContextHelper extends AbstractContextHelper<ScmContext> {
+    private JobManagement jobManagement
 
-    ScmContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+    ScmContextHelper(List<WithXmlAction> withXmlActions, JobType jobType, JobManagement jobManagement) {
         super(withXmlActions, jobType)
+        this.jobManagement = jobManagement
     }
 
     /**
@@ -34,7 +37,7 @@ class ScmContextHelper extends AbstractContextHelper<ScmContext> {
      * @return
      */
     def scm(Closure closure) {
-        execute(closure, new ScmContext(false, withXmlActions))
+        execute(closure, new ScmContext(false, withXmlActions, jobManagement))
     }
 
     Closure generateWithXmlClosure(ScmContext context) {
