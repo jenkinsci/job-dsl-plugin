@@ -37,7 +37,7 @@ public class GeneratedJobsAction implements Action {
         for (b = project.getLastBuild(); b != null; b = b.getPreviousBuild()) {
             GeneratedJobsBuildAction ret = b.getAction(GeneratedJobsBuildAction.class);
             if (ret != null && ret.getModifiedJobs() != null) {
-                return Sets.newHashSet(ret.getModifiedJobs());
+                return Sets.newLinkedHashSet(ret.getModifiedJobs());
             }
         }
         return null;

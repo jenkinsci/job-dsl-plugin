@@ -1,11 +1,12 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
-import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.Context
 
-import static javaposse.jobdsl.dsl.helpers.WrapperContext.Timeout.absolute
+import static WrapperContext.Timeout.absolute
 
 class WrapperContext implements Context {
     List<Node> wrapperNodes = []
@@ -84,37 +85,6 @@ class WrapperContext implements Context {
         absolute,
         elastic,
         likelyStuck
-    }
-
-    /** Context to configure timeout */
-    def static class TimeoutContext implements Context {
-
-        Timeout type
-        def limit  = 3
-        def failBuild = false
-        def writeDescription = false
-        def percentage = 0
-
-        TimeoutContext(Timeout type) {
-            this.type = type
-        }
-
-        def limit(int limit) {
-            this.limit = limit
-        }
-
-        def failBuild(boolean fail) {
-            this.failBuild = fail
-        }
-
-        def writeDescription(boolean writeDesc) {
-            this.writeDescription = writeDesc
-        }
-
-        def percentage(int percentage) {
-            this.percentage = percentage
-        }
-
     }
 
     /**
@@ -228,35 +198,6 @@ class WrapperContext implements Context {
 
     def allocatePorts(Closure cl = null) {
         allocatePorts(new String[0], cl)
-    }
-
-    def static class Port {
-        String port
-        String username
-        String password
-    }
-
-
-    @Canonical
-    def static class PortsContext implements Context {
-        def simplePorts = []
-        def glassfishPorts = []
-        def tomcatPorts = []
-
-        def port(String port, String... ports) {
-            simplePorts << new Port(port: port)
-            ports.each {
-                simplePorts << new Port(port: port)
-            }
-        }
-
-        def glassfish(String port, String user, String password) {
-            glassfishPorts << new Port(port: port, username: user, password: password)
-        }
-
-        def tomcat(String port, String password) {
-            tomcatPorts << new Port(port: port, password: password)
-        }
     }
 
     /**

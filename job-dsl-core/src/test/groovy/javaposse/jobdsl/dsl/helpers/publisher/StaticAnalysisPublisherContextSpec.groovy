@@ -8,7 +8,7 @@ import spock.lang.Unroll
 class StaticAnalysisPublisherContextSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
     PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform)
-    PublisherContextHelper.PublisherContext context = new PublisherContextHelper.PublisherContext()
+    PublisherContext context = new PublisherContext()
 
     @Unroll
     def 'add #analysisTool with default values'(analysisTool, extraNodes) {
@@ -42,6 +42,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         'dependencyCheck' | [:]
         'androidLint'     | [:]
         'checkstyle'      | [:]
+        'jshint'          | [:]
         'dry'             | [highThreshold: 50, normalThreshold: 25]
         'tasks'           | [excludePattern: '', high: '', normal: '', low: '', ignoreCase: false]
     }
@@ -126,6 +127,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 [true]                                                                                   |
                 [isRankActivated: true]
         'checkstyle'      | 'hudson.plugins.checkstyle.CheckStylePublisher'                  | []        | [:]
+        'jshint'          | 'hudson.plugins.jshint.CheckStylePublisher'                      | []        | [:]
         'ccm'             | 'hudson.plugins.ccm.CcmPublisher'                                | []        | [:]
         'dependencyCheck' | 'org.jenkinsci.plugins.DependencyCheck.DependencyCheckPublisher' | []        | [:]
         'androidLint'     | 'org.jenkinsci.plugins.android__lint.LintPublisher'              | []        | [:]

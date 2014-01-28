@@ -17,7 +17,7 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
     static def executeInContext(Closure closure, Context freshContext) {
         if(closure) {
             closure.delegate = freshContext
-            //closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
             def result = closure.call() // No args
 
             // TODO Create callback to concrete classes, so that they can "enhance" the closure, e.g. with static imports

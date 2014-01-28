@@ -1,9 +1,10 @@
-package javaposse.jobdsl.dsl.helpers
-
+package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
 
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.AbstractHelper
 
 class TopLevelHelper extends AbstractHelper {
 
@@ -84,22 +85,45 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
-    def static class EnvironmentVariableContext implements Context {
-        def props = []
-        def groovyScript
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <properties>
+     *         <hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *             <maxConcurrentPerNode>0</maxConcurrentPerNode>
+     *             <maxConcurrentTotal>0</maxConcurrentTotal>
+     *             <categories>
+     *                 <string>CDH5-repo-update</string>
+     *             </categories>
+     *             <throttleEnabled>true</throttleEnabled>
+     *             <throttleOption>category</throttleOption>
+     *         </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *     <properties>
+     * </project>
+     * }
+     * </pre>
+     */
+    def throttleConcurrentBuilds(Closure throttleClosure) {
+        ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
+        AbstractContextHelper.executeInContext(throttleClosure, throttleContext)
 
-        def env(Object key, Object value) {
-            props << "${key}=${value}"
-        }
-
-        def envs(Map<Object, Object> map) {
-            map.entrySet().each {
-                env(it.key, it.value)
+        execute {
+            it / 'properties' / 'hudson.plugins.throttleconcurrents.ThrottleJobProperty' {
+                maxConcurrentPerNode throttleContext.maxConcurrentPerNode
+                maxConcurrentTotal throttleContext.maxConcurrentTotal
+                throttleEnabled throttleContext.throttleDisabled ? 'false' : 'true'
+                if (throttleContext.categories.isEmpty()) {
+                    throttleOption 'project'
+                } else {
+                    throttleOption 'category'
+                }
+                categories {
+                    throttleContext.categories.each { c ->
+                        string c
+                    }
+                }
             }
-        }
-
-        def groovy(String script) {
-            groovyScript = script
         }
     }
 
