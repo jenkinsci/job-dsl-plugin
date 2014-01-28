@@ -894,7 +894,9 @@ class PublisherContext implements Context {
     }
 	
 	/**
-	 * Configures Jenkins job to publish Robot Framework reports
+	 * Configures Jenkins job to publish Robot Framework reports.
+	 * By default the following values are applied. If an instance of a 
+	 * closure is provided, the values from the closure will take effect.
 	 * 
 	 * {@code 
 	 *   <publishers>
@@ -911,20 +913,9 @@ class PublisherContext implements Context {
 	 *}
 	 * @see https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
 	 */
-	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold,
-		Boolean robotOnlyCritical, String robotOutputPath, 
-		String robotReportFileName, String robotLogFileName, String robotOutputFileName,
-		Closure robotClosure = null) {
+	def publishRobotFrameworkReports(Closure robotClosure = null) {
 		
 		RobotFrameworkContext ctx = new RobotFrameworkContext()
-		ctx.passThreshold(robotPassThreshold)
-		ctx.unstableThreshold(robotUnstableThreshold)
-		ctx.outputPath(robotOutputPath)
-		ctx.onlyCritical(robotOnlyCritical)
-		ctx.reportFileName(robotReportFileName)
-		ctx.logFileName(robotLogFileName)
-		ctx.outputFileName(robotOutputFileName)
-		
 		AbstractContextHelper.executeInContext(robotClosure, ctx)
 		
 		def nodeBuilder = NodeBuilder.newInstance()
@@ -939,23 +930,5 @@ class PublisherContext implements Context {
 		}
 		
 		publisherNodes << robotNode
-	}
-		
-	def publishRobotFrameworkReports(Closure robotClosure = null) {
-		publishRobotFrameworkReports(100.0, 0.0, false, null, null, null, null, robotClosure)
-	}
-		
-	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold, Closure robotClosure = null) {
-		publishRobotFrameworkReports(robotPassThreshold, robotUnstableThreshold, false, null, null, null, null, robotClosure)
-	}
-		
-	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold, 
-		Boolean robotOnlyCritical, Closure robotClosure = null) {
-		publishRobotFrameworkReports(robotPassThreshold, robotUnstableThreshold, robotOnlyCritical, null, null, null, null, robotClosure)
-	}
-		
-	def publishRobotFrameworkReports(Double robotPassThreshold, Double robotUnstableThreshold, 
-		Boolean robotOnlyCritical, String robotOutputPath, Closure robotClosure = null) {
-		publishRobotFrameworkReports(robotPassThreshold, robotUnstableThreshold, robotOnlyCritical, robotOutputPath, null, null, null, robotClosure)
 	}
 }

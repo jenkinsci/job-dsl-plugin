@@ -1447,7 +1447,9 @@ public class PublisherHelperSpec extends Specification {
 	
 	def 'publish Robot framework report using specific value for outputPath'() {
 		when:
-		context.publishRobotFrameworkReports(100.0, 0.0, false, "/path/to/foo")
+		context.publishRobotFrameworkReports {
+            outputPath("/path/to/foo")
+        }
 		
 		then:
 		Node node = context.publisherNodes[0]
@@ -1457,7 +1459,10 @@ public class PublisherHelperSpec extends Specification {
 	
 	def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
 		when:
-		context.publishRobotFrameworkReports(100.0, 10.0)
+		context.publishRobotFrameworkReports{
+            passThreshold(100.0)
+            unstableThreshold(10.0)
+        }
 			
 		then:
 		Node node = context.publisherNodes[0]
@@ -1468,7 +1473,9 @@ public class PublisherHelperSpec extends Specification {
 	
 	def 'publish Robot framework report using specific value for onlyCritical'() {
 		when:
-		context.publishRobotFrameworkReports(100.0, 0.0, true)
+		context.publishRobotFrameworkReports {
+            onlyCritical(true)
+        }
 			
 		then:
 		Node node = context.publisherNodes[0]
