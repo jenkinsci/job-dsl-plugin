@@ -1428,78 +1428,74 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
-	
-	def 'publish Robot framework report using default values'() {
-		when:
-		context.publishRobotFrameworkReports()
-		
-		then:
-		Node node = context.publisherNodes[0]
-		node.name() == 'hudson.plugins.robot.RobotPublisher'
-		node.outputPath[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_PATH
-		node.passThreshold[0].value() == 100.0
-		node.unstableThreshold[0].value() == 0.0
-		node.onlyCritical[0].value() == false
-		node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
-		node.logFileName[0].value() == RobotFrameworkContext.DEFAULT_LOG_FILE_NAME
-		node.outputFileName[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_FILE_NAME
-	}
-	
-	def 'publish Robot framework report using specific value for outputPath'() {
-		when:
-		context.publishRobotFrameworkReports {
-            outputPath("/path/to/foo")
-        }
-		
-		then:
-		Node node = context.publisherNodes[0]
-		node.name() == 'hudson.plugins.robot.RobotPublisher'
-		node.outputPath[0].value() == '/path/to/foo'
-	}
-	
-	def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
-		when:
-		context.publishRobotFrameworkReports{
+    
+    def 'publish Robot framework report using default values'() {
+        when:
+        context.publishRobotFrameworkReports()
+
+        then:
+        Node node = context.publisherNodes[0]
+        node.name() == 'hudson.plugins.robot.RobotPublisher'
+        node.outputPath[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_PATH
+        node.passThreshold[0].value() == 100.0
+        node.unstableThreshold[0].value() == 0.0
+        node.onlyCritical[0].value() == false
+        node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
+        node.logFileName[0].value() == RobotFrameworkContext.DEFAULT_LOG_FILE_NAME
+        node.outputFileName[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_FILE_NAME
+    }
+
+    def 'publish Robot framework report using specific value for outputPath'() {
+        when:
+        context.publishRobotFrameworkReports { outputPath("/path/to/foo") }
+
+        then:
+        Node node = context.publisherNodes[0]
+        node.name() == 'hudson.plugins.robot.RobotPublisher'
+        node.outputPath[0].value() == '/path/to/foo'
+    }
+
+    def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
+        when:
+        context.publishRobotFrameworkReports{
             passThreshold(100.0)
             unstableThreshold(10.0)
         }
-			
-		then:
-		Node node = context.publisherNodes[0]
-		node.name() == 'hudson.plugins.robot.RobotPublisher'
-		node.passThreshold[0].value() == 100.0
-		node.unstableThreshold[0].value() == 10.0
-	}
-	
-	def 'publish Robot framework report using specific value for onlyCritical'() {
-		when:
-		context.publishRobotFrameworkReports {
-            onlyCritical(true)
+
+        then:
+        Node node = context.publisherNodes[0]
+        node.name() == 'hudson.plugins.robot.RobotPublisher'
+        node.passThreshold[0].value() == 100.0
+        node.unstableThreshold[0].value() == 10.0
+    }
+
+    def 'publish Robot framework report using specific value for onlyCritical'() {
+        when:
+        context.publishRobotFrameworkReports { onlyCritical(true) }
+
+        then:
+        Node node = context.publisherNodes[0]
+        node.name() == 'hudson.plugins.robot.RobotPublisher'
+        node.passThreshold[0].value() == 100.0
+        node.unstableThreshold[0].value() == 0.0
+        node.onlyCritical[0].value() == true
+    }
+
+    def 'publish Robot framework report using a configure closure'() {
+        when:
+        context.publishRobotFrameworkReports() {
+            passThreshold(50.0)
+            unstableThreshold(10.0)
+            outputPath("/path/to/foo")
         }
-			
-		then:
-		Node node = context.publisherNodes[0]
-		node.name() == 'hudson.plugins.robot.RobotPublisher'
-		node.passThreshold[0].value() == 100.0
-		node.unstableThreshold[0].value() == 0.0
-		node.onlyCritical[0].value() == true
-	}
-	
-	def 'publish Robot framework report using a configure closure'() {
-		when:
-		context.publishRobotFrameworkReports() {
-			passThreshold(50.0)
-			unstableThreshold(10.0)
-			outputPath("/path/to/foo")
-		}
-		
-		then:
-		Node node = context.publisherNodes[0]
-		node.name() == 'hudson.plugins.robot.RobotPublisher'
-		node.passThreshold[0].value() == 50.0
-		node.unstableThreshold[0].value() == 10.0
-		node.outputPath[0].value() == "/path/to/foo"
-		node.onlyCritical[0].value() == false
-		node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME 
-	}
+
+        then:
+        Node node = context.publisherNodes[0]
+        node.name() == 'hudson.plugins.robot.RobotPublisher'
+        node.passThreshold[0].value() == 50.0
+        node.unstableThreshold[0].value() == 10.0
+        node.outputPath[0].value() == "/path/to/foo"
+        node.onlyCritical[0].value() == false
+        node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
+    }
 }
