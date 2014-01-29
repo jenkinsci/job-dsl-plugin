@@ -308,7 +308,6 @@ class TopLevelHelper extends AbstractHelper {
             it / node
         }
     }
-
     /**
      * <project>
      *     <buildWrappers>

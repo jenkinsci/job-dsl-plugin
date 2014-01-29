@@ -48,7 +48,6 @@ class MatrixHelper extends AbstractHelper {
      */
     def matrixAxis( String axis, String n, Iterable<String> v) {
         AxisType a = axis as AxisType
-        //def an = axis.getAxisName()
         def an = a.axisName
         execute {
             it / axes << "${an}" {
