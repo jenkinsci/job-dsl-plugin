@@ -217,7 +217,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = (AbstractProject) Jenkins.getInstance().getItem(templateName);
+            AbstractProject templateProject = Jenkins.getInstance().getItemByFullName(templateName, AbstractProject.class);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
