@@ -29,30 +29,41 @@ class RobotFrameworkContext implements Context {
     String outputFileName = DEFAULT_OUTPUT_FILE_NAME
 
     void passThreshold(Double passThreshold) {
-        this.passThreshold = passThreshold ?: this.passThreshold
+        Preconditions.checkNotNull(passThreshold, 'passThreshould cannot be null')
+        Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0, 
+            'passThreshold should be a floating point in range (0, 100)')
+        this.passThreshold = passThreshold
     }
 
     void unstableThreshold(Double unstableThreshold) {
-        this.unstableThreshold = unstableThreshold ?: this.unstableThreshold
+        Preconditions.checkNotNull(unstableThreshold, 'unstableThreshold cannot be null')
+        Preconditions.checkArgument(unstableThreshold >= 0.0 && unstableThreshold <= 100.0, 
+            'unstableThreshold should be a floating point in range (0, 100)')
+        this.unstableThreshold = unstableThreshold
     }
 
     void onlyCritical(Boolean onlyCritical) {
-        this.onlyCritical = onlyCritical ?: this.onlyCritical
+        Preconditions.checkNotNull(onlyCritical, 'onlyCritical cannot be null')
+        this.onlyCritical = onlyCritical
     }
 
     void outputPath(String outputPath) {
-        this.outputPath = outputPath ?: this.outputPath
+        Preconditions.checkNotNull(outputPath, 'outputPath cannot be null')
+        this.outputPath = outputPath
     }
 
     void reportFileName(String reportFileName) {
-        this.reportFileName = reportFileName ?: this.reportFileName
+        Preconditions.checkNotNull(reportFileName, 'reportFileName cannot be null')
+        this.reportFileName = reportFileName
     }
 
     void logFileName(String logFileName) {
-        this.logFileName = logFileName ?: this.logFileName
+        Preconditions.checkNotNull(logFileName, 'logFileName cannot be null')
+        this.logFileName = logFileName
     }
 
     void outputFileName(String outputFileName) {
-        this.outputFileName = outputFileName ?: this.outputFileName
+        Preconditions.checkNotNull(outputFileName, 'outputFileName cannot be null')
+        this.outputFileName = outputFileName
     }
 }
