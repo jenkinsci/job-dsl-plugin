@@ -58,9 +58,23 @@ public class StepHelperSpec extends Specification {
         def gradleStep2 = context.stepNodes[1]
         gradleStep2.switches[0].value() == '-I init.gradle'
         gradleStep2.useWrapper[0].value() == 'false'
-        
+
         when:
-        context.gradle('tasks','switches'){
+        context.gradle('build', '-I init.gradle', false){
+            it / 'node1'  << 'value1'
+        }
+
+        then:
+        context.stepNodes.size() == 3
+        def gradleStep3 = context.stepNodes[2]
+        gradleStep3.node1[0].value() == 'value1'
+    }
+    
+    def 'call gradle methods with context'() {
+        when:
+        context.gradle{
+            tasks 'tasks'
+            switches 'switches'
             useWrapper  false
             description  'desc'
             rootBuildScriptDir  'rbsd'
@@ -71,18 +85,17 @@ public class StepHelperSpec extends Specification {
         }
         
         then:
-        context.stepNodes.size() == 3
-        def gradleStep3 = context.stepNodes[2]
-        gradleStep3.tasks[0].value() == 'tasks'
-        gradleStep3.switches[0].value() == 'switches'
-        gradleStep3.useWrapper[0].value() == 'false'
-        gradleStep3.description[0].value() == 'desc'
-        gradleStep3.rootBuildScriptDir[0].value() == 'rbsd'
-        gradleStep3.buildFile[0].value() == 'bf'
-        gradleStep3.gradleName[0].value() == 'gn'
-        gradleStep3.fromRootBuildScriptDir[0].value() == 'true'
-        gradleStep3.makeExecutable[0].value() == 'true'
-        
+        context.stepNodes.size() == 1
+        def gradleStep = context.stepNodes[0]
+        gradleStep.tasks[0].value() == 'tasks'
+        gradleStep.switches[0].value() == 'switches'
+        gradleStep.useWrapper[0].value() == 'false'
+        gradleStep.description[0].value() == 'desc'
+        gradleStep.rootBuildScriptDir[0].value() == 'rbsd'
+        gradleStep.buildFile[0].value() == 'bf'
+        gradleStep.gradleName[0].value() == 'gn'
+        gradleStep.fromRootBuildScriptDir[0].value() == 'true'
+        gradleStep.makeExecutable[0].value() == 'true'
         
     }
 

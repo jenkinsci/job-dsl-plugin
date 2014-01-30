@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import groovy.lang.Closure;
 import javaposse.jobdsl.dsl.helpers.Context
 
 
@@ -14,6 +15,7 @@ class GradleContext implements Context {
     Boolean fromRootBuildScriptDir
     Boolean makeExecutable
     String	gradleName = null
+    Closure configureBlock
     
     def tasks(String tasks){
         this.tasks=tasks
@@ -49,5 +51,9 @@ class GradleContext implements Context {
     
     def makeExecutable(Boolean makeExecutable){
         this.makeExecutable=makeExecutable
+    }
+    
+    def configure(Closure closure) {
+        this.configureBlock = closure
     }
 }
