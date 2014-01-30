@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper.PublisherContext.Behavior.MarkUnstable
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
