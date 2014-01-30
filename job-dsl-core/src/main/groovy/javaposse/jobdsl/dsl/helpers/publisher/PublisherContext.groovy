@@ -915,18 +915,18 @@ class PublisherContext implements Context {
      */
     def publishRobotFrameworkReports(Closure robotClosure = null) {
 
-        RobotFrameworkContext ctx = new RobotFrameworkContext()
-        AbstractContextHelper.executeInContext(robotClosure, ctx)
+        RobotFrameworkContext context = new RobotFrameworkContext()
+        AbstractContextHelper.executeInContext(robotClosure, context)
 
         def nodeBuilder = NodeBuilder.newInstance()
         Node robotNode = nodeBuilder.'hudson.plugins.robot.RobotPublisher' {
-            passThreshold ctx.passThreshold
-            unstableThreshold ctx.unstableThreshold
-            outputPath ctx.outputPath
-            onlyCritical ctx.onlyCritical
-            reportFileName ctx.reportFileName
-            logFileName ctx.logFileName
-            outputFileName ctx.outputFileName
+            passThreshold context.passThreshold
+            unstableThreshold context.unstableThreshold
+            outputPath context.outputPath
+            onlyCritical context.onlyCritical
+            reportFileName context.reportFileName
+            logFileName context.logFileName
+            outputFileName context.outputFileName
         }
 
         publisherNodes << robotNode
