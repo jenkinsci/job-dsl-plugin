@@ -20,30 +20,27 @@ class RobotFrameworkContext implements Context {
     static String DEFAULT_OUTPUT_FILE_NAME = "output.xml"
     static String DEFAULT_LOG_FILE_NAME = "log.html"
 
-    Double passThreshold = 100.0
-    Double unstableThreshold = 0.0
-    Boolean onlyCritical = false
+    double passThreshold = 100.0
+    double unstableThreshold = 0.0
+    boolean onlyCritical = false
     String outputPath = DEFAULT_OUTPUT_PATH
     String reportFileName = DEFAULT_REPORT_FILE_NAME
     String logFileName = DEFAULT_LOG_FILE_NAME
     String outputFileName = DEFAULT_OUTPUT_FILE_NAME
 
-    void passThreshold(Double passThreshold) {
-        Preconditions.checkNotNull(passThreshold, 'passThreshould cannot be null')
+    void passThreshold(double passThreshold) {
         Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0, 
             'passThreshold should be a floating point in range (0, 100)')
         this.passThreshold = passThreshold
     }
 
-    void unstableThreshold(Double unstableThreshold) {
-        Preconditions.checkNotNull(unstableThreshold, 'unstableThreshold cannot be null')
+    void unstableThreshold(double unstableThreshold) {
         Preconditions.checkArgument(unstableThreshold >= 0.0 && unstableThreshold <= 100.0, 
             'unstableThreshold should be a floating point in range (0, 100)')
         this.unstableThreshold = unstableThreshold
     }
 
-    void onlyCritical(Boolean onlyCritical) {
-        Preconditions.checkNotNull(onlyCritical, 'onlyCritical cannot be null')
+    void onlyCritical(boolean onlyCritical) {
         this.onlyCritical = onlyCritical
     }
 
