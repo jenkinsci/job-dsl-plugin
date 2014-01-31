@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
+import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
@@ -297,4 +298,75 @@ class WrapperContext implements Context {
             vars(tools.collect { it.replaceAll(/[^a-zA-Z0-9_]/, "_").toUpperCase() + "_HOME" }.join(","))
         }
     }
+    
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <buildWrappers>
+     *         <hudson.plugins.release.ReleaseWrapper>
+     *             <doNotKeepLog>true</doNotKeepLog>
+     *             <overrideBuildParameters>false</overrideBuildParameters>
+     *             <preBuildSteps>
+     *                 <hudson.tasks.Maven>
+     *                      <targets>install</targets>
+     *                      <mavenName>(Default)</mavenName> 
+     *                 </hudson.tasks.Maven>
+     *			   </preBuildSteps>
+     *             <postBuildSteps>
+     *                 <hudson.tasks.Maven>
+     *                      <targets>site</targets>
+     *                      <mavenName>(Default)</mavenName> 
+     *                 </hudson.tasks.Maven>
+     *			   </postBuildSteps>
+     *         </hudson.plugins.release.ReleaseWrapper>
+     *     </buildWrappers>
+     * </project>
+     * }
+     * </pre>
+     *
+     * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
+     *
+     * @param releaseClosure attributes and steps used by the plugin
+     */
+    def release(Closure releaseClosure) {
+  		def releaseContext = new ReleaseContext()
+  		AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
+
+  		def nodeBuilder = new NodeBuilder()
+  		def releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
+    		releaseVersionTemplate(releaseContext.releaseVersionTemplate)
+    		doNotKeepLog(releaseContext.doNotKeepLog)
+    		overrideBuildParameters(releaseContext.overrideBuildParameters)
+ 		}
+  
+  		def preBuildSteps = releaseContext.preBuildSteps
+  		preBuildSteps.each { 
+    		releaseNode.appendNode('preBuildSteps', it)
+  		}
+
+  		def postSuccessfulBuildSteps = releaseContext.postSuccessfulBuildSteps
+  		postSuccessfulBuildSteps.each { 
+    		releaseNode.appendNode('postSuccessfulBuildSteps', it)
+  		}
+
+  		def postBuildSteps = releaseContext.postBuildSteps
+  		postBuildSteps.each { 
+    		releaseNode.appendNode('postBuildSteps', it)
+  		}
+
+  		def postFailedBuildSteps = releaseContext.postFailedBuildSteps
+  		postFailedBuildSteps.each { 
+    		releaseNode.appendNode('postFailedBuildSteps', it)
+  		}
+  		
+  		// Apply Context
+        if (releaseContext.configureBlock) {
+            WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
+            action.execute(releaseNode)
+        }
+
+  		wrapperNodes << releaseNode
+	}
+	
 }
