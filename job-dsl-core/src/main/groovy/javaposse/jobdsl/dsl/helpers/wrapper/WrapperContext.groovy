@@ -329,44 +329,44 @@ class WrapperContext implements Context {
      *
      * @param releaseClosure attributes and steps used by the plugin
      */
-    def release(Closure releaseClosure) {
-  		def releaseContext = new ReleaseContext()
-  		AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
+     def release(Closure releaseClosure) {
+       def releaseContext = new ReleaseContext()
+       AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
+       
+       def nodeBuilder = new NodeBuilder()
+       def releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
+	 releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')
+	 doNotKeepLog(releaseContext.doNotKeepLog)
+	 overrideBuildParameters(releaseContext.overrideBuildParameters)
+       }
+       
+       def preBuildSteps = releaseContext.preBuildSteps
+       preBuildSteps.each { 
+	 releaseNode.appendNode('preBuildSteps', it)
+       }
 
-  		def nodeBuilder = new NodeBuilder()
-  		def releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
-    		releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')
-    		doNotKeepLog(releaseContext.doNotKeepLog)
-    		overrideBuildParameters(releaseContext.overrideBuildParameters)
- 		}
-  
-  		def preBuildSteps = releaseContext.preBuildSteps
-  		preBuildSteps.each { 
-    		releaseNode.appendNode('preBuildSteps', it)
-  		}
-
-  		def postSuccessfulBuildSteps = releaseContext.postSuccessfulBuildSteps
-  		postSuccessfulBuildSteps.each { 
-    		releaseNode.appendNode('postSuccessfulBuildSteps', it)
-  		}
-
-  		def postBuildSteps = releaseContext.postBuildSteps
-  		postBuildSteps.each { 
-    		releaseNode.appendNode('postBuildSteps', it)
-  		}
-
-  		def postFailedBuildSteps = releaseContext.postFailedBuildSteps
-  		postFailedBuildSteps.each { 
-    		releaseNode.appendNode('postFailedBuildSteps', it)
-  		}
-  		
-  		// Apply Context
-        if (releaseContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
-            action.execute(releaseNode)
-        }
-
-  		wrapperNodes << releaseNode
-	}
+       def postSuccessfulBuildSteps = releaseContext.postSuccessfulBuildSteps
+       postSuccessfulBuildSteps.each { 
+	 releaseNode.appendNode('postSuccessfulBuildSteps', it)
+       }
+       
+       def postBuildSteps = releaseContext.postBuildSteps
+       postBuildSteps.each { 
+	 releaseNode.appendNode('postBuildSteps', it)
+       }
+       
+       def postFailedBuildSteps = releaseContext.postFailedBuildSteps
+       postFailedBuildSteps.each { 
+	 releaseNode.appendNode('postFailedBuildSteps', it)
+       }
+       
+       // Apply Context
+       if (releaseContext.configureBlock) {
+	 WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
+	 action.execute(releaseNode)
+       }
+       
+       wrapperNodes << releaseNode
+     }
 	
 }
