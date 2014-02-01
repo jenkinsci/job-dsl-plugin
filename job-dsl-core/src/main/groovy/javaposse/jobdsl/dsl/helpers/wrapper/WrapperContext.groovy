@@ -335,7 +335,7 @@ class WrapperContext implements Context {
 
   		def nodeBuilder = new NodeBuilder()
   		def releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
-    		releaseVersionTemplate(releaseContext.releaseVersionTemplate)
+    		releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')
     		doNotKeepLog(releaseContext.doNotKeepLog)
     		overrideBuildParameters(releaseContext.overrideBuildParameters)
  		}
