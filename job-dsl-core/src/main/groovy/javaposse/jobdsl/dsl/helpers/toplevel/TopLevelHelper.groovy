@@ -1,10 +1,9 @@
-package javaposse.jobdsl.dsl.helpers
-
+package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.absolute
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.AbstractHelper
 
 class TopLevelHelper extends AbstractHelper {
 
@@ -40,98 +39,6 @@ class TopLevelHelper extends AbstractHelper {
             }
         }
     }
-
-    /*
-    <buildWrappers>
-      <hudson.plugins.build__timeout.BuildTimeoutWrapper>
-        <timeoutMinutes>15</timeoutMinutes>
-        <failBuild>true</failBuild>
-        <!-- Missing from DSL Call, Elastic and Likely stuck are radio buttons to Absolute -->
-        <writingDescription>false</writingDescription>
-        <timeoutPercentage>0</timeoutPercentage>
-        <timeoutType>absolute</timeoutType>
-        <timeoutMinutesElasticDefault>3</timeoutMinutesElasticDefault>
-      </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    </buildWrappers>
-    */
-    def timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) {
-        execute {
-            def pluginNode = it / buildWrappers / 'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-            pluginNode / timeoutMinutes(Integer.toString(timeoutInMinutes))
-            pluginNode / failBuild(shouldFailBuild?'true':'false')
-        }
-    }
-
-    /** Enumeration of timeout types for parsing and error reporting*/
-    def static enum Timeout {
-        absolute,
-        elastic,
-        likelyStuck
-    }
-
-    /** Context to configure timeout */
-    def static class TimeoutContext implements Context {
-
-        Timeout type
-        def limit  = 3
-        def failBuild = false
-        def writeDescription = false
-        def percentage = 0
-
-        TimeoutContext(Timeout type) {
-            this.type = type
-        }
-
-        def limit(int limit) {
-            this.limit = limit
-        }
-
-        def failBuild(boolean fail) {
-            this.failBuild = fail
-        }
-
-        def writeDescription(boolean writeDesc) {
-            this.writeDescription = writeDesc
-        }
-
-        def percentage(int percentage) {
-            this.percentage = percentage
-        }
-
-    }
-
-    /**
-     * Add a timeout to the build job.
-     *
-     * May be an absolute, elastic or likely Stuck timeout.
-     *
-     * @param type type of timeout defaults to absolute
-     *
-     * @param timeoutClosure optional closure for configuring the timeout
-     */
-    def timeout(String type = absolute.toString(), Closure timeoutClosure = null) {
-        Timeout ttype
-        try {
-            ttype = Timeout.valueOf(type)
-        } catch (IllegalArgumentException iae) {
-            throw new IllegalArgumentException("Timeout type must be one of: ${Timeout.values()}")
-        }
-
-        TimeoutContext ctx = new TimeoutContext(ttype)
-        AbstractContextHelper.executeInContext(timeoutClosure, ctx)
-
-        execute {
-            it / buildWrappers / 'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
-                timeoutMinutes ctx.limit
-                failBuild ctx.failBuild
-                writingDescription ctx.writeDescription
-                timeoutPercentage ctx.percentage
-                timeoutType ctx.type
-                timeoutMinutesElasticDefault ctx.limit
-            }
-        }
-    }
-
 
     /**
      * Add environment variables to the build.
@@ -177,22 +84,45 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
-    def static class EnvironmentVariableContext implements Context {
-        def props = []
-        def groovyScript
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <properties>
+     *         <hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *             <maxConcurrentPerNode>0</maxConcurrentPerNode>
+     *             <maxConcurrentTotal>0</maxConcurrentTotal>
+     *             <categories>
+     *                 <string>CDH5-repo-update</string>
+     *             </categories>
+     *             <throttleEnabled>true</throttleEnabled>
+     *             <throttleOption>category</throttleOption>
+     *         </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *     <properties>
+     * </project>
+     * }
+     * </pre>
+     */
+    def throttleConcurrentBuilds(Closure throttleClosure) {
+        ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
+        AbstractContextHelper.executeInContext(throttleClosure, throttleContext)
 
-        def env(Object key, Object value) {
-            props << "${key}=${value}"
-        }
-
-        def envs(Map<Object, Object> map) {
-            map.entrySet().each {
-                env(it.key, it.value)
+        execute {
+            it / 'properties' / 'hudson.plugins.throttleconcurrents.ThrottleJobProperty' {
+                maxConcurrentPerNode throttleContext.maxConcurrentPerNode
+                maxConcurrentTotal throttleContext.maxConcurrentTotal
+                throttleEnabled throttleContext.throttleDisabled ? 'false' : 'true'
+                if (throttleContext.categories.isEmpty()) {
+                    throttleOption 'project'
+                } else {
+                    throttleOption 'category'
+                }
+                categories {
+                    throttleContext.categories.each { c ->
+                        string c
+                    }
+                }
             }
-        }
-
-        def groovy(String script) {
-            groovyScript = script
         }
     }
 
@@ -343,7 +273,7 @@ class TopLevelHelper extends AbstractHelper {
      */
     def blockOnUpstreamProjects() {
         execute {
-            it / blockBuildWhenDownstreamBuilding(true)
+            it / blockBuildWhenUpstreamBuilding(true)
         }
     }
 
@@ -353,8 +283,21 @@ class TopLevelHelper extends AbstractHelper {
      */
     def blockOnDownstreamProjects() {
         execute {
-            it / blockBuildWhenUpstreamBuilding(true)
+            it / blockBuildWhenDownstreamBuilding(true)
         }
     }
 
+    /**
+     * Configures the keep Dependencies Flag which can be set in the Fingerprinting action
+     *
+     * <keepDependencies>true</keepDependencies>
+     */
+    def keepDependencies(boolean keep = true) {
+        execute {
+            def node = methodMissing('keepDependencies', keep)
+            it / node
+        }
+    }
 }
+
+

@@ -1,4 +1,14 @@
-allprojects {
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.rholder:gradle-one-jar:1.0.3'
+    }
+}
+
+project(':job-dsl-core') {
+    // jpi plugin will install appropriate repos for job-dsl-plugin
     repositories {
         mavenCentral()
     }
@@ -7,10 +17,13 @@ allprojects {
 defaultTasks 'build' // For BuildHive
 
 subprojects {
-    group = "org.jenkinsci.plugins"
+    group = 'org.jenkins-ci.plugins'
     apply plugin: 'groovy'
+    apply plugin: 'idea'
+    apply plugin: 'maven' // For artifactory publishing
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
+
     dependencies {
         compile 'org.codehaus.groovy:groovy-all:1.8.6'
         compile 'com.google.guava:guava:14.0.1'
@@ -22,18 +35,8 @@ subprojects {
     }
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.github.rholder:gradle-one-jar:1.0.3'
-    }
-}
-
 project(':job-dsl-core') {
     apply plugin: 'application'
-    apply plugin: 'maven' // For artifactory publishing
 
     description = "Generates Jenkins jobs via a DSL"
     dependencies {
@@ -51,11 +54,29 @@ project(':job-dsl-core') {
 
     apply plugin: 'gradle-one-jar'
 
+    task jarSources(type:Jar){
+        from sourceSets.main.allSource
+        classifier = 'sources'
+    }
+
+    task jarJavadocs (type: Jar, dependsOn: 'javadoc') {
+        from project.javadoc.destinationDir
+        classifier = 'javadoc'
+    }
+
+    task jarGroovydocs (type: Jar, dependsOn: 'groovydoc') {
+        from project.groovydoc.destinationDir
+        classifier = 'groovydoc'
+    }
+
     task oneJar(type: OneJar) {
         mainClass = project.mainClassName
     }
 
     artifacts {
+        archives jarJavadocs
+        archives jarGroovydocs
+        archives jarSources
         archives oneJar
     }
 
@@ -65,7 +86,39 @@ project(':job-dsl-core') {
         }
     }
 
+    // gradle-jpi plugin does this for plugins, so we're mimicing it to get our additional artifacts up to repo.jenkinsci.org
+    gradle.taskGraph.whenReady { taskGraph ->
+        if ( taskGraph.hasTask(uploadArchives) ) {
+            uploadArchives {
+                repositories {
+                    mavenDeployer {
+                        def credentials = loadCredentialsForJenkinsCommunityRepository()
+                        repository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/releases') {
+                            authentication(credentials)
+                        }
+                        snapshotRepository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots') {
+                            authentication(credentials)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
+
+private Map loadCredentialsForJenkinsCommunityRepository() {
+    Properties props = new Properties()
+    def dot = new File(System.getProperty("user.home"), ".jenkins-ci.org")
+
+    if ( ! dot.exists() ) {
+        throw new Exception("Trying to deploy to Jenkins community repository but there's no credential file ${dot}. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
+    }
+
+    dot.withInputStream { i -> props.load(i) }
+    return [userName: props["userName"], password: props["password"]]
+}
+
 
 project(':job-dsl-plugin') {
     description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
@@ -74,6 +127,6 @@ project(':job-dsl-plugin') {
     }
 }
 
-task wrapper(type: Wrapper) { gradleVersion = '1.4' }
+task wrapper(type: Wrapper) { gradleVersion = '1.8' }
 
 apply from: './job-dsl-plugin/ide.gradle'

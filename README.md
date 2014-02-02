@@ -1,3 +1,5 @@
+[![Build Status](https://jenkins.ci.cloudbees.com/job/plugins/job/job-dsl-plugin/badge/icon)](https://jenkins.ci.cloudbees.com/job/plugins/job/job-dsl-plugin/)
+
 Jenkins Job DSL / Plugin
 ========================
 

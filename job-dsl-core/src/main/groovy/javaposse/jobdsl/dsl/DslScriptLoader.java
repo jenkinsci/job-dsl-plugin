@@ -2,16 +2,12 @@ package javaposse.jobdsl.dsl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
+import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
-
-import com.google.common.collect.Sets;
-
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
@@ -19,7 +15,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +39,7 @@ public class DslScriptLoader {
         // Add static imports of a few common types, like JobType
         ImportCustomizer icz = new ImportCustomizer();
         icz.addStaticStars("javaposse.jobdsl.dsl.JobType");
+        icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
         GroovyScriptEngine engine = //scriptRequest.resourceConnector!=null?
@@ -166,7 +167,8 @@ public class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports(
                 "javaposse.jobdsl.dsl.helpers.Permissions",
-                "javaposse.jobdsl.dsl.helpers.CheckoutStrategy"
+                "javaposse.jobdsl.dsl.helpers.CheckoutStrategy",
+                "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior"
         );
         config.addCompilationCustomizers(icz);
 

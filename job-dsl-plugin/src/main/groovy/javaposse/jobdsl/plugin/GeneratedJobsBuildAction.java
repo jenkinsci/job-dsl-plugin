@@ -11,7 +11,7 @@ public class GeneratedJobsBuildAction implements Action {
     public final Set<GeneratedJob> modifiedJobs;
 
     public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs) {
-        this.modifiedJobs = Sets.newHashSet(modifiedJobs);
+        this.modifiedJobs = Sets.newLinkedHashSet(modifiedJobs);
     }
 
     /**

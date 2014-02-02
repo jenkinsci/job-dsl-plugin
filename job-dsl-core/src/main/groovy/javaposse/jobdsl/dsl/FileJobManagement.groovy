@@ -1,5 +1,6 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
+import com.google.common.collect.Maps
 
 class FileJobManagement extends AbstractJobManagement {
     /**
@@ -11,6 +12,12 @@ class FileJobManagement extends AbstractJobManagement {
      * Extension to append to job name when looking at the filesystem
      */
     String ext
+
+    /**
+     * map to store job parameters from System properties and
+     * Environment variables.
+     */
+    protected Map params =  Maps.newHashMap();
 
     public FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
         super(out)
@@ -41,6 +48,11 @@ class FileJobManagement extends AbstractJobManagement {
 
         new File(jobName + ext).write(config)
         return true
+    }
+
+    @Override
+    public Map<String, String> getParameters() {
+        return params;
     }
 
     @Override

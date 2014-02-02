@@ -1,9 +1,12 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.*
 
 public class StepHelperSpec extends Specification {
 
@@ -57,6 +60,134 @@ public class StepHelperSpec extends Specification {
         gradleStep2.useWrapper[0].value() == 'false'
     }
 
+    def 'call grails methods'() {
+        when:
+        context.grails('compile')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def grailsStep0 = context.stepNodes[0]
+        grailsStep0.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep0.targets[0].value() == 'compile'
+        grailsStep0.useWrapper[0].value() == 'false'
+        grailsStep0.grailsWorkDir[0].value() == ''
+        grailsStep0.projectWorkDir[0].value() == ''
+        grailsStep0.projectBaseDir[0].value() == ''
+        grailsStep0.serverPort[0].value() == ''
+        grailsStep0.'properties'[0].value() == ''
+        grailsStep0.forceUpgrade[0].value() == 'false'
+        grailsStep0.nonInteractive[0].value() == 'true'
+
+        when:
+        context.grails('compile', true)
+
+        then:
+        context.stepNodes.size() == 2
+        def grailsStep1 = context.stepNodes[1]
+        grailsStep1.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep1.targets[0].value() == 'compile'
+        grailsStep1.useWrapper[0].value() == 'true'
+        grailsStep1.grailsWorkDir[0].value() == ''
+        grailsStep1.projectWorkDir[0].value() == ''
+        grailsStep1.projectBaseDir[0].value() == ''
+        grailsStep1.serverPort[0].value() == ''
+        grailsStep1.'properties'[0].value() == ''
+        grailsStep1.forceUpgrade[0].value() == 'false'
+        grailsStep1.nonInteractive[0].value() == 'true'
+
+        when:
+        context.grails('compile', false) {
+            grailsWorkDir 'work1'
+            nonInteractive false
+        }
+
+        then:
+        context.stepNodes.size() == 3
+        def grailsStep2 = context.stepNodes[2]
+        grailsStep2.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep2.targets[0].value() == 'compile'
+        grailsStep2.useWrapper[0].value() == 'false'
+        grailsStep2.grailsWorkDir[0].value() == 'work1'
+        grailsStep2.projectWorkDir[0].value() == ''
+        grailsStep2.projectBaseDir[0].value() == ''
+        grailsStep2.serverPort[0].value() == ''
+        grailsStep2.'properties'[0].value() == ''
+        grailsStep2.forceUpgrade[0].value() == 'false'
+        grailsStep2.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails {
+            target 'clean'
+            targets(['compile', 'test-app'])
+            useWrapper true
+            grailsWorkDir 'work'
+            projectWorkDir 'project'
+            projectBaseDir  'base'
+            serverPort  '1111'
+            props  prop1: 'val1', prop2: 'val2'
+            prop 'prop3', 'val3'
+            forceUpgrade  true
+            nonInteractive  false
+        }
+
+        then:
+        context.stepNodes.size() == 4
+        def grailsStep3 = context.stepNodes[3]
+        grailsStep3.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep3.targets[0].value() == 'clean compile test-app'
+        grailsStep3.useWrapper[0].value() == 'true'
+        grailsStep3.grailsWorkDir[0].value() == 'work'
+        grailsStep3.projectWorkDir[0].value() == 'project'
+        grailsStep3.projectBaseDir[0].value() == 'base'
+        grailsStep3.serverPort[0].value() == '1111'
+        grailsStep3.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
+        grailsStep3.forceUpgrade[0].value() == 'true'
+        grailsStep3.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails '"test-app --stacktrace"', {
+            useWrapper true
+            grailsWorkDir 'work'
+            projectWorkDir 'project'
+            projectBaseDir  'base'
+            serverPort  '8080'
+            forceUpgrade  true
+            nonInteractive  false
+        }
+
+        then:
+        context.stepNodes.size() == 5
+        def grailsStep4 = context.stepNodes[4]
+        grailsStep4.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep4.targets[0].value() == '"test-app --stacktrace"'
+        grailsStep4.useWrapper[0].value() == 'true'
+        grailsStep4.grailsWorkDir[0].value() == 'work'
+        grailsStep4.projectWorkDir[0].value() == 'project'
+        grailsStep4.projectBaseDir[0].value() == 'base'
+        grailsStep4.serverPort[0].value() == '8080'
+        grailsStep4.'properties'[0].value() == ''
+        grailsStep4.forceUpgrade[0].value() == 'true'
+        grailsStep4.nonInteractive[0].value() == 'false'
+
+        when:
+        context.grails {}
+
+        then:
+        context.stepNodes.size() == 6
+        def grailsStep5 = context.stepNodes[5]
+        grailsStep5.name() == 'com.g2one.hudson.grails.GrailsBuilder'
+        grailsStep5.targets[0].value() == ''
+        grailsStep5.useWrapper[0].value() == 'false'
+        grailsStep5.grailsWorkDir[0].value() == ''
+        grailsStep5.projectWorkDir[0].value() == ''
+        grailsStep5.projectBaseDir[0].value() == ''
+        grailsStep5.serverPort[0].value() == ''
+        grailsStep5.'properties'[0].value() == ''
+        grailsStep5.forceUpgrade[0].value() == 'false'
+        grailsStep5.nonInteractive[0].value() == 'true'
+    }
+
     def 'call maven methods'() {
         when:
         context.maven('install')
@@ -67,7 +198,7 @@ public class StepHelperSpec extends Specification {
         def mavenStep = context.stepNodes[0]
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
-        mavenStep.pom[0].value() == ''
+        mavenStep.pom[0] == null
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
@@ -80,6 +211,52 @@ public class StepHelperSpec extends Specification {
         def mavenStep2 = context.stepNodes[1]
         mavenStep2.pom[0].value() == 'pom.xml'
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
+    }
+
+    def 'call maven method with full context'() {
+        when:
+        context.maven {
+            rootPOM('module-a/pom.xml')
+            goals('clean')
+            goals('install')
+            mavenOpts('-Xms256m')
+            mavenOpts('-Xmx512m')
+            localRepository(LocalToWorkspace)
+            mavenInstallation('Maven 3.0.5')
+            configure {
+                it / settingsConfigId('foo-bar')
+            }
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def mavenStep = context.stepNodes[0]
+        mavenStep.name() == 'hudson.tasks.Maven'
+        mavenStep.children().size() == 6
+        mavenStep.targets[0].value() == 'clean install'
+        mavenStep.pom[0].value() == 'module-a/pom.xml'
+        mavenStep.jvmOptions[0].value() == '-Xms256m -Xmx512m'
+        mavenStep.usePrivateRepository[0].value() == 'true'
+        mavenStep.mavenName[0].value() == 'Maven 3.0.5'
+        mavenStep.settingsConfigId[0].value() == 'foo-bar'
+    }
+
+    def 'call maven method with minimal context'() {
+        when:
+        context.maven {
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def mavenStep = context.stepNodes[0]
+        mavenStep.name() == 'hudson.tasks.Maven'
+        mavenStep.children().size() == 4
+        mavenStep.targets[0].value() == ''
+        mavenStep.jvmOptions[0].value() == ''
+        mavenStep.usePrivateRepository[0].value() == 'false'
+        mavenStep.mavenName[0].value() == '(Default)'
     }
 
     def 'call ant methods'() {
@@ -568,7 +745,6 @@ public class StepHelperSpec extends Specification {
         propStr.contains('prop4=value4')
     }
 
-
     def 'call phases with multiple calls'() {
         when:
         context.phase('Third') {
@@ -687,5 +863,463 @@ public class StepHelperSpec extends Specification {
         sbtStep.sbtFlags[0].value() == '-Dsbt.log.noformat=true'
         sbtStep.actions[0].value() == 'test'
         sbtStep.subdirPath[0].value() == 'subproject'
+    }
+
+    def 'call dsl method defaults' () {
+        when:
+        context.dsl()
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'IGNORE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+
+    def 'call dsl method external script ignoring existing' () {
+        when:
+        context.dsl {
+            removeAction 'DISABLE'
+            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'still-another-dsl.groovy'
+            ignoreExisting()
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method external script' () {
+        when:
+        context.dsl {
+            removeAction 'DISABLE'
+            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'still-another-dsl.groovy'
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method with script text' () {
+        when:
+        context.dsl {
+            removeAction('DELETE')
+            text '''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+'''
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == true
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DELETE'
+        dslStep.scriptText[0].value() == '''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+'''
+    }
+
+    def 'call dsl method external script as parameters' () {
+        when:
+        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method external script as parameters full' () {
+        when:
+        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE', true)
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == '''some-dsl.groovy
+some-other-dsl.groovy
+still-another-dsl.groovy'''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.removedJobAction[0].value() == 'DISABLE'
+        dslStep.scriptText[0].value() == ''
+    }
+
+    def 'call dsl method with script text as parameters'() {
+        when:
+        context.dsl('''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+''', 'DELETE')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == true
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'DELETE'
+        dslStep.scriptText[0].value() == '''job {
+  foo()
+  bar {
+    baz()
+  }
+}
+'''
+    }
+
+    def 'call prerequisite method with single project'() {
+        when:
+        context.prerequisite('project-A')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def prerequisiteStep = context.stepNodes[0]
+        prerequisiteStep.name() == 'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder'
+        prerequisiteStep.projects[0].value() == 'project-A'
+        prerequisiteStep.warningOnly[0].value() == false
+    }
+
+    def 'call prerequisite method with multiple projects'() {
+        when:
+        context.prerequisite('project-A,project-B')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def prerequisiteStep = context.stepNodes[0]
+        prerequisiteStep.name() == 'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder'
+        prerequisiteStep.projects[0].value() == 'project-A,project-B'
+        prerequisiteStep.warningOnly[0].value() == false
+    }
+
+    def 'call prerequisite method with multiple projects containing leading spaces'() {
+        when:
+        context.prerequisite(' project-A, project-B ,project-C ')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def prerequisiteStep = context.stepNodes[0]
+        prerequisiteStep.name() == 'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder'
+        prerequisiteStep.projects[0].value() == 'project-A,project-B,project-C'
+        prerequisiteStep.warningOnly[0].value() == false
+    }
+
+    def 'call prerequisite method with single project and overriden warning only flag'() {
+        when:
+        context.prerequisite('project-A', true)
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def prerequisiteStep = context.stepNodes[0]
+        prerequisiteStep.name() == 'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder'
+        prerequisiteStep.projects[0].value() == 'project-A'
+        prerequisiteStep.warningOnly[0].value() == true
+    }
+
+    def 'call downstream build step with all args'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
+                    ["buildStepFailure": "FAILURE",
+                            "failure": "FAILURE",
+                            "unstable": "UNSTABLE"]) {
+                currentBuild() // Current build parameters
+                propertiesFile('dir/my.properties') // Parameters from properties file
+                gitRevision(false) // Pass-through Git commit that was built
+                predefinedProp('key1', 'value1') // Predefined properties
+                predefinedProps([key2: 'value2', key3: 'value3'])
+                predefinedProps('key4=value4\nkey5=value5') // Newline separated
+                matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
+                subversionRevision() // Subversion Revision
+            }
+            trigger('Project2') {
+                currentBuild()
+            }
+        }
+
+        then:
+        Node stepNode = context.stepNodes[0]
+        stepNode.name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
+        stepNode.configs[0].children().size() == 2
+        Node first = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
+        first.projects[0].value() == 'Project1, Project2'
+        first.condition[0].value() == 'UNSTABLE_OR_BETTER'
+        first.triggerWithNoParameters[0].value() == 'true'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+        first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
+        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == 'false'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+        first.block.size() == 1
+        Node thresholds = first.block[0]
+        thresholds.children().size() == 3
+        Node unstableThreshold = thresholds.unstableThreshold[0]
+        unstableThreshold.name[0].value() == 'UNSTABLE'
+        Node failureThreshold = thresholds.failureThreshold[0]
+        failureThreshold.name[0].value() == 'FAILURE'
+        Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
+        buildStepFailureThreshold.name[0].value() == 'FAILURE'
+
+        Node second = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]
+        second.projects[0].value() == 'Project2'
+        second.condition[0].value() == 'SUCCESS'
+        second.triggerWithNoParameters[0].value() == 'false'
+        second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+        second.block.isEmpty()
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project3') {
+            }
+        }
+
+        then:
+        Node third = context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project3'
+        third.condition[0].value() == 'SUCCESS'
+        third.triggerWithNoParameters[0].value() == 'false'
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project4', 'WRONG')
+        }
+
+        then:
+        thrown(AssertionError)
+    }
+
+    @Unroll
+    def 'call conditional steps for a single step with #testCondition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                delegate.invokeMethod(testCondition, testConditionArgs.values().toArray())
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        step.condition[0].children().size() == testConditionArgs.values().size()
+
+        Node condition = step.condition[0]
+        def condClass
+        if (testCondition == 'booleanCondition') {
+            condClass = 'Boolean'
+        } else {
+            condClass = testCondition.capitalize()
+        }
+
+        condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${condClass}Condition"
+        if (!testConditionArgs.isEmpty()) {
+            testConditionArgs.each { k, v ->
+                condition."${k}"[0].value() == "${v}"
+            }
+        }
+        step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+
+        Node childStep = step.buildStep[0]
+        childStep.attribute('class') == 'hudson.tasks.Shell'
+        childStep.command[0].value() == 'look at me'
+
+        where:
+        testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status']
+        testConditionArgs << [['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
+                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
+                ['expression': 'some-expression', 'label': 'some-label'],
+                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
+                ['worstResult': 'Success', 'bestResult': 'Success']]
+    }
+
+    @Unroll
+    def 'call conditional steps for a single step with #runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            runner(runnerName)
+            shell("look at me")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+
+        step.runner[0].attribute('class') == "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$${runnerName}"
+
+        Node childStep = step.buildStep[0]
+        childStep.attribute('class') == 'hudson.tasks.Shell'
+        childStep.command[0].value() == 'look at me'
+
+        where:
+        runnerName << ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
+    }
+
+    def 'call conditional steps with unknown runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            runner("invalid-runner")
+            shell("look at me")
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call conditional steps with no condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'call conditional steps with invalid condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                invalidCondition()
+            }
+            runner("Fail")
+            shell("look at me")
+        }
+
+        then:
+        thrown(MissingMethodException)
+    }
+
+    def 'call conditional steps for multiple steps'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                stringsMatch("foo", "bar", false)
+            }
+            runner("Fail")
+            shell("look at me")
+            groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
+                groovyParam('foo')
+                groovyParams(['bar', 'baz'])
+                classpath('/foo/acme.jar')
+                classpath('/foo/test.jar')
+                scriptParam('alfa')
+                scriptParams(['bravo', 'charlie'])
+                prop('one', 'two')
+                props([three: 'four', five: 'six'])
+                javaOpt('test')
+                javaOpts(['me', 'too'])
+            }
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+        step.runCondition[0].children().size() == 3
+
+        Node condition = step.runCondition[0]
+        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+        condition.arg1[0].value() == 'foo'
+        condition.arg2[0].value() == 'bar'
+        condition.ignoreCase[0].value() == 'false'
+
+        step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+
+        step.conditionalBuilders[0].children().size() == 2
+
+        Node shellStep = step.conditionalBuilders[0].children()[0]
+        shellStep.name() == 'hudson.tasks.Shell'
+        shellStep.command[0].value() == 'look at me'
+
+        def acmeGroovyNode = step.conditionalBuilders[0].children()[1]
+        acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
+        acmeGroovyNode.groovyName.size() == 1
+        acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
+        acmeGroovyNode.parameters.size() == 1
+        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.classPath.size() == 1
+        acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
+        acmeGroovyNode.scriptParameters.size() == 1
+        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.properties.size() == 1
+        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.javaOpts.size() == 1
+        acmeGroovyNode.javaOpts[0].value() == 'test me too'
+        acmeGroovyNode.scriptSource.size() == 1
+        def acmeScriptSourceNode = acmeGroovyNode.scriptSource[0]
+        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
+        acmeScriptSourceNode.command.size() == 1
+        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
     }
 }

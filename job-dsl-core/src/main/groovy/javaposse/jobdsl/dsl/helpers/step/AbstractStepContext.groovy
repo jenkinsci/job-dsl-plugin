@@ -1,20 +1,17 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
-import groovy.transform.Canonical
-import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
-class StepContext implements Context {
+import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
+
+class AbstractStepContext implements Context {
     List<Node> stepNodes = []
-    JobType type
 
-    StepContext(JobType jobType) {
-        this.type = jobType
-    }
-
-    StepContext(List<Node> stepNodes, JobType jobType) {
-        this(jobType)
+    AbstractStepContext(List<Node> stepNodes = []) {
         this.stepNodes = stepNodes
     }
 
@@ -105,6 +102,53 @@ class StepContext implements Context {
     }
 
     /**
+     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16">
+        <targets>sbt-template.groovy</targets>
+        <usingScriptText>false</usingScriptText>
+        <ignoreExisting>false</ignoreExisting>
+        <removedJobAction>IGNORE</removedJobAction>
+     </javaposse.jobdsl.plugin.ExecuteDslScripts>     */
+    def dsl(Closure configure = null) {
+        DslContext context = new DslContext()
+        AbstractContextHelper.executeInContext(configure, context)
+        buildDslNode(context)
+    }
+
+    def dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.text(scriptText)
+        if (removedJobAction) {
+            ctx.removeAction(removedJobAction)
+        }
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+    }
+
+    def dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
+        DslContext ctx = new DslContext()
+        ctx.external(externalScripts.toArray(new String[0]))
+        if (removedJobAction) {
+            ctx.removeAction(removedJobAction)
+        }
+        ctx.ignoreExisting = ignoreExisting
+        buildDslNode(ctx)
+
+    }
+
+    private void buildDslNode(context) {
+        def nodeBuilder = new NodeBuilder()
+        def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
+            targets context.targets
+            usingScriptText context.useScriptText()
+            scriptText context.scriptText
+            ignoreExisting context.ignoreExisting
+            removedJobAction context.removedJobAction.name()
+        }
+
+        stepNodes << dslNode
+    }
+
+    /**
      <hudson.tasks.Ant>
      <targets>target</targets>
      <antName>Ant 1.8</antName>
@@ -180,50 +224,6 @@ class StepContext implements Context {
         stepNodes << antNode
     }
 
-    def static class AntContext implements Context {
-        def targets = []
-        def props = []
-        def buildFile = null
-        def antOpts = []
-        def antName = null
-
-        def target(String target) {
-            targets << target
-        }
-
-        def targets(Iterable<String> addlTargets) {
-            addlTargets.each {
-                target(it)
-            }
-        }
-
-        def prop(Object key, Object value) {
-            props << "${key}=${value}"
-        }
-
-        def props(Map<String, String> map) {
-            map.entrySet().each {
-                prop(it.key, it.value)
-            }
-        }
-
-        def buildFile(String buildFile) {
-            this.buildFile = buildFile
-        }
-
-        def javaOpt(String opt) {
-            antOpts << opt
-        }
-
-        def javaOpts(Iterable<String> opts) {
-            opts.each { javaOpt(it) }
-        }
-
-        def antInstallation(String antInstallationName) {
-            antName = antInstallationName
-        }
-    }
-
     /**
      <hudson.plugins.groovy.Groovy>
      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
@@ -294,60 +294,6 @@ class StepContext implements Context {
         stepNodes << groovyNode
     }
 
-    def static abstract class AbstractGroovyContext implements Context {
-        def classpathEntries = []
-
-        def classpath(String classpath) {
-            classpathEntries << classpath
-        }
-    }
-
-    def static class GroovyContext extends AbstractGroovyContext {
-        def groovyParams = []
-        def scriptParams = []
-        def props = []
-        def javaOpts = []
-        def groovyInstallation = null
-
-        def groovyParam(String param) {
-            groovyParams << param
-        }
-
-        def groovyParams(Iterable<String> params) {
-            params.each { groovyParam(it) }
-        }
-
-        def scriptParam(String param) {
-            scriptParams << param
-        }
-
-        def scriptParams(Iterable<String> params) {
-            params.each { scriptParam(it) }
-        }
-
-        def prop(String key, String value) {
-            props << "${key}=${value}"
-        }
-
-        def props(Map<String, String> map) {
-            map.entrySet().each {
-                prop(it.key, it.value)
-            }
-        }
-
-        def javaOpt(String opt) {
-            javaOpts << opt
-        }
-
-        def javaOpts(Iterable<String> opts) {
-            opts.each { javaOpt(it) }
-        }
-
-        def groovyInstallation(String groovyInstallationName) {
-            groovyInstallation = groovyInstallationName
-        }
-    }
-
     /**
      <hudson.plugins.groovy.SystemGroovy>
      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
@@ -387,43 +333,50 @@ class StepContext implements Context {
         stepNodes << systemGroovyNode
     }
 
-    def static class SystemGroovyContext extends AbstractGroovyContext {
-        Map<String, String> bindings = [:]
-
-        def binding(String name, String value) {
-            bindings[name] = value
-        }
-    }
-
     /**
-     <hudson.tasks.Maven>
-     <targets>install</targets>
-     <mavenName>(Default)</mavenName>
-     <pom>pom.xml</pom>
-     <usePrivateRepository>false</usePrivateRepository>
-     </hudson.tasks.Maven>
+     * <hudson.tasks.Maven>
+     *     <targets>install</targets>
+     *     <mavenName>(Default)</mavenName>
+     *     <jvmOptions>-Xmx512m</jvmOptions>
+     *     <pom>pom.xml</pom>
+     *     <usePrivateRepository>false</usePrivateRepository>
+     * </hudson.tasks.Maven>
      */
-    def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
-        def nodeBuilder = new NodeBuilder()
-        def mavenNode = nodeBuilder.'hudson.tasks.Maven' {
-            targets targetsArg?:''
-            mavenName '(Default)' // TODO
-            pom pomArg?:''
-            usePrivateRepository 'false'
+    def maven(Closure closure) {
+        MavenContext mavenContext = new MavenContext()
+        AbstractContextHelper.executeInContext(closure, mavenContext)
+
+        Node mavenNode = new NodeBuilder().'hudson.tasks.Maven' {
+            targets mavenContext.goals.join(' ')
+            mavenName mavenContext.mavenInstallation
+            jvmOptions mavenContext.mavenOpts.join(' ')
+            if (mavenContext.rootPOM) {
+                pom mavenContext.rootPOM
+            }
+            usePrivateRepository mavenContext.localRepositoryLocation == LocalToWorkspace ? 'true' : 'false'
         }
+
         // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
+        if (mavenContext.configureBlock) {
+            WithXmlAction action = new WithXmlAction(mavenContext.configureBlock)
             action.execute(mavenNode)
         }
-        stepNodes << mavenNode
 
+        stepNodes << mavenNode
+    }
+
+    def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
+        maven {
+            delegate.goals(targetsArg)
+            delegate.rootPOM(pomArg)
+            delegate.configure(configure)
+        }
     }
 
     /**
      <com.g2one.hudson.grails.GrailsBuilder>
      <targets/>
-     <name>Grails 2.0.3</name>
+     <name>(Default)</name>
      <grailsWorkDir/>
      <projectWorkDir/>
      <projectBaseDir/>
@@ -431,11 +384,39 @@ class StepContext implements Context {
      <properties/>
      <forceUpgrade>false</forceUpgrade>
      <nonInteractive>true</nonInteractive>
+     <useWrapper>false</useWrapper>
      </com.g2one.hudson.grails.GrailsBuilder>
      */
-//        def grails() {
-//
-//        }
+    def grails(Closure grailsClosure) {
+        grails null, false, grailsClosure
+    }
+
+    def grails(String targetsArg, Closure grailsClosure) {
+        grails targetsArg, false, grailsClosure
+    }
+
+    def grails(String targetsArg = null, boolean useWrapperArg = false, Closure grailsClosure = null) {
+        GrailsContext grailsContext = new GrailsContext(
+            useWrapper: useWrapperArg
+        )
+        AbstractContextHelper.executeInContext(grailsClosure, grailsContext)
+
+        def nodeBuilder = new NodeBuilder()
+        def grailsNode = nodeBuilder.'com.g2one.hudson.grails.GrailsBuilder' {
+            targets targetsArg ?: grailsContext.targetsString
+            name grailsContext.name
+            grailsWorkDir grailsContext.grailsWorkDir
+            projectWorkDir grailsContext.projectWorkDir
+            projectBaseDir grailsContext.projectBaseDir
+            serverPort grailsContext.serverPort
+            'properties' grailsContext.propertiesString
+            forceUpgrade grailsContext.forceUpgrade.toString()
+            nonInteractive grailsContext.nonInteractive.toString()
+            useWrapper grailsContext.useWrapper.toString()
+        }
+
+        stepNodes << grailsNode
+    }
 
     /**
      <hudson.plugins.copyartifact.CopyArtifact>
@@ -519,88 +500,6 @@ class StepContext implements Context {
 
     }
 
-    def static class CopyArtifactContext implements Context {
-        String selectedSelector
-        boolean fallback
-        String permalinkName
-        int buildNumber
-        String parameterName
-
-        private void ensureFirst() {
-            if (selectedSelector!=null) {
-                throw new IllegalStateException("Only one selector can be chosen")
-            }
-        }
-        /**
-         * Upstream build that triggered this job
-         * @arg fallback Use "Last successful build" as fallback
-         * @return
-         */
-        def upstreamBuild(boolean fallback = false) {
-            ensureFirst()
-            this.fallback = fallback
-            selectedSelector = 'TriggeredBuild'
-        }
-
-        /**
-         * Latest successful build
-         * @return
-         */
-        def latestSuccessful() {
-            ensureFirst()
-            selectedSelector = 'StatusBuild'
-        }
-        /**
-         * Latest saved build (marked "keep forever")
-         * @return
-         */
-        def latestSaved() {
-            ensureFirst()
-            selectedSelector = 'SavedBuild'
-        }
-        /**
-         * Specified by permalink
-         * @param linkName Values like lastBuild, lastStableBuild
-         * @return
-         */
-        def permalink(String linkName) {
-            ensureFirst()
-            selectedSelector = 'PermalinkBuild'
-            permalinkName = linkName
-        }
-
-        /**
-         * Specific Build
-         * @param buildNumber
-         * @return
-         */
-        def buildNumber(int buildNumber) {
-            ensureFirst()
-            selectedSelector = 'SpecificBuild'
-            this.buildNumber = buildNumber
-        }
-
-        /**
-         * Copy from WORKSPACE of latest completed build
-         * @return
-         */
-        def workspace() {
-            ensureFirst()
-            selectedSelector = 'Workspace'
-        }
-
-        /**
-         * Specified by build parameter
-         * @param parameterName
-         * @return
-         */
-        def buildParameter(String parameterName) {
-            ensureFirst()
-            selectedSelector = 'ParameterizedBuild'
-            this.parameterName = parameterName
-        }
-    }
-
     /**
      * phaseName will have to be provided in the closure
      * @param phaseContext
@@ -634,55 +533,9 @@ class StepContext implements Context {
                         currParams jobInPhase.currentJobParameters?'true':'false'
                         exposedSCM jobInPhase.exposedScm?'true':'false'
                         if (jobInPhase.hasConfig()) {
-                            configs {
-                                if (!jobInPhase.boolParams.isEmpty()) {
-                                    'hudson.plugins.parameterizedtrigger.BooleanParameters'(plugin:'parameterized-trigger@2.17') {
-                                        configs {
-                                            jobInPhase.boolParams.each { k, v ->
-                                                def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
-                                                    value(v?'true':'false')
-                                                }
-                                                boolConfigNode.appendNode('name', k)
-                                            }
-                                        }
-                                    }
-                                }
-                                if (jobInPhase.fileParam) {
-                                    'hudson.plugins.parameterizedtrigger.FileBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        propertiesFile jobInPhase.fileParam
-                                        failTriggerOnMissing jobInPhase.failTriggerOnMissing?'true':'false'
-                                    }
-                                }
-                                if (jobInPhase.nodeParam) {
-                                    'hudson.plugins.parameterizedtrigger.NodeParameters'(plugin:'parameterized-trigger@2.17')
-                                }
-                                if (jobInPhase.currentJobParameters) {
-                                    // Not sure how this differs from currParams
-                                    'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'(plugin:'parameterized-trigger@2.17')
-                                }
-                                if (jobInPhase.matrixFilter) {
-                                    'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        filter jobInPhase.matrixFilter
-                                    }
-                                }
-                                if (jobInPhase.subversionRevision != null) {
-                                    'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        includeUpstreamParameters jobInPhase.subversionRevision?'true':'false'
-                                    }
-                                }
-                                if (jobInPhase.gitRevision != null) {
-                                    'hudson.plugins.git.GitRevisionBuildParameters'(plugin:'git@1.3.0') {
-                                        combineQueuedCommits jobInPhase.gitRevision?'true':'false'
-                                    }
-                                }
-                                if (jobInPhase.props) {
-                                    'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'(plugin:'parameterized-trigger@2.17') {
-                                        'properties'(jobInPhase.props.join('\n'))
-                                    }
-                                }
-                            }
+                            configs(jobInPhase.configAsNode().children())
                         } else {
-                            configs(class:'java.util.Collections$EmptyList')
+                            configs('class': 'java.util.Collections$EmptyList')
                         }
                     }
                 }
@@ -691,105 +544,96 @@ class StepContext implements Context {
         stepNodes << multiJobPhaseNode
     }
 
-    @Canonical
-    static class PhaseContext implements Context {
-        String phaseName
-        String continuationCondition
-
-        List<PhaseJobContext> jobsInPhase = []
-
-        void phaseName(String phaseName) {
-            this.phaseName = phaseName
+    /**
+     * <dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder>
+     *     <projects>project-A,project-B</projects>
+     *     <warningOnly>false</warningOnly>
+     * </dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder>
+     */
+    def prerequisite(String projectList = '', boolean warningOnlyBool = false) {
+        def nodeBuilder = new NodeBuilder()
+        def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
+             // Important that there are no spaces for comma delimited values, plugin doesn't handle by trimming, so we will
+            projectList = projectList.tokenize(',').collect{ it.trim() }.join(',')
+            projects(projectList)
+            warningOnly(warningOnlyBool)
         }
-
-        void continuationCondition(String continuationCondition) {
-            this.continuationCondition = continuationCondition
-        }
-
-        def job(String jobName, Closure phaseJobClosure = null) {
-            job(jobName, true, true, phaseJobClosure)
-        }
-
-        def job(String jobName, boolean currentJobParameters, Closure phaseJobClosure = null) {
-            job(jobName, currentJobParameters, true, phaseJobClosure)
-        }
-
-        def job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
-            PhaseJobContext phaseJobContext = new PhaseJobContext(jobName, currentJobParameters, exposedScm)
-            AbstractContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
-
-            jobsInPhase << phaseJobContext
-
-            return phaseJobContext
-        }
+        stepNodes << preReqNode
     }
 
-    @Canonical
-    static class PhaseJobContext implements Context {
-        String jobName
-        boolean currentJobParameters = true
-        boolean exposedScm = true
+    /**
+     <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.21">
+     <configs>
+     <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+     <configs>
+     <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/> // Current build parameters
+     <hudson.plugins.parameterizedtrigger.FileBuildParameters> // Parameters from properties file
+     <propertiesFile>some.properties</propertiesFile>
+     </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+     <hudson.plugins.git.GitRevisionBuildParameters> // Pass-through Git commit that was built
+     <combineQueuedCommits>false</combineQueuedCommits>
+     </hudson.plugins.git.GitRevisionBuildParameters>
+     <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters> // Predefined properties
+     <properties>prop1=value1
+     prop2=value2</properties>
+     </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     <hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters> // Restrict matrix execution to a subset
+     <filter>label=="${TARGET}"</filter>
+     </hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters>
+     <hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters/> // Subversion revision
+     <projects>one-project,another-project</projects>
+     <condition>ALWAYS</condition>
+     <triggerWithNoParameters>false</triggerWithNoParameters>
+     <block>
+     <unstableThreshold>
+     <name>UNSTABLE</name>
+     <ordinal>1</ordinal>
+     <color>YELLOW</color>
+     </unstableThreshold>
+     <buildStepFailureThreshold>
+     <name>FAILURE</name>
+     <ordinal>2</ordinal>
+     <color>RED</color>
+     </buildStepFailureThreshold>
+     <failureThreshold>
+     <name>FAILURE</name>
+     <ordinal>2</ordinal>
+     <color>RED</color>
+     </failureThreshold>
+     </block>
+     <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+     </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+     </configs>
+     </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+     */
+    def downstreamParameterized(Closure downstreamClosure) {
+        DownstreamContext downstreamContext = new DownstreamContext()
+        AbstractContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
-        Map<String, Boolean> boolParams = [:]
-        String fileParam
-        boolean failTriggerOnMissing
-        boolean nodeParam = false
-        String matrixFilter
-        Boolean subversionRevision
-        Boolean gitRevision
-        def props = []
+        def stepNode = downstreamContext.createDownstreamNode(true)
+        stepNodes << stepNode
+    }
 
-        void jobName(String jobName) {
-            this.jobName = jobName
-        }
+    /**
+     <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.2.2">
+     <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@0.10">
+     <arg1/><arg2/>
+     <ignoreCase>false</ignoreCase>
+     </condition>
+     <buildStep class="hudson.tasks.Shell">
+     <command/>
+     </buildStep>
+     <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@0.10"/>
+     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+     */
+    def conditionalSteps(Closure conditonalStepsClosure) {
+        ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext()
+        AbstractContextHelper.executeInContext(conditonalStepsClosure, conditionalStepsContext)
 
-        def currentJobParameters(boolean currentJobParameters = true) {
-            this.currentJobParameters = currentJobParameters
-        }
-
-        def exposedScm(boolean exposedScm = true) {
-            this.exposedScm = exposedScm
-        }
-
-        def boolParam(String paramName, boolean defaultValue = false) {
-            boolParams[paramName] = defaultValue
-        }
-
-        def fileParam(String propertyFile, boolean failTriggerOnMissing = false) {
-            Preconditions.checkState(!fileParam, "File parameter already set with ${fileParam}")
-            this.fileParam = propertyFile
-            this.failTriggerOnMissing = failTriggerOnMissing
-        }
-
-        def sameNode(boolean nodeParam = true) {
-            this.nodeParam = nodeParam
-        }
-
-        def matrixParam(String filter) {
-            Preconditions.checkState(!matrixFilter, "Matrix parameter already set with ${matrixFilter}")
-            this.matrixFilter = filter
-        }
-
-        def subversionRevision(boolean includeUpstreamParameters = false) {
-            this.subversionRevision = includeUpstreamParameters
-        }
-
-        def gitRevision(boolean combineQueuedCommits = false) {
-            this.gitRevision = combineQueuedCommits
-        }
-
-        def prop(Object key, Object value) {
-            props << "${key}=${value}"
-        }
-
-        def props(Map<String, String> map) {
-            map.entrySet().each {
-                prop(it.key, it.value)
-            }
-        }
-
-        def hasConfig() {
-            return !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null || gitRevision != null || !props.isEmpty()
+        if (conditionalStepsContext.stepNodes.size() > 1) {
+            stepNodes << conditionalStepsContext.createMultiStepNode()
+        } else {
+            stepNodes << conditionalStepsContext.createSingleStepNode()
         }
     }
 }

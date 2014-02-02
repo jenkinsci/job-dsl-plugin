@@ -1,15 +1,20 @@
 package javaposse.jobdsl.plugin;
 
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import hudson.EnvVars;
 import hudson.FilePath;
+import hudson.Plugin;
 import hudson.XmlFile;
 import hudson.model.*;
+import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.*;
 import jenkins.model.Jenkins;
+import jenkins.model.ModifiableTopLevelItemGroup;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -21,13 +26,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.security.ACL.SYSTEM;
+
 /**
  * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
  */
 public final class JenkinsJobManagement extends AbstractJobManagement {
     static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
-    Jenkins jenkins = Jenkins.getInstance();
     EnvVars envVars;
     Set<GeneratedJob> modifiedJobs;
     AbstractBuild<?, ?> build;
@@ -35,13 +41,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     JenkinsJobManagement() {
         super();
         envVars = new EnvVars();
-        modifiedJobs = Sets.newHashSet();
+        modifiedJobs = Sets.newLinkedHashSet();
     }
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build) {
         super(outputLogger);
         this.envVars = envVars;
-        this.modifiedJobs = Sets.newHashSet();
+        this.modifiedJobs = Sets.newLinkedHashSet();
         this.build = build;
     }
 
@@ -69,19 +75,20 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String fullJobName, String config, boolean ignoreExisting)
             throws JobNameNotProvidedException, JobConfigurationMissingException {
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", jobName));
+        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullJobName));
         boolean created = false;
 
-        validateUpdateArgs(jobName, config);
+        validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullJobName);
+        String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
         if (project == null) {
-            created = createNewJob(jobName, config);
+            created = createNewJob(fullJobName, config);
         } else if (!ignoreExisting) {
             created = updateExistingJob(project, config);
         }
@@ -94,10 +101,26 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    public String getCredentialsId(String credentialsDescription) {
+        Jenkins jenkins = Jenkins.getInstance();
+        Plugin credentialsPlugin = jenkins.getPlugin("credentials");
+        if (credentialsPlugin != null && !credentialsPlugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber("1.6"))) {
+            for (CredentialsProvider credentialsProvider : jenkins.getExtensionList(CredentialsProvider.class)) {
+                for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, jenkins, SYSTEM)) {
+                    if (credentials.getDescription().equals(credentialsDescription) || credentials.getId().equals(credentialsDescription)) {
+                        return credentials.getId();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void queueJob(String jobName) throws JobNameNotProvidedException {
         validateJobNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
 
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
@@ -138,7 +161,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jenkins.getItem(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
@@ -185,22 +208,45 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
-    private boolean createNewJob(String jobName, String config) {
+    private boolean createNewJob(String fullJobName, String config) {
         LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
         boolean created;
 
         try {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-            TopLevelItem item = jenkins.createProjectFromXML(jobName, is);
+
+            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
+            String jobName = getJobNameFromFullName(fullJobName);
+            ctx.createProjectFromXML(jobName, is);
+
             created = true;
         } catch (UnsupportedEncodingException ueex) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
             created = false;
         } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", jobName), ioex);
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", fullJobName), ioex);
             created = false;
         }
         return created;
+    }
+
+    private static ModifiableTopLevelItemGroup getContextFromFullName(String fullName) {
+        int i = fullName.lastIndexOf('/');
+        Jenkins jenkins = Jenkins.getInstance();
+        ModifiableTopLevelItemGroup ctx = jenkins;
+        if (i > 0) {
+            String contextName = fullName.substring(0, i);
+            Item contextItem = jenkins.getItemByFullName(contextName);
+            if (contextItem instanceof ModifiableTopLevelItemGroup) {
+                ctx = (ModifiableTopLevelItemGroup) contextItem;
+            }
+        }
+        return ctx;
+    }
+
+    private static String getJobNameFromFullName(String fullName) {
+        int i = fullName.lastIndexOf('/');
+        return i > 0 ? fullName.substring(i+1) : fullName;
     }
 
 //    @SuppressWarnings("rawtypes")
@@ -213,12 +259,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 //    }
 //
 //    public Collection<AbstractProject> getJobsByGeneratedJobs(final Set<GeneratedJob> generatedJobs) {
-//        Set<String> jobNames = Sets.newHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
+//        Set<String> jobNames = Sets.newLinkedHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
 //        return getJobsByName(jobNames);
 //    }
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
-        return Sets.newHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
+        return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
     }
 
     public static class ExtractJobName implements Function<GeneratedJob, String> {

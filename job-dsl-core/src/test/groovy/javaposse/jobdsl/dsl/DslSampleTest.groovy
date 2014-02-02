@@ -1,8 +1,6 @@
 package javaposse.jobdsl.dsl
 
-import org.custommonkey.xmlunit.DetailedDiff
-import org.custommonkey.xmlunit.Diff
-import spock.lang.*
+import spock.lang.Specification
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 

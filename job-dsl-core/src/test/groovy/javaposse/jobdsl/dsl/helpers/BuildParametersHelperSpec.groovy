@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper.BuildParametersContext
 import spock.lang.Specification
 
 public class BuildParametersHelperSpec extends Specification {
@@ -354,6 +353,20 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
         context.buildParameterNodes["myParameterName"].projectName.text() == 'myJobName'
         context.buildParameterNodes["myParameterName"].description.text() == ''
+    }
+
+    def 'fullest runParam usage'() {
+        when:
+        context.runParam("myParameterName", "myJobName", "my description with spaces", "SUCCESSFUL")
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.RunParameterDefinition'
+        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
+        context.buildParameterNodes["myParameterName"].projectName.text() == 'myJobName'
+        context.buildParameterNodes["myParameterName"].description.text() == 'my description with spaces'
+        context.buildParameterNodes["myParameterName"].filter.text() == 'SUCCESSFUL'
     }
 
     def 'runParam name argument cant be null'() {

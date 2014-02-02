@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -11,8 +12,9 @@ public class ScmHelperSpec extends Specification {
     private static final String HG_REPO_URL = 'http://selenic.com/repo/hello'
 
     List<WithXmlAction> mockActions = Mock()
-    ScmContextHelper helper = new ScmContextHelper(mockActions, JobType.Freeform)
-    ScmContext context = new ScmContext()
+    JobManagement mockJobManagement = Mock(JobManagement)
+    ScmContextHelper helper = new ScmContextHelper(mockActions, JobType.Freeform, mockJobManagement)
+    ScmContext context = new ScmContext(false, [], mockJobManagement)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 
     def 'base hg configuration'() {
@@ -42,6 +44,435 @@ public class ScmHelperSpec extends Specification {
 
         then:
         thrown(RuntimeException)
+    }
+
+    def 'call git scm with two remotes'() {
+        when:
+        context.git {
+            remote {
+                name('origin')
+                url('https://github.com/jenkinsci/jenkins.git')
+                refspec('+refs/heads/master:refs/remotes/origin/master')
+            }
+            remote {
+                name('other')
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+                refspec('+refs/heads/master:refs/remotes/other/master')
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.userRemoteConfigs.size() == 1
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'.size() == 2
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].name[0].text() == 'origin'
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].text() == 'https://github.com/jenkinsci/jenkins.git'
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].refspec[0].text() == '+refs/heads/master:refs/remotes/origin/master'
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[1].name[0].text() == 'other'
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[1].url[0].text() == 'https://github.com/jenkinsci/job-dsl-plugin.git'
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[1].refspec[0].text() == '+refs/heads/master:refs/remotes/other/master'
+    }
+
+    def 'call git scm with relativeTargetDir'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            relativeTargetDir('checkout')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.relativeTargetDir.size() == 1
+        context.scmNode.relativeTargetDir[0].text() == 'checkout'
+    }
+
+    def 'call git scm with second relativeTargetDirs'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            relativeTargetDir('ignored')
+            relativeTargetDir('checkout')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.relativeTargetDir.size() == 1
+        context.scmNode.relativeTargetDir[0].text() == 'checkout'
+    }
+
+    def 'call git scm with reference'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            reference('/foo/bar')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.reference.size() == 1
+        context.scmNode.reference[0].text() == '/foo/bar'
+    }
+
+    def 'call git scm with second reference'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            reference('/foo/bar')
+            reference('/foo/baz')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.reference.size() == 1
+        context.scmNode.reference[0].text() == '/foo/baz'
+    }
+
+    def 'call git scm with shallowClone'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            shallowClone(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.useShallowClone.size() == 1
+        context.scmNode.useShallowClone[0].text() == 'true'
+    }
+
+    def 'call git scm with shallowClone, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            shallowClone()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.useShallowClone.size() == 1
+        context.scmNode.useShallowClone[0].text() == 'true'
+    }
+
+    def 'call git scm with second shallowClone'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            shallowClone(false)
+            shallowClone(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.useShallowClone.size() == 1
+        context.scmNode.useShallowClone[0].text() == 'true'
+    }
+
+    def 'call git scm with createTag'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            createTag(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.skipTag.size() == 1
+        context.scmNode.skipTag[0].text() == 'false'
+    }
+
+    def 'call git scm with skipTag, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            createTag()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.skipTag.size() == 1
+        context.scmNode.skipTag[0].text() == 'false'
+    }
+
+    def 'call git scm with second skipTag'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            createTag(false)
+            createTag(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.skipTag.size() == 1
+        context.scmNode.skipTag[0].text() == 'false'
+    }
+
+    def 'call git scm with clean'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            clean(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.clean.size() == 1
+        context.scmNode.clean[0].text() == 'true'
+    }
+
+    def 'call git scm with clean, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            clean()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.clean.size() == 1
+        context.scmNode.clean[0].text() == 'true'
+    }
+
+    def 'call git scm with second clean'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            clean(false)
+            clean(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.clean.size() == 1
+        context.scmNode.clean[0].text() == 'true'
+    }
+
+    def 'call git scm with wipeOutWorkspace'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            wipeOutWorkspace(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.wipeOutWorkspace.size() == 1
+        context.scmNode.wipeOutWorkspace[0].text() == 'true'
+    }
+
+    def 'call git scm with wipeOutWorkspace, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            wipeOutWorkspace()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.wipeOutWorkspace.size() == 1
+        context.scmNode.wipeOutWorkspace[0].text() == 'true'
+    }
+
+    def 'call git scm with second wipeOutWorkspace'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            wipeOutWorkspace(false)
+            wipeOutWorkspace(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.wipeOutWorkspace.size() == 1
+        context.scmNode.wipeOutWorkspace[0].text() == 'true'
+    }
+
+    def 'call git scm with remotePoll'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            remotePoll(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.remotePoll.size() == 1
+        context.scmNode.remotePoll[0].text() == 'true'
+    }
+
+    def 'call git scm with remotePoll, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            remotePoll()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.remotePoll.size() == 1
+        context.scmNode.remotePoll[0].text() == 'true'
+    }
+
+    def 'call git scm with second remotePoll'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            remotePoll(false)
+            remotePoll(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.remotePoll.size() == 1
+        context.scmNode.remotePoll[0].text() == 'true'
+    }
+
+    def 'call git scm with no branch'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.branches.size() == 1
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'.size() == 1
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].text() == '**'
+    }
+
+    def 'call git scm with multiple branches'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            branch('foo')
+            branches('bar', 'test')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.branches.size() == 1
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'.size() == 3
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].text() == 'foo'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[1].name[0].text() == 'bar'
+        context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[2].name[0].text() == 'test'
+    }
+
+    def 'call git scm with mergeOptions'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            mergeOptions('acme-plugin')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.userMergeOptions.size() == 1
+        context.scmNode.userMergeOptions[0].mergeRemote.size() == 0
+        context.scmNode.userMergeOptions[0].mergeTarget.size() == 1
+        context.scmNode.userMergeOptions[0].mergeTarget[0].text() == 'acme-plugin'
+    }
+
+    def 'call git scm with second mergeOptions'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            mergeOptions('ignored')
+            mergeOptions('acme-plugin')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.userMergeOptions.size() == 1
+        context.scmNode.userMergeOptions[0].mergeRemote.size() == 0
+        context.scmNode.userMergeOptions[0].mergeTarget.size() == 1
+        context.scmNode.userMergeOptions[0].mergeTarget[0].text() == 'acme-plugin'
+    }
+
+    def 'call git scm with complex mergeOptions'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            remote {
+                name('other')
+                url('https://github.com/daspilker/job-dsl-plugin.git')
+            }
+            mergeOptions('other', 'acme-plugin')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.userMergeOptions.size() == 1
+        context.scmNode.userMergeOptions[0].mergeRemote.size() == 1
+        context.scmNode.userMergeOptions[0].mergeRemote[0].text() == 'other'
+        context.scmNode.userMergeOptions[0].mergeTarget.size() == 1
+        context.scmNode.userMergeOptions[0].mergeTarget[0].text() == 'acme-plugin'
+    }
+
+    def 'call git scm with credentials'() {
+        setup:
+        mockJobManagement.getCredentialsId('ci-user') >> '0815'
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+                credentials('ci-user')
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.userRemoteConfigs.size() == 1
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'.size() == 1
+        context.scmNode.userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].credentialsId[0].text() == '0815'
     }
 
     def 'call git scm methods'() {
@@ -744,5 +1175,19 @@ public class ScmHelperSpec extends Specification {
 
         then:
         root.scm[0].wipeOutWorkspace[0].text() == 'true'
+    }
+
+    def 'call cloneWorkspace'(parentJob, criteria) {
+        when:
+        context.cloneWorkspace(parentJob, criteria)
+
+        then:
+        context.scmNode.parentJobName.text() == parentJob
+        context.scmNode.criteria.text() == criteria
+
+        where:
+        parentJob | criteria
+        'parent'  | 'Any'
+        'some'    | 'Successful'
     }
 }

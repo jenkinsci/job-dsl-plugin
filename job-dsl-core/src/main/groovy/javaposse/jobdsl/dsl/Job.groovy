@@ -1,7 +1,15 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.helpers.*
+import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
+import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
+import javaposse.jobdsl.dsl.helpers.MavenHelper
+import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
+import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
+import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
+import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
+import javaposse.jobdsl.dsl.helpers.triggers.TriggerContextHelper
+import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
 
 /**
  * DSL Element representing a Jenkins Job
@@ -22,6 +30,7 @@ public class Job {
     @Delegate AuthorizationContextHelper helperAuthorization
     @Delegate ScmContextHelper helperScm
     @Delegate TriggerContextHelper helperTrigger
+    @Delegate WrapperContextHelper helperWrapper
     @Delegate StepContextHelper helperStep
     @Delegate PublisherContextHelper helperPublisher
     @Delegate MultiScmContextHelper helperMultiscm
@@ -36,9 +45,10 @@ public class Job {
 
         // Helpers
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
-        helperScm = new ScmContextHelper(withXmlActions, type)
-        helperMultiscm = new MultiScmContextHelper(withXmlActions, type)
+        helperScm = new ScmContextHelper(withXmlActions, type, jobManagement)
+        helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
         helperTrigger = new TriggerContextHelper(withXmlActions, type)
+        helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperStep = new StepContextHelper(withXmlActions, type)
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)

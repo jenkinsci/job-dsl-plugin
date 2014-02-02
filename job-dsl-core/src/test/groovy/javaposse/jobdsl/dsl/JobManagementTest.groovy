@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl
 
-import spock.lang.*
+import spock.lang.Specification
 
-import static org.custommonkey.xmlunit.XMLUnit.*
+import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class JobManagementTest extends Specification {
 

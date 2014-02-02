@@ -1,13 +1,9 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
-
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.absolute
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.elastic
-import static javaposse.jobdsl.dsl.helpers.TopLevelHelper.Timeout.likelyStuck
 
 public class TopLevelHelperSpec extends Specification {
 
@@ -31,99 +27,6 @@ public class TopLevelHelperSpec extends Specification {
         root.description.size() == 1
         root.description[0].value() == 'Description2'
 
-    }
-
-    def 'can run timeout'() {
-        when:
-        helper.timeout(15)
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'timeout constructs xml'() {
-        when:
-        def action = helper.timeout(15)
-        action.execute(root)
-
-        then:
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].timeoutMinutes[0].value() == '15'
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'true'
-    }
-
-    def 'timeout failBuild parameter works'() {
-        when:
-        def action = helper.timeout(15, false)
-        action.execute(root)
-
-        then:
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'false'
-    }
-
-    def 'default timeout works' () {
-        when:
-        def action = helper.timeout()
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 3
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == absolute
-        timeout.timeoutMinutesElasticDefault[0].value() == 3
-    }
-
-    def 'absolute timeout configuration working' () {
-        when:
-        def action = helper.timeout('absolute') {
-            limit 5
-        }
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 5
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == absolute
-        timeout.timeoutMinutesElasticDefault[0].value() == 5
-    }
-
-
-    def 'elastic timeout configuration working' () {
-        when:
-        def action = helper.timeout('elastic') {
-            limit 15
-            percentage 200
-        }
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 15
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  200
-        timeout.timeoutType[0].value() == elastic
-        timeout.timeoutMinutesElasticDefault[0].value() == 15
-    }
-
-    def 'likelyStuck timeout configuration working' () {
-        when:
-        def action = helper.timeout('likelyStuck')
-        action.execute(root)
-
-        then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 3
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == likelyStuck
-        timeout.timeoutMinutesElasticDefault[0].value() == 3
     }
 
     def 'environments work with map arg'() {
@@ -190,6 +93,58 @@ public class TopLevelHelperSpec extends Specification {
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
         root.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+    }
+
+    def 'throttle concurrents enabled as project alone'() {
+        when:
+        def action = helper.throttleConcurrentBuilds {
+            maxPerNode 1
+            maxTotal 2
+        }
+        action.execute(root)
+
+        then:
+        def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+
+        throttleNode.maxConcurrentPerNode[0].value() == 1
+        throttleNode.maxConcurrentTotal[0].value() == 2
+        throttleNode.throttleEnabled[0].value() == 'true'
+        throttleNode.throttleOption[0].value() == 'project'
+        throttleNode.categories[0].children().size() == 0
+    }
+
+    def 'throttle concurrents disabled'() {
+        when:
+        def action = helper.throttleConcurrentBuilds {
+            throttleDisabled()
+        }
+        action.execute(root)
+
+        then:
+        def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+
+        throttleNode.throttleEnabled[0].value() == 'false'
+    }
+
+    def 'throttle concurrents enabled as part of categories'() {
+        when:
+        def action = helper.throttleConcurrentBuilds {
+            maxPerNode 1
+            maxTotal 2
+            categories(['cat-1', 'cat-2'])
+        }
+        action.execute(root)
+
+        then:
+        def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+
+        throttleNode.maxConcurrentPerNode[0].value() == 1
+        throttleNode.maxConcurrentTotal[0].value() == 2
+        throttleNode.throttleEnabled[0].value() == 'true'
+        throttleNode.throttleOption[0].value() == 'category'
+        throttleNode.categories[0].children().size() == 2
+        throttleNode.categories[0].string[0].value() == 'cat-1'
+        throttleNode.categories[0].string[1].value() == 'cat-2'
     }
 
     def 'can run label'() {
@@ -346,13 +301,26 @@ public class TopLevelHelperSpec extends Specification {
         action.execute(root)
 
         then:
-        root.blockBuildWhenDownstreamBuilding[0].value() == true
+        root.blockBuildWhenUpstreamBuilding[0].value() == true
 
         when:
         action = helper.blockOnDownstreamProjects()
         action.execute(root)
 
         then:
-        root.blockBuildWhenUpstreamBuilding[0].value() == true
+        root.blockBuildWhenDownstreamBuilding[0].value() == true
+    }
+
+    def 'set keep Dependencies'(keep) {
+        when:
+        def action = helper.keepDependencies(keep)
+        action.execute(root)
+
+        then:
+        root.keepDependencies.size() == 1
+        root.keepDependencies[0].value() == keep
+
+        where:
+        keep << [true, false]
     }
 }

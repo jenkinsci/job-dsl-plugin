@@ -1,18 +1,24 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Preconditions
-import groovy.transform.PackageScope
-import javaposse.jobdsl.dsl.WithXmlAction
 import hudson.plugins.perforce.PerforcePasswordEncryptor
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.scm.GitContext
+
+import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.getValidCloneWorkspaceCriteria
 
 class ScmContext implements Context {
     boolean multiEnabled
     List<Node> scmNodes = []
     List<WithXmlAction> withXmlActions = []
+    JobManagement jobManagement
 
-    ScmContext(multiEnabled = false, withXmlActions = []) {
+    ScmContext(multiEnabled = false, withXmlActions = [], jobManagement = null) {
         this.multiEnabled = multiEnabled
         this.withXmlActions = withXmlActions
+        this.jobManagement = jobManagement
     }
 
     // Package scope
@@ -103,9 +109,81 @@ class ScmContext implements Context {
        <gitConfigName/>
        <gitConfigEmail/>
        <skipTag>false</skipTag>
+       <useShallowClone>false</useShallowClone>
        <includedRegions/>
        <scmName/>
      </hudson.plugins.git.GitSCM>
+     */
+    def git(Closure gitClosure) {
+        validateMulti()
+
+        GitContext gitContext = new GitContext(withXmlActions, jobManagement)
+        executeInContext(gitClosure, gitContext)
+
+        if (gitContext.branches.empty) {
+            gitContext.branches << '**'
+        }
+
+        // TODO Attempt to update existing scm node
+        def nodeBuilder = new NodeBuilder()
+
+        Node gitNode = nodeBuilder.scm(class:'hudson.plugins.git.GitSCM') {
+            userRemoteConfigs(gitContext.remoteConfigs)
+            branches {
+                gitContext.branches.each { String branch ->
+                    'hudson.plugins.git.BranchSpec' {
+                        name(branch)
+                    }
+                }
+            }
+            configVersion '2'
+            disableSubmodules 'false'
+            recursiveSubmodules 'false'
+            doGenerateSubmoduleConfigurations 'false'
+            authorOrCommitter 'false'
+            clean gitContext.clean
+            wipeOutWorkspace gitContext.wipeOutWorkspace
+            pruneBranches 'false'
+            remotePoll gitContext.remotePoll
+            ignoreNotifyCommit 'false'
+            //buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"
+            gitTool 'Default'
+            //submoduleCfg 'class="list"'
+            if (gitContext.relativeTargetDir) {
+                relativeTargetDir gitContext.relativeTargetDir
+            }
+            if (gitContext.reference) {
+                reference gitContext.reference
+            }
+            //excludedRegions
+            //excludedUsers
+            //gitConfigName
+            //gitConfigEmail
+            skipTag !gitContext.createTag
+            //includedRegions
+            //scmName
+            if (gitContext.shallowClone) {
+                useShallowClone gitContext.shallowClone
+            }
+        }
+
+        if (gitContext.browser) {
+            gitNode.children().add(gitContext.browser)
+        }
+
+        if (gitContext.mergeOptions) {
+            gitNode.children().add(gitContext.mergeOptions)
+        }
+
+        // Apply Context
+        if (gitContext.withXmlClosure) {
+            WithXmlAction action = new WithXmlAction(gitContext.withXmlClosure)
+            action.execute(gitNode)
+        }
+        scmNodes << gitNode
+    }
+
+    /**
      * @param url
      * @param branch
      * @param configure
@@ -116,58 +194,18 @@ class ScmContext implements Context {
     }
 
     def git(String url, String branch, Closure configure = null) {
-        Preconditions.checkNotNull(url)
-        validateMulti()
-        // TODO Validate url as a git url (e.g. https or git)
-
-        // TODO Attempt to update existing scm node
-        def nodeBuilder = new NodeBuilder()
-
-        Node gitNode = nodeBuilder.scm(class:'hudson.plugins.git.GitSCM') {
-//                userRemoteConfigs {
-//                    'hudson.plugins.git.UserRemoteConfig' {
-//                        'url' 'url'
-//                    }
-//                }
-            // Can't put here because the name is "name"
-//                branches {
-//                    'hudson.plugins.git.BranchSpec' {
-//                        'name' branch?:'master'
-//                    }
-//                }
-            configVersion '2'
-            disableSubmodules 'false'
-            recursiveSubmodules 'false'
-            doGenerateSubmoduleConfigurations 'false'
-            authorOrCommitter 'false'
-            clean 'false'
-            wipeOutWorkspace 'false'
-            pruneBranches 'false'
-            remotePoll 'false'
-            ignoreNotifyCommit 'false'
-            //buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"
-            gitTool 'Default'
-            //submoduleCfg 'class="list"'
-            //relativeTargetDir
-            //reference
-            //excludedRegions
-            //excludedUsers
-            //gitConfigName
-            //gitConfigEmail
-            skipTag 'false'
-            //includedRegions
-            //scmName
+        git {
+            remote {
+                delegate.url(url)
+            }
+            if (branch) {
+                delegate.branch(branch)
+            }
+            if (configure) {
+                delegate.configure(configure)
+            }
+            delegate.createTag()
         }
-
-        gitNode.appendNode('userRemoteConfigs').appendNode('hudson.plugins.git.UserRemoteConfig').appendNode('url', url)
-        gitNode.appendNode('branches').appendNode('hudson.plugins.git.BranchSpec').appendNode('name', branch?:'**')
-
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(gitNode)
-        }
-        scmNodes << gitNode
     }
 
     def github(String ownerAndProject, String branch = null, String protocol = "https", Closure closure) {
@@ -175,29 +213,17 @@ class ScmContext implements Context {
     }
 
     def github(String ownerAndProject, String branch = null, String protocol = "https", String host = "github.com", Closure closure = null) {
-        def url
-        def webUrl = "https://${host}/${ownerAndProject}/"
-
-        switch (protocol) {
-            case 'https':
-                url = "https://${host}/${ownerAndProject}.git"
-                break
-            case 'ssh':
-                url = "git@${host}:${ownerAndProject}.git"
-                break
-            case 'git':
-                url = "git://${host}/${ownerAndProject}.git"
-                break
-            default:
-                throw new IllegalArgumentException("Invalid protocol ${protocol}. Only https, ssh or git are allowed.")
-        }
-        git(url, branch, closure)
-        scmNodes.last().appendNode('browser', [class: 'hudson.plugins.git.browser.GithubWeb']).appendNode('url', webUrl)
-        withXmlActions << new WithXmlAction({ project ->
-            project / 'properties' / 'com.coravy.hudson.plugins.github.GithubProjectProperty' {
-                projectUrl webUrl
+        git {
+            remote {
+                delegate.github(ownerAndProject, protocol, host)
             }
-        })
+            if (branch) {
+                delegate.branch(branch)
+            }
+            if (closure) {
+                delegate.configure(closure)
+            }
+        }
     }
 
     /**
@@ -536,5 +562,24 @@ class ScmContext implements Context {
             action.execute(p4Node)
         }
         scmNodes << p4Node
+    }
+
+    /**
+     * <scm class="hudson.plugins.cloneworkspace.CloneWorkspaceSCM">
+     *   <parentJobName>test-job</parentJobName>
+     *   <criteria>Successful</criteria>
+     * </scm>
+     */
+    def cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
+        Preconditions.checkNotNull(parentProject)
+        Preconditions.checkArgument(
+                validCloneWorkspaceCriteria.contains(criteriaArg),
+                "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}")
+        validateMulti()
+
+        scmNodes << NodeBuilder.newInstance().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
+            parentJobName(parentProject)
+            criteria(criteriaArg)
+        }
     }
 }

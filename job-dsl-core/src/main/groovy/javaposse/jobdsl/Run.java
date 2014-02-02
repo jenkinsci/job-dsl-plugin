@@ -1,8 +1,14 @@
 package javaposse.jobdsl;
 
-import javaposse.jobdsl.dsl.*;
+import javaposse.jobdsl.dsl.DslScriptLoader;
+import javaposse.jobdsl.dsl.FileJobManagement;
+import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.ScriptRequest;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,23 +18,33 @@ import java.util.Set;
 public class Run {
 
     public static void main(String[] args) throws Exception {
-        if(args.length != 1) {
+        if(args.length == 0) {
             throw new RuntimeException("Script name is required");
         }
 
-        String scriptName = args[0];
-
         File cwd = new File(".");
-        ScriptRequest request = new ScriptRequest(scriptName, null, cwd.toURI().toURL(), false);
+        URL cwdURL = cwd.toURI().toURL();
+
         FileJobManagement jm = new FileJobManagement(cwd);
         jm.getParameters().putAll(System.getenv());
         for(Map.Entry entry: System.getProperties().entrySet()) {
             jm.getParameters().put(entry.getKey().toString(), entry.getValue().toString());
         }
-        Set<GeneratedJob> generatedJobs = DslScriptLoader.runDslEngine(request, jm);
 
-        for(GeneratedJob job: generatedJobs) {
-            System.out.println("Generated: " + job);
+        Collection<String> scripts = new ArrayList<String>();
+        for(String arg: args) {
+            if(arg.startsWith("--")) {
+                scripts.add(arg);
+            }
+        }
+
+        for(String scriptName: args) {
+            ScriptRequest request = new ScriptRequest(scriptName, null, cwdURL, false);
+            Set<GeneratedJob> generatedJobs = DslScriptLoader.runDslEngine(request, jm);
+
+            for(GeneratedJob job: generatedJobs) {
+                System.out.println("From "+ scriptName + ", Generated: " + job);
+            }
         }
     }
 }
