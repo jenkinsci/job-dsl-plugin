@@ -314,4 +314,16 @@ class WrapperHelperSpec extends Specification {
         def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.takeScreenshot
         wrapper[0].value() == true
     }
+
+    def 'toolenv' () {
+        when:
+        helper.wrappers {
+            toolenv("Ant 1.8.2", "Maven 3")
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.toolenv.ToolEnvBuildWrapper'.'vars'
+        wrapper[0].value() == "ANT_1_8_2_HOME,MAVEN_3_HOME"
+    }
 }

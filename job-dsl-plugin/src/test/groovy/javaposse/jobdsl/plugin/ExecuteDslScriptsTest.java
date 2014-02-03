@@ -185,6 +185,43 @@ public class ExecuteDslScriptsTest {
         assertNull(jenkinsRule.jenkins.getItemByFullName("/folder/test-job"));
     }
 
+    @Test
+    public void useTemplateInRoot() throws Exception {
+        // setup
+        FreeStyleProject template = jenkinsRule.createFreeStyleProject("template");
+        String description = "template project in root";
+        template.setDescription(description);
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script = "job { name('test-job'); using('template') }";
+        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script), false, RemovedJobAction.DELETE);
+        FreeStyleBuild build = runBuild(job, builder);
+
+        // then
+        assertEquals(SUCCESS, build.getResult());
+        assertEquals(jenkinsRule.jenkins.getItemByFullName("test-job", FreeStyleProject.class).getDescription(), description);
+    }
+
+    @Test
+    public void useTemplateInFolder() throws Exception {
+        // setup
+        Folder folder = jenkinsRule.jenkins.createProject(Folder.class, "template-folder");
+        FreeStyleProject template = folder.createProject(FreeStyleProject.class, "template");
+        String description = "template project in a folder";
+        template.setDescription(description);
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+
+        // when
+        String script = "job { name('test-job'); using('/template-folder/template') }";
+        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script), false, RemovedJobAction.DELETE);
+        FreeStyleBuild build = runBuild(job, builder);
+
+        // then
+        assertEquals(SUCCESS, build.getResult());
+        assertEquals(jenkinsRule.jenkins.getItemByFullName("test-job", FreeStyleProject.class).getDescription(), description);
+    }
+
     private FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) throws Exception {
         job.getBuildersList().clear();
         job.getBuildersList().add(builder);
