@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
+import javaposse.jobdsl.dsl.helpers.BuildDslHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
@@ -36,6 +37,7 @@ public class Job {
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
+    @Delegate BuildDslHelper helperBuildDsl
     @Delegate BuildParametersContextHelper helperBuildParameters
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
@@ -53,6 +55,7 @@ public class Job {
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)
         helperMaven = new MavenHelper(withXmlActions, type)
+        helperBuildDsl = new BuildDslHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
     }
 
@@ -171,6 +174,7 @@ public class Job {
         // TODO Move this logic to the JobType Enum
         switch(type) {
             case JobType.Freeform: return emptyTemplate
+            case JobType.BuildDsl: return emptyBuildDslTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
         }
@@ -201,6 +205,27 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </project>
+'''
+
+    def emptyBuildDslTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.plugins.flow.BuildFlow>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <icon/>
+  <dsl></dsl>
+</com.cloudbees.plugins.flow.BuildFlow>
 '''
 
     def emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
