@@ -120,6 +120,61 @@ public class PublisherHelperSpec extends Specification {
         mailerPublisher.sendToIndividuals[0].value() as Boolean == true
     }
 
+    def 'call performance publisher with no args'() {
+        when:
+        context.performancePublisher()
+
+        then:
+        Node performanceNode = context.publisherNodes[0]
+        performanceNode.name() == 'hudson.plugins.performance.PerformancePublisher'
+        performanceNode.errorFailedThreshold[0].value() as int == 0
+        performanceNode.errorUnstableThreshold[0].value() as int == 0
+        performanceNode.modePerformancePerTestCase[0].value() as Boolean == false
+    }
+
+    def 'call performance publisher with all args'() {
+        when:
+        context.performancePublisher {
+            jMeterParser {
+                glob 'test'
+            }
+            jMeterCsvParser {
+                glob 'test'
+                skipFirstLine false
+                delimiter ','
+                timestampIdx -1
+                elapsedIdx -1
+                responseCodeIdx -1
+                successIdx -1
+                urlIdx -1
+            }
+            jUnitParser {
+                glob 'test'
+            }
+            jmeterSummarizerParser {
+                glob 'test'
+                logDateFormat 'yyyy/mm/dd HH:mm:ss'
+            }
+
+        }
+
+        then:
+        Node performanceNode = context.publisherNodes[0]
+        performanceNode.name() == 'hudson.plugins.performance.PerformancePublisher'
+        performanceNode.parsers.'hudson.plugins.performance.JMeterParser'.glob[0].value() == 'test'
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.glob[0].value() == 'test'
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.skipFirstLine[0].value() as Boolean == false
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.delimiter[0].value() == ','
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.timestampIdx[0].value() as int == -1
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.elapsedIdx[0].value() as int == -1
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.responseCodeIdx[0].value() as int == -1
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.successIdx[0].value() as int == -1
+        performanceNode.parsers.'hudson.plugins.performance.JMeterCsvParser'.urlIdx[0].value() as int == -1
+        performanceNode.parsers.'hudson.plugins.performance.JUnitParser'.glob[0].value() == 'test'
+        performanceNode.parsers.'hudson.plugins.performance.JmeterSummarizerParser'.glob[0].value() == 'test'
+        performanceNode.parsers.'hudson.plugins.performance.JmeterSummarizerParser'.logDateFormat[0].value() == 'yyyy/mm/dd HH:mm:ss'
+    }
+
     def 'call archive artifacts with all args'() {
         when:
         context.archiveArtifacts('include/*', 'exclude/*', true)
@@ -194,7 +249,6 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call jacoco code coverage with no args'() {
         when:
-
         context.jacocoCodeCoverage()
 
         then:
