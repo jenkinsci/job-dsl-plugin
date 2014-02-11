@@ -326,4 +326,26 @@ class WrapperHelperSpec extends Specification {
         def wrapper = root.buildWrappers[0].'hudson.plugins.toolenv.ToolEnvBuildWrapper'.'vars'
         wrapper[0].value() == "ANT_1_8_2_HOME,MAVEN_3_HOME"
     }
+
+    def 'release plugin' () {
+        when:
+        helper.wrappers {
+            release {
+                parameters {
+                    textParam('p1', 'p1', 'd1')
+                }
+                preBuildSteps {
+                    shell('echo hello;')
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'parameterDefinitions'.'hudson.model.TextParameterDefinition'
+        params[0].value()[0].value() == "p1"
+        
+        def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
+        steps[0].value()[0].name() == 'hudson.tasks.Shell'
+    }
 }
