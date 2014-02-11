@@ -522,7 +522,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'SUCCESS'
-        publisherNode.threshold[0].ordinal[0].value() == '0'
+        publisherNode.threshold[0].ordinal[0].value() == 0
         publisherNode.threshold[0].color[0].value() == 'BLUE'
     }
 
@@ -535,7 +535,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'FAILURE'
-        publisherNode.threshold[0].ordinal[0].value() == '2'
+        publisherNode.threshold[0].ordinal[0].value() == 2
         publisherNode.threshold[0].color[0].value() == 'RED'
     }
 
