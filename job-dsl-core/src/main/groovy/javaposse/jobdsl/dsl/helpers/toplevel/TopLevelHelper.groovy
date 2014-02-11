@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
+
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
@@ -136,6 +137,15 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /*
+    <concurrentBuild>true</concurrentBuild>
+     */
+
+    def concurrentBuild(boolean canRunConcurrent = false) {
+        execute {
+            it / concurrentBuild(canRunConcurrent?'true':'false')
+        }
+    }
     /**
      <logRotator>
      <daysToKeep>14</daysToKeep>
@@ -298,6 +308,24 @@ class TopLevelHelper extends AbstractHelper {
             it / node
         }
     }
+    /**
+     * <project>
+     *     <buildWrappers>
+     *         <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
+     *             <user>25899f16-1b91-4656-90cd-3f1c26ef6292</user>
+     *         </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
+     *
+     * Provide SSH credentials to builds via a ssh-agent in Jenkins.
+     * @param credentials name of the credentials to use
+     */
+    def sshAgent(String credentials) {
+        Preconditions.checkNotNull(credentials, "credentials must not be null")
+        String id = jobManagement.getCredentialsId(credentials)
+        Preconditions.checkNotNull(id, "credentials not found")
+        execute {
+            it / buildWrappers / 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
+                user id
+            }
+        }
+    }
 }
-
-
