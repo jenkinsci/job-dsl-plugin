@@ -41,3 +41,4 @@ If you want to make a change to the code on jenkinsci/job-dsl-plugin, here's the
 1. Indentation: use 4 spaces, no tabs.
 1. We roughly follow the [Java](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html) and [Groovy](http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers) style guidelines.
 1. When using IntelliJ IDEA, use the default code style, but disable '*' imports for Java and Groovy.
+1. Always add a CRLF at the end of a file.
