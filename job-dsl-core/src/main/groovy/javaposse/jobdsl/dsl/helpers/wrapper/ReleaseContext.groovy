@@ -6,8 +6,8 @@ import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
 
 class ReleaseContext implements Context {
     String releaseVersionTemplate
-    Boolean doNotKeepLog
-    Boolean overrideBuildParameters
+    boolean doNotKeepLog
+    boolean overrideBuildParameters
     List<Node> preBuildSteps = []
     List<Node> postSuccessfulBuildSteps = []
     List<Node> postBuildSteps = []
@@ -42,11 +42,11 @@ class ReleaseContext implements Context {
         this.releaseVersionTemplate = releaseVersionTemplate
     }
 
-    def doNotKeepLog(Boolean doNotKeepLog) {
+    def doNotKeepLog(boolean doNotKeepLog) {
         this.doNotKeepLog = doNotKeepLog
     }
 
-    def overrideBuildParameters(Boolean overrideBuildParameters) {
+    def overrideBuildParameters(boolean overrideBuildParameters) {
         this.overrideBuildParameters = overrideBuildParameters
     }
 
