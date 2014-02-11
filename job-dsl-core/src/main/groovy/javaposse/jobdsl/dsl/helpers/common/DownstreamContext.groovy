@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 class DownstreamContext implements Context {
     public static final THRESHOLD_COLOR_MAP = ['SUCCESS': 'BLUE', 'UNSTABLE': 'YELLOW', 'FAILURE': 'RED']
-    public static final THRESHOLD_ORDINAL_MAP = ['SUCCESS': '0', 'UNSTABLE': '1', 'FAILURE': '2']
+    public static final THRESHOLD_ORDINAL_MAP = ['SUCCESS': 0, 'UNSTABLE': 1, 'FAILURE': 2]
 
     private List<DownstreamTriggerContext> triggers = []
 
