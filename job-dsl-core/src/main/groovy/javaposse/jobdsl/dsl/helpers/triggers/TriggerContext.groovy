@@ -135,6 +135,46 @@ class TriggerContext implements Context {
     }
 
     /**
+     *  Configures the Jenkins GitHub pull request builder plugin
+     *  Depends on the github-api, github, and git plugins
+     *
+     *  <org.jenkinsci.plugins.ghprb.GhprbTrigger>
+     *      <spec></spec>
+     *      <adminlist></adminlist>
+     *      <whitelist></whitelist>
+     *      <orgslist></orgslist>
+     *      <cron></cron>
+     *      <triggerPhrase>ok to test</triggerPhrase>
+     *      <onlyTriggerPhrase>false</onlyTriggerPhrase>
+     *      <useGitHubHooks>true</useGitHubHooks>
+     *      <permitAll>true</permitAll>
+     *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
+     *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+     */
+    def pullRequest(Closure contextClosure = null) {
+
+        PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
+        AbstractContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
+
+        def nodeBuilder = new NodeBuilder()
+
+        def pullRequestNode = nodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+            spec(pullRequestBuilderContext.spec)
+            adminlist pullRequestBuilderContext.adminlist
+            whitelist pullRequestBuilderContext.whitelist
+            orgslist pullRequestBuilderContext.orgslist
+            delegate.cron(pullRequestBuilderContext.cron)
+            triggerPhrase pullRequestBuilderContext.triggerPhrase
+            onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase
+            useGitHubHooks pullRequestBuilderContext.useGitHubHooks
+            permitAll pullRequestBuilderContext.permitAll
+            autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
+        }
+
+        triggerNodes << pullRequestNode
+    }
+
+    /**
      <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
      <spec></spec>
      <gerritProjects>
