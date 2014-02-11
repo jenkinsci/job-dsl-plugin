@@ -65,6 +65,7 @@ class ConditionsContext implements Context {
     }
 
     def parameters(Closure parametersClosure) {
+        // delegate to main BuildParametersContext
         BuildParametersContext parametersContext = new BuildParametersContext()
         AbstractContextHelper.executeInContext(parametersClosure, parametersContext)
         parametersContext.buildParameterNodes.values().each { params << it }

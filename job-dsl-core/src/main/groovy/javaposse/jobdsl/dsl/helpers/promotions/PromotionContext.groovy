@@ -1,16 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
-import groovy.lang.Closure;
-
-import java.util.List;
-
-import javaposse.jobdsl.dsl.JobType;
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.Context;
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
-import javaposse.jobdsl.dsl.helpers.step.StepContext;
-
-import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
 
 class PromotionContext implements Context {
 
@@ -31,13 +23,15 @@ class PromotionContext implements Context {
     }
 
     def conditions(Closure conditionClosure) {
+        // delegate to ConditionsContext
         ConditionsContext conditionContext = new ConditionsContext()
         AbstractContextHelper.executeInContext(conditionClosure, conditionContext)
         conditions << conditionContext
     }
 
     def actions(Closure actionsClosure) {
-        StepContext actionsContext = new StepContext(JobType.Maven)
+        // delegate to ConditionsContext
+        AbstractStepContext actionsContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(actionsClosure, actionsContext)
         actionsContext.stepNodes.each { actions << it }
     }

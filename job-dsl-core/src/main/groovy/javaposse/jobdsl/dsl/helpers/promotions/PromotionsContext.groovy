@@ -21,12 +21,26 @@ class PromotionsContext implements Context {
     Map<String,Node> subPromotionNodes = [:]
 
     /**
-     * <project>
-     *     <properties>
-     *         <hudson.plugins.promoted__builds.JobPropertyImpl>
-     *             <activeProcessNames>
-     *                 <string>dev</string>
-     *
+     * PromotionNodes:
+     * 1. <string>dev</string>
+     * 2. <string>test</string>
+     * 
+     * AND
+     * 
+     * Sub PromotionNode for every promotion
+     * 1. <project>
+     *     <name>dev</name>
+     *     .
+     *     .
+     *     .
+     * </project>
+     * 2. <project>
+     *     <name>test</name>
+     *     .
+     *     .
+     *     .
+     * </project>
+     * 
      * @param promotionName
      * @return
      */
@@ -41,14 +55,14 @@ class PromotionsContext implements Context {
         AbstractContextHelper.executeInContext(promotionClosure, promotionContext)
 
         subPromotionNodes[promotionName] = new NodeBuilder().'project' {
-            // Conditions
+            // Conditions to proof before promotion
             if (promotionContext.conditions) {
                 promotionContext.conditions.each {ConditionsContext condition ->
                     conditions(condition.createConditionNode().children())
                 }
             }
 
-            // Icon
+            // Icon, i.e. star-green
             if (promotionContext.icon) {
                 icon(promotionContext.icon)
             }
@@ -59,15 +73,12 @@ class PromotionsContext implements Context {
             }
         }
 
-        // Actions
-
+        // Actions for promotions ... BuildSteps
         def steps = new NodeBuilder().'buildSteps'()
         if (promotionContext.actions) {
             promotionContext.actions.each { steps.append(it) }
         }
         subPromotionNodes[promotionName].append(steps)
-
-        // ...
     }
 
 }

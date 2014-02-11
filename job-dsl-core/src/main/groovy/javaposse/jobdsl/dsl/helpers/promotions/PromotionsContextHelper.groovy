@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 
 class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
 
+    // helds the WithXmlActions for every promotion - key: promotion name
     Map<String, List<WithXmlAction>> withXmlActionsPromotions
 
     PromotionsContextHelper(List<WithXmlAction> withXmlActions, Map<String, List<WithXmlAction>> withXmlActionsPromotions, JobType jobType) {
@@ -25,6 +26,7 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
     }
 
     Closure generateWithXmlClosurePromotions(PromotionsContext context, String promotionName) {
+        // special XML closure generator for the promotions config.xml
         return { Node project ->
             def promotion = project
             context.subPromotionNodes.get(promotionName).children().each {
@@ -47,7 +49,7 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
         // Queue up our action, using the concrete classes logic
         withXmlActions << generateWithXmlAction(promotionsContext)
 
-        // Add promotions actions
+        // Add promotions actions for each promotion in the context
         promotionsContext.subPromotionNodes.each { name, node ->
             def xmlActions = withXmlActionsPromotions.get(name)
             if (!xmlActions) {
@@ -63,8 +65,6 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
     WithXmlAction generateWithXmlActionPromotions(PromotionsContext context, String promotionName) {
         // Closure to be run later, in this context we're given the root node with the WithXmlAction magic
         Closure withXmlClosure = generateWithXmlClosurePromotions(context, promotionName)
-        //withXmlClosure.resolveStrategy = Closure.DELEGATE_FIRST
-
         return new WithXmlAction(withXmlClosure)
     }
 
