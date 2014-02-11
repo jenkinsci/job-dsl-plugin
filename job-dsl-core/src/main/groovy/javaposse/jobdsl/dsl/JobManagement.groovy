@@ -1,4 +1,5 @@
 package javaposse.jobdsl.dsl;
+import java.util.Map;
 
 /**
  * Interface to manage jobs, which the DSL needs to do.
@@ -20,11 +21,12 @@ public interface JobManagement {
      * Creates or updates the job config for the named Jenkins job with the config provided.
      * @param jobName the name of the new / updated job
      * @param config the new / updated job config
+     * @param configPromotions the new / updated promotions config
      * @param ignoreExisting do not update existing jobs
      * @throws JobNameNotProvidedException if the jobName is null or blank
      * @throws JobConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException;
+    boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException;
 
     /**
      * Queue a job to run. Useful for running jobs after they've been created.

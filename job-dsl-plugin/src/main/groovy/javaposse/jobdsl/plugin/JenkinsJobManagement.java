@@ -75,7 +75,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public boolean createOrUpdateConfig(String fullJobName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String fullJobName, String config, Map<String, String> configPromotions, boolean ignoreExisting)
             throws JobNameNotProvidedException, JobConfigurationMissingException {
 
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullJobName));
@@ -88,9 +88,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Jenkins.checkGoodName(jobName);
 
         if (project == null) {
-            created = createNewJob(fullJobName, config);
+            created = createNewJob(fullJobName, config, configPromotions);
         } else if (!ignoreExisting) {
-            created = updateExistingJob(project, config);
+            created = updateExistingJob(project, config, configPromotions);
         }
         return created;
     }
@@ -175,15 +175,30 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return jobXml;
     }
 
-    private boolean updateExistingJob(AbstractProject<?, ?> project, String config) {
+    private boolean updateExistingJob(AbstractProject<?, ?> project, String config, Map<String, String> configPromotions) {
         boolean created;
+        
+        // Check promotion configs
+        boolean allSimilar = true;
+        for (String promotionName : configPromotions.keySet()) {
+			XmlFile oldXml = Items.getConfigFile(PromotionsGenerator.getRootDirFor(project.getName(), promotionName));
+			try {
+				Diff diff = XMLUnit.compareXML(oldXml.asString(), configPromotions.get(promotionName));
+				if (!diff.similar()) {
+					allSimilar = false;
+				}
+			} catch (Exception e) {
+	            // It's not a big deal if we can't diff, we'll just move on
+	            LOGGER.warning(e.getMessage());
+	        }
+		}
 
         // Leverage XMLUnit to perform diffs
         Diff diff;
         try {
             String oldJob = project.getConfigFile().asString();
             diff = XMLUnit.compareXML(oldJob, config);
-            if (diff.similar()) {
+            if (diff.similar() && allSimilar) {
                 LOGGER.log(Level.FINE, String.format("Project %s is identical", project.getName()));
                 return false;
             }
@@ -198,7 +213,15 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Updating project %s as %s", project.getName(), config));
         StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
         try {
+            // Create XML for Promotions
+            for (String promotionName : configPromotions.keySet()) {
+            	StreamSource streamSourcePromo = new StreamSource(new StringReader(configPromotions.get(promotionName))); // TODO use real xmlReader
+            	PromotionsGenerator promotion = new PromotionsGenerator(promotionName, project.getName());
+            	promotion.updateByXml(streamSourcePromo);
+            }
+            
             project.updateByXml(streamSource);
+            
             created = true;
         } catch (IOException ioex) {
             LOGGER.log(Level.WARNING, String.format("Error writing updated project to file."), ioex);
@@ -208,15 +231,22 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
-    private boolean createNewJob(String fullJobName, String config) {
+    private boolean createNewJob(String fullJobName, String config, Map<String, String> configPromotions) {
         LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
         boolean created;
 
         try {
-            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-
-            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
             String jobName = getJobNameFromFullName(fullJobName);
+            
+            // Create XML for Promotions
+            for (String promotionName : configPromotions.keySet()) {
+            	InputStream in = new ByteArrayInputStream(configPromotions.get(promotionName).getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+            	PromotionsGenerator promotion = new PromotionsGenerator(promotionName, jobName);
+            	promotion.createPromotionFromXML(in);
+            }
+            
+            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
             ctx.createProjectFromXML(jobName, is);
 
             created = true;

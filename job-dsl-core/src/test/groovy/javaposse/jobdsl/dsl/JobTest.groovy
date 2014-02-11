@@ -1,10 +1,12 @@
 package javaposse.jobdsl.dsl
 
 import org.custommonkey.xmlunit.XMLUnit
+
 import spock.lang.Specification
 
 import java.util.concurrent.atomic.AtomicBoolean
 
+import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContext;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobTest extends Specification {
@@ -192,6 +194,25 @@ class JobTest extends Specification {
         project.actions[0].children().size() == 2
     }
 
+    def 'update Promotions Nodes using withXml'() {
+        setup:
+        final Map<String, Node> promotions = new HashMap<String, Node>()
+		promotions.put("dev", new XmlParser().parse(new StringReader(promotionXml)))
+        Job job = new Job(null)
+        AtomicBoolean boolOutside = new AtomicBoolean(true)
+
+        when: 'Simple update'
+        job.configurePromotion("dev") { Node node ->
+            node / 'actions' {
+				description('Test Description')
+            }
+        }
+        job.executeWithXmlActionsPromotions(promotions)
+
+        then:
+        promotions.get("dev").actions[0].description.text() == 'Test Description'
+    }
+
     def 'construct simple Maven job and generate xml from it'() {
         setup:
         JobManagement jm = Mock()
@@ -202,6 +223,25 @@ class JobTest extends Specification {
 
         then:
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, xml
+    }
+
+    def 'construct simple Promotions and generate xmls from it'() {
+        setup:
+        final Map<String, Node> promotions = new HashMap<String, Node>()
+		promotions.put("dev", new XmlParser().parse(new StringReader(promotionXml)))
+        JobManagement jm = Mock()
+        Job job = new Job(jm, [type: 'maven'])
+
+        when:
+		job.configurePromotion("dev") { Node node ->
+            node / 'actions' {
+				description('Test Description')
+            }
+        }
+        def xmls = job.getXmlPromotions()
+
+        then:
+        xmls.get("dev").contains('Test Description')
     }
 
     def 'free-style job extends Maven template and fails to generate xml'() {
@@ -266,5 +306,11 @@ class JobTest extends Specification {
     <publishers/>
     <buildWrappers/>
 </maven2-moduleset>
+'''
+
+	final promotionXml = '''
+<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.15">
+	<actions/>
+</hudson.plugins.promoted__builds.PromotionProcess>
 '''
 }

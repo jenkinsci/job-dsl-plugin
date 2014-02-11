@@ -2,8 +2,10 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
+import javaposse.jobdsl.dsl.helpers.Helper;
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
+import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
@@ -24,6 +26,7 @@ public class Job {
     String templateName = null // Optional
     JobType type = null // Required
     List<WithXmlAction> withXmlActions = []
+	Map<String, List<WithXmlAction>> withXmlActionsPromotions = [:]
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     // TODO Use some methodMissing to do some sort of dynamic lookup
@@ -37,6 +40,7 @@ public class Job {
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
     @Delegate BuildParametersContextHelper helperBuildParameters
+    @Delegate PromotionsContextHelper helperPromotions
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
@@ -54,6 +58,7 @@ public class Job {
         helperTopLevel = new TopLevelHelper(withXmlActions, type)
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
+        helperPromotions = new PromotionsContextHelper(withXmlActions, withXmlActionsPromotions, type)
     }
 
     /**
@@ -86,6 +91,28 @@ public class Job {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )
     }
 
+	/**
+	 * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
+	 *
+	 * Examples:
+	 *
+	 * <pre>
+	 * configure {
+	 *
+	 * }
+	 * </pre>
+	 * @param withXmlClosure
+	 * @return
+	 */
+    def configurePromotion(String name, Closure withXmlClosure) {
+		def actions = withXmlActionsPromotions.get(name)
+		if (!actions) {
+			actions = new ArrayList<WithXmlAction>()
+			withXmlActionsPromotions.put(name, actions)
+		}
+		actions.add(new WithXmlAction(withXmlClosure))
+    }
+
     def name(String name) {
         // TODO Validation
         this.name = name
@@ -106,6 +133,20 @@ public class Job {
         return project
     }
 
+    public Map<String, Node> getNodesPromotions() {
+		Map<String, Node> promotions = new HashMap<String, Node>()
+		Set<String> promotionsNames = withXmlActionsPromotions.keySet()
+		promotionsNames.each {
+			promotions.put(it, new XmlParser().parse(new StringReader(emptyPromotionTemplate)))
+		}
+
+		// TODO check name field
+
+        executeWithXmlActionsPromotions(promotions)
+
+        return promotions
+    }
+
     /**
      * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
      * even if the user didn't specify them in order.
@@ -113,7 +154,26 @@ public class Job {
      */
     public String getXml() {
         Node project = getNode()
+		return getXml(project)
+    }
 
+	/**
+	 * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
+	 * even if the user didn't specify them in order.
+	 * @return
+	 */
+	public Map<String, String> getXmlPromotions() {
+		Map<String, String> xmls = new HashMap<String, String>()
+		Map<String, Node> promotions = getNodesPromotions()
+
+		promotions.each { promotionName, node ->
+			xmls.put(promotionName, getXml(node))
+		}
+
+		return xmls
+	}
+
+    private String getXml(Node root) {
         //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
 
         def xmlOutput = new StringWriter()
@@ -123,7 +183,7 @@ public class Job {
             expandEmptyElements = true
             quote = "'" // Use single quote for attributes
         }
-        xmlNodePrinter.print(project)
+        xmlNodePrinter.print(root)
 
         String configStr = xmlOutput.toString()
         //String configStr = XmlUtil.serialize(project)
@@ -136,6 +196,15 @@ public class Job {
         withXmlActions.each { WithXmlAction withXmlClosure ->
             withXmlClosure.execute(root)
         }
+    }
+
+	void executeWithXmlActionsPromotions(final Map<String, Node> promotions) {
+		withXmlActionsPromotions.each { promotionName, actions ->
+			actions.each { WithXmlAction withXmlClosure ->
+				def root = promotions.get(promotionName)
+				withXmlClosure.execute(root)
+			}
+		}
     }
 
     // TODO record which templates are used to generate jobs, so that they can be connected to this job
@@ -247,5 +316,23 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
+'''
+
+	def emptyPromotionTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.15">
+  <actions/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <conditions/>
+  <icon/>
+  <buildSteps/>
+</hudson.plugins.promoted__builds.PromotionProcess>
 '''
 }

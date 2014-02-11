@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl;
 
+import java.util.Map;
+
 import groovy.xml.MarkupBuilder
 
 /**
@@ -15,6 +17,7 @@ public class StringJobManagement extends AbstractJobManagement {
 
     Map<String,String> availableConfigs = [:]
     Map<String,String> savedConfigs = [:]
+    Map<String,Map<String,String>> savedConfigsPromotions = [:]
     Map<String,String> availableFiles = [:]
 
     Map<String,String> params = [:]
@@ -53,10 +56,19 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException {
+    boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException {
         validateUpdateArgs(jobName, config);
 
         savedConfigs[jobName] = config
+        
+        for (String promotionName : configPromotions.keySet()) {
+			def configs = savedConfigsPromotions[jobName]
+			if (!configs) {
+				configs = [:]
+				savedConfigsPromotions[jobName] = configs
+			}
+        	configs[promotionName] = configPromotions.get(promotionName)
+		}
         return false
     }
 

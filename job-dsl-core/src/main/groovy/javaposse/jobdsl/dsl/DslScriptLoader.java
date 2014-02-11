@@ -116,7 +116,9 @@ public class DslScriptLoader {
                 try {
                     String xml = job.getXml();
                     LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
+                    Map<String, String> xmlPromotions = job.getXmlPromotions();
+                    LOGGER.log(Level.FINE, String.format("Saving promotions %s as %s", job.getName(), xmlPromotions));
+                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, xmlPromotions, ignoreExisting);
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
                     generatedJobs.add(gj);
                 } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException
