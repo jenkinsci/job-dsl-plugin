@@ -36,3 +36,8 @@ If you want to make a change to the code on jenkinsci/job-dsl-plugin, here's the
 1. For enum type options use the values from the config.xml instead of the GUI text, for example 'FAILURE_AND_FIXED' instead of 'failure and fixed'.
 1. We don't yet have a standard way of taking what could be an Enum as a command argument.  However, a nice style tip can be found in [this thread on the forum](https://groups.google.com/forum/#!msg/job-dsl-plugin/imL88hLX0Cw/_XYDmo8t1M4J).
 1. Neither do we have a standard way of coping with Job Commands which take a _lot_ of parameters. However, another nice style tip can be see in [this pull request](https://github.com/jenkinsci/job-dsl-plugin/pull/70/files).
+
+## Code Style
+1. Indentation: use 4 spaces, no tabs.
+1. We roughly follow the [Java](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html) and [Groovy](http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers) style guidelines.
+1. When using IntelliJ IDEA, use the default code style, but disable '*' imports for Java and Groovy.
