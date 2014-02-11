@@ -313,6 +313,54 @@ public class TriggerHelperSpec extends Specification {
 //        1 * mockActions.add(_)
     }
 
+    def 'call pull request trigger with no args'() {
+        when:
+        context.pullRequest()
+
+        then:
+        def pullRequestNode = context.triggerNodes
+        with(pullRequestNode[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            triggerPhrase.text()== 'ok to test'
+            onlyTriggerPhrase[0].value() as boolean == false
+            useGitHubHooks[0].value() as boolean == true
+            permitAll[0].value() as boolean == true
+            autoCloseFailedPullRequests[0].value() as boolean == false
+        }
+    }
+
+    def 'call pull request trigger with all args'() {
+        when:
+        context.pullRequest() {
+            spec '*/5 * * * *'
+            adminlist 'test'
+            whitelist 'test'
+            orgslist 'test'
+            cron '*/5 * * * *'
+            triggerPhrase 'run tests'
+            onlyTriggerPhrase true
+            useGitHubHooks false
+            permitAll false
+            autoCloseFailedPullRequests true
+        }
+
+        then:
+        def pullRequestNode = context.triggerNodes
+        with(pullRequestNode[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            spec.text() == '*/5 * * * *'
+            adminlist.text() == 'test'
+            whitelist.text() == 'test'
+            orgslist.text() == 'test'
+            cron.text() == '*/5 * * * *'
+            triggerPhrase.text() == 'run tests'
+            onlyTriggerPhrase[0].value() as boolean == true
+            useGitHubHooks[0].value() as boolean == false
+            permitAll[0].value() as boolean == false
+            autoCloseFailedPullRequests[0].value() as boolean == true
+        }
+    }
+
     def 'call empty gerrit trigger methods'() {
         when:
         context.gerrit {
