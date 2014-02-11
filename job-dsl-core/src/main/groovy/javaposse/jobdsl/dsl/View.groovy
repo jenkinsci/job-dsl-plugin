@@ -18,13 +18,13 @@ public abstract class View {
         }
     }
 
-    void filterBuildQueue(boolean filterBuildQueueArg) {
+    void filterBuildQueue(boolean filterBuildQueueArg = true) {
         execute {
             it / methodMissing('filterQueue', filterBuildQueueArg)
         }
     }
 
-    void filterExecutors(boolean filterExecutorsArg) {
+    void filterExecutors(boolean filterExecutorsArg = true) {
         execute {
             it / methodMissing('filterExecutors', filterExecutorsArg)
         }

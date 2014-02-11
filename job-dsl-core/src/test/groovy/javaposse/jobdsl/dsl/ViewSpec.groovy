@@ -41,12 +41,38 @@ class ViewSpec extends Specification {
         root.filterQueue[0].text() == 'true'
     }
 
+    def 'filterBuildQueue without argument'() {
+        setup:
+        view.getTemplate() >> "<View/>"
+
+        when:
+        view.filterBuildQueue()
+
+        then:
+        Node root = view.getNode()
+        root.filterQueue.size() == 1
+        root.filterQueue[0].text() == 'true'
+    }
+
     def 'filterExecutors'() {
         setup:
         view.getTemplate() >> "<View/>"
 
         when:
         view.filterExecutors(true)
+
+        then:
+        Node root = view.getNode()
+        root.filterExecutors.size() == 1
+        root.filterExecutors[0].text() == 'true'
+    }
+
+    def 'filterExecutors without argument'() {
+        setup:
+        view.getTemplate() >> "<View/>"
+
+        when:
+        view.filterExecutors()
 
         then:
         Node root = view.getNode()
