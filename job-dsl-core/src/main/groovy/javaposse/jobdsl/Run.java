@@ -2,7 +2,9 @@ package javaposse.jobdsl;
 
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.FileJobManagement;
+import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.ScriptRequest;
 
 import java.io.File;
@@ -40,10 +42,13 @@ public class Run {
 
         for(String scriptName: args) {
             ScriptRequest request = new ScriptRequest(scriptName, null, cwdURL, false);
-            Set<GeneratedJob> generatedJobs = DslScriptLoader.runDslEngine(request, jm);
+            GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
 
-            for(GeneratedJob job: generatedJobs) {
-                System.out.println("From "+ scriptName + ", Generated: " + job);
+            for(GeneratedJob job: generatedItems.getJobs()) {
+                System.out.println("From "+ scriptName + ", Generated job: " + job);
+            }
+            for(GeneratedView view: generatedItems.getViews()) {
+                System.out.println("From "+ scriptName + ", Generated view: " + view);
             }
         }
     }
