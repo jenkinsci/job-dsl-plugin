@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.promotions
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -63,6 +63,34 @@ public class PromotionsHelperSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'big promotions list'() {
+        when:
+        context.promotion('dev') {
+            icon('star')
+            conditions {
+                manual('name')
+            }
+            actions {
+                shell('echo hallo;')
+            }
+        }
+        context.promotion('test') {
+            icon('ball')
+        }
+
+        then:
+        context.promotionNodes != null
+        context.promotionNodes.size() == 2
+        context.promotionNodes['test'].value() == 'test'
+        context.promotionNodes['dev'].value() == 'dev'
+        
+        context.subPromotionNodes['test'].'icon'[0].value() == 'ball'
+        context.subPromotionNodes['dev'].'icon'[0].value() == 'star'
+        
+        context.subPromotionNodes['dev'].'buildSteps'[0].value()[0].name() == 'hudson.tasks.Shell'
+        context.subPromotionNodes['dev'].'buildSteps'[0].value()[0].value()[0].value() == 'echo hallo;'
     }
 
     def 'call promotions via helper'() {
