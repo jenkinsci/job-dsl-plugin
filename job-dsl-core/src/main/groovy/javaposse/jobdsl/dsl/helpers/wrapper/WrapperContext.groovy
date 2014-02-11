@@ -270,4 +270,31 @@ class WrapperContext implements Context {
             takeScreenshot(takeScreenshotAtEndOfBuild)
         }
     }
+
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <buildWrappers>
+     *         <hudson.plugins.toolenv.ToolEnvBuildWrapper>
+     *             <vars>ANT_1_8_2_HOME,MAVEN_3_0_HOME,DEFAULT_HOME</vars>
+     *         </hudson.plugins.toolenv.ToolEnvBuildWrapper>
+     *     </buildWrappers>
+     * </project>
+     * }
+     * </pre>
+     *
+     * Lets you use "tools" in unusual ways, such as from shell scripts.
+     *
+     * Note that we do not check for validity of tool names.
+     *
+     * @param tools Tool names to import into the environment. They will be transformed
+     *   according to the rules used by the toolenv plugin.
+     */
+    def toolenv(String... tools) {
+        def nodeBuilder = new NodeBuilder()
+        wrapperNodes << nodeBuilder.'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
+            vars(tools.collect { it.replaceAll(/[^a-zA-Z0-9_]/, "_").toUpperCase() + "_HOME" }.join(","))
+        }
+    }
 }

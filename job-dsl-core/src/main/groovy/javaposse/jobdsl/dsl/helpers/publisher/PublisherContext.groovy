@@ -892,4 +892,43 @@ class PublisherContext implements Context {
             }
         }
     }
+    
+    /**
+     * Configures Jenkins job to publish Robot Framework reports.
+     * By default the following values are applied. If an instance of a
+     * closure is provided, the values from the closure will take effect.
+     *
+     * {@code
+     *   <publishers>
+     *      <hudson.plugins.robot.RobotPublisher plugin="robot@1.3.2">
+     *          <outputPath>target/robotframework-reports</outputPath>
+     *          <passThreshold>100.0</passThreshold>
+     *          <unstableThreshold>0.0</unstableThreshold>
+     *          <onlyCritical>false</onlyCritical>
+     *          <reportFileName>report.html</reportFileName>
+     *          <logFileName>log.html</logFileName>
+     *          <outputFileName>output.xml</outputFileName>
+     *      </hudson.plugins.robot.RobotPublisher>
+     *  </publishers>
+     *}
+     * @see https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
+     */
+    def publishRobotFrameworkReports(Closure robotClosure = null) {
+
+        RobotFrameworkContext context = new RobotFrameworkContext()
+        AbstractContextHelper.executeInContext(robotClosure, context)
+
+        def nodeBuilder = NodeBuilder.newInstance()
+        Node robotNode = nodeBuilder.'hudson.plugins.robot.RobotPublisher' {
+            passThreshold context.passThreshold
+            unstableThreshold context.unstableThreshold
+            outputPath context.outputPath
+            onlyCritical context.onlyCritical
+            reportFileName context.reportFileName
+            logFileName context.logFileName
+            outputFileName context.outputFileName
+        }
+
+        publisherNodes << robotNode
+    }
 }

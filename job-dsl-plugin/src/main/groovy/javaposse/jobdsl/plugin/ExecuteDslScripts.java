@@ -8,10 +8,16 @@ import com.google.common.collect.Sets;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.*;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.BuildListener;
+import hudson.model.Result;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslScriptLoader;
+import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -23,6 +29,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.util.Arrays.asList;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -115,8 +123,8 @@ public class ExecuteDslScripts extends Builder {
     }
 
     @Override
-    public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new GeneratedJobsAction(project);
+    public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
+        return asList(new GeneratedJobsAction(project), new GeneratedViewsAction(project));
     }
 
     /**
@@ -143,12 +151,14 @@ public class ExecuteDslScripts extends Builder {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
         Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
 
-        Set< GeneratedJob > freshJobs = Sets.newLinkedHashSet();
+        Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
+        Set<GeneratedView> freshViews = Sets.newLinkedHashSet();
         for (ScriptRequest request : scriptRequests) {
             LOGGER.log(Level.FINE, String.format("Request for %s", request.location));
 
-            Set<GeneratedJob> dslJobs = DslScriptLoader.runDslEngine(request, jm);
-            freshJobs.addAll(dslJobs);
+            GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
+            freshJobs.addAll(generatedItems.getJobs());
+            freshViews.addAll(generatedItems.getViews());
         }
 
         Set<GeneratedJob> failedJobs = new HashSet<GeneratedJob>();
@@ -166,11 +176,15 @@ public class ExecuteDslScripts extends Builder {
         // TODO Pull all this out, so that it can run outside of the plugin, e.g. JenkinsRestApiJobManagement
         updateTemplates(build, listener, freshJobs);
         updateGeneratedJobs(build, listener, freshJobs);
+        updateGeneratedViews(build, listener, freshViews);
 
         // Save onto Builder, which belongs to a Project.
         GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs);
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
+        GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews);
+        gvba.getModifiedViews().addAll(freshViews); // Relying on Set to keep only unique values
+        build.addAction(gvba);
 
         // Hint that our new jobs might have really shaken things up
         Jenkins.getInstance().rebuildDependencyGraph();
@@ -217,7 +231,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = (AbstractProject) Jenkins.getInstance().getItem(templateName);
+            AbstractProject templateProject = Jenkins.getInstance().getItemByFullName(templateName, AbstractProject.class);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -288,6 +302,26 @@ public class ExecuteDslScripts extends Builder {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedJobs();
+        }
+    }
+
+    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedView> freshViews) {
+        Set<GeneratedView> generatedViews = extractGeneratedViews(build.getProject());
+        Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
+        Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
+        Set<GeneratedView> removed = Sets.difference(generatedViews, freshViews);
+
+        listener.getLogger().println("Adding views: " + Joiner.on(",").join(added));
+        listener.getLogger().println("Existing views: " + Joiner.on(",").join(existing));
+        listener.getLogger().println("Removing views: " + Joiner.on(",").join(removed));
+    }
+
+    private Set<GeneratedView> extractGeneratedViews(AbstractProject<?, ?> project) {
+        GeneratedViewsAction gja = project.getAction(GeneratedViewsAction.class);
+        if (gja == null || gja.findLastGeneratedViews() == null) {
+            return Sets.newLinkedHashSet();
+        } else {
+            return gja.findLastGeneratedViews();
         }
     }
 
