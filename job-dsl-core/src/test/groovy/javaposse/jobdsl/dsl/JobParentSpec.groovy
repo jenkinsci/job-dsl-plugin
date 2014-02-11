@@ -1,9 +1,10 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import spock.lang.Specification
 
-class DslScriptSpec extends Specification {
+class JobParentSpec extends Specification {
     JobParent parent = Spy(JobParent)
 
     def 'default view type'() {
@@ -27,6 +28,18 @@ class DslScriptSpec extends Specification {
         then:
         view.name == 'test'
         view instanceof ListView
+        parent.referencedViews.contains(view)
+    }
+
+    def 'build pipeline view'() {
+        when:
+        View view = parent.view(type: ViewType.BuildPipelineView) {
+            name 'test'
+        }
+
+        then:
+        view.name == 'test'
+        view instanceof BuildPipelineView
         parent.referencedViews.contains(view)
     }
 }
