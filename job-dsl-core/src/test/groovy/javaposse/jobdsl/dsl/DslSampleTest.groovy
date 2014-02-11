@@ -51,10 +51,10 @@ class DslSampleTest extends Specification {
         // TODO Review actual results
         println(firstJob)
 
-		// Promotions
-		jm.savedConfigsPromotions.size() == 1
-		def firstConfigs = jm.savedConfigsPromotions['promos']
-		def devConfig = firstConfigs["dev"]
+        // Promotions
+        jm.savedConfigsPromotions.size() == 1
+        def firstConfigs = jm.savedConfigsPromotions['promos']
+        def devConfig = firstConfigs["dev"]
         // TODO Review actual results
         println(devConfig)
     }
@@ -225,24 +225,24 @@ job {
     }
 }
 '''
-	def samplePromotionsDsl = '''
+    def samplePromotionsDsl = '''
 job(type:'Maven') {
     name('promos')
-	promotions {
-		promotion('dev') {
-			conditions {
-				manual('name')
-			}
-			actions {
-        		shell('bring nach test')
-    		}
-		}
-		promotion('test') {
-			conditions {
-				manual('name')
-			}
-		}
-	}
+    promotions {
+        promotion('dev') {
+            conditions {
+                manual('name')
+            }
+            actions {
+                shell('bring nach test')
+            }
+        }
+        promotion('test') {
+            conditions {
+                manual('name')
+            }
+        }
+    }
 }
 '''
 

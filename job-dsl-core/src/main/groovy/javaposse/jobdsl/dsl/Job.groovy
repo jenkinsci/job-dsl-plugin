@@ -26,7 +26,7 @@ public class Job {
     String templateName = null // Optional
     JobType type = null // Required
     List<WithXmlAction> withXmlActions = []
-	Map<String, List<WithXmlAction>> withXmlActionsPromotions = [:]
+    Map<String, List<WithXmlAction>> withXmlActionsPromotions = [:]
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     // TODO Use some methodMissing to do some sort of dynamic lookup
@@ -91,26 +91,26 @@ public class Job {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )
     }
 
-	/**
-	 * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
-	 *
-	 * Examples:
-	 *
-	 * <pre>
-	 * configure {
-	 *
-	 * }
-	 * </pre>
-	 * @param withXmlClosure
-	 * @return
-	 */
+    /**
+     * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
+     *
+     * Examples:
+     *
+     * <pre>
+     * configure {
+     *
+     * }
+     * </pre>
+     * @param withXmlClosure
+     * @return
+     */
     def configurePromotion(String name, Closure withXmlClosure) {
-		def actions = withXmlActionsPromotions.get(name)
-		if (!actions) {
-			actions = new ArrayList<WithXmlAction>()
-			withXmlActionsPromotions.put(name, actions)
-		}
-		actions.add(new WithXmlAction(withXmlClosure))
+        def actions = withXmlActionsPromotions.get(name)
+        if (!actions) {
+            actions = new ArrayList<WithXmlAction>()
+            withXmlActionsPromotions.put(name, actions)
+        }
+        actions.add(new WithXmlAction(withXmlClosure))
     }
 
     def name(String name) {
@@ -134,13 +134,13 @@ public class Job {
     }
 
     public Map<String, Node> getNodesPromotions() {
-		Map<String, Node> promotions = new HashMap<String, Node>()
-		Set<String> promotionsNames = withXmlActionsPromotions.keySet()
-		promotionsNames.each {
-			promotions.put(it, new XmlParser().parse(new StringReader(emptyPromotionTemplate)))
-		}
+        Map<String, Node> promotions = new HashMap<String, Node>()
+        Set<String> promotionsNames = withXmlActionsPromotions.keySet()
+        promotionsNames.each {
+            promotions.put(it, new XmlParser().parse(new StringReader(emptyPromotionTemplate)))
+        }
 
-		// TODO check name field
+        // TODO check name field
 
         executeWithXmlActionsPromotions(promotions)
 
@@ -154,24 +154,24 @@ public class Job {
      */
     public String getXml() {
         Node project = getNode()
-		return getXml(project)
+        return getXml(project)
     }
 
-	/**
-	 * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
-	 * even if the user didn't specify them in order.
-	 * @return
-	 */
-	public Map<String, String> getXmlPromotions() {
-		Map<String, String> xmls = new HashMap<String, String>()
-		Map<String, Node> promotions = getNodesPromotions()
+    /**
+     * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
+     * even if the user didn't specify them in order.
+     * @return
+     */
+    public Map<String, String> getXmlPromotions() {
+        Map<String, String> xmls = new HashMap<String, String>()
+        Map<String, Node> promotions = getNodesPromotions()
 
-		promotions.each { promotionName, node ->
-			xmls.put(promotionName, getXml(node))
-		}
+        promotions.each { promotionName, node ->
+            xmls.put(promotionName, getXml(node))
+        }
 
-		return xmls
-	}
+        return xmls
+    }
 
     private String getXml(Node root) {
         //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
@@ -198,13 +198,13 @@ public class Job {
         }
     }
 
-	void executeWithXmlActionsPromotions(final Map<String, Node> promotions) {
-		withXmlActionsPromotions.each { promotionName, actions ->
-			actions.each { WithXmlAction withXmlClosure ->
-				def root = promotions.get(promotionName)
-				withXmlClosure.execute(root)
-			}
-		}
+    void executeWithXmlActionsPromotions(final Map<String, Node> promotions) {
+        withXmlActionsPromotions.each { promotionName, actions ->
+            actions.each { WithXmlAction withXmlClosure ->
+                def root = promotions.get(promotionName)
+                withXmlClosure.execute(root)
+            }
+        }
     }
 
     // TODO record which templates are used to generate jobs, so that they can be connected to this job
@@ -318,7 +318,7 @@ public class Job {
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
 '''
 
-	def emptyPromotionTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    def emptyPromotionTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.15">
   <actions/>
   <keepDependencies>false</keepDependencies>

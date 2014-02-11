@@ -62,13 +62,13 @@ public class StringJobManagement extends AbstractJobManagement {
         savedConfigs[jobName] = config
         
         for (String promotionName : configPromotions.keySet()) {
-			def configs = savedConfigsPromotions[jobName]
-			if (!configs) {
-				configs = [:]
-				savedConfigsPromotions[jobName] = configs
-			}
-        	configs[promotionName] = configPromotions.get(promotionName)
-		}
+            def configs = savedConfigsPromotions[jobName]
+            if (!configs) {
+                configs = [:]
+                savedConfigsPromotions[jobName] = configs
+            }
+            configs[promotionName] = configPromotions.get(promotionName)
+        }
         return false
     }
 

@@ -197,14 +197,14 @@ class JobTest extends Specification {
     def 'update Promotions Nodes using withXml'() {
         setup:
         final Map<String, Node> promotions = new HashMap<String, Node>()
-		promotions.put("dev", new XmlParser().parse(new StringReader(promotionXml)))
+        promotions.put("dev", new XmlParser().parse(new StringReader(promotionXml)))
         Job job = new Job(null)
         AtomicBoolean boolOutside = new AtomicBoolean(true)
 
         when: 'Simple update'
         job.configurePromotion("dev") { Node node ->
             node / 'actions' {
-				description('Test Description')
+                description('Test Description')
             }
         }
         job.executeWithXmlActionsPromotions(promotions)
@@ -228,14 +228,14 @@ class JobTest extends Specification {
     def 'construct simple Promotions and generate xmls from it'() {
         setup:
         final Map<String, Node> promotions = new HashMap<String, Node>()
-		promotions.put("dev", new XmlParser().parse(new StringReader(promotionXml)))
+        promotions.put("dev", new XmlParser().parse(new StringReader(promotionXml)))
         JobManagement jm = Mock()
         Job job = new Job(jm, [type: 'maven'])
 
         when:
-		job.configurePromotion("dev") { Node node ->
+        job.configurePromotion("dev") { Node node ->
             node / 'actions' {
-				description('Test Description')
+                description('Test Description')
             }
         }
         def xmls = job.getXmlPromotions()
@@ -308,9 +308,9 @@ class JobTest extends Specification {
 </maven2-moduleset>
 '''
 
-	final promotionXml = '''
+    final promotionXml = '''
 <hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.15">
-	<actions/>
+    <actions/>
 </hudson.plugins.promoted__builds.PromotionProcess>
 '''
 }

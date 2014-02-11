@@ -181,17 +181,17 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         // Check promotion configs
         boolean allSimilar = true;
         for (String promotionName : configPromotions.keySet()) {
-			XmlFile oldXml = Items.getConfigFile(PromotionsGenerator.getRootDirFor(project.getName(), promotionName));
-			try {
-				Diff diff = XMLUnit.compareXML(oldXml.asString(), configPromotions.get(promotionName));
-				if (!diff.similar()) {
-					allSimilar = false;
-				}
-			} catch (Exception e) {
-	            // It's not a big deal if we can't diff, we'll just move on
-	            LOGGER.warning(e.getMessage());
-	        }
-		}
+            XmlFile oldXml = Items.getConfigFile(PromotionsGenerator.getRootDirFor(project.getName(), promotionName));
+            try {
+                Diff diff = XMLUnit.compareXML(oldXml.asString(), configPromotions.get(promotionName));
+                if (!diff.similar()) {
+                    allSimilar = false;
+                }
+            } catch (Exception e) {
+                // It's not a big deal if we can't diff, we'll just move on
+                LOGGER.warning(e.getMessage());
+            }
+        }
 
         // Leverage XMLUnit to perform diffs
         Diff diff;
@@ -215,9 +215,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             // Create XML for Promotions
             for (String promotionName : configPromotions.keySet()) {
-            	StreamSource streamSourcePromo = new StreamSource(new StringReader(configPromotions.get(promotionName))); // TODO use real xmlReader
-            	PromotionsGenerator promotion = new PromotionsGenerator(promotionName, project.getName());
-            	promotion.updateByXml(streamSourcePromo);
+                StreamSource streamSourcePromo = new StreamSource(new StringReader(configPromotions.get(promotionName)));
+                PromotionsGenerator promotion = new PromotionsGenerator(promotionName, project.getName());
+                promotion.updateByXml(streamSourcePromo);
             }
             
             project.updateByXml(streamSource);
@@ -240,9 +240,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             
             // Create XML for Promotions
             for (String promotionName : configPromotions.keySet()) {
-            	InputStream in = new ByteArrayInputStream(configPromotions.get(promotionName).getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-            	PromotionsGenerator promotion = new PromotionsGenerator(promotionName, jobName);
-            	promotion.createPromotionFromXML(in);
+                InputStream in = new ByteArrayInputStream(configPromotions.get(promotionName).getBytes("UTF-8"));
+                PromotionsGenerator promotion = new PromotionsGenerator(promotionName, jobName);
+                promotion.createPromotionFromXML(in);
             }
             
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8

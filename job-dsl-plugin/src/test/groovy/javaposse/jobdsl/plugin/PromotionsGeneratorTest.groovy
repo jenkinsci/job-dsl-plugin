@@ -9,32 +9,32 @@ import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
 
 class PromotionsGeneratorTest {
-	
-	@Rule
-	public JenkinsRule jenkinsRule = new JenkinsRule()
 
-	private PromotionsGenerator generator = new PromotionsGenerator("test-promotion", "test-job");
+    @Rule
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
-	@Test
-	public void testCreatePromotionFromXML() throws Exception {
-		InputStream xml = new StringInputStream(promo)
-		generator.createPromotionFromXML(xml)
-		File config = getConfigFile()
-		assert config.exists()
-		assert FileUtils.readFileToString(config) == promo
-	}
+    private PromotionsGenerator generator = new PromotionsGenerator("test-promotion", "test-job");
 
-	private File getConfigFile() {
-		File root = jenkinsRule.getInstance().getRootDir()
-		File jobs = new File(root, "jobs")
-		File testjob = new File(jobs, "test-job")
-		File promos = new File(testjob, "promotions")
-		File p1 = new File(promos, "test-promotion")
-		File config = new File(p1, "config.xml")
-		return config
-	}
+    @Test
+    public void testCreatePromotionFromXML() throws Exception {
+        InputStream xml = new StringInputStream(promo)
+        generator.createPromotionFromXML(xml)
+        File config = getConfigFile()
+        assert config.exists()
+        assert FileUtils.readFileToString(config) == promo
+    }
 
-	private String promo = '''<?xml version='1.0' encoding='UTF-8'?>
+    private File getConfigFile() {
+        File root = jenkinsRule.getInstance().getRootDir()
+        File jobs = new File(root, "jobs")
+        File testjob = new File(jobs, "test-job")
+        File promos = new File(testjob, "promotions")
+        File p1 = new File(promos, "test-promotion")
+        File config = new File(p1, "config.xml")
+        return config
+    }
+
+    private String promo = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.promoted__builds.PromotionProcess plugin='promoted-builds@2.15'>
   <actions/>
   <keepDependencies>false</keepDependencies>
@@ -55,5 +55,4 @@ class PromotionsGeneratorTest {
   <icon>star-green</icon>
   <buildSteps/>
 </hudson.plugins.promoted__builds.PromotionProcess>'''
-	
 }

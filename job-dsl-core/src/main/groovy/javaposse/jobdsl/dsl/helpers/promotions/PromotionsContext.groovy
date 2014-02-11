@@ -16,58 +16,58 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
 class PromotionsContext implements Context {
 
-	Map<String,Node> promotionNodes = [:]
+    Map<String,Node> promotionNodes = [:]
 
-	Map<String,Node> subPromotionNodes = [:]
+    Map<String,Node> subPromotionNodes = [:]
 
-	/**
-	 * <project>
-	 *     <properties>
-	 *         <hudson.plugins.promoted__builds.JobPropertyImpl>
-	 *             <activeProcessNames>
-	 *                 <string>dev</string>
-	 *
-	 * @param promotionName
-	 * @return
-	 */	
-	def promotion(String promotionName, Closure promotionClosure = null) {
-		Preconditions.checkArgument(!promotionNodes.containsKey(promotionName), 'promotion $promotionName already defined')
-		Preconditions.checkNotNull(promotionName, 'promotionName cannot be null')
-		Preconditions.checkArgument(promotionName.length() > 0)
-		Node promotionNode = new Node(null, 'string', promotionName)
-		promotionNodes[promotionName] = promotionNode
+    /**
+     * <project>
+     *     <properties>
+     *         <hudson.plugins.promoted__builds.JobPropertyImpl>
+     *             <activeProcessNames>
+     *                 <string>dev</string>
+     *
+     * @param promotionName
+     * @return
+     */	
+    def promotion(String promotionName, Closure promotionClosure = null) {
+        Preconditions.checkArgument(!promotionNodes.containsKey(promotionName), 'promotion $promotionName already defined')
+        Preconditions.checkNotNull(promotionName, 'promotionName cannot be null')
+        Preconditions.checkArgument(promotionName.length() > 0)
+        Node promotionNode = new Node(null, 'string', promotionName)
+        promotionNodes[promotionName] = promotionNode
 
-		PromotionContext promotionContext = new PromotionContext()
-		AbstractContextHelper.executeInContext(promotionClosure, promotionContext)
+        PromotionContext promotionContext = new PromotionContext()
+        AbstractContextHelper.executeInContext(promotionClosure, promotionContext)
 
-		subPromotionNodes[promotionName] = new NodeBuilder().'project' {
-			// Conditions
-			if (promotionContext.conditions) {
-				promotionContext.conditions.each {ConditionsContext condition ->
-					conditions(condition.createConditionNode().children())
-				}
-			}
+        subPromotionNodes[promotionName] = new NodeBuilder().'project' {
+            // Conditions
+            if (promotionContext.conditions) {
+                promotionContext.conditions.each {ConditionsContext condition ->
+                    conditions(condition.createConditionNode().children())
+                }
+            }
 
-			// Icon
-			if (promotionContext.icon) {
-				icon(promotionContext.icon)
-			}
-			
-			// Restrict label
-			if (promotionContext.restrict) {
-				assignedLabel(promotionContext.restrict)
-			}
-		}
+            // Icon
+            if (promotionContext.icon) {
+                icon(promotionContext.icon)
+            }
 
-		// Actions
+            // Restrict label
+            if (promotionContext.restrict) {
+                assignedLabel(promotionContext.restrict)
+            }
+        }
 
-		def steps = new NodeBuilder().'buildSteps'()
-		if (promotionContext.actions) {
-			promotionContext.actions.each { steps.append(it) }
-		}
-		subPromotionNodes[promotionName].append(steps)
+        // Actions
 
-		// ...
-	}
+        def steps = new NodeBuilder().'buildSteps'()
+        if (promotionContext.actions) {
+            promotionContext.actions.each { steps.append(it) }
+        }
+        subPromotionNodes[promotionName].append(steps)
+
+        // ...
+    }
 
 }

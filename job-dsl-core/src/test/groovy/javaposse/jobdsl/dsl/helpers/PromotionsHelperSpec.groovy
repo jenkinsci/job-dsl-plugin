@@ -20,8 +20,8 @@ public class PromotionsHelperSpec extends Specification {
         then:
         context.promotionNodes != null
         context.promotionNodes.size() == 1
-		context.promotionNodes["myPromotionName"].name() == 'string'
-		context.promotionNodes["myPromotionName"].text() == 'myPromotionName'
+        context.promotionNodes["myPromotionName"].name() == 'string'
+        context.promotionNodes["myPromotionName"].text() == 'myPromotionName'
 
         context.subPromotionNodes != null
         context.subPromotionNodes.values().size() == 1
@@ -67,9 +67,7 @@ public class PromotionsHelperSpec extends Specification {
 
     def 'call promotions via helper'() {
         when:
-        helper.promotions {
-            promotion('myPromotionName',null)
-        }
+        helper.promotions { promotion('myPromotionName',null) }
 
         then:
         1 * mockActions.add(_)
