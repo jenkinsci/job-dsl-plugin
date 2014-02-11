@@ -49,8 +49,8 @@ class FileJobManagement extends AbstractJobManagement {
         new File(jobName + ext).write(config)
         
         for (String promotionName : configPromotions.keySet()) {
-			new File(promotionName + ext).write(configPromotions.get(promotionName))
-		}
+            new File(promotionName + ext).write(configPromotions.get(promotionName))
+        }
         
         return true
     }

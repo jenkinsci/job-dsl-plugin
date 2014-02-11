@@ -29,7 +29,7 @@ class PromotionsContext implements Context {
      *
      * @param promotionName
      * @return
-     */	
+     */
     def promotion(String promotionName, Closure promotionClosure = null) {
         Preconditions.checkArgument(!promotionNodes.containsKey(promotionName), 'promotion $promotionName already defined')
         Preconditions.checkNotNull(promotionName, 'promotionName cannot be null')
