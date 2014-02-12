@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
-import javaposse.jobdsl.dsl.helpers.BuildDslHelper
+import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
@@ -37,7 +37,7 @@ public class Job {
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
-    @Delegate BuildDslHelper helperBuildDsl
+    @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
@@ -55,7 +55,7 @@ public class Job {
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)
         helperMaven = new MavenHelper(withXmlActions, type)
-        helperBuildDsl = new BuildDslHelper(withXmlActions, type)
+        helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
     }
 
@@ -174,7 +174,7 @@ public class Job {
         // TODO Move this logic to the JobType Enum
         switch(type) {
             case JobType.Freeform: return emptyTemplate
-            case JobType.BuildDsl: return emptyBuildDslTemplate
+            case JobType.BuildFlow: return emptyBuildFlowTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
         }
@@ -207,7 +207,7 @@ public class Job {
 </project>
 '''
 
-    def emptyBuildDslTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    def emptyBuildFlowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <com.cloudbees.plugins.flow.BuildFlow>
   <actions/>
   <description></description>

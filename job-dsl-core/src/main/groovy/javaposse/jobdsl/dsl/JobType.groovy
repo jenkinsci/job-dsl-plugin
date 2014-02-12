@@ -4,7 +4,7 @@ public enum JobType {
     Freeform('project'),
     Maven('maven2-moduleset'),
     Multijob('com.tikal.jenkins.plugins.multijob.MultiJobProject'),
-    BuildDsl('com.cloudbees.plugins.flow.BuildFlow')
+    BuildFlow('com.cloudbees.plugins.flow.BuildFlow')
 
     String elementName
 
