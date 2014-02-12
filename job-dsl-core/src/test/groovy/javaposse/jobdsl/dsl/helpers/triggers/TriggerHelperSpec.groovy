@@ -313,6 +313,66 @@ public class TriggerHelperSpec extends Specification {
 //        1 * mockActions.add(_)
     }
 
+    def 'call pull request trigger with no args'() {
+        when:
+        context.pullRequest()
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            onlyTriggerPhrase[0].value() as boolean == false
+            useGitHubHooks[0].value() as boolean == true
+            permitAll[0].value() as boolean == true
+            autoCloseFailedPullRequests[0].value() as boolean == false
+        }
+    }
+
+    def 'call pull request trigger with multiple admins and orgs'() {
+        when:
+        context.pullRequest() {
+            admins(['test1', 'test2'])
+            whiteListedOrgs(['test1', 'test2'])
+        }
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            adminlist[0].value() as String == 'test1\ntest2'
+            orgslist[0].value() as String == 'test1\ntest2'
+        }
+    }
+
+    def 'call pull request trigger with all args'() {
+        when:
+        context.pullRequest() {
+            admins(['test'])
+            whiteList('test')
+            whiteListedOrgs(['test'])
+            cron('*/5 * * * *')
+            triggerPhrase('ok to test')
+            onlyTriggerPhrase(true)
+            useGitHubHooks(false)
+            permitAll(false)
+            autoCloseFailedPullRequests(true)
+        }
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            adminlist[0].value() as String == 'test'
+            whitelist[0].value() as String == 'test'
+            orgslist[0].value() as String == 'test'
+            cron[0].value() as String == '*/5 * * * *'
+            triggerPhrase[0].value() as String == 'ok to test'
+            onlyTriggerPhrase[0].value() as boolean == true
+            useGitHubHooks[0].value() as boolean == false
+            permitAll[0].value() as boolean == false
+            autoCloseFailedPullRequests[0].value() as boolean == true
+        }
+    }
+
     def 'call empty gerrit trigger methods'() {
         when:
         context.gerrit {
