@@ -6,6 +6,7 @@ class MavenContext implements javaposse.jobdsl.dsl.helpers.common.MavenContext {
     String rootPOM
     List<String> goals = []
     List<String> mavenOpts = []
+    Map<String, String> properties = [:]
     LocalRepositoryLocation localRepositoryLocation
     String mavenInstallation = '(Default)'
     Closure configureBlock
@@ -37,5 +38,13 @@ class MavenContext implements javaposse.jobdsl.dsl.helpers.common.MavenContext {
     
     def configure(Closure closure) {
         this.configureBlock = closure
+    }
+
+    def properties(Map props) {
+        properties = properties + props
+    }
+
+    def property(String key, String value) {
+        properties = properties + [(key): value]
     }
 }

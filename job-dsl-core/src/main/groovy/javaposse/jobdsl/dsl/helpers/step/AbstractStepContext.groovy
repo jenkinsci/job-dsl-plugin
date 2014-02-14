@@ -348,6 +348,9 @@ class AbstractStepContext implements Context {
 
         Node mavenNode = new NodeBuilder().'hudson.tasks.Maven' {
             targets mavenContext.goals.join(' ')
+            if (mavenContext.properties) {
+                properties(mavenContext.properties.collect { key, value -> "${key}=${value}" }.join('\n'))
+            }
             mavenName mavenContext.mavenInstallation
             jvmOptions mavenContext.mavenOpts.join(' ')
             if (mavenContext.rootPOM) {
