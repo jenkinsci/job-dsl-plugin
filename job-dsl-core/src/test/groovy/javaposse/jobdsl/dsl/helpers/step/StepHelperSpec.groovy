@@ -1318,4 +1318,20 @@ still-another-dsl.groovy'''
         acmeScriptSourceNode.command.size() == 1
         acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
     }
+
+    @Unroll
+    def 'Method #method should work within Category'(method, parameters) {
+        when:
+        use(ArbitraryCategory) {
+            context."$method"(parameters)
+        }
+        then:
+        notThrown(MissingMethodException)
+
+        where:
+        method               || parameters
+        'groovyCommand'       | ['println "Test"']
+        'systemGroovyCommand' | ['println "Test"']
+        'dsl'                 | 'job { name "test" }'
+    }
 }
