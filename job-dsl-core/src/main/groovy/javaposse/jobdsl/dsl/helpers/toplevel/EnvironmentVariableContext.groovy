@@ -5,7 +5,13 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 class EnvironmentVariableContext implements Context {
     def props = []
-    def groovyScript
+    String groovyScript = ''
+    String script = ''
+    String scriptFilePath = ''
+    String propertiesFilePath = ''
+    boolean loadFilesFromMaster = false
+    boolean keepSystemVariables = true
+    boolean keepBuildVariables = true
 
     def env(Object key, Object value) {
         props << "${key}=${value}"
@@ -19,5 +25,29 @@ class EnvironmentVariableContext implements Context {
 
     def groovy(String script) {
         groovyScript = script
+    }
+
+    def script(String script) {
+        this.script = script
+    }
+
+    def scriptFile(String scriptFilePath) {
+        this.scriptFilePath = scriptFilePath
+    }
+
+    def propertiesFile(String propertiesFilePath) {
+        this.propertiesFilePath = propertiesFilePath
+    }
+
+    def loadFilesFromMaster(boolean loadFilesFromMaster) {
+        this.loadFilesFromMaster = loadFilesFromMaster
+    }
+
+    def keepSystemVariables(boolean keepSystemVariables) {
+        this.keepSystemVariables = keepSystemVariables
+    }
+
+    def keepBuildVariables(boolean keepBuildVariables) {
+        this.keepBuildVariables = keepBuildVariables
     }
 }
