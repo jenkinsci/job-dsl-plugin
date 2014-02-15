@@ -70,15 +70,24 @@ class TopLevelHelper extends AbstractHelper {
         execute {
             it / 'properties' / 'EnvInjectJobProperty' {
                 info {
+                    if (envContext.propertiesFilePath) {
+                        propertiesFilePath(envContext.propertiesFilePath)
+                    }
                     propertiesContent(envContext.props.join('\n'))
+                    if (envContext.scriptFilePath) {
+                        scriptFilePath(envContext.scriptFilePath)
+                    }
+                    if (envContext.script) {
+                        scriptContent(envContext.script)
+                    }
                     if (envContext.groovyScript) {
                         groovyScriptContent(envContext.groovyScript)
                     }
-                    loadFilesFromMaster(false)
+                    loadFilesFromMaster(envContext.loadFilesFromMaster)
                 }
                 on(true)
-                keepJenkinsSystemVariables(true)
-                keepBuildVariables(true)
+                keepJenkinsSystemVariables(envContext.keepSystemVariables)
+                keepBuildVariables(envContext.keepBuildVariables)
                 contributors()
             }
         }

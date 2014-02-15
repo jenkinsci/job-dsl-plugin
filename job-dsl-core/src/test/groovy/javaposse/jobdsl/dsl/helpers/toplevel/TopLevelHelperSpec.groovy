@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
+import spock.lang.Unroll
 
 public class TopLevelHelperSpec extends Specification {
 
@@ -93,6 +94,44 @@ public class TopLevelHelperSpec extends Specification {
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
         root.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+    }
+
+    @Unroll
+    def 'environment from #method'(content, method, xmlElement) {
+        when:
+        def action = helper.environmentVariables {
+            "$method"(content)
+        }
+        action.execute(root)
+
+        then:
+        root.properties[0].'EnvInjectJobProperty'[0].info[0]."$xmlElement"[0].value() == content
+
+        where:
+        content          || method               || xmlElement
+        'some.properties' | 'propertiesFile'      | 'propertiesFilePath'
+        '/some/path'      | 'scriptFile'          | 'scriptFilePath'
+        'echo "Yeah"'     | 'script'              | 'scriptContent'
+        true              | 'loadFilesFromMaster' | 'loadFilesFromMaster'
+    }
+
+    @Unroll
+    def 'environment sets #method to #content'(method, content, xmlElement) {
+        when:
+        def action = helper.environmentVariables {
+            "${method}"(content)
+        }
+        action.execute(root)
+
+        then:
+        root.properties[0].'EnvInjectJobProperty'[0]."${xmlElement}"[0].value() == content
+
+        where:
+        method               || content || xmlElement
+        'keepSystemVariables' | true     | 'keepJenkinsSystemVariables'
+        'keepSystemVariables' | false    | 'keepJenkinsSystemVariables'
+        'keepBuildVariables'  | true     | 'keepBuildVariables'
+        'keepBuildVariables'  | false    | 'keepBuildVariables'
     }
 
     def 'throttle concurrents enabled as project alone'() {
