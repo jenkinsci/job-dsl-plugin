@@ -327,7 +327,7 @@ class WrapperHelperSpec extends Specification {
         wrapper[0].value() == "ANT_1_8_2_HOME,MAVEN_3_HOME"
     }
 
-    def 'release plugin' () {
+    def 'release plugin simple' () {
         when:
         helper.wrappers {
             release {
@@ -348,4 +348,70 @@ class WrapperHelperSpec extends Specification {
         def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
         steps[0].value()[0].name() == 'hudson.tasks.Shell'
     }
+
+    def 'release plugin extended' () {
+        when:
+        helper.wrappers {
+            release {
+                releaseVersionTemplate('templatename')
+                doNotKeepLog(true)
+                overrideBuildParameters(false)
+                postSuccessfulBuildSteps {
+                    shell('echo postsuccess;')
+                }
+                postBuildSteps {
+                    shell('echo post;')
+                }
+                postFailedBuildSteps {
+                    shell('echo postfailed;')
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
+        params[0].value()[0].name() == "releaseVersionTemplate"
+        params[0].value()[0].value() == "templatename"
+        params[0].value()[1].name() == "doNotKeepLog"
+        params[0].value()[1].value() == true
+        params[0].value()[2].name() == "overrideBuildParameters"
+        params[0].value()[2].value() == false
+        
+        def stepsPostSuccess = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postSuccessfulBuildSteps'
+        stepsPostSuccess[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPostSuccess[0].value()[0].value()[0].name() == 'command'
+        stepsPostSuccess[0].value()[0].value()[0].value() == 'echo postsuccess;'
+        
+        def stepsPost = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postBuildSteps'
+        stepsPost[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPost[0].value()[0].value()[0].name() == 'command'
+        stepsPost[0].value()[0].value()[0].value() == 'echo post;'
+        
+        def stepsPostFailed = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postFailedBuildSteps'
+        stepsPostFailed[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPostFailed[0].value()[0].value()[0].name() == 'command'
+        stepsPostFailed[0].value()[0].value()[0].value() == 'echo postfailed;'
+    }
+    
+    def 'release plugin configure' () {
+        when:
+        helper.wrappers {
+            release {
+                configure { project ->
+                    def node = project / 'testCommand'
+                    node << {
+                        custom('value')
+                    }
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'testCommand'
+        params[0].value()[0].name() == "custom"
+        params[0].value()[0].value() == "value"
+    }
+    
 }

@@ -302,26 +302,26 @@ class WrapperContext implements Context {
     /**
      * <pre>
      * {@code
-     * <project>
-     *     <buildWrappers>
-     *         <hudson.plugins.release.ReleaseWrapper>
-     *             <doNotKeepLog>true</doNotKeepLog>
-     *             <overrideBuildParameters>false</overrideBuildParameters>
-     *             <preBuildSteps>
-     *                 <hudson.tasks.Maven>
+     *  <project>
+     *      <buildWrappers>
+     *          <hudson.plugins.release.ReleaseWrapper>
+     *              <doNotKeepLog>true</doNotKeepLog>
+     *              <overrideBuildParameters>false</overrideBuildParameters>
+     *              <preBuildSteps>
+     *                  <hudson.tasks.Maven>
      *                      <targets>install</targets>
      *                      <mavenName>(Default)</mavenName> 
-     *                 </hudson.tasks.Maven>
-     *			   </preBuildSteps>
-     *             <postBuildSteps>
-     *                 <hudson.tasks.Maven>
+     *                  </hudson.tasks.Maven>
+     *              </preBuildSteps>
+     *              <postBuildSteps>
+     *                  <hudson.tasks.Maven>
      *                      <targets>site</targets>
      *                      <mavenName>(Default)</mavenName> 
      *                 </hudson.tasks.Maven>
-     *			   </postBuildSteps>
-     *         </hudson.plugins.release.ReleaseWrapper>
-     *     </buildWrappers>
-     * </project>
+     *              </postBuildSteps>
+     *          </hudson.plugins.release.ReleaseWrapper>
+     *      </buildWrappers>
+     *  </project>
      * }
      * </pre>
      *

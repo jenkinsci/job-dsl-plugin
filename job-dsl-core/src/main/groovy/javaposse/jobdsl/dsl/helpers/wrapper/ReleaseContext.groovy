@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
-import javaposse.jobdsl.dsl.helpers.BuildParametersContext;
+import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
 
@@ -17,28 +17,24 @@ class ReleaseContext implements Context {
     Closure configureBlock
 
     def preBuildSteps(Closure closure) {
-        // delegate to main AbstractStepContext
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
         preBuildSteps << stepContext.stepNodes
     }
 
     def postSuccessfulBuildSteps(Closure closure) {
-        // delegate to main AbstractStepContext
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
         postSuccessfulBuildSteps << stepContext.stepNodes
     }
 
     def postBuildSteps(Closure closure) {
-        // delegate to main AbstractStepContext
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
         postBuildSteps << stepContext.stepNodes
     }
 
     def postFailedBuildSteps(Closure closure) {
-        // delegate to main AbstractStepContext
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
         postFailedBuildSteps << stepContext.stepNodes
@@ -61,7 +57,6 @@ class ReleaseContext implements Context {
     }
 
     def parameters(Closure parametersClosure) {
-        // delegate to main BuildParametersContext
         BuildParametersContext parametersContext = new BuildParametersContext()
         AbstractContextHelper.executeInContext(parametersClosure, parametersContext)
         parametersContext.buildParameterNodes.values().each { params << it }
