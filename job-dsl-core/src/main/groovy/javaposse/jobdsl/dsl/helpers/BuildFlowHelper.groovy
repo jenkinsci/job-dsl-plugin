@@ -17,17 +17,13 @@ class BuildFlowHelper extends AbstractHelper implements Context {
      * Specifies text for the Build Flow Dsl block.
      * @param block of groovy DSL to be applied to the Build Flow block.
      */
-    def buildFlowBlock(String buildFlowBlockText) {
-        checkState type == JobType.BuildFlow, "Build Flow blocks can only be applied to Build Flow jobs."
+    def buildFlow(String buildFlowText) {
+        checkState type == JobType.BuildFlow, "Build Flow text can only be applied to Build Flow jobs."
         checkState !buildFlowAdded, "Build Flow text can only be applied once"
         buildFlowAdded = true
         execute { Node node ->
-            appendOrReplaceNode node, 'dsl', buildFlowBlockText
+            appendOrReplaceNode node, 'dsl', buildFlowText
         }
     }
 
-    private static void appendOrReplaceNode(Node node, String name, Object value) {
-        node.children().removeAll { it instanceof Node && it.name() == name }
-        node.appendNode name, value
-    }
 }

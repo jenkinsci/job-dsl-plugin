@@ -154,8 +154,4 @@ class MavenHelper extends AbstractHelper implements MavenContext {
         }
     }
 
-    private static void appendOrReplaceNode(Node node, String name, Object value) {
-        node.children().removeAll { it instanceof Node && it.name() == name }
-        node.appendNode name, value
-    }
 }

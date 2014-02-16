@@ -13,16 +13,16 @@ public class BuildFlowHelperSpec extends Specification {
 
     def 'can run buildFlowBlock'() {
         when:
-        helper.buildFlowBlock("build block")
+        helper.buildFlow("build block")
 
         then:
         1 * mockActions.add(_)
     }
 
-    def 'cannot run buildFlowBlock twice'() {
+    def 'cannot run buildFlow twice'() {
         when:
-        helper.buildFlowBlock("build block")
-        helper.buildFlowBlock("build block again")
+        helper.buildFlow("build block")
+        helper.buildFlow("build block again")
 
         then:
         thrown(IllegalStateException)
@@ -33,7 +33,7 @@ public class BuildFlowHelperSpec extends Specification {
         BuildFlowHelper helper = new BuildFlowHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.buildFlowBlock("build block")
+        helper.buildFlow("build block")
 
         then:
         thrown(IllegalStateException)
@@ -44,16 +44,16 @@ public class BuildFlowHelperSpec extends Specification {
         BuildFlowHelper helper = new BuildFlowHelper(mockActions, JobType.Maven)
 
         when:
-        helper.buildFlowBlock("build block")
+        helper.buildFlow("build block")
 
         then:
         thrown(IllegalStateException)
     }
 
 
-    def 'buildFlowBlock constructs xml'() {
+    def 'buildFlow constructs xml'() {
         when:
-        def action = helper.buildFlowBlock("build Flow Block")
+        def action = helper.buildFlow("build Flow Block")
         action.execute(root)
 
         then:
