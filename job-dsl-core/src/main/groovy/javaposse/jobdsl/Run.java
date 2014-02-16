@@ -1,18 +1,17 @@
 package javaposse.jobdsl;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.FileJobManagement;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedView;
-import javaposse.jobdsl.dsl.JobManagement;
 import javaposse.jobdsl.dsl.ScriptRequest;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Able to run from the command line to test out. Leverage FileJobManagement
@@ -27,7 +26,7 @@ public class Run {
         File cwd = new File(".");
         URL cwdURL = cwd.toURI().toURL();
 
-        JobManagement jm = new FileJobManagement(cwd);
+        FileJobManagement jm = new FileJobManagement(cwd);
         jm.getParameters().putAll(System.getenv());
         for(Map.Entry entry: System.getProperties().entrySet()) {
             jm.getParameters().put(entry.getKey().toString(), entry.getValue().toString());
