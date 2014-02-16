@@ -41,9 +41,10 @@ class FileJobManagement extends AbstractJobManagement {
             throw new JobConfigurationNotFoundException(jobName)
         }
     }
-
+    
+    @Override
     boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting)
-        throws JobNameNotProvidedException, JobConfigurationMissingException {
+        throws NameNotProvidedException, ConfigurationMissingException {
         validateUpdateArgs(jobName, config);
 
         new File(jobName + ext).write(config)
@@ -53,6 +54,13 @@ class FileJobManagement extends AbstractJobManagement {
         }
         
         return true
+    }
+
+    @Override
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+        validateUpdateArgs(viewName, config);
+
+        new File(viewName + ext).write(config)
     }
 
     @Override

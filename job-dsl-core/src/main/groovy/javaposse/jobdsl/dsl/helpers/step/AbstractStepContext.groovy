@@ -135,7 +135,7 @@ class AbstractStepContext implements Context {
 
     }
 
-    private void buildDslNode(context) {
+    protected void buildDslNode(context) {
         def nodeBuilder = new NodeBuilder()
         def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
             targets context.targets
@@ -266,7 +266,7 @@ class AbstractStepContext implements Context {
         groovy(fileName, false, groovyName, groovyClosure)
     }
 
-    private def groovyScriptSource(String commandOrFileName, boolean isCommand) {
+    protected def groovyScriptSource(String commandOrFileName, boolean isCommand) {
         def nodeBuilder = new NodeBuilder()
         nodeBuilder.scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
             if (isCommand) {
@@ -277,7 +277,7 @@ class AbstractStepContext implements Context {
         }
     }
 
-    private def groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
+    protected def groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
         def groovyContext = new GroovyContext()
         AbstractContextHelper.executeInContext(groovyClosure, groovyContext)
 
@@ -320,7 +320,7 @@ class AbstractStepContext implements Context {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
 
-    private def systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
+    protected def systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
         def systemGroovyContext = new SystemGroovyContext()
         AbstractContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
@@ -348,6 +348,9 @@ class AbstractStepContext implements Context {
 
         Node mavenNode = new NodeBuilder().'hudson.tasks.Maven' {
             targets mavenContext.goals.join(' ')
+            if (mavenContext.properties) {
+                properties(mavenContext.properties.collect { key, value -> "${key}=${value}" }.join('\n'))
+            }
             mavenName mavenContext.mavenInstallation
             jvmOptions mavenContext.mavenOpts.join(' ')
             if (mavenContext.rootPOM) {

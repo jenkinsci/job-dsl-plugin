@@ -6,26 +6,45 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
+
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
-import hudson.model.*;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Cause;
+import hudson.model.Item;
+import hudson.model.Items;
+import hudson.model.Run;
+import hudson.model.View;
 import hudson.util.VersionNumber;
-import javaposse.jobdsl.dsl.*;
+import javaposse.jobdsl.dsl.AbstractJobManagement;
+import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.ConfigurationMissingException;
+import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
+import javaposse.jobdsl.dsl.NameNotProvidedException;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
 
 /**
@@ -76,7 +95,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
      */
     @Override
     public boolean createOrUpdateConfig(String fullJobName, String config, Map<String, String> configPromotions, boolean ignoreExisting)
-            throws JobNameNotProvidedException, JobConfigurationMissingException {
+            throws NameNotProvidedException, ConfigurationMissingException {
 
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullJobName));
         boolean created = false;
@@ -93,6 +112,27 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             created = updateExistingJob(project, config, configPromotions);
         }
         return created;
+    }
+
+    @Override
+    public void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+        validateUpdateArgs(viewName, config);
+        Jenkins.checkGoodName(viewName);
+        try {
+            InputStream inputStream = new ByteArrayInputStream(config.getBytes("UTF-8"));
+
+            Jenkins jenkins = Jenkins.getInstance();
+            View view = jenkins.getView(viewName);
+            if (view == null) {
+                jenkins.addView(createViewFromXML(viewName, inputStream));
+            } else if (!ignoreExisting) {
+                view.updateByXml(new StreamSource(inputStream));
+            }
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new view %s.", viewName), e);
+        }
     }
 
     @Override
@@ -117,8 +157,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public void queueJob(String jobName) throws JobNameNotProvidedException {
-        validateJobNameArg(jobName);
+    public void queueJob(String jobName) throws NameNotProvidedException {
+        validateNameArg(jobName);
 
         AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
 

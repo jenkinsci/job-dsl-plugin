@@ -23,15 +23,25 @@ public interface JobManagement {
      * @param config the new / updated job config
      * @param configPromotions the new / updated promotions config
      * @param ignoreExisting do not update existing jobs
-     * @throws JobNameNotProvidedException if the jobName is null or blank
-     * @throws JobConfigurationMissingException if the config xml is null or blank
+     * @throws NameNotProvidedException if the jobName is null or blank
+     * @throws ConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException;
+    boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException;
+
+    /**
+     * Creates or updates the view config for the named Jenkins view with the config provided.
+     * @param viewName the name of the new / updated view
+     * @param config the new / updated view config
+     * @param ignoreExisting do not update existing view
+     * @throws NameNotProvidedException if the viewName is null or blank
+     * @throws ConfigurationMissingException if the config xml is null or blank
+     */
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException;
 
     /**
      * Queue a job to run. Useful for running jobs after they've been created.
      */
-    void queueJob(String jobName) throws JobNameNotProvidedException;
+    void queueJob(String jobName) throws NameNotProvidedException;
 
     InputStream streamFileInWorkspace(String filePath) throws IOException;
     String readFileInWorkspace(String filePath) throws IOException;

@@ -56,7 +56,7 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException {
+    boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException {
         validateUpdateArgs(jobName, config);
 
         savedConfigs[jobName] = config
@@ -73,12 +73,17 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
     Map<String, String> getParameters() {
         return params
     }
 
     @Override
-    void queueJob(String jobName) throws JobNameNotProvidedException {
+    void queueJob(String jobName) throws NameNotProvidedException {
         jobScheduled << jobName
     }
 

@@ -84,7 +84,7 @@ class JobManagementTest extends Specification {
         jm.createOrUpdateConfig(null, updatedXml_keepDepIsTrue, null, false)
 
         then:
-        thrown(JobNameNotProvidedException)
+        thrown(NameNotProvidedException)
     }
 
     def "create new config - name not provided (EMPTY)"() {
@@ -97,7 +97,7 @@ class JobManagementTest extends Specification {
         jm.createOrUpdateConfig("", updatedXml_keepDepIsTrue, null, false)
 
         then:
-        thrown(JobNameNotProvidedException)
+        thrown(NameNotProvidedException)
     }
 
     def "create new config - config XML not provided (NULL)"() {
@@ -110,7 +110,7 @@ class JobManagementTest extends Specification {
         jm.createOrUpdateConfig("NEW-JOB-NAME", null, null, false)
 
         then:
-        thrown(JobConfigurationMissingException)
+        thrown(ConfigurationMissingException)
     }
 
     def "create new config - config XML not provided (EMPTY)"() {
@@ -123,7 +123,7 @@ class JobManagementTest extends Specification {
         jm.createOrUpdateConfig("NEW-JOB-NAME", "", null, false)
 
         then:
-        thrown(JobConfigurationMissingException)
+        thrown(ConfigurationMissingException)
     }
 
 def minimalXml = '''
