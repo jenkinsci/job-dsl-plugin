@@ -21,6 +21,7 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
 
     def promotions(Closure closure) {
         execute(closure, new PromotionsContext())
+        executeAdditional(closure, new PromotionsContext())
     }
 
     Closure generateWithXmlClosure(PromotionsContext context) {
@@ -30,7 +31,7 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
         }
     }
 
-    Closure generateWithXmlClosurePromotions(PromotionsContext context, String promotionName) {
+    Closure generateAdditionalWithXmlClosure(PromotionsContext context, String promotionName) {
         // special XML closure generator for the promotions config.xml
         return { Node project ->
             def promotion = project
@@ -46,13 +47,9 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
         node.append replace
     }
 
-    @Override
-    def execute(Closure closure, PromotionsContext promotionsContext) {
+    def executeAdditional(Closure closure, PromotionsContext promotionsContext) {
         // Execute context, which we expect will just establish some state
         executeInContext(closure, promotionsContext)
-
-        // Queue up our action, using the concrete classes logic
-        withXmlActions << generateWithXmlAction(promotionsContext)
 
         // Add promotions actions for each promotion in the context
         promotionsContext.subPromotionNodes.each { name, node ->
@@ -62,7 +59,7 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
                 additionalConfigs << xmlConfig
             }
             def xmlActions = xmlConfig.withXmlActions
-            xmlActions << generateWithXmlActionPromotions(promotionsContext, name)
+            xmlActions << generateAdditionalWithXmlAction(promotionsContext, name)
         }
 
         return promotionsContext
@@ -77,9 +74,9 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
         return null
     }
 
-    WithXmlAction generateWithXmlActionPromotions(PromotionsContext context, String promotionName) {
+    WithXmlAction generateAdditionalWithXmlAction(PromotionsContext context, String promotionName) {
         // Closure to be run later, in this context we're given the root node with the WithXmlAction magic
-        Closure withXmlClosure = generateWithXmlClosurePromotions(context, promotionName)
+        Closure withXmlClosure = generateAdditionalWithXmlClosure(context, promotionName)
         return new WithXmlAction(withXmlClosure)
     }
 
