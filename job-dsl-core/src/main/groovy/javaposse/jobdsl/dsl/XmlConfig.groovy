@@ -41,6 +41,8 @@ public abstract class XmlConfig {
      */
     public String getXml() {
         Node root = getNode()
+        
+        executeWithXmlActions(root)
 
         def xmlOutput = new StringWriter()
         def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")

@@ -33,7 +33,6 @@ public abstract class View extends XmlConfig {
 
     Node getNode() {
         Node root = new XmlParser().parse(new StringReader(getTemplate()))
-        executeWithXmlActions(root)
         root
     }
 

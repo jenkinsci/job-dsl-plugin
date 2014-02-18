@@ -85,11 +85,6 @@ public class Job extends XmlConfig {
 
     public Node getNode() {
         Node project = templateName==null?executeEmptyTemplate():executeUsing()
-
-        // TODO check name field
-        
-        executeWithXmlActions(project)
-
         return project
     }
     

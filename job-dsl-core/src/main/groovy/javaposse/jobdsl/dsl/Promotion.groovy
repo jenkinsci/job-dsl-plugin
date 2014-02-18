@@ -13,6 +13,7 @@ class Promotion extends AdditionalXmlConfig {
 
     protected Node getNode() {
         Node project = new XmlParser().parse(new StringReader(emptyPromotionTemplate))
+        return project
     }
 
     def emptyPromotionTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
