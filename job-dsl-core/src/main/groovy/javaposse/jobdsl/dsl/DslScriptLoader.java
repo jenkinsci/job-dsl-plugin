@@ -129,7 +129,7 @@ public class DslScriptLoader {
                         XmlConfigType type = xmlConfig.getConfigType();
                         String path = xmlConfig.getRelativePath();
                         config.addConfig(new JobConfigId(type, path), xmlAdditional);
-                        LOGGER.log(Level.FINE, String.format("Additional config %s %s in %s as %s", type, path, xmlAdditional));
+                        LOGGER.log(Level.FINE, String.format("Additional config %s in %s as %s", type, path, xmlAdditional));
                     }
                     boolean created = jp.getJm().createOrUpdateConfig(job.getName(), config, ignoreExisting);
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
