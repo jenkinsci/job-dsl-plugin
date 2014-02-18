@@ -21,6 +21,8 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
 
     def promotions(Closure closure) {
         execute(closure, new PromotionsContext())
+        
+        // extra execution for the generation of each XML per promotion
         executeAdditional(closure, new PromotionsContext())
     }
 
