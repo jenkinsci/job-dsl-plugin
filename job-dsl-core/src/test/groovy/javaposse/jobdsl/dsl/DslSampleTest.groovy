@@ -40,11 +40,11 @@ class DslSampleTest extends Specification {
         jm.addConfig('TMPL-test-maven', sampleMavenTemplate)
 
         when:
-        Set<GeneratedJob> results = DslScriptLoader.runDslEngine(samplePromotionsDsl, jm)
+        GeneratedItems results = DslScriptLoader.runDslEngine(samplePromotionsDsl, jm)
 
         then:
         results != null
-        results.size() == 1
+        results.jobs.size() == 1
         jm.savedConfigs.size() == 1
         def firstJob = jm.savedConfigs['promos']
         firstJob != null
@@ -54,7 +54,7 @@ class DslSampleTest extends Specification {
         // Promotions
         jm.savedConfigsPromotions.size() == 1
         def firstConfigs = jm.savedConfigsPromotions['promos']
-        def devConfig = firstConfigs["dev"]
+        def devConfig = firstConfigs[new JobConfigId(XmlConfigType.PROMOTION, "dev", "promotions/dev")]
         // TODO Review actual results
         println(devConfig)
     }

@@ -8,17 +8,17 @@ import org.junit.Rule
 import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
 
-class PromotionsGeneratorTest {
+class JobConfigGeneratorTest {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule()
 
-    private PromotionsGenerator generator = new PromotionsGenerator("test-promotion", "test-job");
+    private JobConfigGenerator generator = new JobConfigGenerator("test-job");
 
     @Test
-    public void testCreatePromotionFromXML() throws Exception {
+    public void testCreateConfigFromXML() throws Exception {
         InputStream xml = new StringInputStream(promo)
-        generator.createPromotionFromXML(xml)
+        generator.createConfigFromXML(xml, "promotions/test-promotion")
         File config = getConfigFile()
         assert config.exists()
         assert FileUtils.readFileToString(config) == promo

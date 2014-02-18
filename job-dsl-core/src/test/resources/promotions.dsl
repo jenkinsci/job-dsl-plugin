@@ -3,7 +3,7 @@ job {
     promotions {
         promotion('dev') {
             icon('gold-star')
-        restrict('dev2')
+            restrict('dev2')
             conditions {
                 selfPromotion(true)
                 manual('denschu') {

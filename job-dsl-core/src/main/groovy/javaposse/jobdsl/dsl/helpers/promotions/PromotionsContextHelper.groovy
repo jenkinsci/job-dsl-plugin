@@ -1,17 +1,22 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
+import java.util.List;
+
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.XmlConfig;
+import javaposse.jobdsl.dsl.XmlConfigType;
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.Promotion
 
 class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
 
-    // helds the WithXmlActions for every promotion - key: promotion name
-    Map<String, List<WithXmlAction>> withXmlActionsPromotions
+    // helds the WithXmlActions for every promotion
+    List<XmlConfig> additionalConfigs
 
-    PromotionsContextHelper(List<WithXmlAction> withXmlActions, Map<String, List<WithXmlAction>> withXmlActionsPromotions, JobType jobType) {
+    PromotionsContextHelper(List<WithXmlAction> withXmlActions, List<XmlConfig> additionalConfigs, JobType jobType) {
         super(withXmlActions, jobType)
-        this.withXmlActionsPromotions = withXmlActionsPromotions
+        this.additionalConfigs = additionalConfigs
     }
 
     def promotions(Closure closure) {
@@ -51,15 +56,25 @@ class PromotionsContextHelper extends AbstractContextHelper<PromotionsContext> {
 
         // Add promotions actions for each promotion in the context
         promotionsContext.subPromotionNodes.each { name, node ->
-            def xmlActions = withXmlActionsPromotions.get(name)
-            if (!xmlActions) {
-                xmlActions = []
-                withXmlActionsPromotions.put(name, xmlActions)
+            def xmlConfig = getAdditionalXmlConfig(name)
+            if (!xmlConfig) {
+                xmlConfig = new Promotion(name)
+                additionalConfigs << xmlConfig
             }
+            def xmlActions = xmlConfig.withXmlActions
             xmlActions << generateWithXmlActionPromotions(promotionsContext, name)
         }
 
         return promotionsContext
+    }
+    
+    private XmlConfig getAdditionalXmlConfig(String name) {
+        additionalConfigs.each {
+            if (it.configType == XmlConfigType.PROMOTION && it.name.equals(name)) {
+                return it
+            }
+        }
+        return null
     }
 
     WithXmlAction generateWithXmlActionPromotions(PromotionsContext context, String promotionName) {

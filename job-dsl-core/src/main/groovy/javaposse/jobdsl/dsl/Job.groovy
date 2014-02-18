@@ -19,14 +19,12 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
  * @author jryan
  * @author aharmel-law
  */
-public class Job {
+public class Job extends XmlConfig {
     JobManagement jobManagement
 
-    String name // Required
     String templateName = null // Optional
     JobType type = null // Required
-    List<WithXmlAction> withXmlActions = []
-    Map<String, List<WithXmlAction>> withXmlActionsPromotions = [:]
+    List<AdditionalXmlConfig> additionalConfigs = []
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     // TODO Use some methodMissing to do some sort of dynamic lookup
@@ -43,22 +41,23 @@ public class Job {
     @Delegate PromotionsContextHelper helperPromotions
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
-        this.jobManagement = jobManagement;
+        super(XmlConfigType.JOB)
+        this.jobManagement = jobManagement
         def typeArg = arguments['type']?:JobType.Freeform
         this.type = (typeArg instanceof JobType)?typeArg:JobType.find(typeArg)
 
         // Helpers
-        helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
-        helperScm = new ScmContextHelper(withXmlActions, type, jobManagement)
-        helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
-        helperTrigger = new TriggerContextHelper(withXmlActions, type)
-        helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
-        helperStep = new StepContextHelper(withXmlActions, type)
-        helperPublisher = new PublisherContextHelper(withXmlActions, type)
-        helperTopLevel = new TopLevelHelper(withXmlActions, type)
-        helperMaven = new MavenHelper(withXmlActions, type)
-        helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
-        helperPromotions = new PromotionsContextHelper(withXmlActions, withXmlActionsPromotions, type)
+        helperAuthorization = new AuthorizationContextHelper(super.withXmlActions, type)
+        helperScm = new ScmContextHelper(super.withXmlActions, type, jobManagement)
+        helperMultiscm = new MultiScmContextHelper(super.withXmlActions, type, jobManagement)
+        helperTrigger = new TriggerContextHelper(super.withXmlActions, type)
+        helperWrapper = new WrapperContextHelper(super.withXmlActions, type, jobManagement)
+        helperStep = new StepContextHelper(super.withXmlActions, type)
+        helperPublisher = new PublisherContextHelper(super.withXmlActions, type)
+        helperTopLevel = new TopLevelHelper(super.withXmlActions, type)
+        helperMaven = new MavenHelper(super.withXmlActions, type)
+        helperBuildParameters = new BuildParametersContextHelper(super.withXmlActions, type)
+        helperPromotions = new PromotionsContextHelper(super.withXmlActions, additionalConfigs, type)
     }
 
     /**
@@ -72,45 +71,6 @@ public class Job {
             throw new RuntimeException('Can only use "using" once')
         }
         this.templateName = templateName
-    }
-
-    /**
-     * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
-     *
-     * Examples:
-     *
-     * <pre>
-     * configure {
-     *
-     * }
-     * </pre>
-     * @param withXmlClosure
-     * @return
-     */
-    def configure(Closure withXmlClosure) {
-        withXmlActions.add( new WithXmlAction(withXmlClosure) )
-    }
-
-    /**
-     * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
-     *
-     * Examples:
-     *
-     * <pre>
-     * configure {
-     *
-     * }
-     * </pre>
-     * @param withXmlClosure
-     * @return
-     */
-    def configurePromotion(String name, Closure withXmlClosure) {
-        def actions = withXmlActionsPromotions.get(name)
-        if (!actions) {
-            actions = new ArrayList<WithXmlAction>()
-            withXmlActionsPromotions.put(name, actions)
-        }
-        actions.add(new WithXmlAction(withXmlClosure))
     }
 
     def name(String name) {
@@ -127,86 +87,12 @@ public class Job {
         Node project = templateName==null?executeEmptyTemplate():executeUsing()
 
         // TODO check name field
-
+        
         executeWithXmlActions(project)
 
         return project
     }
-
-    public Map<String, Node> getNodesPromotions() {
-        Map<String, Node> promotions = new HashMap<String, Node>()
-        Set<String> promotionsNames = withXmlActionsPromotions.keySet()
-        promotionsNames.each {
-            promotions.put(it, new XmlParser().parse(new StringReader(emptyPromotionTemplate)))
-        }
-
-        // TODO check name field
-
-        executeWithXmlActionsPromotions(promotions)
-
-        return promotions
-    }
-
-    /**
-     * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
-     * even if the user didn't specify them in order.
-     * @return
-     */
-    public String getXml() {
-        Node project = getNode()
-        return getXml(project)
-    }
-
-    /**
-     * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
-     * even if the user didn't specify them in order.
-     * @return
-     */
-    public Map<String, String> getXmlPromotions() {
-        Map<String, String> xmls = new HashMap<String, String>()
-        Map<String, Node> promotions = getNodesPromotions()
-
-        promotions.each { promotionName, node ->
-            xmls.put(promotionName, getXml(node))
-        }
-
-        return xmls
-    }
-
-    private String getXml(Node root) {
-        //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
-
-        def xmlOutput = new StringWriter()
-        def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
-        xmlNodePrinter.with {
-            preserveWhitespace = true
-            expandEmptyElements = true
-            quote = "'" // Use single quote for attributes
-        }
-        xmlNodePrinter.print(root)
-
-        String configStr = xmlOutput.toString()
-        //String configStr = XmlUtil.serialize(project)
-        return configStr
-    }
-
-    void executeWithXmlActions(final Node root) {
-        // Create builder, based on what we already have
-        // TODO Some Node magic to copy it at each phase, and then presenting a diff in the logs
-        withXmlActions.each { WithXmlAction withXmlClosure ->
-            withXmlClosure.execute(root)
-        }
-    }
-
-    void executeWithXmlActionsPromotions(final Map<String, Node> promotions) {
-        withXmlActionsPromotions.each { promotionName, actions ->
-            actions.each { WithXmlAction withXmlClosure ->
-                def root = promotions.get(promotionName)
-                withXmlClosure.execute(root)
-            }
-        }
-    }
-
+    
     // TODO record which templates are used to generate jobs, so that they can be connected to this job
     private executeUsing() {
         String configXml
@@ -316,23 +202,5 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
-'''
-
-    def emptyPromotionTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.15">
-  <actions/>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>false</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers/>
-  <concurrentBuild>false</concurrentBuild>
-  <conditions/>
-  <icon/>
-  <buildSteps/>
-</hudson.plugins.promoted__builds.PromotionProcess>
 '''
 }

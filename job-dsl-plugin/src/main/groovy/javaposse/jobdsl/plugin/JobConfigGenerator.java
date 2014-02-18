@@ -26,23 +26,20 @@ import jenkins.model.Jenkins;
  * Generate "promotions"-folder including the defined promotions with their config.xml's Code copied from
  * {@link ItemGroupMixIn#createProjectFromXML(String, InputStream)} and {@link AbstractItem#updateByXml(Source)}
  */
-public class PromotionsGenerator {
-
-    private String name;
+public class JobConfigGenerator {
 
     private String jobName;
 
-    public PromotionsGenerator(String name, String jobName) {
-        this.name = name;
+    public JobConfigGenerator(String jobName) {
         this.jobName = jobName;
     }
 
-    public synchronized void createPromotionFromXML(InputStream xml) throws IOException {
+    public synchronized void createConfigFromXML(InputStream xml, String relativePath) throws IOException {
         Jenkins jenkins = Jenkins.getInstance();
         jenkins.checkPermission(Job.CREATE);
 
         // place it as config.xml
-        File configXml = Items.getConfigFile(getRootDir()).getFile();
+        File configXml = Items.getConfigFile(getRootDir(relativePath)).getFile();
         configXml.getParentFile().mkdirs();
         try {
             IOUtils.copy(xml, configXml);
@@ -53,16 +50,10 @@ public class PromotionsGenerator {
         }
     }
 
-    public static File getRootDirFor(String jobName, String promotionName) {
-        Jenkins jenkins = Jenkins.getInstance();
-        return new File(new File(new File(new File(jenkins.getRootDir(), "jobs"), jobName), "promotions"),
-                promotionName);
-    }
-
-    public void updateByXml(Source source) throws IOException {
+    public void updateByXml(Source source, String relativePath) throws IOException {
         Jenkins jenkins = Jenkins.getInstance();
         jenkins.checkPermission(Job.CONFIGURE);
-        XmlFile configXmlFile = Items.getConfigFile(getRootDir());
+        XmlFile configXmlFile = Items.getConfigFile(getRootDir(relativePath));
         AtomicFileWriter out = new AtomicFileWriter(configXmlFile.getFile());
         try {
             try {
@@ -86,8 +77,9 @@ public class PromotionsGenerator {
         }
     }
 
-    public File getRootDir() {
-        return getRootDirFor(jobName, name);
+    public File getRootDir(String relativePath) {
+        Jenkins jenkins = Jenkins.getInstance();
+        return new File(new File(new File(jenkins.getRootDir(), "jobs"), jobName), relativePath);
     }
 
 }

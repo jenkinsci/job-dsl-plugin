@@ -1,7 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
+import javaposse.jobdsl.dsl.XmlConfig;
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.Promotion
 import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContext;
 import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper;
 import spock.lang.Specification
@@ -9,8 +13,8 @@ import spock.lang.Specification
 public class PromotionsHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    Map<String, List<WithXmlAction>> mockActionsPromotions = Mock()
-    PromotionsContextHelper helper = new PromotionsContextHelper(mockActions, mockActionsPromotions, JobType.Freeform)
+    List<XmlConfig> mockAdditionalConfigs = []
+    PromotionsContextHelper helper = new PromotionsContextHelper(mockActions, mockAdditionalConfigs, JobType.Freeform)
     PromotionsContext context = new PromotionsContext()
 
     def 'base promotion usage'() {

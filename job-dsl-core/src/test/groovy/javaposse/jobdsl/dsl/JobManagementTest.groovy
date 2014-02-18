@@ -81,7 +81,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig(null, updatedXml_keepDepIsTrue, null, false)
+        jm.createOrUpdateConfig(null, updatedXml_keepDepIsTrue, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -94,7 +94,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig("", updatedXml_keepDepIsTrue, null, false)
+        jm.createOrUpdateConfig("", updatedXml_keepDepIsTrue, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -107,7 +107,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig("NEW-JOB-NAME", null, null, false)
+        jm.createOrUpdateConfig("NEW-JOB-NAME", null, false)
 
         then:
         thrown(ConfigurationMissingException)
@@ -120,7 +120,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig("NEW-JOB-NAME", "", null, false)
+        jm.createOrUpdateConfig("NEW-JOB-NAME", "", false)
 
         then:
         thrown(ConfigurationMissingException)

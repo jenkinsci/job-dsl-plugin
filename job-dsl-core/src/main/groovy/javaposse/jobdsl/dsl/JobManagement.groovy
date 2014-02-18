@@ -21,12 +21,11 @@ public interface JobManagement {
      * Creates or updates the job config for the named Jenkins job with the config provided.
      * @param jobName the name of the new / updated job
      * @param config the new / updated job config
-     * @param configPromotions the new / updated promotions config
      * @param ignoreExisting do not update existing jobs
      * @throws NameNotProvidedException if the jobName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config, Map<String, String> configPromotions, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException;
+    boolean createOrUpdateConfig(String jobName, JobConfig config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException;
 
     /**
      * Creates or updates the view config for the named Jenkins view with the config provided.
