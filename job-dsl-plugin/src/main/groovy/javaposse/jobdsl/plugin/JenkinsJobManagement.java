@@ -227,15 +227,17 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         // Check additional configs
         boolean allSimilar = true;
         for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
-            XmlFile oldXml = Items.getConfigFile(new File(project.getRootDir(), jobConfigId.getRelativePath()));
-            try {
-                Diff diff = XMLUnit.compareXML(oldXml.asString(), config.getConfig(jobConfigId));
-                if (!diff.similar()) {
-                    allSimilar = false;
+            if (jobConfigId.getType() == XmlConfigType.ADDITIONAL) {
+                XmlFile oldXml = Items.getConfigFile(new File(project.getRootDir(), jobConfigId.getRelativePath()));
+                try {
+                    Diff diff = XMLUnit.compareXML(oldXml.asString(), config.getConfig(jobConfigId));
+                    if (!diff.similar()) {
+                        allSimilar = false;
+                    }
+                } catch (Exception e) {
+                    // It's not a big deal if we can't diff, we'll just move on
+                    LOGGER.warning(e.getMessage());
                 }
-            } catch (Exception e) {
-                // It's not a big deal if we can't diff, we'll just move on
-                LOGGER.warning(e.getMessage());
             }
         }
 
@@ -256,7 +258,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         // Create XML for additional configurations
         try {
             for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
-                if (jobConfigId.getType() != XmlConfigType.JOB) {
+                if (jobConfigId.getType() == XmlConfigType.ADDITIONAL) {
                     StreamSource streamSourcePromo = new StreamSource(new StringReader(config.getConfig(jobConfigId)));
                     JobConfigGenerator generator = new JobConfigGenerator(project.getName());
                     generator.updateByXml(streamSourcePromo, jobConfigId.getRelativePath());
@@ -293,7 +295,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             
             // Create XML for Promotions
             for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
-                if (jobConfigId.getType() != XmlConfigType.JOB) {
+                if (jobConfigId.getType() == XmlConfigType.ADDITIONAL) {
                     InputStream in = new ByteArrayInputStream(config.getConfig(jobConfigId).getBytes("UTF-8"));
                     JobConfigGenerator generator = new JobConfigGenerator(jobName);
                     generator.createConfigFromXML(in, jobConfigId.getRelativePath());

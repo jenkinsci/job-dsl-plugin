@@ -45,7 +45,7 @@ class PromotionTest extends Specification {
         
         def devConfig
         for (AdditionalXmlConfig config : configs) {
-            if (config.configType == XmlConfigType.PROMOTION && config.name == "dev") {
+            if (config.configType == XmlConfigType.ADDITIONAL && config.name == "dev") {
                 devConfig = config
             }
         }

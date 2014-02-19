@@ -54,7 +54,7 @@ class DslSampleTest extends Specification {
         // Promotions
         jm.savedConfigsPromotions.size() == 1
         def firstConfigs = jm.savedConfigsPromotions['promos']
-        def devConfig = firstConfigs[new JobConfigId(XmlConfigType.PROMOTION, "promotions/dev")]
+        def devConfig = firstConfigs[new JobConfigId(XmlConfigType.ADDITIONAL, "promotions/dev")]
         // TODO Review actual results
         println(devConfig)
     }

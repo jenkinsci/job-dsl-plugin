@@ -5,7 +5,7 @@ import groovy.util.Node
 public abstract class AdditionalXmlConfig extends XmlConfig {
     
     public AdditionalXmlConfig(XmlConfigType configType) {
-        super(configType)
+        super(XmlConfigType.ADDITIONAL)
     }
 
     /**

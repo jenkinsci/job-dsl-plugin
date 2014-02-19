@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl
 class Promotion extends AdditionalXmlConfig {
 
     public Promotion(String name) {
-        super(XmlConfigType.PROMOTION)
         this.name = name
     }
 

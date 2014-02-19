@@ -1,4 +1,4 @@
-job {
+job(type:Maven) {
     name 'test'
     promotions {
         promotion('dev') {
