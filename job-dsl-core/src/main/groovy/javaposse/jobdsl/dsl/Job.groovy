@@ -84,7 +84,7 @@ public class Job extends XmlConfig {
         name(nameClosure.call().toString())
     }
 
-    public Node getNode() {
+    protected Node getRootNode() {
         Node project = templateName==null?executeEmptyTemplate():executeUsing()
         return project
     }

@@ -32,7 +32,7 @@ public abstract class View extends XmlConfig {
         }
     }
 
-    Node getNode() {
+    Node getRootNode() {
         Node root = new XmlParser().parse(new StringReader(getTemplate()))
         root
     }

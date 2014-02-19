@@ -11,7 +11,7 @@ class Promotion extends AdditionalXmlConfig {
         return "promotions/" + name
     }
 
-    protected Node getNode() {
+    protected Node getRootNode() {
         Node project = new XmlParser().parse(new StringReader(emptyPromotionTemplate))
         return project
     }

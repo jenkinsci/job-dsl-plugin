@@ -41,8 +41,6 @@ public abstract class XmlConfig {
      */
     public String getXml() {
         Node root = getNode()
-        
-        executeWithXmlActions(root)
 
         def xmlOutput = new StringWriter()
         def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
@@ -64,11 +62,21 @@ public abstract class XmlConfig {
             withXmlClosure.execute(root)
         }
     }
+    
+    /**
+     * The root node of the template. Empty content.
+     * @return Node
+     */
+    protected abstract Node getRootNode();
 
     /**
      * The root node of the configuration. In XML.
      * @return Node
      */
-    protected abstract Node getNode();
+    public Node getNode() {
+        Node root = getRootNode()
+        executeWithXmlActions(root)
+        return root
+    }
     
 }

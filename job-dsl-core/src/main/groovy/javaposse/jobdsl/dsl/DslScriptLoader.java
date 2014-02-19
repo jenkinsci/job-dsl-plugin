@@ -122,16 +122,15 @@ public class DslScriptLoader {
             for(Job job: refJobs) {
                 try {
                     String xml = job.getXml();
-                    LOGGER.log(Level.INFO, String.format("Saving job %s as %s", job.getName(), xml));
+                    LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
                     JobConfig config = new JobConfig();
                     config.setMainConfig(xml);
                     List<AdditionalXmlConfig> additionalConfigs = job.getAdditionalConfigs();
                     for (AdditionalXmlConfig xmlConfig : additionalConfigs) {
                         String xmlAdditional = xmlConfig.getXml();
-                        XmlConfigType type = xmlConfig.getConfigType();
                         String path = xmlConfig.getRelativePath();
-                        config.addConfig(new JobConfigId(type, path), xmlAdditional);
-                        LOGGER.log(Level.INFO, String.format("Additional config %s in %s as %s", type, path, xmlAdditional));
+                        config.addConfig(new JobConfigId(XmlConfigType.ADDITIONAL, path), xmlAdditional);
+                        LOGGER.log(Level.FINE, String.format("Saving additional config %s as %s", path, xmlAdditional));
                     }
                     boolean created = jp.getJm().createOrUpdateConfig(job.getName(), config, ignoreExisting);
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
