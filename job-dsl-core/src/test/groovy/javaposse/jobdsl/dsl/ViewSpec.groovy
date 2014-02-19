@@ -24,6 +24,7 @@ class ViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.description.size() == 1
         root.description[0].text() == 'test view'
     }
@@ -37,6 +38,7 @@ class ViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.filterQueue.size() == 1
         root.filterQueue[0].text() == 'true'
     }
@@ -50,6 +52,7 @@ class ViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.filterQueue.size() == 1
         root.filterQueue[0].text() == 'true'
     }
@@ -63,6 +66,7 @@ class ViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.filterExecutors.size() == 1
         root.filterExecutors[0].text() == 'true'
     }
@@ -76,6 +80,7 @@ class ViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.filterExecutors.size() == 1
         root.filterExecutors[0].text() == 'true'
     }
@@ -91,6 +96,7 @@ class ViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.foo.size() == 1
         root.foo[0].text() == 'bar'
     }

@@ -24,6 +24,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.noOfDisplayedBuilds.size() == 1
         root.noOfDisplayedBuilds[0].text() == '5'
     }
@@ -50,6 +51,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.buildViewTitle.size() == 1
         root.buildViewTitle[0].text() == 'foo'
     }
@@ -60,6 +62,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.buildViewTitle.size() == 1
         root.buildViewTitle[0].text() == ''
     }
@@ -70,6 +73,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.selectedJob.size() == 1
         root.selectedJob[0].text() == 'foo'
     }
@@ -88,6 +92,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.triggerOnlyLatestJob.size() == 1
         root.triggerOnlyLatestJob[0].text() == 'true'
     }
@@ -98,6 +103,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.triggerOnlyLatestJob.size() == 1
         root.triggerOnlyLatestJob[0].text() == 'true'
     }
@@ -108,6 +114,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.alwaysAllowManualTrigger.size() == 1
         root.alwaysAllowManualTrigger[0].text() == 'true'
     }
@@ -118,6 +125,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.alwaysAllowManualTrigger.size() == 1
         root.alwaysAllowManualTrigger[0].text() == 'true'
     }
@@ -128,6 +136,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.showPipelineParameters.size() == 1
         root.showPipelineParameters[0].text() == 'true'
     }
@@ -138,6 +147,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.showPipelineParameters.size() == 1
         root.showPipelineParameters[0].text() == 'true'
     }
@@ -148,6 +158,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.showPipelineParametersInHeaders.size() == 1
         root.showPipelineParametersInHeaders[0].text() == 'true'
     }
@@ -158,6 +169,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.showPipelineParametersInHeaders.size() == 1
         root.showPipelineParametersInHeaders[0].text() == 'true'
     }
@@ -168,6 +180,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.refreshFrequency.size() == 1
         root.refreshFrequency[0].text() == '5'
     }
@@ -194,6 +207,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.showPipelineDefinitionHeader.size() == 1
         root.showPipelineDefinitionHeader[0].text() == 'true'
     }
@@ -204,6 +218,7 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.getNode()
+        view.executeWithXmlActions(root)
         root.showPipelineDefinitionHeader.size() == 1
         root.showPipelineDefinitionHeader[0].text() == 'true'
     }

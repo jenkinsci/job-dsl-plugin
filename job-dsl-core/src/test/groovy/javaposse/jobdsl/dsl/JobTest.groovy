@@ -99,6 +99,7 @@ class JobTest extends Specification {
 
         when:
         def projectRoaming = job.getNode()
+        job.executeWithXmlActions(projectRoaming)
 
         then:
         // See that jobs can roam by default
@@ -107,6 +108,7 @@ class JobTest extends Specification {
         when:
         job.label('Ubuntu')
         def projectLabelled = job.getNode()
+        job.executeWithXmlActions(projectLabelled)
 
         then:
         projectLabelled.canRoam[0].value() == 'false'
