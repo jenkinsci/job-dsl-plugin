@@ -23,6 +23,9 @@ job {
                 }
             }
         }
+        promotion('test') {
+            icon('green-star')
+        }
     }    
 }
 

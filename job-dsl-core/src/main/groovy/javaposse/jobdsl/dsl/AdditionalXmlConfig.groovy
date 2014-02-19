@@ -9,7 +9,7 @@ public abstract class AdditionalXmlConfig extends XmlConfig {
     }
 
     /**
-     * The path of the xml - relative to job main config.
+     * The path of the additional xml - relative to job main config.
      * @return Path
      */
     protected abstract String getRelativePath();
