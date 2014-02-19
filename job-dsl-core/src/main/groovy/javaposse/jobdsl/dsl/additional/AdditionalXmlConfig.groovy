@@ -1,6 +1,7 @@
-package javaposse.jobdsl.dsl
+package javaposse.jobdsl.dsl.additional
 
-import groovy.util.Node
+import javaposse.jobdsl.dsl.XmlConfig
+import javaposse.jobdsl.dsl.XmlConfigType
 
 public abstract class AdditionalXmlConfig extends XmlConfig {
     
@@ -12,6 +13,6 @@ public abstract class AdditionalXmlConfig extends XmlConfig {
      * The path of the additional xml - relative to job main config.
      * @return Path
      */
-    protected abstract String getRelativePath();
+    public abstract String getRelativePath();
     
 }

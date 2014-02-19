@@ -2,10 +2,10 @@ package javaposse.jobdsl.dsl.helpers.promotions
 
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
-import javaposse.jobdsl.dsl.XmlConfig;
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.Promotion
+import javaposse.jobdsl.dsl.XmlConfig;
+import javaposse.jobdsl.dsl.additional.Promotion;
 import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContext;
 import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper;
 import spock.lang.Specification

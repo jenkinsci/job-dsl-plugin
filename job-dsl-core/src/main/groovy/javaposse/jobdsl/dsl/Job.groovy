@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
-import javaposse.jobdsl.dsl.helpers.Helper;
+import javaposse.jobdsl.dsl.helpers.Helper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper
@@ -12,6 +12,7 @@ import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContextHelper
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
+import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig
 
 /**
  * DSL Element representing a Jenkins Job

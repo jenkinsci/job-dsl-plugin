@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl
+package javaposse.jobdsl.dsl.additional
 
 import org.custommonkey.xmlunit.XMLUnit
 
@@ -6,6 +6,11 @@ import spock.lang.Specification
 
 import java.util.concurrent.atomic.AtomicBoolean
 
+import javaposse.jobdsl.dsl.Job;
+import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.dsl.Promotion;
+import javaposse.jobdsl.dsl.XmlConfigType;
+import javaposse.jobdsl.dsl.additional.Promotion;
 import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContext;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 

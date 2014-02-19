@@ -2,8 +2,8 @@ package javaposse.jobdsl.dsl.helpers.promotions
 
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.AdditionalXmlConfig
-import javaposse.jobdsl.dsl.Promotion
+import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig
+import javaposse.jobdsl.dsl.additional.Promotion
 import javaposse.jobdsl.dsl.helpers.AbstractAdditionalContextHelper
 
 class PromotionsContextHelper extends AbstractAdditionalContextHelper<PromotionsContext> {

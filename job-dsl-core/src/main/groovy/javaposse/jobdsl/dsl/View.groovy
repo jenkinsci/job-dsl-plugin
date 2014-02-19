@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+
 /**
  * DSL element representing a Jenkins view.
  */

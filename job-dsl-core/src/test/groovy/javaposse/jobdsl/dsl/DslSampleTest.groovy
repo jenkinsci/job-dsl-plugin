@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
-
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 /**

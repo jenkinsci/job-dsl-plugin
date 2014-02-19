@@ -1,9 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
 import java.util.List
+
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.AdditionalXmlConfig
+import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig;
 
 /**
  * Each helper has essentially two parts. First they run a closure in executeWithContext right away to build a context

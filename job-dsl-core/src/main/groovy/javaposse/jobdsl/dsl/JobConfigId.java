@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl;
 
+
 public class JobConfigId {
 
     private XmlConfigType type;

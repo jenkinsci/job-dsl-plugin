@@ -1,4 +1,5 @@
-package javaposse.jobdsl.dsl
+package javaposse.jobdsl.dsl.additional
+
 
 class Promotion extends AdditionalXmlConfig {
 
@@ -6,7 +7,7 @@ class Promotion extends AdditionalXmlConfig {
         this.name = name
     }
 
-    protected String getRelativePath() {
+    public String getRelativePath() {
         return "promotions/" + name
     }
 
