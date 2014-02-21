@@ -318,14 +318,7 @@ public class TriggerHelperSpec extends Specification {
         context.pullRequest()
 
         then:
-        def pullRequestNode = context.triggerNodes[0]
-        with(pullRequestNode) {
-            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            onlyTriggerPhrase[0].value() as boolean == false
-            useGitHubHooks[0].value() as boolean == true
-            permitAll[0].value() as boolean == true
-            autoCloseFailedPullRequests[0].value() as boolean == false
-        }
+        thrown(NullPointerException)
     }
 
     def 'call pull request trigger with multiple admins and orgs'() {
@@ -338,8 +331,8 @@ public class TriggerHelperSpec extends Specification {
         then:
         def pullRequestNode = context.triggerNodes[0]
         with(pullRequestNode) {
-            adminlist[0].value() as String == 'test1\ntest2'
-            orgslist[0].value() as String == 'test1\ntest2'
+            adminlist[0].value() == 'test1\ntest2'
+            orgslist[0].value() == 'test1\ntest2'
         }
     }
 
@@ -361,15 +354,15 @@ public class TriggerHelperSpec extends Specification {
         def pullRequestNode = context.triggerNodes[0]
         with(pullRequestNode) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            adminlist[0].value() as String == 'test'
-            whitelist[0].value() as String == 'test'
-            orgslist[0].value() as String == 'test'
-            cron[0].value() as String == '*/5 * * * *'
-            triggerPhrase[0].value() as String == 'ok to test'
-            onlyTriggerPhrase[0].value() as boolean == true
-            useGitHubHooks[0].value() as boolean == false
-            permitAll[0].value() as boolean == false
-            autoCloseFailedPullRequests[0].value() as boolean == true
+            adminlist[0].value() == 'test'
+            whitelist[0].value() == 'test'
+            orgslist[0].value() == 'test'
+            cron[0].value() == '*/5 * * * *'
+            triggerPhrase[0].value() == 'ok to test'
+            onlyTriggerPhrase[0].value() == true
+            useGitHubHooks[0].value() == false
+            permitAll[0].value() == false
+            autoCloseFailedPullRequests[0].value() == true
         }
     }
 

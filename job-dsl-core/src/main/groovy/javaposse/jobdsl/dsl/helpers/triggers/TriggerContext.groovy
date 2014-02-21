@@ -151,7 +151,7 @@ class TriggerContext implements Context {
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
     def pullRequest(Closure contextClosure = null) {
-
+        Preconditions.checkNotNull(contextClosure)
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
         AbstractContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
