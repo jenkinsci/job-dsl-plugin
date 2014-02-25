@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.step.StepEnvironmentVariableContext
 
 import static WrapperContext.Timeout.absolute
 
@@ -296,5 +297,33 @@ class WrapperContext implements Context {
         wrapperNodes << nodeBuilder.'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
             vars(tools.collect { it.replaceAll(/[^a-zA-Z0-9_]/, "_").toUpperCase() + "_HOME" }.join(","))
         }
+    }
+
+    /**
+     * <pre>
+     *     {@code
+     * <EnvInjectBuildWrapper>
+     *   <info>
+     *     <propertiesFilePath>some.properties</propertiesFilePath>
+     *     <propertiesContent>REV=14</propertiesContent>
+     *     <scriptFilePath>/test/script.sh</scriptFilePath>
+     *     <scriptContent>echo 5</scriptContent>
+     *     <loadFilesFromMaster>false</loadFilesFromMaster>
+     *   </info>
+     * </EnvInjectBuildWrapper>
+     * }
+     * </pre>
+     * @param envClosure
+     * @return
+     */
+    def environmentVariables(Closure envClosure) {
+        WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
+        AbstractContextHelper.executeInContext(envClosure, envContext)
+
+        def envNode = new NodeBuilder().'EnvInjectBuildWrapper' {
+            envContext.addInfoToBuilder(delegate)
+        }
+
+        wrapperNodes << envNode
     }
 }

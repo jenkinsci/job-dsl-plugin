@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
+import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
 
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 
@@ -629,14 +630,37 @@ class AbstractStepContext implements Context {
      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@0.10"/>
      </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
      */
-    def conditionalSteps(Closure conditonalStepsClosure) {
+    def conditionalSteps(Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext()
-        AbstractContextHelper.executeInContext(conditonalStepsClosure, conditionalStepsContext)
+        AbstractContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
         if (conditionalStepsContext.stepNodes.size() > 1) {
             stepNodes << conditionalStepsContext.createMultiStepNode()
         } else {
             stepNodes << conditionalStepsContext.createSingleStepNode()
         }
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * <EnvInjectBuilder>
+     *   <info>
+     *     <propertiesFilePath>some.properties</propertiesFilePath>
+     *     <propertiesContent>REV=15</propertiesContent>
+     *   </info>
+     * </EnvInjectBuilder>
+     * }
+     * </pre>
+     */
+    def environmentVariables(Closure envClosure) {
+        StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
+        AbstractContextHelper.executeInContext(envClosure, envContext)
+
+        def envNode = new NodeBuilder().'EnvInjectBuilder' {
+            envContext.addInfoToBuilder(delegate)
+        }
+
+        stepNodes << envNode
     }
 }
