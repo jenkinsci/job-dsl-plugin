@@ -11,6 +11,8 @@ import spock.lang.Unroll
 
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
+import static javaposse.jobdsl.dsl.helpers.step.RepositoryConnectorContext.RepositoryConnectorUpdatePolicy
+import static javaposse.jobdsl.dsl.helpers.step.RepositoryConnectorContext.RepositoryConnectorChecksumPolicy
 
 class StepHelperSpec extends Specification {
 
@@ -704,6 +706,106 @@ class StepHelperSpec extends Specification {
         selectorNode8.children().size() == 1
         selectorNode8.stable[0].value() == 'true'
 
+    }
+
+    def 'call resolveArtifact with minimal arguments' () {
+        when:
+        context.resolveArtifact() {
+            targetDirectory 'target'
+
+            artifact {
+                groupId 'de.test.me'
+                artifactId 'myTestArtifact'
+                version 'RELEASE'
+                extension 'war'
+                targetFileName 'myTestArtifact.war'
+            }
+
+        }
+
+        then:
+        def repositoryConnectorNode = context.stepNodes[0]
+
+        repositoryConnectorNode.name() == 'org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver'
+        repositoryConnectorNode.failOnError[0].value() == false
+        repositoryConnectorNode.enableRepoLogging[0].value() == false
+
+        repositoryConnectorNode.snapshotUpdatePolicy[0].value() == RepositoryConnectorUpdatePolicy.DAILY.toString()
+        repositoryConnectorNode.releaseUpdatePolicy[0].value() == RepositoryConnectorUpdatePolicy.DAILY.toString()
+
+        repositoryConnectorNode.snapshotChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
+        repositoryConnectorNode.releaseChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
+
+        def artifactNode = repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[0]
+
+        artifactNode.groupId[0].value() == 'de.test.me'
+        artifactNode.artifactId[0].value() == 'myTestArtifact'
+        artifactNode.version[0].value() == 'RELEASE'
+        artifactNode.extension[0].value() == 'war'
+        artifactNode.targetFileName[0].value() == 'myTestArtifact.war'
+    }
+
+    def 'call resolveArtifact with all arguments and two artifacts' () {
+        when:
+        context.resolveArtifact() {
+            failOnError()
+            enableRepoLogging()
+
+            snapshotUpdatePolicy RepositoryConnectorUpdatePolicy.ALWAYS
+            releaseUpdatePolicy RepositoryConnectorUpdatePolicy.NEVER
+
+            targetDirectory 'target'
+
+            artifact {
+                groupId 'org.slf4j'
+                artifactId 'slf4j-api'
+                version '[1.7.5,1.7.6]'
+                classifier 'javadoc'
+                extension 'jar'
+                targetFileName 'slf4j-api-1.7.6-TEST.jar'
+            }
+
+            artifact {
+                groupId 'ch.qos.logback'
+                artifactId 'logback-classic'
+                version '1.1.1'
+                classifier 'sources'
+                extension 'jar'
+                targetFileName 'logback-classic-1.1.1-TEST.jar'
+            }
+
+        }
+
+        then:
+        def repositoryConnectorNode = context.stepNodes[0]
+
+        repositoryConnectorNode.name() == 'org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver'
+        repositoryConnectorNode.failOnError[0].value() == true
+        repositoryConnectorNode.enableRepoLogging[0].value() == true
+
+        repositoryConnectorNode.snapshotUpdatePolicy[0].value() == RepositoryConnectorUpdatePolicy.ALWAYS.toString()
+        repositoryConnectorNode.releaseUpdatePolicy[0].value() == RepositoryConnectorUpdatePolicy.NEVER.toString()
+
+        repositoryConnectorNode.snapshotChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
+        repositoryConnectorNode.releaseChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
+
+        def artifactNode = repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[0]
+
+        artifactNode.groupId[0].value() == 'org.slf4j'
+        artifactNode.artifactId[0].value() == 'slf4j-api'
+        artifactNode.version[0].value() == '[1.7.5,1.7.6]'
+        artifactNode.classifier[0].value() == 'javadoc'
+        artifactNode.extension[0].value() == 'jar'
+        artifactNode.targetFileName[0].value() == 'slf4j-api-1.7.6-TEST.jar'
+
+        def artifactNodeTwo = repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[1]
+
+        artifactNodeTwo.groupId[0].value() == 'ch.qos.logback'
+        artifactNodeTwo.artifactId[0].value() == 'logback-classic'
+        artifactNodeTwo.version[0].value() == '1.1.1'
+        artifactNodeTwo.classifier[0].value() == 'sources'
+        artifactNodeTwo.extension[0].value() == 'jar'
+        artifactNodeTwo.targetFileName[0].value() == 'logback-classic-1.1.1-TEST.jar'
     }
 
     def 'call phases with minimal arguments'() {
