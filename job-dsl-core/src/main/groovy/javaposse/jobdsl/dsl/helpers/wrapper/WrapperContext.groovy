@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.step.StepEnvironmentVariableContext
 
 import static WrapperContext.Timeout.absolute
 
@@ -299,6 +300,34 @@ class WrapperContext implements Context {
     }
 
     /**
+     * <pre>
+     *     {@code
+     * <EnvInjectBuildWrapper>
+     *   <info>
+     *     <propertiesFilePath>some.properties</propertiesFilePath>
+     *     <propertiesContent>REV=14</propertiesContent>
+     *     <scriptFilePath>/test/script.sh</scriptFilePath>
+     *     <scriptContent>echo 5</scriptContent>
+     *     <loadFilesFromMaster>false</loadFilesFromMaster>
+     *   </info>
+     * </EnvInjectBuildWrapper>
+     * }
+     * </pre>
+     * @param envClosure
+     * @return
+     */
+    def environmentVariables(Closure envClosure) {
+        WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
+        AbstractContextHelper.executeInContext(envClosure, envContext)
+
+        def envNode = new NodeBuilder().'EnvInjectBuildWrapper' {
+            envContext.addInfoToBuilder(delegate)
+        }
+
+        wrapperNodes << envNode
+    }
+
+    /**
      * <p>Configures a release using the m2release plugin.</p>
      * <p>By default the following values are applied. If an instance of a
      * closure is provided, the values from the closure will take effect.</p>
@@ -339,4 +368,5 @@ class WrapperContext implements Context {
 
         wrapperNodes << m2releaseNode
     }
+
 }
