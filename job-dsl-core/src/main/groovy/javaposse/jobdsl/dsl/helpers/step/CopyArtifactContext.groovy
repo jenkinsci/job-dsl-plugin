@@ -7,7 +7,7 @@ class CopyArtifactContext implements Context {
     String selectedSelector
     boolean fallback
     String permalinkName
-    int buildNumber
+    String buildNumber
     String parameterName
 
     private void ensureFirst() {
@@ -59,6 +59,11 @@ class CopyArtifactContext implements Context {
      * @return
      */
     def buildNumber(int buildNumber) {
+        this.buildNumber(Integer.toString(buildNumber))
+
+    }
+
+    def buildNumber(String buildNumber) {
         ensureFirst()
         selectedSelector = 'SpecificBuild'
         this.buildNumber = buildNumber

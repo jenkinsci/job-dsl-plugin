@@ -635,6 +635,16 @@ public class StepHelperSpec extends Specification {
         def selectorNode6 = context.stepNodes[5].selector[0]
         selectorNode6.attribute('class') == 'hudson.plugins.copyartifact.ParameterizedBuildSelector'
         selectorNode6.parameterName[0].value() == 'BUILD_PARAM'
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            buildNumber('$SOME_PARAMTER')
+        }
+
+        then:
+        def selectorNode7 = context.stepNodes[6].selector[0]
+        selectorNode7.attribute('class') == 'hudson.plugins.copyartifact.SpecificBuildSelector'
+        selectorNode7.buildNumber[0].value() == '$SOME_PARAMTER'
     }
 
     def 'call phases with minimal arguments'() {
