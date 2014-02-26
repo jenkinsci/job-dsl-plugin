@@ -351,6 +351,7 @@ class WrapperHelperSpec extends Specification {
 
     def 'configure m2release plugin with least args'() {
         when:
+        context = new WrapperContext(JobType.Maven, mockJobManagement)
         context.mavenRelease()
 
         then:
@@ -370,6 +371,7 @@ class WrapperHelperSpec extends Specification {
 
     def 'configure m2release plugin with all args'() {
         when:
+        context = new WrapperContext(JobType.Maven, mockJobManagement)
         context.mavenRelease() {
             scmUserEnvVar 'MY_USER_ENV'
             scmPasswordEnvVar 'MY_PASSWORD_ENV'
@@ -395,5 +397,13 @@ class WrapperHelperSpec extends Specification {
         m2releaseNode.selectAppendHudsonUsername[0].value() == true
         m2releaseNode.selectScmCredentials[0].value() == true
         m2releaseNode.numberOfReleaseBuildsToKeep[0].value() == 10
+    }
+
+    def 'configure m2release plugin with FreeForm job should fail'() {
+        when:
+        context.mavenRelease()
+
+        then:
+        thrown IllegalStateException
     }
 }

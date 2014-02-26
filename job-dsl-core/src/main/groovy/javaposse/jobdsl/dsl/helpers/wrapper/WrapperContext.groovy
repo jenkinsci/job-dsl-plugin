@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.step.StepEnvironmentVariableContext
+import static com.google.common.base.Preconditions.checkState
 
 import static WrapperContext.Timeout.absolute
 
@@ -350,6 +350,9 @@ class WrapperContext implements Context {
      * </pre>
      */
     def mavenRelease(Closure releaseClosure = null) {
+
+        checkState type == JobType.Maven, "mavenRelease can only be applied for Maven jobs"
+
         M2ReleaseContext context = new M2ReleaseContext()
         AbstractContextHelper.executeInContext(releaseClosure, context)
 
