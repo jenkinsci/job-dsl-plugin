@@ -231,7 +231,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = Jenkins.getInstance().getItemByFullName(templateName, AbstractProject.class);
+            AbstractProject templateProject = (AbstractProject<?,?>) Jenkins.getInstance().getItem(templateName, build.getProject().getParent());
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -276,7 +276,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
+            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName(), build.getProject().getParent());
             if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {

@@ -10,12 +10,7 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Cause;
-import hudson.model.Item;
-import hudson.model.Run;
-import hudson.model.View;
+import hudson.model.*;
 import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
 import javaposse.jobdsl.dsl.GeneratedJob;
@@ -98,7 +93,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullJobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) build.getProject().getParent().getItem(fullJobName);
         String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
@@ -156,7 +151,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItem(jobName, build.getProject().getParent());
 
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
@@ -197,7 +192,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItem(jobName, build.getProject().getParent());
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
@@ -266,18 +261,25 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    private static ModifiableTopLevelItemGroup getContextFromFullName(String fullName) {
-        int i = fullName.lastIndexOf('/');
-        Jenkins jenkins = Jenkins.getInstance();
-        ModifiableTopLevelItemGroup ctx = jenkins;
-        if (i > 0) {
-            String contextName = fullName.substring(0, i);
-            Item contextItem = jenkins.getItemByFullName(contextName);
-            if (contextItem instanceof ModifiableTopLevelItemGroup) {
-                ctx = (ModifiableTopLevelItemGroup) contextItem;
-            }
+    // TODO throw exception when context doesn't exist instead of defaulting to Jenkins.instance.
+    private ModifiableTopLevelItemGroup getContextFromFullName(String fullName) {
+        String contextName = getContextNameFromFullName(fullName);
+        Object context;
+        if (contextName.isEmpty()) {
+            context = build.getProject().getParent();
+        } else {
+            context = build.getProject().getParent().getItem(contextName);
         }
-        return ctx;
+        if (context != null && context instanceof ModifiableTopLevelItemGroup) {
+            return (ModifiableTopLevelItemGroup) context;
+        } else {
+            return Jenkins.getInstance();
+        }
+    }
+
+    private static String getContextNameFromFullName(String fullName) {
+        int i = fullName.lastIndexOf('/');
+        return i > 0 ? fullName.substring(0, i) : "";
     }
 
     private static String getJobNameFromFullName(String fullName) {
