@@ -1527,6 +1527,5 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         def githubCommitNotifier = context.publisherNodes[0]
         githubCommitNotifier.name() == 'com.cloudbees.jenkins.GitHubCommitNotifier'
-        githubCommitNotifier.attribute('plugin') == "github@1.8"
     }
 }
