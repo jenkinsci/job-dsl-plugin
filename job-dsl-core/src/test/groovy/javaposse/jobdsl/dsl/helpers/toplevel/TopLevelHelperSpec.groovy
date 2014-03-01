@@ -362,4 +362,17 @@ public class TopLevelHelperSpec extends Specification {
         where:
         keep << [true, false]
     }
+
+    def 'set concurrentBuild'(allowConcurrentBuild) {
+        when:
+        def action = helper.concurrentBuild(allowConcurrentBuild)
+        action.execute(root)
+
+        then:
+        root.concurrentBuild.size() == 1
+        root.concurrentBuild[0].value() == allowConcurrentBuild
+
+        where:
+        allowConcurrentBuild << [true, false]
+    }
 }
