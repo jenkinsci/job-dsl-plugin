@@ -1115,8 +1115,10 @@ still-another-dsl.groovy'''
         thresholds.children().size() == 3
         Node unstableThreshold = thresholds.unstableThreshold[0]
         unstableThreshold.name[0].value() == 'UNSTABLE'
+        unstableThreshold.ordinal[0].value() == 1
         Node failureThreshold = thresholds.failureThreshold[0]
         failureThreshold.name[0].value() == 'FAILURE'
+        failureThreshold.ordinal[0].value() == 2
         Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
         buildStepFailureThreshold.name[0].value() == 'FAILURE'
 
