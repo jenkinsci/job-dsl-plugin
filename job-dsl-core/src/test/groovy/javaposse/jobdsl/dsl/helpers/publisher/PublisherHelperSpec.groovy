@@ -1517,4 +1517,15 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
         context.publisherNodes[0].downstreamProjectNames[0].value() == ''
     }
+
+    def 'call github commit notifier methods'() {
+        when:
+        context.githubCommitNotifier()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        def githubCommitNotifier = context.publisherNodes[0]
+        githubCommitNotifier.name() == 'com.cloudbees.jenkins.GitHubCommitNotifier'
+    }
 }
