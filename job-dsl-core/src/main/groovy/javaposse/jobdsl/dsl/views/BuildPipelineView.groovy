@@ -38,6 +38,26 @@ class BuildPipelineView extends View {
     }
 
     /**
+     * <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+     */
+    void consoleOutputLinkStyle(String consoleOutputLinkStyle) {
+        checkNotNull(consoleOutputLinkStyle, 'consoleOutputLinkStyle must not be null')
+
+        execute {
+            it / methodMissing('consoleOutputLinkStyle', consoleOutputLinkStyle)
+        }
+    }
+
+    /**
+     * <cssUrl>Custom URL for CSS files</csUrl>
+     */
+    void css(String css) {
+        execute {
+            it / cssUrl(css ?: '')
+        }
+    }
+
+    /**
      * <triggerOnlyLatestJob>true</triggerOnlyLatestJob>
      */
     void triggerOnlyLatestJob(boolean triggerOnlyLatestJob = true) {
@@ -102,6 +122,8 @@ class BuildPipelineView extends View {
     <properties class="hudson.model.View$PropertyList"/>
     <noOfDisplayedBuilds>1</noOfDisplayedBuilds>
     <buildViewTitle/>
+    <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+    <cssUrl/>
     <triggerOnlyLatestJob>false</triggerOnlyLatestJob>
     <alwaysAllowManualTrigger>false</alwaysAllowManualTrigger>
     <showPipelineParameters>false</showPipelineParameters>

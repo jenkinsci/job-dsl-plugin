@@ -82,6 +82,62 @@ class BuildPipelineViewSpec extends Specification {
         thrown(NullPointerException)
     }
 
+    def 'consoleOutputLinkStyle no arguments'() {
+        when:
+        view.consoleOutputLinkStyle(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'consoleOutputLinkStyle New Window'() {
+        when:
+        view.consoleOutputLinkStyle('New Window')
+
+        then:
+        Node root = view.getNode()
+        root.consoleOutputLinkStyle.size() == 1
+        root.consoleOutputLinkStyle[0].text() == 'New Window'
+    }
+
+    def 'consoleOutputLinkStyle This Window'() {
+        when:
+        view.consoleOutputLinkStyle('This Window')
+
+        then:
+        Node root = view.getNode()
+        root.consoleOutputLinkStyle.size() == 1
+        root.consoleOutputLinkStyle[0].text() == 'This Window'
+    }
+
+    def 'consoleOutputLinkStyle null'() {
+        when:
+        view.consoleOutputLinkStyle(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'css'() {
+        when:
+        view.css('foo')
+
+        then:
+        Node root = view.getNode()
+        root.cssUrl.size() == 1
+        root.cssUrl[0].text() == 'foo'
+    }
+
+    def 'css null'() {
+        when:
+        view.css(null)
+
+        then:
+        Node root = view.getNode()
+        root.cssUrl.size() == 1
+        root.cssUrl[0].text() == ''
+    }
+
     def 'triggerOnlyLatestJob'() {
         when:
         view.triggerOnlyLatestJob(true)
@@ -215,6 +271,8 @@ class BuildPipelineViewSpec extends Specification {
     <properties class="hudson.model.View$PropertyList"/>
     <noOfDisplayedBuilds>1</noOfDisplayedBuilds>
     <buildViewTitle/>
+    <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+    <cssUrl/>
     <triggerOnlyLatestJob>false</triggerOnlyLatestJob>
     <alwaysAllowManualTrigger>false</alwaysAllowManualTrigger>
     <showPipelineParameters>false</showPipelineParameters>
