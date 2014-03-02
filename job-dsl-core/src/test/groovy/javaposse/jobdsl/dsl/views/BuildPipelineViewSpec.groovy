@@ -87,6 +87,16 @@ class BuildPipelineViewSpec extends Specification {
         thrown(NullPointerException)
     }
 
+    def 'consoleOutputLinkStyle No Arg'() {
+        when:
+        view.consoleOutputLinkStyle()
+
+        then:
+        Node root = view.getNode()
+        root.consoleOutputLinkStyle.size() == 1
+        root.consoleOutputLinkStyle[0].text() == 'Lightbox'
+    }
+
     def 'consoleOutputLinkStyle Lightbox'() {
         when:
         view.consoleOutputLinkStyle(Lightbox)
