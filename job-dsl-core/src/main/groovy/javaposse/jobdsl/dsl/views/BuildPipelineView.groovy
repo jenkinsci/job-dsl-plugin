@@ -40,11 +40,11 @@ class BuildPipelineView extends View {
     /**
      * <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
      */
-    void consoleOutputLinkStyle(String consoleOutputLinkStyle) {
-        checkNotNull(consoleOutputLinkStyle, 'consoleOutputLinkStyle must not be null')
+    void consoleOutputLinkStyle(OutputStyle outputStyle = OutputStyle.Lightbox) {
+        checkNotNull(outputStyle, 'consoleOutputLinkStyle must not be null')
 
         execute {
-            it / methodMissing('consoleOutputLinkStyle', consoleOutputLinkStyle)
+            it / methodMissing('consoleOutputLinkStyle', outputStyle.value)
         }
     }
 
@@ -131,5 +131,17 @@ class BuildPipelineView extends View {
     <refreshFrequency>3</refreshFrequency>
     <showPipelineDefinitionHeader>false</showPipelineDefinitionHeader>
 </au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>'''
+    }
+
+    static enum OutputStyle {
+        Lightbox('Lightbox'),
+        NewWindow('New Window'),
+        ThisWindow('This Window')
+
+        final String  value
+
+        OutputStyle(String value) {
+            this.value = value
+        }
     }
 }

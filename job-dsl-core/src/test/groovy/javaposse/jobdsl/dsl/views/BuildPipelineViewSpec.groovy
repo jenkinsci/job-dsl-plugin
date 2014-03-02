@@ -2,7 +2,12 @@ package javaposse.jobdsl.dsl.views
 
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.*
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.LIGHTBOX
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.Lightbox
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.NEW_WINDOW
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.NewWindow
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.THIS_WINDOW
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.ThisWindow
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
@@ -82,17 +87,19 @@ class BuildPipelineViewSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def 'consoleOutputLinkStyle no arguments'() {
+    def 'consoleOutputLinkStyle Lightbox'() {
         when:
-        view.consoleOutputLinkStyle(null)
+        view.consoleOutputLinkStyle(Lightbox)
 
         then:
-        thrown(NullPointerException)
+        Node root = view.getNode()
+        root.consoleOutputLinkStyle.size() == 1
+        root.consoleOutputLinkStyle[0].text() == 'Lightbox'
     }
 
     def 'consoleOutputLinkStyle New Window'() {
         when:
-        view.consoleOutputLinkStyle('New Window')
+        view.consoleOutputLinkStyle(NewWindow)
 
         then:
         Node root = view.getNode()
@@ -102,7 +109,7 @@ class BuildPipelineViewSpec extends Specification {
 
     def 'consoleOutputLinkStyle This Window'() {
         when:
-        view.consoleOutputLinkStyle('This Window')
+        view.consoleOutputLinkStyle(ThisWindow)
 
         then:
         Node root = view.getNode()
