@@ -254,6 +254,7 @@ class PublisherContext implements Context {
             maximumLineCoverage jacocoContext.maximumLineCoverage
             maximumMethodCoverage jacocoContext.maximumMethodCoverage
             maximumClassCoverage jacocoContext.maximumClassCoverage
+            changeBuildStatus Boolean.toString(jacocoContext.changeBuildStatus)
         }
 
         publisherNodes << jacocoNode

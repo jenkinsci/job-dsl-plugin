@@ -201,7 +201,8 @@ public class PublisherHelperSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
-        jacocoNode.minimumInstructionCoverage[0].value() == "0"             
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.changeBuildStatus[0].value() == 'false'
     }
    
     def 'call jacoco code coverage with all args'() {
@@ -224,6 +225,7 @@ public class PublisherHelperSpec extends Specification {
             maximumLineCoverage '10' 
             maximumMethodCoverage '11' 
             maximumClassCoverage '12'
+            changeBuildStatus true
         }
 
         then:
@@ -246,6 +248,7 @@ public class PublisherHelperSpec extends Specification {
         jacocoNode.maximumLineCoverage[0].value() == "10"
         jacocoNode.maximumMethodCoverage[0].value() == "11"
         jacocoNode.maximumClassCoverage[0].value() == "12"
+        jacocoNode.changeBuildStatus[0].value() == 'true'
     }
 
     def 'calling minimal html publisher'() {
