@@ -38,7 +38,7 @@ class BuildPipelineView extends View {
     }
 
     /**
-     * <consoleOutputLinkStyle></consoleOutputLinkStyle>
+     * <consoleOutputLinkStyle>Output Style</consoleOutputLinkStyle>
      */
     void consoleOutputLinkStyle(OutputStyle outputStyle) {
         checkNotNull(outputStyle, 'consoleOutputLinkStyle must not be null')
