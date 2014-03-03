@@ -38,9 +38,9 @@ class BuildPipelineView extends View {
     }
 
     /**
-     * <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+     * <consoleOutputLinkStyle></consoleOutputLinkStyle>
      */
-    void consoleOutputLinkStyle(OutputStyle outputStyle = OutputStyle.Lightbox) {
+    void consoleOutputLinkStyle(OutputStyle outputStyle) {
         checkNotNull(outputStyle, 'consoleOutputLinkStyle must not be null')
 
         execute {
@@ -49,11 +49,11 @@ class BuildPipelineView extends View {
     }
 
     /**
-     * <cssUrl>Custom URL for CSS files</csUrl>
+     * <cssUrl>Css Url</csUrl>
      */
-    void css(String css) {
+    void customCssUrl(String customCssUrl) {
         execute {
-            it / cssUrl(css ?: '')
+            it / cssUrl(customCssUrl ?: '')
         }
     }
 

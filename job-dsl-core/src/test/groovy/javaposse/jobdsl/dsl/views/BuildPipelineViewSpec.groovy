@@ -2,11 +2,8 @@ package javaposse.jobdsl.dsl.views
 
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.LIGHTBOX
 import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.Lightbox
-import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.NEW_WINDOW
 import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.NewWindow
-import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.THIS_WINDOW
 import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.ThisWindow
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
@@ -92,9 +89,7 @@ class BuildPipelineViewSpec extends Specification {
         view.consoleOutputLinkStyle()
 
         then:
-        Node root = view.getNode()
-        root.consoleOutputLinkStyle.size() == 1
-        root.consoleOutputLinkStyle[0].text() == 'Lightbox'
+        thrown(NullPointerException)
     }
 
     def 'consoleOutputLinkStyle Lightbox'() {
@@ -135,9 +130,9 @@ class BuildPipelineViewSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def 'css'() {
+    def 'cssUrl'() {
         when:
-        view.css('foo')
+        view.customCssUrl('foo')
 
         then:
         Node root = view.getNode()
@@ -145,9 +140,9 @@ class BuildPipelineViewSpec extends Specification {
         root.cssUrl[0].text() == 'foo'
     }
 
-    def 'css null'() {
+    def 'cssUrl null'() {
         when:
-        view.css(null)
+        view.customCssUrl(null)
 
         then:
         Node root = view.getNode()
