@@ -204,7 +204,22 @@ public class PublisherHelperSpec extends Specification {
         jacocoNode.minimumInstructionCoverage[0].value() == "0"
         jacocoNode.changeBuildStatus[0].value() == 'false'
     }
-   
+
+    def 'call jacoco code coverage with closure, changeBuildStatus with no args defaults to true'() {
+        when:
+
+        context.jacocoCodeCoverage {
+            changeBuildStatus()
+        }
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.execPattern[0].value() == '**/target/**.exec'
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.changeBuildStatus[0].value() == 'true'
+    }
+
     def 'call jacoco code coverage with all args'() {
         when:
         context.jacocoCodeCoverage {
