@@ -183,6 +183,7 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
+        icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
         config.addCompilationCustomizers(icz);
 
         config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

@@ -2,7 +2,9 @@ package javaposse.jobdsl.dsl.views
 
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.*
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.Lightbox
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.NewWindow
+import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.ThisWindow
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
@@ -80,6 +82,72 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         thrown(NullPointerException)
+    }
+
+    def 'consoleOutputLinkStyle No Arg'() {
+        when:
+        view.consoleOutputLinkStyle()
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'consoleOutputLinkStyle Lightbox'() {
+        when:
+        view.consoleOutputLinkStyle(Lightbox)
+
+        then:
+        Node root = view.getNode()
+        root.consoleOutputLinkStyle.size() == 1
+        root.consoleOutputLinkStyle[0].text() == 'Lightbox'
+    }
+
+    def 'consoleOutputLinkStyle New Window'() {
+        when:
+        view.consoleOutputLinkStyle(NewWindow)
+
+        then:
+        Node root = view.getNode()
+        root.consoleOutputLinkStyle.size() == 1
+        root.consoleOutputLinkStyle[0].text() == 'New Window'
+    }
+
+    def 'consoleOutputLinkStyle This Window'() {
+        when:
+        view.consoleOutputLinkStyle(ThisWindow)
+
+        then:
+        Node root = view.getNode()
+        root.consoleOutputLinkStyle.size() == 1
+        root.consoleOutputLinkStyle[0].text() == 'This Window'
+    }
+
+    def 'consoleOutputLinkStyle null'() {
+        when:
+        view.consoleOutputLinkStyle(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'cssUrl'() {
+        when:
+        view.customCssUrl('foo')
+
+        then:
+        Node root = view.getNode()
+        root.cssUrl.size() == 1
+        root.cssUrl[0].text() == 'foo'
+    }
+
+    def 'cssUrl null'() {
+        when:
+        view.customCssUrl(null)
+
+        then:
+        Node root = view.getNode()
+        root.cssUrl.size() == 1
+        root.cssUrl[0].text() == ''
     }
 
     def 'triggerOnlyLatestJob'() {
@@ -215,6 +283,8 @@ class BuildPipelineViewSpec extends Specification {
     <properties class="hudson.model.View$PropertyList"/>
     <noOfDisplayedBuilds>1</noOfDisplayedBuilds>
     <buildViewTitle/>
+    <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+    <cssUrl/>
     <triggerOnlyLatestJob>false</triggerOnlyLatestJob>
     <alwaysAllowManualTrigger>false</alwaysAllowManualTrigger>
     <showPipelineParameters>false</showPipelineParameters>
