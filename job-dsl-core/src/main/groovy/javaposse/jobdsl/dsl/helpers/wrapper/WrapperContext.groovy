@@ -305,8 +305,16 @@ class WrapperContext implements Context {
      *  <project>
      *      <buildWrappers>
      *          <hudson.plugins.release.ReleaseWrapper>
+     *              <releaseVersionTemplate>template</releaseVersionTemplate>
      *              <doNotKeepLog>true</doNotKeepLog>
      *              <overrideBuildParameters>false</overrideBuildParameters>
+     *              <parameterDefinitions>
+     *                  <hudson.model.BooleanParameterDefinition>
+     *                      <name>booleanValue</name>
+     *                      <description>ths description of the boolean value</description>
+     *                      <defaultValue>true</defaultValue>
+     *                  </hudson.model.BooleanParameterDefinition>
+     *              </parameterDefinitions>
      *              <preBuildSteps>
      *                  <hudson.tasks.Maven>
      *                      <targets>install</targets>
