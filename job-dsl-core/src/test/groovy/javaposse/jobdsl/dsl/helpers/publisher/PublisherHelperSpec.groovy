@@ -205,6 +205,22 @@ public class PublisherHelperSpec extends Specification {
         jacocoNode.changeBuildStatus[0] == null
     }
 
+    def 'call jacoco code coverage with closure, set changeBuildStatus'(change) {
+        when:
+
+        context.jacocoCodeCoverage {
+            changeBuildStatus(change)
+        }
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.changeBuildStatus[0].value() == change ? 'true' : 'false'
+
+        where:
+        change << [true, false]
+    }
+
     def 'call jacoco code coverage with closure, changeBuildStatus with no args defaults to true'() {
         when:
 
