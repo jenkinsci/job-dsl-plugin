@@ -159,8 +159,8 @@ class TriggerContext implements Context {
 
         def pullRequestNode = nodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
-            whitelist pullRequestBuilderContext.whiteList
-            orgslist pullRequestBuilderContext.whiteListedOrgs.join('\n')
+            whitelist pullRequestBuilderContext.whitelisted.join('\n')
+            orgslist pullRequestBuilderContext.whitelistedOrgs.join('\n')
             delegate.cron(pullRequestBuilderContext.cron)
             triggerPhrase pullRequestBuilderContext.triggerPhrase
             onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase

@@ -5,8 +5,8 @@ import javaposse.jobdsl.dsl.helpers.Context
 class PullRequestBuilderContext implements Context {
 
     List admins = []
-    String whiteList = ''
-    List whiteListedOrgs = []
+    List whitelisted = []
+    List whitelistedOrgs = []
     String cron = ''
     String triggerPhrase = ''
     boolean onlyTriggerPhrase = false
@@ -24,17 +24,23 @@ class PullRequestBuilderContext implements Context {
         }
     }
 
-    def whiteList(String whiteList) {
-        this.whiteList = whiteList
+    def whitelist(String whitelist) {
+        whitelisted << whitelist
     }
 
-    def whiteListedOrg(String whiteListedOrg) {
-        whiteListedOrgs << whiteListedOrg
+    def whitelisted(Iterable<String> addWhitelist) {
+        addWhitelist.each {
+            whitelist(it)
+        }
     }
 
-    def whiteListedOrgs(Iterable<String> addOrgs) {
+    def whitelistedOrg(String whitelistedOrg) {
+        whitelistedOrgs << whitelistedOrg
+    }
+
+    def whitelistedOrgs(Iterable<String> addOrgs) {
         addOrgs.each {
-            whiteListedOrg(it)
+            whitelistedOrg(it)
         }
     }
 

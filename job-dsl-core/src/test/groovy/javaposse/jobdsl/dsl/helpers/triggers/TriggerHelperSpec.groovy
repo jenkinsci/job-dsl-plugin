@@ -325,13 +325,15 @@ public class TriggerHelperSpec extends Specification {
         when:
         context.pullRequest() {
             admins(['test1', 'test2'])
-            whiteListedOrgs(['test1', 'test2'])
+            whitelisted(['test1', 'test2'])
+            whitelistedOrgs(['test1', 'test2'])
         }
 
         then:
         def pullRequestNode = context.triggerNodes[0]
         with(pullRequestNode) {
             adminlist[0].value() == 'test1\ntest2'
+            whitelist[0].value() == 'test1\ntest2'
             orgslist[0].value() == 'test1\ntest2'
         }
     }
@@ -340,8 +342,8 @@ public class TriggerHelperSpec extends Specification {
         when:
         context.pullRequest() {
             admins(['test'])
-            whiteList('test')
-            whiteListedOrgs(['test'])
+            whitelisted(['test'])
+            whitelistedOrgs(['test'])
             cron('*/5 * * * *')
             triggerPhrase('ok to test')
             onlyTriggerPhrase(true)
