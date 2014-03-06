@@ -356,27 +356,19 @@ class WrapperContext implements Context {
 
         // append steps before every release build
         def preBuildSteps = releaseContext.preBuildSteps
-        preBuildSteps.each {
-            releaseNode.appendNode('preBuildSteps', it)
-        }
+        releaseNode.appendNode('preBuildSteps', preBuildSteps)
 
         // append steps after successful release builds
         def postSuccessfulBuildSteps = releaseContext.postSuccessfulBuildSteps
-        postSuccessfulBuildSteps.each {
-            releaseNode.appendNode('postSuccessfulBuildSteps', it)
-        }
+        releaseNode.appendNode('postSuccessfulBuildSteps', postSuccessfulBuildSteps)
 
         // append steps after every release build
         def postBuildSteps = releaseContext.postBuildSteps
-        postBuildSteps.each {
-            releaseNode.appendNode('postBuildSteps', it)
-        }
+        releaseNode.appendNode('postBuildSteps', postBuildSteps)
 
         // append steps after failed release builds
         def postFailedBuildSteps = releaseContext.postFailedBuildSteps
-        postFailedBuildSteps.each {
-            releaseNode.appendNode('postFailedBuildSteps', it)
-        }
+        releaseNode.appendNode('postFailedBuildSteps', postFailedBuildSteps)
 
         // Apply Context
         if (releaseContext.configureBlock) {

@@ -19,25 +19,25 @@ class ReleaseContext implements Context {
     def preBuildSteps(Closure closure) {
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
-        preBuildSteps << stepContext.stepNodes
+        preBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postSuccessfulBuildSteps(Closure closure) {
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
-        postSuccessfulBuildSteps << stepContext.stepNodes
+        postSuccessfulBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postBuildSteps(Closure closure) {
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
-        postBuildSteps << stepContext.stepNodes
+        postBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postFailedBuildSteps(Closure closure) {
         def stepContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(closure, stepContext)
-        postFailedBuildSteps << stepContext.stepNodes
+        postFailedBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def releaseVersionTemplate(String releaseVersionTemplate) {
@@ -59,6 +59,6 @@ class ReleaseContext implements Context {
     def parameters(Closure parametersClosure) {
         BuildParametersContext parametersContext = new BuildParametersContext()
         AbstractContextHelper.executeInContext(parametersClosure, parametersContext)
-        parametersContext.buildParameterNodes.values().each { params << it }
+        params.addAll(parametersContext.buildParameterNodes.values())
     }
 }

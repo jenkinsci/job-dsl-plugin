@@ -356,8 +356,13 @@ class WrapperHelperSpec extends Specification {
                 releaseVersionTemplate('templatename')
                 doNotKeepLog(true)
                 overrideBuildParameters(false)
+                parameters {
+                    booleanParam('myBooleanParam', true)
+                    booleanParam('my2ndBooleanParam', true)
+                }
                 postSuccessfulBuildSteps {
                     shell('echo postsuccess;')
+                    shell('echo hello world;')
                 }
                 postBuildSteps {
                     shell('echo post;')
