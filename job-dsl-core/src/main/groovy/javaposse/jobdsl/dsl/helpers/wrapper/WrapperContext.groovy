@@ -299,7 +299,7 @@ class WrapperContext implements Context {
             vars(tools.collect { it.replaceAll(/[^a-zA-Z0-9_]/, "_").toUpperCase() + "_HOME" }.join(","))
         }
     }
-    
+
     /**
      * <pre>
      *     {@code
@@ -377,27 +377,17 @@ class WrapperContext implements Context {
             releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')
             doNotKeepLog(releaseContext.doNotKeepLog)
             overrideBuildParameters(releaseContext.overrideBuildParameters)
+            // add aditional build parameters
+            parameterDefinitions(releaseContext.params)
+            // append steps before every release build
+            preBuildSteps(releaseContext.preBuildSteps)
+            // append steps after successful release builds
+            postSuccessfulBuildSteps(releaseContext.postSuccessfulBuildSteps)
+            // append steps after every release build
+            postBuildSteps(releaseContext.postBuildSteps)
+            // append steps after failed release builds
+            postFailedBuildSteps(releaseContext.postFailedBuildSteps)
         }
-        
-        // add aditional build parameters
-        def params = releaseContext.params
-        releaseNode.appendNode('parameterDefinitions', params)
-
-        // append steps before every release build
-        def preBuildSteps = releaseContext.preBuildSteps
-        releaseNode.appendNode('preBuildSteps', preBuildSteps)
-
-        // append steps after successful release builds
-        def postSuccessfulBuildSteps = releaseContext.postSuccessfulBuildSteps
-        releaseNode.appendNode('postSuccessfulBuildSteps', postSuccessfulBuildSteps)
-
-        // append steps after every release build
-        def postBuildSteps = releaseContext.postBuildSteps
-        releaseNode.appendNode('postBuildSteps', postBuildSteps)
-
-        // append steps after failed release builds
-        def postFailedBuildSteps = releaseContext.postFailedBuildSteps
-        releaseNode.appendNode('postFailedBuildSteps', postFailedBuildSteps)
 
         // Apply Context
         if (releaseContext.configureBlock) {

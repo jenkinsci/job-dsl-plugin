@@ -369,6 +369,8 @@ class WrapperHelperSpec extends Specification {
         
         def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
         steps[0].value()[0].name() == 'hudson.tasks.Shell'
+        steps[0].value()[0].value()[0].name() == 'command'
+        steps[0].value()[0].value()[0].value() == 'echo hello;'
     }
 
     def 'release plugin extended' () {
@@ -409,6 +411,9 @@ class WrapperHelperSpec extends Specification {
         stepsPostSuccess[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPostSuccess[0].value()[0].value()[0].name() == 'command'
         stepsPostSuccess[0].value()[0].value()[0].value() == 'echo postsuccess;'
+        stepsPostSuccess[0].value()[1].name() == 'hudson.tasks.Shell'
+        stepsPostSuccess[0].value()[1].value()[0].name() == 'command'
+        stepsPostSuccess[0].value()[1].value()[0].value() == 'echo hello world;'
         
         def stepsPost = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postBuildSteps'
         stepsPost[0].value()[0].name() == 'hudson.tasks.Shell'
