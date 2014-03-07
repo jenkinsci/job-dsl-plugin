@@ -7,11 +7,11 @@ class PullRequestBuilderContext implements Context {
     List admins = []
     List whitelisted = []
     List whitelistedOrgs = []
-    String cron = ''
+    String cron = 'H/5 * * * *'
     String triggerPhrase = ''
     boolean onlyTriggerPhrase = false
-    boolean useGitHubHooks = true
-    boolean permitAll = true
+    boolean useGitHubHooks = false
+    boolean permitAll = false
     boolean autoCloseFailedPullRequests = false
 
     def admin(String admin) {
@@ -53,19 +53,19 @@ class PullRequestBuilderContext implements Context {
     }
 
 
-    def onlyTriggerPhrase(boolean onlyTriggerPhrase) {
+    def onlyTriggerPhrase(boolean onlyTriggerPhrase = true) {
         this.onlyTriggerPhrase = onlyTriggerPhrase
     }
 
-    def useGitHubHooks(boolean useGitHubHooks) {
+    def useGitHubHooks(boolean useGitHubHooks = true) {
         this.useGitHubHooks = useGitHubHooks
     }
 
-    def permitAll(boolean permitAll) {
+    def permitAll(boolean permitAll = true) {
         this.permitAll = permitAll
     }
 
-    def autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests) {
+    def autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) {
         this.autoCloseFailedPullRequests = autoCloseFailedPullRequests
     }
 
