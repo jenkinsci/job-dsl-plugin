@@ -318,7 +318,14 @@ public class TriggerHelperSpec extends Specification {
         context.pullRequest()
 
         then:
-        thrown(NullPointerException)
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            onlyTriggerPhrase[0].value() == false
+            useGitHubHooks[0].value() == false
+            permitAll[0].value() == false
+            autoCloseFailedPullRequests[0].value() == false
+        }
+
     }
 
     def 'call pull request trigger with multiple admins and orgs'() {
@@ -347,8 +354,8 @@ public class TriggerHelperSpec extends Specification {
             cron('*/5 * * * *')
             triggerPhrase('ok to test')
             onlyTriggerPhrase(true)
-            useGitHubHooks(false)
-            permitAll(false)
+            useGitHubHooks(true)
+            permitAll(true)
             autoCloseFailedPullRequests(true)
         }
 
@@ -362,8 +369,8 @@ public class TriggerHelperSpec extends Specification {
             cron[0].value() == '*/5 * * * *'
             triggerPhrase[0].value() == 'ok to test'
             onlyTriggerPhrase[0].value() == true
-            useGitHubHooks[0].value() == false
-            permitAll[0].value() == false
+            useGitHubHooks[0].value() == true
+            permitAll[0].value() == true
             autoCloseFailedPullRequests[0].value() == true
         }
     }

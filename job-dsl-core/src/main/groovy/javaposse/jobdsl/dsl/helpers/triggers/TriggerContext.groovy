@@ -150,8 +150,8 @@ class TriggerContext implements Context {
      *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
-    def pullRequest(Closure contextClosure = null) {
-        Preconditions.checkNotNull(contextClosure)
+    def pullRequest(Closure contextClosure) {
+
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
         AbstractContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
