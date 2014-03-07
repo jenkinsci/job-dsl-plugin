@@ -53,11 +53,16 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws JobNameNotProvidedException, JobConfigurationMissingException {
+    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException {
         validateUpdateArgs(jobName, config);
 
         savedConfigs[jobName] = config
         return false
+    }
+
+    @Override
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+        throw new UnsupportedOperationException()
     }
 
     @Override
@@ -66,7 +71,7 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    void queueJob(String jobName) throws JobNameNotProvidedException {
+    void queueJob(String jobName) throws NameNotProvidedException {
         jobScheduled << jobName
     }
 

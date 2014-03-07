@@ -931,4 +931,31 @@ class PublisherContext implements Context {
 
         publisherNodes << robotNode
     }
+
+    /**
+     * Configures a Build Pipeline Trigger
+     *
+     * <publishers>
+     *     <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+     *         <downstreamProjectNames>acme-project</downstreamProjectNames>
+     *     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+     * </publishers>
+     */
+    def buildPipelineTrigger(String downstreamProjectNames) {
+        def nodeBuilder = NodeBuilder.newInstance()
+        publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
+            delegate.downstreamProjectNames(downstreamProjectNames ?: '')
+        }
+    }
+
+    /**
+     * Create commit status notifications on the commits based on the outcome of the build.
+     *
+     * <publishers>
+     *     <com.cloudbees.jenkins.GitHubCommitNotifier/>
+     * </publishers>
+     */
+    def githubCommitNotifier() {
+        publisherNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubCommitNotifier'()
+    }
 }

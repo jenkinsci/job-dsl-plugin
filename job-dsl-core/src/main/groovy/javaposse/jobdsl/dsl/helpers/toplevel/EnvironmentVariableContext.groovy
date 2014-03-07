@@ -1,23 +1,33 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.wrapper.WrapperEnvironmentVariableContext
 
-
-class EnvironmentVariableContext implements Context {
-    def props = []
-    def groovyScript
-
-    def env(Object key, Object value) {
-        props << "${key}=${value}"
-    }
-
-    def envs(Map<Object, Object> map) {
-        map.entrySet().each {
-            env(it.key, it.value)
-        }
-    }
+class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
+    String groovyScript = ''
+    boolean keepSystemVariables = true
+    boolean keepBuildVariables = true
 
     def groovy(String script) {
         groovyScript = script
+    }
+
+    def loadFilesFromMaster(boolean loadFilesFromMaster) {
+        this.loadFilesFromMaster = loadFilesFromMaster
+    }
+
+    def keepSystemVariables(boolean keepSystemVariables) {
+        this.keepSystemVariables = keepSystemVariables
+    }
+
+    def keepBuildVariables(boolean keepBuildVariables) {
+        this.keepBuildVariables = keepBuildVariables
+    }
+
+    @Override
+    protected addInfoContentToBuilder(builder) {
+        super.addInfoContentToBuilder(builder)
+        if (groovyScript) {
+            builder.groovyScriptContent(groovyScript)
+        }
     }
 }

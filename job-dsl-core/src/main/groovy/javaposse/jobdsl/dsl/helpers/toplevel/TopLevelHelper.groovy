@@ -69,16 +69,10 @@ class TopLevelHelper extends AbstractHelper {
 
         execute {
             it / 'properties' / 'EnvInjectJobProperty' {
-                info {
-                    propertiesContent(envContext.props.join('\n'))
-                    if (envContext.groovyScript) {
-                        groovyScriptContent(envContext.groovyScript)
-                    }
-                    loadFilesFromMaster(false)
-                }
+                envContext.addInfoToBuilder(delegate)
                 on(true)
-                keepJenkinsSystemVariables(true)
-                keepBuildVariables(true)
+                keepJenkinsSystemVariables(envContext.keepSystemVariables)
+                keepBuildVariables(envContext.keepBuildVariables)
                 contributors()
             }
         }
@@ -296,6 +290,17 @@ class TopLevelHelper extends AbstractHelper {
         execute {
             def node = methodMissing('keepDependencies', keep)
             it / node
+        }
+    }
+
+    /**
+     * Configures the 'Execute concurrent builds if necessary' flag
+     *
+     * <concurrentBuild>true</concurrentBuild>
+     */
+    def concurrentBuild(boolean allowConcurrentBuild = true) {
+        execute {
+            it / concurrentBuild(allowConcurrentBuild ? 'true' : 'false')
         }
     }
 }

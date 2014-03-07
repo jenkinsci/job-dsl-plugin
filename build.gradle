@@ -27,8 +27,10 @@ subprojects {
     dependencies {
         compile 'org.codehaus.groovy:groovy-all:1.8.6'
         compile 'com.google.guava:guava:14.0.1'
-        testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+        testCompile 'org.spockframework:spock-core:0.7-groovy-1.8'
         testCompile 'junit:junit-dep:4.10'
+        testCompile 'cglib:cglib-nodep:2.2.2' // Used by Spock
+        testCompile 'org.objenesis:objenesis:1.2' // Used by Spock
     }
     test {
         useJUnit() // Causes "failed to create temp file to extract class from jar into"

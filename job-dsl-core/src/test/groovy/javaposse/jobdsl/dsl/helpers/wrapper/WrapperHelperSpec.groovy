@@ -327,6 +327,28 @@ class WrapperHelperSpec extends Specification {
         wrapper[0].value() == "ANT_1_8_2_HOME,MAVEN_3_HOME"
     }
 
+    def 'environmentVariables are added'() {
+        when:
+        context.environmentVariables {
+            propertiesFile 'some.properties'
+            envs test: 'some', other: 'any'
+            env 'some', 'value'
+            script 'echo Test'
+            scriptFile '/var/lib/jenkins'
+        }
+        Node envNode = context.wrapperNodes[0]
+
+        then:
+        envNode.name() == 'EnvInjectBuildWrapper'
+        def infoNode = envNode.info[0]
+        infoNode.children().size() == 5
+        infoNode.propertiesFilePath[0].value() == 'some.properties'
+        infoNode.propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
+        infoNode.scriptFilePath[0].value() == '/var/lib/jenkins'
+        infoNode.scriptContent[0].value() == 'echo Test'
+        infoNode.loadFilesFromMaster[0].value() == false
+    }
+
     def 'release plugin simple' () {
         when:
         helper.wrappers {
