@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.Helper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
+import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
@@ -38,6 +39,7 @@ public class Job extends XmlConfig {
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
+    @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
     @Delegate PromotionsContextHelper helperPromotions
 
@@ -48,16 +50,17 @@ public class Job extends XmlConfig {
         this.type = (typeArg instanceof JobType)?typeArg:JobType.find(typeArg)
 
         // Helpers
-        helperAuthorization = new AuthorizationContextHelper(super.withXmlActions, type)
-        helperScm = new ScmContextHelper(super.withXmlActions, type, jobManagement)
-        helperMultiscm = new MultiScmContextHelper(super.withXmlActions, type, jobManagement)
-        helperTrigger = new TriggerContextHelper(super.withXmlActions, type)
-        helperWrapper = new WrapperContextHelper(super.withXmlActions, type, jobManagement)
-        helperStep = new StepContextHelper(super.withXmlActions, type)
-        helperPublisher = new PublisherContextHelper(super.withXmlActions, type)
-        helperTopLevel = new TopLevelHelper(super.withXmlActions, type)
-        helperMaven = new MavenHelper(super.withXmlActions, type)
-        helperBuildParameters = new BuildParametersContextHelper(super.withXmlActions, type)
+        helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
+        helperScm = new ScmContextHelper(withXmlActions, type, jobManagement)
+        helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
+        helperTrigger = new TriggerContextHelper(withXmlActions, type)
+        helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
+        helperStep = new StepContextHelper(withXmlActions, type)
+        helperPublisher = new PublisherContextHelper(withXmlActions, type)
+        helperTopLevel = new TopLevelHelper(withXmlActions, type)
+        helperMaven = new MavenHelper(withXmlActions, type)
+        helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
+        helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
         helperPromotions = new PromotionsContextHelper(super.withXmlActions, additionalConfigs, type)
     }
 
@@ -122,6 +125,7 @@ public class Job extends XmlConfig {
         // TODO Move this logic to the JobType Enum
         switch(type) {
             case JobType.Freeform: return emptyTemplate
+            case JobType.BuildFlow: return emptyBuildFlowTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
         }
@@ -152,6 +156,27 @@ public class Job extends XmlConfig {
   <publishers/>
   <buildWrappers/>
 </project>
+'''
+
+    def emptyBuildFlowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.plugins.flow.BuildFlow>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <icon/>
+  <dsl></dsl>
+</com.cloudbees.plugins.flow.BuildFlow>
 '''
 
     def emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>

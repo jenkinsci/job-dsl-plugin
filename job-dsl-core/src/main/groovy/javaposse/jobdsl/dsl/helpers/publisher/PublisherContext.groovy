@@ -947,4 +947,15 @@ class PublisherContext implements Context {
             delegate.downstreamProjectNames(downstreamProjectNames ?: '')
         }
     }
+
+    /**
+     * Create commit status notifications on the commits based on the outcome of the build.
+     *
+     * <publishers>
+     *     <com.cloudbees.jenkins.GitHubCommitNotifier/>
+     * </publishers>
+     */
+    def githubCommitNotifier() {
+        publisherNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubCommitNotifier'()
+    }
 }

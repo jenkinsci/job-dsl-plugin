@@ -234,6 +234,18 @@ class JobTest extends Specification {
         thrown(JobTypeMismatchException.class)
     }
 
+    def 'construct simple Build Flow job and generate xml from it'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm, [type: 'buildFlow'])
+
+        when:
+        def xml = job.getXml()
+
+        then:
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + buildFlowXml, xml
+    }
+
     final minimalXml = '''
 <project>
   <actions/>
@@ -268,5 +280,26 @@ class JobTest extends Specification {
     <publishers/>
     <buildWrappers/>
 </maven2-moduleset>
+'''
+
+    final buildFlowXml = '''
+<com.cloudbees.plugins.flow.BuildFlow>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <icon/>
+  <dsl></dsl>
+</com.cloudbees.plugins.flow.BuildFlow>
 '''
 }

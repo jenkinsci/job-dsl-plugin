@@ -29,4 +29,10 @@ public class AbstractHelper implements Helper {
         withXmlActions << action
         return action
     }
+
+    static void appendOrReplaceNode(Node node, String name, Object value) {
+        node.children().removeAll { it instanceof Node && it.name() == name }
+        node.appendNode name, value
+    }
+
 }

@@ -522,7 +522,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'SUCCESS'
-        publisherNode.threshold[0].ordinal[0].value() == '0'
+        publisherNode.threshold[0].ordinal[0].value() == 0
         publisherNode.threshold[0].color[0].value() == 'BLUE'
     }
 
@@ -535,7 +535,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'FAILURE'
-        publisherNode.threshold[0].ordinal[0].value() == '2'
+        publisherNode.threshold[0].ordinal[0].value() == 2
         publisherNode.threshold[0].color[0].value() == 'RED'
     }
 
@@ -585,6 +585,7 @@ public class PublisherHelperSpec extends Specification {
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
         first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+        first.block.size() == 0
 
         def boolParams = first.configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
         boolParams.children().size() == 3
@@ -1516,5 +1517,16 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
         context.publisherNodes[0].downstreamProjectNames[0].value() == ''
+    }
+
+    def 'call github commit notifier methods'() {
+        when:
+        context.githubCommitNotifier()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        def githubCommitNotifier = context.publisherNodes[0]
+        githubCommitNotifier.name() == 'com.cloudbees.jenkins.GitHubCommitNotifier'
     }
 }

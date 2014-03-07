@@ -1115,8 +1115,10 @@ still-another-dsl.groovy'''
         thresholds.children().size() == 3
         Node unstableThreshold = thresholds.unstableThreshold[0]
         unstableThreshold.name[0].value() == 'UNSTABLE'
+        unstableThreshold.ordinal[0].value() == 1
         Node failureThreshold = thresholds.failureThreshold[0]
         failureThreshold.name[0].value() == 'FAILURE'
+        failureThreshold.ordinal[0].value() == 2
         Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
         buildStepFailureThreshold.name[0].value() == 'FAILURE'
 
@@ -1336,5 +1338,21 @@ still-another-dsl.groovy'''
         'groovyCommand'       | ['println "Test"']
         'systemGroovyCommand' | ['println "Test"']
         'dsl'                 | 'job { name "test" }'
+    }
+
+    def 'environmentVariables are added'() {
+        when:
+        context.environmentVariables {
+            propertiesFile 'some.properties'
+            envs test: 'some', other: 'any'
+            env 'some', 'value'
+        }
+        Node envNode = context.stepNodes[0]
+
+        then:
+        envNode.name() == 'EnvInjectBuilder'
+        envNode.info[0].children().size() == 2
+        envNode.info[0].propertiesFilePath[0].value() == 'some.properties'
+        envNode.info[0].propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
     }
 }
