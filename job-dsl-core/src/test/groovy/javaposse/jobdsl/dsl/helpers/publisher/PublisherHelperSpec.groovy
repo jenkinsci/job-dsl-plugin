@@ -2240,4 +2240,56 @@ public class PublisherHelperSpec extends Specification {
             externalDelete[0].value() == 'rm'
         }
     }
+
+    def 'call rundeck with all args should create valid rundeck node'() {
+        when:
+        context.rundeck('jobId') {
+            options key1: 'value1', key2: 'value2'
+            options key4: 'value4'
+            option 'key3', 'value3'
+            nodeFilters key1: 'value1', key2: 'value2'
+            nodeFilters key4: 'value4'
+            nodeFilter 'key3', 'value3'
+            tag 'tag'
+            shouldWaitForRundeckJob()
+            shouldFailTheBuild false
+        }
+
+        then:
+        Node rundeckNode = context.publisherNodes[0]
+        rundeckNode.name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+        rundeckNode.jobId[0].value() == 'jobId'
+        rundeckNode.options[0].value() == 'key1=value1 key2=value2 key4=value4 key3=value3'
+        rundeckNode.nodeFilters[0].value() == 'key1=value1 key2=value2 key4=value4 key3=value3'
+        rundeckNode.tag[0].value() == 'tag'
+        rundeckNode.shouldWaitForRundeckJob[0].value() == true
+        rundeckNode.shouldFailTheBuild[0].value() == false
+    }
+
+    def 'call rundeck with invalid jobId should fail'() {
+        when:
+        context.rundeck(id)
+
+        then:
+        IllegalArgumentException exception = thrown()
+        exception.message == "jobIdentifier cannot be null or empty"
+
+        where:
+        id | _
+        null | _
+        ''   | _
+    }
+
+    def 'call rundeck with default values'() {
+        when:
+        context.rundeck('jobId')
+
+        then:
+        Node rundeckNode = context.publisherNodes[0]
+        rundeckNode.options[0].value().isEmpty()
+        rundeckNode.nodeFilters[0].value().isEmpty()
+        rundeckNode.tag[0].value() == ''
+        rundeckNode.shouldWaitForRundeckJob[0].value() == false
+        rundeckNode.shouldFailTheBuild[0].value() == false
+    }
 }
