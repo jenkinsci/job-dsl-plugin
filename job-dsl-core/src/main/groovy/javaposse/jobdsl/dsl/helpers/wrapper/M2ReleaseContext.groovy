@@ -33,7 +33,8 @@ class M2ReleaseContext implements Context {
      * release build (this is the password the user enters when triggering a release build, not the password
      * given to Jenkins' SCM configuration of the job).</p>
      * <p>As the passed passwords would potentially get written to the logs and therefore visible to users,
-     * we recommend you to install the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin">Mask Password Plugin</a>.</p>
+     * we recommend you to install the
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin">Mask Password Plugin</a>.</p>
      * @param scmPasswordEnvVar (default: &laquo;empty&raquo;)
      */
     void scmPasswordEnvVar(String scmPasswordEnvVar) {
@@ -59,7 +60,8 @@ class M2ReleaseContext implements Context {
     }
 
     /**
-     * <p>Enter the goals you wish to use as part of the 'dryRun' - to simulate the release build. e.g. "release:prepare -DdryRun=true"</p>
+     * <p>Enter the goals you wish to use as part of the 'dryRun' - to simulate the release build.
+     * e.g. "release:prepare -DdryRun=true"</p>
      * @param dryRunGoals (default: "-Dresume=false -DdryRun=true release:prepare")
      */
     void dryRunGoals(String dryRunGoals) {
@@ -67,7 +69,8 @@ class M2ReleaseContext implements Context {
     }
 
     /**
-     * <p>Enable this to have the "Select custom SCM comment prefix" option selected by default in the "Perform Maven Release" view.</p>
+     * <p>Enable this to have the "Select custom SCM comment prefix" option selected by default
+     * in the "Perform Maven Release" view.</p>
      * @param selectCustomScmCommentPrefix (default: false)
      */
     void selectCustomScmCommentPrefix(boolean selectCustomScmCommentPrefix = true) {
@@ -75,7 +78,8 @@ class M2ReleaseContext implements Context {
     }
 
     /**
-     * <p>Enable this to have the "Append Jenkins Username" option (part of the "Specify custom SCM comment prefix" configuration) selected by default in the "Perform Maven Release" view.</p>
+     * <p>Enable this to have the "Append Jenkins Username" option (part of the "Specify custom SCM comment prefix"
+     * configuration) selected by default in the "Perform Maven Release" view.</p>
      * @param selectAppendHudsonUsername (default: false)
      */
     void selectAppendHudsonUsername(boolean selectAppendHudsonUsername = true) {
@@ -83,7 +87,8 @@ class M2ReleaseContext implements Context {
     }
 
     /**
-     * <p>Enable this to have the "specify SCM login/password" option selected by default in the "Perform Maven Release" view.</p>
+     * <p>Enable this to have the "specify SCM login/password" option selected by default in the
+     * "Perform Maven Release" view.</p>
      * @param selectScmCredentials (default: false)
      */
     void selectScmCredentials(boolean selectScmCredentials = true) {
@@ -91,7 +96,8 @@ class M2ReleaseContext implements Context {
     }
 
     /**
-     * <p>Specify the number of successful release builds to keep forever. A value of -1 will lock all successful release builds, 0 will not lock any builds.</p>
+     * <p>Specify the number of successful release builds to keep forever. A value of -1 will lock all successful
+     * release builds, 0 will not lock any builds.</p>
      * @param numberOfReleaseBuildsToKeep (default: 1)
      */
     void numberOfReleaseBuildsToKeep(int numberOfReleaseBuildsToKeep) {
