@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.step.StepEnvironmentVariableContext
+import static com.google.common.base.Preconditions.checkState
 
 import static WrapperContext.Timeout.absolute
 
@@ -326,4 +326,50 @@ class WrapperContext implements Context {
 
         wrapperNodes << envNode
     }
+
+    /**
+     * <p>Configures a release using the m2release plugin.</p>
+     * <p>By default the following values are applied. If an instance of a
+     * closure is provided, the values from the closure will take effect.</p>
+     * <pre>
+     * {@code
+     * <buildWrappers>
+     *     <org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
+     *         <scmUserEnvVar></scmUserEnvVar>
+     *         <scmPasswordEnvVar></scmPasswordEnvVar>
+     *         <releaseEnvVar>IS_M2RELEASEBUILD</releaseEnvVar>
+     *         <releaseGoals>-Dresume=false release:prepare release:perform</releaseGoals>
+     *         <dryRunGoals>-Dresume=false -DdryRun=true release:prepare</dryRunGoals>
+     *         <selectCustomScmCommentPrefix>false</selectCustomScmCommentPrefix>
+     *         <selectAppendHudsonUsername>false</selectAppendHudsonUsername>
+     *         <selectScmCredentials>false</selectScmCredentials>
+     *         <numberOfReleaseBuildsToKeep>1</numberOfReleaseBuildsToKeep>
+     *     </org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
+     * </buildWrappers>
+     *}
+     * </pre>
+     */
+    def mavenRelease(Closure releaseClosure = null) {
+
+        checkState type == JobType.Maven, "mavenRelease can only be applied for Maven jobs"
+
+        M2ReleaseContext context = new M2ReleaseContext()
+        AbstractContextHelper.executeInContext(releaseClosure, context)
+
+        def nodeBuilder = NodeBuilder.newInstance()
+        def m2releaseNode = nodeBuilder.'org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper' {
+            scmUserEnvVar context.scmUserEnvVar
+            scmPasswordEnvVar context.scmPasswordEnvVar
+            releaseEnvVar context.releaseEnvVar
+            releaseGoals context.releaseGoals
+            dryRunGoals context.dryRunGoals
+            selectCustomScmCommentPrefix context.selectCustomScmCommentPrefix
+            selectAppendHudsonUsername context.selectAppendHudsonUsername
+            selectScmCredentials context.selectScmCredentials
+            numberOfReleaseBuildsToKeep context.numberOfReleaseBuildsToKeep
+        }
+
+        wrapperNodes << m2releaseNode
+    }
+
 }
