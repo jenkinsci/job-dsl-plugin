@@ -30,12 +30,68 @@ If you want to make a change to the code on jenkinsci/job-dsl-plugin, here's the
 
 ## Our Basic Design Decisions / Conventions
 1. Use com.google.common.base.Preconditions for argument validaton. E.g. Preconditions.checkArgument(name, "Channel name for irc channel is required!")
-1. Use default parameters where appropriate. E.g. def hg(String url, String branch = null, Closure configure = null)
 1. We write tests using [Spock](http://code.google.com/p/spock/), so if (for example) you add a new Helper (e.g. ScmHelper), then add a corresponding ScmHelperSpec in the tests directory tree
-1. When the configuration value is a class name, use the unique parts of the possible classnames for brevity and build the FQCN adding the common parts. An example: hudson.plugins.im.build_notify.DefaultBuildToChatNotifier should be "Default".
-1. For enum type options use the values from the config.xml instead of the GUI text, for example 'FAILURE_AND_FIXED' instead of 'failure and fixed'.
-1. We don't yet have a standard way of taking what could be an Enum as a command argument.  However, a nice style tip can be found in [this thread on the forum](https://groups.google.com/forum/#!msg/job-dsl-plugin/imL88hLX0Cw/_XYDmo8t1M4J).
-1. Neither do we have a standard way of coping with Job Commands which take a _lot_ of parameters. However, another nice style tip can be see in [this pull request](https://github.com/jenkinsci/job-dsl-plugin/pull/70/files).
+
+## DSL Design
+* Every option should have the same defaults as the UI.
+* Use context closures instead of long parameter lists.
+* Use private or protected access modifiers for context and helper methods hat should not be exposed to DSL users.
+* Use enum values where appropriate, e.g. when the UI displays a chooser. The enum should be an inner class of the
+context which uses the enum. Use conventions for constants for naming enum values. Add the enum to the implicit imports
+in `DslScriptLoader.createCompilerConfiguration`.
+
+```groovy
+class FooContext {
+    FooOptions option = FooOptions.FIRST
+
+    def option(FooOptions option) {
+        this.option = option
+    }
+
+    enum FooOptions {
+      FIRST,
+      SECOND
+    }
+}
+```
+
+* Set the default parameter values for boolean options to true, so that a user can write `enableSomeOption()` instead
+of `enableSomeOption(true)`.
+
+```groovy
+class FooContext {
+    boolean foo
+
+    def foo(boolean foo = true) {
+        this.foo = foo
+    }
+}
+```
+
+* Offer convenience methods for list or key-value options.
+
+```groovy
+class FooContext {
+    Map<String, String> jvmOptions = [:]
+    List<String> args = []
+
+    def jvmOption(String key, String value) {
+        jvmOptions[key] = value
+    }
+
+    def jvmOptions(Map<String, String> options) {
+        jvmOptions.putAll(options)
+    }
+
+    def arg(String arg) {
+        args << arg
+    }
+
+    def args(String... args) {
+        this.args.addAll(args)
+    }
+}
+```
 
 ## Code Style
 1. Indentation: use 4 spaces, no tabs.
