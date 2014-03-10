@@ -4,9 +4,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 /**
  * <p>DSL Support for the m2release plugin.</p>
- * <p><a href="https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin">https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin</a></p>
- *
- * @author Matthias Balke <matthias.balke@googlemail.com>
+ * <p><a href="https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin">M2 Release Plugin</a></p>
  */
 class M2ReleaseContext implements Context {
 
@@ -72,7 +70,7 @@ class M2ReleaseContext implements Context {
      * <p>Enable this to have the "Select custom SCM comment prefix" option selected by default in the "Perform Maven Release" view.</p>
      * @param selectCustomScmCommentPrefix (default: false)
      */
-    void selectCustomScmCommentPrefix(boolean selectCustomScmCommentPrefix) {
+    void selectCustomScmCommentPrefix(boolean selectCustomScmCommentPrefix = true) {
         this.selectCustomScmCommentPrefix = selectCustomScmCommentPrefix
     }
 
@@ -80,7 +78,7 @@ class M2ReleaseContext implements Context {
      * <p>Enable this to have the "Append Jenkins Username" option (part of the "Specify custom SCM comment prefix" configuration) selected by default in the "Perform Maven Release" view.</p>
      * @param selectAppendHudsonUsername (default: false)
      */
-    void selectAppendHudsonUsername(boolean selectAppendHudsonUsername) {
+    void selectAppendHudsonUsername(boolean selectAppendHudsonUsername = true) {
         this.selectAppendHudsonUsername = selectAppendHudsonUsername
     }
 
@@ -88,7 +86,7 @@ class M2ReleaseContext implements Context {
      * <p>Enable this to have the "specify SCM login/password" option selected by default in the "Perform Maven Release" view.</p>
      * @param selectScmCredentials (default: false)
      */
-    void selectScmCredentials(boolean selectScmCredentials) {
+    void selectScmCredentials(boolean selectScmCredentials = true) {
         this.selectScmCredentials = selectScmCredentials
     }
 

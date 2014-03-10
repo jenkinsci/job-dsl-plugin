@@ -334,17 +334,17 @@ class WrapperContext implements Context {
      * <pre>
      * {@code
      * <buildWrappers>
-     * 	<org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
-     * 		<scmUserEnvVar></scmUserEnvVar>
-     * 		<scmPasswordEnvVar></scmPasswordEnvVar>
-     * 		<releaseEnvVar>IS_M2RELEASEBUILD</releaseEnvVar>
-     * 		<releaseGoals>-Dresume=false release:prepare release:perform</releaseGoals>
-     * 		<dryRunGoals>-Dresume=false -DdryRun=true release:prepare</dryRunGoals>
-     * 		<selectCustomScmCommentPrefix>false</selectCustomScmCommentPrefix>
-     * 		<selectAppendHudsonUsername>false</selectAppendHudsonUsername>
-     * 		<selectScmCredentials>false</selectScmCredentials>
-     * 		<numberOfReleaseBuildsToKeep>1</numberOfReleaseBuildsToKeep>
-     * 	</org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
+     *     <org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
+     *         <scmUserEnvVar></scmUserEnvVar>
+     *         <scmPasswordEnvVar></scmPasswordEnvVar>
+     *         <releaseEnvVar>IS_M2RELEASEBUILD</releaseEnvVar>
+     *         <releaseGoals>-Dresume=false release:prepare release:perform</releaseGoals>
+     *         <dryRunGoals>-Dresume=false -DdryRun=true release:prepare</dryRunGoals>
+     *         <selectCustomScmCommentPrefix>false</selectCustomScmCommentPrefix>
+     *         <selectAppendHudsonUsername>false</selectAppendHudsonUsername>
+     *         <selectScmCredentials>false</selectScmCredentials>
+     *         <numberOfReleaseBuildsToKeep>1</numberOfReleaseBuildsToKeep>
+     *     </org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
      * </buildWrappers>
      *}
      * </pre>
