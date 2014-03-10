@@ -29,13 +29,13 @@ If you want to make a change to the code on jenkinsci/job-dsl-plugin, here's the
 7. If the documentation looks good, we'll merge the Pull Request.
 
 ## Our Basic Design Decisions / Conventions
-1. Use com.google.common.base.Preconditions for argument validaton. E.g. Preconditions.checkArgument(name, "Channel name for irc channel is required!")
+1. Use com.google.common.base.Preconditions for argument validation. E.g. Preconditions.checkArgument(name, "Channel name for irc channel is required!")
 1. We write tests using [Spock](http://code.google.com/p/spock/), so if (for example) you add a new Helper (e.g. ScmHelper), then add a corresponding ScmHelperSpec in the tests directory tree
 
 ## DSL Design
 * Every option should have the same defaults as the UI.
 * Use context closures instead of long parameter lists.
-* Use private or protected access modifiers for context and helper methods hat should not be exposed to DSL users.
+* Use private or protected access modifiers for context and helper methods that should not be exposed to DSL users.
 * Use enum values where appropriate, e.g. when the UI displays a chooser. The enum should be an inner class of the
 context which uses the enum. Use conventions for constants for naming enum values. Add the enum to the implicit imports
 in `DslScriptLoader.createCompilerConfiguration`.
