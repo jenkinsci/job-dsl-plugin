@@ -378,9 +378,9 @@ class WrapperHelperSpec extends Specification {
             releaseEnvVar 'RELEASE_ENV'
             releaseGoals 'release:prepare release:perform'
             dryRunGoals '-DdryRun=true release:prepare'
-            selectCustomScmCommentPrefix true
-            selectAppendHudsonUsername true
-            selectScmCredentials true
+            selectCustomScmCommentPrefix()
+            selectAppendHudsonUsername()
+            selectScmCredentials()
             numberOfReleaseBuildsToKeep 10
         }
 
