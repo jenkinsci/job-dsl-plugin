@@ -95,6 +95,7 @@ class FooContext {
 
 ## Code Style
 1. Indentation: use 4 spaces, no tabs.
+1. Use a maximum line length of 120 characters.
 1. We roughly follow the [Java](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html) and [Groovy](http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers) style guidelines.
 1. When using IntelliJ IDEA, use the default code style, but disable '*' imports for Java and Groovy.
 1. Always add a CRLF at the end of a file.
