@@ -326,6 +326,9 @@ public class TriggerHelperSpec extends Specification {
             autoCloseFailedPullRequests[0].value() == false
             cron[0].value() == 'H/5 * * * *'
             triggerPhrase[0].value() == ''
+            adminlist[0].value() == ''
+            whitelist[0].value() == ''
+            orgslist[0].value() == ''
         }
 
     }
