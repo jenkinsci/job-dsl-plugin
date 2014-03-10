@@ -348,4 +348,102 @@ class WrapperHelperSpec extends Specification {
         infoNode.scriptContent[0].value() == 'echo Test'
         infoNode.loadFilesFromMaster[0].value() == false
     }
+
+    def 'release plugin simple' () {
+        when:
+        helper.wrappers {
+            release {
+                parameters {
+                    textParam('p1', 'p1', 'd1')
+                }
+                preBuildSteps {
+                    shell('echo hello;')
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'parameterDefinitions'.'hudson.model.TextParameterDefinition'
+        params[0].value()[0].value() == "p1"
+        
+        def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
+        steps[0].value()[0].name() == 'hudson.tasks.Shell'
+        steps[0].value()[0].value()[0].name() == 'command'
+        steps[0].value()[0].value()[0].value() == 'echo hello;'
+    }
+
+    def 'release plugin extended' () {
+        when:
+        helper.wrappers {
+            release {
+                releaseVersionTemplate('templatename')
+                doNotKeepLog(true)
+                overrideBuildParameters(false)
+                parameters {
+                    booleanParam('myBooleanParam', true)
+                    booleanParam('my2ndBooleanParam', true)
+                }
+                postSuccessfulBuildSteps {
+                    shell('echo postsuccess;')
+                    shell('echo hello world;')
+                }
+                postBuildSteps {
+                    shell('echo post;')
+                }
+                postFailedBuildSteps {
+                    shell('echo postfailed;')
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
+        params[0].value()[0].name() == "releaseVersionTemplate"
+        params[0].value()[0].value() == "templatename"
+        params[0].value()[1].name() == "doNotKeepLog"
+        params[0].value()[1].value() == true
+        params[0].value()[2].name() == "overrideBuildParameters"
+        params[0].value()[2].value() == false
+        
+        def stepsPostSuccess = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postSuccessfulBuildSteps'
+        stepsPostSuccess[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPostSuccess[0].value()[0].value()[0].name() == 'command'
+        stepsPostSuccess[0].value()[0].value()[0].value() == 'echo postsuccess;'
+        stepsPostSuccess[0].value()[1].name() == 'hudson.tasks.Shell'
+        stepsPostSuccess[0].value()[1].value()[0].name() == 'command'
+        stepsPostSuccess[0].value()[1].value()[0].value() == 'echo hello world;'
+        
+        def stepsPost = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postBuildSteps'
+        stepsPost[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPost[0].value()[0].value()[0].name() == 'command'
+        stepsPost[0].value()[0].value()[0].value() == 'echo post;'
+        
+        def stepsPostFailed = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postFailedBuildSteps'
+        stepsPostFailed[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPostFailed[0].value()[0].value()[0].name() == 'command'
+        stepsPostFailed[0].value()[0].value()[0].value() == 'echo postfailed;'
+    }
+    
+    def 'release plugin configure' () {
+        when:
+        helper.wrappers {
+            release {
+                configure { project ->
+                    def node = project / 'testCommand'
+                    node << {
+                        custom('value')
+                    }
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'testCommand'
+        params[0].value()[0].name() == "custom"
+        params[0].value()[0].value() == "value"
+    }
+    
 }

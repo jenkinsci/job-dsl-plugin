@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
+import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.step.StepEnvironmentVariableContext
@@ -325,5 +326,70 @@ class WrapperContext implements Context {
         }
 
         wrapperNodes << envNode
+    }
+    
+    /**
+     * <pre>
+     * {@code
+     *  <project>
+     *      <buildWrappers>
+     *          <hudson.plugins.release.ReleaseWrapper>
+     *              <releaseVersionTemplate>template</releaseVersionTemplate>
+     *              <doNotKeepLog>true</doNotKeepLog>
+     *              <overrideBuildParameters>false</overrideBuildParameters>
+     *              <parameterDefinitions>
+     *                  <hudson.model.BooleanParameterDefinition>
+     *                      <name>booleanValue</name>
+     *                      <description>ths description of the boolean value</description>
+     *                      <defaultValue>true</defaultValue>
+     *                  </hudson.model.BooleanParameterDefinition>
+     *              </parameterDefinitions>
+     *              <preBuildSteps>
+     *                  <hudson.tasks.Maven>
+     *                      <targets>install</targets>
+     *                      <mavenName>(Default)</mavenName> 
+     *                  </hudson.tasks.Maven>
+     *              </preBuildSteps>
+     *              <postBuildSteps>
+     *                  <hudson.tasks.Maven>
+     *                      <targets>site</targets>
+     *                      <mavenName>(Default)</mavenName> 
+     *                 </hudson.tasks.Maven>
+     *              </postBuildSteps>
+     *          </hudson.plugins.release.ReleaseWrapper>
+     *      </buildWrappers>
+     *  </project>
+     * }
+     * </pre>
+     *
+     * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
+     *
+     * @param releaseClosure attributes and steps used by the plugin
+     */
+    def release(Closure releaseClosure) {
+        def releaseContext = new ReleaseContext()
+        AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
+            
+        def nodeBuilder = new NodeBuilder()
+        
+        // plugin properties
+        def releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
+            releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')
+            doNotKeepLog(releaseContext.doNotKeepLog)
+            overrideBuildParameters(releaseContext.overrideBuildParameters)
+            parameterDefinitions(releaseContext.params)
+            preBuildSteps(releaseContext.preBuildSteps)
+            postSuccessfulBuildSteps(releaseContext.postSuccessfulBuildSteps)
+            postBuildSteps(releaseContext.postBuildSteps)
+            postFailedBuildSteps(releaseContext.postFailedBuildSteps)
+        }
+
+        // Apply Context
+        if (releaseContext.configureBlock) {
+            WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
+            action.execute(releaseNode)
+        }
+
+        wrapperNodes << releaseNode
     }
 }
