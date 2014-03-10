@@ -372,20 +372,15 @@ class WrapperContext implements Context {
             
         def nodeBuilder = new NodeBuilder()
         
-        // main parameters
+        // plugin properties
         def releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
             releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')
             doNotKeepLog(releaseContext.doNotKeepLog)
             overrideBuildParameters(releaseContext.overrideBuildParameters)
-            // add aditional build parameters
             parameterDefinitions(releaseContext.params)
-            // append steps before every release build
             preBuildSteps(releaseContext.preBuildSteps)
-            // append steps after successful release builds
             postSuccessfulBuildSteps(releaseContext.postSuccessfulBuildSteps)
-            // append steps after every release build
             postBuildSteps(releaseContext.postBuildSteps)
-            // append steps after failed release builds
             postFailedBuildSteps(releaseContext.postFailedBuildSteps)
         }
 
