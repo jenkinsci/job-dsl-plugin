@@ -324,6 +324,8 @@ public class TriggerHelperSpec extends Specification {
             useGitHubHooks[0].value() == false
             permitAll[0].value() == false
             autoCloseFailedPullRequests[0].value() == false
+            cron[0].value() == 'H/5 * * * *'
+            triggerPhrase[0].value() == ''
         }
 
     }
@@ -332,8 +334,8 @@ public class TriggerHelperSpec extends Specification {
         when:
         context.pullRequest() {
             admins(['test1', 'test2'])
-            whitelisted(['test1', 'test2'])
-            whitelistedOrgs(['test1', 'test2'])
+            userWhitelist(['test1', 'test2'])
+            orgWhitelist(['test1', 'test2'])
         }
 
         then:
@@ -349,8 +351,8 @@ public class TriggerHelperSpec extends Specification {
         when:
         context.pullRequest() {
             admins(['test'])
-            whitelisted(['test'])
-            whitelistedOrgs(['test'])
+            userWhitelist(['test'])
+            orgWhitelist(['test'])
             cron('*/5 * * * *')
             triggerPhrase('ok to test')
             onlyTriggerPhrase(true)
