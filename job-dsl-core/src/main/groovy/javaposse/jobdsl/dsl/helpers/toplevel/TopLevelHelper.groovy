@@ -292,6 +292,17 @@ class TopLevelHelper extends AbstractHelper {
             it / node
         }
     }
+
+    /**
+     * Configures the 'Execute concurrent builds if necessary' flag
+     *
+     * <concurrentBuild>true</concurrentBuild>
+     */
+    def concurrentBuild(boolean allowConcurrentBuild = true) {
+        execute {
+            it / concurrentBuild(allowConcurrentBuild ? 'true' : 'false')
+        }
+    }
 }
 
 

@@ -485,7 +485,7 @@ class AbstractStepContext implements Context {
                     id copyArtifactContext.permalinkName
                 }
                 if (copyArtifactContext.selectedSelector == 'SpecificBuild') {
-                    buildNumber Integer.toString(copyArtifactContext.buildNumber)
+                    buildNumber copyArtifactContext.buildNumber
                 }
                 if (copyArtifactContext.selectedSelector == 'ParameterizedBuild') {
                     parameterName copyArtifactContext.parameterName

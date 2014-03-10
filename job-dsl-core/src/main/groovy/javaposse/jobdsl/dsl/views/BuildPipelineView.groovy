@@ -38,6 +38,26 @@ class BuildPipelineView extends View {
     }
 
     /**
+     * <consoleOutputLinkStyle>Output Style</consoleOutputLinkStyle>
+     */
+    void consoleOutputLinkStyle(OutputStyle outputStyle) {
+        checkNotNull(outputStyle, 'consoleOutputLinkStyle must not be null')
+
+        execute {
+            it / methodMissing('consoleOutputLinkStyle', outputStyle.value)
+        }
+    }
+
+    /**
+     * <cssUrl>Css Url</csUrl>
+     */
+    void customCssUrl(String customCssUrl) {
+        execute {
+            it / cssUrl(customCssUrl ?: '')
+        }
+    }
+
+    /**
      * <triggerOnlyLatestJob>true</triggerOnlyLatestJob>
      */
     void triggerOnlyLatestJob(boolean triggerOnlyLatestJob = true) {
@@ -102,6 +122,8 @@ class BuildPipelineView extends View {
     <properties class="hudson.model.View$PropertyList"/>
     <noOfDisplayedBuilds>1</noOfDisplayedBuilds>
     <buildViewTitle/>
+    <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+    <cssUrl/>
     <triggerOnlyLatestJob>false</triggerOnlyLatestJob>
     <alwaysAllowManualTrigger>false</alwaysAllowManualTrigger>
     <showPipelineParameters>false</showPipelineParameters>
@@ -109,5 +131,17 @@ class BuildPipelineView extends View {
     <refreshFrequency>3</refreshFrequency>
     <showPipelineDefinitionHeader>false</showPipelineDefinitionHeader>
 </au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>'''
+    }
+
+    static enum OutputStyle {
+        Lightbox('Lightbox'),
+        NewWindow('New Window'),
+        ThisWindow('This Window')
+
+        final String  value
+
+        OutputStyle(String value) {
+            this.value = value
+        }
     }
 }

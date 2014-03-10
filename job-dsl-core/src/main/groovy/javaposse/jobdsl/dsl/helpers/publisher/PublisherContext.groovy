@@ -227,6 +227,7 @@ class PublisherContext implements Context {
      <maximumLineCoverage>0</maximumLineCoverage>
      <maximumMethodCoverage>0</maximumMethodCoverage>
      <maximumClassCoverage>0</maximumClassCoverage>
+     <changeBuildStatus>false</changeBuildStatus>
      </hudson.plugins.jacoco.JacocoPublisher>
      **/
     def jacocoCodeCoverage(Closure jacocoClosure = null) {
@@ -254,6 +255,9 @@ class PublisherContext implements Context {
             maximumLineCoverage jacocoContext.maximumLineCoverage
             maximumMethodCoverage jacocoContext.maximumMethodCoverage
             maximumClassCoverage jacocoContext.maximumClassCoverage
+            if (jacocoContext.changeBuildStatus != null) {
+                changeBuildStatus Boolean.toString(jacocoContext.changeBuildStatus)
+            }
         }
 
         publisherNodes << jacocoNode
@@ -946,5 +950,16 @@ class PublisherContext implements Context {
         publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
             delegate.downstreamProjectNames(downstreamProjectNames ?: '')
         }
+    }
+
+    /**
+     * Create commit status notifications on the commits based on the outcome of the build.
+     *
+     * <publishers>
+     *     <com.cloudbees.jenkins.GitHubCommitNotifier/>
+     * </publishers>
+     */
+    def githubCommitNotifier() {
+        publisherNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubCommitNotifier'()
     }
 }

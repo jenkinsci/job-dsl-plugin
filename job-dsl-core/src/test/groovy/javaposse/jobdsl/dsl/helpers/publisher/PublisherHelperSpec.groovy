@@ -201,9 +201,41 @@ public class PublisherHelperSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
-        jacocoNode.minimumInstructionCoverage[0].value() == "0"             
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.changeBuildStatus[0] == null
     }
-   
+
+    def 'call jacoco code coverage with closure, set changeBuildStatus'(change) {
+        when:
+
+        context.jacocoCodeCoverage {
+            changeBuildStatus(change)
+        }
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.changeBuildStatus[0].value() == change ? 'true' : 'false'
+
+        where:
+        change << [true, false]
+    }
+
+    def 'call jacoco code coverage with closure, changeBuildStatus with no args defaults to true'() {
+        when:
+
+        context.jacocoCodeCoverage {
+            changeBuildStatus()
+        }
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.execPattern[0].value() == '**/target/**.exec'
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.changeBuildStatus[0].value() == 'true'
+    }
+
     def 'call jacoco code coverage with all args'() {
         when:
         context.jacocoCodeCoverage {
@@ -224,6 +256,7 @@ public class PublisherHelperSpec extends Specification {
             maximumLineCoverage '10' 
             maximumMethodCoverage '11' 
             maximumClassCoverage '12'
+            changeBuildStatus true
         }
 
         then:
@@ -246,6 +279,7 @@ public class PublisherHelperSpec extends Specification {
         jacocoNode.maximumLineCoverage[0].value() == "10"
         jacocoNode.maximumMethodCoverage[0].value() == "11"
         jacocoNode.maximumClassCoverage[0].value() == "12"
+        jacocoNode.changeBuildStatus[0].value() == 'true'
     }
 
     def 'calling minimal html publisher'() {
@@ -522,7 +556,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'SUCCESS'
-        publisherNode.threshold[0].ordinal[0].value() == '0'
+        publisherNode.threshold[0].ordinal[0].value() == 0
         publisherNode.threshold[0].color[0].value() == 'BLUE'
     }
 
@@ -535,7 +569,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'FAILURE'
-        publisherNode.threshold[0].ordinal[0].value() == '2'
+        publisherNode.threshold[0].ordinal[0].value() == 2
         publisherNode.threshold[0].color[0].value() == 'RED'
     }
 
@@ -585,6 +619,7 @@ public class PublisherHelperSpec extends Specification {
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
         first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+        first.block.size() == 0
 
         def boolParams = first.configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
         boolParams.children().size() == 3
@@ -1516,5 +1551,16 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
         context.publisherNodes[0].downstreamProjectNames[0].value() == ''
+    }
+
+    def 'call github commit notifier methods'() {
+        when:
+        context.githubCommitNotifier()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        def githubCommitNotifier = context.publisherNodes[0]
+        githubCommitNotifier.name() == 'com.cloudbees.jenkins.GitHubCommitNotifier'
     }
 }
