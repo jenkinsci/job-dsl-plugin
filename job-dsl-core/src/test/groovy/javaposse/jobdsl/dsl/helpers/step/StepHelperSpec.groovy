@@ -1365,4 +1365,103 @@ still-another-dsl.groovy'''
         envNode.info[0].propertiesFilePath[0].value() == 'some.properties'
         envNode.info[0].propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
     }
+
+    def 'call remoteTrigger with minimal options'() {
+        when:
+        context.remoteTrigger('dev-ci', 'test')
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].with {
+            name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
+            children().size() == 14
+            token[0].value() == []
+            remoteJenkinsName[0].value() == 'dev-ci'
+            job[0].value() == 'test'
+            shouldNotFailBuild[0].value() == false
+            pollInterval[0].value() == 10
+            preventRemoteBuildQueue[0].value() == false
+            blockBuildUntilComplete[0].value() == false
+            parameters[0].value() == ''
+            parametersList[0].children().size() == 1
+            parametersList[0].string[0].value() == []
+            overrideAuth[0].value() == false
+            auth[0].children().size() == 1
+            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+                children().size() == 3
+                NONE[0].value() == 'none'
+                API__TOKEN[0].value() == 'apiToken'
+                CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
+            }
+            loadParamsFromFile[0].value() == false
+            parameterFile[0].value() == []
+            queryString[0].value() == []
+        }
+    }
+
+    def 'call remoteTrigger with parameters'() {
+        when:
+        context.remoteTrigger('dev-ci', 'test') {
+            parameter 'foo', '1'
+            parameters bar: '2', baz: '3'
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].with {
+            name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
+            children().size() == 14
+            token[0].value() == []
+            remoteJenkinsName[0].value() == 'dev-ci'
+            job[0].value() == 'test'
+            shouldNotFailBuild[0].value() == false
+            pollInterval[0].value() == 10
+            preventRemoteBuildQueue[0].value() == false
+            blockBuildUntilComplete[0].value() == false
+            parameters[0].value() == 'foo=1\nbar=2\nbaz=3'
+            parametersList[0].children().size() == 3
+            parametersList[0].string[0].value() == 'foo=1'
+            parametersList[0].string[1].value() == 'bar=2'
+            parametersList[0].string[2].value() == 'baz=3'
+            overrideAuth[0].value() == false
+            auth[0].children().size() == 1
+            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+                children().size() == 3
+                NONE[0].value() == 'none'
+                API__TOKEN[0].value() == 'apiToken'
+                CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
+            }
+            loadParamsFromFile[0].value() == false
+            parameterFile[0].value() == []
+            queryString[0].value() == []
+        }
+    }
+
+    def 'call remoteTrigger without jenkins'() {
+        when:
+        context.remoteTrigger(null, 'test')
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.remoteTrigger('', 'test')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call remoteTrigger without job'() {
+        when:
+        context.remoteTrigger('dev-ci', null)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.remoteTrigger('dev-ci', '')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }
