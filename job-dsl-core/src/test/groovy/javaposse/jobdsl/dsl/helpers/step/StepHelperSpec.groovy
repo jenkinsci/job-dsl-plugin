@@ -1383,8 +1383,8 @@ still-another-dsl.groovy'''
             preventRemoteBuildQueue[0].value() == false
             blockBuildUntilComplete[0].value() == false
             parameters[0].value() == ''
-            parametersList[0].children().size() == 1
-            parametersList[0].string[0].value() == []
+            parameterList[0].children().size() == 1
+            parameterList[0].string[0].value() == []
             overrideAuth[0].value() == false
             auth[0].children().size() == 1
             auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
@@ -1419,10 +1419,10 @@ still-another-dsl.groovy'''
             preventRemoteBuildQueue[0].value() == false
             blockBuildUntilComplete[0].value() == false
             parameters[0].value() == 'foo=1\nbar=2\nbaz=3'
-            parametersList[0].children().size() == 3
-            parametersList[0].string[0].value() == 'foo=1'
-            parametersList[0].string[1].value() == 'bar=2'
-            parametersList[0].string[2].value() == 'baz=3'
+            parameterList[0].children().size() == 3
+            parameterList[0].string[0].value() == 'foo=1'
+            parameterList[0].string[1].value() == 'bar=2'
+            parameterList[0].string[2].value() == 'baz=3'
             overrideAuth[0].value() == false
             auth[0].children().size() == 1
             auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {

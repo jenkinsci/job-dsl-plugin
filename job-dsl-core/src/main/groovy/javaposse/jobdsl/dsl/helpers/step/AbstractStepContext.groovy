@@ -709,7 +709,7 @@ class AbstractStepContext implements Context {
             preventRemoteBuildQueue(false)
             blockBuildUntilComplete(false)
             parameters(jobParameters.join('\n'))
-            parametersList {
+            parameterList {
                 if (jobParameters.empty) {
                     string()
                 } else {
