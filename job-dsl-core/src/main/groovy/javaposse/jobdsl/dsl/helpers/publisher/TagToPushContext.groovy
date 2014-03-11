@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.helpers.Context
 
-class TagToPushContext extends RefToPushContext {
+class TagToPushContext implements Context {
     String message
     boolean create
     boolean update

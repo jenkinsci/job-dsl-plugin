@@ -1582,17 +1582,12 @@ public class PublisherHelperSpec extends Specification {
         context.git {
             pushOnlyIfSuccess()
             pushMerge()
-            tag {
-                targetRepo('origin')
-                name('test')
+            tag('origin', 'test') {
                 message('test tag')
                 create()
                 update()
             }
-            branch {
-                targetRepo('origin')
-                name('master')
-            }
+            branch('origin', 'master')
         }
 
         then:
@@ -1623,10 +1618,7 @@ public class PublisherHelperSpec extends Specification {
     def 'call git with minimal tag options'() {
         when:
         context.git {
-            tag {
-                targetRepo('origin')
-                name('test')
-            }
+            tag('origin', 'test')
         }
 
         then:
@@ -1651,9 +1643,15 @@ public class PublisherHelperSpec extends Specification {
     def 'call git without tag targetRepoName'() {
         when:
         context.git {
-            tag {
-                name('test')
-            }
+            tag(null, 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            tag('', 'test')
         }
 
         then:
@@ -1663,9 +1661,15 @@ public class PublisherHelperSpec extends Specification {
     def 'call git without tag name'() {
         when:
         context.git {
-            tag {
-                targetRepo('origin')
-            }
+            tag('origin', null)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            tag('origin', '')
         }
 
         then:
@@ -1675,9 +1679,15 @@ public class PublisherHelperSpec extends Specification {
     def 'call git without branch targetRepoName'() {
         when:
         context.git {
-            branch {
-                name('test')
-            }
+            branch(null, 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            branch('', 'test')
         }
 
         then:
@@ -1687,9 +1697,15 @@ public class PublisherHelperSpec extends Specification {
     def 'call git without branch name'() {
         when:
         context.git {
-            branch {
-                targetRepo('origin')
-            }
+            branch('origin', null)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            branch('origin', '')
         }
 
         then:

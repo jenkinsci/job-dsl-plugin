@@ -29,16 +29,16 @@ class GitPublisherContext implements Context {
      *     <updateTag>false</updateTag>
      * </hudson.plugins.git.GitPublisher_-TagToPush>
      */
-    void tag(Closure closure) {
+    void tag(String targetRepo, String name, Closure closure = null) {
+        checkArgument(!isNullOrEmpty(targetRepo), "targetRepo must be specified")
+        checkArgument(!isNullOrEmpty(name), "name must be specified")
+
         TagToPushContext context = new TagToPushContext()
         AbstractContextHelper.executeInContext(closure, context)
         
-        checkArgument(!isNullOrEmpty(context.targetRepo), "targetRepo must be specified")
-        checkArgument(!isNullOrEmpty(context.name), "name must be specified")
-
         tags << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-TagToPush' {
-            targetRepoName(context.targetRepo)
-            tagName(context.name)
+            targetRepoName(targetRepo)
+            tagName(name)
             tagMessage(context.message ?: '')
             createTag(context.create)
             updateTag(context.update)
@@ -51,16 +51,13 @@ class GitPublisherContext implements Context {
      *     <branchName>master</branchName>
      * </hudson.plugins.git.GitPublisher_-BranchToPush>
      */
-    void branch(Closure closure) {
-        RefToPushContext context = new RefToPushContext()
-        AbstractContextHelper.executeInContext(closure, context)
-        
-        checkArgument(!isNullOrEmpty(context.targetRepo), "targetRepo must be specified")
-        checkArgument(!isNullOrEmpty(context.name), "name must be specified")
+    void branch(String targetRepo, String name) {
+        checkArgument(!isNullOrEmpty(targetRepo), "targetRepo must be specified")
+        checkArgument(!isNullOrEmpty(name), "name must be specified")
 
         branches << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-BranchToPush' {
-            targetRepoName(context.targetRepo)
-            branchName(context.name)
+            targetRepoName(targetRepo)
+            branchName(name)
         }
     }
 }
