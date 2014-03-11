@@ -1,0 +1,21 @@
+package javaposse.jobdsl.dsl.helpers.publisher
+
+import javaposse.jobdsl.dsl.helpers.Context
+
+class TagToPushContext extends RefToPushContext {
+    String message
+    boolean create
+    boolean update
+
+    void message(String message) {
+        this.message = message
+    }
+
+    void create(boolean create = true) {
+        this.create = create
+    }
+
+    void update(boolean update = true) {
+        this.update = update
+    }
+}

@@ -962,4 +962,41 @@ class PublisherContext implements Context {
     def githubCommitNotifier() {
         publisherNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubCommitNotifier'()
     }
+
+    /**
+     * <publishers>
+     *     <hudson.plugins.git.GitPublisher>
+     *         <configVersion>2</configVersion>
+     *         <pushMerge>false</pushMerge>
+     *         <pushOnlyIfSuccess>true</pushOnlyIfSuccess>
+     *         <tagsToPush>
+     *             <hudson.plugins.git.GitPublisher_-TagToPush>
+     *                 <targetRepoName>origin</targetRepoName>
+     *                 <tagName>foo-$PIPELINE_VERSION</tagName>
+     *                 <tagMessage>Release $PIPELINE_VERSION</tagMessage> 
+     *                 <createTag>true</createTag>
+     *                 <updateTag>false</updateTag>
+     *             </hudson.plugins.git.GitPublisher_-TagToPush>
+     *         </tagsToPush>
+     *         <branchesToPush>
+     *             <hudson.plugins.git.GitPublisher_-BranchToPush>
+     *                 <targetRepoName>origin</targetRepoName>
+     *                 <branchName>master</branchName>
+     *             </hudson.plugins.git.GitPublisher_-BranchToPush>
+     *         </branchesToPush>
+     *     </hudson.plugins.git.GitPublisher>
+     * </publishers>
+     */
+    def git(Closure gitPublisherClosure) {
+        GitPublisherContext context = new GitPublisherContext()
+        AbstractContextHelper.executeInContext(gitPublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher' {
+            configVersion(2)
+            pushMerge(context.pushMerge)
+            pushOnlyIfSuccess(context.pushOnlyIfSuccess)
+            tagsToPush(context.tags)
+            branchesToPush(context.branches)
+        }
+    }
 }
