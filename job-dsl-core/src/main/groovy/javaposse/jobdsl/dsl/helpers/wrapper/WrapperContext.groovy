@@ -302,7 +302,6 @@ class WrapperContext implements Context {
 
     /**
      * <pre>
-<<<<<<< HEAD
      *     {@code
      * <EnvInjectBuildWrapper>
      *   <info>
