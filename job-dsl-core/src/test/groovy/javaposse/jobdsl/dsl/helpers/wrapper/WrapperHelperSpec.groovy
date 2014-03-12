@@ -445,4 +445,54 @@ class WrapperHelperSpec extends Specification {
         params[0].value()[0].name() == "custom"
         params[0].value()[0].value() == "value"
     }
+
+    def 'call preBuildCleanup with minimal options' () {
+        when:
+        helper.wrappers {
+            preBuildCleanup()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].with {
+            name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
+            children().size() == 4
+            patterns[0].value() == []
+            deleteDirs[0].value() == false
+            cleanupParameter[0].value() == ''
+            deleteCommand[0].value() == ''
+        }
+    }
+
+    def 'call preBuildCleanup with all options' () {
+        when:
+        helper.wrappers {
+            preBuildCleanup {
+                includePattern('**/test/**')
+                excludePattern('*.test')
+                deleteDirectories()
+                cleanupParameter('TEST')
+                deleteCommand('test')
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].with {
+            name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
+            children().size() == 4
+            patterns[0].children().size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].children.size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].pattern[0].value() == '**/test/**'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].children.size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].pattern[0].value() == '*.test'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'EXCLUDE'
+            deleteDirs[0].value() == true
+            cleanupParameter[0].value() == 'TEST'
+            deleteCommand[0].value() == 'test'
+        }
+    }
 }
