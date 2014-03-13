@@ -1563,4 +1563,152 @@ public class PublisherHelperSpec extends Specification {
         def githubCommitNotifier = context.publisherNodes[0]
         githubCommitNotifier.name() == 'com.cloudbees.jenkins.GitHubCommitNotifier'
     }
+
+    def 'call git with minimal options'() {
+        when:
+        context.git {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.git.GitPublisher'
+        context.publisherNodes[0].configVersion[0].value() == 2
+        context.publisherNodes[0].pushMerge[0].value() == false
+        context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
+    }
+
+    def 'call git with all options'() {
+        when:
+        context.git {
+            pushOnlyIfSuccess()
+            pushMerge()
+            tag('origin', 'test') {
+                message('test tag')
+                create()
+                update()
+            }
+            branch('origin', 'master')
+        }
+
+        then:
+        context.publisherNodes.size() == 1        
+        context.publisherNodes[0].with {
+            name() == 'hudson.plugins.git.GitPublisher'
+            configVersion[0].value() == 2
+            pushMerge[0].value() == true
+            pushOnlyIfSuccess[0].value() == true
+            tagsToPush.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+                targetRepoName[0].value() == 'origin'
+                tagName[0].value() == 'test'
+                tagMessage[0].value() == 'test tag'
+                createTag[0].value() == true
+                updateTag[0].value() == true
+            }
+            branchesToPush.size() == 1
+            branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'.size() == 1
+            branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'[0].with {
+                targetRepoName[0].value() == 'origin'
+                branchName[0].value() == 'master'
+            }
+        }
+    }
+
+    def 'call git with minimal tag options'() {
+        when:
+        context.git {
+            tag('origin', 'test')
+        }
+
+        then:
+        context.publisherNodes.size() == 1        
+        context.publisherNodes[0].with {
+            name() == 'hudson.plugins.git.GitPublisher'
+            configVersion[0].value() == 2
+            pushMerge[0].value() == false
+            pushOnlyIfSuccess[0].value() == false
+            tagsToPush.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+                targetRepoName[0].value() == 'origin'
+                tagName[0].value() == 'test'
+                tagMessage[0].value() == ''
+                createTag[0].value() == false
+                updateTag[0].value() == false
+            }
+        }
+    }
+
+    def 'call git without tag targetRepoName'() {
+        when:
+        context.git {
+            tag(null, 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            tag('', 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call git without tag name'() {
+        when:
+        context.git {
+            tag('origin', null)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            tag('origin', '')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call git without branch targetRepoName'() {
+        when:
+        context.git {
+            branch(null, 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            branch('', 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call git without branch name'() {
+        when:
+        context.git {
+            branch('origin', null)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            branch('origin', '')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }
