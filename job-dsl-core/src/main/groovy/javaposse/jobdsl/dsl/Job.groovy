@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
+import javaposse.jobdsl.dsl.helpers.axis.AxisContextHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
@@ -39,6 +40,7 @@ public class Job {
     @Delegate MavenHelper helperMaven
     @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
+    @Delegate AxisContextHelper helperAxis
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
@@ -57,6 +59,7 @@ public class Job {
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
+        helperAxis = new AxisContextHelper(withXmlActions, type)
     }
 
     /**
@@ -177,6 +180,7 @@ public class Job {
             case JobType.BuildFlow: return emptyBuildFlowTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
+            case JobType.MatrixJob: return emptyMatrixJobTemplate
         }
     }
 
@@ -272,5 +276,27 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
+'''
+
+    def emptyMatrixJobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<matrix-project>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <axes/>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+  <runSequentially>true</runSequentially>
+  </executionStrategy>
+</matrix-project>
 '''
 }

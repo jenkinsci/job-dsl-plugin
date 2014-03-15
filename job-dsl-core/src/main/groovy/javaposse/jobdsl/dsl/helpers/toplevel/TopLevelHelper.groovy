@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
+
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
@@ -304,5 +305,3 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 }
-
-
