@@ -223,6 +223,8 @@ public class StepHelperSpec extends Specification {
             mavenOpts('-Xmx512m')
             localRepository(LocalToWorkspace)
             mavenInstallation('Maven 3.0.5')
+            properties skipTests: true, other: 'some'
+            property 'evenAnother', 'One'
             configure {
                 it / settingsConfigId('foo-bar')
             }
@@ -233,13 +235,14 @@ public class StepHelperSpec extends Specification {
         context.stepNodes.size() == 1
         def mavenStep = context.stepNodes[0]
         mavenStep.name() == 'hudson.tasks.Maven'
-        mavenStep.children().size() == 6
+        mavenStep.children().size() == 7
         mavenStep.targets[0].value() == 'clean install'
         mavenStep.pom[0].value() == 'module-a/pom.xml'
         mavenStep.jvmOptions[0].value() == '-Xms256m -Xmx512m'
         mavenStep.usePrivateRepository[0].value() == 'true'
         mavenStep.mavenName[0].value() == 'Maven 3.0.5'
         mavenStep.settingsConfigId[0].value() == 'foo-bar'
+        mavenStep.properties[0].value() == 'skipTests=true\nother=some\nevenAnother=One'
     }
 
     def 'call maven method with minimal context'() {
@@ -632,6 +635,16 @@ public class StepHelperSpec extends Specification {
         def selectorNode6 = context.stepNodes[5].selector[0]
         selectorNode6.attribute('class') == 'hudson.plugins.copyartifact.ParameterizedBuildSelector'
         selectorNode6.parameterName[0].value() == 'BUILD_PARAM'
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            buildNumber('$SOME_PARAMTER')
+        }
+
+        then:
+        def selectorNode7 = context.stepNodes[6].selector[0]
+        selectorNode7.attribute('class') == 'hudson.plugins.copyartifact.SpecificBuildSelector'
+        selectorNode7.buildNumber[0].value() == '$SOME_PARAMTER'
     }
 
     def 'call phases with minimal arguments'() {
@@ -1112,8 +1125,10 @@ still-another-dsl.groovy'''
         thresholds.children().size() == 3
         Node unstableThreshold = thresholds.unstableThreshold[0]
         unstableThreshold.name[0].value() == 'UNSTABLE'
+        unstableThreshold.ordinal[0].value() == 1
         Node failureThreshold = thresholds.failureThreshold[0]
         failureThreshold.name[0].value() == 'FAILURE'
+        failureThreshold.ordinal[0].value() == 2
         Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
         buildStepFailureThreshold.name[0].value() == 'FAILURE'
 
@@ -1317,5 +1332,136 @@ still-another-dsl.groovy'''
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
         acmeScriptSourceNode.command.size() == 1
         acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
+    }
+
+    @Unroll
+    def 'Method #method should work within Category'(method, parameters) {
+        when:
+        use(ArbitraryCategory) {
+            context."$method"(parameters)
+        }
+        then:
+        notThrown(MissingMethodException)
+
+        where:
+        method               || parameters
+        'groovyCommand'       | ['println "Test"']
+        'systemGroovyCommand' | ['println "Test"']
+        'dsl'                 | 'job { name "test" }'
+    }
+
+    def 'environmentVariables are added'() {
+        when:
+        context.environmentVariables {
+            propertiesFile 'some.properties'
+            envs test: 'some', other: 'any'
+            env 'some', 'value'
+        }
+        Node envNode = context.stepNodes[0]
+
+        then:
+        envNode.name() == 'EnvInjectBuilder'
+        envNode.info[0].children().size() == 2
+        envNode.info[0].propertiesFilePath[0].value() == 'some.properties'
+        envNode.info[0].propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
+    }
+
+    def 'call remoteTrigger with minimal options'() {
+        when:
+        context.remoteTrigger('dev-ci', 'test')
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].with {
+            name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
+            children().size() == 14
+            token[0].value() == []
+            remoteJenkinsName[0].value() == 'dev-ci'
+            job[0].value() == 'test'
+            shouldNotFailBuild[0].value() == false
+            pollInterval[0].value() == 10
+            preventRemoteBuildQueue[0].value() == false
+            blockBuildUntilComplete[0].value() == false
+            parameters[0].value() == ''
+            parameterList[0].children().size() == 1
+            parameterList[0].string[0].value() == []
+            overrideAuth[0].value() == false
+            auth[0].children().size() == 1
+            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+                children().size() == 3
+                NONE[0].value() == 'none'
+                API__TOKEN[0].value() == 'apiToken'
+                CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
+            }
+            loadParamsFromFile[0].value() == false
+            parameterFile[0].value() == []
+            queryString[0].value() == []
+        }
+    }
+
+    def 'call remoteTrigger with parameters'() {
+        when:
+        context.remoteTrigger('dev-ci', 'test') {
+            parameter 'foo', '1'
+            parameters bar: '2', baz: '3'
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].with {
+            name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
+            children().size() == 14
+            token[0].value() == []
+            remoteJenkinsName[0].value() == 'dev-ci'
+            job[0].value() == 'test'
+            shouldNotFailBuild[0].value() == false
+            pollInterval[0].value() == 10
+            preventRemoteBuildQueue[0].value() == false
+            blockBuildUntilComplete[0].value() == false
+            parameters[0].value() == 'foo=1\nbar=2\nbaz=3'
+            parameterList[0].children().size() == 3
+            parameterList[0].string[0].value() == 'foo=1'
+            parameterList[0].string[1].value() == 'bar=2'
+            parameterList[0].string[2].value() == 'baz=3'
+            overrideAuth[0].value() == false
+            auth[0].children().size() == 1
+            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+                children().size() == 3
+                NONE[0].value() == 'none'
+                API__TOKEN[0].value() == 'apiToken'
+                CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
+            }
+            loadParamsFromFile[0].value() == false
+            parameterFile[0].value() == []
+            queryString[0].value() == []
+        }
+    }
+
+    def 'call remoteTrigger without jenkins'() {
+        when:
+        context.remoteTrigger(null, 'test')
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.remoteTrigger('', 'test')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call remoteTrigger without job'() {
+        when:
+        context.remoteTrigger('dev-ci', null)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.remoteTrigger('dev-ci', '')
+
+        then:
+        thrown(IllegalArgumentException)
     }
 }

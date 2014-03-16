@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
+
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
@@ -69,16 +70,10 @@ class TopLevelHelper extends AbstractHelper {
 
         execute {
             it / 'properties' / 'EnvInjectJobProperty' {
-                info {
-                    propertiesContent(envContext.props.join('\n'))
-                    if (envContext.groovyScript) {
-                        groovyScriptContent(envContext.groovyScript)
-                    }
-                    loadFilesFromMaster(false)
-                }
+                envContext.addInfoToBuilder(delegate)
                 on(true)
-                keepJenkinsSystemVariables(true)
-                keepBuildVariables(true)
+                keepJenkinsSystemVariables(envContext.keepSystemVariables)
+                keepBuildVariables(envContext.keepBuildVariables)
                 contributors()
             }
         }
@@ -298,6 +293,15 @@ class TopLevelHelper extends AbstractHelper {
             it / node
         }
     }
+
+    /**
+     * Configures the 'Execute concurrent builds if necessary' flag
+     *
+     * <concurrentBuild>true</concurrentBuild>
+     */
+    def concurrentBuild(boolean allowConcurrentBuild = true) {
+        execute {
+            it / concurrentBuild(allowConcurrentBuild ? 'true' : 'false')
+        }
+    }
 }
-
-

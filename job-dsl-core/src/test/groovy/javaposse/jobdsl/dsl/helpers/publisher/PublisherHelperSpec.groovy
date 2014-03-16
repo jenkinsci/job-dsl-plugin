@@ -201,9 +201,41 @@ public class PublisherHelperSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
-        jacocoNode.minimumInstructionCoverage[0].value() == "0"             
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.changeBuildStatus[0] == null
     }
-   
+
+    def 'call jacoco code coverage with closure, set changeBuildStatus'(change) {
+        when:
+
+        context.jacocoCodeCoverage {
+            changeBuildStatus(change)
+        }
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.changeBuildStatus[0].value() == change ? 'true' : 'false'
+
+        where:
+        change << [true, false]
+    }
+
+    def 'call jacoco code coverage with closure, changeBuildStatus with no args defaults to true'() {
+        when:
+
+        context.jacocoCodeCoverage {
+            changeBuildStatus()
+        }
+
+        then:
+        Node jacocoNode = context.publisherNodes[0]
+        jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
+        jacocoNode.execPattern[0].value() == '**/target/**.exec'
+        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.changeBuildStatus[0].value() == 'true'
+    }
+
     def 'call jacoco code coverage with all args'() {
         when:
         context.jacocoCodeCoverage {
@@ -224,6 +256,7 @@ public class PublisherHelperSpec extends Specification {
             maximumLineCoverage '10' 
             maximumMethodCoverage '11' 
             maximumClassCoverage '12'
+            changeBuildStatus true
         }
 
         then:
@@ -246,6 +279,7 @@ public class PublisherHelperSpec extends Specification {
         jacocoNode.maximumLineCoverage[0].value() == "10"
         jacocoNode.maximumMethodCoverage[0].value() == "11"
         jacocoNode.maximumClassCoverage[0].value() == "12"
+        jacocoNode.changeBuildStatus[0].value() == 'true'
     }
 
     def 'calling minimal html publisher'() {
@@ -522,7 +556,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'SUCCESS'
-        publisherNode.threshold[0].ordinal[0].value() == '0'
+        publisherNode.threshold[0].ordinal[0].value() == 0
         publisherNode.threshold[0].color[0].value() == 'BLUE'
     }
 
@@ -535,7 +569,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.name() == 'hudson.tasks.BuildTrigger'
         publisherNode.childProjects[0].value() == 'THE-JOB'
         publisherNode.threshold[0].name[0].value() == 'FAILURE'
-        publisherNode.threshold[0].ordinal[0].value() == '2'
+        publisherNode.threshold[0].ordinal[0].value() == 2
         publisherNode.threshold[0].color[0].value() == 'RED'
     }
 
@@ -585,6 +619,7 @@ public class PublisherHelperSpec extends Specification {
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
         first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+        first.block.size() == 0
 
         def boolParams = first.configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
         boolParams.children().size() == 3
@@ -1496,5 +1531,184 @@ public class PublisherHelperSpec extends Specification {
         node.outputPath[0].value() == "/path/to/foo"
         node.onlyCritical[0].value() == false
         node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
+    }
+
+    def 'call buildPipelineTrigger'() {
+        when:
+        context.buildPipelineTrigger('next')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+        context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
+    }
+
+    def 'call buildPipelineTrigger with null argument'() {
+        when:
+        context.buildPipelineTrigger(null)
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+        context.publisherNodes[0].downstreamProjectNames[0].value() == ''
+    }
+
+    def 'call github commit notifier methods'() {
+        when:
+        context.githubCommitNotifier()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        def githubCommitNotifier = context.publisherNodes[0]
+        githubCommitNotifier.name() == 'com.cloudbees.jenkins.GitHubCommitNotifier'
+    }
+
+    def 'call git with minimal options'() {
+        when:
+        context.git {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.git.GitPublisher'
+        context.publisherNodes[0].configVersion[0].value() == 2
+        context.publisherNodes[0].pushMerge[0].value() == false
+        context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
+    }
+
+    def 'call git with all options'() {
+        when:
+        context.git {
+            pushOnlyIfSuccess()
+            pushMerge()
+            tag('origin', 'test') {
+                message('test tag')
+                create()
+                update()
+            }
+            branch('origin', 'master')
+        }
+
+        then:
+        context.publisherNodes.size() == 1        
+        context.publisherNodes[0].with {
+            name() == 'hudson.plugins.git.GitPublisher'
+            configVersion[0].value() == 2
+            pushMerge[0].value() == true
+            pushOnlyIfSuccess[0].value() == true
+            tagsToPush.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+                targetRepoName[0].value() == 'origin'
+                tagName[0].value() == 'test'
+                tagMessage[0].value() == 'test tag'
+                createTag[0].value() == true
+                updateTag[0].value() == true
+            }
+            branchesToPush.size() == 1
+            branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'.size() == 1
+            branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'[0].with {
+                targetRepoName[0].value() == 'origin'
+                branchName[0].value() == 'master'
+            }
+        }
+    }
+
+    def 'call git with minimal tag options'() {
+        when:
+        context.git {
+            tag('origin', 'test')
+        }
+
+        then:
+        context.publisherNodes.size() == 1        
+        context.publisherNodes[0].with {
+            name() == 'hudson.plugins.git.GitPublisher'
+            configVersion[0].value() == 2
+            pushMerge[0].value() == false
+            pushOnlyIfSuccess[0].value() == false
+            tagsToPush.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
+            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+                targetRepoName[0].value() == 'origin'
+                tagName[0].value() == 'test'
+                tagMessage[0].value() == ''
+                createTag[0].value() == false
+                updateTag[0].value() == false
+            }
+        }
+    }
+
+    def 'call git without tag targetRepoName'() {
+        when:
+        context.git {
+            tag(null, 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            tag('', 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call git without tag name'() {
+        when:
+        context.git {
+            tag('origin', null)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            tag('origin', '')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call git without branch targetRepoName'() {
+        when:
+        context.git {
+            branch(null, 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            branch('', 'test')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call git without branch name'() {
+        when:
+        context.git {
+            branch('origin', null)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.git {
+            branch('origin', '')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 }

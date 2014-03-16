@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
+import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 
 class AbstractStepContext implements Context {
@@ -135,7 +136,7 @@ class AbstractStepContext implements Context {
 
     }
 
-    private void buildDslNode(context) {
+    protected void buildDslNode(context) {
         def nodeBuilder = new NodeBuilder()
         def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
             targets context.targets
@@ -266,7 +267,7 @@ class AbstractStepContext implements Context {
         groovy(fileName, false, groovyName, groovyClosure)
     }
 
-    private def groovyScriptSource(String commandOrFileName, boolean isCommand) {
+    protected def groovyScriptSource(String commandOrFileName, boolean isCommand) {
         def nodeBuilder = new NodeBuilder()
         nodeBuilder.scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
             if (isCommand) {
@@ -277,7 +278,7 @@ class AbstractStepContext implements Context {
         }
     }
 
-    private def groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
+    protected def groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
         def groovyContext = new GroovyContext()
         AbstractContextHelper.executeInContext(groovyClosure, groovyContext)
 
@@ -320,7 +321,7 @@ class AbstractStepContext implements Context {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
 
-    private def systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
+    protected def systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
         def systemGroovyContext = new SystemGroovyContext()
         AbstractContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
@@ -348,6 +349,9 @@ class AbstractStepContext implements Context {
 
         Node mavenNode = new NodeBuilder().'hudson.tasks.Maven' {
             targets mavenContext.goals.join(' ')
+            if (mavenContext.properties) {
+                properties(mavenContext.properties.collect { key, value -> "${key}=${value}" }.join('\n'))
+            }
             mavenName mavenContext.mavenInstallation
             jvmOptions mavenContext.mavenOpts.join(' ')
             if (mavenContext.rootPOM) {
@@ -481,7 +485,7 @@ class AbstractStepContext implements Context {
                     id copyArtifactContext.permalinkName
                 }
                 if (copyArtifactContext.selectedSelector == 'SpecificBuild') {
-                    buildNumber Integer.toString(copyArtifactContext.buildNumber)
+                    buildNumber copyArtifactContext.buildNumber
                 }
                 if (copyArtifactContext.selectedSelector == 'ParameterizedBuild') {
                     parameterName copyArtifactContext.parameterName
@@ -626,14 +630,105 @@ class AbstractStepContext implements Context {
      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@0.10"/>
      </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
      */
-    def conditionalSteps(Closure conditonalStepsClosure) {
+    def conditionalSteps(Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext()
-        AbstractContextHelper.executeInContext(conditonalStepsClosure, conditionalStepsContext)
+        AbstractContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
         if (conditionalStepsContext.stepNodes.size() > 1) {
             stepNodes << conditionalStepsContext.createMultiStepNode()
         } else {
             stepNodes << conditionalStepsContext.createSingleStepNode()
+        }
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * <EnvInjectBuilder>
+     *   <info>
+     *     <propertiesFilePath>some.properties</propertiesFilePath>
+     *     <propertiesContent>REV=15</propertiesContent>
+     *   </info>
+     * </EnvInjectBuilder>
+     * }
+     * </pre>
+     */
+    def environmentVariables(Closure envClosure) {
+        StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
+        AbstractContextHelper.executeInContext(envClosure, envContext)
+
+        def envNode = new NodeBuilder().'EnvInjectBuilder' {
+            envContext.addInfoToBuilder(delegate)
+        }
+
+        stepNodes << envNode
+    }
+
+    /**
+     * <org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
+     *     <token/>
+     *     <remoteJenkinsName>ci.acme.org</remoteJenkinsName>
+     *     <job>CM7.5-SwingEditor-UITests-ALL</job>
+     *     <shouldNotFailBuild>false</shouldNotFailBuild>
+     *     <pollInterval>10</pollInterval>
+     *     <preventRemoteBuildQueue>false</preventRemoteBuildQueue>
+     *     <blockBuildUntilComplete>false</blockBuildUntilComplete>
+     *     <parameters>BRANCH_OR_TAG=master-7.5 CMS_VERSION=$PIPELINE_VERSION</parameters>
+     *     <parameterList>
+     *         <string>BRANCH_OR_TAG=master-7.5</string>
+     *         <string>CMS_VERSION=$PIPELINE_VERSION</string>
+     *     </parameterList>
+     *     <overrideAuth>false</overrideAuth>
+     *     <auth>
+     *         <org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth>
+     *             <NONE>none</NONE>
+     *             <API__TOKEN>apiToken</API__TOKEN>
+     *             <CREDENTIALS__PLUGIN>credentialsPlugin</CREDENTIALS__PLUGIN>
+     *         </org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth>
+     *     </auth>
+     *     <loadParamsFromFile>false</loadParamsFromFile>
+     *     <parameterFile/>
+     *     <queryString/>
+     * </org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
+     */
+    def remoteTrigger(String remoteJenkins, String jobName, Closure closure = null) {
+        Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), "remoteJenkins must be specified")
+        Preconditions.checkArgument(!isNullOrEmpty(jobName), "jobName must be specified")
+
+        ParameterizedRemoteTriggerContext context = new ParameterizedRemoteTriggerContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        List<String> jobParameters = context.parameters.collect { String key, String value -> "$key=$value" }
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration' {
+            token()
+            remoteJenkinsName(remoteJenkins)
+            job(jobName)
+            shouldNotFailBuild(false)
+            pollInterval(10)
+            preventRemoteBuildQueue(false)
+            blockBuildUntilComplete(false)
+            parameters(jobParameters.join('\n'))
+            parameterList {
+                if (jobParameters.empty) {
+                    string()
+                } else {
+                    jobParameters.each { String value ->
+                        string(value)
+                    }
+                }
+            }
+            overrideAuth(false)
+            auth {
+                'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth' {
+                    NONE('none')
+                    API__TOKEN('apiToken')
+                    CREDENTIALS__PLUGIN('credentialsPlugin')
+                }
+            }
+            loadParamsFromFile(false)
+            parameterFile()
+            queryString()
         }
     }
 }

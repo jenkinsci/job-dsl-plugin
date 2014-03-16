@@ -227,6 +227,7 @@ class PublisherContext implements Context {
      <maximumLineCoverage>0</maximumLineCoverage>
      <maximumMethodCoverage>0</maximumMethodCoverage>
      <maximumClassCoverage>0</maximumClassCoverage>
+     <changeBuildStatus>false</changeBuildStatus>
      </hudson.plugins.jacoco.JacocoPublisher>
      **/
     def jacocoCodeCoverage(Closure jacocoClosure = null) {
@@ -254,6 +255,9 @@ class PublisherContext implements Context {
             maximumLineCoverage jacocoContext.maximumLineCoverage
             maximumMethodCoverage jacocoContext.maximumMethodCoverage
             maximumClassCoverage jacocoContext.maximumClassCoverage
+            if (jacocoContext.changeBuildStatus != null) {
+                changeBuildStatus Boolean.toString(jacocoContext.changeBuildStatus)
+            }
         }
 
         publisherNodes << jacocoNode
@@ -930,5 +934,69 @@ class PublisherContext implements Context {
         }
 
         publisherNodes << robotNode
+    }
+
+    /**
+     * Configures a Build Pipeline Trigger
+     *
+     * <publishers>
+     *     <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+     *         <downstreamProjectNames>acme-project</downstreamProjectNames>
+     *     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+     * </publishers>
+     */
+    def buildPipelineTrigger(String downstreamProjectNames) {
+        def nodeBuilder = NodeBuilder.newInstance()
+        publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
+            delegate.downstreamProjectNames(downstreamProjectNames ?: '')
+        }
+    }
+
+    /**
+     * Create commit status notifications on the commits based on the outcome of the build.
+     *
+     * <publishers>
+     *     <com.cloudbees.jenkins.GitHubCommitNotifier/>
+     * </publishers>
+     */
+    def githubCommitNotifier() {
+        publisherNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubCommitNotifier'()
+    }
+
+    /**
+     * <publishers>
+     *     <hudson.plugins.git.GitPublisher>
+     *         <configVersion>2</configVersion>
+     *         <pushMerge>false</pushMerge>
+     *         <pushOnlyIfSuccess>true</pushOnlyIfSuccess>
+     *         <tagsToPush>
+     *             <hudson.plugins.git.GitPublisher_-TagToPush>
+     *                 <targetRepoName>origin</targetRepoName>
+     *                 <tagName>foo-$PIPELINE_VERSION</tagName>
+     *                 <tagMessage>Release $PIPELINE_VERSION</tagMessage> 
+     *                 <createTag>true</createTag>
+     *                 <updateTag>false</updateTag>
+     *             </hudson.plugins.git.GitPublisher_-TagToPush>
+     *         </tagsToPush>
+     *         <branchesToPush>
+     *             <hudson.plugins.git.GitPublisher_-BranchToPush>
+     *                 <targetRepoName>origin</targetRepoName>
+     *                 <branchName>master</branchName>
+     *             </hudson.plugins.git.GitPublisher_-BranchToPush>
+     *         </branchesToPush>
+     *     </hudson.plugins.git.GitPublisher>
+     * </publishers>
+     */
+    def git(Closure gitPublisherClosure) {
+        GitPublisherContext context = new GitPublisherContext()
+        AbstractContextHelper.executeInContext(gitPublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher' {
+            configVersion(2)
+            pushMerge(context.pushMerge)
+            pushOnlyIfSuccess(context.pushOnlyIfSuccess)
+            tagsToPush(context.tags)
+            branchesToPush(context.branches)
+        }
     }
 }

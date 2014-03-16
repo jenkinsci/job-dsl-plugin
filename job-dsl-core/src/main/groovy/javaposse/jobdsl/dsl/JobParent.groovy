@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
+import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 
 import java.util.logging.Level
@@ -13,6 +14,7 @@ public abstract class JobParent extends Script {
     private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
             (null): ListView.class,
             (ViewType.ListView): ListView.class,
+            (ViewType.BuildPipelineView): BuildPipelineView.class,
     ]
 
     JobManagement jm;

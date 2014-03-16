@@ -3,7 +3,8 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
-import javaposse.jobdsl.dsl.helpers.MatrixHelper
+import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
+import javaposse.jobdsl.dsl.helpers.axis.AxisContextHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
@@ -37,8 +38,9 @@ public class Job {
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
+    @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
-    @Delegate MatrixHelper helperMatrix
+    @Delegate AxisContextHelper helperAxis
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
@@ -55,8 +57,9 @@ public class Job {
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)
         helperMaven = new MavenHelper(withXmlActions, type)
+        helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
-        helperMatrix = new MatrixHelper(withXmlActions, type, jobManagement)
+        helperAxis = new AxisContextHelper(withXmlActions, type)
     }
 
     /**
@@ -174,9 +177,10 @@ public class Job {
         // TODO Move this logic to the JobType Enum
         switch(type) {
             case JobType.Freeform: return emptyTemplate
+            case JobType.BuildFlow: return emptyBuildFlowTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
-            case JobType.Matrixjob: return emptyMatrixjobTemplate
+            case JobType.MatrixJob: return emptyMatrixJobTemplate
         }
     }
 
@@ -205,6 +209,27 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </project>
+'''
+
+    def emptyBuildFlowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.plugins.flow.BuildFlow>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <icon/>
+  <dsl></dsl>
+</com.cloudbees.plugins.flow.BuildFlow>
 '''
 
     def emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
@@ -253,7 +278,7 @@ public class Job {
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
 '''
 
-    def emptyMatrixjobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    def emptyMatrixJobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <matrix-project>
   <description/>
   <keepDependencies>false</keepDependencies>
@@ -270,7 +295,7 @@ public class Job {
   <publishers/>
   <buildWrappers/>
   <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-  <runSequentially>false</runSequentially>
+  <runSequentially>true</runSequentially>
   </executionStrategy>
 </matrix-project>
 '''
