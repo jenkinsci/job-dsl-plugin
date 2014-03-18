@@ -5,7 +5,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Util;
@@ -15,7 +14,6 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.Builder;
-import hudson.util.XStream2;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
@@ -77,7 +75,7 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
-    private RelativeNameContext relativeNameContext;
+    private final RelativeNameContext relativeNameContext;
 
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction, RelativeNameContext relativeNameContext) {
@@ -130,7 +128,8 @@ public class ExecuteDslScripts extends Builder {
     }
 
     public RelativeNameContext getRelativeNameContext() {
-        return relativeNameContext;
+        // Provide backwards compatible behaviour for existing seed jobs.
+        return relativeNameContext != null ? relativeNameContext : RelativeNameContext.JENKINS_ROOT;
     }
 
     @Override
@@ -157,7 +156,7 @@ public class ExecuteDslScripts extends Builder {
         env.putAll(build.getBuildVariables());
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build);
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, relativeNameContext);
 
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
         Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
@@ -190,7 +189,7 @@ public class ExecuteDslScripts extends Builder {
         updateGeneratedViews(build, listener, freshViews);
 
         // Save onto Builder, which belongs to a Project.
-        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs);
+        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, relativeNameContext);
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
         GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews);
@@ -242,7 +241,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = (AbstractProject<?,?>) Jenkins.getInstance().getItem(templateName, build.getProject().getParent());
+            AbstractProject templateProject = (AbstractProject<?,?>) relativeNameContext.getItem(templateName, build.getParent());
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -287,7 +286,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItem(removedJob.getJobName(), build.getProject().getParent());
+            AbstractProject removedProject = (AbstractProject) relativeNameContext.getItem(removedJob.getJobName(), build.getParent());
             if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
@@ -346,20 +345,6 @@ public class ExecuteDslScripts extends Builder {
         @Override
         public boolean apply(SeedReference input) {
             return seedJobName.equals(input.seedJobName);
-        }
-    }
-
-    public static class ConverterImpl extends XStream2.PassthruConverter<ExecuteDslScripts> {
-        public ConverterImpl(XStream2 xstream) {
-            super(xstream);
-        }
-
-        @Override
-        protected void callback(ExecuteDslScripts builder, UnmarshallingContext context) {
-            // Provide backwards compatible behaviour for existing seed jobs.
-            if (builder.relativeNameContext == null) {
-                builder.relativeNameContext = RelativeNameContext.JENKINS_ROOT;
-            }
         }
     }
 }

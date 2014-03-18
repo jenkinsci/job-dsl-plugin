@@ -4,11 +4,11 @@ import com.google.common.collect.Sets;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.RunAction;
 import hudson.util.XStream2;
 import javaposse.jobdsl.dsl.GeneratedJob;
-import jenkins.model.Jenkins;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,9 +17,11 @@ import java.util.Set;
 public class GeneratedJobsBuildAction implements RunAction {
     private transient AbstractBuild<?,?> owner;
     public final Set<GeneratedJob> modifiedJobs;
+    private final RelativeNameContext relativeNameContext;
 
-    public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs) {
+    public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs, RelativeNameContext relativeNameContext) {
         this.modifiedJobs = Sets.newLinkedHashSet(modifiedJobs);
+        this.relativeNameContext = relativeNameContext;
     }
 
     /**
@@ -37,6 +39,11 @@ public class GeneratedJobsBuildAction implements RunAction {
         return "generatedJobs";
     }
 
+    private RelativeNameContext getRelativeNameContext() {
+        // Provide backwards compatible behaviour for existing seed jobs.
+        return relativeNameContext != null ? relativeNameContext : RelativeNameContext.JENKINS_ROOT;
+    }
+
     public Collection<GeneratedJob> getModifiedJobs() {
         return modifiedJobs;
     }
@@ -45,9 +52,9 @@ public class GeneratedJobsBuildAction implements RunAction {
         Set<AbstractProject> modifiedProjects = Sets.newLinkedHashSet();
         if (owner != null && modifiedJobs != null) {
             for (GeneratedJob modifiedJob : modifiedJobs) {
-                AbstractProject modifiedProject = Jenkins.getInstance().getItem(modifiedJob.getJobName(), owner.getProject(), AbstractProject.class);
-                if (modifiedProject != null) {
-                    modifiedProjects.add(modifiedProject);
+                Item modifiedProject = getRelativeNameContext().getItem(modifiedJob.getJobName(), owner.getProject());
+                if (modifiedProject instanceof AbstractProject) {
+                    modifiedProjects.add((AbstractProject) modifiedProject);
                 }
             }
         }

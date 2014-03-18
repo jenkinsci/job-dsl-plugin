@@ -47,18 +47,21 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     EnvVars envVars;
     Set<GeneratedJob> modifiedJobs;
     AbstractBuild<?, ?> build;
+    private final RelativeNameContext relativeNameContext;
 
     JenkinsJobManagement() {
         super();
         envVars = new EnvVars();
         modifiedJobs = Sets.newLinkedHashSet();
+        relativeNameContext = RelativeNameContext.SEED_JOB;
     }
 
-    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build) {
+    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build, RelativeNameContext relativeNameContext) {
         super(outputLogger);
         this.envVars = envVars;
         this.modifiedJobs = Sets.newLinkedHashSet();
         this.build = build;
+        this.relativeNameContext = relativeNameContext;
     }
 
     @Override
@@ -93,7 +96,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) build.getProject().getParent().getItem(fullJobName);
+        AbstractProject<?,?> project = (AbstractProject<?,?>) relativeNameContext.getItem(fullJobName, build.getParent());
         String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
@@ -151,7 +154,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItem(jobName, build.getProject().getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) relativeNameContext.getItem(jobName, build.getParent());
 
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
@@ -192,7 +195,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItem(jobName, build.getProject().getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) relativeNameContext.getItem(jobName, build.getParent());
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
@@ -266,9 +269,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         String contextName = getContextNameFromFullName(fullName);
         Object context;
         if (contextName.isEmpty()) {
-            context = build.getProject().getParent();
+            context = relativeNameContext.getBase(build.getProject());
         } else {
-            context = build.getProject().getParent().getItem(contextName);
+            context = relativeNameContext.getItem(contextName, build.getProject());
         }
         if (context != null && context instanceof ModifiableTopLevelItemGroup) {
             return (ModifiableTopLevelItemGroup) context;
@@ -286,6 +289,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         int i = fullName.lastIndexOf('/');
         return i > 0 ? fullName.substring(i+1) : fullName;
     }
+
+    private AbstractProject<?,?> getGeneratedJob(String fullJobName) {
+        return (AbstractProject<?,?>) build.getProject().getParent().getItem(fullJobName);
+    }
+
 
 //    @SuppressWarnings("rawtypes")
 //    public Collection<AbstractProject> getJobsByName(final Set<String> names) {
