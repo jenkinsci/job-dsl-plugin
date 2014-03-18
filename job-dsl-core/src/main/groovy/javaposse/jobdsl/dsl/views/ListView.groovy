@@ -51,6 +51,17 @@ class ListView extends View {
         }
     }
 
+    void jobFilters(Closure jobFiltersClosure) {
+        JobFiltersContext context = new JobFiltersContext()
+        executeInContext(jobFiltersClosure, context)
+
+        execute {
+            for (Node filterNode : context.filterNodes) {
+                it / 'jobFilters' << filterNode
+            }
+        }
+    }
+
     @Override
     protected String getTemplate() {
         return '''<?xml version='1.0' encoding='UTF-8'?>
