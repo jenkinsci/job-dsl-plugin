@@ -47,7 +47,6 @@ public class GeneratedJobsAction implements Action {
      * Search for all jobs which were created by the child builds
      */
     public Set<GeneratedJob> findAllGeneratedJobs() {
-
         AbstractBuild<?, ?> b;
         Set<GeneratedJob> allGeneratedJobs = Sets.newLinkedHashSet();
         for(AbstractBuild build: project.getBuilds()) {
@@ -57,5 +56,19 @@ public class GeneratedJobsAction implements Action {
             }
         }
         return allGeneratedJobs;
+    }
+
+    /**
+     * Search for existing jobs which were created by the child builds.
+     */
+    public Set<AbstractProject> findAllGeneratedProjects() {
+        Set<AbstractProject> allGeneratedProjects = Sets.newLinkedHashSet();
+        for (AbstractBuild build : project.getBuilds()) {
+            GeneratedJobsBuildAction ret = build.getAction(GeneratedJobsBuildAction.class);
+            if (ret != null && ret.getModifiedJobs() != null) {
+                allGeneratedProjects.addAll(ret.getModifiedProjects());
+            }
+        }
+        return allGeneratedProjects;
     }
 }
