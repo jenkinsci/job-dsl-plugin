@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Util;
@@ -14,6 +15,7 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.Builder;
+import hudson.util.XStream2;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
@@ -75,14 +77,17 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
+    private RelativeNameContext relativeNameContext;
+
     @DataBoundConstructor
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction, RelativeNameContext relativeNameContext) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation==null?null:scriptLocation.targets; // May be null;
         this.scriptText = scriptLocation==null?null:scriptLocation.scriptText; // May be null
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
+        this.relativeNameContext = relativeNameContext;
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -91,6 +96,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
+        this.relativeNameContext = RelativeNameContext.SEED_JOB;
     }
 
     ExecuteDslScripts() { /// Where is the empty constructor called?
@@ -100,6 +106,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
+        this.relativeNameContext = RelativeNameContext.SEED_JOB;
     }
 
     public String getTargets() {
@@ -120,6 +127,10 @@ public class ExecuteDslScripts extends Builder {
 
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
+    }
+
+    public RelativeNameContext getRelativeNameContext() {
+        return relativeNameContext;
     }
 
     @Override
@@ -335,6 +346,20 @@ public class ExecuteDslScripts extends Builder {
         @Override
         public boolean apply(SeedReference input) {
             return seedJobName.equals(input.seedJobName);
+        }
+    }
+
+    public static class ConverterImpl extends XStream2.PassthruConverter<ExecuteDslScripts> {
+        public ConverterImpl(XStream2 xstream) {
+            super(xstream);
+        }
+
+        @Override
+        protected void callback(ExecuteDslScripts builder, UnmarshallingContext context) {
+            // Provide backwards compatible behaviour for existing seed jobs.
+            if (builder.relativeNameContext == null) {
+                builder.relativeNameContext = RelativeNameContext.JENKINS_ROOT;
+            }
         }
     }
 }

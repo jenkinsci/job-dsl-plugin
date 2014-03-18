@@ -2,11 +2,16 @@ package javaposse.jobdsl.plugin;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import hudson.Extension;
+import hudson.model.AbstractBuild;
 import hudson.model.Descriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
+import hudson.util.XStream2;
 import jenkins.YesNoMaybe;
+
+import java.util.Iterator;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public class DescriptorImpl extends Descriptor<Builder> {
@@ -49,6 +54,14 @@ public class DescriptorImpl extends Descriptor<Builder> {
         ListBoxModel items = new ListBoxModel();
         for (RemovedJobAction action : RemovedJobAction.values()) {
             items.add(action.getDisplayName(), action.name());
+        }
+        return items;
+    }
+
+    public ListBoxModel doFillRelativeNameContextItems() {
+        ListBoxModel items = new ListBoxModel();
+        for (RelativeNameContext item : RelativeNameContext.values()) {
+            items.add(item.getDisplayName(), item.name());
         }
         return items;
     }

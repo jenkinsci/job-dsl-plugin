@@ -20,4 +20,11 @@
         description='What to do when a previously generated job is not referenced anymore?'>
         <f:select/>
     </f:entry>
+
+    <f:advanced>
+        <f:entry title="Context to use for relative names:" field="relativeNameContext"
+                 description='When a seed job is in a folder, should relative names be interpreted relative to the seed job or relative to the Jenkins root?'>
+            <f:select default="SEED_JOB"/>
+        </f:entry>
+    </f:advanced>
 </j:jelly>
