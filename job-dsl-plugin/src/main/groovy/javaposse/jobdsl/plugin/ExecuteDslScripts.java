@@ -75,17 +75,17 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
-    private final RelativeNameContext relativeNameContext;
+    private final JobNamingStrategy jobNamingStrategy;
 
     @DataBoundConstructor
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction, RelativeNameContext relativeNameContext) {
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction, JobNamingStrategy jobNamingStrategy) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation==null?null:scriptLocation.targets; // May be null;
         this.scriptText = scriptLocation==null?null:scriptLocation.scriptText; // May be null
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
-        this.relativeNameContext = relativeNameContext;
+        this.jobNamingStrategy = jobNamingStrategy;
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -94,7 +94,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
-        this.relativeNameContext = RelativeNameContext.SEED_JOB;
+        this.jobNamingStrategy = JobNamingStrategy.SEED_JOB;
     }
 
     ExecuteDslScripts() { /// Where is the empty constructor called?
@@ -104,7 +104,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
-        this.relativeNameContext = RelativeNameContext.SEED_JOB;
+        this.jobNamingStrategy = JobNamingStrategy.SEED_JOB;
     }
 
     public String getTargets() {
@@ -127,9 +127,9 @@ public class ExecuteDslScripts extends Builder {
         return removedJobAction;
     }
 
-    public RelativeNameContext getRelativeNameContext() {
+    public JobNamingStrategy getJobNamingStrategy() {
         // Provide backwards compatible behaviour for existing seed jobs.
-        return relativeNameContext != null ? relativeNameContext : RelativeNameContext.JENKINS_ROOT;
+        return jobNamingStrategy != null ? jobNamingStrategy : JobNamingStrategy.JENKINS_ROOT;
     }
 
     @Override
@@ -156,7 +156,7 @@ public class ExecuteDslScripts extends Builder {
         env.putAll(build.getBuildVariables());
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, relativeNameContext);
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, jobNamingStrategy);
 
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
         Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
@@ -189,7 +189,7 @@ public class ExecuteDslScripts extends Builder {
         updateGeneratedViews(build, listener, freshViews);
 
         // Save onto Builder, which belongs to a Project.
-        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, relativeNameContext);
+        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, jobNamingStrategy);
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
         GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews);
@@ -241,7 +241,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = (AbstractProject<?,?>) relativeNameContext.getItem(templateName, build.getParent());
+            AbstractProject templateProject = (AbstractProject<?,?>) jobNamingStrategy.getItem(templateName, build.getParent());
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -286,7 +286,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) relativeNameContext.getItem(removedJob.getJobName(), build.getParent());
+            AbstractProject removedProject = (AbstractProject) jobNamingStrategy.getItem(removedJob.getJobName(), build.getParent());
             if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {

@@ -17,11 +17,11 @@ import java.util.Set;
 public class GeneratedJobsBuildAction implements RunAction {
     private transient AbstractBuild<?,?> owner;
     public final Set<GeneratedJob> modifiedJobs;
-    private final RelativeNameContext relativeNameContext;
+    private final JobNamingStrategy jobNamingStrategy;
 
-    public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs, RelativeNameContext relativeNameContext) {
+    public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs, JobNamingStrategy jobNamingStrategy) {
         this.modifiedJobs = Sets.newLinkedHashSet(modifiedJobs);
-        this.relativeNameContext = relativeNameContext;
+        this.jobNamingStrategy = jobNamingStrategy;
     }
 
     /**
@@ -39,9 +39,9 @@ public class GeneratedJobsBuildAction implements RunAction {
         return "generatedJobs";
     }
 
-    private RelativeNameContext getRelativeNameContext() {
+    private JobNamingStrategy getJobNamingStrategy() {
         // Provide backwards compatible behaviour for existing seed jobs.
-        return relativeNameContext != null ? relativeNameContext : RelativeNameContext.JENKINS_ROOT;
+        return jobNamingStrategy != null ? jobNamingStrategy : JobNamingStrategy.JENKINS_ROOT;
     }
 
     public Collection<GeneratedJob> getModifiedJobs() {
@@ -52,7 +52,7 @@ public class GeneratedJobsBuildAction implements RunAction {
         Set<AbstractProject> modifiedProjects = Sets.newLinkedHashSet();
         if (owner != null && modifiedJobs != null) {
             for (GeneratedJob modifiedJob : modifiedJobs) {
-                Item modifiedProject = getRelativeNameContext().getItem(modifiedJob.getJobName(), owner.getProject());
+                Item modifiedProject = getJobNamingStrategy().getItem(modifiedJob.getJobName(), owner.getProject());
                 if (modifiedProject instanceof AbstractProject) {
                     modifiedProjects.add((AbstractProject) modifiedProject);
                 }

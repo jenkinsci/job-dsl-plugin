@@ -5,7 +5,7 @@ import hudson.model.Item;
 import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
 
-public enum RelativeNameContext {
+public enum JobNamingStrategy {
     JENKINS_ROOT("Jenkins Root") {
         @Override
         public Item getItem(String pathName, AbstractProject<?,?> seedJob) {
@@ -31,7 +31,7 @@ public enum RelativeNameContext {
 
     String displayName;
 
-    RelativeNameContext(String displayName) {
+    JobNamingStrategy(String displayName) {
         this.displayName = displayName;
     }
 
