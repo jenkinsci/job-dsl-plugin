@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.step.StepEnvironmentVariableContext
 
 import static WrapperContext.Timeout.absolute
 
@@ -390,5 +389,34 @@ class WrapperContext implements Context {
         }
 
         wrapperNodes << releaseNode
+    }
+
+    /**
+     * <project>
+     *     <buildWrappers>
+     *         <hudson.plugins.ws__cleanup.PreBuildCleanup>
+     *             <patterns>
+     *                 <hudson.plugins.ws__cleanup.Pattern>
+     *                     <pattern>*.class</pattern>
+     *                     <type>INCLUDE</type>
+     *                 </hudson.plugins.ws__cleanup.Pattern>
+     *             </patterns>
+     *             <deleteDirs>false</deleteDirs>
+     *             <cleanupParameter/>
+     *             <externalDelete/>
+     *         </hudson.plugins.ws__cleanup.PreBuildCleanup>
+     *     </buildWrappers>
+     * </project>
+     */
+    def preBuildCleanup(Closure closure = null) {
+        PreBuildCleanupContext context = new PreBuildCleanupContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.ws__cleanup.PreBuildCleanup' {
+            patterns(context.patternNodes)
+            deleteDirs(context.deleteDirectories)
+            cleanupParameter(context.cleanupParameter ?: '')
+            deleteCommand(context.deleteCommand ?: '')
+        }
     }
 }
