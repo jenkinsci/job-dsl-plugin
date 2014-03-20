@@ -1711,4 +1711,164 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+
+    def 'flowdock with default notification settings'() {
+        when:
+        context.flowdock('some-madeup-token')
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].with {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'some-madeup-token'
+            chatNotification[0].value() == false
+            notificationTags[0].value() == ''
+            notifySuccess[0].value() == true
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            notifyMap[0].with {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == true
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == false
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with some overridden notification settings'() {
+        when:
+        context.flowdock('another-token') {
+            unstable()
+            success(false)
+            chat()
+        }
+
+        then:
+        context.publisherNodes[0].with {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == true
+            notificationTags[0].value() == ''
+            notifySuccess[0].value() == false
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            notifyMap[0].with {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == false
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == true
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with tags'() {
+        when:
+        context.flowdock('another-token') {
+            tags('tag1', 'tagTwo')
+        }
+
+        then:
+        context.publisherNodes[0].with {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == true
+            notificationTags[0].value() == 'tag1,tagTwo'
+            notifySuccess[0].value() == false
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            notifyMap[0].with {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == false
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == true
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with multiple tag calls'() {
+        when:
+        context.flowdock('another-token') {
+            tag('tag1')
+            tag('tagTwo')
+        }
+
+        then:
+        context.publisherNodes[0].with {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == true
+            notificationTags[0].value() == 'tag1,tagTwo'
+            notifySuccess[0].value() == false
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            notifyMap[0].with {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == false
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == true
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with empty tag'() {
+        when:
+        context.flowdock('token') {
+            tag('')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }
