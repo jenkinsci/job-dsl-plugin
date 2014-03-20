@@ -999,4 +999,88 @@ class PublisherContext implements Context {
             branchesToPush(context.branches)
         }
     }
+
+    /**
+     * <publishers>
+     *     <com.flowdock.jenkins.FlowdockNotifier>
+     *         <flowToken>hash</flowToken>
+     *         <notificationTags/>
+     *         <chatNotification>false</chatNotification>
+     *         <notifyMap>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>ABORTED</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>SUCCESS</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>FIXED</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>UNSTABLE</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>FAILURE</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>NOT_BUILT</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *         </notifyMap>
+     *         <notifySuccess>true</notifySuccess>
+     *         <notifyFailure>true</notifyFailure>
+     *         <notifyFixed>true</notifyFixed>
+     *         <notifyUnstable>false</notifyUnstable>
+     *         <notifyAborted>false</notifyAborted>
+     *         <notifyNotBuilt>false</notifyNotBuilt>
+     *     </com.flowdock.jenkins.FlowdockNotifier>
+     * </publishers>
+     */
+    def flowdock(String token, Closure flowdockPublisherClosure = null) {
+        FlowdockPublisherContext context = new FlowdockPublisherContext()
+        AbstractContextHelper.executeInContext(flowdockPublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'com.flowdock.jenkins.FlowdockNotifier' {
+            flowToken(token)
+            notificationTags(context.notificationTags.join(','))
+            chatNotification(context.chat)
+            notifyMap {
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('ABORTED')
+                    'boolean'(context.aborted)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('SUCCESS')
+                    'boolean'(context.success)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('FIXED')
+                    'boolean'(context.fixed)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('UNSTABLE')
+                    'boolean'(context.unstable)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('FAILURE')
+                    'boolean'(context.failure)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('NOT_BUILT')
+                    'boolean'(context.notBuilt)
+                }
+            }
+            notifySuccess(context.success)
+            notifyFailure(context.failure)
+            notifyFixed(context.fixed)
+            notifyUnstable(context.unstable)
+            notifyAborted(context.aborted)
+            notifyNotBuilt(context.notBuilt)
+        }
+    }
 }
