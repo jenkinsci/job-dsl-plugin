@@ -72,7 +72,7 @@ public class StepHelperSpec extends Specification {
     
     def 'call gradle methods with context'() {
         when:
-        context.gradle{
+        context.gradle {
             tasks 'tasks'
             switches 'switches'
             useWrapper  false

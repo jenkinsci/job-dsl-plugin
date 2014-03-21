@@ -42,7 +42,7 @@ class AbstractStepContext implements Context {
 
     def gradle(Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()
-        if(gradleClosure!=null){
+        if(gradleClosure!=null) {
             AbstractContextHelper.executeInContext(gradleClosure, gradleContext)
         }
         
@@ -54,13 +54,13 @@ class AbstractStepContext implements Context {
             rootBuildScriptDir gradleContext.rootBuildScriptDir
             buildFile gradleContext.buildFile
             useWrapper gradleContext.useWrapper.toString()
-            if(gradleContext.fromRootBuildScriptDir!=null){
+            if(gradleContext.fromRootBuildScriptDir != null) {
                 fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir.toString()
             }
-            if(gradleContext.makeExecutable!=null){
+            if(gradleContext.makeExecutable!=null) {
                 makeExecutable gradleContext.makeExecutable.toString()
             }
-            if(gradleContext.gradleName != null){
+            if(gradleContext.gradleName != null) {
                 gradleName gradleContext.gradleName
             }
         }
@@ -84,14 +84,14 @@ class AbstractStepContext implements Context {
      </hudson.plugins.gradle.Gradle>
      */
     def gradle(String tasksArg, String switchesArg=null, Boolean useWrapperArg=null, Closure configure=null) {
-        gradle{
-            if(tasksArg!=null){
+        gradle {
+            if(tasksArg!=null) {
                 tasks tasksArg
             }
-            if(switchesArg!=null){
+            if(switchesArg!=null) {
                 switches switchesArg
             }
-            if(useWrapperArg!=null){
+            if(useWrapperArg!=null) {
                 useWrapper useWrapperArg
             }
             delegate.configure(configure)
