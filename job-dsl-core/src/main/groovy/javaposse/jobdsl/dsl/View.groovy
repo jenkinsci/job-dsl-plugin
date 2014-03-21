@@ -10,6 +10,9 @@ public abstract class View {
 
     void name(String name) {
         this.name = name
+        execute {
+            it / methodMissing('name', name)
+        }
     }
 
     void description(String descriptionArg) {
