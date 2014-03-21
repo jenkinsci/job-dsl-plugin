@@ -419,4 +419,18 @@ class WrapperContext implements Context {
             deleteCommand(context.deleteCommand ?: '')
         }
     }
+
+    /**
+     * adds xvfb support
+     */
+    def xvfb(Closure closure = null)   {
+        XvfbContext context = new XvfbContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper' {
+            screen(context.screen)
+            installationName(context.installationName)
+            displayNameOffset(String.valueOf(context.displayNameOffset))
+        }
+    }
 }

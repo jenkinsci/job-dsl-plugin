@@ -495,4 +495,42 @@ class WrapperHelperSpec extends Specification {
             deleteCommand[0].value() == 'test'
         }
     }
+
+    def 'call xvfb()' () {
+        when:
+        helper.wrappers {
+            xvfb()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+        def xvfbWrapper=root.buildWrappers[0].children()[0]
+        xvfbWrapper.children().size() == 3
+        xvfbWrapper.screen[0].value() == '1024x768x24'
+        xvfbWrapper.installationName[0].value() == 'xvfb'
+        xvfbWrapper.displayNameOffset[0].value() == '100'
+    }
+
+    def 'call xvfb with context' () {
+        when:
+        helper.wrappers {
+            xvfb{
+                screen='screen'
+                installationName='installationName'
+                displayNameOffset=42
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+        def xvfbWrapper=root.buildWrappers[0].children()[0]
+        xvfbWrapper.children().size() == 3
+        xvfbWrapper.screen[0].value() == 'screen'
+        xvfbWrapper.installationName[0].value() == 'installationName'
+        xvfbWrapper.displayNameOffset[0].value() == '42'
+    }
 }
