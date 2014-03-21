@@ -28,6 +28,10 @@ If you want to make a change to the code on jenkinsci/job-dsl-plugin, here's the
 6. If things are all good, we'll ask you to update the documentation. Add an entry to the [Release Notes](https://github.com/jenkinsci/job-dsl-plugin/wiki#release-notes), update the [DSL Overview](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands#dsl-methods) and the [Job Reference](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference) pages if necessary. Make sure to add an example or two on the Job Reference page.
 7. If the documentation looks good, we'll merge the Pull Request.
 
+Try to focus. It's not required to add all options for a certain plugin to get the pull request merged. In fact, it may
+even delay the merge until someone finds time to review a huge change. Only implement the options you really need and
+leave room so that the remaining options can be added when needed.
+
 ## Our Basic Design Decisions / Conventions
 1. Use com.google.common.base.Preconditions for argument validation. E.g. Preconditions.checkArgument(name, "Channel name for irc channel is required!")
 1. We write tests using [Spock](http://code.google.com/p/spock/), so if (for example) you add a new Helper (e.g. ScmHelper), then add a corresponding ScmHelperSpec in the tests directory tree
