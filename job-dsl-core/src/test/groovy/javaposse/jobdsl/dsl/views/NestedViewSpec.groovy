@@ -13,7 +13,7 @@ class NestedViewSpec extends Specification {
 
     def 'check listview nesting'() {
         when:
-        view.view{
+        view.listView('n'){
         }
 
         then:
@@ -22,18 +22,16 @@ class NestedViewSpec extends Specification {
     }
     def 'check nesting name'() {
         when:
-        view.view{ 
-               name('asd123')
+        view.listView('asd123'){ 
         }
 
         then:
         String root = view.getXml()
         root.toString().contains ('asd123')
     }
-    def 'check nested has job'() {
+    def 'check nested view works'() {
         when:
-        view.view{ 
-               name('asd123')
+        view.listView('n'){
                jobs {
                    name('theJobName')
                }
@@ -43,18 +41,14 @@ class NestedViewSpec extends Specification {
         String root = view.getXml()
         root.toString().contains ('theJobName')
     }
-    def 'check nestedviewOwner'() {
+    def 'check nestedview has owner filled'() {
         when:
-        view.view{ 
+        view.listView('n'){ 
                name('asd123')
-               jobs {
-                   name('theJobName')
-               }
         }
 
         then:
-        String root = view.getXml()
-        root.toString().contains ("owner")
-        root.toString().contains ("class='hudson")
+        Node root = view.getNode()
+        root.views[0].value()[0].owner[0].@class == ("hudson.plugins.nested_view.NestedView")
     }
 }

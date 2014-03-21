@@ -23,16 +23,20 @@ class NestedView extends View {
         }
     }
 
-    private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
-        (null): ListView.class,
-        (ViewType.ListView): ListView.class,
-        (ViewType.BuildPipelineView): BuildPipelineView.class,
-        (ViewType.NestedView): NestedView.class,
-    ]
+    public View listView(String name,Closure closure){
+        addView(new ListView(),name,closure)
+    }
 
-    public View view(Map<String, Object> arguments=[:], Closure closure) {
-        Class<? extends View> viewClass = VIEW_TYPE_MAPPING[arguments['type'] as ViewType]
-        View view = viewClass.newInstance()
+    public View nestedView(String name,Closure closure){
+        addView(new NestedView(),name,closure)
+    }
+
+    public View pipelineView(String name,Closure closure){
+        addView(new BuildPipelineView(),name,closure)
+    }
+
+    private View addView(View view,String name,Closure closure) {
+        view.name(name)
         view.with(closure)
         execute{
             def n=view.getNode()
