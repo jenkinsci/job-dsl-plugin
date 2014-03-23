@@ -1307,13 +1307,13 @@ still-another-dsl.groovy'''
 
         step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
 
-        step.conditionalBuilders[0].children().size() == 2
+        step.conditionalbuilders[0].children().size() == 2
 
-        Node shellStep = step.conditionalBuilders[0].children()[0]
+        Node shellStep = step.conditionalbuilders[0].children()[0]
         shellStep.name() == 'hudson.tasks.Shell'
         shellStep.command[0].value() == 'look at me'
 
-        def acmeGroovyNode = step.conditionalBuilders[0].children()[1]
+        def acmeGroovyNode = step.conditionalbuilders[0].children()[1]
         acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
