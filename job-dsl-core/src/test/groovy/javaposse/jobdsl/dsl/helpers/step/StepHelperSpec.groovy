@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -1272,6 +1273,30 @@ still-another-dsl.groovy'''
         thrown(MissingMethodException)
     }
 
+    def 'call conditional steps for not condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                not {
+                    stringsMatch("foo", "bar", false)
+                }
+            }
+            shell("echo Test")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.condition[0].children().size() == 1
+
+        Node notCondition = step.condition[0]
+        notCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.logic.Not'
+        Node matchCondition = notCondition.condition[0]
+        matchCondition.attribute('class') ==  'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+        matchCondition.arg1[0].value() == 'foo'
+        matchCondition.arg2[0].value() == 'bar'
+        matchCondition.ignoreCase[0].value() == 'false'
+    }
+
     def 'call conditional steps for multiple steps'() {
         when:
         context.conditionalSteps {
@@ -1332,6 +1357,105 @@ still-another-dsl.groovy'''
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
         acmeScriptSourceNode.command.size() == 1
         acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
+    }
+
+    def 'fileExists is added correctly'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                fileExists('someFile', 'Workspace')
+            }
+            shell("echo Test")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.condition[0].children().size() == 2
+
+        Node condition = step.condition[0]
+        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
+        condition.file[0].value() == 'someFile'
+        condition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
+    }
+
+    @Unroll
+    def 'Logical Operation #dslOperation is added correctly'(String dslOperation, String operation) {
+        when:
+        context.conditionalSteps {
+            condition {
+                "${dslOperation}" {
+                    fileExists('someFile', 'Workspace')
+                } {
+                    alwaysRun()
+                }
+            }
+            shell("echo Test")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+
+        def logicOperation = step.condition[0]
+        logicOperation.attribute('class') == operation
+        logicOperation.children().size() == 1
+
+        Node conditions = logicOperation.conditions[0]
+        conditions.children().size() == 2
+
+
+        def containers = conditions.'org.jenkins__ci.plugins.run__condition.logic.ConditionContainer'
+        def fileCondition = containers[0].condition[0]
+        fileCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
+        fileCondition.file[0].value() == 'someFile'
+        fileCondition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
+
+        containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
+
+        where:
+        dslOperation | operation
+        'and'        | 'org.jenkins_ci.plugins.run_condition.logic.And'
+        'or'         | 'org.jenkins_ci.plugins.run_condition.logic.Or'
+    }
+
+    @Unroll
+    def 'Simple Condition #conditionDsl is added correctly'(conditionDsl, args, conditionClass, argNodes) {
+        when:
+        context.conditionalSteps {
+            condition {
+                "${conditionDsl}"(*args)
+            }
+            shell("echo something outside")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        Node conditionNode = step.condition[0]
+        conditionNode.children().size() == argNodes.size()
+
+        conditionNode.attribute('class') == conditionClass
+        def ignored = argNodes.each { name, value ->
+            assert conditionNode."${name}"[0].value() == value
+        }
+
+        where:
+        conditionDsl       | args                         | conditionClass                                                        | argNodes
+        'shell'            | ['echo test']                | 'org.jenkins_ci.plugins.run_condition.contributed.ShellCondition'     | [command: 'echo test']
+        'batch'            | ['xcopy * ..\\']             | 'org.jenkins_ci.plugins.run_condition.contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
+        'alwaysRun'        | []                           | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'        | [:]
+        'neverRun'         | []                           | 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'         | [:]
+        'booleanCondition' | ['someToken']                | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
+        'cause'            | ['userCause', true]          | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
+                                                                                                                                     exclusiveCondition: 'true']
+        'stringsMatch'     | ['some1', 'some2', true]     | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
+                                                                                                                                     arg2      : 'some2',
+                                                                                                                                     ignoreCase: 'true']
+        'expression'       | ['exp', 'lab']               | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
+                                                                                                                                     label     : 'lab']
+        'time'             | ['earliest', 'latest', true] | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliest    : 'earliest',
+                                                                                                                                     latest      : 'latest',
+                                                                                                                                     useBuildTime: 'true']
+        'status'           | ['FAILED', 'STABLE']         | 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'           | [worstResult: 'FAILED',
+                                                                                                                                     bestResult : 'STABLE']
     }
 
     @Unroll
