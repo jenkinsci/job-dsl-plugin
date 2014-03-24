@@ -326,4 +326,173 @@ class WrapperHelperSpec extends Specification {
         def wrapper = root.buildWrappers[0].'hudson.plugins.toolenv.ToolEnvBuildWrapper'.'vars'
         wrapper[0].value() == "ANT_1_8_2_HOME,MAVEN_3_HOME"
     }
+
+    def 'environmentVariables are added'() {
+        when:
+        context.environmentVariables {
+            propertiesFile 'some.properties'
+            envs test: 'some', other: 'any'
+            env 'some', 'value'
+            script 'echo Test'
+            scriptFile '/var/lib/jenkins'
+        }
+        Node envNode = context.wrapperNodes[0]
+
+        then:
+        envNode.name() == 'EnvInjectBuildWrapper'
+        def infoNode = envNode.info[0]
+        infoNode.children().size() == 5
+        infoNode.propertiesFilePath[0].value() == 'some.properties'
+        infoNode.propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
+        infoNode.scriptFilePath[0].value() == '/var/lib/jenkins'
+        infoNode.scriptContent[0].value() == 'echo Test'
+        infoNode.loadFilesFromMaster[0].value() == false
+    }
+
+    def 'release plugin simple' () {
+        when:
+        helper.wrappers {
+            release {
+                parameters {
+                    textParam('p1', 'p1', 'd1')
+                }
+                preBuildSteps {
+                    shell('echo hello;')
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'parameterDefinitions'.'hudson.model.TextParameterDefinition'
+        params[0].value()[0].value() == "p1"
+        
+        def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
+        steps[0].value()[0].name() == 'hudson.tasks.Shell'
+        steps[0].value()[0].value()[0].name() == 'command'
+        steps[0].value()[0].value()[0].value() == 'echo hello;'
+    }
+
+    def 'release plugin extended' () {
+        when:
+        helper.wrappers {
+            release {
+                releaseVersionTemplate('templatename')
+                doNotKeepLog(true)
+                overrideBuildParameters(false)
+                parameters {
+                    booleanParam('myBooleanParam', true)
+                    booleanParam('my2ndBooleanParam', true)
+                }
+                postSuccessfulBuildSteps {
+                    shell('echo postsuccess;')
+                    shell('echo hello world;')
+                }
+                postBuildSteps {
+                    shell('echo post;')
+                }
+                postFailedBuildSteps {
+                    shell('echo postfailed;')
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
+        params[0].value()[0].name() == "releaseVersionTemplate"
+        params[0].value()[0].value() == "templatename"
+        params[0].value()[1].name() == "doNotKeepLog"
+        params[0].value()[1].value() == true
+        params[0].value()[2].name() == "overrideBuildParameters"
+        params[0].value()[2].value() == false
+        
+        def stepsPostSuccess = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postSuccessfulBuildSteps'
+        stepsPostSuccess[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPostSuccess[0].value()[0].value()[0].name() == 'command'
+        stepsPostSuccess[0].value()[0].value()[0].value() == 'echo postsuccess;'
+        stepsPostSuccess[0].value()[1].name() == 'hudson.tasks.Shell'
+        stepsPostSuccess[0].value()[1].value()[0].name() == 'command'
+        stepsPostSuccess[0].value()[1].value()[0].value() == 'echo hello world;'
+        
+        def stepsPost = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postBuildSteps'
+        stepsPost[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPost[0].value()[0].value()[0].name() == 'command'
+        stepsPost[0].value()[0].value()[0].value() == 'echo post;'
+        
+        def stepsPostFailed = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postFailedBuildSteps'
+        stepsPostFailed[0].value()[0].name() == 'hudson.tasks.Shell'
+        stepsPostFailed[0].value()[0].value()[0].name() == 'command'
+        stepsPostFailed[0].value()[0].value()[0].value() == 'echo postfailed;'
+    }
+    
+    def 'release plugin configure' () {
+        when:
+        helper.wrappers {
+            release {
+                configure { project ->
+                    def node = project / 'testCommand'
+                    node << {
+                        custom('value')
+                    }
+                }
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'testCommand'
+        params[0].value()[0].name() == "custom"
+        params[0].value()[0].value() == "value"
+    }
+
+    def 'call preBuildCleanup with minimal options' () {
+        when:
+        helper.wrappers {
+            preBuildCleanup()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].with {
+            name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
+            children().size() == 4
+            patterns[0].value() == []
+            deleteDirs[0].value() == false
+            cleanupParameter[0].value() == ''
+            deleteCommand[0].value() == ''
+        }
+    }
+
+    def 'call preBuildCleanup with all options' () {
+        when:
+        helper.wrappers {
+            preBuildCleanup {
+                includePattern('**/test/**')
+                excludePattern('*.test')
+                deleteDirectories()
+                cleanupParameter('TEST')
+                deleteCommand('test')
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].with {
+            name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
+            children().size() == 4
+            patterns[0].children().size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].children.size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].pattern[0].value() == '**/test/**'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].children.size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].pattern[0].value() == '*.test'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'EXCLUDE'
+            deleteDirs[0].value() == true
+            cleanupParameter[0].value() == 'TEST'
+            deleteCommand[0].value() == 'test'
+        }
+    }
 }

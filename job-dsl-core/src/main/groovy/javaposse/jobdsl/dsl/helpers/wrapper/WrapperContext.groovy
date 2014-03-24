@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
+import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
@@ -295,6 +296,127 @@ class WrapperContext implements Context {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
             vars(tools.collect { it.replaceAll(/[^a-zA-Z0-9_]/, "_").toUpperCase() + "_HOME" }.join(","))
+        }
+    }
+
+    /**
+     * <pre>
+     *     {@code
+     * <EnvInjectBuildWrapper>
+     *   <info>
+     *     <propertiesFilePath>some.properties</propertiesFilePath>
+     *     <propertiesContent>REV=14</propertiesContent>
+     *     <scriptFilePath>/test/script.sh</scriptFilePath>
+     *     <scriptContent>echo 5</scriptContent>
+     *     <loadFilesFromMaster>false</loadFilesFromMaster>
+     *   </info>
+     * </EnvInjectBuildWrapper>
+     * }
+     * </pre>
+     * @param envClosure
+     * @return
+     */
+    def environmentVariables(Closure envClosure) {
+        WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
+        AbstractContextHelper.executeInContext(envClosure, envContext)
+
+        def envNode = new NodeBuilder().'EnvInjectBuildWrapper' {
+            envContext.addInfoToBuilder(delegate)
+        }
+
+        wrapperNodes << envNode
+    }
+
+    /**
+     * {@code
+     *  <project>
+     *      <buildWrappers>
+     *          <hudson.plugins.release.ReleaseWrapper>
+     *              <releaseVersionTemplate>template</releaseVersionTemplate>
+     *              <doNotKeepLog>true</doNotKeepLog>
+     *              <overrideBuildParameters>false</overrideBuildParameters>
+     *              <parameterDefinitions>
+     *                  <hudson.model.BooleanParameterDefinition>
+     *                      <name>booleanValue</name>
+     *                      <description>ths description of the boolean value</description>
+     *                      <defaultValue>true</defaultValue>
+     *                  </hudson.model.BooleanParameterDefinition>
+     *              </parameterDefinitions>
+     *              <preBuildSteps>
+     *                  <hudson.tasks.Maven>
+     *                      <targets>install</targets>
+     *                      <mavenName>(Default)</mavenName> 
+     *                  </hudson.tasks.Maven>
+     *              </preBuildSteps>
+     *              <postBuildSteps>
+     *                  <hudson.tasks.Maven>
+     *                      <targets>site</targets>
+     *                      <mavenName>(Default)</mavenName> 
+     *                 </hudson.tasks.Maven>
+     *              </postBuildSteps>
+     *          </hudson.plugins.release.ReleaseWrapper>
+     *      </buildWrappers>
+     *  </project>
+     * }
+     * </pre>
+     *
+     * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
+     *
+     * @param releaseClosure attributes and steps used by the plugin
+     */
+    def release(Closure releaseClosure) {
+        ReleaseContext releaseContext = new ReleaseContext()
+        AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
+            
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        
+        // plugin properties
+        Node releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
+            releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')
+            doNotKeepLog(releaseContext.doNotKeepLog)
+            overrideBuildParameters(releaseContext.overrideBuildParameters)
+            parameterDefinitions(releaseContext.params)
+            preBuildSteps(releaseContext.preBuildSteps)
+            postSuccessfulBuildSteps(releaseContext.postSuccessfulBuildSteps)
+            postBuildSteps(releaseContext.postBuildSteps)
+            postFailedBuildSteps(releaseContext.postFailedBuildSteps)
+        }
+
+        // Apply Context
+        if (releaseContext.configureBlock) {
+            WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
+            action.execute(releaseNode)
+        }
+
+        wrapperNodes << releaseNode
+    }
+
+    /**
+     * <project>
+     *     <buildWrappers>
+     *         <hudson.plugins.ws__cleanup.PreBuildCleanup>
+     *             <patterns>
+     *                 <hudson.plugins.ws__cleanup.Pattern>
+     *                     <pattern>*.class</pattern>
+     *                     <type>INCLUDE</type>
+     *                 </hudson.plugins.ws__cleanup.Pattern>
+     *             </patterns>
+     *             <deleteDirs>false</deleteDirs>
+     *             <cleanupParameter/>
+     *             <externalDelete/>
+     *         </hudson.plugins.ws__cleanup.PreBuildCleanup>
+     *     </buildWrappers>
+     * </project>
+     */
+    def preBuildCleanup(Closure closure = null) {
+        PreBuildCleanupContext context = new PreBuildCleanupContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.ws__cleanup.PreBuildCleanup' {
+            patterns(context.patternNodes)
+            deleteDirs(context.deleteDirectories)
+            cleanupParameter(context.cleanupParameter ?: '')
+            deleteCommand(context.deleteCommand ?: '')
         }
     }
 }

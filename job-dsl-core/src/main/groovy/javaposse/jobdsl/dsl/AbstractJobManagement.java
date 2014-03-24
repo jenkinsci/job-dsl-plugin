@@ -40,8 +40,8 @@ public abstract class AbstractJobManagement implements JobManagement {
     }
 
     @Override
-    public void queueJob(String jobName) throws JobNameNotProvidedException {
-        validateJobNameArg(jobName);
+    public void queueJob(String jobName) throws NameNotProvidedException {
+        validateNameArg(jobName);
     }
 
     @Override
@@ -55,16 +55,16 @@ public abstract class AbstractJobManagement implements JobManagement {
     }
 
     protected void validateUpdateArgs(String jobName, String config) {
-        validateJobNameArg(jobName);
+        validateNameArg(jobName);
         validateConfigArg(config);
     }
 
     protected void validateConfigArg(String config) {
-        if (config == null || config.isEmpty()) throw new JobConfigurationMissingException();
+        if (config == null || config.isEmpty()) throw new ConfigurationMissingException();
     }
 
-    protected void validateJobNameArg(String jobName) {
-        if (jobName == null || jobName.isEmpty()) throw new JobNameNotProvidedException();
+    protected void validateNameArg(String name) {
+        if (name == null || name.isEmpty()) throw new NameNotProvidedException();
     }
 
 }

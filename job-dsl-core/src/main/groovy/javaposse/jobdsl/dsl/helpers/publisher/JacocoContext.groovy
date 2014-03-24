@@ -20,6 +20,7 @@ class JacocoContext implements Context {
     String maximumLineCoverage  = "0"
     String maximumMethodCoverage = "0"
     String maximumClassCoverage = "0"
+    Boolean changeBuildStatus = null
 
     void execPattern(String execPattern) {
         this.execPattern = execPattern
@@ -87,5 +88,9 @@ class JacocoContext implements Context {
 
     void maximumClassCoverage(String maximumClassCoverage) {
         this.maximumClassCoverage = maximumClassCoverage
+    }
+
+    void changeBuildStatus(boolean change = true) {
+        this.changeBuildStatus = change
     }
 }

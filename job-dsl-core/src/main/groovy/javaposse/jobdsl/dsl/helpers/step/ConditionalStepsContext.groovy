@@ -69,7 +69,7 @@ class ConditionalStepsContext extends AbstractStepContext {
                 }
             }
             runner(class: runnerClass)
-            conditionalBuilders(stepNodes)
+            conditionalbuilders(stepNodes)
         }
     }
 

@@ -1,0 +1,18 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <j:set var="allViews" value="${it.findAllGeneratedViews()}"/>
+    <j:if test="${allViews!=null &amp;&amp; !allViews.isEmpty()}">
+        <table style="margin-top: 1em; margin-left:1em;">
+        <t:summary icon="folder.png">
+            Generated Views:
+            <ul class="viewList">
+                <j:forEach items="${allViews}" var="af">
+                    <li>
+                        <a href="${rootURL}/view/${af.name}/" class="model-link tl-tr">${af.name}</a>
+                    </li>
+                </j:forEach>
+            </ul>
+        </t:summary>
+        </table>
+    </j:if>
+</j:jelly>
