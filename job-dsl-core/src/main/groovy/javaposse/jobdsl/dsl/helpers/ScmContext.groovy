@@ -254,49 +254,22 @@ class ScmContext implements Context {
         svn(svnUrl, '.', configure)
     }
     def svn(String svnUrl, String localDir, Closure configure = null) {
-        Preconditions.checkNotNull(svnUrl)
-        Preconditions.checkNotNull(localDir)
-        validateMulti()
-        // TODO Validate url as a svn url (e.g. https or http)
-
-        // TODO Attempt to update existing scm node
-        def nodeBuilder = new NodeBuilder()
-
-        Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
-            locations {
-                'hudson.scm.SubversionSCM_-ModuleLocation' {
-                    remote "${svnUrl}"
-                    local "${localDir}"
-                }
-            }
-
-            excludedRegions ''
-            includedRegions ''
-            excludedUsers ''
-            excludedRevprop ''
-            excludedCommitMessages ''
-            workspaceUpdater(class:'hudson.scm.subversion.UpdateUpdater')
+        svn {
+            location svnUrl, localDir
+            delegate.configure configure
         }
-
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(svnNode)
-        }
-        scmNodes << svnNode
-
     }
     
     def svn(Closure svnClosure) {
         validateMulti()
         
         SvnContext svnContext = new SvnContext()
-        AbstractContextHelper.executeInContext(svnClosure, svnContext)
+        executeInContext(svnClosure, svnContext)
 
         Preconditions.checkState(svnContext.locations.size() != 0, 'One or more locations must be specified')
 
         def nodeBuilder = NodeBuilder.newInstance()
-        Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
+        Node svnNode = nodeBuilder.scm('class':'hudson.scm.SubversionSCM') {
             locations {
                 svnContext.locations.each { currLoc ->
                     'hudson.scm.SubversionSCM_-ModuleLocation' {
@@ -305,7 +278,7 @@ class ScmContext implements Context {
                     }
                 }
             }
-            workspaceUpdater(class:svnContext.checkoutstrategy.className)
+            workspaceUpdater('class':svnContext.checkoutstrategy.className)
             excludedRegions svnContext.excludedregions.join("\n")
             includedRegions svnContext.includedregions.join("\n")
             excludedUsers svnContext.excludedusers.join("\n")
@@ -313,6 +286,15 @@ class ScmContext implements Context {
             excludedRevprop svnContext.excludedrevprop
         }
 
+        if (svnContext.browserXmlClosure) {
+            WithXmlAction action = new WithXmlAction(svnContext.browserXmlClosure)
+            action.execute(svnNode)
+        }
+
+        if (svnContext.configureXmlClosure) {
+            WithXmlAction action = new WithXmlAction(svnContext.configureXmlClosure)
+            action.execute(svnNode)
+        }
         scmNodes << svnNode
     }
 
@@ -329,6 +311,12 @@ class ScmContext implements Context {
         def excludedusers = []
         def excludedcommitmsgs = []
         def excludedrevprop = ''
+        Closure browserXmlClosure = null
+        Closure configureXmlClosure = null
+
+        private validateBrowser() {
+            Preconditions.checkState(browserXmlClosure == null, 'Can only specify one browser to be used with svn.')
+        }
 
         /*
          * At least one location MUST be specified.
@@ -349,6 +337,8 @@ class ScmContext implements Context {
          *                CheckoutStrategy.Checkout
          *                CheckoutStrategy.UpdateWithClean
          *                CheckoutStrategy.UpdateWithRevert
+         *
+         * If no checkout strategy is configured, the default is CheckoutStrategy.Update.
          */
         def checkoutStrategy(CheckoutStrategy strategy) {
             checkoutstrategy = strategy
@@ -468,6 +458,122 @@ class ScmContext implements Context {
          */
         def excludedRevProp(String revisionProperty) {
             excludedrevprop = revisionProperty
+        }
+
+        /*
+         * Create a closure for building a browser node with a single url node.
+         */
+        private Closure basicBrowserXml(String className, String url) {
+            return { svnNode ->
+                svnNode << browser('class':className) {
+                    delegate.url url
+                }
+            }
+        }
+
+        /*
+         * Create a closure for building a browser node suitable for Sventon.
+         */
+        private Closure sventonBrowserXml(String className, String url, String repoInstance) {
+            return { svnNode ->
+                svnNode << browser('class':className) {
+                    delegate.url url
+                    delegate.repositoryInstance repoInstance
+                }
+            }
+        }
+
+        /*
+         * CollabNet Browser
+         * <browser class="hudson.scm.browsers.CollabNetSVN">
+         *     <url>http://url/</url>
+         * </browser>
+         */
+        def browserCollabnetSvn(String url) {
+            validateBrowser()
+            browserXmlClosure = basicBrowserXml('hudson.scm.browsers.CollabNetSVN', url)
+        }
+
+        /*
+         * FishEye Browser
+         * <browser class="hudson.scm.browsers.FishEyeSVN">
+         *     <url>http://url/browse/foobar/</url>
+         *     <rootModule>rootModule</rootModule>
+         * </browser>
+         */
+        def browserFishEye(String url, String rootModule) {
+            validateBrowser()
+            browserXmlClosure = { svnNode ->
+                svnNode << browser('class':'hudson.scm.browsers.FishEyeSVN') {
+                    delegate.url url
+                    delegate.rootModule rootModule
+                }
+            }
+        }
+
+        /*
+         * SVN::Web Browser
+         * <browser class="hudson.scm.browsers.SVNWeb">
+         *     <url>http://url/</url>
+         * </browser>
+         */
+        def browserSvnWeb(String url) {
+            validateBrowser()
+            browserXmlClosure = basicBrowserXml('hudson.scm.browsers.SVNWeb', url)
+        }
+
+        /*
+         * Sventon 1.x Browser
+         * <browser class="hudson.scm.browsers.Sventon">
+         *     <url>http://url/</url>
+         *     <repositoryInstance>repoInstance</repositoryInstance>
+         * </browser>
+         */
+        def browserSventon(String url, String repoInstance) {
+            validateBrowser()
+            browserXmlClosure = sventonBrowserXml('hudson.scm.browsers.Sventon', url, repoInstance)
+        }
+
+        /*
+         * Sventon 2.x Browser
+         * <browser class="hudson.scm.browsers.Sventon2">
+         *     <url>http://url/</url>
+         *     <repositoryInstance>repoInstance</repositoryInstance>
+         * </browser>
+         */
+        def browserSventon2(String url, String repoInstance) {
+            validateBrowser()
+            browserXmlClosure = sventonBrowserXml('hudson.scm.browsers.Sventon2', url, repoInstance)
+        }
+
+        /*
+         * ViewSVN Browser
+         * <browser class="hudson.scm.browsers.ViewSVN">
+         *     <url>http://url/</url>
+         * </browser>
+         */
+        def browserViewSvn(String url) {
+            validateBrowser()
+            browserXmlClosure = basicBrowserXml('hudson.scm.browsers.ViewSVN', url)
+        }
+
+        /*
+         * WebSVN Browser
+         * <browser class="hudson.scm.browsers.WebSVN">
+         *     <url>http://url/</url>
+         * </browser>
+         */
+        def browserWebSvn(String url) {
+            validateBrowser()
+            browserXmlClosure = basicBrowserXml('hudson.scm.browsers.WebSVN', url)
+        }
+
+        /*
+         * Sets a closure to be called when the XML node structure is created.
+         * The SVN node is passed to the closure as the first parameter.
+         */
+        void configure(Closure withXmlClosure) {
+            this.configureXmlClosure = withXmlClosure
         }
     }
 

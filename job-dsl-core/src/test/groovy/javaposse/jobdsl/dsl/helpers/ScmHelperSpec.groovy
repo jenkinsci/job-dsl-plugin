@@ -4,9 +4,10 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.XmlGeneratorSpecification
 import spock.lang.Specification
 
-public class ScmHelperSpec extends Specification {
+public class ScmHelperSpec extends XmlGeneratorSpecification {
 
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
     private static final String HG_REPO_URL = 'http://selenic.com/repo/hello'
@@ -688,7 +689,7 @@ public class ScmHelperSpec extends Specification {
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
     }
 
-    def void isValidSvnScmNode(scmNode) {
+    void isValidSvnScmNode(scmNode) {
         assert scmNode != null
         assert scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
         assert scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() > 0
@@ -1061,6 +1062,121 @@ public class ScmHelperSpec extends Specification {
         then: 'the excludedRevprop node should contain the specified revision property'
         isValidSvnScmNode(context.scmNode)
         context.scmNode.excludedRevprop[0].value() == 'revprop'
+    }
+
+    def 'call svn with configure'() {
+        when: 'svn is called with a configure closure'
+        context.svn {
+            location 'url'
+            configure { svnNode ->
+                svnNode << testNode('testValue')
+            }
+        }
+
+        then: 'the svn node should contain changes implemented by the configure closure'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<testNode>testValue</testNode>', context.scmNode.testNode[0])
+    }
+
+    def 'call svn with multiple browsers'() {
+        when: 'svn is called with multiple browsers specified'
+        context.svn {
+            browserCollabnetSvn 'http://url'
+            browserSvnWeb 'http://url'
+        }
+
+        then: 'an IllegalStateException should be thrown'
+        thrown(IllegalStateException)
+    }
+
+    def 'call svn with CollabNet SVN browser'() {
+        when: 'svn is called with a CollabNet SVN browser'
+        context.svn {
+            location 'url'
+            browserCollabnetSvn 'http://url/'
+        }
+
+        then: 'the svn node should contain a CollabNet SVN browser node'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<browser class="hudson.scm.browsers.CollabNetSVN"><url>http://url/</url></browser>', context.scmNode.browser[0])
+    }
+
+    def 'call svn with FishEye browser'() {
+        when: 'svn is called with a FishEye browser'
+        context.svn {
+            location 'url'
+            browserFishEye 'http://url/', 'rootModule'
+        }
+
+        then: 'the svn node should contain a FishEye browser node'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<browser class="hudson.scm.browsers.FishEyeSVN"><url>http://url/</url><rootModule>rootModule</rootModule></browser>',
+                       context.scmNode.browser[0])
+    }
+
+    def 'call svn with SVN::Web browser'() {
+        when: 'svn is called with a SVN::Web browser'
+        context.svn {
+            location 'url'
+            browserSvnWeb 'http://url/'
+        }
+
+        then: 'the svn node should contain a SVN::Web browser node'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<browser class="hudson.scm.browsers.SVNWeb"><url>http://url/</url></browser>',
+                       context.scmNode.browser[0])
+    }
+
+    def 'call svn with Sventon 1.x browser'() {
+        when: 'svn is called with a Sventon 1.x browser'
+        context.svn {
+            location 'url'
+            browserSventon 'http://url/', 'repoInstance'
+        }
+
+        then: 'the svn node should contain a Sventon 1.x browser node'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<browser class="hudson.scm.browsers.Sventon"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>',
+                       context.scmNode.browser[0])
+    }
+
+    def 'call svn with Sventon 2.x browser'() {
+        when: 'svn is called with a Sventon 2.x browser'
+        context.svn {
+            location 'url'
+            browserSventon2 'http://url/', 'repoInstance'
+        }
+
+        then: 'the svn node should contain a Sventon 2.x browser node'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<browser class="hudson.scm.browsers.Sventon2"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>',
+                       context.scmNode.browser[0])
+    }
+
+    def 'call svn with ViewSVN browser'() {
+        when: 'svn is called with a ViewSVN browser'
+        context.svn {
+            location 'url'
+            browserViewSvn 'http://url/'
+        }
+
+        then: 'the svn node should contain a ViewSVN browser node'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<browser class="hudson.scm.browsers.ViewSVN"><url>http://url/</url></browser>',
+                       context.scmNode.browser[0])
+    }
+
+    def 'call svn with WebSVN browser'() {
+        when: 'svn is called with a WebSVN browser'
+        context.svn {
+            location 'url'
+            browserWebSvn 'http://url/'
+        }
+
+        then: 'the svn node should contain a WebSVN browser node'
+        isValidSvnScmNode(context.scmNode)
+        assertXmlEqual('<browser class="hudson.scm.browsers.WebSVN"><url>http://url/</url></browser>',
+                       context.scmNode.browser[0])
     }
 
     def 'call legacy svn'() {
