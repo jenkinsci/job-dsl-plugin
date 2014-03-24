@@ -11,6 +11,7 @@ userName=yourUsername
 password=IHeartJenkins
 ```
 * Deploy: _./gradlew uploadArchives_
+* Publish the docs: _./gradlew publishDocs_
 * Tag the source as it is: _git tag -a job-dsl-1.14 -m "Staging 1.14"_
 * Increment the version in gradle.properties and append "-SNAPSHOT": _echo "version=1.15-SNAPSHOT">gradle.properties_
 * Commit the updated version number: _git commit -am "Bumping to next rev"_
