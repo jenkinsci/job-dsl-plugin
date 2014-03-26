@@ -694,6 +694,7 @@ gerrit {
 ```
 
 ## Github Pull Request Trigger
+
 ```groovy
 pullRequest {
     admins(String admin)
@@ -713,22 +714,34 @@ pullRequest {
 
 Builds pull requests from GitHub and will report the results directly to the pull request. Requires the [GitHub pull request builder plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin). (Available since 1.22)
 
-```groovy
-pullRequest {
-    admins('USER_ID')
-    userWhitelist('you@you.com')
-    orgWhitelist('your_github_org', 'another_org')
-    cron('H/5 * * * *')
-    triggerPhrase('Ok to test')
-    onlyTriggerPhrase(true)
-    useGitHubHooks(true)
-    permitAll(true)
-    autoCloseFailedPullRequests(true)
-}
+The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for details.
 
-// Git configuration needed for pull request
-remote {
-    github('test-owner/test-project', 'https', 'github.com')
+```groovy
+job {
+    ...
+    scm {
+        git {
+            remote {
+                github('test-owner/test-project')
+                refspec('+refs/pull/*:refs/remotes/origin/pr/*')
+            }
+            branch('${sha1}')
+        }
+    }
+    triggers {
+        pullRequest {
+            admins('USER_ID')
+            userWhitelist('you@you.com')
+            orgWhitelist('your_github_org', 'another_org')
+            cron('H/5 * * * *')
+            triggerPhrase('Ok to test')
+            onlyTriggerPhrase()
+            useGitHubHooks()
+            permitAll()
+            autoCloseFailedPullRequests()
+        }
+    }
+    ...
 }
 ```
 
