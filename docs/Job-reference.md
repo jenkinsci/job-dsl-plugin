@@ -697,18 +697,18 @@ gerrit {
 
 ```groovy
 pullRequest {
-    admins(String admin)
-    admins(Iterable<String> admins)
-    userWhitelist(String user) // user to whitelist
-    userWhitelist(Iterable<String> users) // users to whitelist
-    orgWhitelist(String organization) // organization to whitelist
-    orgWhitelist(Iterable<String> organizations) // organizations to whitelist
-    cron(String cron) // set cron schedule (defaults to : 'H/5 * * * *')
+    admins(String admin) // add admin
+    admins(Iterable<String> admins) // add admins
+    userWhitelist(String user) // add user to whitelist
+    userWhitelist(Iterable<String> users) // add users to whitelist
+    orgWhitelist(String organization) // add organization to whitelist
+    orgWhitelist(Iterable<String> organizations) // add organizations to whitelist
+    cron(String cron) // set cron schedule, defaults to 'H/5 * * * *'
     triggerPhrase(String triggerPhrase) // set phrase to trigger by commenting within the pull request
-    onlyTriggerPhrase(boolean onlyTriggerPhrase = true) // Only build pull requests with phrase (defaults to true)
-    useGitHubHooks(boolean useGithubHooks = true) // (defaults to true)
-    permitAll(boolean permitAll = true) // (defaults to true)
-    autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) // (defaults to true)
+    onlyTriggerPhrase(boolean onlyTriggerPhrase = true) // defaults to false if not specified
+    useGitHubHooks(boolean useGithubHooks = true) // defaults to false if not specified
+    permitAll(boolean permitAll = true) // defaults to false if not specified
+    autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) // defaults to false if not specified
 }
 ```
 
