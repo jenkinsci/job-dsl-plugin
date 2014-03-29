@@ -1385,6 +1385,12 @@ conditionalSteps {
         expression(String expression, String label) // Run if the regular expression matches the label
         time(String earliest, String latest, boolean useBuildTime) // Run if the current (or build) time is between the given dates.
         status(String worstResult, String bestResult) // Run if worstResult <= (current build status) <= bestResult
+        shell(String command) // Run if shell script succeeds (Since 1.22)
+        batch(String command) // Run if batch script succeeds (Since 1.22)
+        fileExits(String file, String baseDir) // Run if file exists relative to baseDir. BaseDir can be one of JenkinsHome, ArtifactsDir and Workspace (Since 1.22)
+        not(Closure condition) // Run if the condition is not satisfied (Since 1.22)
+        and(Closure... conditions) // Run if all conditions are satisfied (Since 1.22)
+        or(Closure... conditions) // Run if any condition is satisfied (Since 1.22)
     }
     runner(String runner) // How to evaluate the results of a failure in the conditional step
     (one or more build steps)
@@ -1413,6 +1419,25 @@ steps {
     conditionalSteps {
         condition {
             time("9:00", "13:00", false)
+        }
+        runner("Unstable")
+        shell("echo 'a first step')
+        ant('build') {
+            target 'test'
+        }
+    }
+}
+```
+
+```groovy
+steps {
+    conditionalSteps {
+        and {
+            time("9:00", "13:00", false)
+        } {
+            not {
+               fileExists('script.sh', 'Workspace')
+            }
         }
         runner("Unstable")
         shell("echo 'a first step')
