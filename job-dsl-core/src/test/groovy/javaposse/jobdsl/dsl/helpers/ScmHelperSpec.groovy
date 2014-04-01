@@ -1089,94 +1089,50 @@ public class ScmHelperSpec extends XmlGeneratorSpecification {
         thrown(IllegalStateException)
     }
 
-    def 'call svn with CollabNet SVN browser'() {
+    def getBrowserTestData() {
+        [
+                [
+                        {location 'url'; browserCollabnetSvn 'http://url/'},
+                        '<browser class="hudson.scm.browsers.CollabNetSVN"><url>http://url/</url></browser>'
+                ],
+                [
+                        {location 'url'; browserFishEye 'http://url/', 'rootModule'},
+                        '<browser class="hudson.scm.browsers.FishEyeSVN"><url>http://url/</url><rootModule>rootModule</rootModule></browser>'
+                ],
+                [
+                        {location 'url'; browserSvnWeb 'http://url/'},
+                        '<browser class="hudson.scm.browsers.SVNWeb"><url>http://url/</url></browser>'
+                ],
+                [
+                        {location 'url'; browserSventon 'http://url/', 'repoInstance'},
+                        '<browser class="hudson.scm.browsers.Sventon"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>'
+                ],
+                [
+                        {location 'url'; browserSventon2 'http://url/', 'repoInstance'},
+                        '<browser class="hudson.scm.browsers.Sventon2"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>'
+                ],
+                [
+                        {location 'url'; browserViewSvn 'http://url/'},
+                        '<browser class="hudson.scm.browsers.ViewSVN"><url>http://url/</url></browser>'
+                ],
+                [
+                        {location 'url'; browserWebSvn 'http://url/'},
+                        '<browser class="hudson.scm.browsers.WebSVN"><url>http://url/</url></browser>'
+                ]
+        ]
+    }
+
+    def 'call svn with browser'() {
         when: 'svn is called with a CollabNet SVN browser'
-        context.svn {
-            location 'url'
-            browserCollabnetSvn 'http://url/'
-        }
+        context.svn svnClosure
 
         then: 'the svn node should contain a CollabNet SVN browser node'
         isValidSvnScmNode(context.scmNode)
-        assertXmlEqual('<browser class="hudson.scm.browsers.CollabNetSVN"><url>http://url/</url></browser>', context.scmNode.browser[0])
-    }
+        assertXmlEqual(xmlResult, context.scmNode.browser[0])
 
-    def 'call svn with FishEye browser'() {
-        when: 'svn is called with a FishEye browser'
-        context.svn {
-            location 'url'
-            browserFishEye 'http://url/', 'rootModule'
-        }
+        where:
+        [svnClosure, xmlResult] << getBrowserTestData()
 
-        then: 'the svn node should contain a FishEye browser node'
-        isValidSvnScmNode(context.scmNode)
-        assertXmlEqual('<browser class="hudson.scm.browsers.FishEyeSVN"><url>http://url/</url><rootModule>rootModule</rootModule></browser>',
-                       context.scmNode.browser[0])
-    }
-
-    def 'call svn with SVN::Web browser'() {
-        when: 'svn is called with a SVN::Web browser'
-        context.svn {
-            location 'url'
-            browserSvnWeb 'http://url/'
-        }
-
-        then: 'the svn node should contain a SVN::Web browser node'
-        isValidSvnScmNode(context.scmNode)
-        assertXmlEqual('<browser class="hudson.scm.browsers.SVNWeb"><url>http://url/</url></browser>',
-                       context.scmNode.browser[0])
-    }
-
-    def 'call svn with Sventon 1.x browser'() {
-        when: 'svn is called with a Sventon 1.x browser'
-        context.svn {
-            location 'url'
-            browserSventon 'http://url/', 'repoInstance'
-        }
-
-        then: 'the svn node should contain a Sventon 1.x browser node'
-        isValidSvnScmNode(context.scmNode)
-        assertXmlEqual('<browser class="hudson.scm.browsers.Sventon"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>',
-                       context.scmNode.browser[0])
-    }
-
-    def 'call svn with Sventon 2.x browser'() {
-        when: 'svn is called with a Sventon 2.x browser'
-        context.svn {
-            location 'url'
-            browserSventon2 'http://url/', 'repoInstance'
-        }
-
-        then: 'the svn node should contain a Sventon 2.x browser node'
-        isValidSvnScmNode(context.scmNode)
-        assertXmlEqual('<browser class="hudson.scm.browsers.Sventon2"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>',
-                       context.scmNode.browser[0])
-    }
-
-    def 'call svn with ViewSVN browser'() {
-        when: 'svn is called with a ViewSVN browser'
-        context.svn {
-            location 'url'
-            browserViewSvn 'http://url/'
-        }
-
-        then: 'the svn node should contain a ViewSVN browser node'
-        isValidSvnScmNode(context.scmNode)
-        assertXmlEqual('<browser class="hudson.scm.browsers.ViewSVN"><url>http://url/</url></browser>',
-                       context.scmNode.browser[0])
-    }
-
-    def 'call svn with WebSVN browser'() {
-        when: 'svn is called with a WebSVN browser'
-        context.svn {
-            location 'url'
-            browserWebSvn 'http://url/'
-        }
-
-        then: 'the svn node should contain a WebSVN browser node'
-        isValidSvnScmNode(context.scmNode)
-        assertXmlEqual('<browser class="hudson.scm.browsers.WebSVN"><url>http://url/</url></browser>',
-                       context.scmNode.browser[0])
     }
 
     def 'call legacy svn'() {
@@ -1199,34 +1155,6 @@ public class ScmHelperSpec extends XmlGeneratorSpecification {
 
         then:
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
-    }
-
-    def 'call legacy svn with browser - Fisheye example'() {
-        when:
-        context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-            svnNode / browser(class:'hudson.scm.browsers.FishEyeSVN') {
-                url 'http://mycompany.com/fisheye/repo_name'
-                rootModule 'my_root_module'
-            }
-        }
-
-        then:
-        context.scmNode != null
-        context.scmNode.browser[0].attributes()['class'] == 'hudson.scm.browsers.FishEyeSVN'
-        context.scmNode.browser[0].url[0].value() == 'http://mycompany.com/fisheye/repo_name'
-        context.scmNode.browser[0].rootModule[0].value() == 'my_root_module'
-    }
-
-    def 'call legacy svn with browser - ViewSVN example'() {
-        when:
-        context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-            svnNode / browser(class:'hudson.scm.browsers.ViewSVN') / url << 'http://mycompany.com/viewsvn/repo_name'
-        }
-
-        then:
-        context.scmNode != null
-        context.scmNode.browser[0].attributes()['class'] == 'hudson.scm.browsers.ViewSVN'
-        context.scmNode.browser[0].url[0].value() == 'http://mycompany.com/viewsvn/repo_name'
     }
 
     def 'call p4 with all parameters'() {
