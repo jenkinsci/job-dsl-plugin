@@ -182,7 +182,7 @@ public class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports(
                 "javaposse.jobdsl.dsl.helpers.Permissions",
-                "javaposse.jobdsl.dsl.helpers.CheckoutStrategy",
+                "javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy",
                 "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior",
                 "javaposse.jobdsl.dsl.views.ListView.StatusFilter",
                 "javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle"

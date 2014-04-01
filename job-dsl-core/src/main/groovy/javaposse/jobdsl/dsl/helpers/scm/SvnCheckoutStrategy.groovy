@@ -1,6 +1,6 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.scm
 
-enum CheckoutStrategy {
+enum SvnCheckoutStrategy {
     Update('hudson.scm.subversion.UpdateUpdater'),
     Checkout('hudson.scm.subversion.CheckoutUpdater'),
     UpdateWithClean('hudson.scm.subversion.UpdateWithCleanUpdater'),
@@ -8,7 +8,7 @@ enum CheckoutStrategy {
 
     final String className
 
-    CheckoutStrategy(String className) {
+    SvnCheckoutStrategy(String className) {
         this.className = className
     }
 }
