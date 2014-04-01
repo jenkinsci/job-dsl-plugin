@@ -59,8 +59,17 @@ public abstract class AbstractJobManagement implements JobManagement {
         validateConfigArg(config);
     }
 
+    protected void validateUpdateArgs(String jobName, JobConfig config) {
+        validateNameArg(jobName);
+        validateConfigArg(config);
+    }
+
     protected void validateConfigArg(String config) {
         if (config == null || config.isEmpty()) throw new ConfigurationMissingException();
+    }
+
+    protected void validateConfigArg(JobConfig config) {
+        if (config == null || !config.isValid()) throw new ConfigurationMissingException();
     }
 
     protected void validateNameArg(String name) {

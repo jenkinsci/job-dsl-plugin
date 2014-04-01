@@ -1,15 +1,9 @@
 package javaposse.jobdsl.dsl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
-import org.codehaus.groovy.runtime.InvokerHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +16,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig;
+
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.codehaus.groovy.runtime.InvokerHelper;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Runs provided DSL scripts via an external JObManager
@@ -119,7 +123,16 @@ public class DslScriptLoader {
                 try {
                     String xml = job.getXml();
                     LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
+                    JobConfig config = new JobConfig();
+                    config.setMainConfig(xml);
+                    List<AdditionalXmlConfig> additionalConfigs = job.getAdditionalConfigs();
+                    for (AdditionalXmlConfig xmlConfig : additionalConfigs) {
+                        String xmlAdditional = xmlConfig.getXml();
+                        String path = xmlConfig.getRelativePath();
+                        config.addConfig(new JobConfigId(XmlConfigType.ADDITIONAL, path), xmlAdditional);
+                        LOGGER.log(Level.FINE, String.format("Saving additional config %s as %s", path, xmlAdditional));
+                    }
+                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), config, ignoreExisting);
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
                     generatedJobs.add(gj);
                 } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException

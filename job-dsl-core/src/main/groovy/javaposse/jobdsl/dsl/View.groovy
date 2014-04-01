@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl
 
+
 /**
  * DSL element representing a Jenkins view.
  */
-public abstract class View {
-    private List<WithXmlAction> withXmlActions = []
+public abstract class View extends XmlConfig {
 
-    String name
+    public View() {
+        super(XmlConfigType.VIEW)
+    }
 
     void name(String name) {
         this.name = name
@@ -30,32 +32,8 @@ public abstract class View {
         }
     }
 
-    void configure(Closure withXmlClosure) {
-        withXmlActions.add(new WithXmlAction(withXmlClosure))
-    }
-
-    /**
-     * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
-     * even if the user didn't specify them in order.
-     * @return
-     */
-    String getXml() {
-        Writer xmlOutput = new StringWriter()
-        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
-        xmlNodePrinter.with {
-            preserveWhitespace = true
-            expandEmptyElements = true
-            quote = "'" // Use single quote for attributes
-        }
-        xmlNodePrinter.print(getNode())
-
-        return xmlOutput.toString()
-    }
-
-    Node getNode() {
+    Node getRootNode() {
         Node root = new XmlParser().parse(new StringReader(getTemplate()))
-
-        withXmlActions.each { it.execute(root) }
         root
     }
 

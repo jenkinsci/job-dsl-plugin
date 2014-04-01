@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
-
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 /**
@@ -31,6 +30,32 @@ class DslSampleTest extends Specification {
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, mavenJob
         def mavenJobWithTemplate = jm.savedConfigs['PROJ-maven-with-template']
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXmlWithTemplate, mavenJobWithTemplate
+    }
+
+    def 'load sample promotions dsl'() {
+        setup:
+        StringJobManagement jm = new StringJobManagement()
+        jm.addConfig('TMPL-test', sampleTemplate)
+        jm.addConfig('TMPL-test-maven', sampleMavenTemplate)
+
+        when:
+        GeneratedItems results = DslScriptLoader.runDslEngine(samplePromotionsDsl, jm)
+
+        then:
+        results != null
+        results.jobs.size() == 1
+        jm.savedConfigs.size() == 1
+        def firstJob = jm.savedConfigs['promos']
+        firstJob != null
+        // TODO Review actual results
+        println(firstJob)
+
+        // Promotions
+        jm.savedConfigsPromotions.size() == 1
+        def firstConfigs = jm.savedConfigsPromotions['promos']
+        def devConfig = firstConfigs[new JobConfigId(XmlConfigType.ADDITIONAL, "promotions/dev")]
+        // TODO Review actual results
+        println(devConfig)
     }
 
     def 'use parameters when loading script'() {
@@ -196,6 +221,26 @@ job {
     }
     steps { // build step
         maven('install')
+    }
+}
+'''
+    def samplePromotionsDsl = '''
+job(type:'Maven') {
+    name('promos')
+    promotions {
+        promotion('dev') {
+            conditions {
+                manual('name')
+            }
+            actions {
+                shell('bring nach test')
+            }
+        }
+        promotion('test') {
+            conditions {
+                manual('name')
+            }
+        }
     }
 }
 '''

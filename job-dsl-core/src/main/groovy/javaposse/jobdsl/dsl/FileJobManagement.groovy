@@ -41,12 +41,20 @@ class FileJobManagement extends AbstractJobManagement {
             throw new JobConfigurationNotFoundException(jobName)
         }
     }
-
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+    
+    @Override
+    boolean createOrUpdateConfig(String jobName, JobConfig config, boolean ignoreExisting)
         throws NameNotProvidedException, ConfigurationMissingException {
         validateUpdateArgs(jobName, config);
 
-        new File(jobName + ext).write(config)
+        new File(jobName + ext).write(config.getMainConfig())
+        
+        for (JobConfigId configId : config.configs.keySet()) {
+            if (configId.getType() == XmlConfigType.ADDITIONAL) {
+                new File(configId.getType().toString() + configId.getRelativePath().replace("/", "_") + jobName + ext).write(config.getConfig(configId))
+            }
+        }
+        
         return true
     }
 

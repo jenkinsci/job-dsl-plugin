@@ -1,47 +1,57 @@
 package javaposse.jobdsl.plugin;
 
-import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.common.StandardCredentials;
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
+import static hudson.model.View.createViewFromXML;
+import static hudson.security.ACL.SYSTEM;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
+import hudson.model.Item;
+import hudson.model.Items;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
-import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.View;
 import hudson.util.VersionNumber;
-import javaposse.jobdsl.dsl.AbstractJobManagement;
-import javaposse.jobdsl.dsl.GeneratedJob;
-import javaposse.jobdsl.dsl.ConfigurationMissingException;
-import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
-import javaposse.jobdsl.dsl.NameNotProvidedException;
-import jenkins.model.Jenkins;
-import jenkins.model.ModifiableTopLevelItemGroup;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
 
-import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static hudson.model.View.createViewFromXML;
-import static hudson.security.ACL.SYSTEM;
+import javaposse.jobdsl.dsl.AbstractJobManagement;
+import javaposse.jobdsl.dsl.JobConfig;
+import javaposse.jobdsl.dsl.ConfigurationMissingException;
+import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.JobConfigId;
+import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
+import javaposse.jobdsl.dsl.NameNotProvidedException;
+import javaposse.jobdsl.dsl.XmlConfigType;
+
+import javax.xml.transform.stream.StreamSource;
+
+import jenkins.model.ModifiableTopLevelItemGroup;
+import jenkins.model.Jenkins;
+
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.common.StandardCredentials;
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 
 /**
  * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
@@ -90,7 +100,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
      * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
      */
     @Override
-    public boolean createOrUpdateConfig(String fullJobName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String fullJobName, JobConfig config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 
         LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullJobName));
@@ -211,15 +221,32 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return jobXml;
     }
 
-    private boolean updateExistingJob(AbstractProject<?, ?> project, String config) {
+    private boolean updateExistingJob(AbstractProject<?, ?> project, JobConfig config) {
         boolean created;
+        
+        // Check additional configs
+        boolean allSimilar = true;
+        for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
+            if (jobConfigId.getType() == XmlConfigType.ADDITIONAL) {
+                XmlFile oldXml = Items.getConfigFile(new File(project.getRootDir(), jobConfigId.getRelativePath()));
+                try {
+                    Diff diff = XMLUnit.compareXML(oldXml.asString(), config.getConfig(jobConfigId));
+                    if (!diff.similar()) {
+                        allSimilar = false;
+                    }
+                } catch (Exception e) {
+                    // It's not a big deal if we can't diff, we'll just move on
+                    LOGGER.warning(e.getMessage());
+                }
+            }
+        }
 
         // Leverage XMLUnit to perform diffs
         Diff diff;
         try {
             String oldJob = project.getConfigFile().asString();
-            diff = XMLUnit.compareXML(oldJob, config);
-            if (diff.similar()) {
+            diff = XMLUnit.compareXML(oldJob, config.getMainConfig());
+            if (diff.similar() && allSimilar) {
                 LOGGER.log(Level.FINE, String.format("Project %s is identical", project.getName()));
                 return false;
             }
@@ -227,14 +254,29 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             // It's not a big deal if we can't diff, we'll just move on
             LOGGER.warning(e.getMessage());
         }
+        
+        // Create XML for additional configurations
+        try {
+            for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
+                if (jobConfigId.getType() == XmlConfigType.ADDITIONAL) {
+                    StreamSource streamSourcePromo = new StreamSource(new StringReader(config.getConfig(jobConfigId)));
+                    JobConfigGenerator generator = new JobConfigGenerator(project.getName());
+                    generator.updateByXml(streamSourcePromo, jobConfigId.getRelativePath());
+                }
+            }
+        } catch (IOException ioex) {
+            LOGGER.log(Level.WARNING, String.format("Error writing updated project to file."), ioex);
+            return false;
+        }
 
         // TODO Perform comparison between old and new, and print to console
         // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
 
-        LOGGER.log(Level.FINE, String.format("Updating project %s as %s", project.getName(), config));
-        StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
+        LOGGER.log(Level.FINE, String.format("Updating project %s as %s", project.getName(), config.getMainConfig()));
+        StreamSource streamSource = new StreamSource(new StringReader(config.getMainConfig())); // TODO use real xmlReader
         try {
             project.updateByXml(streamSource);
+            
             created = true;
         } catch (IOException ioex) {
             LOGGER.log(Level.WARNING, String.format("Error writing updated project to file."), ioex);
@@ -244,15 +286,24 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
-    private boolean createNewJob(String fullJobName, String config) {
+    private boolean createNewJob(String fullJobName, JobConfig config) {
         LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
         boolean created;
 
         try {
-            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
-
-            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
             String jobName = getJobNameFromFullName(fullJobName);
+            
+            // Create XML for Promotions
+            for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
+                if (jobConfigId.getType() == XmlConfigType.ADDITIONAL) {
+                    InputStream in = new ByteArrayInputStream(config.getConfig(jobConfigId).getBytes("UTF-8"));
+                    JobConfigGenerator generator = new JobConfigGenerator(jobName);
+                    generator.createConfigFromXML(in, jobConfigId.getRelativePath());
+                }
+            }
+            
+            InputStream is = new ByteArrayInputStream(config.getMainConfig().getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
             ctx.createProjectFromXML(jobName, is);
 
             created = true;

@@ -1,10 +1,12 @@
 package javaposse.jobdsl.dsl
 
 import org.custommonkey.xmlunit.XMLUnit
+
 import spock.lang.Specification
 
 import java.util.concurrent.atomic.AtomicBoolean
 
+import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContext;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobTest extends Specification {
@@ -191,7 +193,7 @@ class JobTest extends Specification {
         then:
         project.actions[0].children().size() == 2
     }
-
+    
     def 'construct simple Maven job and generate xml from it'() {
         setup:
         JobManagement jm = Mock()

@@ -1,4 +1,5 @@
 package javaposse.jobdsl.dsl;
+import java.util.Map;
 
 /**
  * Interface to manage jobs, which the DSL needs to do.
@@ -24,7 +25,7 @@ public interface JobManagement {
      * @throws NameNotProvidedException if the jobName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException;
+    boolean createOrUpdateConfig(String jobName, JobConfig config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException;
 
     /**
      * Creates or updates the view config for the named Jenkins view with the config provided.

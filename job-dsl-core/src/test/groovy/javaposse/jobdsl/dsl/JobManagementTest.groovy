@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
-
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class JobManagementTest extends Specification {
@@ -79,9 +78,11 @@ class JobManagementTest extends Specification {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new StringJobManagement()
-
+        
         when:
-        jm.createOrUpdateConfig(null, updatedXml_keepDepIsTrue, false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig(updatedXml_keepDepIsTrue)
+        jm.createOrUpdateConfig(null, config, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -94,7 +95,9 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig("", updatedXml_keepDepIsTrue, false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig(updatedXml_keepDepIsTrue)
+        jm.createOrUpdateConfig("", config, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -107,7 +110,9 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig("NEW-JOB-NAME", null, false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig(null)
+        jm.createOrUpdateConfig("NEW-JOB-NAME", config, false)
 
         then:
         thrown(ConfigurationMissingException)
@@ -120,7 +125,9 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig("NEW-JOB-NAME", "", false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig("")
+        jm.createOrUpdateConfig("NEW-JOB-NAME", config, false)
 
         then:
         thrown(ConfigurationMissingException)
