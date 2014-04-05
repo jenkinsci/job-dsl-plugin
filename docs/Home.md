@@ -13,7 +13,7 @@ There is a great load of information on [the forum](https://groups.google.com/fo
 And finally, if you want to get more involved, [here's how...](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)
 
 ## Release Notes
-* 1.22 (unreleased)
+* 1.22 (Apr 05 2014)
  * Fixed support for the Conditional BuildStep Plugin
  * [Github Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
  * [Workspace Cleanup Plugin](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-workspace-cleanup-plugin)
