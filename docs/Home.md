@@ -21,7 +21,6 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * [Git Publisher](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-git-publisher)
  * Support for the `changeBuildStatus` element for [Jacoco Code Coverage](wiki/Job-reference#wiki-jacoco) publisher
  * [Jenkins Release Plugin](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-release)
- * [Jenkins M2 Release Plugin](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-maven-release)
  * Support for buildnumbers as strings in [Copy Artifacts](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-copy-artifacts)
 * 1.21 (Mar 06 2014)
  * [Build Flow](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin) job type

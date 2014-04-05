@@ -118,7 +118,6 @@ job(attributes) {
         toolenv(String.. tools)
         environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
         release(closure) // since 1.22, see [[Job Reference]] for details
-        mavenRelease(closure) // since 1.22, see [[Job Reference]] for closure syntax
         preBuildCleanup(closure) // since 1.22
     }
     steps {
