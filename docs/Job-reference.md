@@ -985,26 +985,6 @@ gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg 
 
 Runs Gradle, defaulting to the Gradle Wrapper. Configure block is handed a hudson.plugins.gradle.Gradle node.
 
-closure gradle command, which support all currently availibe jenkins/gradle plugin options:
-```groovy
-gradle {
-    tasks('task1')
-    switches('--profile -Pasd=1')
-    useWrapper(true)
-    description('gradle task for executing task1 with profile')
-    rootBuildScriptDir('some/path/where/you/gradle/project/reside')
-    buildFile('other')
-    fromRootBuildScriptDir(true)
-    makeExecutable(true)
-    gradleName('jenkins-gradle-combobox-item-name')
-    configure {
-      it / 'unknownOption' << 'on'
-    }
-}
-```
-
-
-
 ## Maven
 ```groovy
 maven(String targetsArg = null, String pomArg = null, Closure configure = null)

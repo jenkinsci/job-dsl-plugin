@@ -123,7 +123,6 @@ job(attributes) {
     steps {
         shell(String commandStr)
         batchFile(String commandStr)
-        gradle {} // since 1.23, see [[JobReference]]
         gradle(tasksArg, switchesArg, useWrapperArg) {}
         maven(targetsArg, pomArg) {}
         maven {} // since 1.20, see [[JobReference]]
