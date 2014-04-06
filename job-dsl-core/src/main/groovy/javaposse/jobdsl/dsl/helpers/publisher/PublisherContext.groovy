@@ -543,7 +543,7 @@ class PublisherContext implements Context {
         AbstractContextHelper.executeInContext(violationsClosure, violationsContext)
 
         def nodeBuilder = NodeBuilder.newInstance()
-        def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher'(plugin: 'violations@0.7.11') {
+        def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher' {
             config {
                 suppressions(class: "tree-set") {
                     'no-comparator'()
