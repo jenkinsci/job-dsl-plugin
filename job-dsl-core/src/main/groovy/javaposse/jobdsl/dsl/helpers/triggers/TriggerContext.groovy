@@ -41,7 +41,7 @@ class TriggerContext implements Context {
         AbstractContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
         def nodeBuilder = new NodeBuilder()
-        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger'(plugin: 'urltrigger@0.31') {
+        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger' {
             spec urlTriggerContext.crontab
             if (urlTriggerContext.label) {
                 labelRestriction true
@@ -128,8 +128,7 @@ class TriggerContext implements Context {
      * Trigger that runs jobs on push notifications from Github/Github enterprise
      */
     def githubPush() {
-        def attributes = [plugin: 'github@1.6']
-        triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger'(attributes) {
+        triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
             spec ''
         }
     }
