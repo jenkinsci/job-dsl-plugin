@@ -19,12 +19,14 @@ class FileExistsCondition extends SimpleCondition {
     }
 
     static enum BaseDir {
-        JenkinsHome,
-        ArtifactsDir,
-        Workspace
+        JENKINS_HOME('JenkinsHome'),
+        ARTIFACTS_DIR('ArtifactsDir'),
+        WORKSPACE('Workspace')
 
-        String getBaseDirClass() {
-            "org.jenkins_ci.plugins.run_condition.common.BaseDirectory\$${name()}"
+        public final String baseDirClass
+
+        BaseDir(String baseDirType) {
+            this.baseDirClass = "org.jenkins_ci.plugins.run_condition.common.BaseDirectory\$${baseDirType}"
         }
     }
 }

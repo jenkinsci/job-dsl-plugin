@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 class ConditionalStepsContext extends AbstractStepContext {
 
@@ -25,7 +26,7 @@ class ConditionalStepsContext extends AbstractStepContext {
     }
 
     def condition(Closure conditionClosure) {
-        this.runCondition = RunConditionContext.of(conditionClosure)
+        this.runCondition = RunConditionFactory.of(conditionClosure)
     }
 
     def runner(String runnerName) {

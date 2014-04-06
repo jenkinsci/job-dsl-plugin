@@ -1,26 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.step.condition.BinaryLogicOperation
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir
 import javaposse.jobdsl.dsl.helpers.step.condition.NotCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 
 
 class RunConditionContext implements Context {
 
     RunCondition condition
-
-    public static RunCondition of(Closure conditionClosure) {
-        RunConditionContext conditionContext = new RunConditionContext()
-        AbstractContextHelper.executeInContext(conditionClosure, conditionContext)
-        Preconditions.checkNotNull(conditionContext?.condition, "No condition specified")
-        return conditionContext.condition
-    }
 
     def alwaysRun() {
         this.condition = new SimpleCondition(name: 'AlwaysRun')
@@ -72,22 +64,21 @@ class RunConditionContext implements Context {
         this.condition = new SimpleCondition(name: 'BatchFile', subPackage: 'contributed', args: [command: command])
     }
 
-    def fileExists(String file, String baseDirString) {
-        BaseDir baseDir = BaseDir.valueOf(baseDirString)
+    def fileExists(String file, BaseDir baseDir) {
         condition = new FileExistsCondition(file, baseDir)
     }
 
     def not(Closure conditionClosure) {
-        this.condition = new NotCondition(of(conditionClosure))
+        this.condition = new NotCondition(RunConditionFactory.of(conditionClosure))
     }
 
     def and(Closure... conditionClosures) {
-        List<RunCondition> conditions = conditionClosures.collect { of(it) }
+        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('And', conditions)
     }
 
     def or(Closure... conditionClosures) {
-        List<RunCondition> conditions = conditionClosures.collect { of(it) }
+        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('Or', conditions)
     }
 

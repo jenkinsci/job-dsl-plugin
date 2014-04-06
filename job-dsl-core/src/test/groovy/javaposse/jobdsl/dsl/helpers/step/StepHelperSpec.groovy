@@ -8,6 +8,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.*
+import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 public class StepHelperSpec extends Specification {
 
@@ -1363,7 +1364,7 @@ still-another-dsl.groovy'''
         when:
         context.conditionalSteps {
             condition {
-                fileExists('someFile', 'Workspace')
+                fileExists('someFile', WORKSPACE)
             }
             shell("echo Test")
         }
@@ -1384,7 +1385,7 @@ still-another-dsl.groovy'''
         context.conditionalSteps {
             condition {
                 "${dslOperation}" {
-                    fileExists('someFile', 'Workspace')
+                    fileExists('someFile', WORKSPACE)
                 } {
                     alwaysRun()
                 }
