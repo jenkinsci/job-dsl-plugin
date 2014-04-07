@@ -1,15 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.properties.PropertiesContextHelper
 import spock.lang.Specification
 import spock.lang.Unroll
 
 public class TopLevelHelperSpec extends Specification {
 
-    List<WithXmlAction> mockActions = Mock()
-    TopLevelHelper helper = new TopLevelHelper(mockActions, JobType.Freeform)
+    List<WithXmlAction> mockActions = []
+    PropertiesContextHelper propertiesContextHelper = new PropertiesContextHelper(mockActions, JobType.Freeform)
+    JobManagement jobManagement = Mock(JobManagement)
+    TopLevelHelper helper = new TopLevelHelper(mockActions, JobType.Freeform, jobManagement, propertiesContextHelper)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 
     def 'add description'() {
@@ -32,11 +36,11 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'environments work with map arg'() {
         when:
-        def action = helper.environmentVariables([
+        helper.environmentVariables([
                 key1: 'val1',
                 key2: 'val2'
         ])
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
@@ -45,11 +49,11 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'environments work with context'() {
         when:
-        def action = helper.environmentVariables {
+        helper.environmentVariables {
             envs([key1: 'val1', key2: 'val2'])
             env 'key3', 'val3'
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
@@ -59,10 +63,10 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'environments work with combination'() {
         when:
-        def action = helper.environmentVariables([key4: 'val4']) {
+        helper.environmentVariables([key4: 'val4']) {
             env 'key3', 'val3'
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
@@ -71,10 +75,10 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'environment from groovy script'() {
         when:
-        def action = helper.environmentVariables {
+        helper.environmentVariables {
             groovy '[foo: "bar"]'
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
@@ -82,12 +86,12 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'environment from map and groovy script'() {
         when:
-        def action = helper.environmentVariables {
+        helper.environmentVariables {
             envs([key1: 'val1', key2: 'val2'])
             env 'key3', 'val3'
             groovy '[foo: "bar"]'
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
@@ -99,10 +103,10 @@ public class TopLevelHelperSpec extends Specification {
     @Unroll
     def 'environment from #method'(content, method, xmlElement) {
         when:
-        def action = helper.environmentVariables {
+        helper.environmentVariables {
             "$method"(content)
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'EnvInjectJobProperty'[0].info[0]."$xmlElement"[0].value() == content
@@ -118,10 +122,10 @@ public class TopLevelHelperSpec extends Specification {
     @Unroll
     def 'environment sets #method to #content'(method, content, xmlElement) {
         when:
-        def action = helper.environmentVariables {
+        helper.environmentVariables {
             "${method}"(content)
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'EnvInjectJobProperty'[0]."${xmlElement}"[0].value() == content
@@ -136,11 +140,11 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'throttle concurrents enabled as project alone'() {
         when:
-        def action = helper.throttleConcurrentBuilds {
+        helper.throttleConcurrentBuilds {
             maxPerNode 1
             maxTotal 2
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
@@ -154,10 +158,10 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'throttle concurrents disabled'() {
         when:
-        def action = helper.throttleConcurrentBuilds {
+        helper.throttleConcurrentBuilds {
             throttleDisabled()
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
@@ -167,12 +171,12 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'throttle concurrents enabled as part of categories'() {
         when:
-        def action = helper.throttleConcurrentBuilds {
+        helper.throttleConcurrentBuilds {
             maxPerNode 1
             maxTotal 2
             categories(['cat-1', 'cat-2'])
         }
-        action.execute(root)
+        mockActions[0].execute(root)
 
         then:
         def throttleNode = root.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
@@ -191,7 +195,7 @@ public class TopLevelHelperSpec extends Specification {
         helper.label('RPM')
 
         then:
-        1 * mockActions.add(_)
+        mockActions.size() == 1
     }
 
     def 'disable defaults to true'() {
@@ -243,8 +247,8 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'build blocker xml'() {
         when:
-        def action = helper.blockOn("MyProject")
-        action.execute(root)
+        helper.blockOn("MyProject")
+        mockActions[0].execute(root)
 
         then:
         root.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0].useBuildBlocker[0].value() == 'true'
@@ -277,8 +281,8 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'priority constructs xml'() {
         when:
-        def action = helper.priority(99)
-        action.execute(root)
+        helper.priority(99)
+        mockActions[0].execute(root)
 
         then:
         root.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99

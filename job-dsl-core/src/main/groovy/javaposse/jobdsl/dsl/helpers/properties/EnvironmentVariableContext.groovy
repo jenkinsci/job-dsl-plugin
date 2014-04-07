@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl.helpers.toplevel
+package javaposse.jobdsl.dsl.helpers.properties
 
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperEnvironmentVariableContext
 
