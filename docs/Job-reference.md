@@ -1437,7 +1437,7 @@ steps {
                 time("9:00", "13:00", false)
             } {
                 not {
-                   fileExists('script.sh', 'Workspace')
+                   fileExists('script.sh', BaseDir.WORKSPACE)
                 }
             }
         }
