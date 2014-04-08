@@ -60,8 +60,8 @@ public class StepHelperSpec extends Specification {
         gradleStep2.useWrapper[0].value() == 'false'
 
         when:
-        context.gradle('build', '-I init.gradle', false){
-            it / 'node1'  << 'value1'
+        context.gradle('build', '-I init.gradle', false) {
+            it / 'node1' << 'value1'
         }
 
         then:
@@ -69,21 +69,21 @@ public class StepHelperSpec extends Specification {
         def gradleStep3 = context.stepNodes[2]
         gradleStep3.node1[0].value() == 'value1'
     }
-    
+
     def 'call gradle methods with context'() {
         when:
         context.gradle {
             tasks 'tasks'
             switches 'switches'
-            useWrapper  false
-            description  'desc'
-            rootBuildScriptDir  'rbsd'
-            buildFile  'bf'
-            gradleName  'gn'
+            useWrapper false
+            description 'desc'
+            rootBuildScriptDir 'rbsd'
+            buildFile 'bf'
+            gradleName 'gn'
             fromRootBuildScriptDir true
             makeExecutable true
         }
-        
+
         then:
         context.stepNodes.size() == 1
         def gradleStep = context.stepNodes[0]
@@ -96,7 +96,7 @@ public class StepHelperSpec extends Specification {
         gradleStep.gradleName[0].value() == 'gn'
         gradleStep.fromRootBuildScriptDir[0].value() == 'true'
         gradleStep.makeExecutable[0].value() == 'true'
-        
+
     }
 
     def 'call grails methods'() {
