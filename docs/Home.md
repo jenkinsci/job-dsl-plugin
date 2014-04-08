@@ -14,6 +14,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.23 (unreleased)
+ * [Flowdock Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flowdock+Plugin)
  * More conditions for the Conditional BuildStep Plugin supported
 * 1.22 (Apr 05 2014)
  * Fixed support for the Conditional BuildStep Plugin
