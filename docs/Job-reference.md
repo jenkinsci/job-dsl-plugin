@@ -2344,6 +2344,71 @@ job {
 
 (Since 1.22)
 
+## Flowdock Publisher
+
+```groovy
+job {
+    publishers {
+        flowdock('a-long-token') {
+            unstable(boolean unstable = true)
+            success(boolean success = true)
+            aborted(boolean aborted = true)
+            failure(boolean failure = true)
+            fixed(boolean fixed = true)
+            notBuilt(boolean notBuilt = true)
+            chat(boolean chat = true)
+            tag(String tagName)
+            tags(String[] tags)
+        }
+    }
+}
+```
+
+Sends build notification from Jenkins to your flow. Requires the [Flowdock Plugin](https://github.com/jenkinsci/flowdock-plugin).
+Omitting an argument to any of the methods taking a boolean will behave as if you passed in true. Not calling the method will default to the plugin's default values (which are true for success, failure and fixed; false for all others).
+Tags are appended to form a single list, so that multiple calls to tag will behave as if youc alled tags variant with the concatenated list of Strings.
+
+Examples:
+
+```groovy
+// Minimal example. Notify using all the plugin defaults (inbox, not chat; notify on success, failure, fixed; no tags)
+job {
+    publishers {
+        flowdock('a-flow-token')
+    }
+}
+```
+
+```groovy
+// Notify on all build statuses
+job {
+    publishers {
+        flowdock('flow-token') {
+            unstable()
+            success()
+            aborted()
+            failure()
+            fixed()
+            notBuilt()
+        }
+    }
+}
+```
+
+```groovy
+// Notify on multiple flows in their chat for the default build statuses (success, failure and fixed) using the tags 'jenkins' and 'build'
+job {
+    publishers {
+        flowdock('first-flow-token', 'second-flow-token') {
+            chat()
+            tags('jenkins', 'build')
+        }
+    }
+}
+```
+
+(Since 1.23)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_
