@@ -421,16 +421,20 @@ class WrapperContext implements Context {
     }
 
     /**
-     * adds xvfb support
+     * <org.jenkinsci.plugins.xvfb.XvfbBuildWrapper>
+     *     <screen>1024x768x24</screen>
+     *     <installationName>xvfb</installationName>
+     *     <displayNameOffset>100</displayNameOffset>
+     * </org.jenkinsci.plugins.xvfb.XvfbBuildWrapper><hudson.plugins.timestamper.TimestamperBuildWrapper/>
      */
-    def xvfb(Closure closure = null)   {
+    def xvfb(Closure closure = null) {
         XvfbContext context = new XvfbContext()
         AbstractContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper' {
             screen(context.screen)
             installationName(context.installationName)
-            displayNameOffset(String.valueOf(context.displayNameOffset))
+            displayNameOffset(context.displayNameOffset)
         }
     }
 }

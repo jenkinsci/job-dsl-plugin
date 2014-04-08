@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
-
 import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.absolute
 import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.elastic
 import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.likelyStuck
@@ -510,7 +509,7 @@ class WrapperHelperSpec extends Specification {
         xvfbWrapper.children().size() == 3
         xvfbWrapper.screen[0].value() == '1024x768x24'
         xvfbWrapper.installationName[0].value() == 'xvfb'
-        xvfbWrapper.displayNameOffset[0].value() == '100'
+        xvfbWrapper.displayNameOffset[0].value() == 1
     }
 
     def 'call xvfb with context' () {
@@ -531,6 +530,6 @@ class WrapperHelperSpec extends Specification {
         xvfbWrapper.children().size() == 3
         xvfbWrapper.screen[0].value() == 'screen'
         xvfbWrapper.installationName[0].value() == 'installationName'
-        xvfbWrapper.displayNameOffset[0].value() == '42'
+        xvfbWrapper.displayNameOffset[0].value() == 42
     }
 }
