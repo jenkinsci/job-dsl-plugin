@@ -39,7 +39,17 @@ class AbstractStepContext implements Context {
             'command' commandStr
         }
     }
-
+    /**
+     * <hudson.plugins.gradle.Gradle>
+     * <description>descr</description>
+     * <switches>--refresh-dependencies</switches>
+     * <tasks>task1 task2</tasks>
+     * <rootBuildScriptDir>master</rootBuildScriptDir>
+     * <buildFile/>
+     * <useWrapper>true</useWrapper>
+     * <fromRootBuildScriptDir>true</fromRootBuildScriptDir>
+     * </hudson.plugins.gradle.Gradle>
+     */
     def gradle(Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()
         AbstractContextHelper.executeInContext(gradleClosure, gradleContext)
