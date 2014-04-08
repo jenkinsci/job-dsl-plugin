@@ -1083,4 +1083,10 @@ class PublisherContext implements Context {
             notifyNotBuilt(context.notBuilt)
         }
     }
+
+    def flowdock(String[] tokens, Closure flowdockPublisherClosure = null) {
+        // Validate values
+        assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
+        flowdock(tokens.join(','), flowdockPublisherClosure)
+    }
 }

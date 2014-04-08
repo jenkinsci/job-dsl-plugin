@@ -189,6 +189,8 @@ job(attributes) {
         buildPipelineTrigger(downstreamProjectNames) // since 1.21
         githubCommitNotifier() // since 1.21
         git(gitPublisherClosure) // since 1.22
+        flowdock(String token, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
+        flowdock(String[] tokens, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
     }
     parameters {
         booleanParam(parameterName, defaultValue, description)
