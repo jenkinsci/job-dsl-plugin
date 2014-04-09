@@ -58,14 +58,6 @@ Defines a timespan to wait for additional events (pushes, check-ins) before trig
 
 If the number of seconds to wait is omitted from the call the job will be configured to wait for five seconds. If you need to wait for a different amount of time just specify the number of seconds to wait. (Available since 1.16)
 
-## Block build
-```groovy
-blockOn(String projectName)
-blockOn(Iterable<String> projectNames)
-```
-
-Block build if certain jobs are running, supported by the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin">Build Blocker Plugin</a>. If more than one name is provided to projectName, it is newline separated. Per the plugin, regular expressions can be used for the projectNames, e.g. ".*-maintenance" will match all maintenance jobs.
-
 ## Block on upstream/downstream projects
 ```groovy
 blockOnUpstreamProjects()
@@ -141,27 +133,6 @@ authorization {
 // Gives all permissions found in the Permissions enum to the special authenticated group
 authorization {
     permissionAll('authenticated')
-}
-```
-
-## [Throttle Concurrent Builds](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
-
-```groovy
-job {
-    // Throttle one job on its own
-    throttleConcurrentBuilds {
-        maxPerNode 1
-        maxTotal 2
-    }
-}
-```
-
-```groovy
-job {
-    // Throttle as part of a category
-    throttleConcurrentBuilds {
-        categories(['cat-1'])
-    }
 }
 ```
 
@@ -309,30 +280,173 @@ job(type: 'Maven') {
 
 (since 1.20)
 
-## Environment Variables
+# Job Properties
+
+## Block Build
+
 ```groovy
-environmentVariables(Map<Object,Object> vars, Closure envClosure = null)
-environmentVariables {
-    scriptFile(String filePath)
-    script(String content)
-    env(Object key, Object value)
-    envs(Map<Object, Object> map) 
-    groovy(String groovyScript)
-    propertiesFile(String filePath)
-    loadFilesFromMaster(boolean loadFromMaster)
-    keepSystemVariables(boolean keepSystemVariables)
-    keepBuildVariables(boolean keepBuildVariables)
+job {
+    blockOn(String projectName) // deprecated since 1.23
+    blockOn(Iterable<String> projectNames) // deprecated since 1.23
+    properties {
+        blockOn(String projectName) // since 1.23
+        blockOn(Iterable<String> projectNames) // since 1.23
+    }
 }
 ```
 
-Injects environment variables into the build. They can be provided as a Map or applied as part of a context. The optional Groovy script must return a map Java object. Requires the [EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
+Block build if certain jobs are running. Regular expressions can be used for the projectNames. Requires the
+[Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin").
 
-## Job Priority
+Example:
+
 ```groovy
-priority(int value)
+// block when project-a or project-b are building
+job {
+    properties {
+        blockOn(['project-a', 'project-b'])
+    }
+}
 ```
 
-Allows jobs waiting in the build queue to be sorted by a static priority rather than the standard FIFO. The default priority is 100. A jobs with a higher priority will be executed before jobs with a lower priority. Requires the [Priority Sorter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin).
+```groovy
+// block when any maintenance job is running
+job {
+    properties {
+        blockOn('.*-maintenance')
+    }
+}
+```
+
+(since 1.11)
+
+## Environment Variables
+
+```groovy
+job {
+    environmentVariables(Map<Object,Object> vars, Closure envClosure = null) // deprecated since 1.23
+    environmentVariables(Closure envClosure) // deprecated since 1.23
+    properties {
+        environmentVariables(Map<Object,Object> vars, Closure envClosure = null) // since 1.23
+        environmentVariables { // since 1.23
+            scriptFile(String filePath)
+            script(String content)
+            env(Object key, Object value)
+            envs(Map<Object, Object> map)
+            groovy(String groovyScript)
+            propertiesFile(String filePath)
+            loadFilesFromMaster(boolean loadFromMaster)
+            keepSystemVariables(boolean keepSystemVariables)
+            keepBuildVariables(boolean keepBuildVariables)
+        }
+    }
+}
+```
+
+Injects environment variables into the build. They can be provided as a map or applied as part of a context. The
+optional Groovy script must return a map object. Requires the
+[EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
+
+Examples:
+
+```groovy
+job {
+    properties {
+        environmentVariables([VERSION: '1.4.7'])
+    }
+}
+```
+
+```groovy
+job {
+    properties {
+        environmentVariables {
+            env('VERSION', '1.4.7')
+            propertiesFile('job.properties')
+        }
+    }
+}
+```
+
+(since 1.14)
+
+## Job Priority
+
+```groovy
+job {
+    priority(int value) // deprecated since 1.23
+    properties {
+        priority(int value) // since 1.23
+    }
+}
+```
+
+Allows jobs waiting in the build queue to be sorted by a static priority rather than the standard FIFO. The default
+priority is 100. A jobs with a higher priority will be executed before jobs with a lower priority. Requires the
+[Priority Sorter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin).
+
+Example:
+
+```groovy
+job {
+    properties {
+        priority(75)
+    }
+}
+```
+
+(since 1.15)
+
+## Throttle Concurrent Builds
+
+```groovy
+job {
+    throttleConcurrentBuilds { // deprecated since 1.23
+        throttleDisabled(boolean throttleDisabled = true)
+        categories(List<String> categories)
+        maxPerNode(int maxPerNode)
+        maxTotal(int maxTotal)
+    }
+    properties {
+        throttleConcurrentBuilds { // since 1.23
+            throttleDisabled(boolean throttleDisabled = true)
+            categories(List<String> categories)
+            maxPerNode(int maxPerNode)
+            maxTotal(int maxTotal)
+        }
+    }
+}
+```
+
+This plugin allows for throttling the number of concurrent builds of a project running per node or globally. Requires
+the [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin).
+
+Examples:
+
+```groovy
+// Throttle one job on its own
+job {
+    properties {
+        throttleConcurrentBuilds {
+            maxPerNode 1
+            maxTotal 2
+        }
+    }
+}
+```
+
+```groovy
+// Throttle as part of a category
+job {
+    properties {
+        throttleConcurrentBuilds {
+            categories(['cat-1'])
+        }
+    }
+}
+```
+
+(since 1.20)
 
 # Source Control
 
