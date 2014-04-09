@@ -225,6 +225,7 @@ view(attributes) {  // since 1.21, see [[View Reference]]
         lastFailure()
         lastDuration()
         buildButton()
+        lastBuildConsole() // since 1.23
     }
 
     // BuildPipelineView options
