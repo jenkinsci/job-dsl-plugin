@@ -18,7 +18,7 @@ class MissingPropertyToStringDelegate {
      * TODO Return Node instead of String, and let div() receive it
      */
     def propertyMissing(String propertyName) {
-        LOGGER.info("Missing ${propertyName}")
+        LOGGER.fine("Missing ${propertyName}")
         return propertyName
     }
 
@@ -49,7 +49,7 @@ class MissingPropertyToStringDelegate {
         }
         NodeBuilder b = new NodeBuilder();
         Node newNode = (Node) b.invokeMethod(methodName, args);
-        LOGGER.info("Missing ${methodName} created ${toXml(newNode)}")
+        LOGGER.fine("Missing ${methodName} created ${toXml(newNode)}")
         return newNode
     }
 }
