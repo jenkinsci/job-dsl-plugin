@@ -3,10 +3,12 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.*
+import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 public class StepHelperSpec extends Specification {
 
@@ -833,7 +835,6 @@ public class StepHelperSpec extends Specification {
         context.stepNodes.size() == 1
         def sbtStep = context.stepNodes[0]
         sbtStep.name() == 'org.jvnet.hudson.plugins.SbtPluginBuilder'
-        sbtStep.attribute('plugin') == 'sbt@1.4'
         sbtStep.name[0].value() == 'SBT 0.12.3'
         sbtStep.jvmFlags[0].value() == ''
         sbtStep.sbtFlags[0].value() == ''
@@ -850,7 +851,6 @@ public class StepHelperSpec extends Specification {
         context.stepNodes.size() == 1
         def sbtStep = context.stepNodes[0]
         sbtStep.name() == 'org.jvnet.hudson.plugins.SbtPluginBuilder'
-        sbtStep.attribute('plugin') == 'sbt@1.4'
         sbtStep.name[0].value() == 'SBT 0.12.3'
         sbtStep.jvmFlags[0].value() == ''
         sbtStep.sbtFlags[0].value() == ''
@@ -866,7 +866,6 @@ public class StepHelperSpec extends Specification {
         context.stepNodes.size() == 1
         def sbtStep = context.stepNodes[0]
         sbtStep.name() == 'org.jvnet.hudson.plugins.SbtPluginBuilder'
-        sbtStep.attribute('plugin') == 'sbt@1.4'
         sbtStep.name[0].value() == 'SBT 0.12.3'
         sbtStep.jvmFlags[0].value() == '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M'
         sbtStep.sbtFlags[0].value() == '-Dsbt.log.noformat=true'
@@ -1272,6 +1271,30 @@ still-another-dsl.groovy'''
         thrown(MissingMethodException)
     }
 
+    def 'call conditional steps for not condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                not {
+                    stringsMatch("foo", "bar", false)
+                }
+            }
+            shell("echo Test")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.condition[0].children().size() == 1
+
+        Node notCondition = step.condition[0]
+        notCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.logic.Not'
+        Node matchCondition = notCondition.condition[0]
+        matchCondition.attribute('class') ==  'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+        matchCondition.arg1[0].value() == 'foo'
+        matchCondition.arg2[0].value() == 'bar'
+        matchCondition.ignoreCase[0].value() == 'false'
+    }
+
     def 'call conditional steps for multiple steps'() {
         when:
         context.conditionalSteps {
@@ -1307,13 +1330,13 @@ still-another-dsl.groovy'''
 
         step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
 
-        step.conditionalBuilders[0].children().size() == 2
+        step.conditionalbuilders[0].children().size() == 2
 
-        Node shellStep = step.conditionalBuilders[0].children()[0]
+        Node shellStep = step.conditionalbuilders[0].children()[0]
         shellStep.name() == 'hudson.tasks.Shell'
         shellStep.command[0].value() == 'look at me'
 
-        def acmeGroovyNode = step.conditionalBuilders[0].children()[1]
+        def acmeGroovyNode = step.conditionalbuilders[0].children()[1]
         acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
@@ -1332,6 +1355,105 @@ still-another-dsl.groovy'''
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
         acmeScriptSourceNode.command.size() == 1
         acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
+    }
+
+    def 'fileExists is added correctly'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                fileExists('someFile', WORKSPACE)
+            }
+            shell("echo Test")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.condition[0].children().size() == 2
+
+        Node condition = step.condition[0]
+        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
+        condition.file[0].value() == 'someFile'
+        condition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
+    }
+
+    @Unroll
+    def 'Logical Operation #dslOperation is added correctly'(String dslOperation, String operation) {
+        when:
+        context.conditionalSteps {
+            condition {
+                "${dslOperation}" {
+                    fileExists('someFile', WORKSPACE)
+                } {
+                    alwaysRun()
+                }
+            }
+            shell("echo Test")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+
+        def logicOperation = step.condition[0]
+        logicOperation.attribute('class') == operation
+        logicOperation.children().size() == 1
+
+        Node conditions = logicOperation.conditions[0]
+        conditions.children().size() == 2
+
+
+        def containers = conditions.'org.jenkins__ci.plugins.run__condition.logic.ConditionContainer'
+        def fileCondition = containers[0].condition[0]
+        fileCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
+        fileCondition.file[0].value() == 'someFile'
+        fileCondition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
+
+        containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
+
+        where:
+        dslOperation | operation
+        'and'        | 'org.jenkins_ci.plugins.run_condition.logic.And'
+        'or'         | 'org.jenkins_ci.plugins.run_condition.logic.Or'
+    }
+
+    @Unroll
+    def 'Simple Condition #conditionDsl is added correctly'(conditionDsl, args, conditionClass, argNodes) {
+        when:
+        context.conditionalSteps {
+            condition {
+                "${conditionDsl}"(*args)
+            }
+            shell("echo something outside")
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        Node conditionNode = step.condition[0]
+        conditionNode.children().size() == argNodes.size()
+
+        conditionNode.attribute('class') == conditionClass
+        def ignored = argNodes.each { name, value ->
+            assert conditionNode."${name}"[0].value() == value
+        }
+
+        where:
+        conditionDsl       | args                         | conditionClass                                                        | argNodes
+        'shell'            | ['echo test']                | 'org.jenkins_ci.plugins.run_condition.contributed.ShellCondition'     | [command: 'echo test']
+        'batch'            | ['xcopy * ..\\']             | 'org.jenkins_ci.plugins.run_condition.contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
+        'alwaysRun'        | []                           | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'        | [:]
+        'neverRun'         | []                           | 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'         | [:]
+        'booleanCondition' | ['someToken']                | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
+        'cause'            | ['userCause', true]          | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
+                                                                                                                                     exclusiveCondition: 'true']
+        'stringsMatch'     | ['some1', 'some2', true]     | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
+                                                                                                                                     arg2      : 'some2',
+                                                                                                                                     ignoreCase: 'true']
+        'expression'       | ['exp', 'lab']               | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
+                                                                                                                                     label     : 'lab']
+        'time'             | ['earliest', 'latest', true] | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliest    : 'earliest',
+                                                                                                                                     latest      : 'latest',
+                                                                                                                                     useBuildTime: 'true']
+        'status'           | ['FAILED', 'STABLE']         | 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'           | [worstResult: 'FAILED',
+                                                                                                                                     bestResult : 'STABLE']
     }
 
     @Unroll
@@ -1364,5 +1486,104 @@ still-another-dsl.groovy'''
         envNode.info[0].children().size() == 2
         envNode.info[0].propertiesFilePath[0].value() == 'some.properties'
         envNode.info[0].propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
+    }
+
+    def 'call remoteTrigger with minimal options'() {
+        when:
+        context.remoteTrigger('dev-ci', 'test')
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].with {
+            name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
+            children().size() == 14
+            token[0].value() == []
+            remoteJenkinsName[0].value() == 'dev-ci'
+            job[0].value() == 'test'
+            shouldNotFailBuild[0].value() == false
+            pollInterval[0].value() == 10
+            preventRemoteBuildQueue[0].value() == false
+            blockBuildUntilComplete[0].value() == false
+            parameters[0].value() == ''
+            parameterList[0].children().size() == 1
+            parameterList[0].string[0].value() == []
+            overrideAuth[0].value() == false
+            auth[0].children().size() == 1
+            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+                children().size() == 3
+                NONE[0].value() == 'none'
+                API__TOKEN[0].value() == 'apiToken'
+                CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
+            }
+            loadParamsFromFile[0].value() == false
+            parameterFile[0].value() == []
+            queryString[0].value() == []
+        }
+    }
+
+    def 'call remoteTrigger with parameters'() {
+        when:
+        context.remoteTrigger('dev-ci', 'test') {
+            parameter 'foo', '1'
+            parameters bar: '2', baz: '3'
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].with {
+            name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
+            children().size() == 14
+            token[0].value() == []
+            remoteJenkinsName[0].value() == 'dev-ci'
+            job[0].value() == 'test'
+            shouldNotFailBuild[0].value() == false
+            pollInterval[0].value() == 10
+            preventRemoteBuildQueue[0].value() == false
+            blockBuildUntilComplete[0].value() == false
+            parameters[0].value() == 'foo=1\nbar=2\nbaz=3'
+            parameterList[0].children().size() == 3
+            parameterList[0].string[0].value() == 'foo=1'
+            parameterList[0].string[1].value() == 'bar=2'
+            parameterList[0].string[2].value() == 'baz=3'
+            overrideAuth[0].value() == false
+            auth[0].children().size() == 1
+            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+                children().size() == 3
+                NONE[0].value() == 'none'
+                API__TOKEN[0].value() == 'apiToken'
+                CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
+            }
+            loadParamsFromFile[0].value() == false
+            parameterFile[0].value() == []
+            queryString[0].value() == []
+        }
+    }
+
+    def 'call remoteTrigger without jenkins'() {
+        when:
+        context.remoteTrigger(null, 'test')
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.remoteTrigger('', 'test')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call remoteTrigger without job'() {
+        when:
+        context.remoteTrigger('dev-ci', null)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.remoteTrigger('dev-ci', '')
+
+        then:
+        thrown(IllegalArgumentException)
     }
 }

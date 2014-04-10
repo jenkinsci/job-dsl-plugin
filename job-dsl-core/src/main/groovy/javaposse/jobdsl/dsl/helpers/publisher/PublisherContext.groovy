@@ -543,7 +543,7 @@ class PublisherContext implements Context {
         AbstractContextHelper.executeInContext(violationsClosure, violationsContext)
 
         def nodeBuilder = NodeBuilder.newInstance()
-        def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher'(plugin: 'violations@0.7.11') {
+        def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher' {
             config {
                 suppressions(class: "tree-set") {
                     'no-comparator'()
@@ -961,5 +961,132 @@ class PublisherContext implements Context {
      */
     def githubCommitNotifier() {
         publisherNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubCommitNotifier'()
+    }
+
+    /**
+     * <publishers>
+     *     <hudson.plugins.git.GitPublisher>
+     *         <configVersion>2</configVersion>
+     *         <pushMerge>false</pushMerge>
+     *         <pushOnlyIfSuccess>true</pushOnlyIfSuccess>
+     *         <tagsToPush>
+     *             <hudson.plugins.git.GitPublisher_-TagToPush>
+     *                 <targetRepoName>origin</targetRepoName>
+     *                 <tagName>foo-$PIPELINE_VERSION</tagName>
+     *                 <tagMessage>Release $PIPELINE_VERSION</tagMessage> 
+     *                 <createTag>true</createTag>
+     *                 <updateTag>false</updateTag>
+     *             </hudson.plugins.git.GitPublisher_-TagToPush>
+     *         </tagsToPush>
+     *         <branchesToPush>
+     *             <hudson.plugins.git.GitPublisher_-BranchToPush>
+     *                 <targetRepoName>origin</targetRepoName>
+     *                 <branchName>master</branchName>
+     *             </hudson.plugins.git.GitPublisher_-BranchToPush>
+     *         </branchesToPush>
+     *     </hudson.plugins.git.GitPublisher>
+     * </publishers>
+     */
+    def git(Closure gitPublisherClosure) {
+        GitPublisherContext context = new GitPublisherContext()
+        AbstractContextHelper.executeInContext(gitPublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher' {
+            configVersion(2)
+            pushMerge(context.pushMerge)
+            pushOnlyIfSuccess(context.pushOnlyIfSuccess)
+            tagsToPush(context.tags)
+            branchesToPush(context.branches)
+        }
+    }
+
+    /**
+     * <publishers>
+     *     <com.flowdock.jenkins.FlowdockNotifier>
+     *         <flowToken>hash</flowToken>
+     *         <notificationTags/>
+     *         <chatNotification>false</chatNotification>
+     *         <notifyMap>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>ABORTED</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>SUCCESS</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>FIXED</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>UNSTABLE</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>FAILURE</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>NOT_BUILT</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *         </notifyMap>
+     *         <notifySuccess>true</notifySuccess>
+     *         <notifyFailure>true</notifyFailure>
+     *         <notifyFixed>true</notifyFixed>
+     *         <notifyUnstable>false</notifyUnstable>
+     *         <notifyAborted>false</notifyAborted>
+     *         <notifyNotBuilt>false</notifyNotBuilt>
+     *     </com.flowdock.jenkins.FlowdockNotifier>
+     * </publishers>
+     */
+    def flowdock(String token, Closure flowdockPublisherClosure = null) {
+        FlowdockPublisherContext context = new FlowdockPublisherContext()
+        AbstractContextHelper.executeInContext(flowdockPublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'com.flowdock.jenkins.FlowdockNotifier' {
+            flowToken(token)
+            notificationTags(context.notificationTags.join(','))
+            chatNotification(context.chat)
+            notifyMap {
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('ABORTED')
+                    'boolean'(context.aborted)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('SUCCESS')
+                    'boolean'(context.success)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('FIXED')
+                    'boolean'(context.fixed)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('UNSTABLE')
+                    'boolean'(context.unstable)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('FAILURE')
+                    'boolean'(context.failure)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('NOT_BUILT')
+                    'boolean'(context.notBuilt)
+                }
+            }
+            notifySuccess(context.success)
+            notifyFailure(context.failure)
+            notifyFixed(context.fixed)
+            notifyUnstable(context.unstable)
+            notifyAborted(context.aborted)
+            notifyNotBuilt(context.notBuilt)
+        }
+    }
+
+    def flowdock(String[] tokens, Closure flowdockPublisherClosure = null) {
+        // Validate values
+        assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
+        flowdock(tokens.join(','), flowdockPublisherClosure)
     }
 }
