@@ -256,9 +256,9 @@ class ScmContext implements Context {
     }
     def svn(String url, String dir, Closure config = null) {
         svn {
-            svnUrl url
+            svnUrl(url) 
             localDir(dir)
-            configure config
+            configure(config)
         }
     }
     def svn(Closure closure) {
