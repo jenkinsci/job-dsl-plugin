@@ -710,6 +710,21 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
     }
 
+    def 'call svn with closure'() {
+        when:
+        context.svn {
+            svnUrl('http://svn.apache.org/repos/asf/xml/crimson/trunk/')
+            localDir('/mydir/mycode')
+            ignoreExternals()
+            updateStrategie('Update')
+        }
+
+        then:
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].ignoreExternalsOption[0].value() == true
+        context.scmNode.workspaceUpdater[0].attributes().class == 'hudson.scm.subversion.UpdateUpdater'
+    }
+
     def 'call svn with browser - Fisheye example'() {
         when:
         context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
