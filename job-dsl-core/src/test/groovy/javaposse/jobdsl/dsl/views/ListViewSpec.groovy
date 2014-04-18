@@ -2,7 +2,10 @@ package javaposse.jobdsl.dsl.views
 
 import spock.lang.Specification
 
+import static javaposse.jobdsl.dsl.views.JobFiltersContext.JobType.FreeStyle
 import static javaposse.jobdsl.dsl.views.JobFiltersContext.MatchValue.JobName
+import static javaposse.jobdsl.dsl.views.JobFiltersContext.MatchValue.JobDescription
+import static javaposse.jobdsl.dsl.views.JobFiltersContext.SCMType.CVS
 import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.ALL
 import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.DISABLED
 import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.ENABLED
@@ -10,8 +13,7 @@ import static javaposse.jobdsl.dsl.views.jobfilters.IncludeExcludeType.INCLUDE_M
 import static javaposse.jobdsl.dsl.views.jobfilters.IncludeExcludeType.INCLUDE_UNMATCHED
 import static javaposse.jobdsl.dsl.views.jobfilters.IncludeExcludeType.EXCLUDE_MATCHED
 import static javaposse.jobdsl.dsl.views.jobfilters.IncludeExcludeType.EXCLUDE_UNMATCHED
-import static javaposse.jobdsl.dsl.views.jobfilters.JobTypeFilterContext.JobType.FreeStyle
-import static javaposse.jobdsl.dsl.views.jobfilters.SCMTypeFilterContext.SCMType.CVS
+
 
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
@@ -252,8 +254,7 @@ class ListViewSpec extends Specification {
     def 'jobStatusfilter with includeMatched'() {
         when:
         view.jobFilters {
-            jobStatusFilter {
-                includeExcludeType(INCLUDE_MATCHED)
+            jobStatusFilter(INCLUDE_MATCHED) {
                 unstable()
             }
         }
@@ -274,8 +275,7 @@ class ListViewSpec extends Specification {
     def 'buildStatusfilter with excludeMatched'() {
         when:
         view.jobFilters {
-            buildStatusFilter {
-                includeExcludeType(EXCLUDE_MATCHED)
+            buildStatusFilter(EXCLUDE_MATCHED) {
                 neverBuilt()
             }
         }
@@ -294,10 +294,7 @@ class ListViewSpec extends Specification {
     def 'jobTypeFilter'() {
         when:
         view.jobFilters {
-            jobTypeFilter {
-                includeExcludeType(EXCLUDE_UNMATCHED)
-                jobType(FreeStyle)
-            }
+            jobTypeFilter(FreeStyle, EXCLUDE_UNMATCHED)
         }
 
         then:
@@ -312,10 +309,7 @@ class ListViewSpec extends Specification {
     def 'scmTypeFilter'() {
         when:
         view.jobFilters {
-            scmTypeFilter {
-                includeExcludeType(INCLUDE_UNMATCHED)
-                scmType(CVS)
-            }
+            scmTypeFilter(CVS, INCLUDE_UNMATCHED)
         }
 
         then:
@@ -330,10 +324,7 @@ class ListViewSpec extends Specification {
     def 'otherViewFilter'() {
         when:
         view.jobFilters {
-            otherViewFilter {
-                includeExcludeType(INCLUDE_MATCHED)
-                otherViewName('Some Other View')
-            }
+            otherViewFilter('Some Other View')
         }
 
         then:
@@ -342,6 +333,21 @@ class ListViewSpec extends Specification {
         root.jobFilters[0].value().size() == 1
         root.jobFilters[0].value()[0].name() == 'hudson.views.OtherViewsFilter'
         root.jobFilters.'hudson.views.OtherViewsFilter'.includeExcludeTypeString[0].text() == 'includeMatched'
+        root.jobFilters.'hudson.views.OtherViewsFilter'.otherViewName[0].text() == 'Some Other View'
+    }
+
+    def 'otherViewFilter'() {
+        when:
+        view.jobFilters {
+            otherViewFilter('Some Other View', EXCLUDE_UNMATCHED)
+        }
+
+        then:
+        Node root = view.getNode()
+        root.jobFilters.size() == 1
+        root.jobFilters[0].value().size() == 1
+        root.jobFilters[0].value()[0].name() == 'hudson.views.OtherViewsFilter'
+        root.jobFilters.'hudson.views.OtherViewsFilter'.includeExcludeTypeString[0].text() == 'excludeUnmatched'
         root.jobFilters.'hudson.views.OtherViewsFilter'.otherViewName[0].text() == 'Some Other View'
     }
 
@@ -363,7 +369,7 @@ class ListViewSpec extends Specification {
     def 'unclassifiedJobs'() {
         when:
         view.jobFilters {
-            unclassifiedJobs(INCLUDE_MATCHED)
+            unclassifiedJobs()
         }
 
         then:
@@ -374,10 +380,24 @@ class ListViewSpec extends Specification {
         root.jobFilters.'hudson.views.UnclassifiedJobsFilter'.includeExcludeTypeString[0].text() == 'includeMatched'
     }
 
+    def 'unclassifiedJobs with non-default match type'() {
+        when:
+        view.jobFilters {
+            unclassifiedJobs(EXCLUDE_MATCHED)
+        }
+
+        then:
+        Node root = view.getNode()
+        root.jobFilters.size() == 1
+        root.jobFilters[0].value().size() == 1
+        root.jobFilters[0].value()[0].name() == 'hudson.views.UnclassifiedJobsFilter'
+        root.jobFilters.'hudson.views.UnclassifiedJobsFilter'.includeExcludeTypeString[0].text() == 'excludeMatched'
+    }
+
     def 'securedJobs'() {
         when:
         view.jobFilters {
-            securedJobs(INCLUDE_MATCHED)
+            securedJobs()
         }
 
         then:
@@ -388,10 +408,24 @@ class ListViewSpec extends Specification {
         root.jobFilters.'hudson.views.SecuredJobsFilter'.includeExcludeTypeString[0].text() == 'includeMatched'
     }
 
-    def 'regex'() {
+    def 'securedJobs with non-default match type'() {
         when:
         view.jobFilters {
-            regex('.*_Nightly', JobName, INCLUDE_MATCHED)
+            securedJobs(INCLUDE_UNMATCHED)
+        }
+
+        then:
+        Node root = view.getNode()
+        root.jobFilters.size() == 1
+        root.jobFilters[0].value().size() == 1
+        root.jobFilters[0].value()[0].name() == 'hudson.views.SecuredJobsFilter'
+        root.jobFilters.'hudson.views.SecuredJobsFilter'.includeExcludeTypeString[0].text() == 'includeUnmatched'
+    }
+
+    def 'regex with default match type'() {
+        when:
+        view.jobFilters {
+            regex('.*_Nightly', JobName)
         }
 
         then:
@@ -401,6 +435,22 @@ class ListViewSpec extends Specification {
         root.jobFilters[0].value()[0].name() == 'hudson.views.RegExJobFilter'
         root.jobFilters.'hudson.views.RegExJobFilter'.includeExcludeTypeString[0].text() == 'includeMatched'
         root.jobFilters.'hudson.views.RegExJobFilter'.valueTypeString[0].text() == 'NAME'
+        root.jobFilters.'hudson.views.RegExJobFilter'.regex[0].text() == '.*_Nightly'
+    }
+
+    def 'regex with non-default match type'() {
+        when:
+        view.jobFilters {
+            regex('.*_Nightly', JobDescription, EXCLUDE_MATCHED)
+        }
+
+        then:
+        Node root = view.getNode()
+        root.jobFilters.size() == 1
+        root.jobFilters[0].value().size() == 1
+        root.jobFilters[0].value()[0].name() == 'hudson.views.RegExJobFilter'
+        root.jobFilters.'hudson.views.RegExJobFilter'.includeExcludeTypeString[0].text() == 'excludeMatched'
+        root.jobFilters.'hudson.views.RegExJobFilter'.valueTypeString[0].text() == 'DESCRIPTION'
         root.jobFilters.'hudson.views.RegExJobFilter'.regex[0].text() == '.*_Nightly'
     }
 

@@ -5,14 +5,14 @@ import javaposse.jobdsl.dsl.views.jobfilters.IncludeExcludeType
 
 class JobStatusFilterContext implements Context {
 
-    String includeExcludeType = IncludeExcludeType.INCLUDE_MATCHED.value
+    String includeExcludeType
     boolean unstable = false
     boolean failed = false
     boolean aborted = false
     boolean disabled = false
     boolean stable = false
 
-    void includeExcludeType(IncludeExcludeType type) {
+    public JobStatusFilterContext(IncludeExcludeType type) {
         this.includeExcludeType = type.value
     }
 

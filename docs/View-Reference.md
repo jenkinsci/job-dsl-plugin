@@ -14,29 +14,18 @@ view(type: ListView) {  // since 1.21
     statusFilter(StatusFilter filter)
     jobFilters { // since 1.23
         mostRecentJobs(int, boolean)
-        unclassifiedJobs(IncludeExcludeType type)
-        securedJobs(IncludeExcludeType type)
-        regex(String regexp, MatchValue matchValue, IncludeExcludeType type)
+        unclassifiedJobs(IncludeExcludeType matchType = INCLUDE_MATCHED)
+        securedJobs(IncludeExcludeType matchType = INCLUDE_MATCHED)
+        regex(String regexp, MatchValue matchValue, IncludeExcludeType matchType = INCLUDE_MATCHED)
         upstreamDownstream(boolean downstream, boolean upstream, boolean recursive, boolean showSource)
-        jobStatusFilter { // See below for closure syntax
-            includeExcludeType(IncludeExcludeType type)
+        jobTypeFilter(JobType type, IncludeExcludeType matchType = INCLUDE_MATCHED)
+        scmTypeFilter(SCMType scm, IncludeExcludeType matchType = INCLUDE_MATCHED)
+        otherViewFilter(String otherView, IncludeExcludeType matchType = INCLUDE_MATCHED)
+        jobStatusFilter(IncludeExcludeType type = INCLUDE_MATCHED) { // See below for closure syntax
             unstable()
         }
-        buildStatusFilter { // See below for closure syntax
-            includeExcludeType(IncludeExcludeType type)
+        buildStatusFilter(IncludeExcludeType type = INCLUDE_MATCHED) { // See below for closure syntax
             neverBuilt()
-        }
-        jobTypeFilter { // See below for closure syntax
-            includeExcludeType(IncludeExcludeType type)
-            jobType(JobType type)
-        }
-        scmTypeFilter { // See below for closure syntax
-            includeExcludeType(IncludeExcludeType type)
-            scmType(SCMType scm)
-        }
-        otherViewFilter { // See below for closure syntax
-            includeExcludeType(IncludeExcludeType type)
-            otherViewName(Strign otherView)
         }
     }
     jobs {
@@ -89,9 +78,13 @@ mostRecentJobs(int count, boolean useStartTime = false)
 
 Restricts the view to only the specified number of recently completed jobs. The boolean argument is to use the job start time versus end time for calculation.
 
+Example:
+```groovy
+mostRecentJobs(5)
+```
 #### Unclassified Jobs
 ```groovy
-unclassifiedJobs(IncludeExcludeType matchType)
+unclassifiedJobs(IncludeExcludeType matchType = INCLUDE_MATCHED)
 ```
 
 This filter allows a View to show all Jobs that haven't already been included in another View (not counting any "All Jobs" views).
@@ -100,18 +93,27 @@ This is especially useful if you have hundreds of Jobs organized into Views, and
 
 Because this filter looks at other Views, there is a risk of creating an infinite loop, so plan carefully.
 
+Example:
+```groovy
+unclassifiedJobs()
+```
 #### Project-based Secured Jobs
 ```groovy
-securedJobs(IncludeExcludeType matchType)
+securedJobs(IncludeExcludeType matchType = INCLUDE_MATCHED)
 ```
 
 Filters on whether a job has selected the "Enable project-based security" option.
 
 NOTE: This filter does not provide security - it merely provides convenient views that feed off of the security you've already set up.
 
-#### Regualr Expression Job Filter
+Example:
 ```groovy
-regex(String regexp, MatchValue matchValue, IncludeExcludeType matchType)
+securedJobs()
+```
+
+#### Regular Expression Job Filter
+```groovy
+regex(String regexp, MatchValue matchValue, IncludeExcludeType matchType = INCLUDE_MATCHED)
 ```
 
 You can use as many Regular Expression Filters as you like - they will each apply in the order you put them in.
@@ -129,7 +131,7 @@ Match Type: Choose whether this filter will add additional jobs, or remove jobs.
 
 Example:
 ```groovy
-regex('.*_Nightly', JobName, INCLUDE_MATCHED)
+regex('.*_Nightly', MatchValue.JobName)
 ```
 
 #### Upstream / Downstream Jobs Filter
@@ -151,8 +153,7 @@ upstreamDownstream(true, false, true, true)
 
 #### Job Statuses Filter
 ```groovy
-jobStatusFilter {
-    includeExcludeType(IncludeExcludeType matchType)
+jobStatusFilter(IncludeExcludeType matchType = INCLUDE_MATCHED) {
     unstable(boolean include = true)
     failed(boolean include = true)
     aborted(boolean include = true)
@@ -167,7 +168,6 @@ Choose an appropriate Match Type to choose whether this filter will add addition
 Example:
 ```groovy
 jobStatusFilter {
-    includeExcludeType(INCLUDE_MATCHED)
     unstable()
     failed()
     aborted(false)
@@ -175,8 +175,7 @@ jobStatusFilter {
 ```
 #### Build Statuses Filter
 ```groovy
-buildStatusFilter {
-    includeExcludeType(IncludeExcludeType matchType)
+buildStatusFilter(IncludeExcludeType matchType = INCLUDE_MATCHED) {
     neverBuilt(boolean include = true)
     building(boolean include = true)
     inBuildQueue(boolean include = true)
@@ -188,15 +187,13 @@ Choose an appropriate Match Type to choose whether this filter will add addition
 
 Example:
 ```groovy
-buildStatusFilter {
-    includeExcludeType(EXCLUDE_MATCHED)
+buildStatusFilter(EXCLUDE_MATCHED) {
     neverBuilt()
 }
 ```
 #### Job Type Filter
 ```groovy
-jobTypeFilter {
-    includeExcludeType(IncludeExcludeType matchType)
+jobTypeFilter(IncludeExcludeType matchType = INCLUDE_MATCHED) {
     jobType(JobType type)
 }
 ```
@@ -205,18 +202,12 @@ Filter by the type of job: ```JobType.FreeStyle, JobType.Maven, JobType.Matrix, 
 
 Example:
 ```groovy
-jobTypeFilter {
-    includeExcludeType(EXCLUDE_UNMATCHED)
-    jobType(FreeStyle)
-}
+jobTypeFilter(JobType.FreeStyle, EXCLUDE_UNMATCHED)
 ```
 
 #### SCM Type Filter
 ```groovy
-scmTypeFilter {
-    includeExcludeType(IncludeExcludeType matchType)
-    scmType(SCMType scm)
-}
+scmTypeFilter(SCMType scm, IncludeExcludeType matchType = INCLUDE_MATCHED)
 ```
 
 Organize views by SCM type. Especially useful in a large organization with hundreds of jobs, or when you are migrating jobs to use a new scm.
@@ -226,17 +217,11 @@ Organize views by SCM type. Especially useful in a large organization with hundr
 
 Example:
 ```groovy
-scmTypeFilter {
-    includeExcludeType(INCLUDE_UNMATCHED)
-    scmType(CVS)
-}
+scmTypeFilter(SCMType.CVS, INCLUDE_UNMATCHED)
 ```
 #### Other Views Filter
 ```groovy
-otherViewFilter {
-    includeExcludeType(IncludeExcludeType matchType)
-    otherViewName(String viewName)
-}
+otherViewFilter(String viewName, IncludeExcludeType matchType = INCLUDE_MATCHED)
 ```
 This filter allows you to base one view's jobs off of other view's jobs. This is mostly helpful in large organizations with hundreds of jobs, and many views.
 
@@ -247,10 +232,7 @@ Another example is if you have one "special" view that contains utility or legac
 Do not select a view as it's own "Other View" - this can cause unpredictable behavior.
 Example:
 ```groovy
-otherViewFilter {
-    includeExcludeType(EXCLUDE_UNMATCHED)
-    otherViewName('some-view')
-}
+otherViewFilter('some-view', EXCLUDE_UNMATCHED)
 ```
 ## Build Pipeline View
 
