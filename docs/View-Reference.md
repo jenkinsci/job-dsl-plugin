@@ -12,6 +12,33 @@ view(type: ListView) {  // since 1.21
 
     // list view options
     statusFilter(StatusFilter filter)
+    jobFilters { // since 1.23
+        mostRecentJobs(int, boolean)
+        unclassifiedJobs(IncludeExcludeType type)
+        securedJobs(IncludeExcludeType type)
+        regex(String regexp, MatchValue matchValue, IncludeExcludeType type)
+        upstreamDownstream(boolean downstream, boolean upstream, boolean recursive, boolean showSource)
+        jobStatusFilter { // See below for closure syntax
+            includeExcludeType(IncludeExcludeType type)
+            unstable()
+        }
+        buildStatusFilter { // See below for closure syntax
+            includeExcludeType(IncludeExcludeType type)
+            neverBuilt()
+        }
+        jobTypeFilter { // See below for closure syntax
+            includeExcludeType(IncludeExcludeType type)
+            jobType(JobType type)
+        }
+        scmTypeFilter { // See below for closure syntax
+            includeExcludeType(IncludeExcludeType type)
+            scmType(SCMType scm)
+        }
+        otherViewFilter { // See below for closure syntax
+            includeExcludeType(IncludeExcludeType type)
+            otherViewName(Strign otherView)
+        }
+    }
     jobs {
         name(String jobName)
         names(String... jobNames)
@@ -54,6 +81,177 @@ view(type: ListView) {
 }
 ```
 
+### Job Filters
+#### Most Recent Jobs
+```groovy
+mostRecentJobs(int count, boolean useStartTime = false)
+```
+
+Restricts the view to only the specified number of recently completed jobs. The boolean argument is to use the job start time versus end time for calculation.
+
+#### Unclassified Jobs
+```groovy
+unclassifiedJobs(IncludeExcludeType matchType)
+```
+
+This filter allows a View to show all Jobs that haven't already been included in another View (not counting any "All Jobs" views).
+
+This is especially useful if you have hundreds of Jobs organized into Views, and you want an easy way to identify which Jobs haven't been "classified" into a View yet.
+
+Because this filter looks at other Views, there is a risk of creating an infinite loop, so plan carefully.
+
+#### Project-based Secured Jobs
+```groovy
+securedJobs(IncludeExcludeType matchType)
+```
+
+Filters on whether a job has selected the "Enable project-based security" option.
+
+NOTE: This filter does not provide security - it merely provides convenient views that feed off of the security you've already set up.
+
+#### Regualr Expression Job Filter
+```groovy
+regex(String regexp, MatchValue matchValue, IncludeExcludeType matchType)
+```
+
+You can use as many Regular Expression Filters as you like - they will each apply in the order you put them in.
+
+Match Value: Choose from the following to match on
+Job name
+Job description
+Job SCM configuration: Matching by SCM is extremely useful if you have hundreds of jobs that need to be "auto organized", and are already organized under source control. (Currently matches against SVN, Git, and CVS paths/configuration)
+Email recipients: Matching by Email is useful for organizing by "who cares about this job."
+Maven configuration: Use this to match against "what does this job do"
+Job schedule: Matches against the chron pattern and any comments for Timer and SCM triggers.
+Node label expression: Matches against the Label Expression under the "Restrict where this project can be run" option.
+
+Match Type: Choose whether this filter will add additional jobs, or remove jobs.
+
+Example:
+```groovy
+regex('.*_Nightly', JobName, INCLUDE_MATCHED)
+```
+
+#### Upstream / Downstream Jobs Filter
+```groovy
+upstreamDownstream(boolean includeDownstream, boolean includeUpstream, boolean recursiveInclude, boolean showSource)
+```
+
+This filter allows you to create a view consisting of jobs that are related through the concept of Upstream/Downstream (also called "Build after other projects are built" and "Build other projects").
+The options provided allow you to choose exactly which types of related jobs to show.
+
+Note that filters are chained together, so using this filter builds off of the jobs included by previous filters. Remember that
+This filter will not include any jobs if there are no jobs already selected
+This filter (like most other filters) is capable of removing jobs that were already selected
+
+Example:
+```groovy
+upstreamDownstream(true, false, true, true)
+```
+
+#### Job Statuses Filter
+```groovy
+jobStatusFilter {
+    includeExcludeType(IncludeExcludeType matchType)
+    unstable(boolean include = true)
+    failed(boolean include = true)
+    aborted(boolean include = true)
+    disabled(boolean include = true)
+    stable(boolean include = true)
+}
+```
+
+You can use as many Job Filters as you like - they will each apply in the order you put them in.
+Choose an appropriate Match Type to choose whether this filter will add additional jobs, or remove jobs.
+
+Example:
+```groovy
+jobStatusFilter {
+    includeExcludeType(INCLUDE_MATCHED)
+    unstable()
+    failed()
+    aborted(false)
+}
+```
+#### Build Statuses Filter
+```groovy
+buildStatusFilter {
+    includeExcludeType(IncludeExcludeType matchType)
+    neverBuilt(boolean include = true)
+    building(boolean include = true)
+    inBuildQueue(boolean include = true)
+}
+```
+
+You can use as many Job Filters as you like - they will each apply in the order you put them in.
+Choose an appropriate Match Type to choose whether this filter will add additional jobs, or remove jobs.
+
+Example:
+```groovy
+buildStatusFilter {
+    includeExcludeType(EXCLUDE_MATCHED)
+    neverBuilt()
+}
+```
+#### Job Type Filter
+```groovy
+jobTypeFilter {
+    includeExcludeType(IncludeExcludeType matchType)
+    jobType(JobType type)
+}
+```
+Filter by the type of job: ```JobType.FreeStyle, JobType.Maven, JobType.Matrix, JobType.External```
+
+
+Example:
+```groovy
+jobTypeFilter {
+    includeExcludeType(EXCLUDE_UNMATCHED)
+    jobType(FreeStyle)
+}
+```
+
+#### SCM Type Filter
+```groovy
+scmTypeFilter {
+    includeExcludeType(IncludeExcludeType matchType)
+    scmType(SCMType scm)
+}
+```
+
+Organize views by SCM type. Especially useful in a large organization with hundreds of jobs, or when you are migrating jobs to use a new scm.
+
+```SCMType.CVS, SCMType.CVSProjectSet, SCMType.Git, SCMType.None, SCMType.SVN```
+
+
+Example:
+```groovy
+scmTypeFilter {
+    includeExcludeType(INCLUDE_UNMATCHED)
+    scmType(CVS)
+}
+```
+#### Other Views Filter
+```groovy
+otherViewFilter {
+    includeExcludeType(IncludeExcludeType matchType)
+    otherViewName(String viewName)
+}
+```
+This filter allows you to base one view's jobs off of other view's jobs. This is mostly helpful in large organizations with hundreds of jobs, and many views.
+
+For example, if you have a company organizational hierarchy of projects, different configuration managers might want to view a different sub-set of jobs, and there's no reason to manage each view's list of jobs if some views are simply meant to be an aggregate of other views.
+
+Another example is if you have one "special" view that contains utility or legacy jobs, and you want to easily exclude those jobs from other views, but there are no well-defined characteristics of those jobs that you can filter on. With this filter, you can put your effort into creating that special view, and then for other views simply choose to exclude all jobs that appear in that special view.
+
+Do not select a view as it's own "Other View" - this can cause unpredictable behavior.
+Example:
+```groovy
+otherViewFilter {
+    includeExcludeType(EXCLUDE_UNMATCHED)
+    otherViewName('some-view')
+}
+```
 ## Build Pipeline View
 
 ```groovy
