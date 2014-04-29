@@ -1140,7 +1140,7 @@ job {
 ```groovy
 copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles = false, boolean optionalAllowed = false, Closure copyArtifactClosure) {
     upstreamBuild(boolean fallback = false) // Upstream build that triggered this job
-    latestSuccessful() // Latest successful build
+    latestSuccessful(boolean stable = false) // Latest successful build
     latestSaved() // Latest saved build (marked "keep forever")
     permalink(String linkName) // Specified by permalink: lastBuild, lastStableBuild
     buildNumber(int buildNumber) // Specific Build

@@ -480,6 +480,9 @@ class AbstractStepContext implements Context {
                 if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
                     fallbackToLastSuccessful 'true'
                 }
+                if (copyArtifactContext.selectedSelector == 'StatusBuild' && copyArtifactContext.stable) {
+                    stable 'true'
+                }
                 if (copyArtifactContext.selectedSelector == 'PermalinkBuild') {
                     id copyArtifactContext.permalinkName
                 }
