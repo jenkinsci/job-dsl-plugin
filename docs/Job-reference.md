@@ -2409,6 +2409,28 @@ job {
 
 (Since 1.23)
 
+## StashNotifier Publisher
+
+Supports the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin).
+All parameters are optional. If a method is not called then the plugin default parameter will be used.
+
+```groovy
+job {
+    publishers {
+        stashNotifier() {
+            url(String url)
+            username(String username)
+            password(String password)
+            ignoreUnverifiedSSL(boolean ignoreUnverifiedSSL = false)
+            commitSha1(String commitSha1)
+            keepRepeatedBuilds(boolean keepRepeatedBuilds = false)
+        }
+    }
+}
+```
+
+(Since 1.23)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_

@@ -1089,4 +1089,31 @@ class PublisherContext implements Context {
         assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
         flowdock(tokens.join(','), flowdockPublisherClosure)
     }
+
+    /**
+     * <publishers>
+     *     <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *         <url/>
+     *         <stashUserName/>
+     *         <stashUserPassword>y1/kpoWAZo+gBl7xAmdWIQ==</stashUserPassword>
+     *         <ignoreUnverifiedSSLPeer>false</ignoreUnverifiedSSLPeer>
+     *         <commitSha1/>
+     *         <includeBuildNumberInKey>false</includeBuildNumberInKey>
+     *      </org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     * </publishers>
+     *
+     * See https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin
+     */
+    def stashNotifier(Closure stashNotifierClosure = null) {
+      StashNotifierContext context = new StashNotifierContext()
+       AbstractContextHelper.executeInContext(stashNotifierClosure, context)
+       publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
+           stashServerBaseUrl(context.url)
+           stashUserName(context.username)
+           stashUserPassword(context.password)
+           ignoreUnverifiedSSLPeer(context.ignoreUnverifiedSSL)
+           commitSha1(context.commitSha1)
+           includeBuildNumberInKey(context.keepRepeatedBuilds)
+       }
+    }
 }
