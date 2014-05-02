@@ -686,7 +686,9 @@ class PublisherContext implements Context {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
             regexp(regularExpression)
             regexpForFailed(regularExpressionForFailed)
-            delegate.description(description)
+            if (description) {
+                delegate.description(description)
+            }
             if (descriptionForFailed) {
                 delegate.descriptionForFailed(descriptionForFailed)
             }
