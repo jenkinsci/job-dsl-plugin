@@ -2409,6 +2409,32 @@ job {
 
 (Since 1.23)
 
+## Workspace Cleanup Publisher
+
+Supports the [Workspace Cleanup Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin).
+All parameters are optional. If a method is not called then the plugin default parameter will be used.
+
+```groovy
+job {
+    publishers {
+        wsCleanup() {
+            includePattern(String pattern)
+            excludePattern(String pattern)
+            deleteDirectories(boolean false = false)
+            cleanWhenSuccess(boolean = true)
+            cleanWhenUnstable(boolean = true)
+            cleanWhenFailure(boolean = true)
+            cleanWhenNotBuilt(boolean = true)
+            cleanWhenAborted(boolean = true)
+            notFailBuild(boolean = true)
+            externalDelete(String command)
+        }
+    }
+}
+```
+
+(Since 1.23)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_

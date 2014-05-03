@@ -1089,4 +1089,49 @@ class PublisherContext implements Context {
         assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
         flowdock(tokens.join(','), flowdockPublisherClosure)
     }
+
+    /**
+     * Configures the post build action of the Workspace Cleanup Plugin to delete the workspace.
+     *
+     * <publishers>
+     *      <hudson.plugins.ws__cleanup.WsCleanup>
+     *          <patterns>
+     *              <hudson.plugins.ws__cleanup.Pattern>
+     *                  <pattern>*.java</pattern>
+     *                  <type>INCLUDE</type>
+     *              </hudson.plugins.ws__cleanup.Pattern>
+     *              <hudson.plugins.ws__cleanup.Pattern>
+     *                  <pattern>*.log</pattern>
+     *                  <type>EXCLUDE</type>
+     *            </hudson.plugins.ws__cleanup.Pattern>
+     *          </patterns>
+     *          <deleteDirs>false</deleteDirs>
+     *          <cleanWhenSuccess>true</cleanWhenSuccess>
+     *          <cleanWhenUnstable>true</cleanWhenUnstable>
+     *          <cleanWhenFailure>true</cleanWhenFailure>
+     *          <cleanWhenNotBuilt>true</cleanWhenNotBuilt>
+     *          <cleanWhenAborted>true</cleanWhenAborted>
+     *          <notFailBuild>false</notFailBuild>
+     *          <externalDelete>rm</externalDelete>
+     *      </hudson.plugins.ws__cleanup.WsCleanup>
+     * </publishers>
+     *
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
+     */
+    def wsCleanup(Closure closure = null) {
+        WsCleanupContext context = new WsCleanupContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.ws__cleanup.WsCleanup' {
+            patterns(context.patternNodes)
+            deleteDirs(context.deleteDirectories)
+            cleanWhenSuccess(context.cleanWhenSuccess)
+            cleanWhenUnstable(context.cleanWhenUnstable)
+            cleanWhenFailure(context.cleanWhenFailure)
+            cleanWhenNotBuilt(context.cleanWhenNotBuilt)
+            cleanWhenAborted(context.cleanWhenAborted)
+            notFailBuild(context.notFailBuild)
+            externalDelete(context.externalDelete ?: '')
+        }
+    }
 }
