@@ -419,4 +419,29 @@ class WrapperContext implements Context {
             deleteCommand(context.deleteCommand ?: '')
         }
     }
+
+    /**
+     * Configures the configuration for the Log File Size Checker build wrapper.
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin
+     *
+     * <project>
+     *     <buildWrappers>
+     *          <hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
+     *              <setOwn>true</setOwn>
+     *              <maxLogSize>10</maxLogSize>
+     *              <failBuild>true</failBuild>
+     *          </hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
+     *     </buildWrappers>
+     * </project>
+     */
+    def logSize(Closure closure = null) {
+        LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper' {
+            setOwn(context.useOwn)
+            maxLogSize(context.maxSize)
+            failBuild(context.fail)
+        }
+    }
 }

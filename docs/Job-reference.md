@@ -960,6 +960,47 @@ job {
 
 (since 1.22)
 
+## Log File Size Checker Plugin
+
+```groovy
+job {
+    wrappers {
+        logSize {
+            useOwn(boolean setOwn = false)
+            maxSize(int size)
+            fail(boolean failBuild = false)
+        }
+    }
+}
+```
+
+Configures the log file size checker plugin. Requires the [LogFileSizeChecker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin).
+
+Examples:
+```groovy
+// default configuration using the system wide definition
+job {
+    wrappers {
+        logSize()
+    }
+}
+```
+
+```groovy
+// using job specific configuration, setting the max log size to 10 MB and fail the build of the log file is larger.
+job {
+    wrappers {
+        logSize {
+            useOwn(true)
+            maxSize(10)
+            fail(true)
+        }
+    }
+}
+```
+
+(since 1.23)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
