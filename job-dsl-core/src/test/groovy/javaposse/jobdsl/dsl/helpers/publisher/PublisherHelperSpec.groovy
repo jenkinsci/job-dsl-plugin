@@ -1063,10 +1063,9 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 3
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == ''
-        context.publisherNodes[0].description[0].value() == ''
-        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -1077,10 +1076,10 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 4
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == ''
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
-        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -1091,10 +1090,10 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 4
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
-        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -1105,6 +1104,7 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 5
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
@@ -1119,6 +1119,7 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 5
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
