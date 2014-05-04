@@ -1089,4 +1089,22 @@ class PublisherContext implements Context {
         assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
         flowdock(tokens.join(','), flowdockPublisherClosure)
     }
+
+    /**
+     *
+     * Configures the Maven Deployment Linker plugin.
+     *
+     * <publishers>
+     *     <hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder>
+     *         <regexp>*.tar.gz</regexp>
+     *     </hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder>
+     * </publishers
+     *
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker
+     */
+    def mavenDeploymentLinker(String regex) {
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder' {
+            regexp(regex)
+        }
+    }
 }
