@@ -16,9 +16,9 @@ class StashNotifierContext implements Context {
 
     /**
      * <project>
-     *  <publishers>
-     *   <org.jenkinsci.plugins.stashNotifier.StashNotifier>
-     *    <stashServerBaseUrl></stashServerBaseUrl>
+     *     <publishers>
+     *         <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *             <stashServerBaseUrl></stashServerBaseUrl>
      *
      * @param url
      */
@@ -28,9 +28,9 @@ class StashNotifierContext implements Context {
 
     /**
      * <project>
-     *  <publishers>
-     *   <org.jenkinsci.plugins.stashNotifier.StashNotifier>
-     *    <stashUserName></stashUserName>
+     *     <publishers>
+     *         <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *             <stashUserName></stashUserName>
      *
      * @param username
      */
@@ -40,9 +40,9 @@ class StashNotifierContext implements Context {
 
     /**
      * <project>
-     *  <publishers>
-     *   <org.jenkinsci.plugins.stashNotifier.StashNotifier>
-     *    <stashUserPassword></stashUserPassword>
+     *     <publishers>
+     *         <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *             <stashUserPassword></stashUserPassword>
      *
      * @param password
      */
@@ -52,21 +52,21 @@ class StashNotifierContext implements Context {
 
     /**
      * <project>
-     *  <publishers>
-     *   <org.jenkinsci.plugins.stashNotifier.StashNotifier>
-     *    <ignoreUnverifiedSSLPeer>false</ignoreUnverifiedSSLPeer>
+     *     <publishers>
+     *         <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *             <ignoreUnverifiedSSLPeer>false</ignoreUnverifiedSSLPeer>
      *
      * @param ignoreUnverifiedSSL
      */
-    void ignoreUnverifiedSSL(boolean ignoreUnverifiedSSL) {
+    void ignoreUnverifiedSSL(boolean ignoreUnverifiedSSL = true) {
         this.ignoreUnverifiedSSL = ignoreUnverifiedSSL
     }
 
     /**
      * <project>
-     *  <publishers>
-     *   <org.jenkinsci.plugins.stashNotifier.StashNotifier>
-     *    <commitSha1></commitSha1>
+     *     <publishers>
+     *         <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *             <commitSha1></commitSha1>
      *
      * @param commitSha1
      */
@@ -76,15 +76,13 @@ class StashNotifierContext implements Context {
 
     /**
      * <project>
-     *  <publishers>
-     *   <org.jenkinsci.plugins.stashNotifier.StashNotifier>
-     *    <includeBuildNumberInKey>false</includeBuildNumberInKey>
+     *     <publishers>
+     *         <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *             <includeBuildNumberInKey>false</includeBuildNumberInKey>
      *
      * @param keepRepeatedBuilds
      */
-    void keepRepeatedBuilds(boolean keepRepeatedBuilds) {
+    void keepRepeatedBuilds(boolean keepRepeatedBuilds = true) {
         this.keepRepeatedBuilds = keepRepeatedBuilds
     }
 }
-
-
