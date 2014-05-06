@@ -1093,7 +1093,7 @@ class PublisherContext implements Context {
     /**
      * <publishers>
      *     <org.jenkinsci.plugins.stashNotifier.StashNotifier>
-     *         <url/>
+     *         <stashServerBaseUrl/>
      *         <stashUserName/>
      *         <stashUserPassword>y1/kpoWAZo+gBl7xAmdWIQ==</stashUserPassword>
      *         <ignoreUnverifiedSSLPeer>false</ignoreUnverifiedSSLPeer>
