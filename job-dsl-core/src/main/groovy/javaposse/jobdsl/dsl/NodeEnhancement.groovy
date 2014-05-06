@@ -12,7 +12,7 @@ class NodeEnhancement {
     private static final Logger LOGGER = Logger.getLogger(NodeEnhancement.getName())
 
     Node div(Node orphan) {
-        LOGGER.info("Looking for child node ${orphan}")
+        LOGGER.fine("Looking for child node ${orphan}")
         def childName = orphan.name()
         def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
             child instanceof Node && child.name() == childName && child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
@@ -40,7 +40,7 @@ class NodeEnhancement {
     }
 
     Node div(String childName) { // a.div(b)
-        LOGGER.info("Looking for childName ${childName} ${LOGGER.getLevel()}")
+        LOGGER.fine("Looking for childName ${childName} ${LOGGER.getLevel()}")
 
         def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
             child instanceof Node && child.name() == childName
