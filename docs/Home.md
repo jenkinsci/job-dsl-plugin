@@ -16,6 +16,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 * 1.23 (unreleased)
  * Fixed support for the Description Setter Plugin
  * new parameter for CopyArtifact's StatusBuildSelector to consider only stable builds
+ * Limited [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin) support
  * [Flowdock Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flowdock+Plugin)
  * More conditions for the Conditional BuildStep Plugin supported
 * 1.22 (Apr 05 2014)
