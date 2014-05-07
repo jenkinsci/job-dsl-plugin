@@ -269,7 +269,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         String contextName = getContextNameFromFullName(fullName);
         Object context;
         if (contextName.isEmpty()) {
-            context = jobLookupStrategy.getBase(build.getProject());
+            context = jobLookupStrategy.getContext(build.getProject());
         } else {
             context = jobLookupStrategy.getItem(contextName, build.getProject());
         }
