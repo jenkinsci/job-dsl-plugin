@@ -52,7 +52,7 @@ public class GeneratedJobsBuildAction implements RunAction {
         Set<AbstractProject> modifiedProjects = Sets.newLinkedHashSet();
         if (owner != null && modifiedJobs != null) {
             for (GeneratedJob modifiedJob : modifiedJobs) {
-                Item modifiedProject = getJobLookupStrategy().getItem(modifiedJob.getJobName(), owner.getProject());
+                Item modifiedProject = getJobLookupStrategy().getItem(owner.getProject(), modifiedJob.getJobName());
                 if (modifiedProject instanceof AbstractProject) {
                     modifiedProjects.add((AbstractProject) modifiedProject);
                 }

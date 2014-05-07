@@ -96,7 +96,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(fullJobName, build.getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(build.getParent(), fullJobName);
         String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
@@ -154,7 +154,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(jobName, build.getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(build.getParent(), jobName);
 
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
@@ -195,7 +195,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(jobName, build.getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(build.getParent(), jobName);
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
@@ -271,7 +271,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         if (contextName.isEmpty()) {
             context = jobLookupStrategy.getContext(build.getProject());
         } else {
-            context = jobLookupStrategy.getItem(contextName, build.getProject());
+            context = jobLookupStrategy.getItem(build.getProject(), contextName);
         }
         if (context != null && context instanceof ModifiableTopLevelItemGroup) {
             return (ModifiableTopLevelItemGroup) context;

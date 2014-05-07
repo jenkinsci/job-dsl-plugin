@@ -241,7 +241,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = (AbstractProject<?,?>) jobLookupStrategy.getItem(templateName, build.getParent());
+            AbstractProject templateProject = (AbstractProject<?,?>) jobLookupStrategy.getItem(build.getParent(), templateName);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -286,7 +286,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) jobLookupStrategy.getItem(removedJob.getJobName(), build.getParent());
+            AbstractProject removedProject = (AbstractProject) jobLookupStrategy.getItem(build.getParent(), removedJob.getJobName());
             if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {

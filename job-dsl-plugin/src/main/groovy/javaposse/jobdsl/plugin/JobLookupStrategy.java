@@ -17,7 +17,7 @@ public enum JobLookupStrategy {
      */
     JENKINS_ROOT("Jenkins Root") {
         @Override
-        public Item getItem(String pathName, AbstractProject<?,?> seedJob) {
+        public Item getItem(AbstractProject<?, ?> seedJob, String pathName) {
             return Jenkins.getInstance().getItemByFullName(pathName, AbstractProject.class);
         }
 
@@ -32,7 +32,7 @@ public enum JobLookupStrategy {
      */
     SEED_JOB("Seed Job") {
         @Override
-        public Item getItem(String pathName, AbstractProject<?,?> seedJob) {
+        public Item getItem(AbstractProject<?, ?> seedJob, String pathName) {
             return Jenkins.getInstance().getItem(pathName, seedJob);
         }
 
@@ -54,11 +54,12 @@ public enum JobLookupStrategy {
 
     /**
      * Get an item by its path name in the context of a seed job.
-     * @param pathName the path name
+     *
      * @param seedJob the seed job
+     * @param pathName the path name
      * @return the item for the given path
      */
-    public abstract Item getItem(String pathName, AbstractProject<?,?> seedJob);
+    public abstract Item getItem(AbstractProject<?, ?> seedJob, String pathName);
 
     /**
      * Get the context in which new jobs should be created for the given seed job.
