@@ -24,7 +24,7 @@ If you want to make a change to the code on jenkinsci/job-dsl-plugin, here's the
 2. On your local machine, clone your copy of the job-dsl-plugin repo.
 3. Again on your local machine, create a branch, ideally named after a JIRA issue you're created for the work.
 4. Switch to the local branch and make your changes. Commit them as you go, and when you're happy, push them to your repo branch.
-5. Also update the documentation. Add an entry to the [Release Notes](docs/Home.md#release-notes), update the [DSL Overview](docs/Job-DSL-Commands.md#dsl-methods) and the [Job Reference](docs/Job-reference.md) pages if necessary. Make sure to add an example or two on the Job Reference page.
+5. Also update the documentation, see below.
 6. Then, on the GitHub website, find the branch you created for your work, and submit a Pull Request. This will then poke us and we'll take a look at it. We might ask you to rebase (if the trunk has moved on and there are some conflicts) or we might suggest some more changes.
 7. If the all looks good, we'll merge the Pull Request.
 
@@ -98,8 +98,53 @@ class FooContext {
 ```
 
 ## Code Style
-1. Indentation: use 4 spaces, no tabs.
-1. Use a maximum line length of 120 characters.
-1. We roughly follow the [Java](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html) and [Groovy](http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers) style guidelines.
-1. When using IntelliJ IDEA, use the default code style, but disable '*' imports for Java and Groovy.
-1. Always add a CRLF at the end of a file.
+* Indentation: use 4 spaces, no tabs.
+* Use a maximum line length of 120 characters.
+* We roughly follow the [Java](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html) and [Groovy](http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers) style guidelines.
+* When using IntelliJ IDEA, use the default code style, but disable '*' imports for Java and Groovy.
+* Add a CRLF at the end of a file.
+* Include an example of the generated XML in the GroovyDoc comment of DSL methods.
+
+```groovy
+/**
+ * <project>
+ *     <buildWrappers>
+ *         <hudson.plugins.foo.FooWrapper>
+ *             <option>bar</option>
+ *         </hudson.plugins.foo.FooWrapper>
+ *     </buildWrappers>
+ * </project>
+ */
+def foo(String optionArg) {
+    ...
+}
+```
+
+## Documentation
+* Add an entry to the [Release Notes](docs/Home.md#release-notes).
+* Update the [DSL Overview](docs/Job-DSL-Commands.md#dsl-methods) if necessary.
+* Make sure that the Job Reference page contains a formal reference, a short description including a link to the plugin, at least one example and the version which added the feature.
+
+```
+    ## Foo
+
+    ```groovy
+    job {
+        wrappers {
+            foo(String option) // optional
+        }
+    }
+    ```
+
+    Does some foo. Requires the [Foo Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Foo).
+
+    ```groovy
+    job {
+        wrappers {
+            foo('bar')
+        }
+    }
+    ```
+
+    (Since 1.15)
+```
