@@ -47,21 +47,21 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     EnvVars envVars;
     Set<GeneratedJob> modifiedJobs;
     AbstractBuild<?, ?> build;
-    private final JobNamingStrategy jobNamingStrategy;
+    private final JobLookupStrategy jobLookupStrategy;
 
     JenkinsJobManagement() {
         super();
         envVars = new EnvVars();
         modifiedJobs = Sets.newLinkedHashSet();
-        jobNamingStrategy = JobNamingStrategy.SEED_JOB;
+        jobLookupStrategy = JobLookupStrategy.SEED_JOB;
     }
 
-    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build, JobNamingStrategy jobNamingStrategy) {
+    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build, JobLookupStrategy jobNamingStrategy) {
         super(outputLogger);
         this.envVars = envVars;
         this.modifiedJobs = Sets.newLinkedHashSet();
         this.build = build;
-        this.jobNamingStrategy = jobNamingStrategy;
+        this.jobLookupStrategy = jobNamingStrategy;
     }
 
     @Override
@@ -96,7 +96,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         validateUpdateArgs(fullJobName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jobNamingStrategy.getItem(fullJobName, build.getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(fullJobName, build.getParent());
         String jobName = getJobNameFromFullName(fullJobName);
         Jenkins.checkGoodName(jobName);
 
@@ -154,7 +154,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jobNamingStrategy.getItem(jobName, build.getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(jobName, build.getParent());
 
         if(build != null && build instanceof Run) {
             Run run = (Run) build;
@@ -195,7 +195,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) jobNamingStrategy.getItem(jobName, build.getParent());
+        AbstractProject<?,?> project = (AbstractProject<?,?>) jobLookupStrategy.getItem(jobName, build.getParent());
         if (project != null) {
             XmlFile xmlFile = project.getConfigFile();
             jobXml = xmlFile.asString();
@@ -269,9 +269,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         String contextName = getContextNameFromFullName(fullName);
         Object context;
         if (contextName.isEmpty()) {
-            context = jobNamingStrategy.getBase(build.getProject());
+            context = jobLookupStrategy.getBase(build.getProject());
         } else {
-            context = jobNamingStrategy.getItem(contextName, build.getProject());
+            context = jobLookupStrategy.getItem(contextName, build.getProject());
         }
         if (context != null && context instanceof ModifiableTopLevelItemGroup) {
             return (ModifiableTopLevelItemGroup) context;

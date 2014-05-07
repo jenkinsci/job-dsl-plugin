@@ -53,9 +53,9 @@ public class DescriptorImpl extends Descriptor<Builder> {
         return items;
     }
 
-    public ListBoxModel doFillJobNamingStrategyItems() {
+    public ListBoxModel doFillJobLookupStrategyItems() {
         ListBoxModel items = new ListBoxModel();
-        for (JobNamingStrategy item : JobNamingStrategy.values()) {
+        for (JobLookupStrategy item : JobLookupStrategy.values()) {
             items.add(item.getDisplayName(), item.name());
         }
         return items;

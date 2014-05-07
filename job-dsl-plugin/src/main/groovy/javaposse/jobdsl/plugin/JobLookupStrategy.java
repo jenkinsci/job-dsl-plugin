@@ -6,11 +6,11 @@ import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
 
 /**
- * A JobNamingStrategy encapsulates where a seed job will look for existing jobs
+ * A JobLookupStrategy encapsulates where a seed job will look for existing jobs
  * and where it will create new jobs. This matters when you use relative names in
  * a job dsl script and the seed job is in a folder.
  */
-public enum JobNamingStrategy {
+public enum JobLookupStrategy {
     /**
      * A naming strategy to provide backwards compatibility for jobs created with
      * plugin versions prior to 1.22.
@@ -44,7 +44,7 @@ public enum JobNamingStrategy {
 
     String displayName;
 
-    JobNamingStrategy(String displayName) {
+    JobLookupStrategy(String displayName) {
         this.displayName = displayName;
     }
 

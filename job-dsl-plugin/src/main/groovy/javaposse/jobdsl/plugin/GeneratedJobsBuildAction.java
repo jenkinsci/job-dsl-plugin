@@ -17,11 +17,11 @@ import java.util.Set;
 public class GeneratedJobsBuildAction implements RunAction {
     private transient AbstractBuild<?,?> owner;
     public final Set<GeneratedJob> modifiedJobs;
-    private final JobNamingStrategy jobNamingStrategy;
+    private final JobLookupStrategy jobLookupStrategy;
 
-    public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs, JobNamingStrategy jobNamingStrategy) {
+    public GeneratedJobsBuildAction(Collection<GeneratedJob> modifiedJobs, JobLookupStrategy jobLookupStrategy) {
         this.modifiedJobs = Sets.newLinkedHashSet(modifiedJobs);
-        this.jobNamingStrategy = jobNamingStrategy;
+        this.jobLookupStrategy = jobLookupStrategy;
     }
 
     /**
@@ -39,9 +39,9 @@ public class GeneratedJobsBuildAction implements RunAction {
         return "generatedJobs";
     }
 
-    private JobNamingStrategy getJobNamingStrategy() {
+    private JobLookupStrategy getJobLookupStrategy() {
         // Provide backwards compatible behaviour for existing seed jobs.
-        return jobNamingStrategy != null ? jobNamingStrategy : JobNamingStrategy.JENKINS_ROOT;
+        return jobLookupStrategy != null ? jobLookupStrategy : JobLookupStrategy.JENKINS_ROOT;
     }
 
     public Collection<GeneratedJob> getModifiedJobs() {
@@ -52,7 +52,7 @@ public class GeneratedJobsBuildAction implements RunAction {
         Set<AbstractProject> modifiedProjects = Sets.newLinkedHashSet();
         if (owner != null && modifiedJobs != null) {
             for (GeneratedJob modifiedJob : modifiedJobs) {
-                Item modifiedProject = getJobNamingStrategy().getItem(modifiedJob.getJobName(), owner.getProject());
+                Item modifiedProject = getJobLookupStrategy().getItem(modifiedJob.getJobName(), owner.getProject());
                 if (modifiedProject instanceof AbstractProject) {
                     modifiedProjects.add((AbstractProject) modifiedProject);
                 }

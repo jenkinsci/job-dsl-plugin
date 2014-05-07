@@ -34,7 +34,7 @@ public class ContextIntegrationTest {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
 
         job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true",
-                null, mavenPrePostScript), true, IGNORE, JobNamingStrategy.SEED_JOB));
+                null, mavenPrePostScript), true, IGNORE, JobLookupStrategy.SEED_JOB));
 
         // when
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get();
@@ -65,7 +65,7 @@ public class ContextIntegrationTest {
         // setup
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
         job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true",
-                null, emptyArchiveScript), true, IGNORE, JobNamingStrategy.SEED_JOB));
+                null, emptyArchiveScript), true, IGNORE, JobLookupStrategy.SEED_JOB));
 
         // when
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get();
