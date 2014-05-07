@@ -14,7 +14,7 @@ class LogFileSizeCheckerContext implements Context {
     Integer maxSize = 0
     boolean fail = false
 
-    void useOwn(boolean useOwn) {
+    void useOwn(boolean useOwn = true) {
         this.useOwn = useOwn
     }
 
@@ -23,7 +23,7 @@ class LogFileSizeCheckerContext implements Context {
         this.maxSize = maxSize
     }
 
-    void fail(boolean failBuild) {
+    void fail(boolean failBuild = true) {
         this.fail = failBuild
     }
 }

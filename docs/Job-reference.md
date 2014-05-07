@@ -991,9 +991,9 @@ job {
 job {
     wrappers {
         logSize {
-            useOwn(true)
+            useOwn()
             maxSize(10)
-            fail(true)
+            fail()
         }
     }
 }

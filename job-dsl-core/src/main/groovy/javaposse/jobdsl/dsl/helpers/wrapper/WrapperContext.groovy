@@ -426,11 +426,11 @@ class WrapperContext implements Context {
      *
      * <project>
      *     <buildWrappers>
-     *          <hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
-     *              <setOwn>true</setOwn>
-     *              <maxLogSize>10</maxLogSize>
-     *              <failBuild>true</failBuild>
-     *          </hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
+     *         <hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
+     *             <setOwn>true</setOwn>
+     *             <maxLogSize>10</maxLogSize>
+     *             <failBuild>true</failBuild>
+     *         </hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
      *     </buildWrappers>
      * </project>
      */
