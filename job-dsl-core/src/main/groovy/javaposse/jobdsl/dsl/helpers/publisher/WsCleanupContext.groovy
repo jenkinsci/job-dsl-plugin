@@ -30,8 +30,8 @@ class WsCleanupContext implements Context {
     boolean cleanWhenFailure = true
     boolean cleanWhenNotBuilt = true
     boolean cleanWhenAborted = true
-    boolean notFailBuild = false
-    String externalDelete
+    boolean failBuild = true
+    String externalDeleteCommand
 
     void includePattern(String pattern) {
         addPattern(PatternType.INCLUDE, pattern)
@@ -41,36 +41,36 @@ class WsCleanupContext implements Context {
         addPattern(PatternType.EXCLUDE, pattern)
     }
 
-    void deleteDirectories(boolean deleteDirectories) {
+    void deleteDirectories(boolean deleteDirectories = true) {
         this.deleteDirectories = deleteDirectories
     }
 
-    void cleanWhenSuccess(boolean cleanWhenSuccess) {
+    void cleanWhenSuccess(boolean cleanWhenSuccess = true) {
         this.cleanWhenSuccess = cleanWhenSuccess
     }
 
-    void cleanWhenUnstable(boolean cleanWhenUnstable) {
+    void cleanWhenUnstable(boolean cleanWhenUnstable = true) {
         this.cleanWhenUnstable = cleanWhenUnstable
     }
 
-    void cleanWhenFailure(boolean cleanWhenFailure) {
+    void cleanWhenFailure(boolean cleanWhenFailure = true) {
         this.cleanWhenFailure = cleanWhenFailure
     }
 
-    void cleanWhenNotBuilt(boolean cleanWhenNotBuilt) {
+    void cleanWhenNotBuilt(boolean cleanWhenNotBuilt = true) {
         this.cleanWhenNotBuilt = cleanWhenNotBuilt
     }
 
-    void cleanWhenAborted(boolean cleanWhenAborted) {
+    void cleanWhenAborted(boolean cleanWhenAborted = true) {
         this.cleanWhenAborted = cleanWhenAborted
     }
 
-    void notFailBuild(boolean notFailBuild) {
-        this.notFailBuild = notFailBuild
+    void failBuildWhenCleanupFails(boolean failBuild = true) {
+        this.failBuild = failBuild
     }
 
-    void externalDelete(String externalDelete) {
-        this.externalDelete = externalDelete
+    void externalDeleteCommand(String externalDeleteCommand) {
+        this.externalDeleteCommand = externalDeleteCommand
     }
 
     private void addPattern(PatternType type, String pattern) {

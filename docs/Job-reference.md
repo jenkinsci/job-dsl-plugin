@@ -2426,8 +2426,8 @@ job {
             cleanWhenFailure(boolean = true)
             cleanWhenNotBuilt(boolean = true)
             cleanWhenAborted(boolean = true)
-            notFailBuild(boolean = true)
-            externalDelete(String command)
+            failBuildWhenCleanupFails(boolean = true)
+            externalDeleteCommand(String command)
         }
     }
 }
