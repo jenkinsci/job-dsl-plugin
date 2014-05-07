@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 class CopyArtifactContext implements Context {
     String selectedSelector
     boolean fallback
+    boolean stable
     String permalinkName
     String buildNumber
     String parameterName
@@ -30,8 +31,9 @@ class CopyArtifactContext implements Context {
      * Latest successful build
      * @return
      */
-    def latestSuccessful() {
+    def latestSuccessful(boolean stable = false) {
         ensureFirst()
+        this.stable = stable
         selectedSelector = 'StatusBuild'
     }
     /**

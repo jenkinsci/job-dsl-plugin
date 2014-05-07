@@ -20,7 +20,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
         def githubPushTrigger = context.triggerNodes[0]
         githubPushTrigger.name() == 'com.cloudbees.jenkins.GitHubPushTrigger'
-        githubPushTrigger.attribute('plugin') == "github@1.6"
         githubPushTrigger.spec[0].value() == ''
     }
 
@@ -55,7 +54,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -85,7 +83,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -126,7 +123,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -165,7 +161,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -199,7 +194,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.spec[0].value() == 'H/5 * * * *'
         utc.labelRestriction != null
         utc.labelRestriction.size() == 1
@@ -229,7 +223,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -252,7 +245,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.spec[0].value() == '* 0 * 0 *'
     }
 
@@ -267,7 +259,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.labelRestriction[0].value() == true
         utc.triggerLabel[0].value() == 'foo'
     }
@@ -311,6 +302,73 @@ public class TriggerHelperSpec extends Specification {
 //
 //        then:
 //        1 * mockActions.add(_)
+    }
+
+    def 'call pull request trigger with no args'() {
+        when:
+        context.pullRequest()
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            onlyTriggerPhrase[0].value() == false
+            useGitHubHooks[0].value() == false
+            permitAll[0].value() == false
+            autoCloseFailedPullRequests[0].value() == false
+            cron[0].value() == 'H/5 * * * *'
+            triggerPhrase[0].value() == ''
+            adminlist[0].value() == ''
+            whitelist[0].value() == ''
+            orgslist[0].value() == ''
+        }
+
+    }
+
+    def 'call pull request trigger with multiple admins and orgs'() {
+        when:
+        context.pullRequest() {
+            admins(['test1', 'test2'])
+            userWhitelist(['test1', 'test2'])
+            orgWhitelist(['test1', 'test2'])
+        }
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            adminlist[0].value() == 'test1\ntest2'
+            whitelist[0].value() == 'test1\ntest2'
+            orgslist[0].value() == 'test1\ntest2'
+        }
+    }
+
+    def 'call pull request trigger with all args'() {
+        when:
+        context.pullRequest() {
+            admins(['test'])
+            userWhitelist(['test'])
+            orgWhitelist(['test'])
+            cron('*/5 * * * *')
+            triggerPhrase('ok to test')
+            onlyTriggerPhrase(true)
+            useGitHubHooks(true)
+            permitAll(true)
+            autoCloseFailedPullRequests(true)
+        }
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            adminlist[0].value() == 'test'
+            whitelist[0].value() == 'test'
+            orgslist[0].value() == 'test'
+            cron[0].value() == '*/5 * * * *'
+            triggerPhrase[0].value() == 'ok to test'
+            onlyTriggerPhrase[0].value() == true
+            useGitHubHooks[0].value() == true
+            permitAll[0].value() == true
+            autoCloseFailedPullRequests[0].value() == true
+        }
     }
 
     def 'call empty gerrit trigger methods'() {

@@ -5,8 +5,8 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
-import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
 
+import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 
 class AbstractStepContext implements Context {
@@ -83,8 +83,7 @@ class AbstractStepContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
 
-        def attributes = [plugin:'sbt@1.4']
-        def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder'(attributes) {
+        def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
             name Preconditions.checkNotNull(sbtNameArg, "Please provide the name of the SBT to use" as Object)
             jvmFlags jvmFlagsArg?:''
             sbtFlags sbtFlagsArg?:''
@@ -481,6 +480,9 @@ class AbstractStepContext implements Context {
                 if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
                     fallbackToLastSuccessful 'true'
                 }
+                if (copyArtifactContext.selectedSelector == 'StatusBuild' && copyArtifactContext.stable) {
+                    stable 'true'
+                }
                 if (copyArtifactContext.selectedSelector == 'PermalinkBuild') {
                     id copyArtifactContext.permalinkName
                 }
@@ -662,5 +664,73 @@ class AbstractStepContext implements Context {
         }
 
         stepNodes << envNode
+    }
+
+    /**
+     * <org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
+     *     <token/>
+     *     <remoteJenkinsName>ci.acme.org</remoteJenkinsName>
+     *     <job>CM7.5-SwingEditor-UITests-ALL</job>
+     *     <shouldNotFailBuild>false</shouldNotFailBuild>
+     *     <pollInterval>10</pollInterval>
+     *     <preventRemoteBuildQueue>false</preventRemoteBuildQueue>
+     *     <blockBuildUntilComplete>false</blockBuildUntilComplete>
+     *     <parameters>BRANCH_OR_TAG=master-7.5 CMS_VERSION=$PIPELINE_VERSION</parameters>
+     *     <parameterList>
+     *         <string>BRANCH_OR_TAG=master-7.5</string>
+     *         <string>CMS_VERSION=$PIPELINE_VERSION</string>
+     *     </parameterList>
+     *     <overrideAuth>false</overrideAuth>
+     *     <auth>
+     *         <org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth>
+     *             <NONE>none</NONE>
+     *             <API__TOKEN>apiToken</API__TOKEN>
+     *             <CREDENTIALS__PLUGIN>credentialsPlugin</CREDENTIALS__PLUGIN>
+     *         </org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth>
+     *     </auth>
+     *     <loadParamsFromFile>false</loadParamsFromFile>
+     *     <parameterFile/>
+     *     <queryString/>
+     * </org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
+     */
+    def remoteTrigger(String remoteJenkins, String jobName, Closure closure = null) {
+        Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), "remoteJenkins must be specified")
+        Preconditions.checkArgument(!isNullOrEmpty(jobName), "jobName must be specified")
+
+        ParameterizedRemoteTriggerContext context = new ParameterizedRemoteTriggerContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        List<String> jobParameters = context.parameters.collect { String key, String value -> "$key=$value" }
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration' {
+            token()
+            remoteJenkinsName(remoteJenkins)
+            job(jobName)
+            shouldNotFailBuild(false)
+            pollInterval(10)
+            preventRemoteBuildQueue(false)
+            blockBuildUntilComplete(false)
+            parameters(jobParameters.join('\n'))
+            parameterList {
+                if (jobParameters.empty) {
+                    string()
+                } else {
+                    jobParameters.each { String value ->
+                        string(value)
+                    }
+                }
+            }
+            overrideAuth(false)
+            auth {
+                'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth' {
+                    NONE('none')
+                    API__TOKEN('apiToken')
+                    CREDENTIALS__PLUGIN('credentialsPlugin')
+                }
+            }
+            loadParamsFromFile(false)
+            parameterFile()
+            queryString()
+        }
     }
 }

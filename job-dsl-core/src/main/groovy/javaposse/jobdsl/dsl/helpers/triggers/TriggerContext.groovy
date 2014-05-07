@@ -41,7 +41,7 @@ class TriggerContext implements Context {
         AbstractContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
         def nodeBuilder = new NodeBuilder()
-        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger'(plugin: 'urltrigger@0.31') {
+        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger' {
             spec urlTriggerContext.crontab
             if (urlTriggerContext.label) {
                 labelRestriction true
@@ -128,10 +128,47 @@ class TriggerContext implements Context {
      * Trigger that runs jobs on push notifications from Github/Github enterprise
      */
     def githubPush() {
-        def attributes = [plugin: 'github@1.6']
-        triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger'(attributes) {
+        triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
             spec ''
         }
+    }
+
+    /**
+     *  Configures the Jenkins GitHub pull request builder plugin
+     *  Depends on the github-api, github, and git plugins
+     *
+     *  <org.jenkinsci.plugins.ghprb.GhprbTrigger>
+     *      <adminlist></adminlist>
+     *      <whitelist></whitelist>
+     *      <orgslist></orgslist>
+     *      <cron></cron>
+     *      <triggerPhrase></triggerPhrase>
+     *      <onlyTriggerPhrase>false</onlyTriggerPhrase>
+     *      <useGitHubHooks>true</useGitHubHooks>
+     *      <permitAll>true</permitAll>
+     *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
+     *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+     */
+    def pullRequest(Closure contextClosure) {
+
+        PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
+        AbstractContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
+
+        def nodeBuilder = NodeBuilder.newInstance()
+
+        def pullRequestNode = nodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+            adminlist pullRequestBuilderContext.admins.join('\n')
+            whitelist pullRequestBuilderContext.userWhitelist.join('\n')
+            orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
+            delegate.cron(pullRequestBuilderContext.cron)
+            triggerPhrase pullRequestBuilderContext.triggerPhrase
+            onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase
+            useGitHubHooks pullRequestBuilderContext.useGitHubHooks
+            permitAll pullRequestBuilderContext.permitAll
+            autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
+        }
+
+        triggerNodes << pullRequestNode
     }
 
     /**
