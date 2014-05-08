@@ -965,10 +965,9 @@ job {
 ```groovy
 job {
     wrappers {
-        logSize {
-            useOwn(boolean setOwn = true) // optional, defaults to false if omitted
+        logSizeChecker {
             maxSize(int size)
-            fail(boolean failBuild = true) // optional, defaults to false if omitted
+            failBuild(boolean failBuild = true) // optional, defaults to false if omitted
         }
     }
 }
@@ -981,7 +980,7 @@ Examples:
 // default configuration using the system wide definition
 job {
     wrappers {
-        logSize()
+        logSizeChecker()
     }
 }
 ```
@@ -990,10 +989,9 @@ job {
 // using job specific configuration, setting the max log size to 10 MB and fail the build of the log file is larger.
 job {
     wrappers {
-        logSize {
-            useOwn()
+        logSizeChecker {
             maxSize(10)
-            fail()
+            failBuild()
         }
     }
 }

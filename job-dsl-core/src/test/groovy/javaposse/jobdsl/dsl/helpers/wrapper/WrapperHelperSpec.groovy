@@ -499,7 +499,7 @@ class WrapperHelperSpec extends Specification {
     def 'logSize with default configuration'() {
         when:
         helper.wrappers {
-            logSize()
+            logSizeChecker()
         }
 
         executeHelperActionsOnRootNode()
@@ -517,10 +517,9 @@ class WrapperHelperSpec extends Specification {
     def 'logSize with configuration for all parameters'() {
         when:
         helper.wrappers {
-            logSize {
-                useOwn(true)
+            logSizeChecker {
                 maxSize(10)
-                fail(true)
+                failBuild(true)
             }
         }
 
@@ -539,10 +538,9 @@ class WrapperHelperSpec extends Specification {
     def 'logSize with configuration for all parameters using defaults for boolean parameter'() {
         when:
         helper.wrappers {
-            logSize {
-                useOwn()
+            logSizeChecker {
                 maxSize(10)
-                fail()
+                failBuild()
             }
         }
 
@@ -561,7 +559,7 @@ class WrapperHelperSpec extends Specification {
     def 'logSize with invalid maxSize'() {
         when:
         helper.wrappers {
-            logSize {
+            logSizeChecker {
                 maxSize(-1)
             }
         }

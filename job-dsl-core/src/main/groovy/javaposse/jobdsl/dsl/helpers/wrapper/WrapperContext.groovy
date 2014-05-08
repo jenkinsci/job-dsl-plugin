@@ -434,14 +434,14 @@ class WrapperContext implements Context {
      *     </buildWrappers>
      * </project>
      */
-    def logSize(Closure closure = null) {
+    def logSizeChecker(Closure closure = null) {
         LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
         AbstractContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper' {
             setOwn(context.useOwn)
             maxLogSize(context.maxSize)
-            failBuild(context.fail)
+            failBuild(context.failBuild)
         }
     }
 }
