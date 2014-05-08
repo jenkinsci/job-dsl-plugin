@@ -966,9 +966,9 @@ job {
 job {
     wrappers {
         logSize {
-            useOwn(boolean setOwn = false)
+            useOwn(boolean setOwn = true) // optional, defaults to false if omitted
             maxSize(int size)
-            fail(boolean failBuild = false)
+            fail(boolean failBuild = true) // optional, defaults to false if omitted
         }
     }
 }

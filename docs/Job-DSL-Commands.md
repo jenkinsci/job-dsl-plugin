@@ -119,7 +119,7 @@ job(attributes) {
         environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
         release(closure) // since 1.22, see [[Job Reference]] for details
         preBuildCleanup(closure) // since 1.22
-        logSize() // since 1.23, see [Job Reference]] for details
+        logSize(closure) // since 1.23, see [Job Reference]] for details
     }
     steps {
         shell(String commandStr)

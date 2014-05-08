@@ -11,14 +11,14 @@ import javaposse.jobdsl.dsl.helpers.Context
 class LogFileSizeCheckerContext implements Context {
 
     boolean useOwn = false
-    Integer maxSize = 0
+    int maxSize = 0
     boolean fail = false
 
     void useOwn(boolean useOwn = true) {
         this.useOwn = useOwn
     }
 
-    void maxSize(Integer maxSize) {
+    void maxSize(int maxSize) {
         Preconditions.checkArgument((maxSize > 0), 'Invalid max size, max size > 0 expected')
         this.maxSize = maxSize
     }
