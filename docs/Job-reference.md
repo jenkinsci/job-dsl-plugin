@@ -2409,6 +2409,47 @@ job {
 
 (Since 1.23)
 
+## StashNotifier Publisher
+
+```groovy
+job {
+    publishers {
+        stashNotifier {
+            commitSha1(String commitSha1) // optional
+            keepRepeatedBuilds(boolean keepRepeatedBuilds = true) // optional, defaults to false if omitted
+        }
+    }
+}
+```
+
+Supports the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin).
+Uses global Jenkins settings for Stash URL, username, password and unverified SSL certificate handling.
+All parameters are optional. If a method is not called then the plugin default parameter will be used.
+
+Examples:
+
+```groovy
+//The following example will notify Stash using the global Jenkins settings
+job {
+    publishers {
+        stashNotifier()
+    }
+}
+```
+
+```groovy
+// The following example will notify Stash using the global Jenkins settings and sets keepRepeatedBuilds to true
+job {
+    publishers {
+        stashNotifier {
+            keepRepeatedBuilds()
+        }
+    }
+}
+```
+
+(Since 1.23)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_
