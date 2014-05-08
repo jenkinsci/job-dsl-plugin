@@ -38,7 +38,19 @@ leave room so that the remaining options can be added when needed.
 
 ## DSL Design
 * Every option should have the same defaults as the UI.
-* Use context closures instead of long parameter lists.
+* Use method parameters for mandatory options and context closures for optional settings.
+
+```groovy
+job {
+    publishers {
+        foo(String mandatoryA, int mandatoryB) {
+            optionalC(String value)
+            optionalD(boolean value = true)
+        }
+    }
+}
+```
+
 * Use private or protected access modifiers for context and helper methods that should not be exposed to DSL users.
 * Use enum values where appropriate, e.g. when the UI displays a chooser. The enum should be an inner class of the
 context which uses the enum. Use conventions for constants for naming enum values. Add the enum to the implicit imports
