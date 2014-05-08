@@ -496,7 +496,7 @@ class WrapperHelperSpec extends Specification {
         }
     }
 
-    def 'logSize with default configuration'() {
+    def 'logSizeChecker with default configuration'() {
         when:
         helper.wrappers {
             logSizeChecker()
@@ -506,7 +506,7 @@ class WrapperHelperSpec extends Specification {
 
         then:
         root.buildWrappers[0].children().size() == 1
-        root.buildWrappers[0].children()[0].with {
+        with(root.buildWrappers[0].children()[0]) {
             name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
             setOwn[0].value() == false
             maxLogSize[0].value() == 0
@@ -514,7 +514,7 @@ class WrapperHelperSpec extends Specification {
         }
     }
 
-    def 'logSize with configuration for all parameters'() {
+    def 'logSizeChecker with configuration for all parameters'() {
         when:
         helper.wrappers {
             logSizeChecker {
@@ -527,7 +527,7 @@ class WrapperHelperSpec extends Specification {
 
         then:
         root.buildWrappers[0].children().size() == 1
-        root.buildWrappers[0].children()[0].with {
+        with(root.buildWrappers[0].children()[0]) {
             name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
             setOwn[0].value() == true
             maxLogSize[0].value() == 10
@@ -535,7 +535,7 @@ class WrapperHelperSpec extends Specification {
         }
     }
 
-    def 'logSize with configuration for all parameters using defaults for boolean parameter'() {
+    def 'logSizeChecker with configuration for all parameters using defaults for boolean parameter'() {
         when:
         helper.wrappers {
             logSizeChecker {
@@ -548,7 +548,7 @@ class WrapperHelperSpec extends Specification {
 
         then:
         root.buildWrappers[0].children().size() == 1
-        root.buildWrappers[0].children()[0].with {
+        with(root.buildWrappers[0].children()[0]) {
             name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
             setOwn[0].value() == true
             maxLogSize[0].value() == 10
@@ -556,7 +556,7 @@ class WrapperHelperSpec extends Specification {
         }
     }
 
-    def 'logSize with invalid maxSize'() {
+    def 'logSizeChecker with invalid maxSize'() {
         when:
         helper.wrappers {
             logSizeChecker {

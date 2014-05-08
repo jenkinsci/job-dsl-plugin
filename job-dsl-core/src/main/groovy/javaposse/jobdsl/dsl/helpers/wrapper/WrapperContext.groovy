@@ -439,7 +439,7 @@ class WrapperContext implements Context {
         AbstractContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper' {
-            setOwn(context.useOwn)
+            setOwn(context.maxSize > 0)
             maxLogSize(context.maxSize)
             failBuild(context.failBuild)
         }
