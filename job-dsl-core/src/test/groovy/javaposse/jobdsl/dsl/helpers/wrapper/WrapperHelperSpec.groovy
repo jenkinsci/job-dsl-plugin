@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
-
 import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.absolute
 import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.elastic
 import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.likelyStuck
@@ -494,5 +493,43 @@ class WrapperHelperSpec extends Specification {
             cleanupParameter[0].value() == 'TEST'
             deleteCommand[0].value() == 'test'
         }
+    }
+
+    def 'call xvfb()' () {
+        when:
+        helper.wrappers {
+            xvfb()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+        def xvfbWrapper=root.buildWrappers[0].children()[0]
+        xvfbWrapper.children().size() == 3
+        xvfbWrapper.screen[0].value() == '1024x768x24'
+        xvfbWrapper.installationName[0].value() == 'xvfb'
+        xvfbWrapper.displayNameOffset[0].value() == 1
+    }
+
+    def 'call xvfb with context' () {
+        when:
+        helper.wrappers {
+            xvfb{
+                screen='screen'
+                installationName='installationName'
+                displayNameOffset=42
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        root.buildWrappers[0].children()[0].name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+        def xvfbWrapper=root.buildWrappers[0].children()[0]
+        xvfbWrapper.children().size() == 3
+        xvfbWrapper.screen[0].value() == 'screen'
+        xvfbWrapper.installationName[0].value() == 'installationName'
+        xvfbWrapper.displayNameOffset[0].value() == 42
     }
 }
