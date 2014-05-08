@@ -2425,7 +2425,7 @@ The following example will create links to all tar.gz build artifacts
 ```groovy
 job {
     publishers {
-        mavenDeploymentLinker('*.tar.gz')
+        mavenDeploymentLinker('.*.tar.gz')
     }
 }
 ```

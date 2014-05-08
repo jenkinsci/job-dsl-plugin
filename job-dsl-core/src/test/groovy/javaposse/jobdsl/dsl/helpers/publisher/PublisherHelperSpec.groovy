@@ -2005,13 +2005,13 @@ public class PublisherHelperSpec extends Specification {
 
     def 'mavenDeploymentLinker with regex'() {
         when:
-        context.mavenDeploymentLinker('*.tar.gz')
+        context.mavenDeploymentLinker('.*.tar.gz')
 
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].with {
             name() == 'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder'
-            regexp[0].value() == '*.tar.gz'
+            regexp[0].value() == '.*.tar.gz'
         }
     }
 }
