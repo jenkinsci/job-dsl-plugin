@@ -2418,9 +2418,31 @@ All parameters are optional. If a method is not called then the plugin default p
 ```groovy
 job {
     publishers {
-        stashNotifier() {
+        stashNotifier {
             commitSha1(String commitSha1) // optional
             keepRepeatedBuilds(boolean keepRepeatedBuilds = true) // optional, defaults to false if omitted
+        }
+    }
+}
+```
+
+Examples:
+
+```groovy
+//The following example will notify Stash using the global Jenkins settings
+job {
+    publishers {
+        stashNotifier()
+    }
+}
+```
+
+```groovy
+// The following example will notify Stash using the global Jenkins settings and sets keepRepeatedBuilds to true
+job {
+    publishers {
+        stashNotifier {
+            keepRepeatedBuilds()
         }
     }
 }

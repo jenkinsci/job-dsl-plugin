@@ -1110,10 +1110,10 @@ class PublisherContext implements Context {
         StashNotifierContext context = new StashNotifierContext()
         AbstractContextHelper.executeInContext(stashNotifierClosure, context)
         publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
-            stashServerBaseUrl(context.url)
-            stashUserName(context.username)
-            stashUserPassword(context.password)
-            ignoreUnverifiedSSLPeer(context.ignoreUnverifiedSSL)
+            stashServerBaseUrl('')
+            stashUserName('')
+            stashUserPassword('')
+            ignoreUnverifiedSSLPeer('')
             commitSha1(context.commitSha1)
             includeBuildNumberInKey(context.keepRepeatedBuilds)
         }

@@ -7,11 +7,7 @@ import javaposse.jobdsl.dsl.helpers.Context
  */
 class StashNotifierContext implements Context {
 
-    String url = ""
-    String username = ""
-    String password = ""
     String commitSha1 = ""
-    boolean ignoreUnverifiedSSL = false
     boolean keepRepeatedBuilds = false
 
     /**
