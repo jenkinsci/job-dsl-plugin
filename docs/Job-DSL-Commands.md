@@ -191,6 +191,7 @@ job(attributes) {
         git(gitPublisherClosure) // since 1.22
         flowdock(String token, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
         flowdock(String[] tokens, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
+        mavenDeploymentLinker(String regex) // since 1.23
     }
     parameters {
         booleanParam(parameterName, defaultValue, description)

@@ -2409,6 +2409,30 @@ job {
 
 (Since 1.23)
 
+## Maven Deployment Linker Publisher
+
+Supports the [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker).
+
+```groovy
+job {
+    publishers {
+        mavenDeploymentLinker(String regex)
+    }
+}
+```
+
+The following example will create links to all tar.gz build artifacts
+```groovy
+job {
+    publishers {
+        mavenDeploymentLinker('.*.tar.gz')
+    }
+}
+```
+
+(Since 1.23)
+
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_
