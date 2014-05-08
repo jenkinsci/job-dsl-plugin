@@ -1093,7 +1093,6 @@ class PublisherContext implements Context {
     }
 
     /**
-<<<<<<< HEAD
      * Configures the StashNotifier plugin.
      *
      * <publishers>
@@ -1119,7 +1118,10 @@ class PublisherContext implements Context {
             ignoreUnverifiedSSLPeer(false)
             commitSha1(context.commitSha1)
             includeBuildNumberInKey(context.keepRepeatedBuilds)
-=======
+        }
+    }
+
+    /**
      *
      * Configures the Maven Deployment Linker plugin.
      *
@@ -1134,7 +1136,6 @@ class PublisherContext implements Context {
     def mavenDeploymentLinker(String regex) {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder' {
             regexp(regex)
->>>>>>> JENKINS-22862
         }
     }
 }

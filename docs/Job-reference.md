@@ -2409,28 +2409,19 @@ job {
 
 (Since 1.23)
 
-<<<<<<< HEAD
 ## StashNotifier Publisher
-=======
-## Maven Deployment Linker Publisher
->>>>>>> JENKINS-22862
 
 ```groovy
 job {
     publishers {
-<<<<<<< HEAD
         stashNotifier {
             commitSha1(String commitSha1) // optional
             keepRepeatedBuilds(boolean keepRepeatedBuilds = true) // optional, defaults to false if omitted
         }
-=======
-        mavenDeploymentLinker(String regex)
->>>>>>> JENKINS-22862
     }
 }
 ```
 
-<<<<<<< HEAD
 Supports the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin).
 Uses global Jenkins settings for Stash URL, username, password and unverified SSL certificate handling.
 All parameters are optional. If a method is not called then the plugin default parameter will be used.
@@ -2453,7 +2444,22 @@ job {
         stashNotifier {
             keepRepeatedBuilds()
         }
-=======
+    }
+}
+```
+
+(Since 1.23)
+
+## Maven Deployment Linker Publisher
+
+```groovy
+job {
+    publishers {
+        mavenDeploymentLinker(String regex)
+    }
+}
+```
+
 Supports the [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker).
 
 The following example will create links to all tar.gz build artifacts.
@@ -2462,7 +2468,6 @@ The following example will create links to all tar.gz build artifacts.
 job {
     publishers {
         mavenDeploymentLinker('.*.tar.gz')
->>>>>>> JENKINS-22862
     }
 }
 ```

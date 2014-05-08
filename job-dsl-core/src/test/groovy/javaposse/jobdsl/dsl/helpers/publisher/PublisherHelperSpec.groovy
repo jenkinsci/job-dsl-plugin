@@ -2004,7 +2004,6 @@ public class PublisherHelperSpec extends Specification {
         thrown(AssertionError)
     }
 
-<<<<<<< HEAD
     def 'stashNotifier with default configuration'() {
         when:
         context.stashNotifier {null}
@@ -2062,7 +2061,9 @@ public class PublisherHelperSpec extends Specification {
             ignoreUnverifiedSSLPeer[0].value() == false
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
-=======
+        }
+    }
+
     def 'mavenDeploymentLinker with regex'() {
         when:
         context.mavenDeploymentLinker('.*.tar.gz')
@@ -2072,7 +2073,6 @@ public class PublisherHelperSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder'
             regexp[0].value() == '.*.tar.gz'
->>>>>>> JENKINS-22862
         }
     }
 }
