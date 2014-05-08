@@ -246,7 +246,7 @@ public class PublisherHelperSpec extends Specification {
             exclusionPattern 'exclusiondir'
             minimumInstructionCoverage '1'
             minimumBranchCoverage '2'
-            minimumComplexityCoverage '3' 
+            minimumComplexityCoverage '3'
             minimumLineCoverage '4' 
             minimumMethodCoverage '5' 
             minimumClassCoverage '6' 
@@ -1463,7 +1463,7 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
-    
+
     def 'publish Robot framework report using default values'() {
         when:
         context.publishRobotFrameworkReports()
@@ -1592,7 +1592,7 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes.size() == 1        
+        context.publisherNodes.size() == 1
         context.publisherNodes[0].with {
             name() == 'hudson.plugins.git.GitPublisher'
             configVersion[0].value() == 2
@@ -2004,6 +2004,7 @@ public class PublisherHelperSpec extends Specification {
         thrown(AssertionError)
     }
 
+<<<<<<< HEAD
     def 'stashNotifier with default configuration'() {
         when:
         context.stashNotifier {null}
@@ -2061,6 +2062,17 @@ public class PublisherHelperSpec extends Specification {
             ignoreUnverifiedSSLPeer[0].value() == false
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
+=======
+    def 'mavenDeploymentLinker with regex'() {
+        when:
+        context.mavenDeploymentLinker('.*.tar.gz')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder'
+            regexp[0].value() == '.*.tar.gz'
+>>>>>>> JENKINS-22862
         }
     }
 }
