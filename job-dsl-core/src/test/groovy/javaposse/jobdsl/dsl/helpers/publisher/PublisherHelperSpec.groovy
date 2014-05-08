@@ -2010,11 +2010,11 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes != null
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            stashServerBaseUrl[0].value() == ''
-            stashUserName[0].value() == ''
-            stashUserPassword[0].value() == ''
+            stashServerBaseUrl[0].value().empty
+            stashUserName[0].value().empty
+            stashUserPassword[0].value().empty
             ignoreUnverifiedSSLPeer[0].value() == false
             commitSha1[0].value() == ''
             includeBuildNumberInKey[0].value() == false
@@ -2031,12 +2031,12 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes != null
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            stashServerBaseUrl[0].value() == ''
-            stashUserName[0].value() == ''
-            stashUserPassword[0].value() == ''
-            ignoreUnverifiedSSLPeer[0].value() == true
+            stashServerBaseUrl[0].value().empty
+            stashUserName[0].value().empty
+            stashUserPassword[0].value().empty
+            ignoreUnverifiedSSLPeer[0].value() == false
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
         }
@@ -2052,12 +2052,12 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes != null
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            stashServerBaseUrl[0].value() == ''
-            stashUserName[0].value() == ''
-            stashUserPassword[0].value() == ''
-            ignoreUnverifiedSSLPeer[0].value() == true
+            stashServerBaseUrl[0].value().empty
+            stashUserName[0].value().empty
+            stashUserPassword[0].value().empty
+            ignoreUnverifiedSSLPeer[0].value() == false
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
         }
