@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
 public enum JobLookupStrategy {
     /**
      * A naming strategy to provide backwards compatibility for jobs created with
-     * plugin versions prior to 1.22.
+     * plugin versions prior to 1.23.
      */
     JENKINS_ROOT("Jenkins Root") {
         @Override
