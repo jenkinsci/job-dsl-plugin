@@ -1091,6 +1091,8 @@ class PublisherContext implements Context {
     }
 
     /**
+     * Configures the StashNotifier plugin.
+     *
      * <publishers>
      *     <org.jenkinsci.plugins.stashNotifier.StashNotifier>
      *         <stashServerBaseUrl/>

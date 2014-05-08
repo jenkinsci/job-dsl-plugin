@@ -2412,18 +2412,15 @@ job {
 ## StashNotifier Publisher
 
 Supports the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin).
+Uses global Jenkins settings for Stash URL, username, password and unverified SSL certificate handling.
 All parameters are optional. If a method is not called then the plugin default parameter will be used.
 
 ```groovy
 job {
     publishers {
         stashNotifier() {
-            url(String url)
-            username(String username)
-            password(String password)
-            ignoreUnverifiedSSL(boolean ignoreUnverifiedSSL = false)
-            commitSha1(String commitSha1)
-            keepRepeatedBuilds(boolean keepRepeatedBuilds = false)
+            commitSha1(String commitSha1) // optional
+            keepRepeatedBuilds(boolean keepRepeatedBuilds = true) // optional, defaults to false if omitted
         }
     }
 }
