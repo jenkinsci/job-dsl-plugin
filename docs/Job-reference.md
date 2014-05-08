@@ -2411,8 +2411,6 @@ job {
 
 ## Maven Deployment Linker Publisher
 
-Supports the [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker).
-
 ```groovy
 job {
     publishers {
@@ -2421,7 +2419,10 @@ job {
 }
 ```
 
-The following example will create links to all tar.gz build artifacts
+Supports the [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker).
+
+The following example will create links to all tar.gz build artifacts.
+
 ```groovy
 job {
     publishers {
@@ -2431,7 +2432,6 @@ job {
 ```
 
 (Since 1.23)
-
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**

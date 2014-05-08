@@ -2009,7 +2009,7 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder'
             regexp[0].value() == '.*.tar.gz'
         }
