@@ -495,4 +495,78 @@ class WrapperHelperSpec extends Specification {
             deleteCommand[0].value() == 'test'
         }
     }
+
+    def 'logSizeChecker with default configuration'() {
+        when:
+        helper.wrappers {
+            logSizeChecker()
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
+            setOwn[0].value() == false
+            maxLogSize[0].value() == 0
+            failBuild[0].value() == false
+        }
+    }
+
+    def 'logSizeChecker with configuration for all parameters'() {
+        when:
+        helper.wrappers {
+            logSizeChecker {
+                maxSize(10)
+                failBuild(true)
+            }
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
+            setOwn[0].value() == true
+            maxLogSize[0].value() == 10
+            failBuild[0].value() == true
+        }
+    }
+
+    def 'logSizeChecker with configuration for all parameters using defaults for boolean parameter'() {
+        when:
+        helper.wrappers {
+            logSizeChecker {
+                maxSize(10)
+                failBuild()
+            }
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
+            setOwn[0].value() == true
+            maxLogSize[0].value() == 10
+            failBuild[0].value() == true
+        }
+    }
+
+    def 'logSizeChecker with invalid maxSize'() {
+        when:
+        helper.wrappers {
+            logSizeChecker {
+                maxSize(-1)
+            }
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }
