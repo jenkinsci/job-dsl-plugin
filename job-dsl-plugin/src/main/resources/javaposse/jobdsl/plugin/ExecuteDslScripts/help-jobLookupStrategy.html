@@ -1,0 +1,18 @@
+<div>
+    Determines how relative job names in DSL scripts are interpreted. You will only see a difference when
+    the seed job is located in a <a href="https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin">folder</a>.
+    <ul>
+        <li>
+            <b>Seed Job</b> is the default choice. If you choose this option relative job names in DSL scripts will be
+            interpreted relative to the folder in which the seed job is located. Suppose you have a seed job which is
+            located in a folder named <tt>seedJobFolder</tt> and a DSL script which creates a job named
+            <tt>subfolder2/job</tt>. The job that is created by the seed job will be at the location
+            <tt>/seedJobFolder/subfolder2/job</tt>.
+        </li>
+        <li>
+            <b>Jenkins Root</b> provides backwards compatibility with plugin versions prior to 1.23. When this option is
+            selected relative job names are always interpreted relative to the Jenkins root. For the seed job and DSL
+            script from the previous example the job will be created at the location <tt>/subfolder2/job</tt>.
+        </li>
+    </ul>
+</div>

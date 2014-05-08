@@ -22,8 +22,7 @@
     </f:entry>
 
     <f:advanced>
-        <f:entry title="Context to use for relative names:" field="jobLookupStrategy"
-                 description='When a seed job is in a folder, should relative names be interpreted relative to the seed job or relative to the Jenkins root?'>
+        <f:entry title="Context to use for relative job names:" field="jobLookupStrategy">
             <f:select default="SEED_JOB"/>
         </f:entry>
     </f:advanced>
