@@ -4,6 +4,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A JobLookupStrategy encapsulates where a seed job will look for existing jobs
@@ -33,7 +34,16 @@ public enum JobLookupStrategy {
     SEED_JOB("Seed Job") {
         @Override
         public Item getItem(AbstractProject<?, ?> seedJob, String pathName) {
-            return Jenkins.getInstance().getItem(pathName, seedJob);
+            // Don't use Jenkins#getItem(String, Item) here because it will fallback to resolving
+            // items against Jenkins root when an item could not be found. For the Job DSL plugin it's
+            // better to be precise and don't allow this fallback.
+            if (StringUtils.isEmpty(pathName)) {
+                return null;
+            } else if (pathName.startsWith("/")) {
+                return Jenkins.getInstance().getItemByFullName(pathName);
+            } else {
+                return Jenkins.getInstance().getItemByFullName(seedJob.getParent().getFullName() + "/" + pathName);
+            }
         }
 
         @Override
