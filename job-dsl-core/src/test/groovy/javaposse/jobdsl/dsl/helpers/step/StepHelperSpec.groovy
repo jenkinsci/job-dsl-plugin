@@ -1,13 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
-
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
-import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.*
+import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 public class StepHelperSpec extends Specification {
@@ -1506,7 +1504,7 @@ still-another-dsl.groovy'''
 
         then:
         context.stepNodes.size() == 1
-        context.stepNodes[0].with {
+        with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
             children().size() == 14
             token[0].value() == []
@@ -1521,7 +1519,7 @@ still-another-dsl.groovy'''
             parameterList[0].string[0].value() == []
             overrideAuth[0].value() == false
             auth[0].children().size() == 1
-            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+            with(auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0]) {
                 children().size() == 3
                 NONE[0].value() == 'none'
                 API__TOKEN[0].value() == 'apiToken'
@@ -1542,7 +1540,7 @@ still-another-dsl.groovy'''
 
         then:
         context.stepNodes.size() == 1
-        context.stepNodes[0].with {
+        with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
             children().size() == 14
             token[0].value() == []
@@ -1559,7 +1557,7 @@ still-another-dsl.groovy'''
             parameterList[0].string[2].value() == 'baz=3'
             overrideAuth[0].value() == false
             auth[0].children().size() == 1
-            auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0].with {
+            with(auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0]) {
                 children().size() == 3
                 NONE[0].value() == 'none'
                 API__TOKEN[0].value() == 'apiToken'

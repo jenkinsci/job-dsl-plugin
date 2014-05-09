@@ -1593,14 +1593,14 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.git.GitPublisher'
             configVersion[0].value() == 2
             pushMerge[0].value() == true
             pushOnlyIfSuccess[0].value() == true
             tagsToPush.size() == 1
             tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
-            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+            with(tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0]) {
                 targetRepoName[0].value() == 'origin'
                 tagName[0].value() == 'test'
                 tagMessage[0].value() == 'test tag'
@@ -1609,7 +1609,7 @@ public class PublisherHelperSpec extends Specification {
             }
             branchesToPush.size() == 1
             branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'.size() == 1
-            branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'[0].with {
+            with(branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'[0]) {
                 targetRepoName[0].value() == 'origin'
                 branchName[0].value() == 'master'
             }
@@ -1624,14 +1624,14 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1        
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.git.GitPublisher'
             configVersion[0].value() == 2
             pushMerge[0].value() == false
             pushOnlyIfSuccess[0].value() == false
             tagsToPush.size() == 1
             tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
-            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+            with(tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0]) {
                 targetRepoName[0].value() == 'origin'
                 tagName[0].value() == 'test'
                 tagMessage[0].value() == ''
@@ -1719,7 +1719,7 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'com.flowdock.jenkins.FlowdockNotifier'
             flowToken[0].value() == 'some-madeup-token'
             chatNotification[0].value() == false
@@ -1732,7 +1732,7 @@ public class PublisherHelperSpec extends Specification {
             notifyNotBuilt[0].value() == false
             notifyMap.size() == 1
             notifyMap[0].entry.size() == 6
-            notifyMap[0].with {
+            with(notifyMap[0]) {
                 entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
                 entry[0].boolean[0].value() == false
                 entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
@@ -1758,7 +1758,7 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'com.flowdock.jenkins.FlowdockNotifier'
             flowToken[0].value() == 'another-token'
             chatNotification[0].value() == true
@@ -1771,7 +1771,7 @@ public class PublisherHelperSpec extends Specification {
             notifyNotBuilt[0].value() == false
             notifyMap.size() == 1
             notifyMap[0].entry.size() == 6
-            notifyMap[0].with {
+            with(notifyMap[0]) {
                 entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
                 entry[0].boolean[0].value() == false
                 entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
@@ -1801,7 +1801,7 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'com.flowdock.jenkins.FlowdockNotifier'
             flowToken[0].value() == 'another-token'
             chatNotification[0].value() == true
@@ -1814,7 +1814,7 @@ public class PublisherHelperSpec extends Specification {
             notifyNotBuilt[0].value() == true
             notifyMap.size() == 1
             notifyMap[0].entry.size() == 6
-            notifyMap[0].with {
+            with(notifyMap[0]) {
                 entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
                 entry[0].boolean[0].value() == true
                 entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
@@ -1845,7 +1845,7 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'com.flowdock.jenkins.FlowdockNotifier'
             flowToken[0].value() == 'another-token'
             chatNotification[0].value() == true
@@ -1858,7 +1858,7 @@ public class PublisherHelperSpec extends Specification {
             notifyNotBuilt[0].value() == true
             notifyMap.size() == 1
             notifyMap[0].entry.size() == 6
-            notifyMap[0].with {
+            with(notifyMap[0]) {
                 entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
                 entry[0].boolean[0].value() == true
                 entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
@@ -1882,28 +1882,28 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'com.flowdock.jenkins.FlowdockNotifier'
             flowToken[0].value() == 'another-token'
-            chatNotification[0].value() == true
+            chatNotification[0].value() == false
             notificationTags[0].value() == 'tag1,tagTwo'
-            notifySuccess[0].value() == false
+            notifySuccess[0].value() == true
             notifyFailure[0].value() == true
             notifyFixed[0].value() == true
-            notifyUnstable[0].value() == true
+            notifyUnstable[0].value() == false
             notifyAborted[0].value() == false
             notifyNotBuilt[0].value() == false
             notifyMap.size() == 1
             notifyMap[0].entry.size() == 6
-            notifyMap[0].with {
+            with(notifyMap[0]) {
                 entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
                 entry[0].boolean[0].value() == false
                 entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
-                entry[1].boolean[0].value() == false
+                entry[1].boolean[0].value() == true
                 entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
                 entry[2].boolean[0].value() == true
                 entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
-                entry[3].boolean[0].value() == true
+                entry[3].boolean[0].value() == false
                 entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
                 entry[4].boolean[0].value() == true
                 entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
@@ -1920,28 +1920,28 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'com.flowdock.jenkins.FlowdockNotifier'
             flowToken[0].value() == 'another-token'
-            chatNotification[0].value() == true
+            chatNotification[0].value() == false
             notificationTags[0].value() == 'tag1,tagTwo'
-            notifySuccess[0].value() == false
+            notifySuccess[0].value() == true
             notifyFailure[0].value() == true
             notifyFixed[0].value() == true
-            notifyUnstable[0].value() == true
+            notifyUnstable[0].value() == false
             notifyAborted[0].value() == false
             notifyNotBuilt[0].value() == false
             notifyMap.size() == 1
             notifyMap[0].entry.size() == 6
-            notifyMap[0].with {
+            with(notifyMap[0]) {
                 entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
                 entry[0].boolean[0].value() == false
                 entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
-                entry[1].boolean[0].value() == false
+                entry[1].boolean[0].value() == true
                 entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
                 entry[2].boolean[0].value() == true
                 entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
-                entry[3].boolean[0].value() == true
+                entry[3].boolean[0].value() == false
                 entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
                 entry[4].boolean[0].value() == true
                 entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
@@ -1966,7 +1966,7 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'com.flowdock.jenkins.FlowdockNotifier'
             flowToken[0].value() == 'some-madeup-token,a-second-token'
             chatNotification[0].value() == false
@@ -1979,7 +1979,7 @@ public class PublisherHelperSpec extends Specification {
             notifyNotBuilt[0].value() == false
             notifyMap.size() == 1
             notifyMap[0].entry.size() == 6
-            notifyMap[0].with {
+            with(notifyMap[0]) {
                 entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
                 entry[0].boolean[0].value() == false
                 entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
