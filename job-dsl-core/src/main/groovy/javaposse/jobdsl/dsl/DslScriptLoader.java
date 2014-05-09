@@ -76,7 +76,6 @@ public class DslScriptLoader {
 
     /**
      * For testing a string directly.
-     *
      * @param scriptBody
      * @param jobManagement
      * @return
@@ -159,7 +158,6 @@ public class DslScriptLoader {
             }
         }
     }
-
     private static Binding createBinding(JobManagement jobManagement) {
         Binding binding = new Binding();
         binding.setVariable("out", jobManagement.getOutputStream()); // Works for println, but not System.out
@@ -183,7 +181,6 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
         icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
-        icz.addImports("javaposse.jobdsl.dsl.helpers.toplevel.ExecutionStrategyContext.RequiredResult");
         config.addCompilationCustomizers(icz);
 
         config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

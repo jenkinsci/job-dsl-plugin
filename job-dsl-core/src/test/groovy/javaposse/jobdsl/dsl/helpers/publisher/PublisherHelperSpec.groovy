@@ -620,7 +620,7 @@ public class PublisherHelperSpec extends Specification {
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].combinationFilter[0].value() == 'label=="${TARGET}"'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
         first.block.size() == 0
 

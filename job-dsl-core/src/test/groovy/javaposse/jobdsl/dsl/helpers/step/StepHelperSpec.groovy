@@ -550,7 +550,7 @@ public class StepHelperSpec extends Specification {
         copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
         copyEmptyNode.flatten.size() == 0
         copyEmptyNode.optional.size() == 0
-        copyEmptyNode.combinationFilter[0].value() == '**/*.xml'
+        copyEmptyNode.filter[0].value() == '**/*.xml'
         copyEmptyNode.target[0] != null
         copyEmptyNode.target[0].value() == ''
         Node selectorNode = copyEmptyNode.selector[0]
@@ -751,7 +751,7 @@ public class StepHelperSpec extends Specification {
         nodeNode != null
 
         def matrixNode = configsNode.'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0]
-        matrixNode.combinationFilter[0].value() == 'it.name=="hello"'
+        matrixNode.filter[0].value() == 'it.name=="hello"'
 
         def svnNode = configsNode.'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0]
         svnNode.includeUpstreamParameters[0].value() == 'false'
@@ -1129,7 +1129,7 @@ still-another-dsl.groovy'''
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].combinationFilter[0].value() == 'label=="${TARGET}"'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
         first.block.size() == 1
         Node thresholds = first.block[0]
