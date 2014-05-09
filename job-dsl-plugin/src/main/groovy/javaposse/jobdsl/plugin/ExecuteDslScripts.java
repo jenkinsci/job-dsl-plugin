@@ -75,7 +75,7 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
-    private final JobLookupStrategy jobLookupStrategy;
+    private JobLookupStrategy jobLookupStrategy;
 
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction, JobLookupStrategy jobLookupStrategy) {
@@ -128,8 +128,7 @@ public class ExecuteDslScripts extends Builder {
     }
 
     public JobLookupStrategy getJobLookupStrategy() {
-        // Provide backwards compatible behaviour for existing seed jobs.
-        return jobLookupStrategy != null ? jobLookupStrategy : JobLookupStrategy.JENKINS_ROOT;
+        return jobLookupStrategy;
     }
 
     @Override
@@ -202,6 +201,13 @@ public class ExecuteDslScripts extends Builder {
         return true;
     }
 
+    public Object readResolve() {
+        // Provide backwards compatible behaviour for existing seed jobs.
+        if (jobLookupStrategy == null) {
+            jobLookupStrategy = JobLookupStrategy.JENKINS_ROOT;
+        }
+        return this;
+    }
 
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
