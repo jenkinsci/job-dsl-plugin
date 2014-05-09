@@ -36,7 +36,7 @@ public class PublisherHelperSpec extends Specification {
         when:
         context.extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
             trigger('PreBuild')
-            trigger(triggerName: 'StillUnstable', subject: 'Subject', body:'Body', recipientList:'RecipientList',
+            trigger(triggerName: 'StillUnstable', subject: 'Subject', body: 'Body', recipientList: 'RecipientList',
                     sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
             configure { node ->
                 node / contentType << 'html'
@@ -92,6 +92,7 @@ public class PublisherHelperSpec extends Specification {
         emailDefault.sendToDevelopers[0].value() == 'false'
         emailDefault.sendToRequester[0].value() == 'true'
     }
+
     def 'call standard mailer method'() {
         when:
         context.mailer('recipient')
@@ -189,7 +190,9 @@ public class PublisherHelperSpec extends Specification {
         archiveNode.keepLongStdio[0].value() == 'false'
         archiveNode.testDataPublishers[0] != null
         !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
-        !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
+        !archiveNode.testDataPublishers[0].children().any {
+            it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher'
+        }
     }
 
     def 'call jacoco code coverage with no args'() {
@@ -247,14 +250,14 @@ public class PublisherHelperSpec extends Specification {
             minimumInstructionCoverage '1'
             minimumBranchCoverage '2'
             minimumComplexityCoverage '3'
-            minimumLineCoverage '4' 
-            minimumMethodCoverage '5' 
-            minimumClassCoverage '6' 
-            maximumInstructionCoverage '7' 
-            maximumBranchCoverage '8' 
-            maximumComplexityCoverage '9' 
-            maximumLineCoverage '10' 
-            maximumMethodCoverage '11' 
+            minimumLineCoverage '4'
+            minimumMethodCoverage '5'
+            minimumClassCoverage '6'
+            maximumInstructionCoverage '7'
+            maximumBranchCoverage '8'
+            maximumComplexityCoverage '9'
+            maximumLineCoverage '10'
+            maximumMethodCoverage '11'
             maximumClassCoverage '12'
             changeBuildStatus true
         }
@@ -381,7 +384,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call Jabber publish with all args'() {
         when:
-        context.publishJabber('me@gmail.com *tools@hipchat.com', 'ANY_FAILURE', 'SummaryOnly' )
+        context.publishJabber('me@gmail.com *tools@hipchat.com', 'ANY_FAILURE', 'SummaryOnly')
 
         then:
         Node publisherNode = context.publisherNodes[0]
@@ -404,7 +407,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call Jabber publish with closure args'() {
         when:
-        context.publishJabber('me@gmail.com', 'ANY_FAILURE', 'SummaryOnly' ) {
+        context.publishJabber('me@gmail.com', 'ANY_FAILURE', 'SummaryOnly') {
             strategyName 'FAILURE_AND_FIXED' // ALL,  FAILURE_AND_FIXED, ANY_FAILURE, STATECHANGE_ONLY
             notifyOnBuildStart = true
             notifySuspects = true
@@ -561,7 +564,7 @@ public class PublisherHelperSpec extends Specification {
     }
 
     def 'call trigger downstream'() {
-            when:
+        when:
         context.downstream('THE-JOB', 'FAILURE')
 
         then:
@@ -617,7 +620,7 @@ public class PublisherHelperSpec extends Specification {
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].combinationFilter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
         first.block.size() == 0
 
@@ -679,7 +682,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
         typeConfigsNode.entry.size() == 17
-        def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian'}
+        def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian' }
         simianNode != null
         def typeConfigNode = simianNode.'hudson.plugins.violations.TypeConfig'[0]
         typeConfigNode.type[0].value() == 'simian'
@@ -711,7 +714,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
         typeConfigsNode.entry.size() == 17
-        def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle'}
+        def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle' }
         checkstyleNode != null
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'checkstyle'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
@@ -719,7 +722,7 @@ public class PublisherHelperSpec extends Specification {
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
-        def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint'}
+        def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint' }
         jshintNode != null
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jshint'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
@@ -727,14 +730,14 @@ public class PublisherHelperSpec extends Specification {
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
-        def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs'}
+        def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs' }
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'findbugs'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '12'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '13'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '12'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == ''
-        def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint'}
+        def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint' }
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jslint'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '999'
@@ -985,30 +988,30 @@ public class PublisherHelperSpec extends Specification {
 
     def 'checking for invalid cobertura target treshold: negative'() {
         when:
-            context.cobertura('reportfilename') {
-                target('invalid', h, u, f)
-            }
+        context.cobertura('reportfilename') {
+            target('invalid', h, u, f)
+        }
         then:
-            thrown(IllegalArgumentException)
+        thrown(IllegalArgumentException)
         where:
-            h  |  u |  f
-            -1 |  1 |  1
-            1  | -1 |  1
-            1  |  1 | -1
+        h  | u  | f
+        -1 | 1  | 1
+        1  | -1 | 1
+        1  | 1  | -1
     }
 
     def 'checking for invalid cobertura target treshold: more than 100 percent'() {
         when:
-            context.cobertura('reportfilename') {
-                target('invalid', h, u, f)
-            }
+        context.cobertura('reportfilename') {
+            target('invalid', h, u, f)
+        }
         then:
-            thrown(IllegalArgumentException)
+        thrown(IllegalArgumentException)
         where:
-            h  |  u  |  f
-           101 |  1  |  1
-            1  | 101 |  1
-            1  |  1  | 101
+        h   | u   | f
+        101 | 1   | 1
+        1   | 101 | 1
+        1   | 1   | 101
     }
 
     def 'null source encoding for cobertura'() {
@@ -1492,7 +1495,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
         when:
-        context.publishRobotFrameworkReports{
+        context.publishRobotFrameworkReports {
             passThreshold(100.0)
             unstableThreshold(10.0)
         }
@@ -1623,7 +1626,7 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes.size() == 1        
+        context.publisherNodes.size() == 1
         context.publisherNodes[0].with {
             name() == 'hudson.plugins.git.GitPublisher'
             configVersion[0].value() == 2
@@ -2006,7 +2009,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'stashNotifier with default configuration'() {
         when:
-        context.stashNotifier {null}
+        context.stashNotifier { null }
 
         then:
         context.publisherNodes != null
