@@ -3,11 +3,10 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
-import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.*
+import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 public class StepHelperSpec extends Specification {
@@ -125,12 +124,12 @@ public class StepHelperSpec extends Specification {
             useWrapper true
             grailsWorkDir 'work'
             projectWorkDir 'project'
-            projectBaseDir  'base'
-            serverPort  '1111'
-            props  prop1: 'val1', prop2: 'val2'
+            projectBaseDir 'base'
+            serverPort '1111'
+            props prop1: 'val1', prop2: 'val2'
             prop 'prop3', 'val3'
-            forceUpgrade  true
-            nonInteractive  false
+            forceUpgrade true
+            nonInteractive false
         }
 
         then:
@@ -152,10 +151,10 @@ public class StepHelperSpec extends Specification {
             useWrapper true
             grailsWorkDir 'work'
             projectWorkDir 'project'
-            projectBaseDir  'base'
-            serverPort  '8080'
-            forceUpgrade  true
-            nonInteractive  false
+            projectBaseDir 'base'
+            serverPort '8080'
+            forceUpgrade true
+            nonInteractive false
         }
 
         then:
@@ -204,7 +203,7 @@ public class StepHelperSpec extends Specification {
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
-            def nameNode = mavenNode/mavenName
+            def nameNode = mavenNode / mavenName
             nameNode.value = 'Maven 2.0.1'
         }
 
@@ -301,7 +300,7 @@ public class StepHelperSpec extends Specification {
             targets(['publish', 'deploy']) // FIXME: I have no idea why the parens are needed
             prop 'test.size', 4
             prop 'logging', 'info'
-            props 'test.threads': 10, 'input.status':'release'
+            props 'test.threads': 10, 'input.status': 'release'
             buildFile 'dir2/build.xml'
             buildFile 'dir1/build.xml'
             javaOpt '-Xmx1g'
@@ -551,7 +550,7 @@ public class StepHelperSpec extends Specification {
         copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
         copyEmptyNode.flatten.size() == 0
         copyEmptyNode.optional.size() == 0
-        copyEmptyNode.filter[0].value() == '**/*.xml'
+        copyEmptyNode.combinationFilter[0].value() == '**/*.xml'
         copyEmptyNode.target[0] != null
         copyEmptyNode.target[0].value() == ''
         Node selectorNode = copyEmptyNode.selector[0]
@@ -752,7 +751,7 @@ public class StepHelperSpec extends Specification {
         nodeNode != null
 
         def matrixNode = configsNode.'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0]
-        matrixNode.filter[0].value() == 'it.name=="hello"'
+        matrixNode.combinationFilter[0].value() == 'it.name=="hello"'
 
         def svnNode = configsNode.'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0]
         svnNode.includeUpstreamParameters[0].value() == 'false'
@@ -869,9 +868,10 @@ public class StepHelperSpec extends Specification {
         sbtStep.actions[0].value() == 'test'
         sbtStep.subdirPath[0].value() == ''
     }
+
     def 'call sbt method full'() {
         when:
-        context.sbt('SBT 0.12.3','test', '-Dsbt.log.noformat=true',  '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', 'subproject')
+        context.sbt('SBT 0.12.3', 'test', '-Dsbt.log.noformat=true', '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', 'subproject')
 
         then:
         context.stepNodes != null
@@ -885,7 +885,7 @@ public class StepHelperSpec extends Specification {
         sbtStep.subdirPath[0].value() == 'subproject'
     }
 
-    def 'call dsl method defaults' () {
+    def 'call dsl method defaults'() {
         when:
         context.dsl()
 
@@ -896,17 +896,17 @@ public class StepHelperSpec extends Specification {
         dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
         dslStep.targets[0].value() == ''
         dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.ignoreExisting[0].value() == false
         dslStep.removedJobAction[0].value() == 'IGNORE'
         dslStep.scriptText[0].value() == ''
     }
 
 
-    def 'call dsl method external script ignoring existing' () {
+    def 'call dsl method external script ignoring existing'() {
         when:
         context.dsl {
             removeAction 'DISABLE'
-            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'some-dsl.groovy', 'some-other-dsl.groovy'
             external 'still-another-dsl.groovy'
             ignoreExisting()
         }
@@ -920,16 +920,16 @@ public class StepHelperSpec extends Specification {
 some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.ignoreExisting[0].value() == true
         dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
 
-    def 'call dsl method external script' () {
+    def 'call dsl method external script'() {
         when:
         context.dsl {
             removeAction 'DISABLE'
-            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'some-dsl.groovy', 'some-other-dsl.groovy'
             external 'still-another-dsl.groovy'
         }
 
@@ -942,12 +942,12 @@ still-another-dsl.groovy'''
 some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.ignoreExisting[0].value() == false
         dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
 
-    def 'call dsl method with script text' () {
+    def 'call dsl method with script text'() {
         when:
         context.dsl {
             removeAction('DELETE')
@@ -967,7 +967,7 @@ still-another-dsl.groovy'''
         dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
         dslStep.targets[0].value() == ''
         dslStep.usingScriptText[0].value() == true
-        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.ignoreExisting[0].value() == false
         dslStep.removedJobAction[0].value() == 'DELETE'
         dslStep.scriptText[0].value() == '''job {
   foo()
@@ -978,9 +978,9 @@ still-another-dsl.groovy'''
 '''
     }
 
-    def 'call dsl method external script as parameters' () {
+    def 'call dsl method external script as parameters'() {
         when:
-        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE')
+        context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE')
 
         then:
         context.stepNodes != null
@@ -991,14 +991,14 @@ still-another-dsl.groovy'''
 some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.ignoreExisting[0].value() == false
         dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
 
-    def 'call dsl method external script as parameters full' () {
+    def 'call dsl method external script as parameters full'() {
         when:
-        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE', true)
+        context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE', true)
 
         then:
         context.stepNodes != null
@@ -1009,7 +1009,7 @@ still-another-dsl.groovy'''
 some-other-dsl.groovy
 still-another-dsl.groovy'''
         dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  true
+        dslStep.ignoreExisting[0].value() == true
         dslStep.removedJobAction[0].value() == 'DISABLE'
         dslStep.scriptText[0].value() == ''
     }
@@ -1031,7 +1031,7 @@ still-another-dsl.groovy'''
         dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
         dslStep.targets[0].value() == ''
         dslStep.usingScriptText[0].value() == true
-        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.ignoreExisting[0].value() == false
         dslStep.removedJobAction[0].value() == 'DELETE'
         dslStep.scriptText[0].value() == '''job {
   foo()
@@ -1099,8 +1099,8 @@ still-another-dsl.groovy'''
         context.downstreamParameterized {
             trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
                     ["buildStepFailure": "FAILURE",
-                            "failure": "FAILURE",
-                            "unstable": "UNSTABLE"]) {
+                     "failure"         : "FAILURE",
+                     "unstable"        : "UNSTABLE"]) {
                 currentBuild() // Current build parameters
                 propertiesFile('dir/my.properties') // Parameters from properties file
                 gitRevision(false) // Pass-through Git commit that was built
@@ -1129,7 +1129,7 @@ still-another-dsl.groovy'''
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
+        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].combinationFilter[0].value() == 'label=="${TARGET}"'
         first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
         first.block.size() == 1
         Node thresholds = first.block[0]
@@ -1211,10 +1211,10 @@ still-another-dsl.groovy'''
         where:
         testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status']
         testConditionArgs << [['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
-                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
-                ['expression': 'some-expression', 'label': 'some-label'],
-                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
-                ['worstResult': 'Success', 'bestResult': 'Success']]
+                              ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
+                              ['expression': 'some-expression', 'label': 'some-label'],
+                              ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
+                              ['worstResult': 'Success', 'bestResult': 'Success']]
     }
 
     @Unroll
@@ -1301,7 +1301,7 @@ still-another-dsl.groovy'''
         Node notCondition = step.condition[0]
         notCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.logic.Not'
         Node matchCondition = notCondition.condition[0]
-        matchCondition.attribute('class') ==  'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+        matchCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
         matchCondition.arg1[0].value() == 'foo'
         matchCondition.arg2[0].value() == 'bar'
         matchCondition.ignoreCase[0].value() == 'false'

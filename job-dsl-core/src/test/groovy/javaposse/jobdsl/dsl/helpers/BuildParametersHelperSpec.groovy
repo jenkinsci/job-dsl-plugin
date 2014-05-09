@@ -366,7 +366,7 @@ public class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
         context.buildParameterNodes["myParameterName"].projectName.text() == 'myJobName'
         context.buildParameterNodes["myParameterName"].description.text() == 'my description with spaces'
-        context.buildParameterNodes["myParameterName"].filter.text() == 'SUCCESSFUL'
+        context.buildParameterNodes["myParameterName"].combinationFilter.text() == 'SUCCESSFUL'
     }
 
     def 'runParam name argument cant be null'() {
