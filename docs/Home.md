@@ -22,6 +22,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Initial support for the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin)
  * Support for [LogFileSizeChecker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin)
  * Support for [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker)
+ * Support Matrix builds
 * 1.22 (Apr 05 2014)
  * Fixed support for the Conditional BuildStep Plugin
  * [Github Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)

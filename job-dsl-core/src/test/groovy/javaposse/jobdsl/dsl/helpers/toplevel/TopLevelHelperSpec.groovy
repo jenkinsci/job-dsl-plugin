@@ -384,4 +384,42 @@ public class TopLevelHelperSpec extends Specification {
         then:
         root.concurrentBuild[0].value() == 'true'
     }
+
+    def 'set combination filter'() {
+        when:
+        helper = new TopLevelHelper(mockActions, JobType.Matrix)
+        def action = helper.combinationFilter('myFilter')
+        action.execute(root)
+
+        then:
+        root.combinationFilter[0].value() == 'myFilter'
+    }
+
+    def 'set combination filter for wrong job type'() {
+        when:
+        helper = new TopLevelHelper(mockActions, JobType.BuildFlow)
+        def action = helper.combinationFilter('myFilter')
+        action.execute(root)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'set execution strategy'() {
+        when:
+        helper = new TopLevelHelper(mockActions, JobType.Matrix)
+        def action = helper.executionStrategy {
+            runSequentially false
+            touchStoneCombinationFilter 'abc'
+            touchStoneResultCondition ExecutionStrategyContext.RequiredResult.SUCCESS
+        }
+        action.execute(root)
+
+        then:
+        root.executionStrategy[0].runSequentially[0].value() == false
+        root.executionStrategy[0].touchStoneCombinationFilter[0].value() == 'abc'
+        root.executionStrategy[0].touchStoneResultCondition[0].name[0].value() == 'SUCCESS'
+        root.executionStrategy[0].touchStoneResultCondition[0].color[0].value() == 'BLUE'
+        root.executionStrategy[0].touchStoneResultCondition[0].ordinal[0].value() == 0
+    }
 }
