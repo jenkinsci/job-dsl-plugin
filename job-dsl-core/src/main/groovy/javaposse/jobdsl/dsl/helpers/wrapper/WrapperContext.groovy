@@ -7,8 +7,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-import static WrapperContext.Timeout.absolute
-
 class WrapperContext implements Context {
     List<Node> wrapperNodes = []
     JobType type
@@ -83,9 +81,16 @@ class WrapperContext implements Context {
     }
     /** Enumeration of timeout types for parsing and error reporting*/
     def static enum Timeout {
-        absolute,
-        elastic,
-        likelyStuck
+        absolute('Absolute'),
+        elastic('Elastic'),
+        likelyStuck('LikelyStuck'),
+        noActivity('NoActivity')
+
+        final String className
+
+        Timeout(String name) {
+            className = "hudson.plugins.build_timeout.impl.${name}TimeOutStrategy"
+        }
     }
 
     /**
@@ -93,16 +98,36 @@ class WrapperContext implements Context {
      *
      * May be an absolute, elastic or likely Stuck timeout.
      *
+     * <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.13">
+     *     <strategy class="hudson.plugins.build_timeout.impl.ElasticTimeOutStrategy">
+     *        <timeoutPercentage>300</timeoutPercentage>
+     *        <numberOfBuilds>3</numberOfBuilds>
+     *        <timeoutMinutesElasticDefault>60</timeoutMinutesElasticDefault>
+     *     </strategy>
+     *     <operationList>
+     *         <hudson.plugins.build__timeout.operations.AbortOperation/>
+     *         <hudson.plugins.build__timeout.operations.FailOperation/>
+     *         <hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
+     *             <description>arstrst</description>
+     *         </hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
+     *     </operationList>
+     * </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+
+     *
      * @param type type of timeout defaults to absolute
      *
      * @param timeoutClosure optional closure for configuring the timeout
      */
-    def timeout(String type = absolute.toString(), Closure timeoutClosure = null) {
+    def timeout(String type = Timeout.absolute.toString(), Closure timeoutClosure = null) {
         Timeout ttype
-        try {
-            ttype = Timeout.valueOf(type)
-        } catch (IllegalArgumentException iae) {
-            throw new IllegalArgumentException("Timeout type must be one of: ${Timeout.values()}")
+        if (type) {
+            try {
+                ttype = Timeout.valueOf(type)
+            } catch (IllegalArgumentException iae) {
+                throw new IllegalArgumentException("Timeout type was ${type} but must be one of: ${Timeout.values()}")
+            }
+        } else {
+            ttype = null
         }
 
         TimeoutContext ctx = new TimeoutContext(ttype)
@@ -110,34 +135,51 @@ class WrapperContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
-            timeoutMinutes ctx.limit
-            failBuild ctx.failBuild
-            writingDescription ctx.writeDescription
-            timeoutPercentage ctx.percentage
-            timeoutType ctx.type
-            timeoutMinutesElasticDefault ctx.limit
+            strategy(class: ctx.type.className) {
+                switch (ctx.type) {
+                    case Timeout.absolute:
+                        timeoutMinutes('' + ctx.limit)
+                        break
+                    case Timeout.elastic:
+                        timeoutPercentage('' + ctx.percentage)
+                        numberOfBuilds('' + ctx.numberOfBuilds)
+                        timeoutMinutesElasticDefault('' + ctx.minutesDefault)
+                        break
+                    case Timeout.likelyStuck:
+                        break
+                    case Timeout.noActivity:
+                        delegate.timeout('' + ctx.noActivitySeconds)
+                        break
+                    default:
+                        Preconditions.checkArgument(false, 'Timeout type must be selected!')
+                }
+            }
+            operationList {
+                if (ctx.failBuild) {
+                    'hudson.plugins.build__timeout.operations.FailOperation'()
+                }
+                if (ctx.writeDescription) {
+                    'hudson.plugins.build__timeout.operations.WriteDescriptionOperation' {
+                        description(ctx.description)
+                    }
+                }
+
+            }
         }
     }
 
+    def timeout(Closure timeoutClosure) {
+        timeout(null, timeoutClosure)
+    }
 
-    /*
-    <buildWrappers>
-      <hudson.plugins.build__timeout.BuildTimeoutWrapper>
-        <timeoutMinutes>15</timeoutMinutes>
-        <failBuild>true</failBuild>
-        <!-- Missing from DSL Call, Elastic and Likely stuck are radio buttons to Absolute -->
-        <writingDescription>false</writingDescription>
-        <timeoutPercentage>0</timeoutPercentage>
-        <timeoutType>absolute</timeoutType>
-        <timeoutMinutesElasticDefault>3</timeoutMinutesElasticDefault>
-      </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    </buildWrappers>
-    */
+    /**
+     * @deprecated for backwards compatibility
+     */
+    @Deprecated
     def timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) {
-        def nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
-            timeoutMinutes(Integer.toString(timeoutInMinutes))
-            failBuild(shouldFailBuild?'true':'false')
+        timeout {
+            absolute(timeoutInMinutes)
+            failBuild shouldFailBuild
         }
     }
 

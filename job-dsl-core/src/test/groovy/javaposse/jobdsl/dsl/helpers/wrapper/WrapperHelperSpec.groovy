@@ -1,14 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
+
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.absolute
-import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.elastic
-import static javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout.likelyStuck
+import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
 class WrapperHelperSpec extends Specification {
     List<WithXmlAction> mockActions = new ArrayList()
@@ -99,8 +98,15 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].timeoutMinutes[0].value() == '15'
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'true'
+        def strategy = timeoutWrapper.strategy[0]
+        strategy.attribute('class') == 'hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy'
+        strategy.timeoutMinutes[0].value() == '15'
+        timeoutWrapper.operationList.size() == 1
+        timeoutHasFailOperation()
+    }
+
+    private void timeoutHasFailOperation() {
+        assert timeoutWrapper.operationList[0].'hudson.plugins.build__timeout.operations.FailOperation'[0] != null
     }
 
     def 'timeout failBuild parameter works'() {
@@ -110,8 +116,13 @@ class WrapperHelperSpec extends Specification {
         }
         executeHelperActionsOnRootNode()
 
+
         then:
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'[0].failBuild[0].value() == 'false'
+        timeoutHasNoOperation()
+    }
+
+    private void timeoutHasNoOperation() {
+        assert timeoutWrapper.operationList[0].children().size() == 0
     }
 
     def 'default timeout works' () {
@@ -123,69 +134,80 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 3
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == absolute
-        timeout.timeoutMinutesElasticDefault[0].value() == 3
+        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == '3'
+        timeoutHasNoOperation()
     }
 
     def 'absolute timeout configuration working' () {
         when:
         helper.wrappers {
-            timeout('absolute') {
-                limit 5
+            timeout {
+                absolute(5)
             }
         }
         executeHelperActionsOnRootNode()
 
         then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 5
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == absolute
-        timeout.timeoutMinutesElasticDefault[0].value() == 5
+        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == '5'
+        timeoutHasNoOperation()
+    }
+
+    private def getTimeoutWrapper() {
+        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
     }
 
 
     def 'elastic timeout configuration working' () {
         when:
         helper.wrappers {
-            timeout('elastic') {
-                limit 15
-                percentage 200
+            timeout {
+                elastic(200, 3, 15)
             }
         }
         executeHelperActionsOnRootNode()
 
+
         then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 15
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  200
-        timeout.timeoutType[0].value() == elastic
-        timeout.timeoutMinutesElasticDefault[0].value() == 15
+        def strategy = timeoutWrapper.strategy[0]
+        strategy.timeoutMinutesElasticDefault[0].value() == '15'
+        strategy.timeoutPercentage[0].value() ==  '200'
+        strategy.attribute('class') == Timeout.elastic.className
+        timeoutHasNoOperation()
+    }
+
+    def 'NoActivity configuration working with set description' () {
+        when:
+        helper.wrappers {
+            timeout {
+                noActivity(15)
+                writeDescription('desc')
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+
+        then:
+        def strategy = timeoutWrapper.strategy[0]
+        strategy.timeout[0].value() == '15'
+        strategy.attribute('class') == Timeout.noActivity.className
+        timeoutWrapper.operationList[0].'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
     }
 
     def 'likelyStuck timeout configuration working' () {
         when:
         helper.wrappers {
-            timeout('likelyStuck')
+            timeout {
+                likelyStuck()
+            }
         }
         executeHelperActionsOnRootNode()
 
+
+        def strategy = timeoutWrapper.strategy[0]
         then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeout.timeoutMinutes[0].value() == 3
-        timeout.failBuild[0].value() == false
-        timeout.writingDescription[0].value() == false
-        timeout.timeoutPercentage[0].value() ==  0
-        timeout.timeoutType[0].value() == likelyStuck
-        timeout.timeoutMinutesElasticDefault[0].value() == 3
+        strategy.attribute('class') == Timeout.likelyStuck.className
+        strategy.children().size() == 0
+        timeoutHasNoOperation()
     }
 
     def 'port allocator string list'() {
