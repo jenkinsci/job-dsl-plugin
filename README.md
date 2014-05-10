@@ -90,7 +90,7 @@ job {
 }
 ```
 
-NOTE: This example does depend on existing jobs which are used at templates, and hence won't run "out of the box". Read 
+NOTE: This example does depend on existing jobs which are used as templates, and hence won't run "out of the box". Read 
 the wiki for isolated examples and step-by-step guides to get this example working.
 
 Manually creating these jobs wouldn't be too hard, but doing the same thing all over again for every new branch or for
