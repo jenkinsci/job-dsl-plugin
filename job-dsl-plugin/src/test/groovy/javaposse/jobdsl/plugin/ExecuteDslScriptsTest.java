@@ -30,7 +30,7 @@ public class ExecuteDslScriptsTest {
     public void scheduleBuildOnMasterUsingScriptText() throws Exception {
         // setup
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, SCRIPT), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, SCRIPT), true, IGNORE, JobLookupStrategy.SEED_JOB));
 
         // when
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get();
@@ -45,7 +45,7 @@ public class ExecuteDslScriptsTest {
         // setup
         jenkinsRule.createSlave("Node1", "label1", null);
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, SCRIPT), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, SCRIPT), true, IGNORE, JobLookupStrategy.SEED_JOB));
         job.setAssignedLabel(Label.get("label1"));
 
         // when
@@ -60,7 +60,7 @@ public class ExecuteDslScriptsTest {
     public void scheduleBuildOnMasterUsingScriptLocation() throws Exception {
         // setup
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "jobs.groovy", null), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "jobs.groovy", null), true, IGNORE, JobLookupStrategy.SEED_JOB));
         jenkinsRule.getInstance().getWorkspaceFor(job).child("jobs.groovy").write(SCRIPT, "UTF-8");
 
         // when
@@ -77,7 +77,7 @@ public class ExecuteDslScriptsTest {
         DumbSlave slave = jenkinsRule.createSlave("Node1", "label1", null);
         new FilePath(new File(slave.getRemoteFS())).child("workspace/seed/jobs.groovy").write(SCRIPT, "UTF-8");
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "jobs.groovy", null), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "jobs.groovy", null), true, IGNORE, JobLookupStrategy.SEED_JOB));
         job.setAssignedLabel(Label.get("label1"));
 
         // when
@@ -94,7 +94,7 @@ public class ExecuteDslScriptsTest {
         DumbSlave slave = jenkinsRule.createSlave("Node2", "label2", null);
         new FilePath(new File(slave.getRemoteFS())).child("workspace/seed/dslscripts/jobs.groovy").write(SCRIPT, "UTF-8");
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "**/*.groovy", null), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "**/*.groovy", null), true, IGNORE, JobLookupStrategy.SEED_JOB));
         job.setAssignedLabel(Label.get("label2"));
 
         // when
@@ -112,7 +112,7 @@ public class ExecuteDslScriptsTest {
         new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/jobs.groovy").write(UTIL_SCRIPT, "UTF-8");
         new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/util/Util.groovy").write(UTIL_CLASS, "UTF-8");
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("groovyengine");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "jobs.groovy", null), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "jobs.groovy", null), true, IGNORE, JobLookupStrategy.SEED_JOB));
         job.setAssignedLabel(Label.get("label3"));
 
         // when
@@ -131,7 +131,7 @@ public class ExecuteDslScriptsTest {
         new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/mydsl/jobs.groovy").write(UTIL_SCRIPT, "UTF-8");
         new FilePath(new File(slave.getRemoteFS())).child("workspace/groovyengine/mydsl/util/Util.groovy").write(UTIL_CLASS, "UTF-8");
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("groovyengine");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "mydsl/jobs.groovy", null), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("false", "mydsl/jobs.groovy", null), true, IGNORE, JobLookupStrategy.SEED_JOB));
         job.setAssignedLabel(Label.get("label4"));
 
         // when
@@ -149,7 +149,7 @@ public class ExecuteDslScriptsTest {
 
         // when
         String script1 = "job { name 'test-job' }";
-        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE, JobLookupStrategy.SEED_JOB);
         runBuild(job, builder1);
 
         // then
@@ -157,7 +157,7 @@ public class ExecuteDslScriptsTest {
 
         // when
         String script2 = "job { name 'different-job' }";
-        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE);
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE, JobLookupStrategy.SEED_JOB);
         runBuild(job, builder2);
 
         // then
@@ -173,7 +173,7 @@ public class ExecuteDslScriptsTest {
 
         // when
         String script1 = "job { name '/folder/test-job' }";
-        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE);
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1), false, RemovedJobAction.DELETE, JobLookupStrategy.SEED_JOB);
         runBuild(job, builder1);
 
         // then
@@ -181,7 +181,7 @@ public class ExecuteDslScriptsTest {
 
         // when
         String script2 = "job { name '/folder/different-job' }";
-        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE);
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2), false, RemovedJobAction.DELETE, JobLookupStrategy.SEED_JOB);
         runBuild(job, builder2);
 
         // then
@@ -199,7 +199,7 @@ public class ExecuteDslScriptsTest {
 
         // when
         String script = "job { name('test-job'); using('template') }";
-        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script), false, RemovedJobAction.DELETE);
+        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script), false, RemovedJobAction.DELETE, JobLookupStrategy.SEED_JOB);
         FreeStyleBuild build = runBuild(job, builder);
 
         // then
@@ -218,7 +218,7 @@ public class ExecuteDslScriptsTest {
 
         // when
         String script = "job { name('test-job'); using('/template-folder/template') }";
-        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script), false, RemovedJobAction.DELETE);
+        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script), false, RemovedJobAction.DELETE, JobLookupStrategy.SEED_JOB);
         FreeStyleBuild build = runBuild(job, builder);
 
         // then
@@ -300,7 +300,7 @@ public class ExecuteDslScriptsTest {
         // setup
         jenkinsRule.getInstance().addView(new ListView("test-view"));
         FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
-        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, VIEW_SCRIPT), true, IGNORE));
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, VIEW_SCRIPT), true, IGNORE, JobLookupStrategy.SEED_JOB));
         job.onCreatedFromScratch();
 
         // when

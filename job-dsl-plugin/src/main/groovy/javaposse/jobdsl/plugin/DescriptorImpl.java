@@ -52,4 +52,12 @@ public class DescriptorImpl extends Descriptor<Builder> {
         }
         return items;
     }
+
+    public ListBoxModel doFillJobLookupStrategyItems() {
+        ListBoxModel items = new ListBoxModel();
+        for (JobLookupStrategy item : JobLookupStrategy.values()) {
+            items.add(item.getDisplayName(), item.name());
+        }
+        return items;
+    }
 }

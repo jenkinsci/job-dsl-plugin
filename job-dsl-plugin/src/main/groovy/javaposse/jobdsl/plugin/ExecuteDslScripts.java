@@ -75,14 +75,17 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
+    private JobLookupStrategy jobLookupStrategy;
+
     @DataBoundConstructor
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction, JobLookupStrategy jobLookupStrategy) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation==null?null:scriptLocation.targets; // May be null;
         this.scriptText = scriptLocation==null?null:scriptLocation.scriptText; // May be null
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
+        this.jobLookupStrategy = jobLookupStrategy;
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -91,6 +94,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
+        this.jobLookupStrategy = JobLookupStrategy.SEED_JOB;
     }
 
     ExecuteDslScripts() { /// Where is the empty constructor called?
@@ -100,6 +104,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
+        this.jobLookupStrategy = JobLookupStrategy.SEED_JOB;
     }
 
     public String getTargets() {
@@ -120,6 +125,10 @@ public class ExecuteDslScripts extends Builder {
 
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
+    }
+
+    public JobLookupStrategy getJobLookupStrategy() {
+        return jobLookupStrategy;
     }
 
     @Override
@@ -146,7 +155,7 @@ public class ExecuteDslScripts extends Builder {
         env.putAll(build.getBuildVariables());
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build);
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, jobLookupStrategy);
 
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
         Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
@@ -179,7 +188,7 @@ public class ExecuteDslScripts extends Builder {
         updateGeneratedViews(build, listener, freshViews);
 
         // Save onto Builder, which belongs to a Project.
-        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs);
+        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, jobLookupStrategy);
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
         GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews);
@@ -192,6 +201,13 @@ public class ExecuteDslScripts extends Builder {
         return true;
     }
 
+    public Object readResolve() {
+        // Provide backwards compatible behaviour for existing seed jobs.
+        if (jobLookupStrategy == null) {
+            jobLookupStrategy = JobLookupStrategy.JENKINS_ROOT;
+        }
+        return this;
+    }
 
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
@@ -231,7 +247,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = Jenkins.getInstance().getItemByFullName(templateName, AbstractProject.class);
+            AbstractProject templateProject = (AbstractProject<?,?>) jobLookupStrategy.getItem(build.getParent(), templateName);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -276,7 +292,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
+            AbstractProject removedProject = (AbstractProject) jobLookupStrategy.getItem(build.getParent(), removedJob.getJobName());
             if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
