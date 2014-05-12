@@ -4,8 +4,6 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
-//import groovy.xml.XmlUtil
-//import hudson.util.Secret
 /**
  triggers {scm(String cronString)
  cron(String cronString)}*/

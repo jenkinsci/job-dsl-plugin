@@ -42,7 +42,6 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
     WithXmlAction generateWithXmlAction(T context) {
         // Closure to be run later, in this context we're given the root node with the WithXmlAction magic
         Closure withXmlClosure = generateWithXmlClosure(context)
-        //withXmlClosure.resolveStrategy = Closure.DELEGATE_FIRST
 
         return new WithXmlAction(withXmlClosure)
     }

@@ -18,9 +18,6 @@ class WithXmlAction {
 
         closure.delegate = new MissingPropertyToStringDelegate(root)
 
-        // Let creator set strategy
-        //closure.resolveStrategy = Closure.OWNER_FIRST
-
         use(NodeEnhancement) {
             closure.call(root)
         }

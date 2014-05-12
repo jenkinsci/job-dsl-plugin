@@ -285,20 +285,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return i > 0 ? fullName.substring(i+1) : fullName;
     }
 
-//    @SuppressWarnings("rawtypes")
-//    public Collection<AbstractProject> getJobsByName(final Set<String> names) {
-//        return Collections2.filter(Jenkins.getInstance().getProjects(), new Predicate<AbstractProject>() {
-//            @Override public boolean apply(AbstractProject project) {
-//                return names.contains(project.getName());
-//            }
-//        });
-//    }
-//
-//    public Collection<AbstractProject> getJobsByGeneratedJobs(final Set<GeneratedJob> generatedJobs) {
-//        Set<String> jobNames = Sets.newLinkedHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
-//        return getJobsByName(jobNames);
-//    }
-
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
     }
