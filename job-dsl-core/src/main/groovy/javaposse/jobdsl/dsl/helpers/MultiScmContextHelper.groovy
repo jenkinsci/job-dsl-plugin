@@ -40,7 +40,7 @@ class MultiScmContextHelper extends AbstractContextHelper<ScmContext> {
 
     Closure generateWithXmlClosure(ScmContext context) {
         return { Node project ->
-            def scm = project/scm // TODO This will create it if it doesn't exist, seems like we wouldn't need to do this, but dealing with NodeList is a pain
+            def scm = project/scm
 
             if (scm) {
                     // There can only be only one SCM, so remove if there

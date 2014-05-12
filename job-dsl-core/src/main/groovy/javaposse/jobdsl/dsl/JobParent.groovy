@@ -67,7 +67,6 @@ public abstract class JobParent extends Script {
      * @return
      */
     public queue(Job job) {
-        // TODO Consider lazily evaluating in case some Closure sets the name
         Preconditions.checkArgument(job.name as Boolean)
         queueToBuild << job.name
     }

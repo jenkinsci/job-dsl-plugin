@@ -799,13 +799,6 @@ public class StepHelperSpec extends Specification {
 
         then:
         1 * mockActions.add(_)
-
-        // TODO Support this notation
-//        when:
-//        helper.steps.shell('ls')
-//
-//        then:
-//        1 * mockActions.add(_)
     }
 
     def 'execute withXml Action'() {

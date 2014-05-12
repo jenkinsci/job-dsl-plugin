@@ -295,13 +295,6 @@ public class TriggerHelperSpec extends Specification {
 
         then:
         1 * mockActions.add(_)
-
-        // TODO Support this notation
-//        when:
-//        helper.trigger.cron('0 13 0 0 0 0')
-//
-//        then:
-//        1 * mockActions.add(_)
     }
 
     def 'call pull request trigger with no args'() {

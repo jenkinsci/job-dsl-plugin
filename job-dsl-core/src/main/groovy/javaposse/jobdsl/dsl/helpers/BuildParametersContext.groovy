@@ -59,7 +59,7 @@ class BuildParametersContext implements Context {
         Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
         Preconditions.checkArgument(parameterName.length() > 0)
         Preconditions.checkNotNull(scmUrl, 'scmUrl cannot be null')
-        Preconditions.checkArgument(scmUrl.length() > 0)  // TODO: use regex to check this is a valid URL?
+        Preconditions.checkArgument(scmUrl.length() > 0)
         Preconditions.checkNotNull(tagFilterRegex, 'tagFilterRegex cannot be null')
         Preconditions.checkArgument(tagFilterRegex.length() > 0)
 

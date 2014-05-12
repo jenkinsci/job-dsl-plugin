@@ -38,5 +38,4 @@ class JabberContext implements Context {
     void channelNotificationName(String channelNotificationName) {
         this.channelNotificationName = channelNotificationName
     }
-// TODO Create Enum for channelNotificationMessage and strategy
 }
