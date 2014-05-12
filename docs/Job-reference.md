@@ -2311,20 +2311,22 @@ publishRobotFrameworkReports()
 
 ```groovy
 buildPipelineTrigger(String downstreamProjectNames, Closure closure) {
-    currentBuild() // Current build parameters (Since 1.23)
-    propertiesFile(String propFile) // Parameters from properties file (Since 1.23)
-    gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built (Since 1.23)
-    predefinedProp(String key, String value) // Predefined properties (Since 1.23)
-    predefinedProps(Map<String, String> predefinedPropsMap) (Since 1.23)
-    predefinedProps(String predefinedProps) // Newline separated (Since 1.23)
-    matrixSubset(String groovyFilter) // Restrict matrix execution to a subset (Since 1.23)
-    subversionRevision() // Subversion Revision (Since 1.23)
+    parameters { // Parameters closure (Since 1.23)
+        currentBuild() // Current build parameters (Since 1.23)
+        propertiesFile(String propFile) // Parameters from properties file (Since 1.23)
+        gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built (Since 1.23)
+        predefinedProp(String key, String value) // Predefined properties (Since 1.23)
+        predefinedProps(Map<String, String> predefinedPropsMap) (Since 1.23)
+        predefinedProps(String predefinedProps) // Newline separated (Since 1.23)
+        matrixSubset(String groovyFilter) // Restrict matrix execution to a subset (Since 1.23)
+        subversionRevision() // Subversion Revision (Since 1.23)
+    }
 }
 ```
 
 Add a manual triggers for jobs that require intervention prior to execution, e.g. an approval process outside of Jenkins. The argument takes a comma separated list of job names. Requires the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
 
-The methods inside the `downstreamTriggerClosure` are optional, though it
+The `parameters` closure and the methods inside it are optional, though it
 makes the most sense to call at least one. Each one is relatively self documenting, mapping directly to what is seen in the UI. The `predefinedProp` and
 `predefinedProps` methods are used to accumulate properties, meaning that they can be called multiple times to build a superset of properties. They are basically
 equivalent to the ones defined for `downstreamParameterized()`

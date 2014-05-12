@@ -955,8 +955,9 @@ class PublisherContext implements Context {
      */
     def buildPipelineTrigger(String downstreamProjectNames = '', Closure closure = null) {
         BuildPipelineContext buildPipelineContext = new BuildPipelineContext()
+        AbstractContextHelper.executeInContext(closure, buildPipelineContext)
 
-        def publishNode = buildPipelineContext.createManualDownstreamNode(downstreamProjectNames, closure)
+        def publishNode = buildPipelineContext.createManualDownstreamNode(downstreamProjectNames)
         publisherNodes << publishNode
     }
 

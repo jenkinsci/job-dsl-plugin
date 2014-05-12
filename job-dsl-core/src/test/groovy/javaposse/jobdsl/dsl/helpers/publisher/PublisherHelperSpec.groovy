@@ -1544,21 +1544,36 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
     }
 
+    def 'call buildPipelineTrigger with empty parameters'() {
+        when:
+        context.buildPipelineTrigger('next') {
+            parameters {
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+        context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
+    }
+
     def 'call buildPipelineTrigger with parameters'() {
         when:
         context.buildPipelineTrigger('next') {
-            currentBuild() // Current build parameters
-            propertiesFile('dir/my.properties') // Parameters from properties file
-            gitRevision(false) // Pass-through Git commit that was built
-            predefinedProp('key1', 'value1') // Predefined properties
-            predefinedProps([key2: 'value2', key3: 'value3'])
-            predefinedProps('key4=value4\nkey5=value5') // Newline separated
-            matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
-            subversionRevision() // Subversion Revision
-            boolParam('aParam')
-            boolParam('bParam', false)
-            boolParam('cParam', true)
-            sameNode()
+            parameters {
+                currentBuild() // Current build parameters
+                propertiesFile('dir/my.properties') // Parameters from properties file
+                gitRevision(false) // Pass-through Git commit that was built
+                predefinedProp('key1', 'value1') // Predefined properties
+                predefinedProps([key2: 'value2', key3: 'value3'])
+                predefinedProps('key4=value4\nkey5=value5') // Newline separated
+                matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
+                subversionRevision() // Subversion Revision
+                boolParam('aParam')
+                boolParam('bParam', false)
+                boolParam('cParam', true)
+                sameNode()
+            }
         }
 
         then:
