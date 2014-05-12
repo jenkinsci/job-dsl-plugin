@@ -18,8 +18,8 @@ import hudson.model.Run;
 import hudson.model.View;
 import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
-import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
+import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import jenkins.model.Jenkins;
@@ -27,6 +27,7 @@ import jenkins.model.ModifiableTopLevelItemGroup;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -164,7 +165,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             project.scheduleBuild(new Cause.UpstreamCause(run));
         } else {
             LOGGER.log(Level.INFO, String.format("Scheduling build of %s", jobName));
-            project.scheduleBuild(new Cause.UserCause());
+            project.scheduleBuild(new Cause.UserIdCause());
         }
     }
 
@@ -232,7 +233,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
 
         LOGGER.log(Level.FINE, String.format("Updating project %s as %s", project.getName(), config));
-        StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
+        Source streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
         try {
             project.updateByXml(streamSource);
             created = true;
