@@ -1540,8 +1540,13 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
-        context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+            configs.size() == 1
+            configs[0].value().empty
+        }
     }
 
     def 'call buildPipelineTrigger with empty parameters'() {
@@ -1553,64 +1558,38 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
-        context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+            configs.size() == 1
+            configs[0].value().empty
+        }
     }
 
     def 'call buildPipelineTrigger with parameters'() {
         when:
         context.buildPipelineTrigger('next') {
             parameters {
-                currentBuild() // Current build parameters
-                propertiesFile('dir/my.properties') // Parameters from properties file
-                gitRevision(false) // Pass-through Git commit that was built
-                predefinedProp('key1', 'value1') // Predefined properties
-                predefinedProps([key2: 'value2', key3: 'value3'])
-                predefinedProps('key4=value4\nkey5=value5') // Newline separated
-                matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
-                subversionRevision() // Subversion Revision
-                boolParam('aParam')
-                boolParam('bParam', false)
-                boolParam('cParam', true)
-                sameNode()
+                currentBuild()
+                predefinedProp('key1', 'value1')
             }
         }
 
         then:
         context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
 
-        Node publisherNode = context.publisherNodes[0]
-        publisherNode.name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
 
-        publisherNode.downstreamProjectNames.size() == 1
-        publisherNode.downstreamProjectNames[0].value() == 'next'
-
-        publisherNode.configs.size() == 1
-        Node configNode = publisherNode.configs[0]
-
-        configNode.'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-        configNode.'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
-        configNode.'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == 'false'
-        configNode.'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
-        configNode.'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
-                   'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        configNode.'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
-        configNode.'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
-
-        def boolParams = configNode.'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
-        boolParams.children().size() == 3
-        def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
-        boolNode.name[0].value() == 'aParam'
-        boolNode.value[0].value() == 'false'
-        def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
-        boolNode1.name[0].value() == 'bParam'
-        boolNode1.value[0].value() == 'false'
-        def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
-        boolNode2.name[0].value() == 'cParam'
-        boolNode2.value[0].value() == 'true'
-
-        def nodeNode = configNode.'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
-        nodeNode != null
+            configs.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0].value().empty
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() == 'key1=value1'
+        }
     }
 
     def 'call buildPipelineTrigger with null argument'() {
@@ -1619,8 +1598,13 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
-        context.publisherNodes[0].downstreamProjectNames[0].value() == ''
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == ''
+            configs.size() == 1
+            configs[0].value().empty
+        }
     }
 
     def 'call github commit notifier methods'() {

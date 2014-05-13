@@ -953,12 +953,15 @@ class PublisherContext implements Context {
      *     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
      * </publishers>
      */
-    def buildPipelineTrigger(String downstreamProjectNames = '', Closure closure = null) {
+    def buildPipelineTrigger(String downstreamProjectNames, Closure closure = null) {
         BuildPipelineContext buildPipelineContext = new BuildPipelineContext()
         AbstractContextHelper.executeInContext(closure, buildPipelineContext)
 
-        def publishNode = buildPipelineContext.createManualDownstreamNode(downstreamProjectNames)
-        publisherNodes << publishNode
+        def nodeBuilder = NodeBuilder.newInstance()
+        publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
+            delegate.downstreamProjectNames(downstreamProjectNames ?: '')
+            configs(buildPipelineContext.parameterNodes)
+        }
     }
 
     /**
