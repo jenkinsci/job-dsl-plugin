@@ -58,12 +58,6 @@ class TriggerContext implements Context {
                             timeout entry.timeout
                             proxyActivated entry.proxyActivated
 
-                            /* Does not work right now due to dependencies on Jenkins for encryption */
-                            /*if (entry.username && entry.password) {
-                                username entry.username
-                                password entry.password
-                            }*/
-
                             checkStatus entry.checks.contains(UrlTriggerEntryContext.Check.status)
                             checkETag entry.checks.contains(UrlTriggerEntryContext.Check.etag)
                             checkLastModificationDate entry.checks.contains(UrlTriggerEntryContext.Check.lastModified)

@@ -112,8 +112,6 @@ public class Job {
     public String getXml() {
         Node project = getNode()
 
-        //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
-
         def xmlOutput = new StringWriter()
         def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
         xmlNodePrinter.with {
@@ -124,7 +122,6 @@ public class Job {
         xmlNodePrinter.print(project)
 
         String configStr = xmlOutput.toString()
-        //String configStr = XmlUtil.serialize(project)
         return configStr
     }
 

@@ -20,11 +20,6 @@ class UrlTriggerEntryContext implements Context {
         lastModified
     }
 
-    /* Currently not usable due to encryption dependencies on Jenkins instance
-    def username
-    def password
-    */
-
     def url
     def statusCode = 200
     def timeout = 300
@@ -130,14 +125,4 @@ class UrlTriggerEntryContext implements Context {
         inspections << inspection
 
     }
-
-    /* *
-     * Basic Authentication currently unsupported, because this requires the encoding of the password
-     * with the Jenkins instance specific key that is only cleanly accessible via the shared Jenkins runtime instance.
-     */
-    /*def basicAuth(String username, String password) {
-        this.username = Preconditions.checkNotNull(username, "Username is required for authentication")
-        this.password = new Secret(password).encryptedValue
-    }*/
-
 }

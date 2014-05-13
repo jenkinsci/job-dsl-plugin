@@ -23,12 +23,6 @@ public class SeedJobItemListener extends ItemListener {
         LOGGER.info("onDeleted");
     }
 
-    // 1.460
-//    @Override
-//    public void onUpdated(Item item) {
-//        LOGGER.info("onDeleted");
-//    }
-
     @Override
     public void onRenamed(Item item, String oldName, String newName) {
         LOGGER.info("onRenamed");

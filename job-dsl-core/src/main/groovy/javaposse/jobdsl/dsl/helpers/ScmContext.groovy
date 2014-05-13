@@ -143,22 +143,14 @@ class ScmContext implements Context {
             pruneBranches 'false'
             remotePoll gitContext.remotePoll
             ignoreNotifyCommit 'false'
-            //buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"
             gitTool 'Default'
-            //submoduleCfg 'class="list"'
             if (gitContext.relativeTargetDir) {
                 relativeTargetDir gitContext.relativeTargetDir
             }
             if (gitContext.reference) {
                 reference gitContext.reference
             }
-            //excludedRegions
-            //excludedUsers
-            //gitConfigName
-            //gitConfigEmail
             skipTag !gitContext.createTag
-            //includedRegions
-            //scmName
             if (gitContext.shallowClone) {
                 useShallowClone gitContext.shallowClone
             }
