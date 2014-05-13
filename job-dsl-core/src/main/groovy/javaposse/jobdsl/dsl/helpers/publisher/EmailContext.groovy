@@ -20,7 +20,8 @@ class EmailContext implements Context {
         emailTriggers << new EmailTrigger(triggerName, recipientList, subject, body, sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList)
     }
 
-    Closure configureClosure // TODO Pluralize
+    Closure configureClosure
+
     def configure(Closure configureClosure) {
         // save for later
         this.configureClosure = configureClosure

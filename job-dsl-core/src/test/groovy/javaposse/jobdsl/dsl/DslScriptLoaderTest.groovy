@@ -15,13 +15,6 @@ public class DslScriptLoaderTest extends Specification {
         return baos.toString()  // Could send ISO-8859-1
     }
 
-    def 'load template from MarkupBuilder'() {
-        setup:
-        Job job = new Job(jm)
-
-        // TODO
-    }
-
     def 'load template from file'() {
         setup:
         Job job = new Job(jm)
@@ -44,8 +37,6 @@ public class DslScriptLoaderTest extends Specification {
 
         then:
         noExceptionThrown()
-        // TODO
-        //job.xml
     }
 
     def 'run engine'() {

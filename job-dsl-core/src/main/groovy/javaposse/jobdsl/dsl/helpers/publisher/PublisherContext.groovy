@@ -55,8 +55,6 @@ class PublisherContext implements Context {
      <attachmentsPattern/>
      </hudson.plugins.emailext.ExtendedEmailPublisher>
      * @return
-     * TODO Support list for recipients
-     * TODO Escape XML for all subject and content fields
      */
     def extendedEmail(String recipients = null, Closure emailClosure = null) {
         return extendedEmail(recipients, null, emailClosure)
@@ -392,7 +390,6 @@ class PublisherContext implements Context {
         assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
 
         def nodeBuilder = NodeBuilder.newInstance()
-        // TODO Possibility to update existing publish node
         def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
             entries {

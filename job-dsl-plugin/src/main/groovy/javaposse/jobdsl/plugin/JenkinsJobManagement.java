@@ -86,9 +86,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return xml;
     }
 
-    /**
-     * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
-     */
     @Override
     public boolean createOrUpdateConfig(String fullJobName, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
@@ -228,11 +225,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.warning(e.getMessage());
         }
 
-        // TODO Perform comparison between old and new, and print to console
-        // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
-
         LOGGER.log(Level.FINE, String.format("Updating project %s as %s", project.getName(), config));
-        StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
+        StreamSource streamSource = new StreamSource(new StringReader(config));
         try {
             project.updateByXml(streamSource);
             created = true;
@@ -243,13 +237,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
     private boolean createNewJob(String fullJobName, String config) {
         LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
         boolean created;
 
         try {
-            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
             ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
             String jobName = getJobNameFromFullName(fullJobName);

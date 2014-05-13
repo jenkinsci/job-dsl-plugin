@@ -19,8 +19,6 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
             closure.delegate = freshContext
             closure.resolveStrategy = Closure.DELEGATE_FIRST
             def result = closure.call() // No args
-
-            // TODO Create callback to concrete classes, so that they can "enhance" the closure, e.g. with static imports
         }
     }
     /**
