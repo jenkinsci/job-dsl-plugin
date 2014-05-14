@@ -84,7 +84,7 @@ public class DslScriptLoader {
      * @throws IOException
      */
     static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURL() );
+        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURI().toURL() );
         return runDslEngine(scriptRequest, jobManagement);
     }
 
