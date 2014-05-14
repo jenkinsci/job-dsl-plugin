@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
+import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 
 
 class PublisherContext implements Context {
@@ -940,14 +941,23 @@ class PublisherContext implements Context {
      *
      * <publishers>
      *     <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+     *         <configs>
+     *             <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *                 <properties>ARTIFACT_BUILD_NUMBER=$BUILD_NUMBER</properties>
+     *             </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *         </configs>
      *         <downstreamProjectNames>acme-project</downstreamProjectNames>
      *     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
      * </publishers>
      */
-    def buildPipelineTrigger(String downstreamProjectNames) {
+    def buildPipelineTrigger(String downstreamProjectNames, Closure closure = null) {
+        BuildPipelineContext buildPipelineContext = new BuildPipelineContext()
+        AbstractContextHelper.executeInContext(closure, buildPipelineContext)
+
         def nodeBuilder = NodeBuilder.newInstance()
         publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
             delegate.downstreamProjectNames(downstreamProjectNames ?: '')
+            configs(buildPipelineContext.parameterNodes)
         }
     }
 

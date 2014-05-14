@@ -2310,13 +2310,39 @@ publishRobotFrameworkReports()
 ## Build Pipeline Trigger
 
 ```groovy
-buildPipelineTrigger(String downstreamProjectNames)
+buildPipelineTrigger(String downstreamProjectNames, Closure closure) {
+    parameters { // Parameters closure (Since 1.23)
+        currentBuild() // Current build parameters
+        propertiesFile(String propFile) // Parameters from properties file
+        gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built
+        predefinedProp(String key, String value) // Predefined properties
+        predefinedProps(Map<String, String> predefinedPropsMap)
+        predefinedProps(String predefinedProps) // Newline separated
+        matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
+        subversionRevision() // Subversion Revision
+    }
+}
 ```
 
-Add a manual triggers for jobs that require intervention prior to execution, e.g. an approval process outside of Jenkins. The argument takes a comma separated list of job names. Requires the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
+Add a manual triggers for jobs that require intervention prior to execution, e.g. an approval process outside of
+Jenkins. The argument takes a comma separated list of job names. Requires the
+[Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
+
+The `parameters` closure and the methods inside it are optional, though it makes the most sense to call at least one.
+Each one is relatively self documenting, mapping directly to what is seen in the UI. The `predefinedProp` and
+`predefinedProps` methods are used to accumulate properties, meaning that they can be called multiple times to build a
+superset of properties. They are basically equivalent to the ones defined for `downstreamParameterized()`
+
 
 ```groovy
 buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2')
+```
+
+```groovy
+buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2') {
+    predefinedProp('GIT_COMMIT', '$GIT_COMMIT')
+    predefinedProp('ARTIFACT_BUILD_NUMBER', '$BUILD_NUMBER')
+}
 ```
 
 (Since 1.21)
@@ -2629,4 +2655,3 @@ Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
 ```
- 

@@ -98,7 +98,7 @@ class DownstreamTriggerContext implements Context {
                 || !boolParams.isEmpty() || sameNode)
     }
 
-    def createParametersNode() {
+    Node createParametersNode() {
         def nodeBuilder = NodeBuilder.newInstance()
 
         return nodeBuilder.'configs' {

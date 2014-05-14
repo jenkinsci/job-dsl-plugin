@@ -1540,8 +1540,56 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
-        context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+            configs.size() == 1
+            configs[0].value().empty
+        }
+    }
+
+    def 'call buildPipelineTrigger with empty parameters'() {
+        when:
+        context.buildPipelineTrigger('next') {
+            parameters {
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+            configs.size() == 1
+            configs[0].value().empty
+        }
+    }
+
+    def 'call buildPipelineTrigger with parameters'() {
+        when:
+        context.buildPipelineTrigger('next') {
+            parameters {
+                currentBuild()
+                predefinedProp('key1', 'value1')
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+
+            configs.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0].value().empty
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() == 'key1=value1'
+        }
     }
 
     def 'call buildPipelineTrigger with null argument'() {
@@ -1550,8 +1598,13 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
-        context.publisherNodes[0].downstreamProjectNames[0].value() == ''
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == ''
+            configs.size() == 1
+            configs[0].value().empty
+        }
     }
 
     def 'call github commit notifier methods'() {
