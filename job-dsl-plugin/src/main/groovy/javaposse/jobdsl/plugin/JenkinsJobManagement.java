@@ -183,9 +183,10 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         FilePath filePath = build.getWorkspace().child(relLocation);
         try {
             if (!filePath.exists()) {
-                throw new IllegalStateException("File does not exists");
+                String path = filePath.getRemote();
+                throw new IllegalStateException(String.format("File %s does not exist in workspace.", path));
             }
-        } catch(InterruptedException ie) {
+        } catch (InterruptedException ie) {
             throw new RuntimeException(ie);
         }
         return filePath;
