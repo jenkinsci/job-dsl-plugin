@@ -34,17 +34,6 @@ public class DescriptorImpl extends Descriptor<Builder> {
         this.templateJobMap = templateJobMap;
     }
 
-    /*
-    @Override
-    public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-        return super.newInstance(req, formData);
-    }
-
-    @Override
-    public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-        return super.configure(req, json);
-    }
-    */
     public ListBoxModel doFillRemovedJobActionItems() {
         ListBoxModel items = new ListBoxModel();
         for (RemovedJobAction action : RemovedJobAction.values()) {

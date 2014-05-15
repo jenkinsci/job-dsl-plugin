@@ -69,7 +69,6 @@ class NodeEnhancement {
     Node leftShift(String appendChildName) {
         LOGGER.fine("Setting value of ${appendChildName} for ${this.name()}")
         this.setValue(appendChildName)
-        //this.appendNode(appendChildName)
         return this
     }
 

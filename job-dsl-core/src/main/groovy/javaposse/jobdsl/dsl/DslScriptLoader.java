@@ -39,9 +39,7 @@ public class DslScriptLoader {
         icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
-        GroovyScriptEngine engine = //scriptRequest.resourceConnector!=null?
-                //new GroovyScriptEngine(scriptRequest.resourceConnector, parentClassLoader):
-                new GroovyScriptEngine(new URL[]{scriptRequest.urlRoot}, cl);
+        GroovyScriptEngine engine = new GroovyScriptEngine(new URL[] { scriptRequest.urlRoot } , cl);
 
         engine.setConfig(config);
 
@@ -83,7 +81,7 @@ public class DslScriptLoader {
      * @throws IOException
      */
     static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURL());
+        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURI().toURL() );
         return runDslEngine(scriptRequest, jobManagement);
     }
 

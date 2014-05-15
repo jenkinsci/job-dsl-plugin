@@ -24,7 +24,6 @@ class AuthorizationContext implements Context {
     }
 
     def permission(String perm) {
-        // TODO Check formatting, e.g. has colon
         addAuthorization(perm)
     }
 

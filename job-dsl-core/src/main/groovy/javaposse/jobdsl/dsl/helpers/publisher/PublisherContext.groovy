@@ -3,8 +3,8 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
-
 
 class PublisherContext implements Context {
     List<Node> publisherNodes = []
@@ -55,8 +55,6 @@ class PublisherContext implements Context {
      <attachmentsPattern/>
      </hudson.plugins.emailext.ExtendedEmailPublisher>
      * @return
-     * TODO Support list for recipients
-     * TODO Escape XML for all subject and content fields
      */
     def extendedEmail(String recipients = null, Closure emailClosure = null) {
         return extendedEmail(recipients, null, emailClosure)
@@ -392,7 +390,6 @@ class PublisherContext implements Context {
         assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
 
         def nodeBuilder = NodeBuilder.newInstance()
-        // TODO Possibility to update existing publish node
         def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
             entries {
@@ -898,7 +895,7 @@ class PublisherContext implements Context {
             }
         }
     }
-    
+
     /**
      * Configures Jenkins job to publish Robot Framework reports.
      * By default the following values are applied. If an instance of a
@@ -943,14 +940,23 @@ class PublisherContext implements Context {
      *
      * <publishers>
      *     <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+     *         <configs>
+     *             <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *                 <properties>ARTIFACT_BUILD_NUMBER=$BUILD_NUMBER</properties>
+     *             </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *         </configs>
      *         <downstreamProjectNames>acme-project</downstreamProjectNames>
      *     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
      * </publishers>
      */
-    def buildPipelineTrigger(String downstreamProjectNames) {
+    def buildPipelineTrigger(String downstreamProjectNames, Closure closure = null) {
+        BuildPipelineContext buildPipelineContext = new BuildPipelineContext()
+        AbstractContextHelper.executeInContext(closure, buildPipelineContext)
+
         def nodeBuilder = NodeBuilder.newInstance()
         publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
             delegate.downstreamProjectNames(downstreamProjectNames ?: '')
+            configs(buildPipelineContext.parameterNodes)
         }
     }
 

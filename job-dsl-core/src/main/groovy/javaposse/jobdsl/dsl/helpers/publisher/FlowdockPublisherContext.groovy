@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 class FlowdockPublisherContext implements Context {
 
-    String[] notificationTags = []
+    List<String> notificationTags = []
     boolean chat = false
 
     boolean success = true
@@ -17,7 +17,7 @@ class FlowdockPublisherContext implements Context {
 
     void tag(String tag) {
         Preconditions.checkArgument(tag != null && tag.length() > 0, "A non-empty tag is required!")
-        this.notificationTags + tag.tokenize(',')
+        this.notificationTags.addAll(tag.tokenize(','))
     }
 
     void tags(String[] tags) {

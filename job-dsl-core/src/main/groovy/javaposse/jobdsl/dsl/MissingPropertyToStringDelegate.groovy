@@ -7,7 +7,6 @@ import java.util.logging.Logger
  */
 class MissingPropertyToStringDelegate {
     private static final Logger LOGGER = Logger.getLogger(MissingPropertyToStringDelegate.getName())
-    //@Delegate // TODO investigate making node the delegate
     Node root
 
     MissingPropertyToStringDelegate(Node root) {
@@ -15,7 +14,6 @@ class MissingPropertyToStringDelegate {
     }
     /**
      * Make string for div() to do lookup
-     * TODO Return Node instead of String, and let div() receive it
      */
     def propertyMissing(String propertyName) {
         LOGGER.fine("Missing ${propertyName}")
@@ -30,16 +28,6 @@ class MissingPropertyToStringDelegate {
 
     Node methodMissing(String methodName, args) {
         LOGGER.fine("Method missing for ${methodName} ${args}")
-
-        // TODO Investigate re-using root's children for names. Problems with closure and non-left aligned assignments
-//        def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
-//            child instanceof Node && child.name() == methodName
-//        }
-//
-//        if(children.size() == 1) {
-//            // Single child with the exact name, let's re-use it.
-//            return children[0]
-//        }
 
         args.each {
             if (it instanceof Closure) {

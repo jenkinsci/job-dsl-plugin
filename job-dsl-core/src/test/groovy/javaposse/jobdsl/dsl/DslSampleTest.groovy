@@ -24,7 +24,6 @@ class DslSampleTest extends Specification {
         jm.savedConfigs.size() == 6
         def firstJob = jm.savedConfigs['PROJ-unit-tests']
         firstJob != null
-        // TODO Review actual results
         println(firstJob)
         def mavenJob = jm.savedConfigs['PROJ-maven']
 

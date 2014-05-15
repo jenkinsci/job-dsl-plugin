@@ -25,10 +25,6 @@ class SeedJobsProperty extends JobProperty<AbstractProject<?,?>> {
         this.seedJobs = Maps.newHashMap();
     }
 
-//    public Collection<String> getSeedJobs() {
-//        return seedJobs.keySet();
-//    }
-//
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public static final class DescriptorImpl extends JobPropertyDescriptor {
         public String getDisplayName() {

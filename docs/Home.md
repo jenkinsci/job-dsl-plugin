@@ -14,6 +14,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.23 (unreleased)
+ * Removed multiscm limit
  * Fixed support for the Description Setter Plugin
  * new parameter for CopyArtifact's StatusBuildSelector to consider only stable builds
  * Limited [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin) support
@@ -23,6 +24,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Support for [LogFileSizeChecker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin)
  * Support for [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker)
  * Support Matrix builds
+ * Added support for parameterized manual jobs for the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
 * 1.22 (Apr 05 2014)
  * Fixed support for the Conditional BuildStep Plugin
  * [Github Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
