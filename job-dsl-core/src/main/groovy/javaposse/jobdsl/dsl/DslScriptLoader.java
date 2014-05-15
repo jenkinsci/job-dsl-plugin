@@ -76,6 +76,7 @@ public class DslScriptLoader {
 
     /**
      * For testing a string directly.
+     *
      * @param scriptBody
      * @param jobManagement
      * @return
@@ -158,6 +159,7 @@ public class DslScriptLoader {
             }
         }
     }
+
     private static Binding createBinding(JobManagement jobManagement) {
         Binding binding = new Binding();
         binding.setVariable("out", jobManagement.getOutputStream()); // Works for println, but not System.out
