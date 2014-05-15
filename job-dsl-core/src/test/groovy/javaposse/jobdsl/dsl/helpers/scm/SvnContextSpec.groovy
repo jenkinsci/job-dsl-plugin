@@ -1,13 +1,23 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.XmlGeneratorSpecification
-import javaposse.jobdsl.dsl.helpers.ScmContext
+import org.custommonkey.xmlunit.XMLUnit;
 
-public class SvnContextSpec extends XmlGeneratorSpecification {
+import spock.lang.Specification;
+import groovy.util.Node;
+import groovy.xml.XmlUtil;
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.ScmContext
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
+
+public class SvnContextSpec extends Specification {
 
     JobManagement mockJobManagement = Mock(JobManagement)
     ScmContext context = new ScmContext(false, [], mockJobManagement)
+    
+    static void assertXmlEqual(String expectedXml, Node node) {
+        XMLUnit.setIgnoreWhitespace true
+        assertXMLEqual(expectedXml, XmlUtil.serialize(node))
+    }
 
     void isValidSvnScmNode(scmNode) {
         assert scmNode != null

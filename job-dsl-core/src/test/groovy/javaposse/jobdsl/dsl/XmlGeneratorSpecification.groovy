@@ -9,8 +9,5 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 
 abstract class XmlGeneratorSpecification extends Specification {
-    void assertXmlEqual(String expectedXml, Node node) {
-        XMLUnit.setIgnoreWhitespace true
-        assertXMLEqual(expectedXml, XmlUtil.serialize(node))
-    }
+    
 }
