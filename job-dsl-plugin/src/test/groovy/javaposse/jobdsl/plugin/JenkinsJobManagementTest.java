@@ -1,7 +1,10 @@
 package javaposse.jobdsl.plugin;
 
+import hudson.EnvVars;
+import hudson.model.AbstractBuild;
 import hudson.model.ListView;
 import hudson.model.View;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -17,7 +20,13 @@ public class JenkinsJobManagementTest {
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
 
-    JenkinsJobManagement jobManagement = new JenkinsJobManagement();
+    JenkinsJobManagement jobManagement;
+
+    @Before
+    public void setup() throws Exception {
+        AbstractBuild<?, ?> build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject());
+        jobManagement = new JenkinsJobManagement(System.out, new EnvVars(), build);
+    }
 
     @Test
     public void getCredentialsIdWithoutCredentialsPlugin() {
@@ -77,5 +86,20 @@ public class JenkinsJobManagementTest {
         // then
         View view = jenkinsRule.getInstance().getView("test-view");
         assertNull(view);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void readFileFromWorkspaceException() throws Exception {
+        // setup
+        String fileName = "test.txt";
+
+        try {
+            // when
+            jobManagement.readFileInWorkspace(fileName);
+        } catch (Exception e) {
+            // then
+            assertTrue(e.getMessage().contains(fileName));
+            throw e;
+        }
     }
 }
