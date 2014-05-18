@@ -2128,4 +2128,112 @@ public class PublisherHelperSpec extends Specification {
             regexp[0].value() == '.*.tar.gz'
         }
     }
+
+    def 'wsCleanup with configuration of all parameters'() {
+        when:
+        context.wsCleanup{
+            includePattern('foo')
+            includePattern('bar')
+            excludePattern('foo')
+            excludePattern('bar')
+            deleteDirectories(true)
+            cleanWhenSuccess(false)
+            cleanWhenUnstable(false)
+            cleanWhenFailure(false)
+            cleanWhenNotBuilt(false)
+            cleanWhenAborted(false)
+            failBuildWhenCleanupFails(false)
+            deleteCommand('rm')
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.ws__cleanup.WsCleanup'
+            patterns.size() == 1
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'.size() == 4
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].type[0].value() == 'EXCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].type[0].value() == 'EXCLUDE'
+            deleteDirs[0].value() == true
+            cleanWhenSuccess[0].value() == false
+            cleanWhenUnstable[0].value() == false
+            cleanWhenFailure[0].value() == false
+            cleanWhenNotBuilt[0].value() == false
+            cleanWhenAborted[0].value() == false
+            notFailBuild[0].value() == true
+            externalDelete[0].value() == 'rm'
+        }
+    }
+
+    def 'wsCleanup with default configuration'() {
+        when:
+        context.wsCleanup()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.ws__cleanup.WsCleanup'
+            patterns.size() == 1
+            patterns[0].entry.size() == 0
+            deleteDirs[0].value() == false
+            cleanWhenSuccess[0].value() == true
+            cleanWhenUnstable[0].value() == true
+            cleanWhenFailure[0].value() == true
+            cleanWhenNotBuilt[0].value() == true
+            cleanWhenAborted[0].value() == true
+            notFailBuild[0].value() == false
+            externalDelete[0].value() == ''
+        }
+    }
+
+    def 'wsCleanup with configuration of all parameters using defaults for boolean parameter'() {
+        when:
+        context.wsCleanup{
+            includePattern('foo')
+            includePattern('bar')
+            excludePattern('foo')
+            excludePattern('bar')
+            deleteDirectories()
+            cleanWhenSuccess()
+            cleanWhenUnstable()
+            cleanWhenFailure()
+            cleanWhenNotBuilt()
+            cleanWhenAborted()
+            failBuildWhenCleanupFails()
+            deleteCommand('rm')
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.ws__cleanup.WsCleanup'
+            patterns.size() == 1
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'.size() == 4
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].type[0].value() == 'EXCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].type[0].value() == 'EXCLUDE'
+            deleteDirs[0].value() == true
+            cleanWhenSuccess[0].value() == true
+            cleanWhenUnstable[0].value() == true
+            cleanWhenFailure[0].value() == true
+            cleanWhenNotBuilt[0].value() == true
+            cleanWhenAborted[0].value() == true
+            notFailBuild[0].value() == false
+            externalDelete[0].value() == 'rm'
+        }
+    }
 }

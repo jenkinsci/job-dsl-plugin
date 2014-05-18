@@ -194,6 +194,7 @@ job(attributes) {
         flowdock(String[] tokens, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
         stashNotifier(stashNotifierClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
         mavenDeploymentLinker(String regex) // since 1.23
+        wsCleanup(wsCleanupClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
     }
     parameters {
         booleanParam(parameterName, defaultValue, description)
