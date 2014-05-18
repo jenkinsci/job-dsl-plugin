@@ -2655,7 +2655,6 @@ Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
 ```
-<<<<<<< HEAD
 
 ## Matrix Jobs
 ```groovy
@@ -2674,6 +2673,3 @@ job(type: Matrix){
    touchStoneResultCondition RequiredResult.SUCCESS
  }
 }
-```
-=======
->>>>>>> 566195431904f5ccd44828daab5925caaaa4f4c9

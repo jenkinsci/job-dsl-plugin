@@ -13,7 +13,11 @@ import hudson.XmlFile;
 import hudson.model.*;
 import hudson.model.View;
 import hudson.util.VersionNumber;
-import javaposse.jobdsl.dsl.*;
+import javaposse.jobdsl.dsl.AbstractJobManagement;
+import javaposse.jobdsl.dsl.ConfigurationMissingException;
+import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
+import javaposse.jobdsl.dsl.NameNotProvidedException;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.custommonkey.xmlunit.Diff;
@@ -170,9 +174,10 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         FilePath filePath = build.getWorkspace().child(relLocation);
         try {
             if (!filePath.exists()) {
-                throw new IllegalStateException("File does not exists");
+                String path = filePath.getRemote();
+                throw new IllegalStateException(String.format("File %s does not exist in workspace.", path));
             }
-        } catch(InterruptedException ie) {
+        } catch (InterruptedException ie) {
             throw new RuntimeException(ie);
         }
         return filePath;
