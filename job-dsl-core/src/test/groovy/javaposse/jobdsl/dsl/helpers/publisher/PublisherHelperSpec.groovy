@@ -194,6 +194,247 @@ class PublisherHelperSpec extends Specification {
         }
     }
 
+    def 'call xunit archive with no args'() {
+        when:
+        context.archiveXunit()
+
+        then:
+        Node xunitNode = context.publisherNodes[0]
+        xunitNode.name() == 'xunit'
+
+        def failedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.FailedThreshold'[0]
+        failedThresholds.unstableThreshold[0].value() == 0
+        failedThresholds.unstableNewThreshold[0].value() == 0
+        failedThresholds.failureThreshold[0].value() == 0
+        failedThresholds.failureNewThreshold[0].value() == 0
+
+        def skippedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold'[0]
+        skippedThresholds.unstableThreshold[0].value() == 0
+        skippedThresholds.unstableNewThreshold[0].value() == 0
+        skippedThresholds.failureThreshold[0].value() == 0
+        skippedThresholds.failureNewThreshold[0].value() == 0
+
+        xunitNode.thresholdMode[0].value() == 1
+        xunitNode.extraConfiguration[0].testTimeMargin[0].value() == 3000
+    }
+
+    def 'call xunit archive with some basic args'() {
+        when:
+        context.archiveXunit {
+            failedThresholds {
+                unstable 1
+                unstableNew 0
+                failure 3
+                failureNew 4
+            }
+            skippedThresholds {
+                unstable 7
+                failureNew 9
+            }
+            timeMargin 4000
+        }
+
+        then:
+        Node xunitNode = context.publisherNodes[0]
+        xunitNode.name() == 'xunit'
+
+        def failedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.FailedThreshold'[0]
+        failedThresholds.unstableThreshold[0].value() == 1
+        failedThresholds.unstableNewThreshold[0].value() == 0
+        failedThresholds.failureThreshold[0].value() == 3
+        failedThresholds.failureNewThreshold[0].value() == 4
+
+        def skippedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold'[0]
+        skippedThresholds.unstableThreshold[0].value() == 7
+        skippedThresholds.unstableNewThreshold[0].value() == 0
+        skippedThresholds.failureThreshold[0].value() == 0
+        skippedThresholds.failureNewThreshold[0].value() == 9
+
+        xunitNode.thresholdMode[0].value() == 1
+        xunitNode.extraConfiguration[0].testTimeMargin[0].value() == 4000
+    }
+
+    def 'call xunit archive with all basic args'() {
+        when:
+        context.archiveXunit {
+            failedThresholds {
+                unstable 1
+                unstableNew 2
+                failure 3
+                failureNew 4
+            }
+            skippedThresholds {
+                unstable 5
+                unstableNew 6
+                failure 7
+                failureNew 8
+            }
+            thresholdMode 'percent'
+            timeMargin 2000
+        }
+
+        then:
+        Node xunitNode = context.publisherNodes[0]
+        xunitNode.name() == 'xunit'
+
+        def failedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.FailedThreshold'[0]
+        failedThresholds.unstableThreshold[0].value() == 1
+        failedThresholds.unstableNewThreshold[0].value() == 2
+        failedThresholds.failureThreshold[0].value() == 3
+        failedThresholds.failureNewThreshold[0].value() == 4
+
+        def skippedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold'[0]
+        skippedThresholds.unstableThreshold[0].value() == 5
+        skippedThresholds.unstableNewThreshold[0].value() == 6
+        skippedThresholds.failureThreshold[0].value() == 7
+        skippedThresholds.failureNewThreshold[0].value() == 8
+
+        xunitNode.thresholdMode[0].value() == 2
+        xunitNode.extraConfiguration[0].testTimeMargin[0].value() == 2000
+    }
+
+    def 'call xunit archive with all valid thresholdMode values'(){
+        when:
+        context.archiveXunit {
+            thresholdMode input
+        }
+
+        then:
+        Node xunitNode = context.publisherNodes[0]
+        xunitNode.name() == 'xunit'
+
+        def failedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.FailedThreshold'[0]
+        failedThresholds.unstableThreshold[0].value() == 0
+        failedThresholds.unstableNewThreshold[0].value() == 0
+        failedThresholds.failureThreshold[0].value() == 0
+        failedThresholds.failureNewThreshold[0].value() == 0
+
+        def skippedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold'[0]
+        skippedThresholds.unstableThreshold[0].value() == 0
+        skippedThresholds.unstableNewThreshold[0].value() == 0
+        skippedThresholds.failureThreshold[0].value() == 0
+        skippedThresholds.failureNewThreshold[0].value() == 0
+
+        xunitNode.thresholdMode[0].value() == output
+        xunitNode.extraConfiguration[0].testTimeMargin[0].value() == 3000
+
+        where:
+        input     | output
+        'number'  | 1
+        'percent' | 2
+        'Number'  | 1
+        'Percent' | 2
+        'NUMBER'  | 1
+        'PERCENT' | 2
+        'NuMbEr'  | 1
+        'PeRcEnT' | 2
+    }
+
+    def 'call xunit archive with all result types'() {
+        when:
+        context.archiveXunit {
+            "${input}" {
+                pattern 'some_pattern'
+            }
+        }
+
+        then:
+        Node xunitNode = context.publisherNodes[0]
+        xunitNode.name() == 'xunit'
+
+        def resultFile = xunitNode.types[0]."${output}"[0]
+        resultFile.pattern[0].value() == 'some_pattern'
+
+        where:
+        input        | output
+        'aUnit'      | 'AUnitJunitHudsonTestType'
+        'customTool' | 'CustomType'
+        'fpcUnit'    | 'FPCUnitJunitHudsonTestType'
+    }
+
+    def 'call xunit archive with combination of most options'() {
+        when:
+        context.archiveXunit {
+            aUnit {
+                pattern 'first_pattern'
+            }
+            customTool {
+                pattern 'fourth_pattern'
+                styleSheet 'XSL_pattern'
+            }
+            fpcUnit {
+                pattern 'fifth_pattern'
+                skipNoTestFiles true
+            }
+            fpcUnit {
+                pattern 'sixth_pattern'
+                stopProcessingIfError false
+            }
+            failedThresholds {
+                unstable 1
+                unstableNew 2
+                failure 3
+                failureNew 4
+            }
+            skippedThresholds {
+                unstable 5
+                unstableNew 6
+                failure 7
+                failureNew 8
+            }
+            thresholdMode 'percent'
+            timeMargin 2000
+        }
+
+        then:
+        Node xunitNode = context.publisherNodes[0]
+        xunitNode.name() == 'xunit'
+
+        def aUnit = xunitNode.types[0].AUnitJunitHudsonTestType[0]
+        aUnit.pattern[0].value() == 'first_pattern'
+        aUnit.skipNoTestFiles[0].value() == 'false'
+        aUnit.failIfNotNew[0].value() == 'true'
+        aUnit.deleteOutputFiles[0].value() == 'true'
+        aUnit.stopProcessingIfError[0].value() == 'true'
+
+        def customTool = xunitNode.types[0].CustomType[0]
+        customTool.pattern[0].value() == 'fourth_pattern'
+        customTool.skipNoTestFiles[0].value() == 'false'
+        customTool.failIfNotNew[0].value() == 'true'
+        customTool.deleteOutputFiles[0].value() == 'true'
+        customTool.stopProcessingIfError[0].value() == 'true'
+        customTool.customXSL[0].value() == 'XSL_pattern'
+
+        def fpcUnit0 = xunitNode.types[0].FPCUnitJunitHudsonTestType[0]
+        fpcUnit0.pattern[0].value() == 'fifth_pattern'
+        fpcUnit0.skipNoTestFiles[0].value() == 'true'
+        fpcUnit0.failIfNotNew[0].value() == 'true'
+        fpcUnit0.deleteOutputFiles[0].value() == 'true'
+        fpcUnit0.stopProcessingIfError[0].value() == 'true'
+
+        def fpcUnit1 = xunitNode.types[0].FPCUnitJunitHudsonTestType[1]
+        fpcUnit1.pattern[0].value() == 'sixth_pattern'
+        fpcUnit1.skipNoTestFiles[0].value() == 'false'
+        fpcUnit1.failIfNotNew[0].value() == 'true'
+        fpcUnit1.deleteOutputFiles[0].value() == 'true'
+        fpcUnit1.stopProcessingIfError[0].value() == 'false'
+
+        def failedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.FailedThreshold'[0]
+        failedThresholds.unstableThreshold[0].value() == 1
+        failedThresholds.unstableNewThreshold[0].value() == 2
+        failedThresholds.failureThreshold[0].value() == 3
+        failedThresholds.failureNewThreshold[0].value() == 4
+
+        def skippedThresholds = xunitNode.thresholds[0].'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold'[0]
+        skippedThresholds.unstableThreshold[0].value() == 5
+        skippedThresholds.unstableNewThreshold[0].value() == 6
+        skippedThresholds.failureThreshold[0].value() == 7
+        skippedThresholds.failureNewThreshold[0].value() == 8
+
+        xunitNode.thresholdMode[0].value() == 2
+        xunitNode.extraConfiguration[0].testTimeMargin[0].value() == 2000
+    }
+
     def 'call jacoco code coverage with no args'() {
         when:
 

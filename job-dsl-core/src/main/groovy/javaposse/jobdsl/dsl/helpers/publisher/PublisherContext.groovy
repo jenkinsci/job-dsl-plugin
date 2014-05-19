@@ -202,6 +202,46 @@ class PublisherContext implements Context {
     }
 
     /**
+     <xunit>
+       <types>  // Optional - only generated when result file(s) specified
+         <JUnitType>  // Must be in the list of 'known' types - see ArchiveXunitContext
+           <pattern></pattern>
+           <skipNoTestFiles>false</skipNoTestFiles>
+           <failIfNotNew>true</failIfNotNew>
+           <deleteOutputFiles>true</deleteOutputFiles>
+           <stopProcessingIfError>true</stopProcessingIfError>
+           <customXSL></customXSL>  // Only valid for 'CustomType'
+         </JUnitType>
+       </types>
+       <thresholds>  // Always generated
+         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+           <unstableThreshold></unstableThreshold>
+           <unstableNewThreshold></unstableNewThreshold>
+           <failureThreshold></failureThreshold>
+           <failureNewThreshold></failureNewThreshold>
+         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+         <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+           <unstableThreshold></unstableThreshold>
+           <unstableNewThreshold></unstableNewThreshold>
+           <failureThreshold></failureThreshold>
+           <failureNewThreshold></failureNewThreshold>
+         </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+       </thresholds>
+       <thresholdMode>1</thresholdMode>
+       <extraConfiguration>
+         <testTimeMargin>3000</testTimeMargin>
+       </extraConfiguration>
+     </xunit>
+    */
+    def archiveXunit(Closure xunitClosure = null) {
+
+        ArchiveXunitContext xunitContext = new ArchiveXunitContext()
+        AbstractContextHelper.executeInContext(xunitClosure, xunitContext)
+
+        publisherNodes << xunitContext.createXunitNode()
+    }
+
+    /**
      <hudson.plugins.jacoco.JacocoPublisher>
      <execPattern>"target/*.exec"</execPattern>
      <classPattern>"target/classes"</classPattern>
