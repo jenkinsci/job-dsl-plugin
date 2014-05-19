@@ -348,8 +348,23 @@ class PublisherHelperSpec extends Specification {
         where:
         input        | output
         'aUnit'      | 'AUnitJunitHudsonTestType'
+        'boostTest'  | 'BoostTestJunitHudsonTestType'
+        'cTest'      | 'CTestType'
+        'check'      | 'CheckType'
+        'cppTest'    | 'CppTestJunitHudsonTestType'
+        'cppUnit'    | 'CppUnitJunitHudsonTestType'
         'customTool' | 'CustomType'
+        'embUnit'    | 'EmbUnitType'
         'fpcUnit'    | 'FPCUnitJunitHudsonTestType'
+        'googleTest' | 'GoogleTestType'
+        'jUnit'      | 'JUnitType'
+        'msTest'     | 'MSTestJunitHudsonTestType'
+        'mbUnit'     | 'MbUnitType'
+        'nUnit'      | 'NUnitJunitHudsonTestType'
+        'phpUnit'    | 'PHPUnitJunitHudsonTestType'
+        'qTestLib'   | 'QTestLibType'
+        'unitTest'   | 'UnitTestJunitHudsonTestType'
+        'valgrind'   | 'ValgrindJunitHudsonTestType'
     }
 
     def 'call xunit archive with combination of most options'() {
@@ -357,6 +372,17 @@ class PublisherHelperSpec extends Specification {
         context.archiveXunit {
             aUnit {
                 pattern 'first_pattern'
+            }
+            cTest {
+                pattern 'second_pattern'
+                failIfNotNew false
+            }
+            cppTest {
+                pattern 'third_pattern'
+                skipNoTestFiles true
+                failIfNotNew false
+                deleteOutputFiles false
+                stopProcessingIfError false
             }
             customTool {
                 pattern 'fourth_pattern'
@@ -396,6 +422,20 @@ class PublisherHelperSpec extends Specification {
         aUnit.failIfNotNew[0].value() == 'true'
         aUnit.deleteOutputFiles[0].value() == 'true'
         aUnit.stopProcessingIfError[0].value() == 'true'
+
+        def cTest = xunitNode.types[0].CTestType[0]
+        cTest.pattern[0].value() == 'second_pattern'
+        cTest.skipNoTestFiles[0].value() == 'false'
+        cTest.failIfNotNew[0].value() == 'false'
+        cTest.deleteOutputFiles[0].value() == 'true'
+        cTest.stopProcessingIfError[0].value() == 'true'
+
+        def cppTest = xunitNode.types[0].CppTestJunitHudsonTestType[0]
+        cppTest.pattern[0].value() == 'third_pattern'
+        cppTest.skipNoTestFiles[0].value() == 'true'
+        cppTest.failIfNotNew[0].value() == 'false'
+        cppTest.deleteOutputFiles[0].value() == 'false'
+        cppTest.stopProcessingIfError[0].value() == 'false'
 
         def customTool = xunitNode.types[0].CustomType[0]
         customTool.pattern[0].value() == 'fourth_pattern'

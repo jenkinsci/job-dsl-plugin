@@ -41,12 +41,72 @@ class ArchiveXunitContext implements Context {
         addResultFile('AUnitJunitHudsonTestType', resultFileClosure)
     }
 
+    void boostTest(Closure resultFileClosure) {
+        addResultFile('BoostTestJunitHudsonTestType', resultFileClosure)
+    }
+
+    void cTest(Closure resultFileClosure) {
+        addResultFile('CTestType', resultFileClosure)
+    }
+
+    void check(Closure resultFileClosure) {
+        addResultFile('CheckType', resultFileClosure)
+    }
+
+    void cppTest(Closure resultFileClosure) {
+        addResultFile('CppTestJunitHudsonTestType', resultFileClosure)
+    }
+
+    void cppUnit(Closure resultFileClosure) {
+        addResultFile('CppUnitJunitHudsonTestType', resultFileClosure)
+    }
+
     void customTool(Closure resultFileClosure) {
         addResultFile('CustomType', resultFileClosure)
     }
 
+    void embUnit(Closure resultFileClosure) {
+        addResultFile('EmbUnitType', resultFileClosure)
+    }
+
     void fpcUnit(Closure resultFileClosure) {
         addResultFile('FPCUnitJunitHudsonTestType', resultFileClosure)
+    }
+
+    void googleTest(Closure resultFileClosure) {
+        addResultFile('GoogleTestType', resultFileClosure)
+    }
+
+    void jUnit(Closure resultFileClosure) {
+        addResultFile('JUnitType', resultFileClosure)
+    }
+
+    void msTest(Closure resultFileClosure) {
+        addResultFile('MSTestJunitHudsonTestType', resultFileClosure)
+    }
+
+    void mbUnit(Closure resultFileClosure) {
+        addResultFile('MbUnitType', resultFileClosure)
+    }
+
+    void nUnit(Closure resultFileClosure) {
+        addResultFile('NUnitJunitHudsonTestType', resultFileClosure)
+    }
+
+    void phpUnit(Closure resultFileClosure) {
+        addResultFile('PHPUnitJunitHudsonTestType', resultFileClosure)
+    }
+
+    void qTestLib(Closure resultFileClosure) {
+        addResultFile('QTestLibType', resultFileClosure)
+    }
+
+    void unitTest(Closure resultFileClosure) {
+        addResultFile('UnitTestJunitHudsonTestType', resultFileClosure)
+    }
+
+    void valgrind(Closure resultFileClosure) {
+        addResultFile('ValgrindJunitHudsonTestType', resultFileClosure)
     }
 
     private void addResultFile(String type, Closure resultFileClosure) {
