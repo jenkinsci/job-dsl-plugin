@@ -14,6 +14,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.23 (unreleased)
+ * Fixed behavior when creating Jabber targets that are not group chats ([JENKINS-23090](https://issues.jenkins-ci.org/browse/JENKINS-23090))
  * Removed multiscm limit
  * Fixed support for the Description Setter Plugin
  * new parameter for CopyArtifact's StatusBuildSelector to consider only stable builds
