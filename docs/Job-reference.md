@@ -2655,3 +2655,21 @@ Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
 ```
+
+## Matrix Jobs
+```groovy
+job(type: Matrix){
+ name 'myName1111'
+ axes {
+   textAxis('value', ['value1', 'value2'])
+   jdkAxis('jdk', ['jdk7', 'jdk8'])
+   labelAxis('label', ['slave1', 'slave2'])
+   labelExpressionAxis('exp', ['unix'])
+ }
+ combinationFilter("value == 'value1'")
+ executionStrategy {
+   runSequentially false
+   touchStoneCombinationFilter("value == 'value1'")
+   touchStoneResultCondition RequiredResult.SUCCESS
+ }
+}

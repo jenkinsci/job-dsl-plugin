@@ -74,6 +74,18 @@ job(attributes) {
     priority(value)
     throttleConcurrentBuilds(throttleClosure)
     buildFlow(buildFlowText) // Since 1.21, can only be used on 'BuildFlow' job types. See [[Job Reference]].
+    combinationFilter(value)
+    executionStrategy {
+        runSequentially(boolean)
+        touchStoneCombinationFilter(value)
+        touchStoneRequiredResult(RequiredResult.SUCCESS)
+    }
+    axes {
+        textAxis(name, values)
+        labelAxis(name, values)
+        labelExpressionAxis(name, values)
+        jdkAxis(name, values)
+    }
     authorization {
         permission(permissionStr) // e.g. hudson.model.Item.Workspace:authenticated
         permission(String permEnumName, String user)

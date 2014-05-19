@@ -152,10 +152,10 @@ class TopLevelHelper extends AbstractHelper {
     /**
      * Block build if certain jobs are running
      <properties>
-         <hudson.plugins.buildblocker.BuildBlockerProperty>
-             <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
-             <blockingJobs>JobA</blockingJobs>
-         </hudson.plugins.buildblocker.BuildBlockerProperty>
+     <hudson.plugins.buildblocker.BuildBlockerProperty>
+     <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
+     <blockingJobs>JobA</blockingJobs>
+     </hudson.plugins.buildblocker.BuildBlockerProperty>
      </properties>
      */
     def blockOn(Iterable<String> projectNames) {
@@ -298,6 +298,48 @@ class TopLevelHelper extends AbstractHelper {
     def concurrentBuild(boolean allowConcurrentBuild = true) {
         execute {
             it / concurrentBuild(allowConcurrentBuild ? 'true' : 'false')
+        }
+    }
+
+    /**
+     * <combinationFilter>myFilter</combinationFilter>
+     */
+    def combinationFilter(String filter) {
+        Preconditions.checkState(type == JobType.Matrix)
+        execute {
+            def node = methodMissing('combinationFilter', filter)
+            it / node
+        }
+    }
+
+    /**
+     * <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+     *   <runSequentially>false</runSequentially>
+     *   <touchStoneCombinationFilter>myName == &apos;value1&apos;</touchStoneCombinationFilter>
+     *   <touchStoneResultCondition>
+     *     <name>SUCCESS</name>
+     *     <ordinal>0</ordinal>
+     *     <color>BLUE</color>
+     *   </touchStoneResultCondition>
+     * </executionStrategy>
+     */
+    def executionStrategy(Closure executionStrategyClosure) {
+        ExecutionStrategyContext executionStrategyContext = new ExecutionStrategyContext()
+        AbstractContextHelper.executeInContext(executionStrategyClosure, executionStrategyContext)
+
+        execute {
+            it / 'executionStrategy' / 'runSequentially'(executionStrategyContext.runSequentially)
+
+            if (executionStrategyContext.touchStoneCombinationFilter) {
+                it / 'executionStrategy' / 'touchStoneCombinationFilter'(executionStrategyContext.touchStoneCombinationFilter)
+            }
+            if (executionStrategyContext.touchStoneRequiredResult) {
+                it / 'executionStrategy' / 'touchStoneResultCondition' {
+                    name executionStrategyContext.touchStoneRequiredResult.name()
+                    ordinal 0
+                    color executionStrategyContext.touchStoneRequiredResult.color
+                }
+            }
         }
     }
 }

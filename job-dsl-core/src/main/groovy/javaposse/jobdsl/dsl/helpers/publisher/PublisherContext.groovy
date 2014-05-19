@@ -3,9 +3,9 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
-
 
 class PublisherContext implements Context {
     List<Node> publisherNodes = []
@@ -900,7 +900,7 @@ class PublisherContext implements Context {
             }
         }
     }
-    
+
     /**
      * Configures Jenkins job to publish Robot Framework reports.
      * By default the following values are applied. If an instance of a

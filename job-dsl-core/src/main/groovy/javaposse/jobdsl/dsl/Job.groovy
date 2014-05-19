@@ -1,11 +1,12 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
+import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
-import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
+import javaposse.jobdsl.dsl.helpers.axis.AxisContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
@@ -38,11 +39,12 @@ public class Job {
     @Delegate MavenHelper helperMaven
     @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
+    @Delegate AxisContextHelper helperAxis
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
-        def typeArg = arguments['type']?:JobType.Freeform
-        this.type = (typeArg instanceof JobType)?typeArg:JobType.find(typeArg)
+        def typeArg = arguments['type'] ?: JobType.Freeform
+        this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
 
         // Helpers
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
@@ -56,6 +58,7 @@ public class Job {
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
+        helperAxis = new AxisContextHelper(withXmlActions, type)
     }
 
     /**
@@ -77,15 +80,13 @@ public class Job {
      * Examples:
      *
      * <pre>
-     * configure {
-     *
-     * }
-     * </pre>
+     * configure {*
+     *}* </pre>
      * @param withXmlClosure
      * @return
      */
     def configure(Closure withXmlClosure) {
-        withXmlActions.add( new WithXmlAction(withXmlClosure) )
+        withXmlActions.add(new WithXmlAction(withXmlClosure))
     }
 
     def name(String name) {
@@ -97,7 +98,7 @@ public class Job {
     }
 
     public Node getNode() {
-        Node project = templateName==null?executeEmptyTemplate():executeUsing()
+        Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
 
         executeWithXmlActions(project)
 
@@ -136,7 +137,7 @@ public class Job {
         String configXml
         try {
             configXml = jobManagement.getConfig(templateName)
-            if (configXml==null) {
+            if (configXml == null) {
                 throw new JobConfigurationNotFoundException()
             }
         } catch (JobConfigurationNotFoundException jcnfex) {
@@ -150,7 +151,9 @@ public class Job {
         }
 
         // Clean up our own indication that a job is a template
-        List<Node> seedJobProperties = templateNode.depthFirst().findAll { it.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty' }
+        List<Node> seedJobProperties = templateNode.depthFirst().findAll {
+            it.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty'
+        }
         seedJobProperties.each { Node node -> node.parent().remove(node) }
 
         return templateNode
@@ -166,6 +169,7 @@ public class Job {
             case JobType.BuildFlow: return emptyBuildFlowTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
+            case JobType.Matrix: return emptyMatrixTemplate
         }
     }
 
@@ -261,5 +265,28 @@ public class Job {
   <publishers/>
   <buildWrappers/>
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
+'''
+
+    def emptyMatrixTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<matrix-project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <axes/>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+    <runSequentially>false</runSequentially>
+  </executionStrategy>
+</matrix-project>
 '''
 }

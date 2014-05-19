@@ -15,11 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,7 +63,7 @@ public class DslScriptLoader {
 
             script.run();
         } catch (Exception e) { // ResourceException or ScriptException
-            if(e instanceof RuntimeException) {
+            if (e instanceof RuntimeException) {
                 throw ((RuntimeException) e);
             } else {
                 throw new IOException("Unable to run script", e);
@@ -78,6 +74,7 @@ public class DslScriptLoader {
 
     /**
      * For testing a string directly.
+     *
      * @param scriptBody
      * @param jobManagement
      * @return
@@ -113,14 +110,14 @@ public class DslScriptLoader {
                     return o1.getType().ordinal() - o2.getType().ordinal();
                 }
             });
-            for(Job job: refJobs) {
+            for (Job job : refJobs) {
                 try {
                     String xml = job.getXml();
                     LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
                     boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
                     GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
                     generatedJobs.add(gj);
-                } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException
+                } catch (Exception e) {  // org.xml.sax.SAXException, java.io.IOException
                     if (e instanceof RuntimeException) {
                         throw ((RuntimeException) e);
                     } else {
@@ -146,26 +143,27 @@ public class DslScriptLoader {
 
     static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {
         Map<String, Throwable> exceptions = Maps.newHashMap();
-        for(String jobName: jobNames) {
+        for (String jobName : jobNames) {
             try {
                 jobManagement.queueJob(jobName);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 exceptions.put(jobName, e);
             }
         }
-        if(!exceptions.isEmpty()) {
+        if (!exceptions.isEmpty()) {
             LOGGER.warning("Trouble schedule some jobs");
-            for(Map.Entry<String, Throwable> entry: exceptions.entrySet()) {
+            for (Map.Entry<String, Throwable> entry : exceptions.entrySet()) {
                 LOGGER.throwing("DslScriptLoader", entry.getKey(), entry.getValue());
             }
         }
     }
+
     private static Binding createBinding(JobManagement jobManagement) {
         Binding binding = new Binding();
-        binding.setVariable("out", jobManagement.getOutputStream() ); // Works for println, but not System.out
+        binding.setVariable("out", jobManagement.getOutputStream()); // Works for println, but not System.out
 
         Map<String, String> params = jobManagement.getParameters();
-        for(Map.Entry<String,String> entry: params.entrySet()) {
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             LOGGER.fine(String.format("Binding %s to %s", entry.getKey(), entry.getValue()));
             binding.setVariable(entry.getKey(), entry.getValue());
         }
@@ -183,9 +181,10 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
         icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.toplevel.ExecutionStrategyContext.RequiredResult");
         config.addCompilationCustomizers(icz);
 
-        config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
+        config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
         return config;
     }
 
