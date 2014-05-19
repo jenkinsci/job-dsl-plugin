@@ -363,8 +363,8 @@ public class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        targetNode.name[0].value() == 'me@gmail.com'
+        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
+        targetNode.value[0].value() == 'me@gmail.com'
         targetNode.notificationOnly.size() == 0 // No noficationOnly when not a group
         publisherNode.strategy[0].value() == 'ALL'
         publisherNode.notifyOnBuildStart[0].value() == 'false'
@@ -386,15 +386,17 @@ public class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'.size() == 2
+        publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'.size() == 1
+        publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'.size() == 1
 
-        def emailTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        emailTargetNode.name[0].value() == 'me@gmail.com'
-        emailTargetNode.notificationOnly.size() == 0
-
-        def confTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[1]
+        def confTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
         confTargetNode.name[0].value() == 'tools@hipchat.com'
         confTargetNode.notificationOnly[0].value() == 'false'
+
+
+        def emailTargetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
+        emailTargetNode.value[0].value() == 'me@gmail.com'
+        emailTargetNode.notificationOnly.size() == 0
 
         publisherNode.strategy[0].value() == 'ANY_FAILURE'
         Node buildToNode = publisherNode.buildToChatNotifier[0]
@@ -417,8 +419,8 @@ public class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        targetNode.name[0].value() == 'me@gmail.com'
+        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
+        targetNode.value[0].value() == 'me@gmail.com'
         targetNode.notificationOnly.size() == 0
         publisherNode.strategy[0].value() == 'FAILURE_AND_FIXED'
         publisherNode.notifyOnBuildStart[0].value() == 'true'

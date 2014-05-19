@@ -347,11 +347,15 @@ class PublisherContext implements Context {
             targets {
                 targetsArg.split().each { target ->
                     def isGroup = target.startsWith('*')
-                    def targetClean = isGroup ? target.substring(1) : target
-                    'hudson.plugins.im.GroupChatIMMessageTarget' {
-                        delegate.createNode('name', targetClean)
-                        if (isGroup) {
+                    if (isGroup) {
+                        def targetClean = isGroup ? target.substring(1) : target
+                        'hudson.plugins.im.GroupChatIMMessageTarget' {
+                            delegate.createNode('name', targetClean)
                             notificationOnly 'false'
+                        }
+                    } else {
+                        'hudson.plugins.im.DefaultIMMessageTarget' {
+                            delegate.createNode('value', target)
                         }
                     }
                 }
