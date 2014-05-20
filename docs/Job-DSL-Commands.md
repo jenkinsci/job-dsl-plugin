@@ -86,7 +86,7 @@ job(attributes) {
         github(ownerAndProject, branch, protocol, host) {}
         svn(svnUrl, localDir) {}
         p4(viewspec, user, password) {}
-        cloneWorkspace(parentProject, criteriaArg) 
+        cloneWorkspace(parentProject, criteriaArg)
     }
     multiscm {
         hg(url, branch) {}
@@ -102,7 +102,7 @@ job(attributes) {
         githubPush()
         gerrit(gerritClosure) // See [[Job Reference]] for gerritClosure syntax
         pullRequest(pullRequestClosure) // since 1.22 See [[Job Reference]] for pullRequestClosure syntax
-        urlTrigger([cronString,] urlTriggerClosure) // See [[Job Reference]] for closure syntax 
+        urlTrigger([cronString,] urlTriggerClosure) // See [[Job Reference]] for closure syntax
         snapshotDependencies(checkSnapshotDependencies)
     }
     wrappers { // This block exists since 1.19. Before that the methods were on top level
@@ -142,7 +142,6 @@ job(attributes) {
         grails(targetsArg, grailsClosure)
         grails(targetsArg, useWrapperArg, grailsClosure)
         prerequisite(projectList, warningOnlyBool) // Since 1.19
-        downstreamParameterized(downstreamClosure) // See [[Job Reference]] for downstreamClosure syntax
         conditionalSteps(conditionalClosure) // See [[Job Reference]] for conditionalClosure syntax
         environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
         remoteTrigger(remoteJenkinsName, jobName, remoteTriggerClosure) // Since 1.22
