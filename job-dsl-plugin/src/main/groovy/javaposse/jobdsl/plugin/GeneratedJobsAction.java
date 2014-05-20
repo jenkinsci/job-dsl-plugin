@@ -41,7 +41,7 @@ public class GeneratedJobsAction implements Action {
                 return Sets.newLinkedHashSet(ret.getModifiedJobs());
             }
         }
-        return null;
+        return Sets.newLinkedHashSet();
     }
 
     /**

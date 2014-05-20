@@ -297,7 +297,7 @@ public class ExecuteDslScripts extends Builder {
 
     private Set<GeneratedJob> extractGeneratedJobs(AbstractProject project) {
         GeneratedJobsAction gja = project.getAction(GeneratedJobsAction.class);
-        if (gja==null || gja.findLastGeneratedJobs() == null) {
+        if (gja==null) {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedJobs();
@@ -317,7 +317,7 @@ public class ExecuteDslScripts extends Builder {
 
     private Set<GeneratedView> extractGeneratedViews(AbstractProject<?, ?> project) {
         GeneratedViewsAction gja = project.getAction(GeneratedViewsAction.class);
-        if (gja == null || gja.findLastGeneratedViews() == null) {
+        if (gja == null) {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedViews();

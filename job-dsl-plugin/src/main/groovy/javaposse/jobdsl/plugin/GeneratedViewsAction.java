@@ -36,11 +36,11 @@ public class GeneratedViewsAction implements Action {
     public Set<GeneratedView> findLastGeneratedViews() {
         for (AbstractBuild<?, ?> b = project.getLastBuild(); b != null; b = b.getPreviousBuild()) {
             GeneratedViewsBuildAction action = b.getAction(GeneratedViewsBuildAction.class);
-            if (action != null) {
+            if (action != null && action.getModifiedViews() != null) {
                 return newLinkedHashSet(action.getModifiedViews());
             }
         }
-        return null;
+        return newLinkedHashSet();
     }
 
     /**
