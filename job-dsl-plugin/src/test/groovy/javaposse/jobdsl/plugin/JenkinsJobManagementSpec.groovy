@@ -8,12 +8,12 @@ import spock.lang.Specification
 class JenkinsJobManagementSpec extends Specification {
     JenkinsJobManagement jobManagement = new JenkinsJobManagement()
 
-    def 'getJobNameFromFullName'() {
+    def 'getItemNameFromFullName'() {
         expect:
-        JenkinsJobManagement.getJobNameFromFullName(fullName) == jobName
+        JenkinsJobManagement.getItemNameFromFullName(fullName) == itemName
 
         where:
-        fullName     || jobName
+        fullName     || itemName
         'a/b/c'      || 'c'
         'folder/job' || 'job'
         'myjob'      || 'myjob'

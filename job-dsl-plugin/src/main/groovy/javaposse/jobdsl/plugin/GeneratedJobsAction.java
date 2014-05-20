@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Item;
 import javaposse.jobdsl.dsl.GeneratedJob;
 
 import java.util.Set;
@@ -46,6 +47,7 @@ public class GeneratedJobsAction implements Action {
     /**
      * Search for all jobs which were created by the child builds
      */
+    @Deprecated
     public Set<GeneratedJob> findAllGeneratedJobs() {
 
         AbstractBuild<?, ?> b;
@@ -57,5 +59,16 @@ public class GeneratedJobsAction implements Action {
             }
         }
         return allGeneratedJobs;
+    }
+
+    public Set<Item> getItems() {
+        Set<Item> result = Sets.newLinkedHashSet();
+        for (AbstractBuild build : project.getBuilds()) {
+            GeneratedJobsBuildAction ret = build.getAction(GeneratedJobsBuildAction.class);
+            if (ret != null) {
+                result.addAll(ret.getItems());
+            }
+        }
+        return result;
     }
 }

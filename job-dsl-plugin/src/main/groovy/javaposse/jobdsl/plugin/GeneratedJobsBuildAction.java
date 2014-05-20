@@ -2,7 +2,9 @@ package javaposse.jobdsl.plugin;
 
 import com.google.common.collect.Sets;
 import hudson.model.Action;
+import hudson.model.Item;
 import javaposse.jobdsl.dsl.GeneratedJob;
+import jenkins.model.Jenkins;
 
 import java.util.Collection;
 import java.util.Set;
@@ -22,7 +24,7 @@ public class GeneratedJobsBuildAction implements Action {
     }
 
     public String getDisplayName() {
-        return "Generated Jobs";
+        return "Generated Items";
     }
 
     public String getUrlName() {
@@ -33,4 +35,16 @@ public class GeneratedJobsBuildAction implements Action {
         return modifiedJobs;
     }
 
+    public Set<Item> getItems() {
+        Set<Item> result = Sets.newLinkedHashSet();
+        if (modifiedJobs != null) {
+            for (GeneratedJob job : modifiedJobs) {
+                Item item = Jenkins.getInstance().getItemByFullName(job.getJobName());
+                if (item != null) {
+                    result.add(item);
+                }
+            }
+        }
+        return result;
+    }
 }
