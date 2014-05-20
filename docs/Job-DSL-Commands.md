@@ -52,7 +52,7 @@ job(attributes) {
     quietPeriod(seconds)
     customWorkspace(workspacePath)
     disabled(shouldDisable)
-    blockOn(projectNames)
+    blockOn(projectNames) // deprecated since 1.23
     blockOnUpstreamProjects()
     blockOnDownstreamProjects()
     logRotator(daysToKeepInt, numToKeepInt, artifactDaysToKeepInt, artifactNumToKeepInt)
@@ -69,11 +69,18 @@ job(attributes) {
     runHeadless(shouldRunHeadless)
     preBuildSteps(mavenPreBuildStepsClosure)
     postBuildSteps(mavenPostBuildStepsClosure)
-    environmentVariables(vars)
-    environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
-    priority(value)
-    throttleConcurrentBuilds(throttleClosure)
+    environmentVariables(vars) // deprecated since 1.23
+    environmentVariables(closure) // deprecated since 1.23
+    priority(value) // deprecated since 1.23
+    throttleConcurrentBuilds(throttleClosure) // deprecated since 1.23
     buildFlow(buildFlowText) // Since 1.21, can only be used on 'BuildFlow' job types. See [[Job Reference]].
+    properties {
+        blockOn(projectNames) // since 1.23
+        environmentVariables(vars) // since 1.23
+        environmentVariables(closure) // since 1.23, see [[Job Reference]] for details of EnvironmentVariablesContext
+        priority(value) // since 1.23
+        throttleConcurrentBuilds(throttleClosure) // since 1.23
+    }
     authorization {
         permission(permissionStr) // e.g. hudson.model.Item.Workspace:authenticated
         permission(String permEnumName, String user)

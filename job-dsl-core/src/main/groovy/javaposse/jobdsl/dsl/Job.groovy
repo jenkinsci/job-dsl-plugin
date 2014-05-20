@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
+import javaposse.jobdsl.dsl.helpers.properties.PropertiesContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
@@ -34,6 +35,7 @@ public class Job {
     @Delegate StepContextHelper helperStep
     @Delegate PublisherContextHelper helperPublisher
     @Delegate MultiScmContextHelper helperMultiscm
+    @Delegate PropertiesContextHelper helperProperties
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
     @Delegate BuildFlowHelper helperBuildFlow
@@ -52,7 +54,8 @@ public class Job {
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperStep = new StepContextHelper(withXmlActions, type)
         helperPublisher = new PublisherContextHelper(withXmlActions, type)
-        helperTopLevel = new TopLevelHelper(withXmlActions, type)
+        helperProperties = new PropertiesContextHelper(withXmlActions, type)
+        helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement, helperProperties)
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)

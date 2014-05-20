@@ -1,14 +1,20 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
+import javaposse.jobdsl.dsl.helpers.properties.PropertiesContextHelper
 
 class TopLevelHelper extends AbstractHelper {
+    JobManagement jobManagement
+    PropertiesContextHelper propertiesContextHelper
 
-    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType,
+                   JobManagement jobManagement, PropertiesContextHelper propertiesContextHelper) {
         super(withXmlActions, jobType)
+        this.jobManagement = jobManagement
+        this.propertiesContextHelper = propertiesContextHelper
     }
 
     def description(String descriptionString) {
@@ -40,83 +46,24 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
-    /**
-     * Add environment variables to the build.
-     *
-     * <project>
-     *   <properties>
-     *     <EnvInjectJobProperty>
-     *       <info>
-     *         <propertiesContent>TEST=foo BAR=123</propertiesContent>
-     *         <loadFilesFromMaster>false</loadFilesFromMaster>
-     *       </info>
-     *       <on>true</on>
-     *       <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
-     *       <keepBuildVariables>true</keepBuildVariables>
-     *       <contributors/>
-     *     </EnvInjectJobProperty>
-     */
     def environmentVariables(Closure envClosure) {
-        environmentVariables(null, envClosure)
+        jobManagement.logDeprecationWarning()
+        propertiesContextHelper.properties {
+            environmentVariables(envClosure)
+        }
     }
 
     def environmentVariables(Map<Object, Object> vars, Closure envClosure = null) {
-        EnvironmentVariableContext envContext = new EnvironmentVariableContext()
-        if (vars) {
-            envContext.envs(vars)
-        }
-        AbstractContextHelper.executeInContext(envClosure, envContext)
-
-        execute {
-            it / 'properties' / 'EnvInjectJobProperty' {
-                envContext.addInfoToBuilder(delegate)
-                on(true)
-                keepJenkinsSystemVariables(envContext.keepSystemVariables)
-                keepBuildVariables(envContext.keepBuildVariables)
-                contributors()
-            }
+        jobManagement.logDeprecationWarning()
+        propertiesContextHelper.properties {
+            environmentVariables(vars, envClosure)
         }
     }
 
-    /**
-     * <pre>
-     * {@code
-     * <project>
-     *     <properties>
-     *         <hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-     *             <maxConcurrentPerNode>0</maxConcurrentPerNode>
-     *             <maxConcurrentTotal>0</maxConcurrentTotal>
-     *             <categories>
-     *                 <string>CDH5-repo-update</string>
-     *             </categories>
-     *             <throttleEnabled>true</throttleEnabled>
-     *             <throttleOption>category</throttleOption>
-     *         </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-     *     <properties>
-     * </project>
-     * }
-     * </pre>
-     */
     def throttleConcurrentBuilds(Closure throttleClosure) {
-        ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
-        AbstractContextHelper.executeInContext(throttleClosure, throttleContext)
-
-        execute {
-            it / 'properties' / 'hudson.plugins.throttleconcurrents.ThrottleJobProperty' {
-                maxConcurrentPerNode throttleContext.maxConcurrentPerNode
-                maxConcurrentTotal throttleContext.maxConcurrentTotal
-                throttleEnabled throttleContext.throttleDisabled ? 'false' : 'true'
-                if (throttleContext.categories.isEmpty()) {
-                    throttleOption 'project'
-                } else {
-                    throttleOption 'category'
-                }
-                categories {
-                    throttleContext.categories.each { c ->
-                        string c
-                    }
-                }
-            }
+        jobManagement.logDeprecationWarning()
+        propertiesContextHelper.properties {
+            throttleConcurrentBuilds(throttleClosure)
         }
     }
 
@@ -149,30 +96,17 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
-    /**
-     * Block build if certain jobs are running
-     <properties>
-         <hudson.plugins.buildblocker.BuildBlockerProperty>
-             <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
-             <blockingJobs>JobA</blockingJobs>
-         </hudson.plugins.buildblocker.BuildBlockerProperty>
-     </properties>
-     */
     def blockOn(Iterable<String> projectNames) {
-        blockOn(projectNames.join('\n'))
+        jobManagement.logDeprecationWarning()
+        propertiesContextHelper.properties {
+            blockOn(projectNames)
+        }
     }
 
-    /**
-     * Block build if certain jobs are running.
-     * @param projectName Can be regular expressions. Newline delimited.
-     * @return
-     */
     def blockOn(String projectName) {
-        execute {
-            it / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
-                useBuildBlocker 'true'
-                blockingJobs projectName
-            }
+        jobManagement.logDeprecationWarning()
+        propertiesContextHelper.properties {
+            blockOn(projectName)
         }
     }
 
@@ -187,21 +121,9 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
-    /**
-     * Priority of this job.
-     * Requires the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
-     * Default value is 100.
-     *
-     * <properties>
-     *   <hudson.queueSorter.PrioritySorterJobProperty plugin="PrioritySorter@1.3">
-     *     <priority>100</priority>
-     *   </hudson.queueSorter.PrioritySorterJobProperty>
-     * </properties>
-     */
     def priority(int value) {
-        execute {
-            def node = new Node(it / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
-            node.appendNode('priority', value)
+        propertiesContextHelper.properties {
+            priority(value)
         }
     }
 
