@@ -5,7 +5,12 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.Thread.currentThread;
+import static org.codehaus.groovy.runtime.StackTraceUtils.isApplicationClass;
 
 /**
  * Abstract version of JobManagement to minimize impact on future API changes
@@ -54,6 +59,26 @@ public abstract class AbstractJobManagement implements JobManagement {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void logDeprecationWarning() {
+        List<StackTraceElement> stackTrace = getStackTrace();
+        StackTraceElement source = null;
+        for (StackTraceElement stackTraceElement : stackTrace) {
+            if (!stackTraceElement.getClassName().startsWith("javaposse.jobdsl.")) {
+                source = stackTraceElement;
+                break;
+            }
+        }
+        String details = "unknown source";
+        if (source != null && source.getFileName() != null) {
+            details = source.getFileName().matches("script\\d+\\.groovy") ? "DSL script" : source.getFileName();
+            if (source.getLineNumber() > 0) {
+                details += ", line " + source.getLineNumber();
+            }
+        }
+        getOutputStream().println("Warning: " + stackTrace.get(0).getMethodName() + " is deprecated (" + details + ")");
+    }
+
     protected void validateUpdateArgs(String jobName, String config) {
         validateNameArg(jobName);
         validateConfigArg(config);
@@ -67,4 +92,13 @@ public abstract class AbstractJobManagement implements JobManagement {
         if (name == null || name.isEmpty()) throw new NameNotProvidedException();
     }
 
+    private static List<StackTraceElement> getStackTrace() {
+        List<StackTraceElement> result = newArrayList();
+        for (StackTraceElement stackTraceElement : currentThread().getStackTrace()) {
+            if (isApplicationClass(stackTraceElement.getClassName())) {
+                result.add(stackTraceElement);
+            }
+        }
+        return result.subList(3, result.size());
+    }
 }

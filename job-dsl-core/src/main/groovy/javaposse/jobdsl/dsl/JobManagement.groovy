@@ -61,4 +61,9 @@ public interface JobManagement {
      * @return id of Credentials or <code>null</code> if no credentials could be found
      */
     String getCredentialsId(String credentialsDescription);
+
+    /**
+     * Logs a deprecation warning for the calling method.
+     */
+    void logDeprecationWarning();
 }
