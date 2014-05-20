@@ -130,7 +130,7 @@ class WrapperContext implements Context {
             ttype = null
         }
 
-        TimeoutContext ctx = new TimeoutContext(ttype)
+        TimeoutContext ctx = new TimeoutContext(ttype, jobManagement)
         AbstractContextHelper.executeInContext(timeoutClosure, ctx)
 
         def nodeBuilder = new NodeBuilder()
@@ -173,10 +173,11 @@ class WrapperContext implements Context {
     }
 
     /**
-     * @deprecated for backwards compatibility
+     * @deprecated use timeout(String, Closure), this method is only for backwards compatibility
      */
     @Deprecated
     def timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) {
+        jobManagement.logDeprecationWarning()
         timeout {
             absolute(timeoutInMinutes)
             failBuild shouldFailBuild

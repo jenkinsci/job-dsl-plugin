@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
@@ -19,8 +20,10 @@ class TimeoutContext implements Context {
     boolean failBuild = false
     boolean writeDescription = false
     String description = ''
+    private JobManagement jobManagement
 
-    TimeoutContext(WrapperContext.Timeout type) {
+    TimeoutContext(WrapperContext.Timeout type, JobManagement jobManagement) {
+        this.jobManagement = jobManagement
         this.type = type
     }
 
@@ -30,6 +33,7 @@ class TimeoutContext implements Context {
     @Deprecated
     def limit(int limit) {
         Preconditions.checkArgument([Timeout.elastic, Timeout.absolute].contains(type))
+        jobManagement.logDeprecationWarning()
         if (type == Timeout.absolute) {
             this.limit = limit
         } else if (type == Timeout.elastic) {
@@ -42,12 +46,13 @@ class TimeoutContext implements Context {
      */
     @Deprecated
     def percentage(int percentage) {
+        jobManagement.logDeprecationWarning()
         this.percentage = percentage
     }
 
     def elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60) {
         type = Timeout.elastic
-        this.percentage(percentage)
+        this.percentage = percentage
         this.numberOfBuilds = numberOfBuilds
         this.minutesDefault = minutesDefault
     }
@@ -59,7 +64,7 @@ class TimeoutContext implements Context {
 
     def absolute(int minutes = 3) {
         type = Timeout.absolute
-        limit(minutes)
+        this.limit = minutes
     }
 
     def likelyStuck() {
@@ -75,11 +80,12 @@ class TimeoutContext implements Context {
      */
     @Deprecated
     def writeDescription(boolean writeDesc = true) {
+        jobManagement.logDeprecationWarning()
         this.writeDescription = writeDesc
     }
 
     def writeDescription(String description) {
         this.description = description
-        writeDescription(true)
+        this.writeDescription = true
     }
 }
