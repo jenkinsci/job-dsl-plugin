@@ -94,7 +94,7 @@ job {
    concurrentBuild()
    ...
 }
-``` 
+```
 
 
 ## Custom workspace
@@ -102,7 +102,7 @@ job {
 customWorkspace(String workspacePath)
 ```
 
-Defines that a project should use the given directory as a workspace instead of the default workspace location. (Available since 1.16) 
+Defines that a project should use the given directory as a workspace instead of the default workspace location. (Available since 1.16)
 
 ## JDK
 ```groovy
@@ -165,7 +165,7 @@ job {
 }
 ```
 
-## Build Flow 
+## Build Flow
 
 ```groovy
 buildFlow(String flowDsl)
@@ -217,28 +217,28 @@ To use a different 'pom.xml' in some other directory than the workspace root.
 
 ## Goals
 ```groovy
-goals(String goals) 
+goals(String goals)
 ```
 
-The Maven goals to execute including other command line options. 
+The Maven goals to execute including other command line options.
 
 When specified multiple times, the goals and options will be concatenated, e.g.
 
 ```groovy
-goals("clean") 
-goals("install") 
-goals("-DskipTests") 
+goals("clean")
+goals("install")
+goals("-DskipTests")
 ```
 
 is equivalent to
 
 ```groovy
-goals("clean install -DskipTests") 
+goals("clean install -DskipTests")
 ```
 
 ## MAVEN_OPTS
 ```groovy
-mavenOpts(String mavenOpts) 
+mavenOpts(String mavenOpts)
 ```
 
 The JVM options to be used when starting Maven. When specified multiple times, the options will be concatenated.
@@ -260,7 +260,7 @@ localRepository(LocalRepositoryLocation location)
 
 LocalRepositoryLocation is available as two enums, injected into the script. Their names are LocalToExecutor and LocalToWorkspace, they can be used like this:
 
-```groovy 
+```groovy
 localRepository(LocalToWorkspace)
 ```
 
@@ -316,7 +316,7 @@ environmentVariables {
     scriptFile(String filePath)
     script(String content)
     env(Object key, Object value)
-    envs(Map<Object, Object> map) 
+    envs(Map<Object, Object> map)
     groovy(String groovyScript)
     propertiesFile(String filePath)
     loadFilesFromMaster(boolean loadFromMaster)
@@ -343,7 +343,7 @@ checkoutRetryCount()
 checkoutRetryCount(int times)
 ```
 
-Defines the number of times the build should retry to check out from the SCM if the SCM checkout fails. 
+Defines the number of times the build should retry to check out from the SCM if the SCM checkout fails.
 
 The parameterless invocation sets a default retry count of three (3) times. To specify more (or less) retry counts pass the number of times to retry the checkout. (Available since 1.16)
 
@@ -383,7 +383,7 @@ git {
     shallowClone(boolean shallowClone = true) // perform shallow clone, optional, defaults to false
     relativeTargetDir(String relativeTargetDir) // checkout to a sub-directory, optional
     reference(String reference) // path to a reference repository, optional
-    configure(Closure configure) // optional configure block, the GitSCM node is passed in 
+    configure(Closure configure) // optional configure block, the GitSCM node is passed in
 }
 
 git(String url, String branch = null, Closure configure = null)
@@ -407,7 +407,7 @@ Examples:
 git {
     remote {
         name('remoteB')
-        url('git@server:account/repo1.git')      
+        url('git@server:account/repo1.git')
     }
     clean()
     relativeTargetDir('repo1')
@@ -419,11 +419,11 @@ git {
 git {
     remote {
         name('origin')
-        url('git@serverA:account/repo1.git')      
+        url('git@serverA:account/repo1.git')
     }
     remote {
         name('upstream')
-        url('git@serverB:account/repo1.git')      
+        url('git@serverB:account/repo1.git')
     }
     branch('featureA')
     mergeOptions('upstream', 'master')
@@ -501,7 +501,7 @@ p4('//depot/Tools/build') { node ->
 ## Clone Workspace
 
 ```
-cloneWorkspace(String parentProject, String criteriaArg = 'Any') 
+cloneWorkspace(String parentProject, String criteriaArg = 'Any')
 ```
 
 Support the Clone Workspace plugin, by copy the workspace of another build. This complements another job which published their workspace.
@@ -631,7 +631,7 @@ urlTrigger {
     proxy true           // use Jenkins Proxy for requests
     status 404           // set the expected HTTP Response status code (default: 200)
     timeout 4000         // set the request timeout in seconds (default: 300 seconds)
-    check 'status'       // check the returned status code (not checked by default) 
+    check 'status'       // check the returned status code (not checked by default)
     check 'etag'         // check ETag header (not checked by default)
     check 'lastModified' // check last modified date of resource (not checked by default)
   }
@@ -641,16 +641,16 @@ urlTrigger {
     inspection 'change' //calculate MD5 sum of URL content and on hash changes
   }
 
-  /* Content inspection for JSON or XML content with detailed checking 
+  /* Content inspection for JSON or XML content with detailed checking
      using XPath/JSONPath */
   url('http://www.example.com/baz/') {
     inspection('json'|'xml') {              // inspect XML or JSON content type
       path '//div[@class="foo"]'            // XPath for checking XML content
-      path '$.store.book[0].title'          // JSONPath expression (dot syntax) 
+      path '$.store.book[0].title'          // JSONPath expression (dot syntax)
       path "$['store']['book'][0]['title']" // JSONPath expression (bracket syntax)
     }
   }
- 
+
   /* Content inspection for text content with detailed checking using regular expressions */
   url('http://www.example.com/fubar/') {
     inspection('text') {    // inspect content type text
@@ -673,7 +673,7 @@ The trigger can check multiple URLs and virtually all options are combinable, al
 More on JSON path expressions: [http://goessner.net/articles/JsonPath/]
 
 The URL trigger is particularly useful for monitoring snapshot dependencies for non-Maven/Ivy projects like SBT:
- 
+
 ```groovy
 urlTrigger {
   url('http://snapshots.repository.codehaus.org/org/picocontainer/picocontainer/2.11-SNAPSHOT/maven-metadata.xml' {
@@ -771,7 +771,7 @@ allocatePorts 'HTTP', '8080' // allocates two ports: one randomly assigned and a
 
 allocatePorts {
   port 'HTTP'                          // random port available as $HTTP
-  port '8080'                          // concurrent build execution controlled to prevent resource conflicts 
+  port '8080'                          // concurrent build execution controlled to prevent resource conflicts
   glassfish '1234', 'user', 'password' // adds a glassfish port
   tomcat '1234', 'password'            // adds a port for tomcat
 }
@@ -859,7 +859,7 @@ job {
       scriptFile(String filePath)
       script(String content)
       env(Object key, Object value)
-      envs(Map<Object, Object> map) 
+      envs(Map<Object, Object> map)
       propertiesFile(String filePath)
     }
   }
@@ -878,10 +878,10 @@ job {
             releaseVersionTemplate(String template)
             doNotKeepLog(boolean keep = true)
             overrideBuildParameters(boolean override = true)
-            parameterDefinitions(Closure parameters) 
-            preBuildSteps(Closure steps) 
-            postSuccessfulBuildSteps(Closure steps) 
-            postBuildSteps(Closure steps) 
+            parameterDefinitions(Closure parameters)
+            preBuildSteps(Closure steps)
+            postSuccessfulBuildSteps(Closure steps)
+            postBuildSteps(Closure steps)
             postFailedBuildSteps(Closure steps)
         }
     }
@@ -1160,7 +1160,7 @@ job {
     bar {
         baz()
     }
-} 
+}
 }
 
 /* same definition using parameters instead of closure */
@@ -1193,7 +1193,7 @@ Supports the Copy Artifact plugin. As per the plugin, the input glob is for file
 
 ## Groovy
 ```groovy
-groovyCommand(String commandStr = null, String groovyInstallation = '(Default)', Closure groovyClosure = null) {   
+groovyCommand(String commandStr = null, String groovyInstallation = '(Default)', Closure groovyClosure = null) {
     groovyParam(String param)
     groovyParams(Iterable<String> params)
     scriptParam(String param)
@@ -1205,7 +1205,7 @@ groovyCommand(String commandStr = null, String groovyInstallation = '(Default)',
     groovyInstallation(String groovyInstallationName)
     classpath(String classpathEntry)
 }
-groovyScriptFile(String fileName = null, String groovyInstallation = '(Default)', Closure groovyClosure = null) {   
+groovyScriptFile(String fileName = null, String groovyInstallation = '(Default)', Closure groovyClosure = null) {
     groovyParam(String param)
     groovyParams(Iterable<String> params)
     scriptParam(String param)
@@ -1226,7 +1226,7 @@ Runs a Groovy script which can either be passed inline ('groovyCommand' method) 
 * Groovy Installation - Also available as an argument. Refers to the pull down box in the UI to select which installation of Groovy to use, specify the exact string seen in the UI.
 * Java Options - Arguments to be passed directly to the JVM.
 * Classpath - Defines the classpath for the script.
- 
+
 ## System Groovy Scripts
 ```groovy
 systemGroovyCommand(String commandStr, Closure systemGroovyClosure = null) {
@@ -1271,7 +1271,7 @@ job {
   steps {
     environmentVariables {
       env(Object key, Object value)
-      envs(Map<Object, Object> map) 
+      envs(Map<Object, Object> map)
       propertiesFile(String filePath)
     }
   }
@@ -1289,14 +1289,14 @@ phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phase
     phaseName(String phaseName)
     continuationCondition(String continuationCondition)
     job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true, Closure phaseJobClosure = null)  {
-        currentJobParameters(boolean currentJobParameters = true) 
+        currentJobParameters(boolean currentJobParameters = true)
         exposedScm(boolean exposedScm = true)
         boolParam(String paramName, boolean defaultValue = false)
         fileParam(String propertyFile, boolean failTriggerOnMissing = false)
-        sameNode(boolean nodeParam = true) 
+        sameNode(boolean nodeParam = true)
         matrixParam(String filter)
         subversionRevision(boolean includeUpstreamParameters = false)
-        gitRevision(boolean combineQueuedCommits = false) 
+        gitRevision(boolean combineQueuedCommits = false)
         prop(Object key, Object value)
         props(Map<String, String> map)
     }
@@ -1342,7 +1342,7 @@ prerequisite(String projectList = '', boolean warningOnlyBool = false)
 ```
 
 Arguments:
-* `projectList` A comma delimited list of jobs to check. 
+* `projectList` A comma delimited list of jobs to check.
 * `warningOnlyBool` If set to true then the build will not be failed even if the checks are failed
 
 When a job is checked the following conditions must be validated before the job is marked passed.
@@ -1386,7 +1386,7 @@ These can each be set to any of the allowed build statuses ('SUCCESS', 'UNSTABLE
 
 Examples:
 ```groovy
-steps {
+publishers {
     downstreamParameterized {
         trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
                     ["buildStepFailure": "FAILURE",
@@ -1569,7 +1569,7 @@ extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
 mailer(String recipients, String dontNotifyEveryUnstableBuildBoolean = false, String sendToIndividualsBoolean = false)
 ```
 
-This is the default mailer task. Specify the recipients, whether to flame on unstable builds, and whether to send email to individuals who broke the build. Note the double negative in the dontNotifyEveryUnstableBuild condition. If you want notification on every unstable build, keep it false. 
+This is the default mailer task. Specify the recipients, whether to flame on unstable builds, and whether to send email to individuals who broke the build. Note the double negative in the dontNotifyEveryUnstableBuild condition. If you want notification on every unstable build, keep it false.
 Simple example:
 
 ```groovy
@@ -1609,7 +1609,7 @@ archiveArtifacts {
 fingerprint(String targets, boolean recordBuildArtifacts = false)
 ```
 
-Activates fingerprinting for the build. 
+Activates fingerprinting for the build.
 If recordBuildArtifacts evaluates to "true", then all archived artifacts are also fingerprinted.
 Moreover, the option to keep the build logs of dependencies can be set at the top level via:
 ```groovy
@@ -1842,8 +1842,8 @@ cobertura(xmlReportFilePattern) {
   failNoReports(true) // Fail builds if no coverage reports have been found.
   sourceEncoding('ASCII') // Character encoding of source files
   // The following targets are added by default to check the method, line and conditional level coverage:
-  methodTarget(80, 0, 0) 
-  lineTarget(80, 0, 0)   
+  methodTarget(80, 0, 0)
+  lineTarget(80, 0, 0)
   conditionalTarget(70, 0, 0)
 }
 ```
@@ -1863,9 +1863,9 @@ packageTarget(healthy, unhealthy, failing)
 ```
 
 Each of the 3 parameters represent a percentage treshold. They have the following meaning:
-* healthy: Report health as 100% when coverage is greater than {healthy}% 
+* healthy: Report health as 100% when coverage is greater than {healthy}%
 * unhealthy: Report health as 0% when coverage is less than {unhealthy}%
-* failing: Mark the build as unstable when coverage is less than {failing}% 
+* failing: Mark the build as unstable when coverage is less than {failing}%
 
 ## Allow Broken Build Claiming
 
@@ -1891,15 +1891,15 @@ jacocoCodeCoverage {
     exclusionPattern '**/*Test*'
     minimumInstructionCoverage '0'
     minimumBranchCoverage '0'
-    minimumComplexityCoverage '0' 
-    minimumLineCoverage '0' 
-    minimumMethodCoverage '0' 
-    minimumClassCoverage '0' 
-    maximumInstructionCoverage '0' 
-    maximumBranchCoverage '0' 
-    maximumComplexityCoverage '0' 
-    maximumLineCoverage '0' 
-    maximumMethodCoverage '0' 
+    minimumComplexityCoverage '0'
+    minimumLineCoverage '0'
+    minimumMethodCoverage '0'
+    minimumClassCoverage '0'
+    maximumInstructionCoverage '0'
+    maximumBranchCoverage '0'
+    maximumComplexityCoverage '0'
+    maximumLineCoverage '0'
+    maximumMethodCoverage '0'
     maximumClassCoverage '0'
     changeBuildStatus false // introduced in 1.22
 }
@@ -1955,7 +1955,7 @@ publishers {
   findbugs('**/findbugsXml.xml', true) {
     thresholds(
       unstableTotal: [all: 1, high: 2, normal: 3, low: 4]
-    )    
+    )
   }
 }
 ```
@@ -1991,7 +1991,7 @@ publishers {
 }
 ```
 
-### [DRY](https://wiki.jenkins-ci.org/display/JENKINS/DRY+Plugin) 
+### [DRY](https://wiki.jenkins-ci.org/display/JENKINS/DRY+Plugin)
 ```groovy
 publishers {
   dry('**/cpd.xml', 80, 20) {
@@ -2252,15 +2252,15 @@ emma('coverage-results/coverage.xml') {
 ```
 
 Each of the 3 parameters represent a percentage threshold. They have the following meaning:
-* healthy: Report health as 100% when coverage is greater than {healthy}% 
+* healthy: Report health as 100% when coverage is greater than {healthy}%
 * unhealthy: Report health as 0% when coverage is less than {unhealthy}%
-* failing: Mark the build as unstable when coverage is less than {failing}% 
+* failing: Mark the build as unstable when coverage is less than {failing}%
 
 (since 1.20)
 
 ## Associated Files
 
-Supports the [Associated Files Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin). 
+Supports the [Associated Files Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin).
 
 ```groovy
 associatedFiles(String associatedFilesPattern)
@@ -2274,7 +2274,7 @@ Supports [Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ro
 
 ```groovy
 publishRobotFrameworkReports(Closure closure = null)
-``` 
+```
 
 If no `closure` is provided, default values will be used that are based on [Jenkins Robot Framework plugin](https://github.com/jenkinsci/robot-plugin/blob/master/src/main/java/hudson/plugins/robot/RobotPublisher.java). The following properties can configured using the closure:
 
@@ -2547,7 +2547,7 @@ _Note: The Password Parameter is not yet supported. See https://issues.jenkins-c
 Simplest usage (taking advantage of all defaults)
 ```groovy
 // In this use case, the value will be "true" and the description will be ''
-booleanParam("myParameterName") 
+booleanParam("myParameterName")
 ```
 Simple usage (omitting the description)
 ```groovy
@@ -2556,43 +2556,43 @@ booleanParam("myParameterName", false)
 ```
 Full usage
 ```groovy
-// In this use case, the value will be "false" and the description will be 'the description 
+// In this use case, the value will be "false" and the description will be 'the description
 // of my parameter'
-booleanParam("myParameterName", false, "The description of my parameter") 
+booleanParam("myParameterName", false, "The description of my parameter")
 ```
 
 ## ListTags Parameter
 Simplest usage (taking advantage of all defaults)
 ```groovy
-// in this case "maxTags will be set to "all", reverseByDate and reverseByName will be set to "false", 
+// in this case "maxTags will be set to "all", reverseByDate and reverseByName will be set to "false",
 // and description and defaultValue xml tags will not be created at all
-listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex") 
+listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex")
 ```
 Simple usage (omitting the description and defaultValue)
 ```groovy
-// in this case "maxTags will be set to "all", reverseByDate and reverseByName will be set to "true", 
+// in this case "maxTags will be set to "all", reverseByDate and reverseByName will be set to "true",
 // and description and defaultValue xml tags will not be created at all
-listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true) 
+listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true)
 ```
 Full usage (omitting the description and defaultValue)
 ```groovy
-// in this case "maxTags will be set to "all", reverseByDate and reverseByName will be set to "true", 
+// in this case "maxTags will be set to "all", reverseByDate and reverseByName will be set to "true",
 // and description and defaultValue xml tags will be set as shown
-listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true, "defaultValue", "description") 
+listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true, "defaultValue", "description")
 ```
 NOTE: The second-to-last parameter needs to be a String, although you are provinding in most cases a number.  This is because the default value for defaultValue is "all".
 
 ## Choice Parameter
 Simplest usage (taking advantage of default description)
 ```groovy
-// In this case the description will be set to '' and you will have a 3-option list with 
-// "option 1 (default)" as the default (because it's first, not because it says so in the String 
+// In this case the description will be set to '' and you will have a 3-option list with
+// "option 1 (default)" as the default (because it's first, not because it says so in the String
 choiceParam("myParameterName", ["option 1 (default)", "option 2", "option 3"])
 ```
 Full usage
 ```groovy
-// In this case the description will be set to 'my description' and you will have a 3-option list with 
-// "option 1 (default)" as the default (because it's first, not because it says so in the String 
+// In this case the description will be set to 'my description' and you will have a 3-option list with
+// "option 1 (default)" as the default (because it's first, not because it says so in the String
 choiceParam("myParameterName", ["option 1 (default)", "option 2", "option 3"], "my description")
 ```
 
@@ -2635,7 +2635,7 @@ stringParam("myParameterName", "my default stringParam value")
 ```
 Full usage
 ```groovy
-// In this case the defaultValue will be set to 'my default stringParam value' and the description 
+// In this case the defaultValue will be set to 'my default stringParam value' and the description
 // will be set to 'my description'
 stringParam("myParameterName", "my default stringParam value", "my description")
 ```
