@@ -45,7 +45,7 @@ public class Run {
             GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
 
             for(GeneratedJob job: generatedItems.getJobs()) {
-                System.out.println("From "+ scriptName + ", Generated job: " + job);
+                System.out.println("From "+ scriptName + ", Generated item: " + job);
             }
             for(GeneratedView view: generatedItems.getViews()) {
                 System.out.println("From "+ scriptName + ", Generated view: " + view);

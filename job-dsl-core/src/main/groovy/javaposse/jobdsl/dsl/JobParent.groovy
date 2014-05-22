@@ -18,7 +18,7 @@ public abstract class JobParent extends Script {
     ]
 
     JobManagement jm;
-    Set<Job> referencedJobs
+    Set<Item> referencedJobs
     Set<View> referencedViews
     List<String> queueToBuild
 
@@ -50,6 +50,13 @@ public abstract class JobParent extends Script {
 
         // This view can have .configure { } called on
         return view
+    }
+
+    public Folder folder(Closure closure) {
+        Folder folder = new Folder()
+        folder.with(closure)
+        referencedJobs << folder
+        return folder
     }
 
     /**

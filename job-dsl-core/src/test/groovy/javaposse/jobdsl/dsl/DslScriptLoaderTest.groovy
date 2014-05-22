@@ -260,4 +260,23 @@ view(type: ListView) {
         views.any { it.name == 'view-a' }
         views.any { it.name == 'view-b' }
     }
+
+    def 'run engine with folders'() {
+        setup:
+        def scriptStr = '''folder {
+    name 'folder-a'
+}
+folder {
+    name 'folder-b'
+}
+'''
+
+        when:
+        def jobs = DslScriptLoader.runDslEngine(scriptStr, jm).jobs
+
+        then:
+        jobs.size() == 2
+        jobs.any { it.jobName == 'folder-a' }
+        jobs.any { it.jobName == 'folder-b' }
+    }
 }

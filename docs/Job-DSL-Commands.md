@@ -245,6 +245,12 @@ view(attributes) {  // since 1.21, see [[View Reference]]
     refreshFrequency(seconds)
     showPipelineDefinitionHeader(showPipelineDefinitionHeaderBool)
 }
+
+folder { // since 1.23
+    name(nameStr)
+    displayName(displayNameStr)
+    configure(configBlock)
+}
 ```
 
 The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods fail you, you can always generate the XML yourself via the [configure block](The Configure Block). Sometimes, a DSL method will provide a configure block of its own, which will set the a good context to help modify a few fields.  This gives native access to the Job config XML, which is typically very straight forward to understand.
@@ -293,6 +299,42 @@ view(type: ListView) {
 ```
 
 Please see the [[View Reference]] page for details.
+
+# Folder
+```groovy
+folder(Closure closure)
+```
+
+The folder method behaves like the job method explained above and will return a _Folder_ object.
+
+Folders will be created before jobs and views to ensure that a folder exists before entries are created.
+
+```groovy
+folder {
+  name 'project-a'
+  displayName 'Project A'
+}
+```
+
+Items can be created within folders by using the full path as job name.
+
+```groovy
+folder {
+  name 'project-a'
+}
+
+job {
+  name 'project-a/compile'
+}
+
+view {
+  name 'project-a/pipeline'
+}
+
+folder {
+  name 'project-a/testing'
+}
+```
 
 # Queue
 

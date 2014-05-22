@@ -269,9 +269,9 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = Sets.difference(generatedJobs, freshJobs);
 
-        listener.getLogger().println("Adding jobs: "   + Joiner.on(",").join(added));
-        listener.getLogger().println("Existing jobs: " + Joiner.on(",").join(existing));
-        listener.getLogger().println("Removing jobs: " + Joiner.on(",").join(removed));
+        listener.getLogger().println("Adding items: "   + Joiner.on(",").join(added));
+        listener.getLogger().println("Existing items: " + Joiner.on(",").join(existing));
+        listener.getLogger().println("Removing items: " + Joiner.on(",").join(removed));
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
@@ -281,8 +281,8 @@ public class ExecuteDslScripts extends Builder {
                     try {
                         removedProject.delete();
                     } catch(InterruptedException e) {
-                        listener.getLogger().println(String.format("Delete job failed: %s", removedJob));
-                        listener.getLogger().println(String.format("Disabling job instead: %s", removedJob));
+                        listener.getLogger().println(String.format("Delete item failed: %s", removedJob));
+                        listener.getLogger().println(String.format("Disabling item instead: %s", removedJob));
                         removedProject.disable();
                     }
                 } else {
@@ -297,7 +297,7 @@ public class ExecuteDslScripts extends Builder {
 
     private Set<GeneratedJob> extractGeneratedJobs(AbstractProject project) {
         GeneratedJobsAction gja = project.getAction(GeneratedJobsAction.class);
-        if (gja==null || gja.findLastGeneratedJobs() == null) {
+        if (gja==null) {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedJobs();
@@ -317,7 +317,7 @@ public class ExecuteDslScripts extends Builder {
 
     private Set<GeneratedView> extractGeneratedViews(AbstractProject<?, ?> project) {
         GeneratedViewsAction gja = project.getAction(GeneratedViewsAction.class);
-        if (gja == null || gja.findLastGeneratedViews() == null) {
+        if (gja == null) {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedViews();
