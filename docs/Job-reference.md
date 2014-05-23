@@ -327,6 +327,13 @@ environmentVariables {
 
 Injects environment variables into the build. They can be provided as a Map or applied as part of a context. The optional Groovy script must return a map Java object. Requires the [EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
 
+## Inject global passwords
+```groovy
+injectPasswords()
+```
+
+Injects globally defined passwords as environment variables into the job.
+
 ## Job Priority
 ```groovy
 priority(int value)
