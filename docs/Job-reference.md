@@ -2602,6 +2602,25 @@ job {
 }
 ```
 
+## Rundeck Notifier
+
+Supports the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
+The jobId is required; all other parameters are optional.
+
+```groovy
+job {
+    publishers {
+        rundeck (String jobId) {
+            options [:]                     //defaults to empty map if omitted
+            tag ''                          //defaults to empty string if omitted
+            nodeFilters [:]                 //defaults to empty map if omitted
+            shouldWaitForRundeckJob true    //defaults to true if omitted
+            shouldFailTheBuild true         //defaults to true if omitted
+        }
+    }
+}
+```
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_
