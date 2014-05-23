@@ -343,8 +343,7 @@ class WrapperContext implements Context {
      * Injects global passwords into the job
      */
     def injectPasswords() {
-        def nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'EnvInjectPasswordWrapper' {
+        wrapperNodes << new NodeBuilder().'EnvInjectPasswordWrapper' {
             'injectGlobalPasswords'(true)
             'passwordEntries'()
         }
