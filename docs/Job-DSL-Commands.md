@@ -120,6 +120,7 @@ job(attributes) {
         release(closure) // since 1.22, see [[Job Reference]] for details
         preBuildCleanup(closure) // since 1.22
         logSizeChecker(closure) // since 1.23, see [Job Reference]] for details
+        injectPasswords() // since 1.23
     }
     steps {
         shell(String commandStr)
