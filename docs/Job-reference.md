@@ -922,9 +922,9 @@ job {
 job {
     wrappers {
         preBuildCleanup {
-            includePattern(String pattern)
+            includePattern(String pattern)  // all files are deleted if omitted
             excludePattern(String pattern)
-            deleteDirectories(boolean deleteDirectories = true)
+            deleteDirectories(boolean deleteDirectories = true) // defaults to false if omitted
             cleanupParameter(String parameter)
             deleteCommand(String command)
         }
@@ -2538,6 +2538,53 @@ job {
 ```
 
 (Since 1.23)
+
+## Workspace Cleanup Publisher
+
+Supports the [Workspace Cleanup Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin).
+All parameters are optional.
+
+```groovy
+job {
+    publishers {
+        wsCleanup {
+            includePattern(String pattern) // all files are deleted if omitted
+            excludePattern(String pattern)
+            deleteDirectories(boolean value = true) // defaults to false if omitted
+            cleanWhenSuccess(boolean value = true)  // defaults to true if omitted
+            cleanWhenUnstable(boolean value = true) // defaults to true if omitted
+            cleanWhenFailure(boolean value = true) // defaults to true if omitted
+            cleanWhenNotBuilt(boolean value = true) // defaults to true if omitted
+            cleanWhenAborted(boolean value = true) // defaults to true if omitted
+            failBuildWhenCleanupFails(boolean value = true) // defaults to true if omitted
+            externalDeleteCommand(String command)
+        }
+    }
+}
+```
+
+The following example will delete all files after a build.
+
+```groovy
+job {
+    publishers {
+        wsCleanup()
+    }
+}
+```
+
+The following example will delete all 'src' directories in the directory tree
+
+```groovy
+job {
+    publishers {
+        wsCleanup {
+            includePattern('**/src/**')
+            deleteDirectories(true)
+        }
+    }
+}
+```
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
