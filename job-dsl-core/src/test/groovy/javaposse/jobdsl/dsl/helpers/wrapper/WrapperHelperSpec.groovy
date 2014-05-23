@@ -544,6 +544,10 @@ class WrapperHelperSpec extends Specification {
             }
         }
 
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
         with(root.buildWrappers[0].children()[0]) {
             name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
             setOwn[0].value() == true
