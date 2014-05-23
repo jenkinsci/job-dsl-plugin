@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.WorkspaceCleanupContext
 
 /**
@@ -8,8 +7,7 @@ import javaposse.jobdsl.dsl.helpers.common.WorkspaceCleanupContext
  *
  * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
  */
-class PostBuildCleanupContext extends WorkspaceCleanupContext implements Context {
-
+class PostBuildCleanupContext extends WorkspaceCleanupContext {
     boolean cleanWhenSuccess = true
     boolean cleanWhenUnstable = true
     boolean cleanWhenFailure = true

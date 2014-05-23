@@ -7,8 +7,7 @@ import javaposse.jobdsl.dsl.helpers.Context
  *
  * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
  */
-class WorkspaceCleanupContext implements Context {
-
+abstract class WorkspaceCleanupContext implements Context {
     List<Node> patternNodes = []
     boolean deleteDirectories = false
     String deleteCommand
