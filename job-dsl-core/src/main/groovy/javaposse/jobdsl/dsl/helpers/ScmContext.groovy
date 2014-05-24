@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import hudson.plugins.perforce.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 
 import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
@@ -381,6 +382,76 @@ class ScmContext implements Context {
         scmNodes << NodeBuilder.newInstance().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
             parentJobName(parentProject)
             criteria(criteriaArg)
+        }
+    }
+
+    /**
+     * <scm class="hudson.plugins.clearcase.ClearCaseSCM">
+     *     <changeset>BRANCH</changeset>
+     *     <createDynView>false</createDynView>
+     *     <excludedRegions/>
+     *     <extractLoadRules>false</extractLoadRules>
+     *     <filteringOutDestroySubBranchEvent>false</filteringOutDestroySubBranchEvent>
+     *     <freezeCode>false</freezeCode>
+     *     <loadRules/>
+     *     <loadRulesForPolling/>
+     *     <mkviewOptionalParam/>
+     *     <multiSitePollBuffer>0</multiSitePollBuffer>
+     *     <recreateView>false</recreateView>
+     *     <removeViewOnRename>false</removeViewOnRename>
+     *     <useDynamicView>false</useDynamicView>
+     *     <useOtherLoadRulesForPolling>false</useOtherLoadRulesForPolling>
+     *     <useUpdate>true</useUpdate>
+     *     <viewDrive>/view</viewDrive>
+     *     <viewName>
+     *     Jenkins_${USER_NAME}_${NODE_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}
+     *     </viewName>
+     *     <viewPath>view</viewPath>
+     *     <branch/>
+     *     <configSpec/>
+     *     <configSpecFileName/>
+     *     <doNotUpdateConfigSpec>false</doNotUpdateConfigSpec>
+     *     <extractConfigSpec>false</extractConfigSpec>
+     *     <label/>
+     *     <refreshConfigSpec>false</refreshConfigSpec>
+     *     <refreshConfigSpecCommand/>
+     *     <useTimeRule>false</useTimeRule>
+     * </scm>
+     *
+     * See http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin
+     */
+    def baseClearCase(Closure closure = null) {
+        ClearCaseContext context = new ClearCaseContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        scmNodes << NodeBuilder.newInstance().scm(class: 'hudson.plugins.clearcase.ClearCaseSCM') {
+            changeset(context.changeSet)
+            createDynView(context.createDynView)
+            excludedRegions(context.excludedRegions)
+            extractLoadRules(context.extractLoadRules)
+            filteringOutDestroySubBranchEvent(context.filteringOutDestroySubBranchEvent)
+            freezeCode(context.freezeCode)
+            loadRules(context.loadRules)
+            loadRulesForPolling(context.loadRulesForPolling)
+            mkviewOptionalParam(context.mkviewOptionalParameter)
+            multiSitePollBuffer(context.multiSitePollBuffer)
+            recreateView(context.recreateView)
+            removeViewOnRename(context.removeViewOnRename)
+            useDynamicView(context.useDynamicView)
+            useOtherLoadRulesForPolling(context.useOtherLoadRulesForPolling)
+            useUpdate(context.useUpdate)
+            viewDrive(context.viewDrive)
+            viewName(context.viewName)
+            viewPath(context.viewPath)
+            branch(context.branch)
+            configSpec(context.configSpec)
+            configSpecFileName(context.configSpecFileName)
+            doNotUpdateConfigSpec(context.doNotUpdateConfigSpec)
+            extractConfigSpec(context.extractConfigSpec)
+            label(context.label)
+            refreshConfigSpec(context.refreshConfigSpec)
+            refreshConfigSpecCommand(context.refreshConfigSpecCommand)
+            useTimeRule(context.useTimeRule)
         }
     }
 }

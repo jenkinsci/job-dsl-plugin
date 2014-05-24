@@ -520,6 +520,27 @@ cloneWorkspace(String parentProject, String criteriaArg = 'Any')
 
 Support the Clone Workspace plugin, by copy the workspace of another build. This complements another job which published their workspace.
 
+## Base ClearCase
+
+Support for the [ClearCase plugin](http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin).
+
+```groovy
+baseClearCase {
+    configSpec(String configSpec)
+    loadRules(String loadRules)
+    mkviewOptionalParameter(String parameter)
+    viewName(String viewName) // Default: 'Jenkins_${USER_NAME}_${NODE_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}'
+    viewPath(String viewPath) // Default: //view
+```
+
+Example defining config spec and load rules.
+```groovy
+baseClearCase {
+    configSpec('element * CHECKEDOUT
+                element * /main/LATEST')
+    loadRules('/vob/some_vob')
+```
+
 # Triggers
 
 

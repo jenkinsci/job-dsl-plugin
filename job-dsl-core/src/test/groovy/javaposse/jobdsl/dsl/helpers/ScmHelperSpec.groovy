@@ -815,4 +815,82 @@ public class ScmHelperSpec extends Specification {
         'parent'  | 'Any'
         'some'    | 'Successful'
     }
+
+    def 'call baseClearCase with default configuration'() {
+        when:
+        context.baseClearCase()
+
+        then:
+        context.scmNode != null
+        context.scmNode.attributes()['class'] == 'hudson.plugins.clearcase.ClearCaseSCM'
+        context.scmNode.changeset[0].value() == 'BRANCH'
+        context.scmNode.createDynView[0].value() == false
+        context.scmNode.excludedRegions[0].value() == ''
+        context.scmNode.extractLoadRules[0].value() == false
+        context.scmNode.filteringOutDestroySubBranchEvent[0].value() == false
+        context.scmNode.freezeCode[0].value() == false
+        context.scmNode.loadRules[0].value() == ''
+        context.scmNode.loadRulesForPolling[0].value() == ''
+        context.scmNode.mkviewOptionalParam[0].value() == ''
+        context.scmNode.multiSitePollBuffer[0].value() == 0
+        context.scmNode.recreateView[0].value() == false
+        context.scmNode.removeViewOnRename[0].value() == false
+        context.scmNode.useDynamicView[0].value() == false
+        context.scmNode.useOtherLoadRulesForPolling[0].value() == false
+        context.scmNode.useUpdate[0].value() ==  true
+        context.scmNode.viewDrive[0].value() == '/view'
+        context.scmNode.viewName[0].value() == 'Jenkins_${USER_NAME}_${NODE_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}'
+        context.scmNode.viewPath[0].value() == 'view'
+        context.scmNode.branch[0].value() == ''
+        context.scmNode.configSpec[0].value() == ''
+        context.scmNode.configSpecFileName[0].value() == ''
+        context.scmNode.doNotUpdateConfigSpec[0].value() == false
+        context.scmNode.extractConfigSpec[0].value() == false
+        context.scmNode.label[0].value() == ''
+        context.scmNode.refreshConfigSpec[0].value() == false
+        context.scmNode.refreshConfigSpecCommand[0].value() == ''
+        context.scmNode.useTimeRule[0].value() == false
+    }
+
+    def 'call baseClearCase with all configuration parameters'() {
+        when:
+        context.baseClearCase {
+            configSpec('element .../foo/... /main/LATEST\n' + 'element .../bar/... /main/LATEST)')
+            loadRules('/vobs/foo\n' + '/vobs/bar')
+            mkviewOptionalParameter('foo\n' + 'bar')
+            viewName('Jenkins_${USER_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}')
+            viewPath('views')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.attributes()['class'] == 'hudson.plugins.clearcase.ClearCaseSCM'
+        context.scmNode.changeset[0].value() == 'BRANCH'
+        context.scmNode.createDynView[0].value() == false
+        context.scmNode.excludedRegions[0].value() == ''
+        context.scmNode.extractLoadRules[0].value() == false
+        context.scmNode.filteringOutDestroySubBranchEvent[0].value() == false
+        context.scmNode.freezeCode[0].value() == false
+        context.scmNode.loadRules[0].value() == '/vobs/foo\n' + '/vobs/bar'
+        context.scmNode.loadRulesForPolling[0].value() == ''
+        context.scmNode.mkviewOptionalParam[0].value() == 'foo\n' + 'bar'
+        context.scmNode.multiSitePollBuffer[0].value() == 0
+        context.scmNode.recreateView[0].value() == false
+        context.scmNode.removeViewOnRename[0].value() == false
+        context.scmNode.useDynamicView[0].value() == false
+        context.scmNode.useOtherLoadRulesForPolling[0].value() == false
+        context.scmNode.useUpdate[0].value() ==  true
+        context.scmNode.viewDrive[0].value() == '/view'
+        context.scmNode.viewName[0].value() == 'Jenkins_${USER_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}'
+        context.scmNode.viewPath[0].value() == 'views'
+        context.scmNode.branch[0].value() == ''
+        context.scmNode.configSpec[0].value() == 'element .../foo/... /main/LATEST\n' + 'element .../bar/... /main/LATEST)'
+        context.scmNode.configSpecFileName[0].value() == ''
+        context.scmNode.doNotUpdateConfigSpec[0].value() == false
+        context.scmNode.extractConfigSpec[0].value() == false
+        context.scmNode.label[0].value() == ''
+        context.scmNode.refreshConfigSpec[0].value() == false
+        context.scmNode.refreshConfigSpecCommand[0].value() == ''
+        context.scmNode.useTimeRule[0].value() == false
+    }
 }
