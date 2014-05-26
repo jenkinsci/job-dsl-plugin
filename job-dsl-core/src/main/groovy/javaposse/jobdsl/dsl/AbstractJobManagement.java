@@ -62,20 +62,7 @@ public abstract class AbstractJobManagement implements JobManagement {
     @Override
     public void logDeprecationWarning() {
         List<StackTraceElement> stackTrace = getStackTrace();
-        StackTraceElement source = null;
-        for (StackTraceElement stackTraceElement : stackTrace) {
-            if (!stackTraceElement.getClassName().startsWith("javaposse.jobdsl.")) {
-                source = stackTraceElement;
-                break;
-            }
-        }
-        String details = "unknown source";
-        if (source != null && source.getFileName() != null) {
-            details = source.getFileName().matches("script\\d+\\.groovy") ? "DSL script" : source.getFileName();
-            if (source.getLineNumber() > 0) {
-                details += ", line " + source.getLineNumber();
-            }
-        }
+        String details = getSourceDetails(stackTrace);
         getOutputStream().println("Warning: " + stackTrace.get(0).getMethodName() + " is deprecated (" + details + ")");
     }
 
@@ -92,7 +79,7 @@ public abstract class AbstractJobManagement implements JobManagement {
         if (name == null || name.isEmpty()) throw new NameNotProvidedException();
     }
 
-    private static List<StackTraceElement> getStackTrace() {
+    protected static List<StackTraceElement> getStackTrace() {
         List<StackTraceElement> result = newArrayList();
         for (StackTraceElement stackTraceElement : currentThread().getStackTrace()) {
             if (isApplicationClass(stackTraceElement.getClassName())) {
@@ -100,5 +87,23 @@ public abstract class AbstractJobManagement implements JobManagement {
             }
         }
         return result.subList(3, result.size());
+    }
+
+    protected static String getSourceDetails(List<StackTraceElement> stackTrace) {
+        StackTraceElement source = null;
+        for (StackTraceElement stackTraceElement : stackTrace) {
+            if (!stackTraceElement.getClassName().startsWith("javaposse.jobdsl.")) {
+                source = stackTraceElement;
+                break;
+            }
+        }
+        String details = "unknown source";
+        if (source != null && source.getFileName() != null) {
+            details = source.getFileName().matches("script\\d+\\.groovy") ? "DSL script" : source.getFileName();
+            if (source.getLineNumber() > 0) {
+                details += ", line " + source.getLineNumber();
+            }
+        }
+        return details;
     }
 }

@@ -92,5 +92,9 @@ public class StringJobManagement extends AbstractJobManagement {
         }
         return body
     }
+
+    @Override
+    void checkMinimumPluginVersion(String pluginShortName, String version) {
+    }
 }
 

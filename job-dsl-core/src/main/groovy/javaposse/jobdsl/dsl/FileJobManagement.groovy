@@ -71,5 +71,9 @@ class FileJobManagement extends AbstractJobManagement {
     public String readFileInWorkspace(String filePath) {
         new File(root, filePath).text
     }
+
+    @Override
+    void checkMinimumPluginVersion(String pluginShortName, String version) {
+    }
 }
 

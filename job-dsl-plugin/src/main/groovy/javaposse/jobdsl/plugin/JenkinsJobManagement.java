@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
 
@@ -187,6 +188,21 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public String readFileInWorkspace(String relLocation) throws IOException {
         FilePath filePath = locateValidFileInWorkspace(relLocation);
         return filePath.readToString();
+    }
+
+    @Override
+    public void checkMinimumPluginVersion(String pluginShortName, String version) {
+        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        if (plugin == null) {
+            markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be installed");
+        } else if (plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version))) {
+            markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be updated to version " + version + " or later");
+        }
+    }
+
+    private void markBuildAsUnstable(String message) {
+        getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
+        build.setResult(UNSTABLE);
     }
 
     private FilePath locateValidFileInWorkspace(String relLocation) throws IOException {
