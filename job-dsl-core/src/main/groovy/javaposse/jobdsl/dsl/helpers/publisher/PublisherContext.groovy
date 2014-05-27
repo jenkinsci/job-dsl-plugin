@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
@@ -14,13 +15,8 @@ class PublisherContext implements Context {
     StaticAnalysisPublisherContext staticAnalysisPublisherHelper
 
 
-    PublisherContext() {
-        staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes)
-    }
-
-    PublisherContext(List<Node> publisherNodes) {
-        this.publisherNodes = publisherNodes
-        staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(this.publisherNodes)
+    PublisherContext(JobManagement jobManagement) {
+        staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes, jobManagement)
     }
 
     /**

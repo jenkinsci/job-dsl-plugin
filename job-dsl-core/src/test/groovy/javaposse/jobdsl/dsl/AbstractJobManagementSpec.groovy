@@ -56,6 +56,11 @@ class AbstractJobManagementSpec extends Specification {
             throw new UnsupportedOperationException()
         }
 
+        @Override
+        void requireMinimumPluginVersion(String pluginShortName, String version) {
+            throw new UnsupportedOperationException()
+        }
+
         void testMethod() {
             logDeprecationWarning()
         }

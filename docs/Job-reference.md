@@ -2084,6 +2084,8 @@ Moreover, the warningsClosure takes, additional to all the options from the stat
 * excludePattern
 * resolveRelativePaths
 
+Requires version 4.0 or later of the [Warnings Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Warnings+Plugin).
+
 ## Text Finder
 
 Searches for keywords in files or the console log and uses that to downgrade a build to be unstable or a failure. Requires the [Text Finder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin).
