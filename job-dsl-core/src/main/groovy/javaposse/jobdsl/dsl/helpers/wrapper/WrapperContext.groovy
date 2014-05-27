@@ -119,6 +119,7 @@ class WrapperContext implements Context {
      * @param timeoutClosure optional closure for configuring the timeout
      */
     def timeout(String type = Timeout.absolute.toString(), Closure timeoutClosure = null) {
+        jobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
         Timeout ttype
         if (type) {
             try {

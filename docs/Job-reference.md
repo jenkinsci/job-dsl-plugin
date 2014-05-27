@@ -729,6 +729,7 @@ rvm('ruby-2.0@gemset')
 Configures the job to prepare a Ruby environment controlled by RVM for the build. Requires at least the ruby version, can take also a gemset specification to prevent side effects with other builds. (Available since 1.16)
 
 ## [Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
+Requires version 1.12 or later of the [Timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin).
 
 ```groovy
 timeout          { //
