@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
+import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXunitContext.ThresholdMode
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
 
 class PublisherHelperSpec extends Specification {
@@ -269,7 +270,7 @@ class PublisherHelperSpec extends Specification {
                 failure 7
                 failureNew 8
             }
-            thresholdMode 'percent'
+            thresholdMode ThresholdMode.PERCENT
             timeMargin 2000
         }
 
@@ -319,15 +320,9 @@ class PublisherHelperSpec extends Specification {
         xunitNode.extraConfiguration[0].testTimeMargin[0].value() == 3000
 
         where:
-        input     | output
-        'number'  | 1
-        'percent' | 2
-        'Number'  | 1
-        'Percent' | 2
-        'NUMBER'  | 1
-        'PERCENT' | 2
-        'NuMbEr'  | 1
-        'PeRcEnT' | 2
+        input                 | output
+        ThresholdMode.NUMBER  | 1
+        ThresholdMode.PERCENT | 2
     }
 
     def 'call xunit archive with all result types'() {
@@ -408,7 +403,7 @@ class PublisherHelperSpec extends Specification {
                 failure 7
                 failureNew 8
             }
-            thresholdMode 'percent'
+            thresholdMode ThresholdMode.PERCENT
             timeMargin 2000
         }
 

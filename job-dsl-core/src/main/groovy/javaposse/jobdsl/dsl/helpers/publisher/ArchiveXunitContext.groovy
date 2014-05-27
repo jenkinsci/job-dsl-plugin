@@ -1,3 +1,5 @@
+package javaposse.jobdsl.dsl.helpers.publisher
+
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
@@ -27,8 +29,8 @@ class ArchiveXunitContext implements Context {
         AbstractContextHelper.executeInContext(thresholdsClosure, skippedThresholdsContext)
     }
 
-    void thresholdMode(String thresholdMode) {
-        this.thresholdMode = ThresholdMode."${thresholdMode.toUpperCase()}"
+    void thresholdMode(ThresholdMode thresholdMode) {
+        this.thresholdMode = thresholdMode
     }
 
     void timeMargin(int timeMargin) {

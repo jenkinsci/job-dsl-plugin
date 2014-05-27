@@ -174,6 +174,7 @@ public class DslScriptLoader {
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.ArchiveXunitContext.ThresholdMode");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
         icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
