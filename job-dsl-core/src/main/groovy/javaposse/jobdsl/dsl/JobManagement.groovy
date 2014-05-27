@@ -71,5 +71,5 @@ public interface JobManagement {
      * Logs a warning and sets the build status to unstable if the installed version of the given plugin is older than
      * the given version.
      */
-    void checkMinimumPluginVersion(String pluginShortName, String version);
+    void requireMinimumPluginVersion(String pluginShortName, String version);
 }

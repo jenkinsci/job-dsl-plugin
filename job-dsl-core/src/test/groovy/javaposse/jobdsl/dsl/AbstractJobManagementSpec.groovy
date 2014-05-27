@@ -57,7 +57,7 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
-        void checkMinimumPluginVersion(String pluginShortName, String version) {
+        void requireMinimumPluginVersion(String pluginShortName, String version) {
             throw new UnsupportedOperationException()
         }
 

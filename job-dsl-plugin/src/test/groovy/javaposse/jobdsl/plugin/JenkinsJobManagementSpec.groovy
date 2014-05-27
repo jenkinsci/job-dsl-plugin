@@ -68,7 +68,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'checkMinimumPluginVersion not installed'() {
         when:
-        jobManagement.checkMinimumPluginVersion('foo', '1.2.3')
+        jobManagement.requireMinimumPluginVersion('foo', '1.2.3')
 
         then:
         1 * build.setResult(UNSTABLE)
@@ -77,7 +77,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'checkMinimumPluginVersion too old'() {
         when:
-        jobManagement.checkMinimumPluginVersion('ldap', '20.0')
+        jobManagement.requireMinimumPluginVersion('ldap', '20.0')
 
         then:
         1 * build.setResult(UNSTABLE)
@@ -86,7 +86,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'checkMinimumPluginVersion success'() {
         when:
-        jobManagement.checkMinimumPluginVersion('ldap', '1.1')
+        jobManagement.requireMinimumPluginVersion('ldap', '1.1')
 
         then:
         0 * build.setResult(UNSTABLE)

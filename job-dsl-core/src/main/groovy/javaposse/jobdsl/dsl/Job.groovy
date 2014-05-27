@@ -49,7 +49,7 @@ public class Job extends Item {
         helperTrigger = new TriggerContextHelper(withXmlActions, type)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperStep = new StepContextHelper(withXmlActions, type)
-        helperPublisher = new PublisherContextHelper(withXmlActions, type)
+        helperPublisher = new PublisherContextHelper(withXmlActions, type, jobManagement)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)

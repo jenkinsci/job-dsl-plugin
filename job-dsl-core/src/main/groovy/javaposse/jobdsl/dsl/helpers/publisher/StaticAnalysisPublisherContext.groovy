@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
 /**
@@ -47,9 +48,11 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
  */
 class StaticAnalysisPublisherContext {
     List<Node> publisherNodes
+    JobManagement jobManagement
 
-    StaticAnalysisPublisherContext(List<Node> publisherNodes) {
+    StaticAnalysisPublisherContext(List<Node> publisherNodes, JobManagement jobManagement) {
         this.publisherNodes = publisherNodes
+        this.jobManagement = jobManagement
     }
 
     /**
@@ -276,6 +279,7 @@ class StaticAnalysisPublisherContext {
      * </pre>
      */
     def warnings(List consoleParsers, Map parserConfigurations = [:], Closure warningsClosure = null) {
+        jobManagement.requireMinimumPluginVersion('warnings', '4.0')
         WarningsContext warningsContext = new WarningsContext()
         AbstractContextHelper.executeInContext(warningsClosure,  warningsContext)
 

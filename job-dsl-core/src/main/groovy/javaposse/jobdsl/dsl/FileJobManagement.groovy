@@ -73,7 +73,7 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    void checkMinimumPluginVersion(String pluginShortName, String version) {
+    void requireMinimumPluginVersion(String pluginShortName, String version) {
     }
 }
 
