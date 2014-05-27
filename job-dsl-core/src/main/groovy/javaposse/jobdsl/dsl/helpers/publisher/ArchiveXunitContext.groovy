@@ -1,5 +1,3 @@
-package javaposse.jobdsl.dsl.helpers.publisher
-
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
@@ -15,8 +13,8 @@ class ArchiveXunitContext implements Context {
         }
     }
 
-    ThresholdContext failedThresholdsContext = new ThresholdContext()
-    ThresholdContext skippedThresholdsContext = new ThresholdContext()
+    ArchiveXunitThresholdContext failedThresholdsContext = new ArchiveXunitThresholdContext()
+    ArchiveXunitThresholdContext skippedThresholdsContext = new ArchiveXunitThresholdContext()
     ThresholdMode thresholdMode = ThresholdMode.NUMBER
     int timeMargin = 3000
     def resultFiles = []
@@ -110,71 +108,10 @@ class ArchiveXunitContext implements Context {
     }
 
     private void addResultFile(String type, Closure resultFileClosure) {
-        ResultFileContext resultFileContext = new ResultFileContext()
+        ArchiveXunitResultFileContext resultFileContext = new ArchiveXunitResultFileContext()
         AbstractContextHelper.executeInContext(resultFileClosure, resultFileContext)
 
         resultFileContext.type(type)
         resultFiles << resultFileContext
-    }
-
-    class ThresholdContext implements Context {
-        int unstable = 0
-        int unstableNew = 0
-        int failure = 0
-        int failureNew = 0
-
-        void unstable(int unstable) {
-            this.unstable = unstable
-        }
-
-        void unstableNew(int unstableNew) {
-            this.unstableNew = unstableNew
-        }
-
-        void failure(int failure) {
-            this.failure = failure
-        }
-
-        void failureNew(int failureNew) {
-            this.failureNew = failureNew
-        }
-    }
-
-    class ResultFileContext implements Context {
-        String type
-        String pattern = ''
-        boolean skipNoTestFiles = false
-        boolean failIfNotNew = true
-        boolean deleteOutputFiles = true
-        boolean stopProcessingIfError = true
-        String styleSheet = ''
-
-        void type(String type) {
-            this.type = type
-        }
-
-        void pattern(String pattern) {
-            this.pattern = pattern
-        }
-
-        void skipNoTestFiles(boolean skipNoTestFiles = true) {
-            this.skipNoTestFiles = skipNoTestFiles
-        }
-
-        void failIfNotNew(boolean failIfNotNew) {
-            this.failIfNotNew = failIfNotNew
-        }
-
-        void deleteOutputFiles(boolean deleteOutputFiles) {
-            this.deleteOutputFiles = deleteOutputFiles
-        }
-
-        void stopProcessingIfError(boolean stopProcessingIfError) {
-            this.stopProcessingIfError = stopProcessingIfError
-        }
-
-        void styleSheet(String styleSheet) {
-            this.styleSheet = styleSheet
-        }
     }
 }

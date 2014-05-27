@@ -242,7 +242,7 @@ class PublisherContext implements Context {
 
         Node xunitNode = nodeBuilder.'xunit' {
             types {
-                xunitContext.resultFiles.each { ArchiveXunitContext.ResultFileContext resultFile ->
+                xunitContext.resultFiles.each { ArchiveXunitResultFileContext resultFile ->
                     "${resultFile.type}" {
                         pattern resultFile.pattern
                         skipNoTestFiles resultFile.skipNoTestFiles ? 'true' : 'false'
