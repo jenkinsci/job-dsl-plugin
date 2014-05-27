@@ -208,6 +208,82 @@ class PublisherContext implements Context {
     }
 
     /**
+     <hudson.plugins.performance.PerformancePublisher>
+     <errorFailedThreshold>0</errorFailedThreshold>
+     <errorUnstableThreshold>0</dontNotifyEveryUnstableBuild>
+     <modePerformancePerTestCase>false</modePerformancePerTestCase>
+     <parsers>
+     <hudson.plugins.performance.JMeterParser>
+     <glob></glob>
+     </hudson.plugins.performance.JMeterParser>
+     <hudson.plugins.performance.JMeterCsvParser>
+     <glob></glob>
+     <skipFirstLine>false</skipFirstLine>
+     <delimiter>,</delimiter>
+     <timestampIdx>-1</timestampIdx>
+     <elapsedIdx>-1</elapsedIdx>
+     <responseCodeIdx>-1</responseCodeIdx>
+     <successIdx>-1</successIdx>
+     <urlIdx>-1</urlIdx>
+     </hudson.plugins.performance.JMeterCsvParser>
+     <hudson.plugins.performance.JUnitParser>
+     <glob></glob>
+     </hudson.plugins.performance.JUnitParser>
+     <hudson.plugins.performance.JmeterSummarizerParser>
+     <glob></glob>
+     <logDateFormat>yyyy/mm/dd HH:mm:ss</logDateFormat>
+     </hudson.plugins.performance.JmeterSummarizerParser>
+     </parsers>
+     </hudson.plugins.performance.PerformancePublisher>
+     */
+    def performancePublisher(Closure performanceClosure = null) {
+
+        PerformanceContext performanceContext = new PerformanceContext()
+        AbstractContextHelper.executeInContext(performanceClosure, performanceContext)
+
+        def nodeBuilder = NodeBuilder.newInstance()
+
+        Node performanceNode = nodeBuilder.'hudson.plugins.performance.PerformancePublisher' {
+            errorFailedThreshold(performanceContext.errorFailedThreshold)
+            errorUnstableThreshold(performanceContext.errorUnstableThreshold)
+            modePerformancePerTestCase(performanceContext.modePerformancePerTestCase)
+            parsers {
+                if (performanceContext.jMeterParser) {
+                    'hudson.plugins.performance.JMeterParser' {
+                        glob performanceContext.jMeterParser.glob
+                    }
+                }
+                if (performanceContext.jMeterCsvParser) {
+                    'hudson.plugins.performance.JMeterCsvParser' {
+                        glob performanceContext.jMeterCsvParser.glob
+                        skipFirstLine performanceContext.jMeterCsvParser.skipFirstLine
+                        delimiter performanceContext.jMeterCsvParser.delimiter
+                        timestampIdx performanceContext.jMeterCsvParser.timestampIdx
+                        elapsedIdx performanceContext.jMeterCsvParser.elapsedIdx
+                        responseCodeIdx performanceContext.jMeterCsvParser.responseCodeIdx
+                        successIdx performanceContext.jMeterCsvParser.successIdx
+                        urlIdx performanceContext.jMeterCsvParser.urlIdx
+                    }
+                }
+                if (performanceContext.jUnitParser) {
+                    'hudson.plugins.performance.JUnitParser' {
+                        glob performanceContext.jUnitParser.glob
+                    }
+                }
+
+                if (performanceContext.jmeterSummarizerParser) {
+                    'hudson.plugins.performance.JmeterSummarizerParser' {
+                        glob performanceContext.jmeterSummarizerParser.glob
+                        logDateFormat performanceContext.jmeterSummarizerParser.logDateFormat
+                    }
+                }
+            }
+        }
+
+        publisherNodes << performanceNode
+    }
+
+    /**
      <hudson.plugins.jacoco.JacocoPublisher>
      <execPattern>"target/*.exec"</execPattern>
      <classPattern>"target/classes"</classPattern>
