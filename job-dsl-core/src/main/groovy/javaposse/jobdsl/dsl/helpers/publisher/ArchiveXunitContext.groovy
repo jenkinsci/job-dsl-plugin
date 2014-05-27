@@ -117,46 +117,6 @@ class ArchiveXunitContext implements Context {
         resultFiles << resultFileContext
     }
 
-    Node createXunitNode() {
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-
-        Node xunitNode = nodeBuilder.'xunit' {
-            types {
-                resultFiles.each { ResultFileContext resultFile ->
-                    "${resultFile.type}" {
-                        pattern resultFile.pattern
-                        skipNoTestFiles resultFile.skipNoTestFiles ? 'true' : 'false'
-                        failIfNotNew resultFile.failIfNotNew ? 'true' : 'false'
-                        deleteOutputFiles resultFile.deleteOutputFiles ? 'true' : 'false'
-                        stopProcessingIfError resultFile.stopProcessingIfError ? 'true' : 'false'
-                        if (resultFile.type == 'CustomType') {  // Only valid for CustomType
-                            customXSL resultFile.styleSheet
-                        }
-                    }
-                }
-            }
-            thresholds {
-                'org.jenkinsci.plugins.xunit.threshold.FailedThreshold' {
-                    unstableThreshold failedThresholdsContext.unstable
-                    unstableNewThreshold failedThresholdsContext.unstableNew
-                    failureThreshold failedThresholdsContext.failure
-                    failureNewThreshold failedThresholdsContext.failureNew
-                }
-                'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold' {
-                    unstableThreshold skippedThresholdsContext.unstable
-                    unstableNewThreshold skippedThresholdsContext.unstableNew
-                    failureThreshold skippedThresholdsContext.failure
-                    failureNewThreshold skippedThresholdsContext.failureNew
-                }
-            }
-            thresholdMode thresholdMode.xmlValue
-            extraConfiguration {
-                testTimeMargin timeMargin
-            }
-        }
-        return xunitNode
-    }
-
     class ThresholdContext implements Context {
         int unstable = 0
         int unstableNew = 0

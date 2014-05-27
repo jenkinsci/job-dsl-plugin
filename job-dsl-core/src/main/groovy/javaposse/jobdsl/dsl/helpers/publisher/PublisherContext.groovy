@@ -238,7 +238,44 @@ class PublisherContext implements Context {
         ArchiveXunitContext xunitContext = new ArchiveXunitContext()
         AbstractContextHelper.executeInContext(xunitClosure, xunitContext)
 
-        publisherNodes << xunitContext.createXunitNode()
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+
+        Node xunitNode = nodeBuilder.'xunit' {
+            types {
+                xunitContext.resultFiles.each { ArchiveXunitContext.ResultFileContext resultFile ->
+                    "${resultFile.type}" {
+                        pattern resultFile.pattern
+                        skipNoTestFiles resultFile.skipNoTestFiles ? 'true' : 'false'
+                        failIfNotNew resultFile.failIfNotNew ? 'true' : 'false'
+                        deleteOutputFiles resultFile.deleteOutputFiles ? 'true' : 'false'
+                        stopProcessingIfError resultFile.stopProcessingIfError ? 'true' : 'false'
+                        if (resultFile.type == 'CustomType') {  // Only valid for CustomType
+                            customXSL resultFile.styleSheet
+                        }
+                    }
+                }
+            }
+            thresholds {
+                'org.jenkinsci.plugins.xunit.threshold.FailedThreshold' {
+                    unstableThreshold xunitContext.failedThresholdsContext.unstable
+                    unstableNewThreshold xunitContext.failedThresholdsContext.unstableNew
+                    failureThreshold xunitContext.failedThresholdsContext.failure
+                    failureNewThreshold xunitContext.failedThresholdsContext.failureNew
+                }
+                'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold' {
+                    unstableThreshold xunitContext.skippedThresholdsContext.unstable
+                    unstableNewThreshold xunitContext.skippedThresholdsContext.unstableNew
+                    failureThreshold xunitContext.skippedThresholdsContext.failure
+                    failureNewThreshold xunitContext.skippedThresholdsContext.failureNew
+                }
+            }
+            thresholdMode xunitContext.thresholdMode.xmlValue
+            extraConfiguration {
+                testTimeMargin xunitContext.timeMargin
+            }
+        }
+
+        publisherNodes << xunitNode
     }
 
     /**
