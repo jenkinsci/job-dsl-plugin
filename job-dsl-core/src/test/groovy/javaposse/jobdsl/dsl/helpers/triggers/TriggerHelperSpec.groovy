@@ -309,6 +309,7 @@ public class TriggerHelperSpec extends Specification {
             permitAll[0].value() == false
             autoCloseFailedPullRequests[0].value() == false
             cron[0].value() == 'H/5 * * * *'
+            spec[0].value() == 'H/5 * * * *'
             triggerPhrase[0].value() == ''
             adminlist[0].value() == ''
             whitelist[0].value() == ''
@@ -356,6 +357,7 @@ public class TriggerHelperSpec extends Specification {
             whitelist[0].value() == 'test'
             orgslist[0].value() == 'test'
             cron[0].value() == '*/5 * * * *'
+            spec[0].value() == '*/5 * * * *'
             triggerPhrase[0].value() == 'ok to test'
             onlyTriggerPhrase[0].value() == true
             useGitHubHooks[0].value() == true

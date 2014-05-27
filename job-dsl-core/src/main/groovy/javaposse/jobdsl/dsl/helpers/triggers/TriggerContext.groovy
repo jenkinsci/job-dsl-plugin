@@ -155,6 +155,7 @@ class TriggerContext implements Context {
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
             delegate.cron(pullRequestBuilderContext.cron)
+            spec pullRequestBuilderContext.cron
             triggerPhrase pullRequestBuilderContext.triggerPhrase
             onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase
             useGitHubHooks pullRequestBuilderContext.useGitHubHooks
