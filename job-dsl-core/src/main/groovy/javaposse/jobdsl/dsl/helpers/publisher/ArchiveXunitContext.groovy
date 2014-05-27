@@ -108,10 +108,9 @@ class ArchiveXunitContext implements Context {
     }
 
     private void addResultFile(String type, Closure resultFileClosure) {
-        ArchiveXunitResultFileContext resultFileContext = new ArchiveXunitResultFileContext()
+        ArchiveXunitResultFileContext resultFileContext = new ArchiveXunitResultFileContext(type)
         AbstractContextHelper.executeInContext(resultFileClosure, resultFileContext)
 
-        resultFileContext.type(type)
         resultFiles << resultFileContext
     }
 }

@@ -9,7 +9,7 @@ class ArchiveXunitResultFileContext implements Context {
     boolean stopProcessingIfError = true
     String styleSheet = ''
 
-    void type(String type) {
+    public ArchiveXunitResultFileContext(String type) {
         this.type = type
     }
 
