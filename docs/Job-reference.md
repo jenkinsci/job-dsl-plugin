@@ -2604,9 +2604,6 @@ job {
 
 ## Rundeck Notifier
 
-Supports the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
-The jobId is required; all other parameters are optional.
-
 ```groovy
 job {
     publishers {
@@ -2620,6 +2617,35 @@ job {
     }
 }
 ```
+
+Configure a Jenkins job to trigger a RunDeck job as a post-build action. Requires the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
+
+Examples:
+
+```groovy
+job {
+    publishers {
+        rundeck (13eba461-179d-40a1-8a08-bafee33fdc12) {
+    }
+}
+```
+
+```groovy
+job {
+    publishers {
+        rundeck (13eba461-179d-40a1-8a08-bafee33fdc12) {
+            options artifact: 'app', env: 'dev'
+            option 'version', '1.1'
+            tag 'deploy app to dev'
+            nodeFilters hostname: 'dev(\d+).company.net'
+            nodeFilter 'tags', 'www+dev'
+            shouldWaitForRundeckJob true
+            shouldFailTheBuild true
+        }
+    }
+}
+```
+
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
