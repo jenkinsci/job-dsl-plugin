@@ -42,4 +42,15 @@ class JobParentSpec extends Specification {
         view instanceof BuildPipelineView
         parent.referencedViews.contains(view)
     }
+
+    def 'folder'() {
+        when:
+        Folder folder = parent.folder {
+            name 'test'
+        }
+
+        then:
+        folder.name == 'test'
+        parent.referencedJobs.contains(folder)
+    }
 }

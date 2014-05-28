@@ -24,6 +24,4 @@ class CloneWorkspaceContext implements Context {
     void overrideDefaultExcludes(boolean overrideDefaultExcludes) {
         this.overrideDefaultExcludes = overrideDefaultExcludes
     }
-
-    // TODO Create Enums for criteria and archiveMethod
 }

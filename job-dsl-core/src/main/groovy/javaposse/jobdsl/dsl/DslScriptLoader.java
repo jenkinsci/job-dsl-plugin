@@ -28,6 +28,7 @@ import java.util.logging.Logger;
  */
 public class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.class.getName());
+    private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator();
 
     public static JobParent runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.class.getClassLoader();
@@ -43,9 +44,7 @@ public class DslScriptLoader {
         icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
-        GroovyScriptEngine engine = //scriptRequest.resourceConnector!=null?
-                //new GroovyScriptEngine(scriptRequest.resourceConnector, parentClassLoader):
-                new GroovyScriptEngine(new URL[] { scriptRequest.urlRoot } , cl);
+        GroovyScriptEngine engine = new GroovyScriptEngine(new URL[] { scriptRequest.urlRoot } , cl);
 
         engine.setConfig(config);
 
@@ -86,7 +85,7 @@ public class DslScriptLoader {
      * @throws IOException
      */
     static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURL() );
+        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURI().toURL() );
         return runDslEngine(scriptRequest, jobManagement);
     }
 
@@ -107,21 +106,15 @@ public class DslScriptLoader {
         // Iterate jobs which were setup, save them, and convert to a serializable form
         Set<GeneratedJob> generatedJobs = Sets.newLinkedHashSet();
         if (jp != null) {
-            List<Job> refJobs = Lists.newArrayList(jp.getReferencedJobs()); // As List
-            Collections.sort(refJobs, new Comparator<Job>() {
-                // Sort by the job type, so that normal (Maven and Freeform) are done before Multijob
-                @Override
-                public int compare(Job o1, Job o2) {
-                    return o1.getType().ordinal() - o2.getType().ordinal();
-                }
-            });
-            for(Job job: refJobs) {
+            List<Item> referencedItems = Lists.newArrayList(jp.getReferencedJobs()); // As List
+            Collections.sort(referencedItems, ITEM_COMPARATOR);
+            for (Item job : referencedItems) {
                 try {
                     String xml = job.getXml();
                     LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
                     boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
-                    GeneratedJob gj = new GeneratedJob(job.getTemplateName(), job.getName(), created);
-                    generatedJobs.add(gj);
+                    String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
+                    generatedJobs.add(new GeneratedJob(templateName, job.getName(), created));
                 } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException
                     if (e instanceof RuntimeException) {
                         throw ((RuntimeException) e);
@@ -182,10 +175,11 @@ public class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports(
                 "javaposse.jobdsl.dsl.helpers.Permissions",
-                "javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy",
                 "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior",
+                "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
                 "javaposse.jobdsl.dsl.views.ListView.StatusFilter",
-                "javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle"
+                "javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle",
+                "javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy"
         );
         config.addCompilationCustomizers(icz);
 

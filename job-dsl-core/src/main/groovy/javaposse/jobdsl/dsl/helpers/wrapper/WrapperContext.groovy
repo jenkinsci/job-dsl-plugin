@@ -328,6 +328,28 @@ class WrapperContext implements Context {
     }
 
     /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <buildWrappers>
+     *         <EnvInjectPasswordWrapper>
+     *             <injectGlobalPasswords>true</injectGlobalPasswords>
+     *             <passwordEntries/>
+     *         </EnvInjectPasswordWrapper>
+     *     </buildWrappers>
+     * </project>
+     * }
+     *
+     * Injects global passwords into the job
+     */
+    def injectPasswords() {
+        wrapperNodes << new NodeBuilder().'EnvInjectPasswordWrapper' {
+            'injectGlobalPasswords'(true)
+            'passwordEntries'()
+        }
+    }
+
+    /**
      * {@code
      *  <project>
      *      <buildWrappers>
@@ -417,6 +439,31 @@ class WrapperContext implements Context {
             deleteDirs(context.deleteDirectories)
             cleanupParameter(context.cleanupParameter ?: '')
             deleteCommand(context.deleteCommand ?: '')
+        }
+    }
+
+    /**
+     * Configures the configuration for the Log File Size Checker build wrapper.
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin
+     *
+     * <project>
+     *     <buildWrappers>
+     *         <hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
+     *             <setOwn>true</setOwn>
+     *             <maxLogSize>10</maxLogSize>
+     *             <failBuild>true</failBuild>
+     *         </hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
+     *     </buildWrappers>
+     * </project>
+     */
+    def logSizeChecker(Closure closure = null) {
+        LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper' {
+            setOwn(context.maxSize > 0)
+            maxLogSize(context.maxSize)
+            failBuild(context.failBuild)
         }
     }
 }

@@ -18,7 +18,7 @@ public abstract class JobParent extends Script {
     ]
 
     JobManagement jm;
-    Set<Job> referencedJobs
+    Set<Item> referencedJobs
     Set<View> referencedViews
     List<String> queueToBuild
 
@@ -52,6 +52,13 @@ public abstract class JobParent extends Script {
         return view
     }
 
+    public Folder folder(Closure closure) {
+        Folder folder = new Folder()
+        folder.with(closure)
+        referencedJobs << folder
+        return folder
+    }
+
     /**
      * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
      * @param jobName
@@ -67,7 +74,6 @@ public abstract class JobParent extends Script {
      * @return
      */
     public queue(Job job) {
-        // TODO Consider lazily evaluating in case some Closure sets the name
         Preconditions.checkArgument(job.name as Boolean)
         queueToBuild << job.name
     }

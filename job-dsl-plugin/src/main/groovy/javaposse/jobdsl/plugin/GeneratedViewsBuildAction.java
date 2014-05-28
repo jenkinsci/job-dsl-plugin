@@ -2,11 +2,15 @@ package javaposse.jobdsl.plugin;
 
 import com.google.common.collect.Sets;
 import hudson.model.Action;
-import javaposse.jobdsl.dsl.GeneratedJob;
+import hudson.model.View;
+import hudson.model.ViewGroup;
 import javaposse.jobdsl.dsl.GeneratedView;
 
 import java.util.Collection;
 import java.util.Set;
+
+import static javaposse.jobdsl.plugin.JenkinsJobManagement.getItemNameFromFullName;
+import static javaposse.jobdsl.plugin.JenkinsJobManagement.getViewGroup;
 
 public class GeneratedViewsBuildAction implements Action {
     public final Set<GeneratedView> modifiedViews;
@@ -32,5 +36,21 @@ public class GeneratedViewsBuildAction implements Action {
 
     public Collection<GeneratedView> getModifiedViews() {
         return modifiedViews;
+    }
+
+    public Set<View> getViews() {
+        Set<View> allGeneratedViews = Sets.newLinkedHashSet();
+        if (modifiedViews != null) {
+            for (GeneratedView generatedView : modifiedViews) {
+                ViewGroup viewGroup = getViewGroup(generatedView.getName());
+                if (viewGroup != null) {
+                    View view = viewGroup.getView(getItemNameFromFullName(generatedView.getName()));
+                    if (view != null) {
+                        allGeneratedViews.add(view);
+                    }
+                }
+            }
+        }
+        return allGeneratedViews;
     }
 }

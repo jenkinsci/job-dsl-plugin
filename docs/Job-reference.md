@@ -327,6 +327,20 @@ environmentVariables {
 
 Injects environment variables into the build. They can be provided as a Map or applied as part of a context. The optional Groovy script must return a map Java object. Requires the [EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
 
+## Inject global passwords
+
+```groovy
+job {
+    wrappers {
+        injectPasswords()
+    }
+}
+```
+
+Injects globally defined passwords as environment variables into the job. Requires the [EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
+
+(since 1.23)
+
 ## Job Priority
 ```groovy
 priority(int value)
@@ -454,136 +468,6 @@ git {
 ```
 
 ## Subversion
-
-**BEGIN Unreleased Feature - Documentation is a work in progress**
-
-### Job DSL Plugin Version X.XX or greater
-
-As of version X.XX of the Job DSL Plugin, the Subversion plugin can be configured using an improved svn closure.  The following are the methods availble in the svn closure (note: these methods are **not** available in the older svn(...) closures):
-
-```groovy
-svn {
-    /*
-     * At least one location MUST be specified.
-     * Additional locations can be specified by calling location() multiple times.
-     *   svnUrl   - What to checkout from SVN.
-     *   localDir - Destination directory relative to workspace.
-     *              If not specified, defaults to '.'.
-     */
-    location(String svnUrl, String localDir = '.')
-
-    /*
-     * The checkout strategy that should be used.  This is a global setting for all
-     * locations.
-     *   strategy - Strategy to use. Possible values:
-     *                CheckoutStrategy.Update
-     *                CheckoutStrategy.Checkout
-     *                CheckoutStrategy.UpdateWithClean
-     *                CheckoutStrategy.UpdateWithRevert
-     *
-     * If no checkout strategy is configured, the default is CheckoutStrategy.Update.
-     */
-    checkoutStrategy(CheckoutStrategy strategy)
-
-    /*
-     * Add an excluded region.  Each call to excludedRegion() adds to the list of
-     * excluded regions.
-     * If excluded regions are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any files and/or folders that match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   pattern - RegEx
-     */
-    excludedRegion(String pattern)
-
-    /*
-     * Add a list of excluded regions.  Each call to excludedRegions() adds to the
-     * list of excluded regions.
-     * If excluded regions are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any files and/or folders that match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   patterns - RegEx
-     */
-    excludedRegions(Iterable<String> patterns)
-
-    /*
-     * Add an included region.  Each call to includedRegion() adds to the list of
-     * included regions.
-     * If included regions are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any files and/or folders that do _not_ match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   pattern - RegEx
-     */
-    includedRegion(String pattern)
-
-    /*
-     * Add a list of included regions.  Each call to includedRegions() adds to the
-     * list of included regions.
-     * If included regions are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any files and/or folders that do _not_ match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   patterns - RegEx
-     */
-    includedRegions(Iterable<String> patterns)
-
-    /*
-     * Add an excluded user.  Each call to excludedUser() adds to the list of
-     * excluded users.
-     * If excluded users are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any revisions committed by the specified users when
-     * determining if a build needs to be triggered.
-     *   user - User to ignore when triggering builds
-     */
-    excludedUser(String user)
-
-    /*
-     * Add a list of excluded users.  Each call to excludedUsers() adds to the
-     * list of excluded users.
-     * If excluded users are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any revisions committed by the specified users when
-     * determining if a build needs to be triggered.
-     *   users - Users to ignore when triggering builds
-     */
-    excludedUsers(Iterable<String> users)
-
-    /*
-     * Add an exluded commit message.  Each call to excludedCommitMsg() adds to the list of
-     * excluded commit messages.
-     * If excluded messages are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any revisions with commit messages that match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   pattern - RegEx
-     */
-    excludedCommitMsg(String pattern)
-
-    /*
-     * Add a list of excluded commit messages.  Each call to excludedCommitMsgs() adds to the
-     * list of excluded commit messages.
-     * If excluded messages are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any revisions with commit messages that match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   patterns - RegEx
-     */
-    excludedCommitMsgs(Iterable<String> patterns)
-
-    /*
-     * Set an excluded revision property.
-     * If an excluded revision property is set, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any revisions that are marked with the specified
-     * revision property when determining if a build needs to be triggered.
-     * This only works in Subversion 1.5 servers or greater.
-     *   pattern - RegEx
-     */
-    excludedRevProp(String revisionProperty)
-}
-```
-Note that no support for a configure block is available in the new svn closure.  Use the job closure's configure method instead.
-
-### Job DSL Plugin Version less than X.XX
-
-If using a version of the Job DSL Plugin older than X.XX, the following configuration methods are available.
-Note; For backwards compatibility, these are still supported in version X.XX and above.
-
-**END Unreleased Feature**
 
 ```groovy
 svn(String svnUrl, String localDir='.', Closure configure = null)
@@ -1046,165 +930,15 @@ job {
 
 (Since 1.22)
 
-## Maven Release
-```groovy
-job {
-    wrappers {
-        mavenRelease {
-            /**
-             * If defined, an environment variable with this name will hold the scm username when triggering a
-             * release build (this is the username the user enters when triggering a release build, not the username
-             * given to Jenkins' SCM configuration of the job).
-             *
-             * @param scmUserEnvVar (default: <<empty>>)
-             */
-            scmUserEnvVar(String scmUserEnvVar)
-
-            /**
-             * If defined, an environment variable with this name will hold the scm password when triggering a
-             * release build (this is the password the user enters when triggering a release build, not the password
-             * given to Jenkins' SCM configuration of the job).
-             *
-             * As the passed passwords would potentially get written to the logs and therefore visible to users,
-             * we recommend you to install the
-             * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin">Mask Password Plugin</a>.
-             *
-             * @param scmPasswordEnvVar (default: <<empty>>)
-             */
-            scmPasswordEnvVar(String scmPasswordEnvVar)
-
-            /**
-             * An environment variable with this name indicates whether the current build is a release build or not.
-             * This can be used e.g. within a shell or the conditional buildstep to do pre and post release processing.
-             * The value will be boolean (true if it is a release build, false if its not a release build).
-             *
-             * @param releaseEnvVar (default: "IS_M2RELEASEBUILD")
-             */
-            releaseEnvVar(String releaseEnvVar)
-
-            /**
-             * Enter the goals you wish to use as part of the release process. e.g. "release:prepare release:perform"
-             *
-             * @param releaseGoals (default: "-Dresume=false release:prepare release:perform")
-             */
-            releaseGoals(String releaseGoals)
-
-            /**
-             * Enter the goals you wish to use as part of the 'dryRun' - to simulate the release build.
-             * e.g. "release:prepare -DdryRun=true"
-             *
-             * @param dryRunGoals (default: "-Dresume=false -DdryRun=true release:prepare")
-             */
-            dryRunGoals(String dryRunGoals)
-
-            /**
-             * Enable this to have the "Select custom SCM comment prefix" option selected by default
-             * in the "Perform Maven Release" view.
-             *
-             * @param selectCustomScmCommentPrefix (default: false)
-             */
-            selectCustomScmCommentPrefix(boolean selectCustomScmCommentPrefix)
-
-            /**
-             * Enable this to have the "Append Jenkins Username" option (part of the "Specify custom SCM comment prefix"
-             * configuration) selected by default in the "Perform Maven Release" view.
-             *
-             * @param selectAppendHudsonUsername (default: false)
-             */
-            selectAppendHudsonUsername(boolean selectAppendHudsonUsername)
-
-            /**
-             * Enable this to have the "specify SCM login/password" option selected by default in the
-             * "Perform Maven Release" view.
-             *
-             * @param selectScmCredentials (default: false)
-             */
-            selectScmCredentials(boolean selectScmCredentials)
-
-            /**
-             * Specify the number of successful release builds to keep forever. A value of -1 will lock all successful
-             * release builds, 0 will not lock any builds.
-             *
-             * @param numberOfReleaseBuildsToKeep (default: 1)
-             */
-            numberOfReleaseBuildsToKeep(int numberOfReleaseBuildsToKeep)
-        }
-    }
-}
-```
-
-Example: using the default values
-```groovy
-job {
-    ...
-    wrappers {
-        ...
-        mavenRelease()
-    }
-}
-```
-
-Example: overwriting the default values
-```groovy
-job {
-    ...
-    wrappers {
-        ...
-        mavenRelease() {
-            scmUserEnvVar 'MY_USER_ENV'
-            scmPasswordEnvVar 'MY_PASSWORD_ENV'
-            releaseEnvVar 'RELEASE_ENV'
-
-            releaseGoals '-DautoVersionSubmodules -DcommitByProject release:prepare release:perform'
-            dryRunGoals '-DdryRun=true -DautoVersionSubmodules -DcommitByProject release:prepare'
-        
-            selectCustomScmCommentPrefix()
-            selectAppendHudsonUsername()
-            selectScmCredentials()
-        
-            numberOfReleaseBuildsToKeep 10
-        }
-    }
-}
-```
-
-Default values
-```groovy
-job {
-    ...
-    wrappers {
-        ...
-        mavenRelease() {
-            scmUserEnvVar ''
-            scmPasswordEnvVar ''
-            releaseEnvVar 'IS_M2RELEASEBUILD'
-
-            releaseGoals '-Dresume=false release:prepare release:perform'
-            dryRunGoals '-Dresume=false -DdryRun=true release:prepare'
-        
-            selectCustomScmCommentPrefix false
-            selectAppendHudsonUsername false
-            selectScmCredentials false
-        
-            numberOfReleaseBuildsToKeep 1
-        }
-    }
-}
-```
-
-Configure a maven release inside a Jenkins job. Job type need to be "Maven". Requires the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin).
-
-(Since 1.22)
-
 ## Workspace Cleanup Plugin
 
 ```groovy
 job {
     wrappers {
         preBuildCleanup {
-            includePattern(String pattern)
+            includePattern(String pattern)  // all files are deleted if omitted
             excludePattern(String pattern)
-            deleteDirectories(boolean deleteDirectories = true)
+            deleteDirectories(boolean deleteDirectories = true) // defaults to false if omitted
             cleanupParameter(String parameter)
             deleteCommand(String command)
         }
@@ -1240,6 +974,45 @@ job {
 
 (since 1.22)
 
+## Log File Size Checker Plugin
+
+```groovy
+job {
+    wrappers {
+        logSizeChecker {
+            maxSize(int size)
+            failBuild(boolean failBuild = true) // optional, defaults to false if omitted
+        }
+    }
+}
+```
+
+Configures the log file size checker plugin. Requires the [LogFileSizeChecker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin).
+
+Examples:
+```groovy
+// default configuration using the system wide definition
+job {
+    wrappers {
+        logSizeChecker()
+    }
+}
+```
+
+```groovy
+// using job specific configuration, setting the max log size to 10 MB and fail the build of the log file is larger.
+job {
+    wrappers {
+        logSizeChecker {
+            maxSize(10)
+            failBuild()
+        }
+    }
+}
+```
+
+(since 1.23)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
@@ -1264,26 +1037,6 @@ gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg 
 ```
 
 Runs Gradle, defaulting to the Gradle Wrapper. Configure block is handed a hudson.plugins.gradle.Gradle node.
-
-closure gradle command, which support all currently availibe jenkins/gradle plugin options:
-```groovy
-gradle {
-    tasks('task1')
-    switches('--profile -Pasd=1')
-    useWrapper(true)
-    description('gradle task for executing task1 with profile')
-    rootBuildScriptDir('some/path/where/you/gradle/project/reside')
-    buildFile('other')
-    fromRootBuildScriptDir(true)
-    makeExecutable(true)
-    gradleName('jenkins-gradle-combobox-item-name')
-    configure {
-      it / 'unknownOption' << 'on'
-    }
-}
-```
-
-
 
 ## Maven
 ```groovy
@@ -1440,7 +1193,7 @@ job {
 ```groovy
 copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles = false, boolean optionalAllowed = false, Closure copyArtifactClosure) {
     upstreamBuild(boolean fallback = false) // Upstream build that triggered this job
-    latestSuccessful() // Latest successful build
+    latestSuccessful(boolean stable = false) // Latest successful build
     latestSaved() // Latest saved build (marked "keep forever")
     permalink(String linkName) // Specified by permalink: lastBuild, lastStableBuild
     buildNumber(int buildNumber) // Specific Build
@@ -1685,6 +1438,12 @@ conditionalSteps {
         expression(String expression, String label) // Run if the regular expression matches the label
         time(String earliest, String latest, boolean useBuildTime) // Run if the current (or build) time is between the given dates.
         status(String worstResult, String bestResult) // Run if worstResult <= (current build status) <= bestResult
+        shell(String command) // Run if shell script succeeds (Since 1.23)
+        batch(String command) // Run if batch script succeeds (Since 1.23)
+        fileExits(String file, BaseDir baseDir) // Run if file exists relative to baseDir. BaseDir can be one of JENKINS_HOME, ARTIFACTS_DIR and WORKSPACE (Since 1.23)
+        not(Closure condition) // Run if the condition is not satisfied (Since 1.23)
+        and(Closure... conditions) // Run if all conditions are satisfied (Since 1.23)
+        or(Closure... conditions) // Run if any condition is satisfied (Since 1.23)
     }
     runner(String runner) // How to evaluate the results of a failure in the conditional step
     (one or more build steps)
@@ -1713,6 +1472,27 @@ steps {
     conditionalSteps {
         condition {
             time("9:00", "13:00", false)
+        }
+        runner("Unstable")
+        shell("echo 'a first step')
+        ant('build') {
+            target 'test'
+        }
+    }
+}
+```
+
+```groovy
+steps {
+    conditionalSteps {
+        condition {
+            and {
+                time("9:00", "13:00", false)
+            } {
+                not {
+                   fileExists('script.sh', BaseDir.WORKSPACE)
+                }
+            }
         }
         runner("Unstable")
         shell("echo 'a first step')
@@ -2304,6 +2084,8 @@ Moreover, the warningsClosure takes, additional to all the options from the stat
 * excludePattern
 * resolveRelativePaths
 
+Requires version 4.0 or later of the [Warnings Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Warnings+Plugin).
+
 ## Text Finder
 
 Searches for keywords in files or the console log and uses that to downgrade a build to be unstable or a failure. Requires the [Text Finder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin).
@@ -2544,13 +2326,39 @@ publishRobotFrameworkReports()
 ## Build Pipeline Trigger
 
 ```groovy
-buildPipelineTrigger(String downstreamProjectNames)
+buildPipelineTrigger(String downstreamProjectNames, Closure closure) {
+    parameters { // Parameters closure (Since 1.23)
+        currentBuild() // Current build parameters
+        propertiesFile(String propFile) // Parameters from properties file
+        gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built
+        predefinedProp(String key, String value) // Predefined properties
+        predefinedProps(Map<String, String> predefinedPropsMap)
+        predefinedProps(String predefinedProps) // Newline separated
+        matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
+        subversionRevision() // Subversion Revision
+    }
+}
 ```
 
-Add a manual triggers for jobs that require intervention prior to execution, e.g. an approval process outside of Jenkins. The argument takes a comma separated list of job names. Requires the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
+Add a manual triggers for jobs that require intervention prior to execution, e.g. an approval process outside of
+Jenkins. The argument takes a comma separated list of job names. Requires the
+[Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
+
+The `parameters` closure and the methods inside it are optional, though it makes the most sense to call at least one.
+Each one is relatively self documenting, mapping directly to what is seen in the UI. The `predefinedProp` and
+`predefinedProps` methods are used to accumulate properties, meaning that they can be called multiple times to build a
+superset of properties. They are basically equivalent to the ones defined for `downstreamParameterized()`
+
 
 ```groovy
 buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2')
+```
+
+```groovy
+buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2') {
+    predefinedProp('GIT_COMMIT', '$GIT_COMMIT')
+    predefinedProp('ARTIFACT_BUILD_NUMBER', '$BUILD_NUMBER')
+}
 ```
 
 (Since 1.21)
@@ -2616,6 +2424,183 @@ job {
 ```
 
 (Since 1.22)
+
+## Flowdock Publisher
+
+```groovy
+job {
+    publishers {
+        flowdock('a-long-token') {
+            unstable(boolean unstable = true)
+            success(boolean success = true)
+            aborted(boolean aborted = true)
+            failure(boolean failure = true)
+            fixed(boolean fixed = true)
+            notBuilt(boolean notBuilt = true)
+            chat(boolean chat = true)
+            tag(String tagName)
+            tags(String[] tags)
+        }
+    }
+}
+```
+
+Sends build notification from Jenkins to your flow. Requires the [Flowdock Plugin](https://github.com/jenkinsci/flowdock-plugin).
+Omitting an argument to any of the methods taking a boolean will behave as if you passed in true. Not calling the method will default to the plugin's default values (which are true for success, failure and fixed; false for all others).
+Tags are appended to form a single list, so that multiple calls to tag will behave as if youc alled tags variant with the concatenated list of Strings.
+
+Examples:
+
+```groovy
+// Minimal example. Notify using all the plugin defaults (inbox, not chat; notify on success, failure, fixed; no tags)
+job {
+    publishers {
+        flowdock('a-flow-token')
+    }
+}
+```
+
+```groovy
+// Notify on all build statuses
+job {
+    publishers {
+        flowdock('flow-token') {
+            unstable()
+            success()
+            aborted()
+            failure()
+            fixed()
+            notBuilt()
+        }
+    }
+}
+```
+
+```groovy
+// Notify on multiple flows in their chat for the default build statuses (success, failure and fixed) using the tags 'jenkins' and 'build'
+job {
+    publishers {
+        flowdock('first-flow-token', 'second-flow-token') {
+            chat()
+            tags('jenkins', 'build')
+        }
+    }
+}
+```
+
+(Since 1.23)
+
+## StashNotifier Publisher
+
+```groovy
+job {
+    publishers {
+        stashNotifier {
+            commitSha1(String commitSha1) // optional
+            keepRepeatedBuilds(boolean keepRepeatedBuilds = true) // optional, defaults to false if omitted
+        }
+    }
+}
+```
+
+Supports the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin).
+Uses global Jenkins settings for Stash URL, username, password and unverified SSL certificate handling.
+All parameters are optional. If a method is not called then the plugin default parameter will be used.
+
+Examples:
+
+```groovy
+//The following example will notify Stash using the global Jenkins settings
+job {
+    publishers {
+        stashNotifier()
+    }
+}
+```
+
+```groovy
+// The following example will notify Stash using the global Jenkins settings and sets keepRepeatedBuilds to true
+job {
+    publishers {
+        stashNotifier {
+            keepRepeatedBuilds()
+        }
+    }
+}
+```
+
+(Since 1.23)
+
+## Maven Deployment Linker Publisher
+
+```groovy
+job {
+    publishers {
+        mavenDeploymentLinker(String regex)
+    }
+}
+```
+
+Supports the [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker).
+
+The following example will create links to all tar.gz build artifacts.
+
+```groovy
+job {
+    publishers {
+        mavenDeploymentLinker('.*.tar.gz')
+    }
+}
+```
+
+(Since 1.23)
+
+## Workspace Cleanup Publisher
+
+Supports the [Workspace Cleanup Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin).
+All parameters are optional.
+
+```groovy
+job {
+    publishers {
+        wsCleanup {
+            includePattern(String pattern) // all files are deleted if omitted
+            excludePattern(String pattern)
+            deleteDirectories(boolean value = true) // defaults to false if omitted
+            cleanWhenSuccess(boolean value = true)  // defaults to true if omitted
+            cleanWhenUnstable(boolean value = true) // defaults to true if omitted
+            cleanWhenFailure(boolean value = true) // defaults to true if omitted
+            cleanWhenNotBuilt(boolean value = true) // defaults to true if omitted
+            cleanWhenAborted(boolean value = true) // defaults to true if omitted
+            failBuildWhenCleanupFails(boolean value = true) // defaults to true if omitted
+            externalDeleteCommand(String command)
+        }
+    }
+}
+```
+
+The following example will delete all files after a build.
+
+```groovy
+job {
+    publishers {
+        wsCleanup()
+    }
+}
+```
+
+The following example will delete all 'src' directories in the directory tree
+
+```groovy
+job {
+    publishers {
+        wsCleanup {
+            includePattern('**/src/**')
+            deleteDirectories(true)
+        }
+    }
+}
+```
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
@@ -2733,4 +2718,3 @@ Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
 ```
- 

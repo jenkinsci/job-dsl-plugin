@@ -13,7 +13,25 @@ There is a great load of information on [the forum](https://groups.google.com/fo
 And finally, if you want to get more involved, [here's how...](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)
 
 ## Release Notes
-* 1.22 (unreleased)
+* 1.24 (unreleased)
+* 1.23 (May 23 2014)
+ * Added support for injecting globally defined passwords ([EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin))
+ * Added file name to exception message when reading missing workspace files ([JENKINS-23006](https://issues.jenkins-ci.org/browse/JENKINS-23006))
+ * Fixed behavior when creating Jabber targets that are not group chats ([JENKINS-23090](https://issues.jenkins-ci.org/browse/JENKINS-23090))
+ * Create and update folders ([Cloudbees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin))
+ * Allow to create or update views within folders
+ * Removed multiscm limit
+ * Fixed support for the Description Setter Plugin
+ * new parameter for CopyArtifact's StatusBuildSelector to consider only stable builds
+ * Limited [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin) support
+ * [Flowdock Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flowdock+Plugin)
+ * More conditions for the Conditional BuildStep Plugin supported
+ * Initial support for the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin)
+ * Support for [LogFileSizeChecker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin)
+ * Support for [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker)
+ * Added support for parameterized manual jobs for the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
+ * Support for [Workspace Cleanup Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin)
+* 1.22 (Apr 05 2014)
  * Fixed support for the Conditional BuildStep Plugin
  * [Github Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
  * [Workspace Cleanup Plugin](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-workspace-cleanup-plugin)
@@ -21,7 +39,6 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * [Git Publisher](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-git-publisher)
  * Support for the `changeBuildStatus` element for [Jacoco Code Coverage](wiki/Job-reference#wiki-jacoco) publisher
  * [Jenkins Release Plugin](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-release)
- * [Jenkins M2 Release Plugin](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-maven-release)
  * Support for buildnumbers as strings in [Copy Artifacts](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-copy-artifacts)
 * 1.21 (Mar 06 2014)
  * [Build Flow](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin) job type

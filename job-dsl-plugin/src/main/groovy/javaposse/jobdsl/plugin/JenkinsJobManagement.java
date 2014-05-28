@@ -1,5 +1,6 @@
 package javaposse.jobdsl.plugin;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Function;
@@ -11,15 +12,17 @@ import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.View;
+import hudson.model.ViewGroup;
 import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
-import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
+import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import jenkins.model.Jenkins;
@@ -27,6 +30,7 @@ import jenkins.model.ModifiableTopLevelItemGroup;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,6 +44,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
 
@@ -86,26 +91,23 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return xml;
     }
 
-    /**
-     * TODO cache the <jobName,config> and then let the calling method collect the tuples, so they can be saved at once. Maybe even connect to their template
-     */
     @Override
-    public boolean createOrUpdateConfig(String fullJobName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String fullItemName, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullJobName));
+        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullItemName));
         boolean created = false;
 
-        validateUpdateArgs(fullJobName, config);
+        validateUpdateArgs(fullItemName, config);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(fullJobName);
-        String jobName = getJobNameFromFullName(fullJobName);
+        AbstractItem item = (AbstractItem) Jenkins.getInstance().getItemByFullName(fullItemName);
+        String jobName = getItemNameFromFullName(fullItemName);
         Jenkins.checkGoodName(jobName);
 
-        if (project == null) {
-            created = createNewJob(fullJobName, config);
+        if (item == null) {
+            created = createNewItem(fullItemName, config);
         } else if (!ignoreExisting) {
-            created = updateExistingJob(project, config);
+            created = updateExistingItem(item, config);
         }
         return created;
     }
@@ -113,14 +115,21 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
         validateUpdateArgs(viewName, config);
-        Jenkins.checkGoodName(viewName);
+        String viewBaseName = getItemNameFromFullName(viewName);
+        Jenkins.checkGoodName(viewBaseName);
         try {
             InputStream inputStream = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
-            Jenkins jenkins = Jenkins.getInstance();
-            View view = jenkins.getView(viewName);
+            ViewGroup viewGroup = getViewGroup(viewName);
+            View view = viewGroup.getView(viewBaseName);
             if (view == null) {
-                jenkins.addView(createViewFromXML(viewName, inputStream));
+                if (viewGroup instanceof Jenkins) {
+                    ((Jenkins) viewGroup).addView(createViewFromXML(viewBaseName, inputStream));
+                } else if (viewGroup instanceof Folder) {
+                    ((Folder) viewGroup).addView(createViewFromXML(viewBaseName, inputStream));
+                } else {
+                    LOGGER.log(Level.WARNING, String.format("Could not create view within %s", viewGroup.getClass()));
+                }
             } else if (!ignoreExisting) {
                 view.updateByXml(new StreamSource(inputStream));
             }
@@ -164,7 +173,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             project.scheduleBuild(new Cause.UpstreamCause(run));
         } else {
             LOGGER.log(Level.INFO, String.format("Scheduling build of %s", jobName));
-            project.scheduleBuild(new Cause.UserCause());
+            project.scheduleBuild(new Cause.UserIdCause());
         }
     }
 
@@ -181,46 +190,62 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return filePath.readToString();
     }
 
+    @Override
+    public void requireMinimumPluginVersion(String pluginShortName, String version) {
+        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        if (plugin == null) {
+            markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be installed");
+        } else if (plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version))) {
+            markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be updated to version " + version + " or later");
+        }
+    }
+
+    private void markBuildAsUnstable(String message) {
+        getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
+        build.setResult(UNSTABLE);
+    }
+
     private FilePath locateValidFileInWorkspace(String relLocation) throws IOException {
         FilePath filePath = build.getWorkspace().child(relLocation);
         try {
             if (!filePath.exists()) {
-                throw new IllegalStateException("File does not exists");
+                String path = filePath.getRemote();
+                throw new IllegalStateException(String.format("File %s does not exist in workspace.", path));
             }
-        } catch(InterruptedException ie) {
+        } catch (InterruptedException ie) {
             throw new RuntimeException(ie);
         }
         return filePath;
     }
 
     private String lookupJob(String jobName) throws IOException {
-        LOGGER.log(Level.FINE, String.format("Looking up Job %s", jobName));
+        LOGGER.log(Level.FINE, String.format("Looking up item %s", jobName));
         String jobXml = "";
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
-        if (project != null) {
-            XmlFile xmlFile = project.getConfigFile();
+        AbstractItem item = (AbstractItem) Jenkins.getInstance().getItemByFullName(jobName);
+        if (item != null) {
+            XmlFile xmlFile = item.getConfigFile();
             jobXml = xmlFile.asString();
         } else {
-            LOGGER.log(Level.WARNING, String.format("No Job called %s could be found.", jobName));
-            throw new IOException(String.format("No Job called %s could be found.", jobName));
+            LOGGER.log(Level.WARNING, String.format("No item called %s could be found.", jobName));
+            throw new IOException(String.format("No item called %s could be found.", jobName));
 
         }
 
-        LOGGER.log(Level.FINE, String.format("Looked up Job with config %s", jobXml));
+        LOGGER.log(Level.FINE, String.format("Looked up item with config %s", jobXml));
         return jobXml;
     }
 
-    private boolean updateExistingJob(AbstractProject<?, ?> project, String config) {
+    private boolean updateExistingItem(AbstractItem item, String config) {
         boolean created;
 
         // Leverage XMLUnit to perform diffs
         Diff diff;
         try {
-            String oldJob = project.getConfigFile().asString();
+            String oldJob = item.getConfigFile().asString();
             diff = XMLUnit.compareXML(oldJob, config);
             if (diff.similar()) {
-                LOGGER.log(Level.FINE, String.format("Project %s is identical", project.getName()));
+                LOGGER.log(Level.FINE, String.format("Item %s is identical", item.getName()));
                 return false;
             }
         } catch (Exception e) {
@@ -228,39 +253,35 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.warning(e.getMessage());
         }
 
-        // TODO Perform comparison between old and new, and print to console
-        // TODO Print out, for posterity, what the user might have changed, in the format of the DSL
-
-        LOGGER.log(Level.FINE, String.format("Updating project %s as %s", project.getName(), config));
-        StreamSource streamSource = new StreamSource(new StringReader(config)); // TODO use real xmlReader
+        LOGGER.log(Level.FINE, String.format("Updating item %s as %s", item.getName(), config));
+        Source streamSource = new StreamSource(new StringReader(config));
         try {
-            project.updateByXml(streamSource);
+            item.updateByXml(streamSource);
             created = true;
         } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing updated project to file."), ioex);
+            LOGGER.log(Level.WARNING, String.format("Error writing updated item to file."), ioex);
             created = false;
         }
         return created;
     }
 
-    // TODO Tag projects as created by us, so that we can intelligently delete them and prevent multiple jobs editing Projects
-    private boolean createNewJob(String fullJobName, String config) {
-        LOGGER.log(Level.FINE, String.format("Creating project as %s", config));
+    private boolean createNewItem(String fullItemName, String config) {
+        LOGGER.log(Level.FINE, String.format("Creating item as %s", config));
         boolean created;
 
         try {
-            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));  // TODO confirm that we're using UTF-8
+            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
-            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullJobName);
-            String jobName = getJobNameFromFullName(fullJobName);
-            ctx.createProjectFromXML(jobName, is);
+            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullItemName);
+            String itemName = getItemNameFromFullName(fullItemName);
+            ctx.createProjectFromXML(itemName, is);
 
             created = true;
         } catch (UnsupportedEncodingException ueex) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
             created = false;
         } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new job %s.", fullJobName), ioex);
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new item %s.", fullItemName), ioex);
             created = false;
         }
         return created;
@@ -280,24 +301,16 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return ctx;
     }
 
-    private static String getJobNameFromFullName(String fullName) {
+    static String getItemNameFromFullName(String fullName) {
         int i = fullName.lastIndexOf('/');
         return i > 0 ? fullName.substring(i+1) : fullName;
     }
 
-//    @SuppressWarnings("rawtypes")
-//    public Collection<AbstractProject> getJobsByName(final Set<String> names) {
-//        return Collections2.filter(Jenkins.getInstance().getProjects(), new Predicate<AbstractProject>() {
-//            @Override public boolean apply(AbstractProject project) {
-//                return names.contains(project.getName());
-//            }
-//        });
-//    }
-//
-//    public Collection<AbstractProject> getJobsByGeneratedJobs(final Set<GeneratedJob> generatedJobs) {
-//        Set<String> jobNames = Sets.newLinkedHashSet(Collections2.transform(generatedJobs, new ExtractTemplate()));
-//        return getJobsByName(jobNames);
-//    }
+    static ViewGroup getViewGroup(String fullName) {
+        Jenkins jenkins = Jenkins.getInstance();
+        int i = fullName.lastIndexOf('/');
+        return i > 0 ? jenkins.getItemByFullName(fullName.substring(0, i), Folder.class) : jenkins;
+    }
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));

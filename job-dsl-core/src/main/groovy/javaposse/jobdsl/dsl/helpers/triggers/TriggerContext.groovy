@@ -41,7 +41,7 @@ class TriggerContext implements Context {
         AbstractContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
         def nodeBuilder = new NodeBuilder()
-        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger'(plugin: 'urltrigger@0.31') {
+        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger' {
             spec urlTriggerContext.crontab
             if (urlTriggerContext.label) {
                 labelRestriction true
@@ -57,12 +57,6 @@ class TriggerContext implements Context {
                             statusCode entry.statusCode
                             timeout entry.timeout
                             proxyActivated entry.proxyActivated
-
-                            /* Does not work right now due to dependencies on Jenkins for encryption */
-                            /*if (entry.username && entry.password) {
-                                username entry.username
-                                password entry.password
-                            }*/
 
                             checkStatus entry.checks.contains(UrlTriggerEntryContext.Check.status)
                             checkETag entry.checks.contains(UrlTriggerEntryContext.Check.etag)
@@ -128,8 +122,7 @@ class TriggerContext implements Context {
      * Trigger that runs jobs on push notifications from Github/Github enterprise
      */
     def githubPush() {
-        def attributes = [plugin: 'github@1.6']
-        triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger'(attributes) {
+        triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
             spec ''
         }
     }
@@ -162,6 +155,7 @@ class TriggerContext implements Context {
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
             delegate.cron(pullRequestBuilderContext.cron)
+            spec pullRequestBuilderContext.cron
             triggerPhrase pullRequestBuilderContext.triggerPhrase
             onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase
             useGitHubHooks pullRequestBuilderContext.useGitHubHooks

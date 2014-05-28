@@ -98,51 +98,51 @@ class DownstreamTriggerContext implements Context {
                 || !boolParams.isEmpty() || sameNode)
     }
 
-    def createParametersNode() {
+    Node createParametersNode() {
         def nodeBuilder = NodeBuilder.newInstance()
 
         return nodeBuilder.'configs' {
             if (usingCurrentBuild) {
-                'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'(plugin:'parameterized-trigger@2.17')
+                'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'()
             }
 
             if (usingPropertiesFile) {
-                'hudson.plugins.parameterizedtrigger.FileBuildParameters'(plugin:'parameterized-trigger@2.17') {
+                'hudson.plugins.parameterizedtrigger.FileBuildParameters' {
                     delegate.createNode('propertiesFile', propFile)
                     delegate.createNode('failTriggerOnMissing', failTriggerOnMissing?'true':'false')
                 }
             }
 
             if (usingGitRevision) {
-                'hudson.plugins.git.GitRevisionBuildParameters'(plugin:'parameterized-trigger@2.17') {
+                'hudson.plugins.git.GitRevisionBuildParameters' {
                     'combineQueuedCommits' combineQueuedCommits ? 'true' : 'false'
                 }
             }
 
             if (usingPredefined) {
-                'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'(plugin:'parameterized-trigger@2.17') {
+                'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters' {
                     delegate.createNode('properties', predefinedProps.join('\n'))
                 }
             }
 
             if (usingMatrixSubset) {
-                'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'(plugin:'parameterized-trigger@2.17') {
+                'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters' {
                     filter matrixSubsetFilter
                 }
             }
 
             if (usingSubversionRevision) {
-                'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'(plugin:'parameterized-trigger@2.17') {
+                'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {
                     delegate.createNode('includeUpstreamParameters', includeUpstreamParameters?'true':'false')
                 }
             }
 
             if (sameNode) {
-                'hudson.plugins.parameterizedtrigger.NodeParameters'(plugin:'parameterized-trigger@2.17')
+                'hudson.plugins.parameterizedtrigger.NodeParameters'()
             }
 
             if (!boolParams.isEmpty()) {
-                'hudson.plugins.parameterizedtrigger.BooleanParameters'(plugin:'parameterized-trigger@2.17')  {
+                'hudson.plugins.parameterizedtrigger.BooleanParameters'  {
                     configs {
                         boolParams.each { k, v ->
                             def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {

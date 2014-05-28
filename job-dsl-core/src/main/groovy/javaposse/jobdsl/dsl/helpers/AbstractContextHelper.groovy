@@ -19,8 +19,6 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
             closure.delegate = freshContext
             closure.resolveStrategy = Closure.DELEGATE_FIRST
             def result = closure.call() // No args
-
-            // TODO Create callback to concrete classes, so that they can "enhance" the closure, e.g. with static imports
         }
     }
     /**
@@ -42,7 +40,6 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
     WithXmlAction generateWithXmlAction(T context) {
         // Closure to be run later, in this context we're given the root node with the WithXmlAction magic
         Closure withXmlClosure = generateWithXmlClosure(context)
-        //withXmlClosure.resolveStrategy = Closure.DELEGATE_FIRST
 
         return new WithXmlAction(withXmlClosure)
     }

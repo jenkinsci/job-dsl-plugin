@@ -20,7 +20,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
         def githubPushTrigger = context.triggerNodes[0]
         githubPushTrigger.name() == 'com.cloudbees.jenkins.GitHubPushTrigger'
-        githubPushTrigger.attribute('plugin') == "github@1.6"
         githubPushTrigger.spec[0].value() == ''
     }
 
@@ -55,7 +54,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -85,7 +83,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -126,7 +123,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -165,7 +161,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes.size() == 1
 
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -199,7 +194,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.spec[0].value() == 'H/5 * * * *'
         utc.labelRestriction != null
         utc.labelRestriction.size() == 1
@@ -229,7 +223,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.entries != null
         utc.entries.size() == 1
 
@@ -252,7 +245,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.spec[0].value() == '* 0 * 0 *'
     }
 
@@ -267,7 +259,6 @@ public class TriggerHelperSpec extends Specification {
         context.triggerNodes != null
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
-        utc.attribute('plugin') == 'urltrigger@0.31'
         utc.labelRestriction[0].value() == true
         utc.triggerLabel[0].value() == 'foo'
     }
@@ -304,13 +295,6 @@ public class TriggerHelperSpec extends Specification {
 
         then:
         1 * mockActions.add(_)
-
-        // TODO Support this notation
-//        when:
-//        helper.trigger.cron('0 13 0 0 0 0')
-//
-//        then:
-//        1 * mockActions.add(_)
     }
 
     def 'call pull request trigger with no args'() {
@@ -325,6 +309,7 @@ public class TriggerHelperSpec extends Specification {
             permitAll[0].value() == false
             autoCloseFailedPullRequests[0].value() == false
             cron[0].value() == 'H/5 * * * *'
+            spec[0].value() == 'H/5 * * * *'
             triggerPhrase[0].value() == ''
             adminlist[0].value() == ''
             whitelist[0].value() == ''
@@ -372,6 +357,7 @@ public class TriggerHelperSpec extends Specification {
             whitelist[0].value() == 'test'
             orgslist[0].value() == 'test'
             cron[0].value() == '*/5 * * * *'
+            spec[0].value() == '*/5 * * * *'
             triggerPhrase[0].value() == 'ok to test'
             onlyTriggerPhrase[0].value() == true
             useGitHubHooks[0].value() == true

@@ -203,10 +203,12 @@ columns {
     lastFailure()
     lastDuration()
     buildButton()
+    lastBuildConsole() // since 1.23, requires the Extra Columns Plugin
 }
 ```
 
-Adds columns to the views. The view will have no columns by default.
+Adds columns to the views. The view will have no columns by default. Some column types require the
+[Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin).
 
 ## Build Pipeline View Options
 

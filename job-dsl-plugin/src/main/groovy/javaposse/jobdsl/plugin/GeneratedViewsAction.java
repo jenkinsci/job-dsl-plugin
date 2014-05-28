@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.View;
 import javaposse.jobdsl.dsl.GeneratedView;
 
 import java.util.Set;
@@ -35,16 +36,17 @@ public class GeneratedViewsAction implements Action {
     public Set<GeneratedView> findLastGeneratedViews() {
         for (AbstractBuild<?, ?> b = project.getLastBuild(); b != null; b = b.getPreviousBuild()) {
             GeneratedViewsBuildAction action = b.getAction(GeneratedViewsBuildAction.class);
-            if (action != null) {
+            if (action != null && action.getModifiedViews() != null) {
                 return newLinkedHashSet(action.getModifiedViews());
             }
         }
-        return null;
+        return newLinkedHashSet();
     }
 
     /**
      * Search for all jobs which were created by the child builds
      */
+    @Deprecated
     public Set<GeneratedView> findAllGeneratedViews() {
         Set<GeneratedView> allGeneratedViews = newLinkedHashSet();
         for (AbstractBuild build : project.getBuilds()) {
@@ -54,5 +56,16 @@ public class GeneratedViewsAction implements Action {
             }
         }
         return allGeneratedViews;
+    }
+
+    public Set<View> getViews() {
+        Set<View> result = newLinkedHashSet();
+        for (AbstractBuild build : project.getBuilds()) {
+            GeneratedViewsBuildAction action = build.getAction(GeneratedViewsBuildAction.class);
+            if (action != null) {
+                result.addAll(action.getViews());
+            }
+        }
+        return result;
     }
 }
