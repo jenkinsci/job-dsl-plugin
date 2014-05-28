@@ -279,12 +279,12 @@ class ScmContext implements Context {
                     }
                 }
             }
-            workspaceUpdater('class':svnContext.checkoutstrategy.className)
-            excludedRegions svnContext.excludedregions.join("\n")
-            includedRegions svnContext.includedregions.join("\n")
-            excludedUsers svnContext.excludedusers.join("\n")
-            excludedCommitMessages svnContext.excludedcommitmsgs.join("\n")
-            excludedRevprop svnContext.excludedrevprop
+            workspaceUpdater('class':svnContext.checkoutStrategy.className)
+            excludedRegions svnContext.excludedRegions.join("\n")
+            includedRegions svnContext.includedRegions.join("\n")
+            excludedUsers svnContext.excludedUsers.join("\n")
+            excludedCommitMessages svnContext.excludedCommitMsgs.join("\n")
+            excludedRevprop svnContext.excludedRevProp
         }
 
         if (svnContext.browserXmlClosure) {
