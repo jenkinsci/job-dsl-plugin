@@ -855,9 +855,12 @@ public class ScmHelperSpec extends Specification {
     def 'call baseClearCase with all configuration parameters'() {
         when:
         context.baseClearCase {
-            configSpec('element .../foo/... /main/LATEST\n' + 'element .../bar/... /main/LATEST)')
-            loadRules('/vobs/foo\n' + '/vobs/bar')
-            mkviewOptionalParameter('foo\n' + 'bar')
+            configSpec('element .../foo1/... /main/LATEST\n' + 'element .../bar1/... /main/LATEST')
+            configSpec('element .../foo2/... /main/LATEST', 'element .../bar2/... /main/LATEST')
+            loadRules('/vobs/foo1\n' + '/vobs/bar1')
+            loadRules('/vobs/foo2', '/vobs/bar2')
+            mkviewOptionalParameter('foo1\n' + 'bar1')
+            mkviewOptionalParameter('foo2', 'bar2')
             viewName('Jenkins_${USER_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}')
             viewPath('views')
         }
@@ -871,9 +874,9 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.extractLoadRules[0].value() == false
         context.scmNode.filteringOutDestroySubBranchEvent[0].value() == false
         context.scmNode.freezeCode[0].value() == false
-        context.scmNode.loadRules[0].value() == '/vobs/foo\n' + '/vobs/bar'
+        context.scmNode.loadRules[0].value() == '/vobs/foo1\n' + '/vobs/bar1\n' + '/vobs/foo2\n' + '/vobs/bar2'
         context.scmNode.loadRulesForPolling[0].value() == ''
-        context.scmNode.mkviewOptionalParam[0].value() == 'foo\n' + 'bar'
+        context.scmNode.mkviewOptionalParam[0].value() == 'foo1\n' + 'bar1\n' + 'foo2\n' + 'bar2'
         context.scmNode.multiSitePollBuffer[0].value() == 0
         context.scmNode.recreateView[0].value() == false
         context.scmNode.removeViewOnRename[0].value() == false
@@ -884,7 +887,7 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.viewName[0].value() == 'Jenkins_${USER_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}'
         context.scmNode.viewPath[0].value() == 'views'
         context.scmNode.branch[0].value() == ''
-        context.scmNode.configSpec[0].value() == 'element .../foo/... /main/LATEST\n' + 'element .../bar/... /main/LATEST)'
+        context.scmNode.configSpec[0].value() == 'element .../foo1/... /main/LATEST\n' + 'element .../bar1/... /main/LATEST\n' + 'element .../foo2/... /main/LATEST\n' + 'element .../bar2/... /main/LATEST'
         context.scmNode.configSpecFileName[0].value() == ''
         context.scmNode.doNotUpdateConfigSpec[0].value() == false
         context.scmNode.extractConfigSpec[0].value() == false

@@ -533,11 +533,38 @@ baseClearCase {
     viewPath(String viewPath) // Default: //view
 ```
 
+
 Example defining config spec and load rules.
 ```groovy
 baseClearCase {
-    configSpec('element * CHECKEDOUT
-                element * /main/LATEST')
+    configSpec('''element * CHECKEDOUT
+                element * /main/LATEST''')
+    loadRules('/vob/some_vob')
+```
+
+configSpec(), loadRules(), mkviewOptionalParameter() can also be called multiple times as these configurations can be quite long.
+
+Example defining config spec and load rules with multiple methods calls.
+```groovy
+baseClearCase {
+    configSpec('element * CHECKEDOUT')
+    configSpec('element * /main/LATEST')
+    loadRules('/vob/some_vob')
+    loadRules('/vob/another_vob')
+```
+
+Example defining config spec and load rules using varargs parameters.
+```groovy
+baseClearCase {
+    configSpec('element * CHECKEDOUT', 'element * /main/LATEST')
+    loadRules('/vob/some_vob', '/vob/another_vob'')
+```
+
+This is another example which reads the config spec from a file in the current workspace using _readFileFromWorkspace_
+```groovy
+baseClearCase {
+    configSpec(readFileFromWorkspace('configSpec.txt'))
+    configSpec('element * /main/LATEST')
     loadRules('/vob/some_vob')
 ```
 
