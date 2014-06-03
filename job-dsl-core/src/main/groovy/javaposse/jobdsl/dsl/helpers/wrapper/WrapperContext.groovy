@@ -466,4 +466,26 @@ class WrapperContext implements Context {
             failBuild(context.failBuild)
         }
     }
+
+    /**
+     * Enables the "Build Name Setter Plugin" build wrapper.<br>
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin
+     *
+     * <pre>
+     * &lt;buildWrappers>
+     *     &lt;org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
+     *         &lt;template>#${BUILD_NUMBER} on ${ENV,var="BRANCH"}&lt;/template>
+     *     &lt;/org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
+     * &lt;/buildWrappers>
+     * </pre>
+     *
+     * @param nameTemplate template defining the build name. Tokens expansion
+     *   mechanism is provided by the Token Macro Plugin.
+     */
+    def buildName(String nameTemplate) {
+        Preconditions.checkNotNull(nameTemplate, "Name template must not be null")
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.buildnamesetter.BuildNameSetter' {
+            template nameTemplate
+        }
+    }
 }
