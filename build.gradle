@@ -24,6 +24,8 @@ subprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     apply plugin: 'maven' // For artifactory publishing
+    apply plugin: 'codenarc'
+
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
 
@@ -37,6 +39,14 @@ subprojects {
     }
     test {
         useJUnit() // Causes "failed to create temp file to extract class from jar into"
+    }
+
+    codenarc {
+        toolVersion = '0.21'
+    }
+
+    codenarcTest {
+        configFile = file("../config/codenarc/codenarc-test.xml")
     }
 }
 

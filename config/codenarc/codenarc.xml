@@ -1,0 +1,202 @@
+<ruleset xmlns="http://codenarc.org/ruleset/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://codenarc.org/ruleset/1.0 http://codenarc.org/ruleset-schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://codenarc.org/ruleset-schema.xsd">
+    <ruleset-ref path="rulesets/basic.xml">
+        <!-- TODO: fix violations -->
+        <exclude name="EqualsAndHashCode"/>
+        <!-- TODO: fix violations -->
+        <exclude name="EqualsOverloaded"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/braces.xml">
+        <!-- TODO: fix violations -->
+        <exclude name="ForStatementBraces"/>
+        <!-- TODO: fix violations -->
+        <exclude name="IfStatementBraces"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/concurrency.xml"/>
+
+    <ruleset-ref path="rulesets/convention.xml">
+        <!-- TODO: fix violations -->
+        <exclude name="CouldBeElvis"/>
+        <!-- this rule does not necessarily lead to better code -->
+        <exclude name="IfStatementCouldBeTernary"/>
+        <!-- TODO: fix violations -->
+        <exclude name="ParameterReassignment"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/design.xml">
+        <!-- TODO: fix violations -->
+        <exclude name="AbstractClassWithPublicConstructor"/>
+        <!-- we don't care -->
+        <exclude name="AbstractClassWithoutAbstractMethod"/>
+        <!-- we don't care -->
+        <exclude name="BuilderMethodWithSideEffects"/>
+        <!-- TODO: fix violations -->
+        <exclude name="DuplicateStringLiteral"/>
+        <!-- TODO: fix violations -->
+        <exclude name="PrivateFieldCouldBeFinal"/>
+        <!-- TODO: fix violations -->
+        <exclude name="PublicInstanceField"/>
+    </ruleset-ref>
+
+    <!-- these rules do not necessarily lead to better code -->
+    <!-- ruleset-ref path="rulesets/dry.xml" -->
+
+    <ruleset-ref path="rulesets/enhanced.xml"/>
+
+    <ruleset-ref path="rulesets/exceptions.xml">
+        <!-- TODO: evaluate DRY rules -->
+        <exclude name="ThrowRuntimeException"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/formatting.xml">
+        <!-- enforce at least one space after map entry colon -->
+        <rule-config name="SpaceAroundMapEntryColon">
+            <property name="characterAfterColonRegex" value="\s"/>
+        </rule-config>
+
+        <!-- TODO: fix violations -->
+        <exclude name="ClassJavadoc"/>
+        <!-- TODO: fix violations -->
+        <exclude name="ConsecutiveBlankLines"/>
+        <!-- TODO: fix violations -->
+        <exclude name="FileEndsWithoutNewline"/>
+        <!-- TODO: fix violations -->
+        <exclude name="LineLength"/>
+        <!-- TODO: fix violations -->
+        <exclude name="MissingBlankLineAfterImports"/>
+        <!-- TODO: fix violations -->
+        <exclude name="MissingBlankLineAfterPackage"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceAfterClosingBrace"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceAfterComma"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceAfterIf"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceAfterOpeningBrace"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceAfterSwitch"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceAroundMapEntryColon"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceAroundOperator"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceBeforeClosingBrace"/>
+        <!-- TODO: fix violations -->
+        <exclude name="SpaceBeforeOpeningBrace"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/generic.xml"/>
+
+    <ruleset-ref path="rulesets/groovyism.xml">
+        <!-- framework methods should be allowed to call leftShift explicitly -->
+        <rule-config name="ExplicitCallToLeftShiftMethod">
+            <property name="ignoreThisReference" value="true"/>
+        </rule-config>
+
+        <!-- creates false negatives -->
+        <exclude name="ClosureAsLastMethodParameter"/>
+        <!-- TODO: fix violations -->
+        <exclude name="ExplicitArrayListInstantiation"/>
+        <!-- TODO: fix violations -->
+        <exclude name="ExplicitCallToGetAtMethod"/>
+        <!-- not necessarily an issue, problems should be detected by unit tests -->
+        <exclude name="GStringExpressionWithinString"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/imports.xml">
+        <!-- we order static imports after other imports because that's the default style in IDEA -->
+        <rule-config name="MisorderedStaticImports">
+            <property name="comesBefore" value="false"/>
+        </rule-config>
+
+        <!-- TODO: fix violations -->
+        <exclude name="UnusedImport"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/junit.xml"/>
+
+    <ruleset-ref path="rulesets/logging.xml">
+        <!-- TODO: fix violations -->
+        <exclude name="LoggerForDifferentClass"/>
+        <!-- TODO: fix violations -->
+        <exclude name="Println"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/naming.xml">
+        <!-- this is an issue, but currently the Context classes violate this by convention -->
+        <exclude name="ConfusingMethodName"/>
+        <!-- TODO: fix violations -->
+        <exclude name="FactoryMethodName"/>
+        <!-- TODO: fix violations -->
+        <exclude name="PropertyName"/>
+        <!-- TODO: fix violations -->
+        <exclude name="VariableName"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/security.xml">
+        <!-- we don't care because our classes need not to satisfy the Java Beans specification -->
+        <exclude name="JavaIoPackageAccess"/>
+        <!-- TODO: fix violations -->
+        <exclude name="NonFinalPublicField"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/serialization.xml">
+        <!-- we don't care because we are not using Java serialization -->
+        <exclude name="SerializableClassMustDefineSerialVersionUID"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/size.xml">
+        <!-- we don't care for now -->
+        <exclude name="AbcMetric"/>
+        <!-- we don't care for now -->
+        <exclude name="ClassSize"/>
+        <!-- we don't care for now -->
+        <exclude name="NestedBlockDepth"/>
+        <!-- we don't care for now -->
+        <exclude name="MethodCount"/>
+        <!-- we don't care for now -->
+        <exclude name="MethodSize"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/unnecessary.xml">
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryCollectCall"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryDefInFieldDeclaration"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryDefInMethodDeclaration"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryDotClass"/>
+        <!-- we don't care, does not necessarily lead to better code -->
+        <exclude name="UnnecessaryElseStatement"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryGetter"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryGString"/>
+        <!-- we don't care, does not necessarily lead to better code -->
+        <exclude name="UnnecessaryObjectReferences"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryPackageReference"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryParenthesesForMethodCallWithClosure"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryPublicModifier"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessaryReturnKeyword"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessarySemicolon"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnnecessarySubstring"/>
+    </ruleset-ref>
+
+    <ruleset-ref path="rulesets/unused.xml">
+        <!-- TODO: fix violations -->
+        <exclude name="UnusedPrivateField"/>
+        <!-- TODO: fix violations -->
+        <exclude name="UnusedVariable"/>
+    </ruleset-ref>
+</ruleset>
