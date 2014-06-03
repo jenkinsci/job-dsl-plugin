@@ -12,6 +12,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslScriptLoader;
@@ -275,18 +276,22 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for(GeneratedJob removedJob: removed) {
-            AbstractProject removedProject = (AbstractProject) Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
-            if (removedProject != null && removedJobAction != RemovedJobAction.IGNORE) {
+            Item removedItem = Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
+            if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
-                        removedProject.delete();
+                        removedItem.delete();
                     } catch(InterruptedException e) {
                         listener.getLogger().println(String.format("Delete item failed: %s", removedJob));
-                        listener.getLogger().println(String.format("Disabling item instead: %s", removedJob));
-                        removedProject.disable();
+                        if (removedItem instanceof AbstractProject) {
+                            listener.getLogger().println(String.format("Disabling item instead: %s", removedJob));
+                            ((AbstractProject) removedItem).disable();
+                        }
                     }
                 } else {
-                    removedProject.disable();
+                    if (removedItem instanceof AbstractProject) {
+                        ((AbstractProject) removedItem).disable();
+                    }
                 }
             }
         }

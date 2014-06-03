@@ -18,6 +18,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import java.io.File;
 
 import static hudson.model.Result.SUCCESS;
+import static javaposse.jobdsl.plugin.RemovedJobAction.DELETE;
 import static javaposse.jobdsl.plugin.RemovedJobAction.IGNORE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -518,6 +519,29 @@ public class ExecuteDslScriptsTest {
         // then
         assertTrue(item instanceof Folder);
         assertNull(item.getDescription());
+    }
+
+    @Test
+    public void removeFolder() throws Exception {
+        // setup
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject("seed");
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, FOLDER_SCRIPT), true, IGNORE));
+        job.onCreatedFromScratch();
+
+        // when
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get();
+
+        // then
+        assertEquals(SUCCESS, freeStyleBuild.getResult());
+
+        // when
+        job.getBuildersList().clear();
+        job.getBuildersList().add(new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, "// empty"), true, DELETE));
+        freeStyleBuild = job.scheduleBuild2(0).get();
+
+        // then
+        assertEquals(SUCCESS, freeStyleBuild.getResult());
+        assertNull(jenkinsRule.getInstance().getItem("test-folder"));
     }
 
     private static final String SCRIPT = "" +
