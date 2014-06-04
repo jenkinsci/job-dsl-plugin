@@ -95,7 +95,7 @@ ruleset {
             ignoreThisReference = true
         }
 
-        // creates false negatives
+        // TODO: fix violations
         exclude 'ClosureAsLastMethodParameter'
         // TODO: fix violations
         exclude 'ExplicitArrayListInstantiation'
@@ -163,7 +163,7 @@ ruleset {
         exclude 'UnnecessaryGetter'
         // TODO: fix violations
         exclude 'UnnecessaryGString'
-        // we don't care, does not necessarily lead to better code
+        // TODO: fix violations
         exclude 'UnnecessaryObjectReferences'
         // TODO: fix violations
         exclude 'UnnecessaryPackageReference'
