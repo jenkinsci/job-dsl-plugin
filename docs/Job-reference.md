@@ -2607,25 +2607,28 @@ job {
 ```groovy
 job {
     publishers {
-        rundeck (String jobId) {
-            options [:]                     //defaults to empty map if omitted
-            tag ''                          //defaults to empty string if omitted
-            nodeFilters [:]                 //defaults to empty map if omitted
-            shouldWaitForRundeckJob true    //defaults to true if omitted
-            shouldFailTheBuild true         //defaults to true if omitted
+        rundeck(String jobId) {
+            options(Map<String, String> option)           // defaults to empty map if omitted
+            option(String key, String value)
+            tag(String tag)                               // defaults to empty string if omitted
+            nodeFilters(Map<String, String> filters)      // defaults to empty map if omitted
+            nodeFilter(String key, String value)
+            shouldWaitForRundeckJob(boolean value = true) // defaults to false if omitted
+            shouldFailTheBuild(boolean value = true)      // defaults to false if omitted
         }
     }
 }
 ```
 
-Configure a Jenkins job to trigger a RunDeck job as a post-build action. Requires the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
+Configure a Jenkins job to trigger a Rundeck job as a post-build action. Requires the
+[RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
 
 Examples:
 
 ```groovy
 job {
     publishers {
-        rundeck (13eba461-179d-40a1-8a08-bafee33fdc12) {
+        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {
     }
 }
 ```
@@ -2633,19 +2636,20 @@ job {
 ```groovy
 job {
     publishers {
-        rundeck (13eba461-179d-40a1-8a08-bafee33fdc12) {
-            options artifact: 'app', env: 'dev'
-            option 'version', '1.1'
-            tag 'deploy app to dev'
-            nodeFilters hostname: 'dev(\d+).company.net'
-            nodeFilter 'tags', 'www+dev'
-            shouldWaitForRundeckJob true
-            shouldFailTheBuild true
+        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {
+            options(artifact: 'app', env: 'dev')
+            option('version', '1.1')
+            tag('deploy app to dev')
+            nodeFilters(hostname: 'dev(\\d+).company.net')
+            nodeFilter('tags', 'www+dev')
+            shouldWaitForRundeckJob()
+            shouldFailTheBuild()
         }
     }
 }
 ```
 
+(since 1.24)
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**

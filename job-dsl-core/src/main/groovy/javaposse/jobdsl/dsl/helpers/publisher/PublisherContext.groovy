@@ -1207,18 +1207,17 @@ class PublisherContext implements Context {
      */
     def rundeck(String jobIdentifier, Closure rundeckClosure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(jobIdentifier), 'jobIdentifier cannot be null or empty')
+
         RundeckContext rundeckContext = new RundeckContext()
         AbstractContextHelper.executeInContext(rundeckClosure, rundeckContext)
 
-        Node rundeckNode = NodeBuilder.newInstance().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
+        publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
             jobId jobIdentifier
-            options rundeckContext.options.collect { key, value -> "${key}=${value}" }.join(' ')
-            nodeFilters rundeckContext.nodeFilters.collect { key, value -> "${key}=${value}" }.join(' ')
+            options rundeckContext.options.collect({ key, value -> "${key}=${value}" }).join('\n')
+            nodeFilters rundeckContext.nodeFilters.collect({ key, value -> "${key}=${value}" }).join('\n')
             tag rundeckContext.tag
             shouldWaitForRundeckJob rundeckContext.shouldWaitForRundeckJob
             shouldFailTheBuild rundeckContext.shouldFailTheBuild
         }
-
-        publisherNodes << rundeckNode
     }
 }

@@ -2259,8 +2259,8 @@ public class PublisherHelperSpec extends Specification {
         Node rundeckNode = context.publisherNodes[0]
         rundeckNode.name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
         rundeckNode.jobId[0].value() == 'jobId'
-        rundeckNode.options[0].value() == 'key1=value1 key2=value2 key4=value4 key3=value3'
-        rundeckNode.nodeFilters[0].value() == 'key1=value1 key2=value2 key4=value4 key3=value3'
+        rundeckNode.options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+        rundeckNode.nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
         rundeckNode.tag[0].value() == 'tag'
         rundeckNode.shouldWaitForRundeckJob[0].value() == true
         rundeckNode.shouldFailTheBuild[0].value() == false
@@ -2275,7 +2275,7 @@ public class PublisherHelperSpec extends Specification {
         exception.message == "jobIdentifier cannot be null or empty"
 
         where:
-        id | _
+        id   | _
         null | _
         ''   | _
     }

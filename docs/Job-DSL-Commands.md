@@ -196,7 +196,7 @@ job(attributes) {
         stashNotifier(stashNotifierClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
         mavenDeploymentLinker(String regex) // since 1.23
         wsCleanup(wsCleanupClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
-        rundeck(jobId, rundeckClosure = null) // See [[Job Reference]] for the closure syntax
+        rundeck(jobId, rundeckClosure = null) // since 1.24. See [[Job Reference]] for the closure syntax
     }
     parameters {
         booleanParam(parameterName, defaultValue, description)
