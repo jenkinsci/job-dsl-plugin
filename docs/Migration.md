@@ -10,6 +10,8 @@ timeout(String type) { //type is one of: 'absolute', 'elastic', 'likelyStuck'
     limit 15       // timeout in minutes
     percentage 200 // percentage of runtime to consider a build timed out
 }
+
+timeout(35, false)
 ```
 
 DSL since 1.23
@@ -19,7 +21,13 @@ timeout {
    failBuild()
    writeDescription('Build failed due to timeout after {0} minutes')
 }
+
+timeout {
+    absolute(35)
+    failBuild(false)
+}
 ```
+
 See the [[Job Reference]] for further details.
 
 ## Migrating to 1.20

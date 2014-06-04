@@ -122,6 +122,7 @@ class WrapperContext implements Context {
         jobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
         Timeout ttype
         if (type) {
+            jobManagement.logDeprecationWarning()
             try {
                 ttype = Timeout.valueOf(type)
             } catch (IllegalArgumentException iae) {
