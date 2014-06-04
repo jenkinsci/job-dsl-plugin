@@ -120,19 +120,17 @@ class WrapperContext implements Context {
      */
     def timeout(String type = Timeout.absolute.toString(), Closure timeoutClosure = null) {
         jobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
-        Timeout ttype
+        Timeout timeoutType = null
         if (type) {
             jobManagement.logDeprecationWarning()
             try {
-                ttype = Timeout.valueOf(type)
+                timeoutType = Timeout.valueOf(type)
             } catch (IllegalArgumentException iae) {
                 throw new IllegalArgumentException("Timeout type was ${type} but must be one of: ${Timeout.values()}")
             }
-        } else {
-            ttype = null
         }
 
-        TimeoutContext ctx = new TimeoutContext(ttype, jobManagement)
+        TimeoutContext ctx = new TimeoutContext(timeoutType, jobManagement)
         AbstractContextHelper.executeInContext(timeoutClosure, ctx)
 
         def nodeBuilder = new NodeBuilder()
@@ -140,17 +138,17 @@ class WrapperContext implements Context {
             strategy(class: ctx.type.className) {
                 switch (ctx.type) {
                     case Timeout.absolute:
-                        timeoutMinutes('' + ctx.limit)
+                        timeoutMinutes(ctx.limit)
                         break
                     case Timeout.elastic:
-                        timeoutPercentage('' + ctx.percentage)
-                        numberOfBuilds('' + ctx.numberOfBuilds)
-                        timeoutMinutesElasticDefault('' + ctx.minutesDefault)
+                        timeoutPercentage(ctx.percentage)
+                        numberOfBuilds(ctx.numberOfBuilds)
+                        timeoutMinutesElasticDefault(ctx.minutesDefault)
                         break
                     case Timeout.likelyStuck:
                         break
                     case Timeout.noActivity:
-                        delegate.timeout('' + ctx.noActivitySeconds)
+                        delegate.timeout(ctx.noActivitySeconds)
                         break
                     default:
                         Preconditions.checkArgument(false, 'Timeout type must be selected!')
@@ -165,7 +163,6 @@ class WrapperContext implements Context {
                         description(ctx.description)
                     }
                 }
-
             }
         }
     }

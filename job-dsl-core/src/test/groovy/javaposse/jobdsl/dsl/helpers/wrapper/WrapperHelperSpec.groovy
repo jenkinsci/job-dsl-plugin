@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -100,7 +99,7 @@ class WrapperHelperSpec extends Specification {
         then:
         def strategy = timeoutWrapper.strategy[0]
         strategy.attribute('class') == 'hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy'
-        strategy.timeoutMinutes[0].value() == '15'
+        strategy.timeoutMinutes[0].value() == 15
         timeoutWrapper.operationList.size() == 1
         timeoutHasFailOperation()
     }
@@ -115,7 +114,6 @@ class WrapperHelperSpec extends Specification {
             timeout(15, false)
         }
         executeHelperActionsOnRootNode()
-
 
         then:
         timeoutHasNoOperation()
@@ -133,8 +131,7 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def timeout = root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == '3'
+        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == 3
         timeoutHasNoOperation()
     }
 
@@ -148,7 +145,7 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == '5'
+        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == 5
         timeoutHasNoOperation()
     }
 
@@ -166,11 +163,10 @@ class WrapperHelperSpec extends Specification {
         }
         executeHelperActionsOnRootNode()
 
-
         then:
         def strategy = timeoutWrapper.strategy[0]
-        strategy.timeoutMinutesElasticDefault[0].value() == '15'
-        strategy.timeoutPercentage[0].value() ==  '200'
+        strategy.timeoutMinutesElasticDefault[0].value() == 15
+        strategy.timeoutPercentage[0].value() == 200
         strategy.attribute('class') == Timeout.elastic.className
         timeoutHasNoOperation()
     }
@@ -188,7 +184,7 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def strategy = timeoutWrapper.strategy[0]
-        strategy.timeout[0].value() == '15'
+        strategy.timeout[0].value() == 15
         strategy.attribute('class') == Timeout.noActivity.className
         timeoutWrapper.operationList[0].'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
     }
@@ -202,9 +198,8 @@ class WrapperHelperSpec extends Specification {
         }
         executeHelperActionsOnRootNode()
 
-
-        def strategy = timeoutWrapper.strategy[0]
         then:
+        def strategy = timeoutWrapper.strategy[0]
         strategy.attribute('class') == Timeout.likelyStuck.className
         strategy.children().size() == 0
         timeoutHasNoOperation()

@@ -728,16 +728,25 @@ rvm('ruby-2.0@gemset')
 
 Configures the job to prepare a Ruby environment controlled by RVM for the build. Requires at least the ruby version, can take also a gemset specification to prevent side effects with other builds. (Available since 1.16)
 
-## [Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
-Requires version 1.12 or later of the [Timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin).
+## Build Timeout
 
 ```groovy
-timeout          { //
-    absolute(15)   // timeout in minutes
+timeout {
+    elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60)
+    noActivity(int seconds = 180)
+    absolute(int minutes = 3)                  // default
+    likelyStuck()
+    failBuild(boolean fail = true)
+    writeDescription(String description)
+    limit(int limit)                           // deprecated
+    percentage(int percentage)                 // deprecated
+    writeDescription(boolean writeDesc = true) // deprecated
 }
 ```
 
-The timeout method enables you to define a timeout for builds. It can either be absolute (build times out after a fixed number of minutes), elastic (times out if build runs x% longer than the average build duration) or likelyStuck. (Available since 1.16)
+The timeout method enables you to define a timeout for builds. It can either be absolute (build times out after a fixed number of minutes), elastic (times out if build runs x% longer than the average build duration) or likelyStuck.
+
+Requires version 1.12 or later of the [Build Timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin).
 
 The simplest invocation looks like this:
 
@@ -790,6 +799,7 @@ When the timeout happens, the default action is to abort if no other actions are
 - Add a build description
 
 They are both simultaneously allowed and configured like this:
+
 ```groovy
 timeout {
    absolute(30)
@@ -803,6 +813,8 @@ The following syntax has been available before 1.16 and will be retained for com
 ```groovy
 timeout(int timeoutInMinutes, Boolean shouldFailBuild = true)
 ```
+
+(since 1.24)
 
 ## Port allocation
 ```groovy
