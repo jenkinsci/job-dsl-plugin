@@ -586,4 +586,26 @@ class WrapperHelperSpec extends Specification {
             children()[0].value() == true
         }
     }
+
+    def 'call buildName' () {
+        when:
+        helper.wrappers {
+            buildName('#${BUILD_NUMBER} && <test>')
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'org.jenkinsci.plugins.buildnamesetter.BuildNameSetter'
+        wrapper.template[0].value() == '#${BUILD_NUMBER} && <test>'
+    }
+
+    def 'call buildName with null parameter' () {
+        when:
+        helper.wrappers {
+            buildName(null)
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
 }

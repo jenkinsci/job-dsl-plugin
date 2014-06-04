@@ -1013,6 +1013,32 @@ job {
 
 (since 1.23)
 
+## Build Name Setter Plugin
+
+```groovy
+job {
+    wrappers {
+        buildName(String nameTemplate)
+    }
+}
+```
+
+Configures the [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin). Token
+expansion mechanism is provided by the
+[Token Macro Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Token+Macro+Plugin).
+
+Example:
+```groovy
+// define the build name based on the build number and an environment variable
+job {
+    wrappers {
+        buildName('#${BUILD_NUMBER} on ${ENV,var="BRANCH"}')
+    }
+}
+```
+
+(since 1.24)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
