@@ -246,16 +246,18 @@ class TriggerContext implements Context {
                     }
                 }
             }
-            gerritBuildStartedVerifiedValue Integer.toString(gerritContext.startedVerified)
-            gerritBuildStartedCodeReviewValue Integer.toString(gerritContext.startedCodeReview)
-            gerritBuildSuccessfulVerifiedValue Integer.toString(gerritContext.successfulVerified)
-            gerritBuildSuccessfulCodeReviewValue Integer.toString(gerritContext.successfulCodeReview)
-            gerritBuildFailedVerifiedValue Integer.toString(gerritContext.failedVerified)
-            gerritBuildFailedCodeReviewValue Integer.toString(gerritContext.failedCodeReview)
-            gerritBuildUnstableVerifiedValue Integer.toString(gerritContext.unstableVerified)
-            gerritBuildUnstableCodeReviewValue Integer.toString(gerritContext.unstableCodeReview)
-            gerritBuildNotBuiltVerifiedValue Integer.toString(gerritContext.notBuiltVerified)
-            gerritBuildNotBuiltCodeReviewValue Integer.toString(gerritContext.notBuiltCodeReview)
+            gerritContext.with {
+                if (startedVerified != null) gerritBuildStartedVerifiedValue Integer.toString(startedVerified)
+                if (startedCodeReview != null) gerritBuildStartedCodeReviewValue Integer.toString(startedCodeReview)
+                if (successfulVerified != null) gerritBuildSuccessfulVerifiedValue Integer.toString(successfulVerified)
+                if (successfulCodeReview != null) gerritBuildSuccessfulCodeReviewValue Integer.toString(successfulCodeReview)
+                if (failedVerified != null) gerritBuildFailedVerifiedValue Integer.toString(failedVerified)
+                if (failedCodeReview != null) gerritBuildFailedCodeReviewValue Integer.toString(failedCodeReview)
+                if (unstableVerified != null) gerritBuildUnstableVerifiedValue Integer.toString(unstableVerified)
+                if (unstableCodeReview != null) gerritBuildUnstableCodeReviewValue Integer.toString(unstableCodeReview)
+                if (notBuiltVerified != null) gerritBuildNotBuiltVerifiedValue Integer.toString(notBuiltVerified)
+                if (notBuiltCodeReview != null) gerritBuildNotBuiltCodeReviewValue Integer.toString(notBuiltCodeReview)
+            }
             dynamicTriggerConfiguration false
             triggerConfigURL ''
             triggerInformationAction ''

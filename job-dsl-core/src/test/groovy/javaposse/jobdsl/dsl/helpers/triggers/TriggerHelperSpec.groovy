@@ -398,9 +398,6 @@ public class TriggerHelperSpec extends Specification {
         gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
         gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '10'
 
-        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() == '0'
-
         Node gerritEvents = gerritTrigger.triggerOnEvents[0]
         gerritEvents.children().size() == 2
         gerritEvents.children()[0].name().contains('com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin')
@@ -439,23 +436,12 @@ public class TriggerHelperSpec extends Specification {
         }
       then:
         def gerritTrigger = context.triggerNodes[0]
-        gerritTrigger.gerritBuildSuccessfulCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildSuccessfulCodeReviewValue[0].value() == '0'
-
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '1'
-
-        gerritTrigger.gerritBuildFailedVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildFailedVerifiedValue[0].value() as String == '-1'
-
-        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() as String == '0'
-
-        gerritTrigger.gerritBuildUnstableVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildUnstableVerifiedValue[0].value() as String == '0'
-
-        gerritTrigger.gerritBuildUnstableCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildUnstableCodeReviewValue[0].value() == '0'
+        gerritTrigger.gerritBuildSuccessfulCodeReviewValue.size() == 0
+        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 0
+        gerritTrigger.gerritBuildFailedVerifiedValue.size() == 0
+        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 0
+        gerritTrigger.gerritBuildUnstableVerifiedValue.size() == 0
+        gerritTrigger.gerritBuildUnstableCodeReviewValue.size() == 0
     }
 
 
