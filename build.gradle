@@ -43,10 +43,11 @@ subprojects {
 
     codenarc {
         toolVersion = '0.21'
+        configFile = file("../config/codenarc/rules.groovy")
     }
 
     codenarcTest {
-        configFile = file("../config/codenarc/codenarc-test.xml")
+        configFile = file("../config/codenarc/rules-test.groovy")
     }
 }
 
