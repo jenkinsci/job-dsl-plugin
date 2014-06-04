@@ -728,16 +728,25 @@ rvm('ruby-2.0@gemset')
 
 Configures the job to prepare a Ruby environment controlled by RVM for the build. Requires at least the ruby version, can take also a gemset specification to prevent side effects with other builds. (Available since 1.16)
 
-## Timeout
+## Build Timeout
 
 ```groovy
-timeout(String type) { //type is one of: 'absolute', 'elastic', 'likelyStuck'
-    limit 15       // timeout in minutes
-    percentage 200 // percentage of runtime to consider a build timed out
+timeout {
+    elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60)
+    noActivity(int seconds = 180)
+    absolute(int minutes = 3)                  // default
+    likelyStuck()
+    failBuild(boolean fail = true)
+    writeDescription(String description)
+    limit(int limit)                           // deprecated
+    percentage(int percentage)                 // deprecated
+    writeDescription(boolean writeDesc = true) // deprecated
 }
 ```
 
-The timeout method enables you to define a timeout for builds. It can either be absolute (build times out after a fixed number of minutes), elastic (times out if build runs x% longer than the average build duration) or likelyStuck. (Available since 1.16)
+The timeout method enables you to define a timeout for builds. It can either be absolute (build times out after a fixed number of minutes), elastic (times out if build runs x% longer than the average build duration) or likelyStuck.
+
+Requires version 1.12 or later of the [Build Timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin).
 
 The simplest invocation looks like this:
 
@@ -750,33 +759,62 @@ It defines an absolute timeout with a maximum build time of 3 minutes.
 Here is an absolute timeout:
 
 ```groovy
-timeout('absolute') {
-    limit 60              // 60 minutes before timeout
+timeout {
+    absolute(60)   // 60 minutes before timeout
 }
 ```
 
-The elastic timeout accepts two parameters: a percentage for determining builds that take longer than normal an a limit that is used if there is no average successful build duration (i.e. no jobs run or all runs failed):
+The elastic timeout accepts three parameters: a percentage for determining builds that take longer than normal,
+a limit that is used if there is no average successful build duration (i.e. no jobs run or all runs failed) and
+the number of successful/unstable builds to consider to calculate the average duration:
 
 ```groovy
-timeout('elastic') {
-    limit 30        // 30 minutes default timeout (no successful builds available as reference)
-    percentage 300  // Build will timeout when it take 3 time longer than the reference build duration
+timeout {
+    elastic(
+        300, // Build will timeout when it take 3 time longer than the reference build duration, default = 150
+        3,   // Number of builds to consider for average calculation
+        30)  // 30 minutes default timeout (no successful builds available as reference)
 }
 ```
 
 The likelyStuck timeout times out a build when it is likely to be stuck. Does not take extra configuration parameters.
 
 ```groovy
-timeout('likelyStuck')
+timeout {
+    likelyStuck()
+}
+```
+
+The noActivity timeout times out a build when there has been no console activity for a certain duration.
+
+```groovy
+timeout {
+    noActivity(180) // Timeout if there has been no activity for 180 seconds
+}
+```
+
+When the timeout happens, the default action is to abort if no other actions are configured. There are two other actions:
+
+- Fail the build
+- Add a build description
+
+They are both simultaneously allowed and configured like this:
+
+```groovy
+timeout {
+   absolute(30)
+   failBuild()
+   writeDescription('Build failed due to timeout after {0} minutes')
+}
 ```
 
 The following syntax has been available before 1.16 and will be retained for compatibility reasons:
 
 ```groovy
-timeout(int timeoutInMinutes, Boolean shoudFailBuild = true)
+timeout(int timeoutInMinutes, Boolean shouldFailBuild = true)
 ```
 
-Using the build timeout plugin, it can fail a build after a certain amount of time.
+(since 1.24)
 
 ## Port allocation
 ```groovy
