@@ -1440,7 +1440,7 @@ conditionalSteps {
         status(String worstResult, String bestResult) // Run if worstResult <= (current build status) <= bestResult
         shell(String command) // Run if shell script succeeds (Since 1.23)
         batch(String command) // Run if batch script succeeds (Since 1.23)
-        fileExits(String file, BaseDir baseDir) // Run if file exists relative to baseDir. BaseDir can be one of JENKINS_HOME, ARTIFACTS_DIR and WORKSPACE (Since 1.23)
+        fileExists(String file, BaseDir baseDir) // Run if file exists relative to baseDir. BaseDir can be one of JENKINS_HOME, ARTIFACTS_DIR and WORKSPACE (Since 1.23)
         not(Closure condition) // Run if the condition is not satisfied (Since 1.23)
         and(Closure... conditions) // Run if all conditions are satisfied (Since 1.23)
         or(Closure... conditions) // Run if any condition is satisfied (Since 1.23)
