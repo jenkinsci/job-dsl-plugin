@@ -608,5 +608,4 @@ class WrapperHelperSpec extends Specification {
         then:
         thrown(NullPointerException)
     }
-
 }

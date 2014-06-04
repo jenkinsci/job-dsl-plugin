@@ -1013,7 +1013,19 @@ job {
 
 (since 1.23)
 
-## [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
+## Build Name Setter Plugin
+
+```groovy
+job {
+    wrappers {
+        buildName(String nameTemplate)
+    }
+}
+```
+
+Configures the [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin). Token
+expansion mechanism is provided by the
+[Token Macro Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Token+Macro+Plugin).
 
 Example:
 ```groovy
@@ -1025,10 +1037,7 @@ job {
 }
 ```
 
-Configures the Build Name Setter plugin. Tokens expansion mechanism is provided
-by the Token Macro Plugin.
-
-(Since 1.24)
+(since 1.24)
 
 # Build Steps
 
