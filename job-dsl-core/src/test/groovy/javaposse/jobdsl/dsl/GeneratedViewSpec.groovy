@@ -33,7 +33,7 @@ class GeneratedViewSpec extends Specification {
         view.compareTo(2) > 0
     }
 
-    def 'equals'() {
+    def 'test equals'() {
         when:
         GeneratedView view = new GeneratedView('test')
 
@@ -44,7 +44,7 @@ class GeneratedViewSpec extends Specification {
         !view.equals('test')
     }
 
-    def 'hashCode'() {
+    def 'test hashCode'() {
         when:
         GeneratedView view = new GeneratedView('test')
 
@@ -53,7 +53,7 @@ class GeneratedViewSpec extends Specification {
         view.hashCode() != new GeneratedView('other').hashCode()
     }
 
-    def 'toString'() {
+    def 'test toString'() {
         when:
         GeneratedView view = new GeneratedView('test')
 
