@@ -213,28 +213,32 @@ class WrapperContext implements Context {
         wrapperNodes << nodeBuilder.'org.jvnet.hudson.plugins.port__allocator.PortAllocator' {
             ports {
                 if (portsArg)
-                    for (p in portsArg)
+                    for (p in portsArg) {
                         'org.jvnet.hudson.plugins.port__allocator.DefaultPortType' {
                             name p
                         }
+                    }
 
-                for (p in portContext.simplePorts)
+                for (p in portContext.simplePorts) {
                     'org.jvnet.hudson.plugins.port__allocator.DefaultPortType' {
                         name p.port
                     }
+                }
 
-                for (p in portContext.glassfishPorts)
+                for (p in portContext.glassfishPorts) {
                     'org.jvnet.hudson.plugins.port__allocator.GlassFishJmxPortType' {
                         name p.port
                         userName p.username
                         password p.password
                     }
+                }
 
-                for (p in portContext.tomcatPorts)
+                for (p in portContext.tomcatPorts) {
                     'org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType' {
                         name p.port
                         password p.password
                     }
+                }
             }
         }
     }

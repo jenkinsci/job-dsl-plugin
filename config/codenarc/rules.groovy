@@ -8,8 +8,6 @@ ruleset {
 
     ruleset('rulesets/braces.xml') {
         // TODO: fix violations
-        exclude 'ForStatementBraces'
-        // TODO: fix violations
         exclude 'IfStatementBraces'
     }
 
