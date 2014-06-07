@@ -212,12 +212,13 @@ class WrapperContext implements Context {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'org.jvnet.hudson.plugins.port__allocator.PortAllocator' {
             ports {
-                if (portsArg)
+                if (portsArg) {
                     for (p in portsArg) {
                         'org.jvnet.hudson.plugins.port__allocator.DefaultPortType' {
                             name p
                         }
                     }
+                }
 
                 for (p in portContext.simplePorts) {
                     'org.jvnet.hudson.plugins.port__allocator.DefaultPortType' {

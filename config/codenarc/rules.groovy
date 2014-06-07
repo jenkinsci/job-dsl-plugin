@@ -6,10 +6,7 @@ ruleset {
         exclude 'EqualsOverloaded'
     }
 
-    ruleset('rulesets/braces.xml') {
-        // TODO: fix violations
-        exclude 'IfStatementBraces'
-    }
+    ruleset('rulesets/braces.xml')
 
     ruleset('rulesets/concurrency.xml')
 

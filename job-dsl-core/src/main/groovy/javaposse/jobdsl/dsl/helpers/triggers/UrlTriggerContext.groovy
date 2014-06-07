@@ -14,7 +14,9 @@ class UrlTriggerContext implements Context {
     String crontab = 'H/5 * * * *'
 
     UrlTriggerContext(String cron = null) {
-        if (cron) this.crontab = cron
+        if (cron) {
+            this.crontab = cron
+        }
     }
 
     /** Adds configure closure for overriding the generated XML */
