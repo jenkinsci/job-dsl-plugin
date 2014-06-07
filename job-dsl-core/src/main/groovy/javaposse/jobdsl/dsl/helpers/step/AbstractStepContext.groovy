@@ -188,11 +188,6 @@ class AbstractStepContext implements Context {
         }
         targetList.addAll antContext.targets
 
-        // Build File
-        if (!buildFileArg && antContext.buildFile) { // Fall back to context
-            buildFileArg = antContext.buildFile
-        }
-
         def antOptsList = antContext.antOpts
 
         def propertiesList = []
@@ -208,8 +203,8 @@ class AbstractStepContext implements Context {
                 antOpts antOptsList.join('\n')
             }
 
-            if (buildFileArg) {
-                buildFile buildFileArg
+            if (buildFileArg || antContext.buildFile) {
+                buildFile buildFileArg ?: antContext.buildFile
             }
         }
 
@@ -556,8 +551,7 @@ class AbstractStepContext implements Context {
         def nodeBuilder = new NodeBuilder()
         def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
              // Important that there are no spaces for comma delimited values, plugin doesn't handle by trimming, so we will
-            projectList = projectList.tokenize(',').collect{ it.trim() }.join(',')
-            projects(projectList)
+            projects(projectList.tokenize(',').collect { it.trim() }.join(','))
             warningOnly(warningOnlyBool)
         }
         stepNodes << preReqNode

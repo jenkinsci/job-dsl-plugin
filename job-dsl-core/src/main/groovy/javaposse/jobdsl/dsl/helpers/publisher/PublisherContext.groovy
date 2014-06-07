@@ -73,17 +73,13 @@ class PublisherContext implements Context {
             emailContext.emailTriggers << new EmailContext.EmailTrigger('Success')
         }
 
-        recipients = recipients != null ? recipients : '$DEFAULT_RECIPIENTS'
-        subjectTemplate = subjectTemplate ?: '$DEFAULT_SUBJECT'
-        contentTemplate = contentTemplate ?: '$DEFAULT_CONTENT'
-
         // Now that the context has what we need
         def nodeBuilder = NodeBuilder.newInstance()
         def emailNode = nodeBuilder.'hudson.plugins.emailext.ExtendedEmailPublisher' {
-            recipientList recipients
+            recipientList recipients != null ? recipients : '$DEFAULT_RECIPIENTS'
             contentType 'default'
-            defaultSubject subjectTemplate
-            defaultContent contentTemplate
+            defaultSubject subjectTemplate ?: '$DEFAULT_SUBJECT'
+            defaultContent contentTemplate ?: '$DEFAULT_CONTENT'
             attachmentsPattern ''
 
             configuredTriggers {
