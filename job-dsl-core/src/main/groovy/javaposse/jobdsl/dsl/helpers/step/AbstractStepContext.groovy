@@ -195,10 +195,6 @@ class AbstractStepContext implements Context {
 
         def antOptsList = antContext.antOpts
 
-        if(!antInstallation) {
-            antInstallation = antContext.antName?:'(Default)'
-        }
-
         def propertiesList = []
         propertiesList += antContext.props
 
@@ -206,7 +202,7 @@ class AbstractStepContext implements Context {
         def antNode = nodeBuilder.'hudson.tasks.Ant' {
             targets targetList.join(' ')
 
-            antName antInstallation
+            antName antInstallation ?: antContext.antName ?: '(Default)'
 
             if (antOptsList) {
                 antOpts antOptsList.join('\n')
