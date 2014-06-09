@@ -1,10 +1,5 @@
 ruleset {
-    ruleset('rulesets/basic.xml') {
-        // TODO: fix violations
-        exclude 'EqualsAndHashCode'
-        // TODO: fix violations
-        exclude 'EqualsOverloaded'
-    }
+    ruleset('rulesets/basic.xml')
 
     ruleset('rulesets/braces.xml') {
         // TODO: fix violations
