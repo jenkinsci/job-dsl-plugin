@@ -41,7 +41,7 @@ ruleset {
             characterAfterColonRegex = /\s/
         }
 
-        // TODO: fix violations
+        // we don't care for now
         exclude 'ClassJavadoc'
         // TODO: fix violations
         exclude 'ConsecutiveBlankLines'
