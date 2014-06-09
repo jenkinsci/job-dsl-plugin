@@ -423,9 +423,8 @@ class ScmContext implements Context {
     def baseClearCase(Closure closure = null) {
         validateMulti()
 
-        String lineSeparator = System.getProperty("line.separator")
         ClearCaseContext context = new ClearCaseContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        executeInContext(closure, context)
 
         scmNodes << NodeBuilder.newInstance().scm(class: 'hudson.plugins.clearcase.ClearCaseSCM') {
             changeset('BRANCH')
@@ -434,9 +433,9 @@ class ScmContext implements Context {
             extractLoadRules(false)
             filteringOutDestroySubBranchEvent(false)
             freezeCode(false)
-            loadRules(context.loadRules.join(lineSeparator))
+            loadRules(context.loadRules.join('\n'))
             loadRulesForPolling('')
-            mkviewOptionalParam(context.mkviewOptionalParameter.join(lineSeparator))
+            mkviewOptionalParam(context.mkviewOptionalParameter.join('\n'))
             multiSitePollBuffer(0)
             recreateView(false)
             removeViewOnRename(false)
@@ -447,7 +446,7 @@ class ScmContext implements Context {
             viewName(context.viewName)
             viewPath(context.viewPath)
             branch('')
-            configSpec(context.configSpec.join(lineSeparator))
+            configSpec(context.configSpec.join('\n'))
             configSpecFileName('')
             doNotUpdateConfigSpec(false)
             extractConfigSpec(false)

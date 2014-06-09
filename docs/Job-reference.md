@@ -522,29 +522,31 @@ Support the Clone Workspace plugin, by copy the workspace of another build. This
 
 ## Base ClearCase
 
-Support for the [ClearCase plugin](http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin).
-
 ```groovy
 baseClearCase {
-    configSpec(String configSpec)
-    loadRules(String loadRules)
-    mkviewOptionalParameter(String parameter)
+    configSpec(String... configSpec)
+    loadRules(String... loadRules)
+    mkviewOptionalParameter(String... parameter)
     viewName(String viewName) // Default: 'Jenkins_${USER_NAME}_${NODE_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}'
     viewPath(String viewPath) // Default: //view
 ```
 
+Support for the [ClearCase plugin](http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin).
 
-Example defining config spec and load rules.
+`configSpec`, `loadRules`, `mkviewOptionalParameter` can also be called multiple times as these configurations can be
+quite long.
+
+Example defining config spec and load rules:
+
 ```groovy
 baseClearCase {
     configSpec('''element * CHECKEDOUT
-                element * /main/LATEST''')
+element * /main/LATEST''')
     loadRules('/vob/some_vob')
 ```
 
-configSpec(), loadRules(), mkviewOptionalParameter() can also be called multiple times as these configurations can be quite long.
+Example defining config spec and load rules with multiple methods calls:
 
-Example defining config spec and load rules with multiple methods calls.
 ```groovy
 baseClearCase {
     configSpec('element * CHECKEDOUT')
@@ -553,20 +555,24 @@ baseClearCase {
     loadRules('/vob/another_vob')
 ```
 
-Example defining config spec and load rules using varargs parameters.
+Example defining config spec and load rules using varargs parameters:
+
 ```groovy
 baseClearCase {
     configSpec('element * CHECKEDOUT', 'element * /main/LATEST')
     loadRules('/vob/some_vob', '/vob/another_vob'')
 ```
 
-This is another example which reads the config spec from a file in the current workspace using _readFileFromWorkspace_
+This is another example which reads the config spec from a file in the seed job's workspace using
+`readFileFromWorkspace`:
+
 ```groovy
 baseClearCase {
     configSpec(readFileFromWorkspace('configSpec.txt'))
-    configSpec('element * /main/LATEST')
     loadRules('/vob/some_vob')
 ```
+
+(since 1.24)
 
 # Triggers
 
