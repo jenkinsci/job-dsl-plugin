@@ -15,8 +15,6 @@ ruleset {
         exclude 'AbstractClassWithoutAbstractMethod'
         // we don't care
         exclude 'BuilderMethodWithSideEffects'
-        // TODO: fix violations
-        exclude 'PublicInstanceField'
     }
 
     // the DRY rules do not necessarily lead to better code

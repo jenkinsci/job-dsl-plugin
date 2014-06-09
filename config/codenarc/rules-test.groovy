@@ -15,6 +15,8 @@ ruleset {
         exclude 'ExplicitCallToEqualsMethod'
         // Spock encourages to violate this rule
         exclude 'MethodName'
+        // Fields annotated with @org.junit.Rule violate this rule
+        exclude 'PublicInstanceField'
         // Spock's data tables violate this rule
         exclude 'UnnecessaryBooleanExpression'
         // causes false negatives
