@@ -16,8 +16,6 @@ ruleset {
         // we don't care
         exclude 'BuilderMethodWithSideEffects'
         // TODO: fix violations
-        exclude 'DuplicateStringLiteral'
-        // TODO: fix violations
         exclude 'PrivateFieldCouldBeFinal'
         // TODO: fix violations
         exclude 'PublicInstanceField'
