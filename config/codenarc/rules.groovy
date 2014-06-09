@@ -22,10 +22,7 @@ ruleset {
 
     ruleset('rulesets/enhanced.xml')
 
-    ruleset('rulesets/exceptions.xml') {
-        // TODO: fix violations
-        exclude 'ThrowRuntimeException'
-    }
+    ruleset('rulesets/exceptions.xml')
 
     ruleset('rulesets/formatting.xml') {
         // enforce at least one space after map entry colon
