@@ -1,12 +1,7 @@
 ruleset {
     ruleset('rulesets/basic.xml')
 
-    ruleset('rulesets/braces.xml') {
-        // TODO: fix violations
-        exclude 'ForStatementBraces'
-        // TODO: fix violations
-        exclude 'IfStatementBraces'
-    }
+    ruleset('rulesets/braces.xml')
 
     ruleset('rulesets/concurrency.xml')
 

@@ -27,13 +27,15 @@ class FileJobManagement extends AbstractJobManagement {
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
 
-        if (jobName.isEmpty()) return '''
+        if (jobName.isEmpty()) {
+            return '''
 <project>
   <actions/>
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties/>
 </project>'''
+        }
 
         try {
             new File(root, jobName + ext).getText()

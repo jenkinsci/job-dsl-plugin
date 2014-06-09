@@ -19,7 +19,8 @@ public class WorkspaceUrlHandler extends URLStreamHandler {
      */
     def static installHandler() {
         Map<String, URLStreamHandler> handlers = URL.handlers;
-        if( !handlers.containsKey('workspace') )
-        URL.handlers.put('workspace', new WorkspaceUrlHandler());
+        if (!handlers.containsKey('workspace')) {
+            URL.handlers.put('workspace', new WorkspaceUrlHandler());
+        }
     }
 }

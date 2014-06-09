@@ -710,7 +710,9 @@ class PublisherContext implements Context {
      */
     def textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false, boolean succeedIfFound = false, unstableIfFound = false) {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.textfinder.TextFinderPublisher' {
-            if (fileSet) delegate.fileSet(fileSet)
+            if (fileSet) {
+                delegate.fileSet(fileSet)
+            }
             delegate.regexp(regularExpression)
             delegate.alsoCheckConsoleOutput(alsoCheckConsoleOutput)
             delegate.succeedIfFound(succeedIfFound)
