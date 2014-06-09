@@ -7,7 +7,7 @@ import java.util.logging.Logger
 class WithXmlAction {
     private static final Logger LOGGER = Logger.getLogger(WithXmlAction.getName())
 
-    private Closure closure
+    private final Closure closure
 
     WithXmlAction(Closure closure) {
         this.closure = Preconditions.checkNotNull(closure, "Closure has to be set during constructor")

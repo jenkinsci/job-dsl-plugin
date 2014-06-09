@@ -20,7 +20,7 @@ class TimeoutContext implements Context {
     boolean failBuild = false
     boolean writeDescription = false
     String description = ''
-    private JobManagement jobManagement
+    private final JobManagement jobManagement
 
     TimeoutContext(WrapperContext.Timeout type, JobManagement jobManagement) {
         this.jobManagement = jobManagement

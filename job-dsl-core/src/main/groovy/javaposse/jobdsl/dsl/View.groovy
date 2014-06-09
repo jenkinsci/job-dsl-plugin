@@ -4,7 +4,7 @@ package javaposse.jobdsl.dsl
  * DSL element representing a Jenkins view.
  */
 public abstract class View {
-    private List<WithXmlAction> withXmlActions = []
+    private final List<WithXmlAction> withXmlActions = []
 
     String name
 

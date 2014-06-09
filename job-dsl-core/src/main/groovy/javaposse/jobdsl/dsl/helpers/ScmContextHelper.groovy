@@ -22,7 +22,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
  }
  */
 class ScmContextHelper extends AbstractContextHelper<ScmContext> {
-    private JobManagement jobManagement
+    private final JobManagement jobManagement
 
     ScmContextHelper(List<WithXmlAction> withXmlActions, JobType jobType, JobManagement jobManagement) {
         super(withXmlActions, jobType)

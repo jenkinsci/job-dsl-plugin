@@ -7,8 +7,8 @@ import javaposse.jobdsl.dsl.helpers.Context
 import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
 
 class GitContext implements Context {
-    private List<WithXmlAction> withXmlActions
-    private JobManagement jobManagement
+    private final List<WithXmlAction> withXmlActions
+    private final JobManagement jobManagement
 
     List<Node> remoteConfigs = []
     List<String> branches = []
