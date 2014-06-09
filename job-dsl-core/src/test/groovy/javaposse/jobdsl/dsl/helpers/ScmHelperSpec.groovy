@@ -815,4 +815,90 @@ public class ScmHelperSpec extends Specification {
         'parent'  | 'Any'
         'some'    | 'Successful'
     }
+
+    def 'call baseClearCase with default configuration'() {
+        when:
+        context.baseClearCase()
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            attributes()['class'] == 'hudson.plugins.clearcase.ClearCaseSCM'
+            changeset[0].value() == 'BRANCH'
+            createDynView[0].value() == false
+            excludedRegions[0].value() == ''
+            extractLoadRules[0].value() == false
+            filteringOutDestroySubBranchEvent[0].value() == false
+            freezeCode[0].value() == false
+            loadRules[0].value() == ''
+            loadRulesForPolling[0].value() == ''
+            mkviewOptionalParam[0].value() == ''
+            multiSitePollBuffer[0].value() == 0
+            recreateView[0].value() == false
+            removeViewOnRename[0].value() == false
+            useDynamicView[0].value() == false
+            useOtherLoadRulesForPolling[0].value() == false
+            useUpdate[0].value() == true
+            viewDrive[0].value() == '/view'
+            viewName[0].value() == 'Jenkins_${USER_NAME}_${NODE_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}'
+            viewPath[0].value() == 'view'
+            branch[0].value() == ''
+            configSpec[0].value() == ''
+            configSpecFileName[0].value() == ''
+            doNotUpdateConfigSpec[0].value() == false
+            extractConfigSpec[0].value() == false
+            label[0].value() == ''
+            refreshConfigSpec[0].value() == false
+            refreshConfigSpecCommand[0].value() == ''
+            useTimeRule[0].value() == false
+        }
+    }
+
+    def 'call baseClearCase with all configuration parameters'() {
+        when:
+        context.baseClearCase {
+            configSpec('element .../foo1/... /main/LATEST\nelement .../bar1/... /main/LATEST')
+            configSpec('element .../foo2/... /main/LATEST', 'element .../bar2/... /main/LATEST')
+            loadRules('/vobs/foo1\n/vobs/bar1')
+            loadRules('/vobs/foo2', '/vobs/bar2')
+            mkviewOptionalParameter('foo1\nbar1')
+            mkviewOptionalParameter('foo2', 'bar2')
+            viewName('Jenkins_${USER_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}')
+            viewPath('views')
+        }
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            attributes()['class'] == 'hudson.plugins.clearcase.ClearCaseSCM'
+            changeset[0].value() == 'BRANCH'
+            createDynView[0].value() == false
+            excludedRegions[0].value() == ''
+            extractLoadRules[0].value() == false
+            filteringOutDestroySubBranchEvent[0].value() == false
+            freezeCode[0].value() == false
+            loadRules[0].value() == '/vobs/foo1\n/vobs/bar1\n/vobs/foo2\n/vobs/bar2'
+            loadRulesForPolling[0].value() == ''
+            mkviewOptionalParam[0].value() == 'foo1\nbar1\nfoo2\nbar2'
+            multiSitePollBuffer[0].value() == 0
+            recreateView[0].value() == false
+            removeViewOnRename[0].value() == false
+            useDynamicView[0].value() == false
+            useOtherLoadRulesForPolling[0].value() == false
+            useUpdate[0].value() == true
+            viewDrive[0].value() == '/view'
+            viewName[0].value() == 'Jenkins_${USER_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}'
+            viewPath[0].value() == 'views'
+            branch[0].value() == ''
+            configSpec[0].value() == 'element .../foo1/... /main/LATEST\nelement .../bar1/... /main/LATEST\n' +
+                    'element .../foo2/... /main/LATEST\nelement .../bar2/... /main/LATEST'
+            configSpecFileName[0].value() == ''
+            doNotUpdateConfigSpec[0].value() == false
+            extractConfigSpec[0].value() == false
+            label[0].value() == ''
+            refreshConfigSpec[0].value() == false
+            refreshConfigSpecCommand[0].value() == ''
+            useTimeRule[0].value() == false
+        }
+    }
 }

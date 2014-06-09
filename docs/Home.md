@@ -16,6 +16,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 * 1.24 (unreleased)
  * Support for [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
  * Support for [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+ * Support for [ClearCase Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin)
  * Extend support for [Build Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
  * Fixed ClassCastException when removing folder ([JENKINS-23289](https://issues.jenkins-ci.org/browse/JENKINS-23289))
 * 1.23 (May 23 2014)

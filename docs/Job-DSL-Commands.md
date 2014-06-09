@@ -87,6 +87,7 @@ job(attributes) {
         svn(svnUrl, localDir) {}
         p4(viewspec, user, password) {}
         cloneWorkspace(parentProject, criteriaArg) 
+        baseClearCase(closure) // since 1.24. See [[Job Reference]] for the closure syntax
     }
     multiscm {
         hg(url, branch) {}
