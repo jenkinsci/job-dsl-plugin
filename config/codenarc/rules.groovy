@@ -6,12 +6,8 @@ ruleset {
     ruleset('rulesets/concurrency.xml')
 
     ruleset('rulesets/convention.xml') {
-        // TODO: fix violations
-        exclude 'CouldBeElvis'
         // this rule does not necessarily lead to better code
         exclude 'IfStatementCouldBeTernary'
-        // TODO: fix violations
-        exclude 'ParameterReassignment'
     }
 
     ruleset('rulesets/design.xml') {

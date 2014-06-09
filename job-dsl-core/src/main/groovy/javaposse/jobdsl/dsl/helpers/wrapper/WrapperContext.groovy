@@ -287,13 +287,9 @@ class WrapperContext implements Context {
      * @param colorMap name of colormap to use (eg: xterm)
      */
     def colorizeOutput(String colorMap) {
-        if (colorMap == null) {
-            colorMap = "xterm"
-        }
-
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.ansicolor.AnsiColorBuildWrapper' {
-            'colorMapName'(colorMap)
+            colorMapName(colorMap ?: "xterm")
         }
     }
 
