@@ -11,8 +11,6 @@ ruleset {
     }
 
     ruleset('rulesets/design.xml') {
-        // TODO: fix violations
-        exclude 'AbstractClassWithPublicConstructor'
         // we don't care
         exclude 'AbstractClassWithoutAbstractMethod'
         // we don't care

@@ -10,7 +10,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
  */
 abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
 
-    AbstractContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+    protected AbstractContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)
     }
 

@@ -22,7 +22,7 @@ public abstract class JobParent extends Script {
     Set<View> referencedViews
     List<String> queueToBuild
 
-    public JobParent() {
+    protected JobParent() {
         referencedJobs = Sets.newLinkedHashSet()
         referencedViews = Sets.newLinkedHashSet()
         queueToBuild = Lists.newArrayList()
