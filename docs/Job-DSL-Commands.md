@@ -108,8 +108,9 @@ job(attributes) {
     wrappers { // This block exists since 1.19. Before that the methods were on top level
         runOnSameNodeAs(jobName, useSameWorkspace)
         rvm(rubySpecification)
-        timeout(timeoutInMinutes, shouldFailBuild)
-        timeout(type) {} //see Job Reference for closure details
+        timeout {} //see Job Reference for closure details
+        timeout(timeoutInMinutes, shouldFailBuild) // deprecated
+        timeout(type) {} // deprecated
         allocatePorts(ports){}
         sshagent(credentials)
         timestamps()

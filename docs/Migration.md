@@ -1,10 +1,10 @@
-## Migrating to 1.23
+## Migrating to 1.24
 
-In version 1.23 the dsl for the build timeout plugin has been modified and the
+In version 1.24 the dsl for the build timeout plugin has been modified and the
 generated xml requires a newer version of the build timeout plugin.
 The old dsl still works but has been deprecated.
 
-DSL prior to 1.23
+DSL prior to 1.24
 ```groovy
 timeout(String type) { //type is one of: 'absolute', 'elastic', 'likelyStuck'
     limit 15       // timeout in minutes
@@ -14,7 +14,7 @@ timeout(String type) { //type is one of: 'absolute', 'elastic', 'likelyStuck'
 timeout(35, false)
 ```
 
-DSL since 1.23
+DSL since 1.24
 ```groovy
 timeout {
    absolute(15)
