@@ -24,7 +24,6 @@ class DslSampleTest extends Specification {
         jm.savedConfigs.size() == 6
         def firstJob = jm.savedConfigs['PROJ-unit-tests']
         firstJob != null
-        println(firstJob)
         def mavenJob = jm.savedConfigs['PROJ-maven']
 
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, mavenJob
@@ -47,7 +46,6 @@ class DslSampleTest extends Specification {
         jm.savedConfigs.size() == 1
         def firstJob = jm.savedConfigs['PROJ-JavaPosseRoundup']
         firstJob != null
-        println firstJob
     }
 
     def sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>

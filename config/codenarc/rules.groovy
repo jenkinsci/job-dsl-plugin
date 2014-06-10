@@ -93,8 +93,6 @@ ruleset {
     ruleset('rulesets/logging.xml') {
         // TODO: fix violations
         exclude 'LoggerForDifferentClass'
-        // TODO: fix violations
-        exclude 'Println'
     }
 
     ruleset('rulesets/naming.xml') {

@@ -44,12 +44,6 @@ class WithXmlActionSpec extends Specification {
         }
     }
 
-    def static printNode(Node n) {
-        def writer = new StringWriter()
-        new XmlNodePrinter(new PrintWriter(writer)).print(n)
-        println writer.toString()
-    }
-
     def execute(Closure closure) {
         def withXmlAction = new WithXmlAction(closure)
         return withXmlAction.execute(root)
@@ -61,7 +55,6 @@ class WithXmlActionSpec extends Specification {
         execute { project ->
             Preconditions.checkNotNull(project)
             Preconditions.checkArgument(project instanceof Node)
-            println "About to reference! ${owner} ${delegate}"
 
             def matrix = project / builders / builder
         }
