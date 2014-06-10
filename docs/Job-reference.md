@@ -606,11 +606,11 @@ gerrit {
     events(Closure eventClosure) // Free form listing of event names
     project(String projectName, List<String> branches) // Can be called multiple times
     project(String projectName, String branches) // Can be called multiple times
-    buildStarted(int verified, int codeReview) //Updates the gerrit report values for the build started event
-     buildSuccessful(int verified, int codeReview) //Updates the gerrit report values for the build successful event
-    buildFailed(int verified, int codeReview) //Updates the gerrit report values for the build failed event 
-    buildUnstable(int verified, int codeReview) //Updates the gerrit report values for the build unstable event 
-    buildNotBuilt(int verified, int codeReview) //Updates the gerrit report values for the build not built event 
+    buildStarted(Integer verified, Integer codeReview) //Updates the gerrit report values for the build started event, null : keep default value
+     buildSuccessful(Integer verified, Integer codeReview) //Updates the gerrit report values for the build successful event, null : keep default value
+    buildFailed(Integer verified, Integer codeReview) //Updates the gerrit report values for the build failed event, null : keep default value
+    buildUnstable(Integer verified, Integer codeReview) //Updates the gerrit report values for the build unstable event, null : keep default value
+    buildNotBuilt(Integer verified, Integer codeReview) //Updates the gerrit report values for the build not built, null : keep default value event 
     configure(Closure configureClosure) // Handed com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger
 }
 ```
@@ -625,9 +625,7 @@ gerrit {
     }
     project('reg_exp:myProject', ['ant:feature-branch', 'plain:origin/refs/mybranch'])
     project('test-project', '**')
-    configure { node ->
-        node / gerritBuildSuccessfulVerifiedValue << '10'
-    }
+    buildSuccessful(10, null)
 }
 ```
 
