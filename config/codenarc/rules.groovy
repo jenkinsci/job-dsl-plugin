@@ -90,10 +90,7 @@ ruleset {
         exclude 'UnusedImport'
     }
 
-    ruleset('rulesets/logging.xml') {
-        // TODO: fix violations
-        exclude 'LoggerForDifferentClass'
-    }
+    ruleset('rulesets/logging.xml')
 
     ruleset('rulesets/naming.xml') {
         // this is an issue, but currently the Context classes violate this by convention
