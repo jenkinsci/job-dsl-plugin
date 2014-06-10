@@ -146,8 +146,6 @@ ruleset {
 
     ruleset('rulesets/unused.xml') {
         // TODO: fix violations
-        exclude 'UnusedPrivateField'
-        // TODO: fix violations
         exclude 'UnusedVariable'
     }
 }
