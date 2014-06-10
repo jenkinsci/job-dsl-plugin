@@ -3,8 +3,10 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
+
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.ListView
+import javaposse.jobdsl.dsl.views.NestedView;
 
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -15,6 +17,7 @@ public abstract class JobParent extends Script {
             (null): ListView.class,
             (ViewType.ListView): ListView.class,
             (ViewType.BuildPipelineView): BuildPipelineView.class,
+            (ViewType.NestedView): NestedView.class,
     ]
 
     JobManagement jm;
