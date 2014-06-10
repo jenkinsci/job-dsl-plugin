@@ -12,7 +12,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
 
     def 'missing URL causes NullPointerException' () {
         when:
-        UrlTriggerInspectionContext ctx = new UrlTriggerInspectionContext(null)
+        new UrlTriggerInspectionContext(null)
 
         then:
         thrown(NullPointerException)

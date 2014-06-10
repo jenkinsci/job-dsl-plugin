@@ -56,7 +56,7 @@ class WithXmlActionSpec extends Specification {
             Preconditions.checkNotNull(project)
             Preconditions.checkArgument(project instanceof Node)
 
-            def matrix = project / builders / builder
+            project / builders / builder
         }
 
         then:
@@ -66,7 +66,7 @@ class WithXmlActionSpec extends Specification {
     def 'lookup with non-existent nodes'() {
         when:
         execute { project ->
-            def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
+            project / builders / 'hudson.security.AuthorizationMatrixProperty'
         }
 
         then:

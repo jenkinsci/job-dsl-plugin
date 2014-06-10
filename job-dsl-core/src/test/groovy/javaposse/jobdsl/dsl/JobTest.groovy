@@ -17,7 +17,7 @@ class JobTest extends Specification {
         JobManagement jm = Mock()
 
         when:
-        def job = new Job(jm)
+        new Job(jm)
 
         then:
         notThrown(Exception)

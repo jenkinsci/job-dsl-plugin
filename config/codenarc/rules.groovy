@@ -144,8 +144,5 @@ ruleset {
         exclude 'UnnecessarySubstring'
     }
 
-    ruleset('rulesets/unused.xml') {
-        // TODO: fix violations
-        exclude 'UnusedVariable'
-    }
+    ruleset('rulesets/unused.xml')
 }

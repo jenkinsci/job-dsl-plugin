@@ -7,6 +7,10 @@ ruleset {
     }
 
     ruleset('file:config/codenarc/rules.groovy') {
+        'UnusedVariable' {
+            ignoreVariableNames = 'ignored'
+        }
+
         // that's OK for test code
         exclude 'ComparisonWithSelf'
         // that's OK for test code
