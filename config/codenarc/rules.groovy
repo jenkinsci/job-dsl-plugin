@@ -103,8 +103,6 @@ ruleset {
     ruleset('rulesets/security.xml') {
         // we don't care because our classes need not to satisfy the Java Beans specification
         exclude 'JavaIoPackageAccess'
-        // TODO: fix violations
-        exclude 'NonFinalPublicField'
     }
 
     ruleset('rulesets/serialization.xml') {

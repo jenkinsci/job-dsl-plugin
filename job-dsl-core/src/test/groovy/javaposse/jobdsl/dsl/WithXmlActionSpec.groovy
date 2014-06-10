@@ -12,7 +12,7 @@ import java.util.logging.Logger
  * Work through the additional functionality we're offer over node
  */
 class WithXmlActionSpec extends Specification {
-    public static String xml = """<?xml version='1.0' encoding='UTF-8'?>
+    static final String XML = """<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -33,7 +33,7 @@ class WithXmlActionSpec extends Specification {
 </project>
 """
 
-    final Node root = new XmlParser().parse(new StringReader(xml))
+    final Node root = new XmlParser().parse(new StringReader(XML))
 
     def setup() {
         Logger.getLogger("javaposse.jobdsl").setLevel(Level.ALL)

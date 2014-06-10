@@ -16,6 +16,8 @@ ruleset {
         // Spock encourages to violate this rule
         exclude 'MethodName'
         // Fields annotated with @org.junit.Rule violate this rule
+        exclude 'NonFinalPublicField'
+        // Fields annotated with @org.junit.Rule violate this rule
         exclude 'PublicInstanceField'
         // Spock's data tables violate this rule
         exclude 'UnnecessaryBooleanExpression'

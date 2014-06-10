@@ -10,7 +10,7 @@ public class TopLevelHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     TopLevelHelper helper = new TopLevelHelper(mockActions, JobType.Freeform)
-    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'add description'() {
         when:

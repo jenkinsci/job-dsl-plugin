@@ -13,7 +13,7 @@ class WrapperHelperSpec extends Specification {
     JobManagement mockJobManagement = Mock()
     WrapperContextHelper helper = new WrapperContextHelper(mockActions, JobType.Freeform, mockJobManagement)
     WrapperContext context = new WrapperContext(JobType.Freeform, mockJobManagement)
-    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'call timestamps method'() {
         when:

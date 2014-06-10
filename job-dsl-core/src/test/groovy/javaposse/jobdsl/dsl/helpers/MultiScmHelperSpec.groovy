@@ -29,7 +29,7 @@ public class MultiScmHelperSpec extends Specification {
 
 
     def 'call scm via helper'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
         when:
         ScmContext createdContext = helper.multiscm {
