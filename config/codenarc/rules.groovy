@@ -85,9 +85,6 @@ ruleset {
         MisorderedStaticImports {
             comesBefore = false
         }
-
-        // TODO: fix violations
-        exclude 'UnusedImport'
     }
 
     ruleset('rulesets/logging.xml')
