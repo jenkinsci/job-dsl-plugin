@@ -28,6 +28,10 @@ timeout {
 }
 ```
 
+Before 1.24, GerritTrigger configuration used hardwired configuration for not set label configurations (successfulVerified +1, failedVerified -1, everything else 0, these the default values of the central gerrit trigger plugin configuration). Now GerritTrigger configuration correctly honors central configuration of labels. If you use non-default labels in your central configuration, you might need to change the trigger label configuration of your jobs.
+
+
+
 See the [[Job Reference]] for further details.
 
 ## Migrating to 1.20
