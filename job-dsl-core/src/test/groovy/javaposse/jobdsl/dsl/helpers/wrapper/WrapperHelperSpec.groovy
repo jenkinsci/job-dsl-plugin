@@ -383,7 +383,7 @@ class WrapperHelperSpec extends Specification {
         then:
         def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'parameterDefinitions'.'hudson.model.TextParameterDefinition'
         params[0].value()[0].value() == "p1"
-        
+
         def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
         steps[0].value()[0].name() == 'hudson.tasks.Shell'
         steps[0].value()[0].value()[0].name() == 'command'
@@ -423,7 +423,7 @@ class WrapperHelperSpec extends Specification {
         params[0].value()[1].value() == true
         params[0].value()[2].name() == "overrideBuildParameters"
         params[0].value()[2].value() == false
-        
+
         def stepsPostSuccess = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postSuccessfulBuildSteps'
         stepsPostSuccess[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPostSuccess[0].value()[0].value()[0].name() == 'command'
@@ -431,18 +431,18 @@ class WrapperHelperSpec extends Specification {
         stepsPostSuccess[0].value()[1].name() == 'hudson.tasks.Shell'
         stepsPostSuccess[0].value()[1].value()[0].name() == 'command'
         stepsPostSuccess[0].value()[1].value()[0].value() == 'echo hello world;'
-        
+
         def stepsPost = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postBuildSteps'
         stepsPost[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPost[0].value()[0].value()[0].name() == 'command'
         stepsPost[0].value()[0].value()[0].value() == 'echo post;'
-        
+
         def stepsPostFailed = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postFailedBuildSteps'
         stepsPostFailed[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPostFailed[0].value()[0].value()[0].name() == 'command'
         stepsPostFailed[0].value()[0].value()[0].value() == 'echo postfailed;'
     }
-    
+
     def 'release plugin configure' () {
         when:
         helper.wrappers {

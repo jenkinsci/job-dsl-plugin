@@ -249,14 +249,14 @@ public class PublisherHelperSpec extends Specification {
             minimumInstructionCoverage '1'
             minimumBranchCoverage '2'
             minimumComplexityCoverage '3'
-            minimumLineCoverage '4' 
-            minimumMethodCoverage '5' 
-            minimumClassCoverage '6' 
-            maximumInstructionCoverage '7' 
-            maximumBranchCoverage '8' 
-            maximumComplexityCoverage '9' 
-            maximumLineCoverage '10' 
-            maximumMethodCoverage '11' 
+            minimumLineCoverage '4'
+            minimumMethodCoverage '5'
+            minimumClassCoverage '6'
+            maximumInstructionCoverage '7'
+            maximumBranchCoverage '8'
+            maximumComplexityCoverage '9'
+            maximumLineCoverage '10'
+            maximumMethodCoverage '11'
             maximumClassCoverage '12'
             changeBuildStatus true
         }
@@ -1680,7 +1680,7 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes.size() == 1        
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.git.GitPublisher'
             configVersion[0].value() == 2
