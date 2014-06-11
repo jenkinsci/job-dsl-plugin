@@ -35,8 +35,6 @@ ruleset {
         // TODO: fix violations
         exclude 'LineLength'
         // TODO: fix violations
-        exclude 'SpaceAfterOpeningBrace'
-        // TODO: fix violations
         exclude 'SpaceAfterSwitch'
         // TODO: fix violations
         exclude 'SpaceAroundMapEntryColon'

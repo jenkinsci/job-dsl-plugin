@@ -2059,7 +2059,8 @@ public class PublisherHelperSpec extends Specification {
 
     def 'stashNotifier with default configuration'() {
         when:
-        context.stashNotifier {null}
+        context.stashNotifier {
+        }
 
         then:
         context.publisherNodes != null

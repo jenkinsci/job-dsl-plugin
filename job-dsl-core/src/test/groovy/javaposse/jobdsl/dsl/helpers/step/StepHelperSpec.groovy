@@ -172,7 +172,8 @@ public class StepHelperSpec extends Specification {
         grailsStep4.nonInteractive[0].value() == 'false'
 
         when:
-        context.grails {}
+        context.grails {
+        }
 
         then:
         context.stepNodes.size() == 6
@@ -824,7 +825,8 @@ public class StepHelperSpec extends Specification {
         StepContextHelper helper = new StepContextHelper(mockActions, JobType.Maven)
 
         when:
-        helper.steps {}
+        helper.steps {
+        }
 
         then:
         thrown(IllegalStateException)

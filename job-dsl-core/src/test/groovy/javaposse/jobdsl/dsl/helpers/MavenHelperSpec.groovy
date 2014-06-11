@@ -288,7 +288,8 @@ public class MavenHelperSpec extends Specification {
         MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.preBuildSteps {}
+        helper.preBuildSteps {
+        }
 
         then:
         thrown(IllegalStateException)
@@ -311,7 +312,8 @@ public class MavenHelperSpec extends Specification {
         MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.postBuildSteps {}
+        helper.postBuildSteps {
+        }
 
         then:
         thrown(IllegalStateException)
