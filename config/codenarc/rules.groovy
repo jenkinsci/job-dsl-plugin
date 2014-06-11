@@ -96,8 +96,6 @@ ruleset {
         exclude 'ConfusingMethodName'
         // TODO: fix violations
         exclude 'FactoryMethodName'
-        // TODO: fix violations
-        exclude 'PropertyName'
     }
 
     ruleset('rulesets/security.xml') {

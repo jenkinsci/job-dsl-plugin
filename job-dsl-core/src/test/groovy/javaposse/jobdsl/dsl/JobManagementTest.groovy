@@ -35,7 +35,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig(null, updatedXml_keepDepIsTrue, false)
+        jm.createOrUpdateConfig(null, minimalXml, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -48,7 +48,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig("", updatedXml_keepDepIsTrue, false)
+        jm.createOrUpdateConfig("", minimalXml, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -88,14 +88,4 @@ def minimalXml = '''
   <properties/>
 </project>
 '''
-
-def updatedXml_keepDepIsTrue = '''
-<project>
-  <actions/>
-  <description/>
-  <keepDependencies>true</keepDependencies>
-  <properties/>
-</project>
-'''
-
 }
