@@ -71,8 +71,6 @@ ruleset {
         }
 
         // TODO: fix violations
-        exclude 'ClosureAsLastMethodParameter'
-        // TODO: fix violations
         exclude 'ExplicitArrayListInstantiation'
         // TODO: fix violations
         exclude 'ExplicitCallToGetAtMethod'
