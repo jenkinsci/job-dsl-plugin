@@ -208,7 +208,7 @@ class AbstractStepContext implements Context {
             }
         }
 
-        if(propertiesList) {
+        if (propertiesList) {
             antNode.appendNode('properties', propertiesList.join('\n'))
         }
 
