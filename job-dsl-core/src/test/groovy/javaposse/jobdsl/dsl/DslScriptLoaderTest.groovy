@@ -155,6 +155,7 @@ Callee.makeJob(this, 'test2')
         setup:
         def scriptStr = '''@Grab(group='commons-lang', module='commons-lang', version='2.4')
 import org.apache.commons.lang.WordUtils
+
 println "Hello ${WordUtils.capitalize('world')}"
 '''
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
