@@ -301,7 +301,7 @@ public class StepHelperSpec extends Specification {
             targets(['publish', 'deploy']) // FIXME: I have no idea why the parens are needed
             prop 'test.size', 4
             prop 'logging', 'info'
-            props 'test.threads': 10, 'input.status':'release'
+            props 'test.threads': 10, 'input.status': 'release'
             buildFile 'dir2/build.xml'
             buildFile 'dir1/build.xml'
             javaOpt '-Xmx1g'

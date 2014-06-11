@@ -58,7 +58,7 @@ class ScmContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
 
-        Node scmNode = nodeBuilder.scm(class:'hudson.plugins.mercurial.MercurialSCM') {
+        Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
             source url
             modules ''
             clean false
@@ -125,7 +125,7 @@ class ScmContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
 
-        Node gitNode = nodeBuilder.scm(class:'hudson.plugins.git.GitSCM') {
+        Node gitNode = nodeBuilder.scm(class: 'hudson.plugins.git.GitSCM') {
             userRemoteConfigs(gitContext.remoteConfigs)
             branches {
                 gitContext.branches.each { String branch ->
@@ -250,7 +250,7 @@ class ScmContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
 
-        Node svnNode = nodeBuilder.scm(class:'hudson.scm.SubversionSCM') {
+        Node svnNode = nodeBuilder.scm(class: 'hudson.scm.SubversionSCM') {
             locations {
                 'hudson.scm.SubversionSCM_-ModuleLocation' {
                     remote "${svnUrl}"
@@ -263,7 +263,7 @@ class ScmContext implements Context {
             excludedUsers ''
             excludedRevprop ''
             excludedCommitMessages ''
-            workspaceUpdater(class:'hudson.scm.subversion.UpdateUpdater')
+            workspaceUpdater(class: 'hudson.scm.subversion.UpdateUpdater')
         }
 
         // Apply Context
@@ -325,7 +325,7 @@ class ScmContext implements Context {
         PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor();
         String cleanPassword = encryptor.appearsToBeAnEncryptedPassword(password)?password:encryptor.encryptString(password)
 
-        Node p4Node = nodeBuilder.scm(class:'hudson.plugins.perforce.PerforceSCM') {
+        Node p4Node = nodeBuilder.scm(class: 'hudson.plugins.perforce.PerforceSCM') {
             p4User user
             p4Passwd cleanPassword
             p4Port 'perforce:1666'
