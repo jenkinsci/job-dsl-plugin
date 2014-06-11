@@ -47,5 +47,3 @@ class EmailContext implements Context {
 
     }
 }
-
-

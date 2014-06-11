@@ -33,8 +33,6 @@ ruleset {
         // we don't care for now
         exclude 'ClassJavadoc'
         // TODO: fix violations
-        exclude 'ConsecutiveBlankLines'
-        // TODO: fix violations
         exclude 'FileEndsWithoutNewline'
         // TODO: fix violations
         exclude 'LineLength'

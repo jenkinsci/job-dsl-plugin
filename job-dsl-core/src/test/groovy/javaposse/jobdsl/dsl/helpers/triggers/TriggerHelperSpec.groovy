@@ -423,7 +423,6 @@ public class TriggerHelperSpec extends Specification {
         // Assume branch is fine
     }
 
-
     def 'call gerrit trigger and verify build status value settings'() {
         when:
         context.gerrit {
@@ -445,7 +444,6 @@ public class TriggerHelperSpec extends Specification {
             gerritBuildUnstableCodeReviewValue.size() == 0
         }
     }
-
 
     def 'call gerrit trigger and verify build status value methods'() {
         when:

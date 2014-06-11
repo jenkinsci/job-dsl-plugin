@@ -515,7 +515,6 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.gitTool[1].text() == 'NotDefault'
     }
 
-
     def 'call git scm with configure on Node'() {
         when:
         context.git(GIT_REPO_URL, null) { gitNode ->

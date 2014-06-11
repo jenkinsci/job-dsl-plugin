@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step.condition
 
-
 class SimpleCondition implements RunCondition {
     String name
     String subPackage = 'core'

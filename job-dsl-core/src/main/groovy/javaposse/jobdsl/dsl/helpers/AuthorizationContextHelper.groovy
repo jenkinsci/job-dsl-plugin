@@ -54,5 +54,3 @@ class AuthorizationContextHelper extends AbstractContextHelper<AuthorizationCont
         }
     }
 }
-
-

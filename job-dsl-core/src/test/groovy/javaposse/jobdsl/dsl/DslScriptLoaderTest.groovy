@@ -149,9 +149,7 @@ Callee.makeJob(this, 'test2')
         jobs.size() == 2
         jobs.any { it.jobName == 'test'}
         jobs.any { it.jobName == 'test2'}
-
     }
-
 
     def 'use @Grab'() {
         setup:
@@ -214,7 +212,6 @@ println content
         getContent().contains('bar')
         getContent().count('bar') == 3
     }
-
 
     def 'read nonexistant file'() {
         setup:

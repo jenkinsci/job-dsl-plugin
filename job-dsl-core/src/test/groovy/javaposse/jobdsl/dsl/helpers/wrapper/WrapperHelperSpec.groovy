@@ -153,7 +153,6 @@ class WrapperHelperSpec extends Specification {
         root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
     }
 
-
     def 'elastic timeout configuration working' () {
         when:
         helper.wrappers {
@@ -180,7 +179,6 @@ class WrapperHelperSpec extends Specification {
             }
         }
         executeHelperActionsOnRootNode()
-
 
         then:
         def strategy = timeoutWrapper.strategy[0]
@@ -244,7 +242,6 @@ class WrapperHelperSpec extends Specification {
         tomcat.name[0].value()== '1234'
         tomcat.password[0].value()== 'password' */
     }
-
 
     def 'sshAgent without credentials' () {
         when:

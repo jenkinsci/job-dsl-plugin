@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 class GrailsContext implements Context {
     List<String> targets = []
     String name = '(Default)'

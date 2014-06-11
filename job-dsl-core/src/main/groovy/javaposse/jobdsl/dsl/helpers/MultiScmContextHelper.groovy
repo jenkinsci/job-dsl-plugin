@@ -28,7 +28,6 @@ class MultiScmContextHelper extends AbstractContextHelper<ScmContext> {
         execute(closure, new ScmContext(true, withXmlActions, jobManagement))
     }
 
-
     /**
      <scm class="org.jenkinsci.plugins.multiplescms.MultiSCM" plugin="multiple-scms@0.2">
      <scms>

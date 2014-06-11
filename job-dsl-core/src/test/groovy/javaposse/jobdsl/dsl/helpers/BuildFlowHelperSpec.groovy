@@ -50,7 +50,6 @@ public class BuildFlowHelperSpec extends Specification {
         thrown(IllegalStateException)
     }
 
-
     def 'buildFlow constructs xml'() {
         when:
         def action = helper.buildFlow("build Flow Block")
@@ -60,5 +59,4 @@ public class BuildFlowHelperSpec extends Specification {
         root.dsl.size() == 1
         root.dsl[0].value() == "build Flow Block"
     }
-
 }

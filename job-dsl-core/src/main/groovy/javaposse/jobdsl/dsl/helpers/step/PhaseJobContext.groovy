@@ -5,7 +5,6 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerContext
 
-
 @Canonical
 class PhaseJobContext implements Context {
     String jobName
@@ -20,7 +19,6 @@ class PhaseJobContext implements Context {
     Boolean subversionRevision
     Boolean gitRevision
     def props = []
-
 
     void jobName(String jobName) {
         this.jobName = jobName

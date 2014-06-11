@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 class TriggerContext implements Context {
     List<WithXmlAction> withXmlActions
     JobType jobType

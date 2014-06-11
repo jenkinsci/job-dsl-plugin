@@ -22,5 +22,3 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
         }
     }
 }
-
-

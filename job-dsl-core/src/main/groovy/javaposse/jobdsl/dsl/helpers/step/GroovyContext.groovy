@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-
 class GroovyContext extends AbstractGroovyContext {
     def groovyParams = []
     def scriptParams = []

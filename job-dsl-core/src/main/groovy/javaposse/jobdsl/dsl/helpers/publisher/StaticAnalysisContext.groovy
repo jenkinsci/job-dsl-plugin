@@ -54,7 +54,6 @@ class StaticAnalysisContext implements Context {
         this.dontComputeNew = !computeNew
     }
 
-
     def thresholds(Map thresholdMap) {
         assert ALLOWED_THRESHOLDS.containsAll(thresholdMap.keySet()),
                 "Only the thresholds ${ALLOWED_THRESHOLDS.join(',')} are allowed. You used ${thresholdMap}."

@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 class CopyArtifactContext implements Context {
     String selectedSelector
     boolean fallback

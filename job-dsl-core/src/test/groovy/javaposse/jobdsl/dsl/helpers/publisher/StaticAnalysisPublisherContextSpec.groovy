@@ -79,7 +79,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
     }
 
-
     @Unroll
     def 'add #analysisTool with all values'(analysisTool, nodeName, extraArgs, extraValues) {
         when:
@@ -201,7 +200,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
     }
 
-
     private void assertValues(Map map, baseNode, List notCheckedNodes = []) {
         map.each { key, expectedValue ->
             def nodeList = baseNode[key]
@@ -213,5 +211,4 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         def children = baseNode instanceof Node ? baseNode.children() : baseNode*.children().flatten()
         assert children*.name().toSet() == map.keySet() + notCheckedNodes
     }
-
 }

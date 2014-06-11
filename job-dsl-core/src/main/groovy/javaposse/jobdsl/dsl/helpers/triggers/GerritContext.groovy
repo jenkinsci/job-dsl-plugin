@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 class GerritContext implements Context {
     GerritEventContext eventContext = new GerritEventContext()
     Closure configureClosure
@@ -35,7 +34,6 @@ class GerritContext implements Context {
                 Integer.parseInt(codeReview.toString())
         )
     }
-
 
     def buildSuccessful(Integer verified, Integer codeReview) {
         successfulVerified = verified

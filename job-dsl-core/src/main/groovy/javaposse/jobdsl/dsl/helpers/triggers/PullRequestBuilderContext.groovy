@@ -52,7 +52,6 @@ class PullRequestBuilderContext implements Context {
         this.triggerPhrase = triggerPhrase
     }
 
-
     def onlyTriggerPhrase(boolean onlyTriggerPhrase = true) {
         this.onlyTriggerPhrase = onlyTriggerPhrase
     }

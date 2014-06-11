@@ -27,7 +27,6 @@ public class MultiScmHelperSpec extends Specification {
         context.scmNodes.size() == 2
     }
 
-
     def 'call scm via helper'() {
         Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
 

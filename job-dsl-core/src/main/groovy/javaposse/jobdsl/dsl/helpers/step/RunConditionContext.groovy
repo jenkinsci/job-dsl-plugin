@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 
-
 class RunConditionContext implements Context {
 
     RunCondition condition

@@ -892,7 +892,6 @@ public class StepHelperSpec extends Specification {
         dslStep.scriptText[0].value() == ''
     }
 
-
     def 'call dsl method external script ignoring existing' () {
         when:
         context.dsl {
@@ -1402,7 +1401,6 @@ still-another-dsl.groovy'''
 
         Node conditions = logicOperation.conditions[0]
         conditions.children().size() == 2
-
 
         def containers = conditions.'org.jenkins__ci.plugins.run__condition.logic.ConditionContainer'
         def fileCondition = containers[0].condition[0]

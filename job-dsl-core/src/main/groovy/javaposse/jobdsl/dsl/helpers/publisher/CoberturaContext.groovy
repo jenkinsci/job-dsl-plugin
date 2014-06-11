@@ -266,5 +266,3 @@ class CoberturaContext implements Context {
         String failingTarget
     }
 }
-
-
