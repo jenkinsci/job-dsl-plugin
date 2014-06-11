@@ -863,7 +863,13 @@ public class StepHelperSpec extends Specification {
     }
     def 'call sbt method full'() {
         when:
-        context.sbt('SBT 0.12.3','test', '-Dsbt.log.noformat=true',  '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', 'subproject')
+        context.sbt(
+                'SBT 0.12.3',
+                'test',
+                '-Dsbt.log.noformat=true',
+                '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M',
+                'subproject'
+        )
 
         then:
         context.stepNodes != null
@@ -897,7 +903,7 @@ public class StepHelperSpec extends Specification {
         when:
         context.dsl {
             removeAction 'DISABLE'
-            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'some-dsl.groovy', 'some-other-dsl.groovy'
             external 'still-another-dsl.groovy'
             ignoreExisting()
         }
@@ -920,7 +926,7 @@ still-another-dsl.groovy'''
         when:
         context.dsl {
             removeAction 'DISABLE'
-            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'some-dsl.groovy', 'some-other-dsl.groovy'
             external 'still-another-dsl.groovy'
         }
 
@@ -971,7 +977,7 @@ still-another-dsl.groovy'''
 
     def 'call dsl method external script as parameters' () {
         when:
-        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE')
+        context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE')
 
         then:
         context.stepNodes != null
@@ -989,7 +995,7 @@ still-another-dsl.groovy'''
 
     def 'call dsl method external script as parameters full' () {
         when:
-        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE', true)
+        context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE', true)
 
         then:
         context.stepNodes != null

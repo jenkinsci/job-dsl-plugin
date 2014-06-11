@@ -89,7 +89,7 @@ class BuildPipelineView extends View {
      */
     void showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true) {
         execute {
-            it / methodMissing('showPipelineParametersInHeaders' ,showPipelineParametersInHeaders)
+            it / methodMissing('showPipelineParametersInHeaders', showPipelineParametersInHeaders)
         }
     }
 

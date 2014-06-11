@@ -250,7 +250,7 @@ class TopLevelHelper extends AbstractHelper {
      * @param workspacePath workspace path to use
      */
     def customWorkspace(String workspacePath) {
-        def workspace = Preconditions.checkNotNull(workspacePath,"Workspace path must not be null")
+        def workspace = Preconditions.checkNotNull(workspacePath, "Workspace path must not be null")
         execute {
             def node = methodMissing('customWorkspace', workspace)
             it / node

@@ -32,7 +32,7 @@ class NodeEnhancement {
                 found.setValue(orphan.value())
             }
             orphan.attributes().each { k, v ->
-                found.attributes().put(k,v)
+                found.attributes().put(k, v)
             }
 
             found

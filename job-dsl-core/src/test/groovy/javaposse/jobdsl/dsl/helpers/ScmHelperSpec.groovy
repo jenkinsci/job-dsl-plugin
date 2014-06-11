@@ -519,7 +519,7 @@ public class ScmHelperSpec extends Specification {
         when:
         context.git(GIT_REPO_URL, null) { gitNode ->
             gitNode << gitConfigName('john') // Always append
-            gitNode.appendNode('gitConfigEmail' ,'john@gmail.com') // Clearly an append
+            gitNode.appendNode('gitConfigEmail', 'john@gmail.com') // Clearly an append
             gitNode / scmName << 'Kittner' // Re-use node and set value
         }
 

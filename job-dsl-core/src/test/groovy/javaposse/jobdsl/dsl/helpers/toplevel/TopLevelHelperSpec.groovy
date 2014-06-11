@@ -233,7 +233,7 @@ public class TopLevelHelperSpec extends Specification {
 
     def 'log rotate xml'() {
         when:
-        def action = helper.logRotator(14,50)
+        def action = helper.logRotator(14, 50)
         action.execute(root)
 
         then:
