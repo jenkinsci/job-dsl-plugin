@@ -100,7 +100,7 @@ ruleset {
     ruleset('rulesets/naming.xml') {
         // this is an issue, but currently the Context classes violate this by convention
         exclude 'ConfusingMethodName'
-        // TODO: fix violations
+        // we don't care for now
         exclude 'FactoryMethodName'
         // TODO: fix violations
         exclude 'PropertyName'
