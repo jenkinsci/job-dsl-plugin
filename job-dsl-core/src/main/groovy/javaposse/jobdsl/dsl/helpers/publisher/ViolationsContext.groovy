@@ -7,7 +7,7 @@ class ViolationsContext implements Context {
     def static validTypes = ['checkstyle', 'codenarc', 'cpd', 'cpplint', 'csslint', 'findbugs', 'fxcop', 'gendarme',
             'jcreport', 'jslint', 'pep8', 'perlcritic', 'pmd', 'pylint', 'simian', 'stylecop', 'jshint']
 
-    private Map<String, ViolationsEntry> entries = validTypes.collectEntries { String key ->
+    private final Map<String, ViolationsEntry> entries = validTypes.collectEntries { String key ->
         return [key, createEntry()]
     } as TreeMap
     String sourcePathPattern = null

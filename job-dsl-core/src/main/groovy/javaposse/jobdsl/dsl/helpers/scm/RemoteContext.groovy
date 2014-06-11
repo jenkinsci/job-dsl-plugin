@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.Context
 
 class RemoteContext implements Context {
-    private List<WithXmlAction> withXmlActions
+    private final List<WithXmlAction> withXmlActions
 
     String name
     String url

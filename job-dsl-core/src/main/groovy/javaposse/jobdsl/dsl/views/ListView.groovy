@@ -7,7 +7,7 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER
 import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
 
 class ListView extends View {
-    private Set<String> jobNames = []
+    private final Set<String> jobNames = []
 
     void statusFilter(StatusFilter filter) {
         checkNotNull(filter, "filter must not be null")

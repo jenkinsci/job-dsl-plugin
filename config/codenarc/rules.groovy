@@ -11,18 +11,10 @@ ruleset {
     }
 
     ruleset('rulesets/design.xml') {
-        // TODO: fix violations
-        exclude 'AbstractClassWithPublicConstructor'
         // we don't care
         exclude 'AbstractClassWithoutAbstractMethod'
         // we don't care
         exclude 'BuilderMethodWithSideEffects'
-        // TODO: fix violations
-        exclude 'DuplicateStringLiteral'
-        // TODO: fix violations
-        exclude 'PrivateFieldCouldBeFinal'
-        // TODO: fix violations
-        exclude 'PublicInstanceField'
     }
 
     // the DRY rules do not necessarily lead to better code
@@ -30,10 +22,7 @@ ruleset {
 
     ruleset('rulesets/enhanced.xml')
 
-    ruleset('rulesets/exceptions.xml') {
-        // TODO: fix violations
-        exclude 'ThrowRuntimeException'
-    }
+    ruleset('rulesets/exceptions.xml')
 
     ruleset('rulesets/formatting.xml') {
         // enforce at least one space after map entry colon

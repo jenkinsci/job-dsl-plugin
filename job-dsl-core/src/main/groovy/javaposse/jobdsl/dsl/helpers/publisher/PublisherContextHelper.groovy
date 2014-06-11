@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 
 class PublisherContextHelper extends AbstractContextHelper<PublisherContext> {
-    private JobManagement jobManagement
+    private final JobManagement jobManagement
 
     PublisherContextHelper(List<WithXmlAction> withXmlActions, JobType jobType, JobManagement jobManagement) {
         super(withXmlActions, jobType)

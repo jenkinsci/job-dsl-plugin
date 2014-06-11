@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
@@ -63,9 +64,7 @@ public class Job extends Item {
      * @throws JobTemplateMissingException
      */
     def using(String templateName) throws JobTemplateMissingException {
-        if (this.templateName != null) {
-            throw new RuntimeException('Can only use "using" once')
-        }
+        Preconditions.checkState(this.templateName == null, 'Can only use "using" once')
         this.templateName = templateName
     }
 
