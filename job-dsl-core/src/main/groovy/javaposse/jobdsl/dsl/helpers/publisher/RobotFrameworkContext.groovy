@@ -7,10 +7,10 @@ import com.google.common.base.Preconditions;
 import javaposse.jobdsl.dsl.helpers.Context
 
 /**
- * A Job DSL context for Robot Framework. Specifically, 
- * take a look at 
+ * A Job DSL context for Robot Framework. Specifically,
+ * take a look at
  * https://github.com/jenkinsci/robot-plugin/blob/master/src/main/java/hudson/plugins/robot/RobotPublisher.java
- * 
+ *
  * @author Behrooz Nobakht
  */
 class RobotFrameworkContext implements Context {
@@ -29,13 +29,13 @@ class RobotFrameworkContext implements Context {
     String outputFileName = DEFAULT_OUTPUT_FILE_NAME
 
     void passThreshold(double passThreshold) {
-        Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0, 
+        Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0,
             'passThreshold should be a floating point in range (0, 100)')
         this.passThreshold = passThreshold
     }
 
     void unstableThreshold(double unstableThreshold) {
-        Preconditions.checkArgument(unstableThreshold >= 0.0 && unstableThreshold <= 100.0, 
+        Preconditions.checkArgument(unstableThreshold >= 0.0 && unstableThreshold <= 100.0,
             'unstableThreshold should be a floating point in range (0, 100)')
         this.unstableThreshold = unstableThreshold
     }

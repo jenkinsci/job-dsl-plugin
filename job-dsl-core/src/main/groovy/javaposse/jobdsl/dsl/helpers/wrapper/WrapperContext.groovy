@@ -410,13 +410,13 @@ class WrapperContext implements Context {
      *              <preBuildSteps>
      *                  <hudson.tasks.Maven>
      *                      <targets>install</targets>
-     *                      <mavenName>(Default)</mavenName> 
+     *                      <mavenName>(Default)</mavenName>
      *                  </hudson.tasks.Maven>
      *              </preBuildSteps>
      *              <postBuildSteps>
      *                  <hudson.tasks.Maven>
      *                      <targets>site</targets>
-     *                      <mavenName>(Default)</mavenName> 
+     *                      <mavenName>(Default)</mavenName>
      *                 </hudson.tasks.Maven>
      *              </postBuildSteps>
      *          </hudson.plugins.release.ReleaseWrapper>
@@ -432,9 +432,9 @@ class WrapperContext implements Context {
     def release(Closure releaseClosure) {
         ReleaseContext releaseContext = new ReleaseContext()
         AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
-            
+
         NodeBuilder nodeBuilder = new NodeBuilder()
-        
+
         // plugin properties
         Node releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
             releaseVersionTemplate(releaseContext.releaseVersionTemplate?:'')

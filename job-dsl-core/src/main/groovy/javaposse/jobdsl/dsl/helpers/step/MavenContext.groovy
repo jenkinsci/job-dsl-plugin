@@ -10,7 +10,7 @@ class MavenContext implements javaposse.jobdsl.dsl.helpers.common.MavenContext {
     LocalRepositoryLocation localRepositoryLocation
     String mavenInstallation = '(Default)'
     Closure configureBlock
-    
+
     @Override
     def rootPOM(String rootPOM) {
         this.rootPOM = rootPOM
@@ -35,7 +35,7 @@ class MavenContext implements javaposse.jobdsl.dsl.helpers.common.MavenContext {
     def mavenInstallation(String name) {
         this.mavenInstallation = name
     }
-    
+
     def configure(Closure closure) {
         this.configureBlock = closure
     }

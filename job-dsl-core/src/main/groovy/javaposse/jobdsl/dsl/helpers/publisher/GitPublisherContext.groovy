@@ -24,7 +24,7 @@ class GitPublisherContext implements Context {
      * <hudson.plugins.git.GitPublisher_-TagToPush>
      *     <targetRepoName>origin</targetRepoName>
      *     <tagName>foo-$PIPELINE_VERSION</tagName>
-     *     <tagMessage>Release $PIPELINE_VERSION</tagMessage> 
+     *     <tagMessage>Release $PIPELINE_VERSION</tagMessage>
      *     <createTag>true</createTag>
      *     <updateTag>false</updateTag>
      * </hudson.plugins.git.GitPublisher_-TagToPush>
@@ -35,7 +35,7 @@ class GitPublisherContext implements Context {
 
         TagToPushContext context = new TagToPushContext()
         AbstractContextHelper.executeInContext(closure, context)
-        
+
         tags << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-TagToPush' {
             targetRepoName(targetRepo)
             tagName(name)

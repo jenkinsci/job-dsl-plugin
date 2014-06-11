@@ -896,7 +896,7 @@ class PublisherContext implements Context {
             }
         }
     }
-    
+
     /**
      * Configures Jenkins job to publish Robot Framework reports.
      * By default the following values are applied. If an instance of a
@@ -982,7 +982,7 @@ class PublisherContext implements Context {
      *             <hudson.plugins.git.GitPublisher_-TagToPush>
      *                 <targetRepoName>origin</targetRepoName>
      *                 <tagName>foo-$PIPELINE_VERSION</tagName>
-     *                 <tagMessage>Release $PIPELINE_VERSION</tagMessage> 
+     *                 <tagMessage>Release $PIPELINE_VERSION</tagMessage>
      *                 <createTag>true</createTag>
      *                 <updateTag>false</updateTag>
      *             </hudson.plugins.git.GitPublisher_-TagToPush>
