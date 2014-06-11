@@ -52,9 +52,7 @@ class GitContext implements Context {
 
     void mergeOptions(String remote = null, String branch) {
         mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
-            if (remote) {
-                mergeRemote(remote)
-            }
+            mergeRemote(remote ?: '')
             mergeTarget(branch)
         }
     }

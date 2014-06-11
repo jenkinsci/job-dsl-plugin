@@ -411,7 +411,8 @@ public class ScmHelperSpec extends Specification {
         then:
         context.scmNode != null
         context.scmNode.userMergeOptions.size() == 1
-        context.scmNode.userMergeOptions[0].mergeRemote.size() == 0
+        context.scmNode.userMergeOptions[0].mergeRemote.size() == 1
+        context.scmNode.userMergeOptions[0].mergeRemote[0].text() == ''
         context.scmNode.userMergeOptions[0].mergeTarget.size() == 1
         context.scmNode.userMergeOptions[0].mergeTarget[0].text() == 'acme-plugin'
     }
@@ -429,7 +430,8 @@ public class ScmHelperSpec extends Specification {
         then:
         context.scmNode != null
         context.scmNode.userMergeOptions.size() == 1
-        context.scmNode.userMergeOptions[0].mergeRemote.size() == 0
+        context.scmNode.userMergeOptions[0].mergeRemote.size() == 1
+        context.scmNode.userMergeOptions[0].mergeRemote[0].text() == ''
         context.scmNode.userMergeOptions[0].mergeTarget.size() == 1
         context.scmNode.userMergeOptions[0].mergeTarget[0].text() == 'acme-plugin'
     }
