@@ -80,5 +80,4 @@ class RunConditionContext implements Context {
         List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('Or', conditions)
     }
-
 }
