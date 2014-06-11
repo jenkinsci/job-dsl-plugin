@@ -850,7 +850,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         Node ircPublisher = context.publisherNodes[0]
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
-        ircPublisher.getAt('buildToChatNotifier')[0].attributes()['class'] == 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
+        ircPublisher.'buildToChatNotifier'[0].attributes()['class'] == 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
     }
 
     def 'default notification message is set if not specified'() {
@@ -863,7 +863,7 @@ public class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         Node ircPublisher = context.publisherNodes[0]
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
-        ircPublisher.getAt('buildToChatNotifier')[0].attributes()['class'] == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+        ircPublisher.'buildToChatNotifier'[0].attributes()['class'] == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
     }
 
     def 'default notification strategy is set if not specified'() {
@@ -905,8 +905,8 @@ public class PublisherHelperSpec extends Specification {
     }
 
     private void assertTarget(String targetName, int position, String type, String value) {
-        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].getAt('hudson.plugins.cobertura.targets.CoverageMetric')[0].value() == type
-        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].getAt('int')[0].value() == value
+        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].'hudson.plugins.cobertura.targets.CoverageMetric'[0].value() == type
+        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].'int'[0].value() == value
     }
 
     def 'the closure makes it possible to override all the cobertura flags'() {

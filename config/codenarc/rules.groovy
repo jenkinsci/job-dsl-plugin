@@ -70,8 +70,6 @@ ruleset {
             ignoreThisReference = true
         }
 
-        // TODO: fix violations
-        exclude 'ExplicitCallToGetAtMethod'
         // not necessarily an issue, problems should be detected by unit tests
         exclude 'GStringExpressionWithinString'
     }
