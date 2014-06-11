@@ -601,21 +601,31 @@ githubPush()
 Enables the job to be started whenever a change is pushed to a github repository. Requires that Jenkins has the github plugin installed and that it is registered as service hook for the repository (also works with Github Enterprise). (Since 1.16)
 
 ## Gerrit
+
 ```groovy
 gerrit {
-    events(Closure eventClosure) // Free form listing of event names
-    project(String projectName, List<String> branches) // Can be called multiple times
-    project(String projectName, String branches) // Can be called multiple times
-    buildStarted(Integer verified, Integer codeReview) //Updates the gerrit report values for the build started event, null : keep default value
-     buildSuccessful(Integer verified, Integer codeReview) //Updates the gerrit report values for the build successful event, null : keep default value
-    buildFailed(Integer verified, Integer codeReview) //Updates the gerrit report values for the build failed event, null : keep default value
-    buildUnstable(Integer verified, Integer codeReview) //Updates the gerrit report values for the build unstable event, null : keep default value
-    buildNotBuilt(Integer verified, Integer codeReview) //Updates the gerrit report values for the build not built, null : keep default value event 
-    configure(Closure configureClosure) // Handed com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger
+    events(Closure eventClosure)                          // free form listing of event names
+    project(String projectName, List<String> branches)    // can be called multiple times
+    project(String projectName, String branches)          // can be called multiple times
+    buildStarted(Integer verified, Integer codeReview)    // updates the Gerrit report values for the build started event, use null to keep the default value
+    buildSuccessful(Integer verified, Integer codeReview) // updates the Gerrit report values for the build successful event, use null to keep the default value
+    buildFailed(Integer verified, Integer codeReview)     // updates the Gerrit report values for the build failed event, use null to keep the default value
+    buildUnstable(Integer verified, Integer codeReview)   // updates the Gerrit report values for the build unstable event, use null to keep the default value
+    buildNotBuilt(Integer verified, Integer codeReview)   // updates the Gerrit report values for the build not built event, use null to keep the default value
+    configure(Closure configureClosure)                   // the com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger node is handed in
 }
 ```
 
-Polls gerrit for changes. This DSL method works slightly differently by exposing most of its functionality in its own block. This is accommodating how the plugin can be pointed to multiple projects and trigger on many events. The most complex part is the events block, which takes the "short name" of an event. When looking at the raw config.xml for a Job which has Gerrit trigger, you'll see multiple class names in the triggerOnEvents element. The DSL method will take the names in the events block and prepend it with "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin" and append "Event", meaning that shorter names like ChangeMerged and DraftPublished can be used. Straight from the unit test:
+Polls Gerrit for changes. This DSL method works slightly differently by exposing most of its functionality in its own
+block. This is accommodating how the plugin can be pointed to multiple projects and trigger on many events. The events
+block takes the "short name" of an event. When looking at the raw config.xml for a job which uses the Gerrit trigger,
+you'll see multiple class names in the triggerOnEvents element. The DSL method will take the names in the events block
+and prepend it with 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin' and append 'Event',
+meaning that shorter names like ChangeMerged and DraftPublished can be used.
+
+Requires the [Gerrit Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger).
+
+Example:
 
 ```groovy
 gerrit {

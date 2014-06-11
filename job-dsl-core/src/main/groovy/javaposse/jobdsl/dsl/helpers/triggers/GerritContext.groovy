@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 
 class GerritContext implements Context {
-    
     GerritEventContext eventContext = new GerritEventContext()
     Closure configureClosure
     def projects = []
