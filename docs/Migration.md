@@ -1,5 +1,7 @@
 ## Migrating to 1.24
 
+### Build Timeout
+
 In version 1.24 the dsl for the build timeout plugin has been modified and the
 generated xml requires a newer version of the build timeout plugin.
 The old dsl still works but has been deprecated.
@@ -27,6 +29,15 @@ timeout {
     failBuild(false)
 }
 ```
+
+See the [[Job Reference]] for further details.
+
+### Gerrit Trigger
+
+Before 1.24, the Gerrit trigger configuration used hardwired configuration for unset label configurations
+(successfulVerified +1, failedVerified -1, everything else 0, these are the default values of the central Gerrit trigger
+plugin configuration). Now the Gerrit trigger configuration correctly honors central configuration of labels. If you use
+non-default labels in your central configuration, you might need to change the trigger label configuration of your jobs.
 
 See the [[Job Reference]] for further details.
 

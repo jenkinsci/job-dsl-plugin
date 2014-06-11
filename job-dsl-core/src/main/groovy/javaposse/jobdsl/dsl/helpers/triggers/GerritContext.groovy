@@ -9,22 +9,22 @@ class GerritContext implements Context {
     Closure configureClosure
     def projects = []
 
-    int startedCodeReview = 0
-    int startedVerified = 0
+    Integer startedCodeReview = null
+    Integer startedVerified = null
 
-    int successfulCodeReview = 0
-    int successfulVerified = 1
+    Integer successfulCodeReview = null
+    Integer successfulVerified = null
 
-    int failedCodeReview = 0
-    int failedVerified = -1
+    Integer failedCodeReview = null
+    Integer failedVerified = null
 
-    int unstableCodeReview = 0
-    int unstableVerified = 0
+    Integer unstableCodeReview = null
+    Integer unstableVerified = null
 
-    int notBuiltCodeReview = 0
-    int notBuiltVerified = 0
+    Integer notBuiltCodeReview = null
+    Integer notBuiltVerified = null
 
-    def buildStarted(int verified, int codeReview) {
+    def buildStarted(Integer verified, Integer codeReview) {
         startedVerified = verified
         startedCodeReview = codeReview
     }
@@ -37,7 +37,7 @@ class GerritContext implements Context {
     }
 
 
-    def buildSuccessful(int verified, int codeReview) {
+    def buildSuccessful(Integer verified, Integer codeReview) {
         successfulVerified = verified
         successfulCodeReview = codeReview
     }
@@ -49,7 +49,7 @@ class GerritContext implements Context {
         )
     }
 
-    def buildFailed(int verified, int codeReview) {
+    def buildFailed(Integer verified, Integer codeReview) {
         failedVerified = verified
         failedCodeReview = codeReview
     }
@@ -61,7 +61,7 @@ class GerritContext implements Context {
         )
     }
 
-    def buildUnstable(int verified, int codeReview) {
+    def buildUnstable(Integer verified, Integer codeReview) {
         unstableVerified = verified
         unstableCodeReview = codeReview
     }
@@ -73,7 +73,7 @@ class GerritContext implements Context {
         )
     }
 
-    def buildNotBuilt(int verified, int codeReview) {
+    def buildNotBuilt(Integer verified, Integer codeReview) {
         notBuiltVerified = verified
         notBuiltCodeReview = codeReview
     }

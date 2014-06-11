@@ -246,16 +246,38 @@ class TriggerContext implements Context {
                     }
                 }
             }
-            gerritBuildStartedVerifiedValue Integer.toString(gerritContext.startedVerified)
-            gerritBuildStartedCodeReviewValue Integer.toString(gerritContext.startedCodeReview)
-            gerritBuildSuccessfulVerifiedValue Integer.toString(gerritContext.successfulVerified)
-            gerritBuildSuccessfulCodeReviewValue Integer.toString(gerritContext.successfulCodeReview)
-            gerritBuildFailedVerifiedValue Integer.toString(gerritContext.failedVerified)
-            gerritBuildFailedCodeReviewValue Integer.toString(gerritContext.failedCodeReview)
-            gerritBuildUnstableVerifiedValue Integer.toString(gerritContext.unstableVerified)
-            gerritBuildUnstableCodeReviewValue Integer.toString(gerritContext.unstableCodeReview)
-            gerritBuildNotBuiltVerifiedValue Integer.toString(gerritContext.notBuiltVerified)
-            gerritBuildNotBuiltCodeReviewValue Integer.toString(gerritContext.notBuiltCodeReview)
+            gerritContext.with {
+                if (startedVerified != null) {
+                    gerritBuildStartedVerifiedValue startedVerified
+                }
+                if (startedCodeReview != null) {
+                    gerritBuildStartedCodeReviewValue startedCodeReview
+                }
+                if (successfulVerified != null) {
+                    gerritBuildSuccessfulVerifiedValue successfulVerified
+                }
+                if (successfulCodeReview != null) {
+                    gerritBuildSuccessfulCodeReviewValue successfulCodeReview
+                }
+                if (failedVerified != null) {
+                    gerritBuildFailedVerifiedValue failedVerified
+                }
+                if (failedCodeReview != null) {
+                    gerritBuildFailedCodeReviewValue failedCodeReview
+                }
+                if (unstableVerified != null) {
+                    gerritBuildUnstableVerifiedValue unstableVerified
+                }
+                if (unstableCodeReview != null) {
+                    gerritBuildUnstableCodeReviewValue unstableCodeReview
+                }
+                if (notBuiltVerified != null) {
+                    gerritBuildNotBuiltVerifiedValue notBuiltVerified
+                }
+                if (notBuiltCodeReview != null) {
+                    gerritBuildNotBuiltCodeReviewValue notBuiltCodeReview
+                }
+            }
             dynamicTriggerConfiguration false
             triggerConfigURL ''
             triggerInformationAction ''

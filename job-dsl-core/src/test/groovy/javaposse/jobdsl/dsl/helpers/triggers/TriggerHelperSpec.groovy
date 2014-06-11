@@ -398,9 +398,6 @@ public class TriggerHelperSpec extends Specification {
         gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
         gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '10'
 
-        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() == '0'
-
         Node gerritEvents = gerritTrigger.triggerOnEvents[0]
         gerritEvents.children().size() == 2
         gerritEvents.children()[0].name().contains('com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin')
@@ -428,7 +425,7 @@ public class TriggerHelperSpec extends Specification {
 
 
     def 'call gerrit trigger and verify build status value settings'() {
-      when:
+        when:
         context.gerrit {
             events {
                 PatchsetCreated
@@ -437,30 +434,21 @@ public class TriggerHelperSpec extends Specification {
 
             project('test-project', '**')
         }
-      then:
-        def gerritTrigger = context.triggerNodes[0]
-        gerritTrigger.gerritBuildSuccessfulCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildSuccessfulCodeReviewValue[0].value() == '0'
 
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '1'
-
-        gerritTrigger.gerritBuildFailedVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildFailedVerifiedValue[0].value() as String == '-1'
-
-        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() as String == '0'
-
-        gerritTrigger.gerritBuildUnstableVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildUnstableVerifiedValue[0].value() as String == '0'
-
-        gerritTrigger.gerritBuildUnstableCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildUnstableCodeReviewValue[0].value() == '0'
+        then:
+        with(context.triggerNodes[0]) {
+            gerritBuildSuccessfulCodeReviewValue.size() == 0
+            gerritBuildSuccessfulVerifiedValue.size() == 0
+            gerritBuildFailedVerifiedValue.size() == 0
+            gerritBuildFailedCodeReviewValue.size() == 0
+            gerritBuildUnstableVerifiedValue.size() == 0
+            gerritBuildUnstableCodeReviewValue.size() == 0
+        }
     }
 
 
     def 'call gerrit trigger and verify build status value methods'() {
-      when:
+        when:
         context.gerrit {
             events {
                 PatchsetCreated
@@ -469,44 +457,45 @@ public class TriggerHelperSpec extends Specification {
 
             project('test-project', '**')
 
-            buildSuccessful(11,10)
-            buildFailed('-21',20)
-            buildUnstable(30,'32')
-            buildNotBuilt('40','42')
-            buildStarted('50','55')
+            buildSuccessful(11, 10)
+            buildFailed('-21', 20)
+            buildUnstable(30, '32')
+            buildNotBuilt('40', '42')
+            buildStarted('50', '55')
         }
-      then:
-        def gerritTrigger = context.triggerNodes[0]
-        gerritTrigger.gerritBuildSuccessfulCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildSuccessfulCodeReviewValue[0].value() == '10'
 
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '11'
+        then:
+        with(context.triggerNodes[0]) {
+            gerritBuildSuccessfulCodeReviewValue.size() == 1
+            gerritBuildSuccessfulCodeReviewValue[0].value() == 10
 
-        gerritTrigger.gerritBuildFailedVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildFailedVerifiedValue[0].value() as String == '-21'
+            gerritBuildSuccessfulVerifiedValue.size() == 1
+            gerritBuildSuccessfulVerifiedValue[0].value() == 11
 
-        gerritTrigger.gerritBuildFailedCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildFailedCodeReviewValue[0].value() as String == '20'
+            gerritBuildFailedVerifiedValue.size() == 1
+            gerritBuildFailedVerifiedValue[0].value() == -21
 
-        gerritTrigger.gerritBuildUnstableVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildUnstableVerifiedValue[0].value() as String == '30'
+            gerritBuildFailedCodeReviewValue.size() == 1
+            gerritBuildFailedCodeReviewValue[0].value() == 20
 
-        gerritTrigger.gerritBuildUnstableCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildUnstableCodeReviewValue[0].value() == '32'
+            gerritBuildUnstableVerifiedValue.size() == 1
+            gerritBuildUnstableVerifiedValue[0].value() == 30
 
-        gerritTrigger.gerritBuildNotBuiltVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildNotBuiltVerifiedValue[0].value() as String == '40'
+            gerritBuildUnstableCodeReviewValue.size() == 1
+            gerritBuildUnstableCodeReviewValue[0].value() == 32
 
-        gerritTrigger.gerritBuildNotBuiltCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildNotBuiltCodeReviewValue[0].value() == '42'
+            gerritBuildNotBuiltVerifiedValue.size() == 1
+            gerritBuildNotBuiltVerifiedValue[0].value() == 40
 
-        gerritTrigger.gerritBuildStartedVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildStartedVerifiedValue[0].value() as String == '50'
+            gerritBuildNotBuiltCodeReviewValue.size() == 1
+            gerritBuildNotBuiltCodeReviewValue[0].value() == 42
 
-        gerritTrigger.gerritBuildStartedCodeReviewValue.size() == 1
-        gerritTrigger.gerritBuildStartedCodeReviewValue[0].value() == '55'
+            gerritBuildStartedVerifiedValue.size() == 1
+            gerritBuildStartedVerifiedValue[0].value() == 50
 
+            gerritBuildStartedCodeReviewValue.size() == 1
+            gerritBuildStartedCodeReviewValue[0].value() == 55
+        }
     }
 
     def 'execute withXml Action'() {
