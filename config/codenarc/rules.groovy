@@ -98,8 +98,6 @@ ruleset {
         exclude 'FactoryMethodName'
         // TODO: fix violations
         exclude 'PropertyName'
-        // TODO: fix violations
-        exclude 'VariableName'
     }
 
     ruleset('rulesets/security.xml') {
