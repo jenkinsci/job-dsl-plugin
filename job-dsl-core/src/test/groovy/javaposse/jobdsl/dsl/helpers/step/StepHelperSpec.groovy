@@ -1,4 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
+
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec

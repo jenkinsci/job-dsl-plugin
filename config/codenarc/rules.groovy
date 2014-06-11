@@ -35,8 +35,6 @@ ruleset {
         // TODO: fix violations
         exclude 'LineLength'
         // TODO: fix violations
-        exclude 'MissingBlankLineAfterPackage'
-        // TODO: fix violations
         exclude 'SpaceAfterClosingBrace'
         // TODO: fix violations
         exclude 'SpaceAfterComma'
