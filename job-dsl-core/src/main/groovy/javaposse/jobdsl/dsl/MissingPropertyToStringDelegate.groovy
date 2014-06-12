@@ -6,7 +6,7 @@ import java.util.logging.Logger
  * Works like NodeBuilder, but in the context of a parent node. Used as the delegate for WithXmlAction closure.
  */
 class MissingPropertyToStringDelegate {
-    private static final Logger LOGGER = Logger.getLogger(MissingPropertyToStringDelegate.class.name)
+    private static final Logger LOGGER = Logger.getLogger(MissingPropertyToStringDelegate.name)
     Node root
 
     MissingPropertyToStringDelegate(Node root) {

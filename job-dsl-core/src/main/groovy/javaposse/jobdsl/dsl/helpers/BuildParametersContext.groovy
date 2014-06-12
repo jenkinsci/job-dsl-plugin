@@ -75,7 +75,7 @@ class BuildParametersContext implements Context {
         if (description != null) {
             definitionNode.appendNode('description', description)
         }
-        definitionNode.appendNode('uuid', java.util.UUID.randomUUID())
+        definitionNode.appendNode('uuid', UUID.randomUUID())
 
         buildParameterNodes[parameterName] = definitionNode
     }
@@ -232,7 +232,7 @@ class BuildParametersContext implements Context {
         simpleParam('hudson.model.TextParameterDefinition', parameterName, defaultValue, description)
     }
 
-    private def simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
+    private simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
         Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
         Preconditions.checkArgument(parameterName.length() > 0)

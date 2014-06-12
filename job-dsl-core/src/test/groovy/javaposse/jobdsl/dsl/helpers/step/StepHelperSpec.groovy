@@ -672,7 +672,7 @@ public class StepHelperSpec extends Specification {
         phaseNode.continuationCondition[0].value() == 'SUCCESSFUL'
 
         when:
-        context.phase() {
+        context.phase {
             phaseName 'Second'
             job('JobA')
         }

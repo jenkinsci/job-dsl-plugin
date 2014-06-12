@@ -17,72 +17,72 @@ class ViewSpec extends Specification {
 
     def 'description'() {
         setup:
-        view.getTemplate() >> "<View/>"
+        view.template >> "<View/>"
 
         when:
         view.description('test view')
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.description.size() == 1
         root.description[0].text() == 'test view'
     }
 
     def 'filterBuildQueue'() {
         setup:
-        view.getTemplate() >> "<View/>"
+        view.template >> "<View/>"
 
         when:
         view.filterBuildQueue(true)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.filterQueue.size() == 1
         root.filterQueue[0].text() == 'true'
     }
 
     def 'filterBuildQueue without argument'() {
         setup:
-        view.getTemplate() >> "<View/>"
+        view.template >> "<View/>"
 
         when:
         view.filterBuildQueue()
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.filterQueue.size() == 1
         root.filterQueue[0].text() == 'true'
     }
 
     def 'filterExecutors'() {
         setup:
-        view.getTemplate() >> "<View/>"
+        view.template >> "<View/>"
 
         when:
         view.filterExecutors(true)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.filterExecutors.size() == 1
         root.filterExecutors[0].text() == 'true'
     }
 
     def 'filterExecutors without argument'() {
         setup:
-        view.getTemplate() >> "<View/>"
+        view.template >> "<View/>"
 
         when:
         view.filterExecutors()
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.filterExecutors.size() == 1
         root.filterExecutors[0].text() == 'true'
     }
 
     def 'configure'() {
         setup:
-        view.getTemplate() >> "<View/>"
+        view.template >> "<View/>"
 
         when:
         view.configure {
@@ -90,17 +90,17 @@ class ViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.foo.size() == 1
         root.foo[0].text() == 'bar'
     }
 
     def 'xml'() {
         setup:
-        view.getTemplate() >> "<View/>"
+        view.template >> "<View/>"
 
         when:
-        String xml = view.getXml()
+        String xml = view.xml
 
         then:
         compareXML("<View/>", xml).similar()

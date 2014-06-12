@@ -14,7 +14,7 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
         super(withXmlActions, jobType)
     }
 
-    static def executeInContext(Closure closure, Context freshContext) {
+    static executeInContext(Closure closure, Context freshContext) {
         if (closure) {
             closure.delegate = freshContext
             closure.resolveStrategy = Closure.DELEGATE_FIRST

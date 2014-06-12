@@ -47,13 +47,13 @@ public abstract class View {
             expandEmptyElements = true
             quote = "'" // Use single quote for attributes
         }
-        xmlNodePrinter.print(getNode())
+        xmlNodePrinter.print(node)
 
         return xmlOutput.toString()
     }
 
     Node getNode() {
-        Node root = new XmlParser().parse(new StringReader(getTemplate()))
+        Node root = new XmlParser().parse(new StringReader(template))
 
         withXmlActions.each { it.execute(root) }
         root

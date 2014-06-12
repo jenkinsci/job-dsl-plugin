@@ -29,7 +29,7 @@ abstract class Item {
             expandEmptyElements = true
             quote = "'" // Use single quote for attributes
         }
-        xmlNodePrinter.print(getNode())
+        xmlNodePrinter.print(node)
 
         return xmlOutput.toString()
     }

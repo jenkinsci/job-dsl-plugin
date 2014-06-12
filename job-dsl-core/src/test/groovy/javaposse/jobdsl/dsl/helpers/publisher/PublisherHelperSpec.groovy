@@ -1199,7 +1199,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call postBuildTask with two arguments'() {
         when:
-        context.postBuildTask() {
+        context.postBuildTask {
             task('BUILD SUCCESSFUL', 'git clean -fdx')
         }
 
@@ -1215,7 +1215,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'call postBuildTask with two tasks'() {
         when:
-        context.postBuildTask() {
+        context.postBuildTask {
             task('BUILD SUCCESSFUL', 'git clean -fdx')
             task('BUILD FAILED', 'git gc', true, true)
         }
@@ -1518,7 +1518,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'publish Robot framework report using a configure closure'() {
         when:
-        context.publishRobotFrameworkReports() {
+        context.publishRobotFrameworkReports {
             passThreshold(50.0)
             unstableThreshold(10.0)
             outputPath("/path/to/foo")

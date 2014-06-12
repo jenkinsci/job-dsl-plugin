@@ -315,7 +315,7 @@ class StaticAnalysisPublisherContext {
         }
     }
 
-    private def addStaticAnalysisContext(nodeBuilder, StaticAnalysisContext context) {
+    private addStaticAnalysisContext(nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
             healthy(context.healthy)
             unHealthy(context.unHealthy)
@@ -337,11 +337,11 @@ class StaticAnalysisPublisherContext {
         }
     }
 
-    private def addStaticAnalysisPattern(nodeBuilder, String pattern) {
+    private addStaticAnalysisPattern(nodeBuilder, String pattern) {
         nodeBuilder.pattern(pattern)
     }
 
-    private def addStaticAnalysisContextAndPattern(nodeBuilder, StaticAnalysisContext context, String pattern) {
+    private addStaticAnalysisContextAndPattern(nodeBuilder, StaticAnalysisContext context, String pattern) {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }

@@ -9,7 +9,7 @@ import java.util.logging.Logger
  */
 @Category(Node)
 class NodeEnhancement {
-    private static final Logger LOGGER = Logger.getLogger(NodeEnhancement.class.name)
+    private static final Logger LOGGER = Logger.getLogger(NodeEnhancement.name)
 
     Node div(Node orphan) {
         LOGGER.fine("Looking for child node ${orphan}")
@@ -40,7 +40,7 @@ class NodeEnhancement {
     }
 
     Node div(String childName) { // a.div(b)
-        LOGGER.fine("Looking for childName ${childName} ${LOGGER.getLevel()}")
+        LOGGER.fine("Looking for childName ${childName} ${LOGGER.level}")
 
         def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
             child instanceof Node && child.name() == childName

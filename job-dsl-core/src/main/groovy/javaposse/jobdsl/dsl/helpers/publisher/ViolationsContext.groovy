@@ -4,7 +4,7 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.helpers.Context
 
 class ViolationsContext implements Context {
-    def static validTypes = ['checkstyle', 'codenarc', 'cpd', 'cpplint', 'csslint', 'findbugs', 'fxcop', 'gendarme',
+    static validTypes = ['checkstyle', 'codenarc', 'cpd', 'cpplint', 'csslint', 'findbugs', 'fxcop', 'gendarme',
             'jcreport', 'jslint', 'pep8', 'perlcritic', 'pmd', 'pylint', 'simian', 'stylecop', 'jshint']
 
     private final Map<String, ViolationsEntry> entries = validTypes.collectEntries { String key ->

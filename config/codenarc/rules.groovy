@@ -85,26 +85,12 @@ ruleset {
     // ruleset('rulesets/size.xml')
 
     ruleset('rulesets/unnecessary.xml') {
-        // TODO: fix violations
-        exclude 'UnnecessaryCollectCall'
-        // TODO: fix violations
-        exclude 'UnnecessaryDefInFieldDeclaration'
-        // TODO: fix violations
-        exclude 'UnnecessaryDefInMethodDeclaration'
-        // TODO: fix violations
-        exclude 'UnnecessaryDotClass'
         // we don't care, does not necessarily lead to better code
         exclude 'UnnecessaryElseStatement'
-        // TODO: fix violations
-        exclude 'UnnecessaryGetter'
         // TODO: fix violations
         exclude 'UnnecessaryGString'
         // TODO: fix violations
         exclude 'UnnecessaryObjectReferences'
-        // TODO: fix violations
-        exclude 'UnnecessaryPackageReference'
-        // TODO: fix violations
-        exclude 'UnnecessaryParenthesesForMethodCallWithClosure'
         // TODO: fix violations
         exclude 'UnnecessaryPublicModifier'
         // TODO: fix violations

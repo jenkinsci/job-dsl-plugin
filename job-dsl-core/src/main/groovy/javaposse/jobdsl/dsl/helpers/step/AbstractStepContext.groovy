@@ -257,7 +257,7 @@ class AbstractStepContext implements Context {
         groovy(fileName, false, groovyName, groovyClosure)
     }
 
-    protected def groovyScriptSource(String commandOrFileName, boolean isCommand) {
+    protected groovyScriptSource(String commandOrFileName, boolean isCommand) {
         def nodeBuilder = new NodeBuilder()
         nodeBuilder.scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
             if (isCommand) {
@@ -268,7 +268,7 @@ class AbstractStepContext implements Context {
         }
     }
 
-    protected def groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
+    protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
         def groovyContext = new GroovyContext()
         AbstractContextHelper.executeInContext(groovyClosure, groovyContext)
 
@@ -311,7 +311,7 @@ class AbstractStepContext implements Context {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
 
-    protected def systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
+    protected systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
         def systemGroovyContext = new SystemGroovyContext()
         AbstractContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
@@ -551,7 +551,7 @@ class AbstractStepContext implements Context {
         def nodeBuilder = new NodeBuilder()
         def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
              // Important that there are no spaces for comma delimited values, plugin doesn't handle by trimming, so we will
-            projects(projectList.tokenize(',').collect { it.trim() }.join(','))
+            projects(projectList.tokenize(',')*.trim().join(','))
             warningOnly(warningOnlyBool)
         }
         stepNodes << preReqNode
