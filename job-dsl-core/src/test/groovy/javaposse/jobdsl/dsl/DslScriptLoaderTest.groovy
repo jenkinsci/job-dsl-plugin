@@ -62,8 +62,8 @@ public class DslScriptLoaderTest extends Specification {
         then:
         jobs != null
         jobs.size() == 2
-        jobs.any { it.jobName == 'test'}
-        jobs.any { it.jobName == 'test2'}
+        jobs.any { it.jobName == 'test' }
+        jobs.any { it.jobName == 'test2' }
 
     }
 
@@ -147,8 +147,8 @@ Callee.makeJob(this, 'test2')
         then:
         jobs != null
         jobs.size() == 2
-        jobs.any { it.jobName == 'test'}
-        jobs.any { it.jobName == 'test2'}
+        jobs.any { it.jobName == 'test' }
+        jobs.any { it.jobName == 'test2' }
     }
 
     def 'use @Grab'() {

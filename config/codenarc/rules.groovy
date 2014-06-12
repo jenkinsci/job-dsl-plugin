@@ -38,8 +38,6 @@ ruleset {
         // TODO: fix violations
         exclude 'SpaceAroundOperator'
         // TODO: fix violations
-        exclude 'SpaceBeforeClosingBrace'
-        // TODO: fix violations
         exclude 'SpaceBeforeOpeningBrace'
     }
 

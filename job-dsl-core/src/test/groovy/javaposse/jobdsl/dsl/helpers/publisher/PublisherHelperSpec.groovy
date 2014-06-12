@@ -679,7 +679,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
         typeConfigsNode.entry.size() == 17
-        def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian'}
+        def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian' }
         simianNode != null
         def typeConfigNode = simianNode.'hudson.plugins.violations.TypeConfig'[0]
         typeConfigNode.type[0].value() == 'simian'
@@ -711,7 +711,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
         typeConfigsNode.entry.size() == 17
-        def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle'}
+        def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle' }
         checkstyleNode != null
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'checkstyle'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
@@ -719,7 +719,7 @@ public class PublisherHelperSpec extends Specification {
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
-        def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint'}
+        def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint' }
         jshintNode != null
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jshint'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
@@ -727,14 +727,14 @@ public class PublisherHelperSpec extends Specification {
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
-        def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs'}
+        def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs' }
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'findbugs'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '12'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '13'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '12'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == ''
-        def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint'}
+        def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint' }
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jslint'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '999'
