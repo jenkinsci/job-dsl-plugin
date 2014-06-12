@@ -53,7 +53,7 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false, boolean sortZtoA = false, String maxTagsToDisplay = "all", String defaultValue = null, String description = null) {
+    def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false, boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null, String description = null) {
         Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
         Preconditions.checkArgument(parameterName.length() > 0)

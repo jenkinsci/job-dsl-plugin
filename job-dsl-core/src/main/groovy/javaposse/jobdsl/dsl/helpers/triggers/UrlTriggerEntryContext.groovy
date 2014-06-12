@@ -32,8 +32,8 @@ class UrlTriggerEntryContext implements Context {
      * @param url Required URL to monitor
      */
     UrlTriggerEntryContext(String url) {
-        this.url = Preconditions.checkNotNull(url, "The URL is required for urlTrigger()")
-        Preconditions.checkArgument(url != "", "URL must not be empty.")
+        this.url = Preconditions.checkNotNull(url, 'The URL is required for urlTrigger()')
+        Preconditions.checkArgument(url != '', 'URL must not be empty.')
         this.statusCode = statusCode
         this.timeout = timeout
     }

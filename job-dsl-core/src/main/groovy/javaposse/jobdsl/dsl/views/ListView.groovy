@@ -10,7 +10,7 @@ class ListView extends View {
     private final Set<String> jobNames = []
 
     void statusFilter(StatusFilter filter) {
-        checkNotNull(filter, "filter must not be null")
+        checkNotNull(filter, 'filter must not be null')
 
         execute {
             if (filter == StatusFilter.ALL) {

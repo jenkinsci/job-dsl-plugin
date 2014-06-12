@@ -12,41 +12,41 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base booleanParam usage'() {
         when:
-        context.booleanParam("myParameterName", true, "myBooleanParameterDescription")
+        context.booleanParam('myParameterName', true, 'myBooleanParameterDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.BooleanParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'true'
-        context.buildParameterNodes["myParameterName"].description.text() == 'myBooleanParameterDescription'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'true'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myBooleanParameterDescription'
     }
 
     def 'simplified booleanParam usage'() {
         when:
-        context.booleanParam("myParameterName", true)
+        context.booleanParam('myParameterName', true)
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.BooleanParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'true'
-        context.buildParameterNodes["myParameterName"].description.text() == ''
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'true'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
     }
 
     def 'simplest booleanParam usage'() {
         when:
-        context.booleanParam("myParameterName")
+        context.booleanParam('myParameterName')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.BooleanParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'false'
-        context.buildParameterNodes["myParameterName"].description.text() == ''
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'false'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
     }
 
     def 'booleanParam name argument cant be null'() {
@@ -73,14 +73,14 @@ class BuildParametersHelperSpec extends Specification {
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 2
-        context.buildParameterNodes["myFirstBooleanParameter"].name() == 'hudson.model.BooleanParameterDefinition'
-        context.buildParameterNodes["myFirstBooleanParameter"].name.text() == 'myFirstBooleanParameter'
-        context.buildParameterNodes["myFirstBooleanParameter"].defaultValue.text() == 'false'
-        context.buildParameterNodes["myFirstBooleanParameter"].description.text() == ''
-        context.buildParameterNodes["mySecondBooleanParameter"].name() == 'hudson.model.BooleanParameterDefinition'
-        context.buildParameterNodes["mySecondBooleanParameter"].name.text() == 'mySecondBooleanParameter'
-        context.buildParameterNodes["mySecondBooleanParameter"].defaultValue.text() == 'false'
-        context.buildParameterNodes["mySecondBooleanParameter"].description.text() == ''
+        context.buildParameterNodes['myFirstBooleanParameter'].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes['myFirstBooleanParameter'].name.text() == 'myFirstBooleanParameter'
+        context.buildParameterNodes['myFirstBooleanParameter'].defaultValue.text() == 'false'
+        context.buildParameterNodes['myFirstBooleanParameter'].description.text() == ''
+        context.buildParameterNodes['mySecondBooleanParameter'].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes['mySecondBooleanParameter'].name.text() == 'mySecondBooleanParameter'
+        context.buildParameterNodes['mySecondBooleanParameter'].defaultValue.text() == 'false'
+        context.buildParameterNodes['mySecondBooleanParameter'].description.text() == ''
     }
 
     def 'booleanParam already defined'() {
@@ -94,57 +94,57 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base listTagsParam usage'() {
         when:
-        context.listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true, "maximumNumberOfTagsToDisplay", "theDefaultValue", "myListTagsParameterDescription")
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true, true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'theDefaultValue'
-        context.buildParameterNodes["myParameterName"].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
-        context.buildParameterNodes["myParameterName"].tagsFilter.text() == '^mytagsfilterregex'
-        context.buildParameterNodes["myParameterName"].reverseByDate.text() == 'true'
-        context.buildParameterNodes["myParameterName"].reverseByName.text() == 'true'
-        context.buildParameterNodes["myParameterName"].maxTags.text() == 'maximumNumberOfTagsToDisplay'
-        context.buildParameterNodes["myParameterName"].description.text() == 'myListTagsParameterDescription'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'theDefaultValue'
+        context.buildParameterNodes['myParameterName'].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+        context.buildParameterNodes['myParameterName'].tagsFilter.text() == '^mytagsfilterregex'
+        context.buildParameterNodes['myParameterName'].reverseByDate.text() == 'true'
+        context.buildParameterNodes['myParameterName'].reverseByName.text() == 'true'
+        context.buildParameterNodes['myParameterName'].maxTags.text() == 'maximumNumberOfTagsToDisplay'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myListTagsParameterDescription'
     }
 
     def 'simplified listTagsParam usage'() {
         when:
-        context.listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex", true, true)
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true, true)
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
-        context.buildParameterNodes["myParameterName"].tagsFilter.text() == '^mytagsfilterregex'
-        context.buildParameterNodes["myParameterName"].reverseByDate.text() == 'true'
-        context.buildParameterNodes["myParameterName"].reverseByName.text() == 'true'
-        context.buildParameterNodes["myParameterName"].maxTags.text() == 'all'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+        context.buildParameterNodes['myParameterName'].tagsFilter.text() == '^mytagsfilterregex'
+        context.buildParameterNodes['myParameterName'].reverseByDate.text() == 'true'
+        context.buildParameterNodes['myParameterName'].reverseByName.text() == 'true'
+        context.buildParameterNodes['myParameterName'].maxTags.text() == 'all'
     }
 
     def 'simplest listTagsParam usage'() {
         when:
-        context.listTagsParam("myParameterName", "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex")
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
-        context.buildParameterNodes["myParameterName"].tagsFilter.text() == '^mytagsfilterregex'
-        context.buildParameterNodes["myParameterName"].reverseByDate.text() == 'false'
-        context.buildParameterNodes["myParameterName"].reverseByName.text() == 'false'
-        context.buildParameterNodes["myParameterName"].maxTags.text() == 'all'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+        context.buildParameterNodes['myParameterName'].tagsFilter.text() == '^mytagsfilterregex'
+        context.buildParameterNodes['myParameterName'].reverseByDate.text() == 'false'
+        context.buildParameterNodes['myParameterName'].reverseByName.text() == 'false'
+        context.buildParameterNodes['myParameterName'].maxTags.text() == 'all'
     }
 
     def 'listTagsParam name argument cant be null'() {
         when:
-        context.listTagsParam(null, "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex")
+        context.listTagsParam(null, 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex')
 
         then:
         thrown(NullPointerException)
@@ -152,7 +152,7 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'listTagsParam name argument cant be empty'() {
         when:
-        context.listTagsParam('', "http://kenai.com/svn/myProject/tags", "^mytagsfilterregex")
+        context.listTagsParam('', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex')
 
         then:
         thrown(IllegalArgumentException)
@@ -160,7 +160,7 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'listTagsParam scmUrl argument cant be null'() {
         when:
-        context.listTagsParam("myParameterName", null, "^mytagsfilterregex")
+        context.listTagsParam('myParameterName', null, '^mytagsfilterregex')
 
         then:
         thrown(NullPointerException)
@@ -168,7 +168,7 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'listTagsParam scmUrl argument cant be empty'() {
         when:
-        context.listTagsParam("myParameterName", '', "^mytagsfilterregex")
+        context.listTagsParam('myParameterName', '', '^mytagsfilterregex')
 
         then:
         thrown(IllegalArgumentException)
@@ -176,7 +176,7 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'listTagsParam tagFilterRegex argument cant be null'() {
         when:
-        context.listTagsParam('myParameterName', "http://kenai.com/svn/myProject/tags", null)
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', null)
 
         then:
         thrown(NullPointerException)
@@ -184,7 +184,7 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'listTagsParam tagFilterRegex argument cant be empty'() {
         when:
-        context.listTagsParam('myParameterName', "http://kenai.com/svn/myProject/tags", '')
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '')
 
         then:
         thrown(IllegalArgumentException)
@@ -201,42 +201,42 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base choiceParam usage'() {
         when:
-        context.choiceParam("myParameterName", ["option 1 (default)", "option 2", "option 3"], "myChoiceParamDescription")
+        context.choiceParam('myParameterName', ['option 1 (default)', 'option 2', 'option 3'], 'myChoiceParamDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.ChoiceParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].description.text() == 'myChoiceParamDescription'
-        context.buildParameterNodes["myParameterName"].choices.size() == 1
-        context.buildParameterNodes["myParameterName"].choices[0].attribute('class') == 'java.util.Arrays$ArrayList'
-        context.buildParameterNodes["myParameterName"].choices[0].a.size() == 1
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].attribute('class') == 'string-array'
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string.size() == 3
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string[0].text() == 'option 1 (default)'
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string[1].text() == 'option 2'
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string[2].text() == 'option 3'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.ChoiceParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myChoiceParamDescription'
+        context.buildParameterNodes['myParameterName'].choices.size() == 1
+        context.buildParameterNodes['myParameterName'].choices[0].attribute('class') == 'java.util.Arrays$ArrayList'
+        context.buildParameterNodes['myParameterName'].choices[0].a.size() == 1
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].attribute('class') == 'string-array'
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string.size() == 3
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string[0].text() == 'option 1 (default)'
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string[1].text() == 'option 2'
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string[2].text() == 'option 3'
     }
 
     def 'simplified choiceParam usage'() {
         when:
-        context.choiceParam("myParameterName", ["option 1 (default)", "option 2", "option 3"])
+        context.choiceParam('myParameterName', ['option 1 (default)', 'option 2', 'option 3'])
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.ChoiceParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].description.text() == ''
-        context.buildParameterNodes["myParameterName"].choices.size() == 1
-        context.buildParameterNodes["myParameterName"].choices[0].attribute('class') == 'java.util.Arrays$ArrayList'
-        context.buildParameterNodes["myParameterName"].choices[0].a.size() == 1
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].attribute('class') == 'string-array'
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string.size() == 3
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string[0].text() == 'option 1 (default)'
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string[1].text() == 'option 2'
-        context.buildParameterNodes["myParameterName"].choices[0].a[0].string[2].text() == 'option 3'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.ChoiceParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+        context.buildParameterNodes['myParameterName'].choices.size() == 1
+        context.buildParameterNodes['myParameterName'].choices[0].attribute('class') == 'java.util.Arrays$ArrayList'
+        context.buildParameterNodes['myParameterName'].choices[0].a.size() == 1
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].attribute('class') == 'string-array'
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string.size() == 3
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string[0].text() == 'option 1 (default)'
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string[1].text() == 'option 2'
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string[2].text() == 'option 3'
     }
 
     def 'choiceParam name argument cant be null'() {
@@ -282,26 +282,26 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base fileParam usage'() {
         when:
-        context.fileParam("test/upload.zip", "myFileParamDescription")
+        context.fileParam('test/upload.zip', 'myFileParamDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["test/upload.zip"].name() == 'hudson.model.FileParameterDefinition'
-        context.buildParameterNodes["test/upload.zip"].name.text() == 'test/upload.zip'
-        context.buildParameterNodes["test/upload.zip"].description.text() == 'myFileParamDescription'
+        context.buildParameterNodes['test/upload.zip'].name() == 'hudson.model.FileParameterDefinition'
+        context.buildParameterNodes['test/upload.zip'].name.text() == 'test/upload.zip'
+        context.buildParameterNodes['test/upload.zip'].description.text() == 'myFileParamDescription'
     }
 
     def 'simplified fileParam usage'() {
         when:
-        context.fileParam("test/upload.zip")
+        context.fileParam('test/upload.zip')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["test/upload.zip"].name() == 'hudson.model.FileParameterDefinition'
-        context.buildParameterNodes["test/upload.zip"].name.text() == 'test/upload.zip'
-        context.buildParameterNodes["test/upload.zip"].description.text() == ''
+        context.buildParameterNodes['test/upload.zip'].name() == 'hudson.model.FileParameterDefinition'
+        context.buildParameterNodes['test/upload.zip'].name.text() == 'test/upload.zip'
+        context.buildParameterNodes['test/upload.zip'].description.text() == ''
     }
 
     def 'fileParam fileLocation argument cant be null'() {
@@ -331,42 +331,42 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base runParam usage'() {
         when:
-        context.runParam("myParameterName", "myJobName", "myRunParamDescription")
+        context.runParam('myParameterName', 'myJobName', 'myRunParamDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.RunParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].projectName.text() == 'myJobName'
-        context.buildParameterNodes["myParameterName"].description.text() == 'myRunParamDescription'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.RunParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].projectName.text() == 'myJobName'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myRunParamDescription'
     }
 
     def 'simplest runParam usage'() {
         when:
-        context.runParam("myParameterName", "myJobName")
+        context.runParam('myParameterName', 'myJobName')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.RunParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].projectName.text() == 'myJobName'
-        context.buildParameterNodes["myParameterName"].description.text() == ''
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.RunParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].projectName.text() == 'myJobName'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
     }
 
     def 'fullest runParam usage'() {
         when:
-        context.runParam("myParameterName", "myJobName", "my description with spaces", "SUCCESSFUL")
+        context.runParam('myParameterName', 'myJobName', 'my description with spaces', 'SUCCESSFUL')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.RunParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].projectName.text() == 'myJobName'
-        context.buildParameterNodes["myParameterName"].description.text() == 'my description with spaces'
-        context.buildParameterNodes["myParameterName"].filter.text() == 'SUCCESSFUL'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.RunParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].projectName.text() == 'myJobName'
+        context.buildParameterNodes['myParameterName'].description.text() == 'my description with spaces'
+        context.buildParameterNodes['myParameterName'].filter.text() == 'SUCCESSFUL'
     }
 
     def 'runParam name argument cant be null'() {
@@ -412,41 +412,41 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base stringParam usage'() {
         when:
-        context.stringParam("myParameterName", "my default stringParam value", "myStringParameterDescription")
+        context.stringParam('myParameterName', 'my default stringParam value', 'myStringParameterDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.StringParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'my default stringParam value'
-        context.buildParameterNodes["myParameterName"].description.text() == 'myStringParameterDescription'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.StringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default stringParam value'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myStringParameterDescription'
     }
 
     def 'simplified stringParam usage'() {
         when:
-        context.stringParam("myParameterName", "my default stringParam value")
+        context.stringParam('myParameterName', 'my default stringParam value')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.StringParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'my default stringParam value'
-        context.buildParameterNodes["myParameterName"].description.text() == ''
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.StringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default stringParam value'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
     }
 
     def 'simplest stringParam usage'() {
         when:
-        context.stringParam("myParameterName")
+        context.stringParam('myParameterName')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.StringParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == ''
-        context.buildParameterNodes["myParameterName"].description.text() == ''
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.StringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == ''
+        context.buildParameterNodes['myParameterName'].description.text() == ''
     }
 
     def 'stringParam name argument cant be null'() {
@@ -476,41 +476,41 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base textParam usage'() {
         when:
-        context.textParam("myParameterName", "my default textParam value", "myTextParameterDescription")
+        context.textParam('myParameterName', 'my default textParam value', 'myTextParameterDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.TextParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'my default textParam value'
-        context.buildParameterNodes["myParameterName"].description.text() == 'myTextParameterDescription'
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.TextParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default textParam value'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myTextParameterDescription'
     }
 
     def 'simplified textParam usage'() {
         when:
-        context.textParam("myParameterName", "my default textParam value")
+        context.textParam('myParameterName', 'my default textParam value')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.TextParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == 'my default textParam value'
-        context.buildParameterNodes["myParameterName"].description.text() == ''
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.TextParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default textParam value'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
     }
 
     def 'simplest textParam usage'() {
         when:
-        context.textParam("myParameterName")
+        context.textParam('myParameterName')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes["myParameterName"].name() == 'hudson.model.TextParameterDefinition'
-        context.buildParameterNodes["myParameterName"].name.text() == 'myParameterName'
-        context.buildParameterNodes["myParameterName"].defaultValue.text() == ''
-        context.buildParameterNodes["myParameterName"].description.text() == ''
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.TextParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == ''
+        context.buildParameterNodes['myParameterName'].description.text() == ''
     }
 
     def 'textParam name argument cant be null'() {
@@ -547,25 +547,25 @@ class BuildParametersHelperSpec extends Specification {
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 3
-        context.buildParameterNodes["myFirstBooleanParameter"].name() == 'hudson.model.BooleanParameterDefinition'
-        context.buildParameterNodes["myFirstBooleanParameter"].name.text() == 'myFirstBooleanParameter'
-        context.buildParameterNodes["myFirstBooleanParameter"].defaultValue.text() == 'false'
-        context.buildParameterNodes["myFirstBooleanParameter"].description.text() == ''
-        context.buildParameterNodes["myFirstTextParam"].name() == 'hudson.model.TextParameterDefinition'
-        context.buildParameterNodes["myFirstTextParam"].name.text() == 'myFirstTextParam'
-        context.buildParameterNodes["myFirstTextParam"].defaultValue.text() == ''
-        context.buildParameterNodes["myFirstTextParam"].description.text() == ''
-        context.buildParameterNodes["mySecondBooleanParameter"].name() == 'hudson.model.BooleanParameterDefinition'
-        context.buildParameterNodes["mySecondBooleanParameter"].name.text() == 'mySecondBooleanParameter'
-        context.buildParameterNodes["mySecondBooleanParameter"].defaultValue.text() == 'false'
-        context.buildParameterNodes["mySecondBooleanParameter"].description.text() == ''
+        context.buildParameterNodes['myFirstBooleanParameter'].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes['myFirstBooleanParameter'].name.text() == 'myFirstBooleanParameter'
+        context.buildParameterNodes['myFirstBooleanParameter'].defaultValue.text() == 'false'
+        context.buildParameterNodes['myFirstBooleanParameter'].description.text() == ''
+        context.buildParameterNodes['myFirstTextParam'].name() == 'hudson.model.TextParameterDefinition'
+        context.buildParameterNodes['myFirstTextParam'].name.text() == 'myFirstTextParam'
+        context.buildParameterNodes['myFirstTextParam'].defaultValue.text() == ''
+        context.buildParameterNodes['myFirstTextParam'].description.text() == ''
+        context.buildParameterNodes['mySecondBooleanParameter'].name() == 'hudson.model.BooleanParameterDefinition'
+        context.buildParameterNodes['mySecondBooleanParameter'].name.text() == 'mySecondBooleanParameter'
+        context.buildParameterNodes['mySecondBooleanParameter'].defaultValue.text() == 'false'
+        context.buildParameterNodes['mySecondBooleanParameter'].description.text() == ''
     }
 
     def 'call parameters via helper'() {
         when:
         helper.parameters {
             booleanParam('myBooleanParam', true)
-            choiceParam("myChoiceParam", ["option 1", "option 2"])
+            choiceParam('myChoiceParam', ['option 1', 'option 2'])
             stringParam('myStringParam', 'foo')
             textParam('myTextParam', 'bar')
         }

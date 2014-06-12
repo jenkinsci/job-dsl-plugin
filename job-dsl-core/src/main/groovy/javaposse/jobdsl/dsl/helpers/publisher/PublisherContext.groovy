@@ -384,7 +384,7 @@ class PublisherContext implements Context {
         AbstractContextHelper.executeInContext(scpClosure, scpContext)
 
         // Validate values
-        assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
+        assert !scpContext.entries.isEmpty(), 'Scp publish requires at least one entry'
 
         def nodeBuilder = NodeBuilder.newInstance()
         def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
@@ -539,7 +539,7 @@ class PublisherContext implements Context {
         def nodeBuilder = NodeBuilder.newInstance()
         def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher' {
             config {
-                suppressions(class: "tree-set") {
+                suppressions(class: 'tree-set') {
                     'no-comparator'()
                 }
                 typeConfigs {
@@ -627,7 +627,7 @@ class PublisherContext implements Context {
             failNoReports(coberturaContext.failNoReports)
             ['healthyTarget', 'unhealthyTarget', 'failingTarget'].each { targetName ->
                 "$targetName" {
-                    targets(class: "enum-map", 'enum-type': "hudson.plugins.cobertura.targets.CoverageMetric") {
+                    targets(class: 'enum-map', 'enum-type': 'hudson.plugins.cobertura.targets.CoverageMetric') {
                         coberturaContext.targets.values().each { target ->
                             entry {
                                 'hudson.plugins.cobertura.targets.CoverageMetric' target.targetType
@@ -1093,7 +1093,7 @@ class PublisherContext implements Context {
 
     def flowdock(String[] tokens, Closure flowdockPublisherClosure = null) {
         // Validate values
-        assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
+        assert tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token'
         flowdock(tokens.join(','), flowdockPublisherClosure)
     }
 

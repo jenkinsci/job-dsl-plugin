@@ -26,7 +26,7 @@ class ScriptRequestGenerator {
         } else {
             String targetsStr = env.expand(targets)
 
-            FilePath[] filePaths =  build.workspace.list(targetsStr.replace("\n", ","))
+            FilePath[] filePaths =  build.workspace.list(targetsStr.replace('\n', ','))
             for (FilePath filePath : filePaths) {
                 URL relativeWorkspaceUrl = WorkspaceProtocol.createWorkspaceUrl(build, filePath.parent)
                 ScriptRequest request = new ScriptRequest(filePath.name, null, relativeWorkspaceUrl, ignoreExisting)

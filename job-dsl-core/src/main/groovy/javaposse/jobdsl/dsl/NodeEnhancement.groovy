@@ -58,7 +58,7 @@ class NodeEnhancement {
 
     private static List<Node> buildChildren(c) {
         NodeBuilder b = new NodeBuilder()
-        Node newNode = (Node) b.invokeMethod("dummyNode", c)
+        Node newNode = (Node) b.invokeMethod('dummyNode', c)
         return newNode.children()
     }
 

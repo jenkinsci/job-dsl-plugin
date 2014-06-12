@@ -18,7 +18,7 @@ class CoberturaContext implements Context {
         METHOD, LINE, CONDITIONAL, PACKAGES, FILES, CLASSES
     }
     def targets = [
-        "METHOD": new CoberturaTarget(
+        'METHOD': new CoberturaTarget(
             targetType: TargetType.METHOD,
             healthyTarget: 8000000,
             unhealthyTarget: 0,

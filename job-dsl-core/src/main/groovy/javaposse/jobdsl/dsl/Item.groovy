@@ -23,7 +23,7 @@ abstract class Item {
      */
     String getXml() {
         Writer xmlOutput = new StringWriter()
-        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
+        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), '    ')
         xmlNodePrinter.with {
             preserveWhitespace = true
             expandEmptyElements = true

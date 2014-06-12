@@ -41,7 +41,7 @@ class WrapperContext implements Context {
      * @param useSameWorkspace set to <code>true</code> to share the workspace with the given job
      */
     def runOnSameNodeAs(String jobName, boolean useSameWorkspace = false) {
-        Preconditions.checkNotNull(jobName, "Job name must not be null")
+        Preconditions.checkNotNull(jobName, 'Job name must not be null')
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper' {
             job jobName
@@ -67,7 +67,7 @@ class WrapperContext implements Context {
      * </ruby-proxy-object>
      */
     def rvm(String rubySpecification) {
-        Preconditions.checkArgument(rubySpecification as Boolean, "Please specify at least the ruby version")
+        Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'ruby-proxy-object' {
             'ruby-object'('ruby-class': 'Jenkins::Plugin::Proxies::BuildWrapper', pluginid: 'rvm') {
@@ -262,9 +262,9 @@ class WrapperContext implements Context {
      * @param credentials name of the credentials to use
      */
     def sshAgent(String credentials) {
-        Preconditions.checkNotNull(credentials, "credentials must not be null")
+        Preconditions.checkNotNull(credentials, 'credentials must not be null')
         String id = jobManagement.getCredentialsId(credentials)
-        Preconditions.checkNotNull(id, "credentials not found")
+        Preconditions.checkNotNull(id, 'credentials not found')
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
             user id
@@ -289,7 +289,7 @@ class WrapperContext implements Context {
     def colorizeOutput(String colorMap) {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.ansicolor.AnsiColorBuildWrapper' {
-            colorMapName(colorMap ?: "xterm")
+            colorMapName(colorMap ?: 'xterm')
         }
     }
 
@@ -338,7 +338,7 @@ class WrapperContext implements Context {
     def toolenv(String... tools) {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
-            vars(tools.collect { it.replaceAll(/[^a-zA-Z0-9_]/, "_").toUpperCase() + "_HOME" }.join(","))
+            vars(tools.collect { "${it.replaceAll(/[^a-zA-Z0-9_]/, '_').toUpperCase()}_HOME" }.join(','))
         }
     }
 
@@ -526,7 +526,7 @@ class WrapperContext implements Context {
      *   mechanism is provided by the Token Macro Plugin.
      */
     def buildName(String nameTemplate) {
-        Preconditions.checkNotNull(nameTemplate, "Name template must not be null")
+        Preconditions.checkNotNull(nameTemplate, 'Name template must not be null')
 
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.buildnamesetter.BuildNameSetter' {
             template nameTemplate

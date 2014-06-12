@@ -28,7 +28,7 @@ class ScmHelperSpec extends Specification {
     }
 
     def 'hg with branch'() {
-        String branch = "not-default"
+        String branch = 'not-default'
 
         when:
         context.hg(HG_REPO_URL, branch)

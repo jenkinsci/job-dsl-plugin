@@ -198,11 +198,11 @@ class ScmContext implements Context {
         }
     }
 
-    def github(String ownerAndProject, String branch = null, String protocol = "https", Closure closure) {
-        github(ownerAndProject, branch, protocol, "github.com", closure)
+    def github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
+        github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
 
-    def github(String ownerAndProject, String branch = null, String protocol = "https", String host = "github.com", Closure closure = null) {
+    def github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com', Closure closure = null) {
         git {
             remote {
                 delegate.github(ownerAndProject, protocol, host)

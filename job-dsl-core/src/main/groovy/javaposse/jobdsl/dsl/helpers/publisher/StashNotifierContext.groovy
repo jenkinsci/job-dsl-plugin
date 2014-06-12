@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.helpers.Context
  * DSL for https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin
  */
 class StashNotifierContext implements Context {
-    String commitSha1 = ""
+    String commitSha1 = ''
     boolean keepRepeatedBuilds = false
 
     /**

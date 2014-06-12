@@ -12,7 +12,7 @@ class CopyArtifactContext implements Context {
 
     private void ensureFirst() {
         if (selectedSelector != null) {
-            throw new IllegalStateException("Only one selector can be chosen")
+            throw new IllegalStateException('Only one selector can be chosen')
         }
     }
     /**

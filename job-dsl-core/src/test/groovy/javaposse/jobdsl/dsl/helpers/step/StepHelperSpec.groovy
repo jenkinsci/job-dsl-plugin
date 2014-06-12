@@ -367,13 +367,13 @@ class StepHelperSpec extends Specification {
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
         acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
         acmeGroovyNode.javaOpts[0].value() == 'test me too'
         acmeGroovyNode.scriptSource.size() == 1
@@ -430,13 +430,13 @@ class StepHelperSpec extends Specification {
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
         acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
         acmeGroovyNode.javaOpts[0].value() == 'test me too'
         acmeGroovyNode.scriptSource.size() == 1
@@ -476,11 +476,11 @@ class StepHelperSpec extends Specification {
         scriptSourceNode.command[0].value() == "println 'Hello World!'"
 
         when:
-        context.systemGroovyCommand("acme.Acme.doSomething()") {
-            binding("foo", "bar")
-            binding("test", "0815")
-            classpath("/foo/acme.jar")
-            classpath("/foo/test.jar")
+        context.systemGroovyCommand('acme.Acme.doSomething()') {
+            binding('foo', 'bar')
+            binding('test', '0815')
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
         }
 
         then:
@@ -488,19 +488,19 @@ class StepHelperSpec extends Specification {
         def acmeSystemGroovyNode = context.stepNodes[1]
         acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
         acmeSystemGroovyNode.bindings.size() == 1
-        acmeSystemGroovyNode.bindings[0].value() == "foo=bar\ntest=0815"
+        acmeSystemGroovyNode.bindings[0].value() == 'foo=bar\ntest=0815'
         acmeSystemGroovyNode.classpath.size() == 1
         acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeSystemGroovyNode.scriptSource.size() == 1
         def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
         acmeScriptSourceNode.command.size() == 1
-        acmeScriptSourceNode.command[0].value() == "acme.Acme.doSomething()"
+        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
     }
 
     def 'call systemGroovyScriptFile methods'() {
         when:
-        context.systemGroovyScriptFile("scripts/hello.groovy")
+        context.systemGroovyScriptFile('scripts/hello.groovy')
 
         then:
         context.stepNodes.size() == 1
@@ -514,14 +514,14 @@ class StepHelperSpec extends Specification {
         def scriptSourceNode = systemGroovyNode.scriptSource[0]
         scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
         scriptSourceNode.scriptFile.size() == 1
-        scriptSourceNode.scriptFile[0].value() == "scripts/hello.groovy"
+        scriptSourceNode.scriptFile[0].value() == 'scripts/hello.groovy'
 
         when:
-        context.systemGroovyScriptFile("acme.groovy") {
-            binding("foo", "bar")
-            binding("test", "0815")
-            classpath("/foo/acme.jar")
-            classpath("/foo/test.jar")
+        context.systemGroovyScriptFile('acme.groovy') {
+            binding('foo', 'bar')
+            binding('test', '0815')
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
         }
 
         then:
@@ -529,14 +529,14 @@ class StepHelperSpec extends Specification {
         def acmeSystemGroovyNode = context.stepNodes[1]
         acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
         acmeSystemGroovyNode.bindings.size() == 1
-        acmeSystemGroovyNode.bindings[0].value() == "foo=bar\ntest=0815"
+        acmeSystemGroovyNode.bindings[0].value() == 'foo=bar\ntest=0815'
         acmeSystemGroovyNode.classpath.size() == 1
         acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeSystemGroovyNode.scriptSource.size() == 1
         def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
         acmeScriptSourceNode.scriptFile.size() == 1
-        acmeScriptSourceNode.scriptFile[0].value() == "acme.groovy"
+        acmeScriptSourceNode.scriptFile[0].value() == 'acme.groovy'
     }
 
     def 'call minimal copyArtifacts'() {
@@ -1097,9 +1097,7 @@ still-another-dsl.groovy'''
         when:
         context.downstreamParameterized {
             trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
-                    ["buildStepFailure": "FAILURE",
-                            "failure": "FAILURE",
-                            "unstable": "UNSTABLE"]) {
+                    [buildStepFailure: 'FAILURE', failure: 'FAILURE', unstable: 'UNSTABLE']) {
                 currentBuild() // Current build parameters
                 propertiesFile('dir/my.properties') // Parameters from properties file
                 gitRevision(false) // Pass-through Git commit that was built
@@ -1178,8 +1176,8 @@ still-another-dsl.groovy'''
             condition {
                 delegate.invokeMethod(testCondition, testConditionArgs.values().toArray())
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
         }
 
         then:
@@ -1198,7 +1196,7 @@ still-another-dsl.groovy'''
         condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${condClass}Condition"
         if (!testConditionArgs.isEmpty()) {
             testConditionArgs.each { k, v ->
-                condition."${k}"[0].value() == "${v}"
+                condition[k][0].value() == v
             }
         }
         step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
@@ -1224,7 +1222,7 @@ still-another-dsl.groovy'''
                 alwaysRun()
             }
             runner(runnerName)
-            shell("look at me")
+            shell('look at me')
         }
 
         then:
@@ -1247,8 +1245,8 @@ still-another-dsl.groovy'''
             condition {
                 alwaysRun()
             }
-            runner("invalid-runner")
-            shell("look at me")
+            runner('invalid-runner')
+            shell('look at me')
         }
 
         then:
@@ -1260,8 +1258,8 @@ still-another-dsl.groovy'''
         context.conditionalSteps {
             condition {
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
         }
 
         then:
@@ -1274,8 +1272,8 @@ still-another-dsl.groovy'''
             condition {
                 invalidCondition()
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
         }
 
         then:
@@ -1287,10 +1285,10 @@ still-another-dsl.groovy'''
         context.conditionalSteps {
             condition {
                 not {
-                    stringsMatch("foo", "bar", false)
+                    stringsMatch('foo', 'bar', false)
                 }
             }
-            shell("echo Test")
+            shell('echo Test')
         }
 
         then:
@@ -1310,10 +1308,10 @@ still-another-dsl.groovy'''
         when:
         context.conditionalSteps {
             condition {
-                stringsMatch("foo", "bar", false)
+                stringsMatch('foo', 'bar', false)
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
             groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
                 groovyParam('foo')
                 groovyParams(['bar', 'baz'])
@@ -1352,13 +1350,13 @@ still-another-dsl.groovy'''
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
         acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
         acmeGroovyNode.javaOpts[0].value() == 'test me too'
         acmeGroovyNode.scriptSource.size() == 1
@@ -1374,7 +1372,7 @@ still-another-dsl.groovy'''
             condition {
                 fileExists('someFile', WORKSPACE)
             }
-            shell("echo Test")
+            shell('echo Test')
         }
 
         then:
@@ -1398,7 +1396,7 @@ still-another-dsl.groovy'''
                     alwaysRun()
                 }
             }
-            shell("echo Test")
+            shell('echo Test')
         }
 
         then:
@@ -1432,7 +1430,7 @@ still-another-dsl.groovy'''
             condition {
                 "${conditionDsl}"(*args)
             }
-            shell("echo something outside")
+            shell('echo something outside')
         }
 
         then:
@@ -1442,7 +1440,7 @@ still-another-dsl.groovy'''
 
         conditionNode.attribute('class') == conditionClass
         def ignored = argNodes.each { name, value ->
-            assert conditionNode."${name}"[0].value() == value
+            assert conditionNode[name][0].value() == value
         }
 
         where:

@@ -251,7 +251,7 @@ class TriggerHelperSpec extends Specification {
     def 'call urltrigger methods with label restriction'() {
         when:
         context.urlTrigger {
-            restrictToLabel "foo"
+            restrictToLabel 'foo'
             url 'http://www.example.com/some/url'
         }
 

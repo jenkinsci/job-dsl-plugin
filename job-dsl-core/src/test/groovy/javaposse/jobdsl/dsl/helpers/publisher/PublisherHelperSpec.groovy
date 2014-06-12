@@ -202,7 +202,7 @@ class PublisherHelperSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
-        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.minimumInstructionCoverage[0].value() == '0'
         jacocoNode.changeBuildStatus[0] == null
     }
 
@@ -233,7 +233,7 @@ class PublisherHelperSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
-        jacocoNode.minimumInstructionCoverage[0].value() == "0"
+        jacocoNode.minimumInstructionCoverage[0].value() == '0'
         jacocoNode.changeBuildStatus[0].value() == 'true'
     }
 
@@ -268,18 +268,18 @@ class PublisherHelperSpec extends Specification {
         jacocoNode.sourcePattern[0].value() == 'sourcedir'
         jacocoNode.inclusionPattern[0].value() == 'inclusiondir'
         jacocoNode.exclusionPattern[0].value() == 'exclusiondir'
-        jacocoNode.minimumInstructionCoverage[0].value() == "1"
-        jacocoNode.minimumBranchCoverage[0].value() == "2"
-        jacocoNode.minimumComplexityCoverage[0].value() == "3"
-        jacocoNode.minimumLineCoverage[0].value() == "4"
-        jacocoNode.minimumMethodCoverage[0].value() == "5"
-        jacocoNode.minimumClassCoverage[0].value() == "6"
-        jacocoNode.maximumInstructionCoverage[0].value() == "7"
-        jacocoNode.maximumBranchCoverage[0].value() == "8"
-        jacocoNode.maximumComplexityCoverage[0].value() == "9"
-        jacocoNode.maximumLineCoverage[0].value() == "10"
-        jacocoNode.maximumMethodCoverage[0].value() == "11"
-        jacocoNode.maximumClassCoverage[0].value() == "12"
+        jacocoNode.minimumInstructionCoverage[0].value() == '1'
+        jacocoNode.minimumBranchCoverage[0].value() == '2'
+        jacocoNode.minimumComplexityCoverage[0].value() == '3'
+        jacocoNode.minimumLineCoverage[0].value() == '4'
+        jacocoNode.minimumMethodCoverage[0].value() == '5'
+        jacocoNode.minimumClassCoverage[0].value() == '6'
+        jacocoNode.maximumInstructionCoverage[0].value() == '7'
+        jacocoNode.maximumBranchCoverage[0].value() == '8'
+        jacocoNode.maximumComplexityCoverage[0].value() == '9'
+        jacocoNode.maximumLineCoverage[0].value() == '10'
+        jacocoNode.maximumMethodCoverage[0].value() == '11'
+        jacocoNode.maximumClassCoverage[0].value() == '12'
         jacocoNode.changeBuildStatus[0].value() == 'true'
     }
 
@@ -780,8 +780,8 @@ class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.chucknorris.CordellWalkerRecorder'
-        publisherNode.value()[0].name() == "factGenerator"
-        publisherNode.value()[0].value() == ""
+        publisherNode.value()[0].name() == 'factGenerator'
+        publisherNode.value()[0].value() == ''
     }
 
     def 'irc channels are added'() {
@@ -1482,7 +1482,7 @@ class PublisherHelperSpec extends Specification {
 
     def 'publish Robot framework report using specific value for outputPath'() {
         when:
-        context.publishRobotFrameworkReports { outputPath("/path/to/foo") }
+        context.publishRobotFrameworkReports { outputPath('/path/to/foo') }
 
         then:
         Node node = context.publisherNodes[0]
@@ -1521,7 +1521,7 @@ class PublisherHelperSpec extends Specification {
         context.publishRobotFrameworkReports {
             passThreshold(50.0)
             unstableThreshold(10.0)
-            outputPath("/path/to/foo")
+            outputPath('/path/to/foo')
         }
 
         then:
@@ -1529,7 +1529,7 @@ class PublisherHelperSpec extends Specification {
         node.name() == 'hudson.plugins.robot.RobotPublisher'
         node.passThreshold[0].value() == 50.0
         node.unstableThreshold[0].value() == 10.0
-        node.outputPath[0].value() == "/path/to/foo"
+        node.outputPath[0].value() == '/path/to/foo'
         node.onlyCritical[0].value() == false
         node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
     }
@@ -2269,7 +2269,7 @@ class PublisherHelperSpec extends Specification {
 
         then:
         IllegalArgumentException exception = thrown()
-        exception.message == "jobIdentifier cannot be null or empty"
+        exception.message == 'jobIdentifier cannot be null or empty'
 
         where:
         id   | _

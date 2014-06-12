@@ -166,7 +166,7 @@ println "Hello ${WordUtils.capitalize('world')}"
         then:
         def results = content
         results != null
-        results.contains("Hello World")
+        results.contains('Hello World')
     }
 
     def 'jobs scheduled to build'() {
@@ -201,7 +201,7 @@ def content = readFileFromWorkspace('foo.txt')
 println content
 '''
         StringJobManagement sm = new StringJobManagement(ps)
-        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+        sm.availableFiles['foo.txt'] = 'Bar bar, bar bar.'
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
@@ -220,7 +220,7 @@ println content
 readFileFromWorkspace('bar.txt')
 '''
         StringJobManagement sm = new StringJobManagement(ps)
-        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+        sm.availableFiles['foo.txt'] = 'Bar bar, bar bar.'
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 

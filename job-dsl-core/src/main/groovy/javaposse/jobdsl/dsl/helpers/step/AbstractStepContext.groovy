@@ -84,7 +84,7 @@ class AbstractStepContext implements Context {
         def nodeBuilder = new NodeBuilder()
 
         def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
-            name Preconditions.checkNotNull(sbtNameArg, "Please provide the name of the SBT to use" as Object)
+            name Preconditions.checkNotNull(sbtNameArg, 'Please provide the name of the SBT to use' as Object)
             jvmFlags jvmFlagsArg ?: ''
             sbtFlags sbtFlagsArg ?: ''
             actions actionsArg ?: ''
@@ -457,7 +457,7 @@ class AbstractStepContext implements Context {
         AbstractContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
         if (!copyArtifactContext.selectedSelector) {
-            throw new IllegalArgumentException("A selector has to be select in the closure argument")
+            throw new IllegalArgumentException('A selector has to be select in the closure argument')
         }
 
         def nodeBuilder = NodeBuilder.newInstance()
@@ -514,7 +514,7 @@ class AbstractStepContext implements Context {
         PhaseContext phaseContext = new PhaseContext(name, continuationConditionArg)
         AbstractContextHelper.executeInContext(phaseClosure, phaseContext)
 
-        Preconditions.checkArgument phaseContext.phaseName as Boolean, "A phase needs a name"
+        Preconditions.checkArgument phaseContext.phaseName as Boolean, 'A phase needs a name'
 
         def validConditions = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
         Preconditions.checkArgument(validConditions.contains(phaseContext.continuationCondition), "Continuation Condition need to be one of these values: ${validConditions.join(',')}" )
@@ -684,8 +684,8 @@ class AbstractStepContext implements Context {
      * </org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
      */
     def remoteTrigger(String remoteJenkins, String jobName, Closure closure = null) {
-        Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), "remoteJenkins must be specified")
-        Preconditions.checkArgument(!isNullOrEmpty(jobName), "jobName must be specified")
+        Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), 'remoteJenkins must be specified')
+        Preconditions.checkArgument(!isNullOrEmpty(jobName), 'jobName must be specified')
 
         ParameterizedRemoteTriggerContext context = new ParameterizedRemoteTriggerContext()
         AbstractContextHelper.executeInContext(closure, context)

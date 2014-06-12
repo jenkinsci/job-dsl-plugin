@@ -13,10 +13,10 @@ import javaposse.jobdsl.dsl.helpers.Context
  */
 class RobotFrameworkContext implements Context {
 
-    static final String DEFAULT_OUTPUT_PATH = "target/robotframework-reports"
-    static final String DEFAULT_REPORT_FILE_NAME = "report.html"
-    static final String DEFAULT_OUTPUT_FILE_NAME = "output.xml"
-    static final String DEFAULT_LOG_FILE_NAME = "log.html"
+    static final String DEFAULT_OUTPUT_PATH = 'target/robotframework-reports'
+    static final String DEFAULT_REPORT_FILE_NAME = 'report.html'
+    static final String DEFAULT_OUTPUT_FILE_NAME = 'output.xml'
+    static final String DEFAULT_LOG_FILE_NAME = 'log.html'
 
     double passThreshold = 100.0
     double unstableThreshold = 0.0

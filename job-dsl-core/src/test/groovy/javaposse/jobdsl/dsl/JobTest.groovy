@@ -71,11 +71,10 @@ class JobTest extends Specification {
         Job job = new Job(jm)
 
         when:
-        job.using("config")
+        job.using('config')
         String project = job.xml
 
         then:
-        // assertXpathExists('/description', project) // java.lang.NoSuchMethodError: org.apache.xpath.XPathContext
         project.contains('<description>Description</description>')
     }
 
@@ -127,12 +126,6 @@ class JobTest extends Specification {
 
         then:
         !job.withXmlActions.empty
-
-        when:
-        job.configure("Not a closure")
-
-        then:
-        thrown(MissingMethodException)
     }
 
     class JobParentConcrete extends JobParent {

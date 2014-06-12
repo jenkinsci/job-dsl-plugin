@@ -6,7 +6,7 @@ class WithXmlAction {
     private final Closure closure
 
     WithXmlAction(Closure closure) {
-        this.closure = Preconditions.checkNotNull(closure, "Closure has to be set during constructor")
+        this.closure = Preconditions.checkNotNull(closure, 'Closure has to be set during constructor')
     }
 
     def execute(Node root) {

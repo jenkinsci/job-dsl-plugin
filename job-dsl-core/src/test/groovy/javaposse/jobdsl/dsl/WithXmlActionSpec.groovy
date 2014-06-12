@@ -12,7 +12,7 @@ import java.util.logging.Logger
  * Work through the additional functionality we're offer over node
  */
 class WithXmlActionSpec extends Specification {
-    static final String XML = """<?xml version='1.0' encoding='UTF-8'?>
+    static final String XML = '''<?xml version="1.0" encoding="UTF-8"?>
 <project>
   <actions/>
   <description></description>
@@ -31,15 +31,15 @@ class WithXmlActionSpec extends Specification {
   <publishers/>
   <buildWrappers/>
 </project>
-"""
+'''
 
     final Node root = new XmlParser().parse(new StringReader(XML))
 
     def setup() {
-        Logger.getLogger("javaposse.jobdsl").setLevel(Level.ALL)
+        Logger.getLogger('javaposse.jobdsl').setLevel(Level.ALL)
 
         // Our only choice to allow lower logging is to allow it for everyone since JUL puts the handler in one place and sets a horrible default
-        LogManager.logManager.getLogger("").handlers.each { Handler handler ->
+        LogManager.logManager.getLogger('').handlers.each { Handler handler ->
             handler.setLevel(Level.ALL)
         }
     }
@@ -51,7 +51,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'lookup with existent nodes'() {
         when:
-        def builders = "build"
+        def builders = 'build'
         execute { project ->
             Preconditions.checkNotNull(project)
             Preconditions.checkArgument(project instanceof Node)
