@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 /** Configuration container for a monitored URL.*/
 class UrlTriggerEntryContext implements Context {
 

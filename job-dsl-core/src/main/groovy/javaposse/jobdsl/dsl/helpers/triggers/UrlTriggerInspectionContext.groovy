@@ -39,7 +39,6 @@ class UrlTriggerInspectionContext implements Context {
     Inspection type
     def expressions = []
 
-
     UrlTriggerInspectionContext(Inspection type) {
         this.type = Preconditions.checkNotNull(type, "Inspection type must not be null!")
     }

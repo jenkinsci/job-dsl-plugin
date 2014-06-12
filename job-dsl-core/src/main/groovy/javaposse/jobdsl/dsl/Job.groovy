@@ -116,7 +116,7 @@ public class Job extends Item {
     }
 
     private String getTemplate(JobType type) {
-        switch(type) {
+        switch (type) {
             case JobType.Freeform: return emptyTemplate
             case JobType.BuildFlow: return emptyBuildFlowTemplate
             case JobType.Maven: return emptyMavenTemplate

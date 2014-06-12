@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 class GerritContext implements Context {
     GerritEventContext eventContext = new GerritEventContext()
     Closure configureClosure
@@ -35,7 +34,6 @@ class GerritContext implements Context {
                 Integer.parseInt(codeReview.toString())
         )
     }
-
 
     def buildSuccessful(Integer verified, Integer codeReview) {
         successfulVerified = verified
@@ -95,7 +93,10 @@ class GerritContext implements Context {
     }
 
     def project(String projectName, List<String> branches) {
-        projects << [new GerritSpec(projectName), branches.collect { new GerritSpec(it) }]
+        projects << [
+                new GerritSpec(projectName),
+                branches.collect { new GerritSpec(it) }
+        ]
     }
 
     def project(String projectName, String branch) {

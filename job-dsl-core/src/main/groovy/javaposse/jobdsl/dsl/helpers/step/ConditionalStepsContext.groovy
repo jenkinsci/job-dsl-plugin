@@ -1,4 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
+
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory

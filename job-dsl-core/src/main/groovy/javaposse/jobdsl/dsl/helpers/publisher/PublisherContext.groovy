@@ -9,13 +9,11 @@ import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 
-
 class PublisherContext implements Context {
     List<Node> publisherNodes = []
 
     @Delegate
     StaticAnalysisPublisherContext staticAnalysisPublisherHelper
-
 
     PublisherContext(JobManagement jobManagement) {
         staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes, jobManagement)

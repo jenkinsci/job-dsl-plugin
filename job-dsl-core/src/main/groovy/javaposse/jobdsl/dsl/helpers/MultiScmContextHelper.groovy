@@ -28,7 +28,6 @@ class MultiScmContextHelper extends AbstractContextHelper<ScmContext> {
         execute(closure, new ScmContext(true, withXmlActions, jobManagement))
     }
 
-
     /**
      <scm class="org.jenkinsci.plugins.multiplescms.MultiSCM" plugin="multiple-scms@0.2">
      <scms>
@@ -48,7 +47,7 @@ class MultiScmContextHelper extends AbstractContextHelper<ScmContext> {
             }
 
             def nodeBuilder = new NodeBuilder()
-            def multiscmNode = nodeBuilder.scm(class:'org.jenkinsci.plugins.multiplescms.MultiSCM')
+            def multiscmNode = nodeBuilder.scm(class: 'org.jenkinsci.plugins.multiplescms.MultiSCM')
             def scmsNode = multiscmNode / scms
             context.scmNodes.each {
                 scmsNode << it

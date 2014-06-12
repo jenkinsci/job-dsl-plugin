@@ -38,7 +38,7 @@ public class PublisherHelperSpec extends Specification {
         when:
         context.extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
             trigger('PreBuild')
-            trigger(triggerName: 'StillUnstable', subject: 'Subject', body:'Body', recipientList:'RecipientList',
+            trigger(triggerName: 'StillUnstable', subject: 'Subject', body: 'Body', recipientList: 'RecipientList',
                     sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
             configure { node ->
                 node / contentType << 'html'
@@ -74,7 +74,6 @@ public class PublisherHelperSpec extends Specification {
         email.sendToRecipientList[0].value() as String == 'false'
     }
 
-
     def 'loop triggers to set send to requester'() {
         when:
         // Given by Thaddeus Diamond <thaddeus@hadapt.com> in mailing list
@@ -94,6 +93,7 @@ public class PublisherHelperSpec extends Specification {
         emailDefault.sendToDevelopers[0].value() == 'false'
         emailDefault.sendToRequester[0].value() == 'true'
     }
+
     def 'call standard mailer method'() {
         when:
         context.mailer('recipient')
@@ -178,7 +178,6 @@ public class PublisherHelperSpec extends Specification {
         archiveNode.testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
         archiveNode.testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
     }
-
 
     def 'call junit archive with minimal args'() {
         when:
@@ -395,7 +394,6 @@ public class PublisherHelperSpec extends Specification {
         confTargetNode.name[0].value() == 'tools@hipchat.com'
         confTargetNode.notificationOnly[0].value() == 'false'
 
-
         def emailTargetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
         emailTargetNode.value[0].value() == 'me@gmail.com'
         emailTargetNode.notificationOnly.size() == 0
@@ -435,7 +433,6 @@ public class PublisherHelperSpec extends Specification {
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
         publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
     }
-
 
     def 'call Jabber publish to get exceptions'() {
         when:
@@ -669,7 +666,6 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(AssertionError)
     }
-
 
     def 'call violations plugin with no args has correct defaults'() {
         when:
@@ -2063,7 +2059,8 @@ public class PublisherHelperSpec extends Specification {
 
     def 'stashNotifier with default configuration'() {
         when:
-        context.stashNotifier {null}
+        context.stashNotifier {
+        }
 
         then:
         context.publisherNodes != null

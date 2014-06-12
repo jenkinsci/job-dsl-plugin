@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 
-
 class RunConditionContext implements Context {
 
     RunCondition condition
@@ -81,5 +80,4 @@ class RunConditionContext implements Context {
         List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('Or', conditions)
     }
-
 }

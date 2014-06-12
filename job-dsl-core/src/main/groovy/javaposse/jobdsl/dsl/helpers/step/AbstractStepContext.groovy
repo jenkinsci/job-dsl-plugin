@@ -208,7 +208,7 @@ class AbstractStepContext implements Context {
             }
         }
 
-        if(propertiesList) {
+        if (propertiesList) {
             antNode.appendNode('properties', propertiesList.join('\n'))
         }
 
@@ -467,7 +467,7 @@ class AbstractStepContext implements Context {
             filter includeGlob
             target targetPath?:''
 
-            selector('class':"hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
+            selector(class: "hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
                 if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
                     fallbackToLastSuccessful 'true'
                 }

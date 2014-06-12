@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 class ThrottleConcurrentBuildsContext implements Context {
     def throttleDisabled = false
     def categories = []

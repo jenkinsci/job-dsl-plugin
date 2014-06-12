@@ -515,12 +515,11 @@ public class ScmHelperSpec extends Specification {
         context.scmNode.gitTool[1].text() == 'NotDefault'
     }
 
-
     def 'call git scm with configure on Node'() {
         when:
         context.git(GIT_REPO_URL, null) { gitNode ->
             gitNode << gitConfigName('john') // Always append
-            gitNode.appendNode('gitConfigEmail' ,'john@gmail.com') // Clearly an append
+            gitNode.appendNode('gitConfigEmail', 'john@gmail.com') // Clearly an append
             gitNode / scmName << 'Kittner' // Re-use node and set value
         }
 
@@ -715,7 +714,7 @@ public class ScmHelperSpec extends Specification {
     def 'call svn with browser - Fisheye example'() {
         when:
         context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-            svnNode / browser(class:'hudson.scm.browsers.FishEyeSVN') {
+            svnNode / browser(class: 'hudson.scm.browsers.FishEyeSVN') {
                 url 'http://mycompany.com/fisheye/repo_name'
                 rootModule 'my_root_module'
             }
@@ -731,7 +730,7 @@ public class ScmHelperSpec extends Specification {
     def 'call svn with browser - ViewSVN example'() {
         when:
         context.svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-            svnNode / browser(class:'hudson.scm.browsers.ViewSVN') / url << 'http://mycompany.com/viewsvn/repo_name'
+            svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') / url << 'http://mycompany.com/viewsvn/repo_name'
         }
 
         then:
@@ -792,7 +791,7 @@ public class ScmHelperSpec extends Specification {
         Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
         def nodeBuilder = new NodeBuilder()
 
-        Node scmNode = nodeBuilder.scm(class:'hudson.plugins.git.GitSCM') {
+        Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.git.GitSCM') {
             wipeOutWorkspace 'true'
         }
 

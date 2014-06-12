@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-
 class SystemGroovyContext extends AbstractGroovyContext {
     Map<String, String> bindings = [:]
 

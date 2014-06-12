@@ -22,7 +22,6 @@ public class AbstractHelper implements Helper {
         this.type = type
     }
 
-
     WithXmlAction execute(Closure rootClosure) {
         rootClosure.resolveStrategy = Closure.DELEGATE_FIRST
         def action = new WithXmlAction(rootClosure)

@@ -28,32 +28,13 @@ ruleset {
         // enforce at least one space after map entry colon
         SpaceAroundMapEntryColon {
             characterAfterColonRegex = /\s/
+            characterBeforeColonRegex = /./
         }
 
         // we don't care for now
         exclude 'ClassJavadoc'
         // TODO: fix violations
-        exclude 'ConsecutiveBlankLines'
-        // TODO: fix violations
-        exclude 'FileEndsWithoutNewline'
-        // TODO: fix violations
         exclude 'LineLength'
-        // TODO: fix violations
-        exclude 'MissingBlankLineAfterImports'
-        // TODO: fix violations
-        exclude 'MissingBlankLineAfterPackage'
-        // TODO: fix violations
-        exclude 'SpaceAfterClosingBrace'
-        // TODO: fix violations
-        exclude 'SpaceAfterComma'
-        // TODO: fix violations
-        exclude 'SpaceAfterIf'
-        // TODO: fix violations
-        exclude 'SpaceAfterOpeningBrace'
-        // TODO: fix violations
-        exclude 'SpaceAfterSwitch'
-        // TODO: fix violations
-        exclude 'SpaceAroundMapEntryColon'
         // TODO: fix violations
         exclude 'SpaceAroundOperator'
         // TODO: fix violations

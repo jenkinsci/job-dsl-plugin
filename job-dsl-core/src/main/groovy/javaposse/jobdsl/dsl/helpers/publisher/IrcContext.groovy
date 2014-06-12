@@ -1,7 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.publisher
+
 import com.google.common.base.Preconditions
 import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.helpers.Context
+
 /**
  * @author Zsolt Takacs <zsolt@takacs.cc>
  */
@@ -30,7 +32,6 @@ class IrcContext implements Context {
         strategy = strategies[0];
         notificationMessage = notificationMessages[0];
     }
-
 
     def channel(String name, String password = '', boolean notificationOnly = false) {
         Preconditions.checkArgument(name != null && name.length() > 0, "Channel name for irc channel is required!")

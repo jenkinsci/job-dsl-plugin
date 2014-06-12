@@ -1,4 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
+
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -171,7 +172,8 @@ public class StepHelperSpec extends Specification {
         grailsStep4.nonInteractive[0].value() == 'false'
 
         when:
-        context.grails {}
+        context.grails {
+        }
 
         then:
         context.stepNodes.size() == 6
@@ -299,7 +301,7 @@ public class StepHelperSpec extends Specification {
             targets(['publish', 'deploy']) // FIXME: I have no idea why the parens are needed
             prop 'test.size', 4
             prop 'logging', 'info'
-            props 'test.threads': 10, 'input.status':'release'
+            props 'test.threads': 10, 'input.status': 'release'
             buildFile 'dir2/build.xml'
             buildFile 'dir1/build.xml'
             javaOpt '-Xmx1g'
@@ -823,7 +825,8 @@ public class StepHelperSpec extends Specification {
         StepContextHelper helper = new StepContextHelper(mockActions, JobType.Maven)
 
         when:
-        helper.steps {}
+        helper.steps {
+        }
 
         then:
         thrown(IllegalStateException)
@@ -862,7 +865,13 @@ public class StepHelperSpec extends Specification {
     }
     def 'call sbt method full'() {
         when:
-        context.sbt('SBT 0.12.3','test', '-Dsbt.log.noformat=true',  '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M', 'subproject')
+        context.sbt(
+                'SBT 0.12.3',
+                'test',
+                '-Dsbt.log.noformat=true',
+                '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M',
+                'subproject'
+        )
 
         then:
         context.stepNodes != null
@@ -892,12 +901,11 @@ public class StepHelperSpec extends Specification {
         dslStep.scriptText[0].value() == ''
     }
 
-
     def 'call dsl method external script ignoring existing' () {
         when:
         context.dsl {
             removeAction 'DISABLE'
-            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'some-dsl.groovy', 'some-other-dsl.groovy'
             external 'still-another-dsl.groovy'
             ignoreExisting()
         }
@@ -920,7 +928,7 @@ still-another-dsl.groovy'''
         when:
         context.dsl {
             removeAction 'DISABLE'
-            external 'some-dsl.groovy','some-other-dsl.groovy'
+            external 'some-dsl.groovy', 'some-other-dsl.groovy'
             external 'still-another-dsl.groovy'
         }
 
@@ -971,7 +979,7 @@ still-another-dsl.groovy'''
 
     def 'call dsl method external script as parameters' () {
         when:
-        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE')
+        context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE')
 
         then:
         context.stepNodes != null
@@ -989,7 +997,7 @@ still-another-dsl.groovy'''
 
     def 'call dsl method external script as parameters full' () {
         when:
-        context.dsl (['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE', true)
+        context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE', true)
 
         then:
         context.stepNodes != null
@@ -1402,7 +1410,6 @@ still-another-dsl.groovy'''
 
         Node conditions = logicOperation.conditions[0]
         conditions.children().size() == 2
-
 
         def containers = conditions.'org.jenkins__ci.plugins.run__condition.logic.ConditionContainer'
         def fileCondition = containers[0].condition[0]

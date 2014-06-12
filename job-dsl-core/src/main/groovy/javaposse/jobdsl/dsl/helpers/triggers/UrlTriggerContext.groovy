@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-
 /**
  * Top level context for configuring the URL trigger functionality.
  */
