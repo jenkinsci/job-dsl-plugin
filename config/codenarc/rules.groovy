@@ -85,8 +85,6 @@ ruleset {
     // ruleset('rulesets/size.xml')
 
     ruleset('rulesets/unnecessary.xml') {
-        // TODO: fix violations
-        exclude 'UnnecessaryCollectCall'
         // we don't care, does not necessarily lead to better code
         exclude 'UnnecessaryElseStatement'
         // TODO: fix violations

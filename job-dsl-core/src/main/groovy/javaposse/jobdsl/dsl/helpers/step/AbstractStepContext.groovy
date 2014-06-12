@@ -551,7 +551,7 @@ class AbstractStepContext implements Context {
         def nodeBuilder = new NodeBuilder()
         def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
              // Important that there are no spaces for comma delimited values, plugin doesn't handle by trimming, so we will
-            projects(projectList.tokenize(',').collect { it.trim() }.join(','))
+            projects(projectList.tokenize(',')*.trim().join(','))
             warningOnly(warningOnlyBool)
         }
         stepNodes << preReqNode
