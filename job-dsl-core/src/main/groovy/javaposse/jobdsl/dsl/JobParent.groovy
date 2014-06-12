@@ -10,14 +10,14 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 public abstract class JobParent extends Script {
-    private static final Logger LOGGER = Logger.getLogger(JobParent.name);
+    private static final Logger LOGGER = Logger.getLogger(JobParent.name)
     private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
             (null): ListView,
             (ViewType.ListView): ListView,
             (ViewType.BuildPipelineView): BuildPipelineView,
     ]
 
-    JobManagement jm;
+    JobManagement jm
     Set<Item> referencedJobs
     Set<View> referencedViews
     List<String> queueToBuild
@@ -80,11 +80,11 @@ public abstract class JobParent extends Script {
 
     public InputStream streamFileFromWorkspace(String filePath) throws IOException {
         Preconditions.checkArgument(filePath as Boolean)
-        return jm.streamFileInWorkspace(filePath);
+        return jm.streamFileInWorkspace(filePath)
     }
 
     public String readFileFromWorkspace(String filePath) throws IOException {
         Preconditions.checkArgument(filePath as Boolean)
-        return jm.readFileInWorkspace(filePath);
+        return jm.readFileInWorkspace(filePath)
     }
 }

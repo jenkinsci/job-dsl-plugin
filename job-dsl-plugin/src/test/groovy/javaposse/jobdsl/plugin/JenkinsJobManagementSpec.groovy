@@ -13,7 +13,7 @@ import static hudson.model.Result.UNSTABLE
 
 class JenkinsJobManagementSpec extends Specification {
     @Rule
-    JenkinsRule jenkinsRule = new JenkinsRule();
+    JenkinsRule jenkinsRule = new JenkinsRule()
 
     ByteArrayOutputStream buffer = new ByteArrayOutputStream()
     AbstractBuild build = Mock(AbstractBuild)

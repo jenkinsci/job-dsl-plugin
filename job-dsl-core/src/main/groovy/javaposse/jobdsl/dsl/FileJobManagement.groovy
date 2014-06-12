@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Maps
-
 class FileJobManagement extends AbstractJobManagement {
     /**
      * Root of where to look for job config files
@@ -17,7 +15,7 @@ class FileJobManagement extends AbstractJobManagement {
      * map to store job parameters from System properties and
      * Environment variables.
      */
-    protected Map params =  Maps.newHashMap();
+    protected Map params = [:]
 
     public FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
         super(out)
@@ -46,7 +44,7 @@ class FileJobManagement extends AbstractJobManagement {
 
     boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
         throws NameNotProvidedException, ConfigurationMissingException {
-        validateUpdateArgs(jobName, config);
+        validateUpdateArgs(jobName, config)
 
         new File(jobName + ext).write(config)
         return true
@@ -54,19 +52,19 @@ class FileJobManagement extends AbstractJobManagement {
 
     @Override
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
-        validateUpdateArgs(viewName, config);
+        validateUpdateArgs(viewName, config)
 
         new File(viewName + ext).write(config)
     }
 
     @Override
     public Map<String, String> getParameters() {
-        return params;
+        return params
     }
 
     @Override
     public InputStream streamFileInWorkspace(String filePath) {
-        return new FileInputStream(new File(root, filePath));
+        return new FileInputStream(new File(root, filePath))
     }
 
     @Override

@@ -322,7 +322,7 @@ class ScmContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
 
-        PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor();
+        PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor()
 
         Node p4Node = nodeBuilder.scm(class: 'hudson.plugins.perforce.PerforceSCM') {
             p4User user

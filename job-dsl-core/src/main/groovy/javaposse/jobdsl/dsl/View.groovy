@@ -63,5 +63,5 @@ public abstract class View {
         withXmlActions << new WithXmlAction(rootClosure)
     }
 
-    protected abstract String getTemplate();
+    protected abstract String getTemplate()
 }

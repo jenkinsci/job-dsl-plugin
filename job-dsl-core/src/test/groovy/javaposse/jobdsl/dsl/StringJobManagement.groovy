@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
 import groovy.xml.MarkupBuilder
 
@@ -54,7 +54,7 @@ public class StringJobManagement extends AbstractJobManagement {
 
     @Override
     boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException {
-        validateUpdateArgs(jobName, config);
+        validateUpdateArgs(jobName, config)
 
         savedConfigs[jobName] = config
         return false
@@ -79,16 +79,16 @@ public class StringJobManagement extends AbstractJobManagement {
     public InputStream streamFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
         if (body == null) {
-            throw new FileNotFoundException(filePath);
+            throw new FileNotFoundException(filePath)
         }
-        return new InputStreamReader(new StringReader(body));
+        return new InputStreamReader(new StringReader(body))
     }
 
     @Override
     public String readFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
         if (body == null) {
-            throw new FileNotFoundException(filePath);
+            throw new FileNotFoundException(filePath)
         }
         return body
     }

@@ -89,8 +89,6 @@ ruleset {
         exclude 'UnnecessaryPublicModifier'
         // TODO: fix violations
         exclude 'UnnecessaryReturnKeyword'
-        // TODO: fix violations
-        exclude 'UnnecessarySemicolon'
     }
 
     ruleset('rulesets/unused.xml')

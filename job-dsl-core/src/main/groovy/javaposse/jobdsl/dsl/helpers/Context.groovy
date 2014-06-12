@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl.helpers;
+package javaposse.jobdsl.dsl.helpers
 
 /**
  * Marker interface to indicate that this is the context from the DSL method having run, it still

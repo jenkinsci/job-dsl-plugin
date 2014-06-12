@@ -39,7 +39,7 @@ public class Job extends Item {
     @Delegate BuildParametersContextHelper helperBuildParameters
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
-        this.jobManagement = jobManagement;
+        this.jobManagement = jobManagement
         def typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
 
@@ -101,7 +101,7 @@ public class Job extends Item {
         def templateNode = new XmlParser().parse(new StringReader(configXml))
 
         if (type != getJobType(templateNode)) {
-            throw new JobTypeMismatchException(name, templateName);
+            throw new JobTypeMismatchException(name, templateName)
         }
 
         // Clean up our own indication that a job is a template

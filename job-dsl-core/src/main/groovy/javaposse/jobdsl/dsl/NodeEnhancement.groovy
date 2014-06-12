@@ -57,9 +57,9 @@ class NodeEnhancement {
     }
 
     private static List<Node> buildChildren(c) {
-        NodeBuilder b = new NodeBuilder();
-        Node newNode = (Node) b.invokeMethod("dummyNode", c);
-        return newNode.children();
+        NodeBuilder b = new NodeBuilder()
+        Node newNode = (Node) b.invokeMethod("dummyNode", c)
+        return newNode.children()
     }
 
     Node leftShift(boolean boolValue) {
@@ -81,7 +81,7 @@ class NodeEnhancement {
     Node leftShift(Closure configureBlock) {
         LOGGER.fine("Appending block from ${configureBlock}")
         configureBlock.resolveStrategy = Closure.DELEGATE_FIRST
-        List<Node> newChildren = buildChildren(configureBlock);
+        List<Node> newChildren = buildChildren(configureBlock)
         newChildren.each { this.append(it) }
         return this
     }
