@@ -83,7 +83,7 @@ job {
 
         then:
         jp != null
-        def jobs = jp.getReferencedJobs()
+        def jobs = jp.referencedJobs
         jobs.size() == 2
         def job = Iterables.get(jobs, 0)
         // If this one fails periodically, then it is because the referenced jobs are
@@ -106,7 +106,7 @@ job {
 
         then:
         jp != null
-        def jobs = jp.getReferencedJobs()
+        def jobs = jp.referencedJobs
         jobs.size() == 1
         def job = Iterables.get(jobs, 0)
         job.name == 'test'
@@ -127,7 +127,7 @@ job {
 
         then:
         jp != null
-        def jobs = jp.getReferencedJobs()
+        def jobs = jp.referencedJobs
         jobs.size() == 1
     }
 
@@ -164,7 +164,7 @@ println "Hello ${WordUtils.capitalize('world')}"
         DslScriptLoader.runDslEngine(request, jm)
 
         then:
-        def results = getContent()
+        def results = content
         results != null
         results.contains("Hello World")
     }
@@ -210,8 +210,8 @@ println content
 
         then:
         noExceptionThrown()
-        getContent().contains('bar')
-        getContent().count('bar') == 3
+        content.contains('bar')
+        content.count('bar') == 3
     }
 
     def 'read nonexistant file'() {

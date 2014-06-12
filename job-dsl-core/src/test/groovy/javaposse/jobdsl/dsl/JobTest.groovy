@@ -42,7 +42,7 @@ class JobTest extends Specification {
 
         when:
         job.using('TMPL')
-        job.getXml()
+        job.xml
 
         then:
         1 * jm.getConfig('TMPL') >> minimalXml
@@ -56,7 +56,7 @@ class JobTest extends Specification {
 
         when:
         job.using('TMPL')
-        def xml = job.getXml()
+        def xml = job.xml
 
         then:
         _ * jm.getConfig('TMPL') >> minimalXml
@@ -70,7 +70,7 @@ class JobTest extends Specification {
 
         when:
         job.using("config")
-        String project = job.getXml()
+        String project = job.xml
 
         then:
         // assertXpathExists('/description', project) // java.lang.NoSuchMethodError: org.apache.xpath.XPathContext
@@ -84,7 +84,7 @@ class JobTest extends Specification {
 
         when:
         job.using('TMPL-NOT_THERE')
-        job.getXml()
+        job.xml
 
         then:
         thrown(JobTemplateMissingException)
@@ -96,7 +96,7 @@ class JobTest extends Specification {
         Job job = new Job(jm)
 
         when:
-        def projectRoaming = job.getNode()
+        def projectRoaming = job.node
 
         then:
         // See that jobs can roam by default
@@ -104,7 +104,7 @@ class JobTest extends Specification {
 
         when:
         job.label('Ubuntu')
-        def projectLabelled = job.getNode()
+        def projectLabelled = job.node
 
         then:
         projectLabelled.canRoam[0].value() == 'false'
@@ -124,7 +124,7 @@ class JobTest extends Specification {
         }
 
         then:
-        !job.withXmlActions.isEmpty()
+        !job.withXmlActions.empty
 
         when:
         job.configure("Not a closure")
@@ -198,7 +198,7 @@ class JobTest extends Specification {
         Job job = new Job(jm, [type: 'maven'])
 
         when:
-        def xml = job.getXml()
+        def xml = job.xml
 
         then:
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, xml
@@ -211,7 +211,7 @@ class JobTest extends Specification {
 
         when:
         job.using('TMPL')
-        job.getXml()
+        job.xml
 
         then:
         1 * jm.getConfig('TMPL') >> mavenXml
@@ -225,7 +225,7 @@ class JobTest extends Specification {
 
         when:
         job.using('TMPL')
-        job.getXml()
+        job.xml
 
         then:
         1 * jm.getConfig('TMPL') >> minimalXml
@@ -238,7 +238,7 @@ class JobTest extends Specification {
         Job job = new Job(jm, [type: 'buildFlow'])
 
         when:
-        def xml = job.getXml()
+        def xml = job.xml
 
         then:
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + buildFlowXml, xml

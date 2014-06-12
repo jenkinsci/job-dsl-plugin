@@ -13,7 +13,7 @@ class BuildPipelineViewSpec extends Specification {
 
     def 'defaults'() {
         when:
-        String xml = view.getXml()
+        String xml = view.xml
 
         then:
         setIgnoreWhitespace(true)
@@ -25,7 +25,7 @@ class BuildPipelineViewSpec extends Specification {
         view.displayedBuilds(5)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.noOfDisplayedBuilds.size() == 1
         root.noOfDisplayedBuilds[0].text() == '5'
     }
@@ -51,7 +51,7 @@ class BuildPipelineViewSpec extends Specification {
         view.title('foo')
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.buildViewTitle.size() == 1
         root.buildViewTitle[0].text() == 'foo'
     }
@@ -61,7 +61,7 @@ class BuildPipelineViewSpec extends Specification {
         view.title(null)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.buildViewTitle.size() == 1
         root.buildViewTitle[0].text() == ''
     }
@@ -71,7 +71,7 @@ class BuildPipelineViewSpec extends Specification {
         view.selectedJob('foo')
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.selectedJob.size() == 1
         root.selectedJob[0].text() == 'foo'
     }
@@ -97,7 +97,7 @@ class BuildPipelineViewSpec extends Specification {
         view.consoleOutputLinkStyle(Lightbox)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.consoleOutputLinkStyle.size() == 1
         root.consoleOutputLinkStyle[0].text() == 'Lightbox'
     }
@@ -107,7 +107,7 @@ class BuildPipelineViewSpec extends Specification {
         view.consoleOutputLinkStyle(NewWindow)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.consoleOutputLinkStyle.size() == 1
         root.consoleOutputLinkStyle[0].text() == 'New Window'
     }
@@ -117,7 +117,7 @@ class BuildPipelineViewSpec extends Specification {
         view.consoleOutputLinkStyle(ThisWindow)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.consoleOutputLinkStyle.size() == 1
         root.consoleOutputLinkStyle[0].text() == 'This Window'
     }
@@ -135,7 +135,7 @@ class BuildPipelineViewSpec extends Specification {
         view.customCssUrl('foo')
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.cssUrl.size() == 1
         root.cssUrl[0].text() == 'foo'
     }
@@ -145,7 +145,7 @@ class BuildPipelineViewSpec extends Specification {
         view.customCssUrl(null)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.cssUrl.size() == 1
         root.cssUrl[0].text() == ''
     }
@@ -155,7 +155,7 @@ class BuildPipelineViewSpec extends Specification {
         view.triggerOnlyLatestJob(true)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.triggerOnlyLatestJob.size() == 1
         root.triggerOnlyLatestJob[0].text() == 'true'
     }
@@ -165,7 +165,7 @@ class BuildPipelineViewSpec extends Specification {
         view.triggerOnlyLatestJob()
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.triggerOnlyLatestJob.size() == 1
         root.triggerOnlyLatestJob[0].text() == 'true'
     }
@@ -175,7 +175,7 @@ class BuildPipelineViewSpec extends Specification {
         view.alwaysAllowManualTrigger(true)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.alwaysAllowManualTrigger.size() == 1
         root.alwaysAllowManualTrigger[0].text() == 'true'
     }
@@ -185,7 +185,7 @@ class BuildPipelineViewSpec extends Specification {
         view.alwaysAllowManualTrigger()
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.alwaysAllowManualTrigger.size() == 1
         root.alwaysAllowManualTrigger[0].text() == 'true'
     }
@@ -195,7 +195,7 @@ class BuildPipelineViewSpec extends Specification {
         view.showPipelineParameters(true)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.showPipelineParameters.size() == 1
         root.showPipelineParameters[0].text() == 'true'
     }
@@ -205,7 +205,7 @@ class BuildPipelineViewSpec extends Specification {
         view.showPipelineParameters()
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.showPipelineParameters.size() == 1
         root.showPipelineParameters[0].text() == 'true'
     }
@@ -215,7 +215,7 @@ class BuildPipelineViewSpec extends Specification {
         view.showPipelineParametersInHeaders(true)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.showPipelineParametersInHeaders.size() == 1
         root.showPipelineParametersInHeaders[0].text() == 'true'
     }
@@ -225,7 +225,7 @@ class BuildPipelineViewSpec extends Specification {
         view.showPipelineParametersInHeaders()
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.showPipelineParametersInHeaders.size() == 1
         root.showPipelineParametersInHeaders[0].text() == 'true'
     }
@@ -235,7 +235,7 @@ class BuildPipelineViewSpec extends Specification {
         view.refreshFrequency(5)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.refreshFrequency.size() == 1
         root.refreshFrequency[0].text() == '5'
     }
@@ -261,7 +261,7 @@ class BuildPipelineViewSpec extends Specification {
         view.showPipelineDefinitionHeader(true)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.showPipelineDefinitionHeader.size() == 1
         root.showPipelineDefinitionHeader[0].text() == 'true'
     }
@@ -271,7 +271,7 @@ class BuildPipelineViewSpec extends Specification {
         view.showPipelineDefinitionHeader()
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.showPipelineDefinitionHeader.size() == 1
         root.showPipelineDefinitionHeader[0].text() == 'true'
     }

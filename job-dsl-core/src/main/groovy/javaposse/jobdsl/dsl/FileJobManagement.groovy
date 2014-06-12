@@ -38,7 +38,7 @@ class FileJobManagement extends AbstractJobManagement {
         }
 
         try {
-            new File(root, jobName + ext).getText()
+            new File(root, jobName + ext).text
         } catch (IOException ioex) {
             throw new JobConfigurationNotFoundException(jobName)
         }

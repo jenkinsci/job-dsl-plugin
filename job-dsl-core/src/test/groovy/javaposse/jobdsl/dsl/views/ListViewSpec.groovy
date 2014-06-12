@@ -13,7 +13,7 @@ class ListViewSpec extends Specification {
 
     def 'defaults'() {
         when:
-        String xml = view.getXml()
+        String xml = view.xml
 
         then:
         setIgnoreWhitespace(true)
@@ -25,7 +25,7 @@ class ListViewSpec extends Specification {
         view.statusFilter(ALL)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.statusFilter.size() == 0
     }
 
@@ -35,7 +35,7 @@ class ListViewSpec extends Specification {
         view.statusFilter(ALL)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.statusFilter.size() == 0
     }
 
@@ -44,7 +44,7 @@ class ListViewSpec extends Specification {
         view.statusFilter(ENABLED)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.statusFilter.size() == 1
         root.statusFilter[0].text() == 'true'
     }
@@ -54,7 +54,7 @@ class ListViewSpec extends Specification {
         view.statusFilter(DISABLED)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.statusFilter.size() == 1
         root.statusFilter[0].text() == 'false'
     }
@@ -66,7 +66,7 @@ class ListViewSpec extends Specification {
         view.statusFilter(DISABLED)
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.statusFilter.size() == 1
         root.statusFilter[0].text() == 'false'
     }
@@ -86,7 +86,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.jobNames.size() == 1
         root.jobNames[0].string.size() == 1
         root.jobNames[0].string[0].text() == 'foo'
@@ -109,7 +109,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.jobNames.size() == 1
         root.jobNames[0].string.size() == 2
         root.jobNames[0].string[0].text() == 'bar'
@@ -134,7 +134,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.includeRegex.size() == 1
         root.includeRegex[0].text() == 'test'
     }
@@ -149,7 +149,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.jobNames.size() == 1
         root.jobNames[0].string.size() == 2
         root.jobNames[0].string[0].text() == 'bar'
@@ -165,7 +165,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.jobNames.size() == 1
         root.jobNames[0].string.size() == 3
         root.jobNames[0].string[0].text() == 'bar'
@@ -181,7 +181,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.columns.size() == 1
         root.columns[0].children.size() == 0
     }
@@ -199,7 +199,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.columns.size() == 1
         root.columns[0].value().size() == 7
         root.columns[0].value()[0].name() == 'hudson.views.StatusColumn'
@@ -221,7 +221,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.columns.size() == 1
         root.columns[0].value().size() == 2
         root.columns[0].value()[0].name() == 'hudson.views.JobColumn'
@@ -235,7 +235,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        Node root = view.getNode()
+        Node root = view.node
         root.columns.size() == 1
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildConsoleColumn'

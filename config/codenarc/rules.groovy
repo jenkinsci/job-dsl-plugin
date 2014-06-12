@@ -88,8 +88,6 @@ ruleset {
         // we don't care, does not necessarily lead to better code
         exclude 'UnnecessaryElseStatement'
         // TODO: fix violations
-        exclude 'UnnecessaryGetter'
-        // TODO: fix violations
         exclude 'UnnecessaryGString'
         // TODO: fix violations
         exclude 'UnnecessaryObjectReferences'
