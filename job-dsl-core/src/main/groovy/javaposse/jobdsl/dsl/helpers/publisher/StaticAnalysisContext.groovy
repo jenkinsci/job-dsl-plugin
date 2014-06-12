@@ -60,6 +60,6 @@ class StaticAnalysisContext implements Context {
         assert ALLOWED_THRESHOLD_TYPES.containsAll(thresholdMap.values()*.keySet().flatten()),
                 "Threshold only can use the types ${ALLOWED_THRESHOLD_TYPES.join(',')}. You used ${thresholdMap}."
         this.thresholdMap = thresholdMap
-        this.dontComputeNew = ! thresholdMap.keySet().find { it.contains('New')}
+        this.dontComputeNew = !thresholdMap.keySet().find { it.contains('New') }
     }
 }

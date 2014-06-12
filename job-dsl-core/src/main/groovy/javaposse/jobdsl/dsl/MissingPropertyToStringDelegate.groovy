@@ -35,8 +35,8 @@ class MissingPropertyToStringDelegate {
                 it.resolveStrategy = Closure.DELEGATE_FIRST
             }
         }
-        NodeBuilder b = new NodeBuilder();
-        Node newNode = (Node) b.invokeMethod(methodName, args);
+        NodeBuilder b = new NodeBuilder()
+        Node newNode = (Node) b.invokeMethod(methodName, args)
         LOGGER.fine("Missing ${methodName} created ${toXml(newNode)}")
         return newNode
     }

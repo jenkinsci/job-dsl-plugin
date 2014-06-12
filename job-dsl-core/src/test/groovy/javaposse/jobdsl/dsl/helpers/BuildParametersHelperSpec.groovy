@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
-public class BuildParametersHelperSpec extends Specification {
+class BuildParametersHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     BuildParametersContextHelper helper = new BuildParametersContextHelper(mockActions, JobType.Freeform)

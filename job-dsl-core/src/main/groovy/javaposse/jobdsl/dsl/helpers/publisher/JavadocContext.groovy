@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 class JavadocContext implements Context {
     String javadocDir = ""
-    boolean keepAll;
+    boolean keepAll
 
     void javadocDir(String javadocDir) {
         this.javadocDir = javadocDir

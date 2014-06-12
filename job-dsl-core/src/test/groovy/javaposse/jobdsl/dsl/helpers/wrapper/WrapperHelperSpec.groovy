@@ -584,7 +584,7 @@ class WrapperHelperSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'call injectPasswords' (){
+    def 'call injectPasswords'() {
         when:
         helper.wrappers {
             injectPasswords()

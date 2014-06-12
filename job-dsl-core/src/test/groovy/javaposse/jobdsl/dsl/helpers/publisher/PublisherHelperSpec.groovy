@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
 
-public class PublisherHelperSpec extends Specification {
+class PublisherHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     JobManagement jobManagement = Mock(JobManagement)
@@ -614,7 +614,7 @@ public class PublisherHelperSpec extends Specification {
         first.triggerWithNoParameters[0].value() == 'true'
         first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
         first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
-        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == 'false'
+        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
@@ -626,13 +626,13 @@ public class PublisherHelperSpec extends Specification {
         boolParams.children().size() == 3
         def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
         boolNode.name[0].value() == 'aParam'
-        boolNode.value[0].value() == 'false'
+        boolNode.value[0].value() == false
         def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
         boolNode1.name[0].value() == 'bParam'
-        boolNode1.value[0].value() == 'false'
+        boolNode1.value[0].value() == false
         def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
         boolNode2.name[0].value() == 'cParam'
-        boolNode2.value[0].value() == 'true'
+        boolNode2.value[0].value() == true
 
         def nodeNode = first.configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
         nodeNode != null
@@ -679,7 +679,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
         typeConfigsNode.entry.size() == 17
-        def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian'}
+        def simianNode = typeConfigsNode.entry.find { it.string[0].value() == 'simian' }
         simianNode != null
         def typeConfigNode = simianNode.'hudson.plugins.violations.TypeConfig'[0]
         typeConfigNode.type[0].value() == 'simian'
@@ -711,7 +711,7 @@ public class PublisherHelperSpec extends Specification {
         publisherNode.config[0].encoding[0].value() == 'default'
         def typeConfigsNode = publisherNode.config[0].typeConfigs[0]
         typeConfigsNode.entry.size() == 17
-        def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle'}
+        def checkstyleNode = typeConfigsNode.entry.find { it.string[0].value() == 'checkstyle' }
         checkstyleNode != null
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'checkstyle'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
@@ -719,7 +719,7 @@ public class PublisherHelperSpec extends Specification {
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         checkstyleNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
-        def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint'}
+        def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint' }
         jshintNode != null
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jshint'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
@@ -727,14 +727,14 @@ public class PublisherHelperSpec extends Specification {
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
-        def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs'}
+        def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs' }
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'findbugs'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '12'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '13'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '12'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
         findbugsNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == ''
-        def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint'}
+        def jslintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jslint' }
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jslint'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '999'
@@ -1492,7 +1492,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
         when:
-        context.publishRobotFrameworkReports{
+        context.publishRobotFrameworkReports {
             passThreshold(100.0)
             unstableThreshold(10.0)
         }
@@ -2132,7 +2132,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'wsCleanup with configuration of all parameters'() {
         when:
-        context.wsCleanup{
+        context.wsCleanup {
             includePattern('foo')
             includePattern('bar')
             excludePattern('foo')
@@ -2197,7 +2197,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'wsCleanup with configuration of all parameters using defaults for boolean parameter'() {
         when:
-        context.wsCleanup{
+        context.wsCleanup {
             includePattern('foo')
             includePattern('bar')
             excludePattern('foo')

@@ -19,7 +19,7 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
  * @author jryan
  * @author aharmel-law
  */
-public class Job extends Item {
+class Job extends Item {
     JobManagement jobManagement
 
     String templateName = null // Optional
@@ -38,10 +38,10 @@ public class Job extends Item {
     @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
 
-    public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
-        this.jobManagement = jobManagement;
-        def typeArg = arguments['type']?:JobType.Freeform
-        this.type = (typeArg instanceof JobType)?typeArg:JobType.find(typeArg)
+    Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
+        this.jobManagement = jobManagement
+        def typeArg = arguments['type'] ?: JobType.Freeform
+        this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
 
         // Helpers
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
@@ -72,8 +72,8 @@ public class Job extends Item {
         name(nameClosure.call().toString())
     }
 
-    public Node getNode() {
-        Node project = templateName==null?executeEmptyTemplate():executeUsing()
+    Node getNode() {
+        Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
 
         executeWithXmlActions(project)
 
@@ -91,7 +91,7 @@ public class Job extends Item {
         String configXml
         try {
             configXml = jobManagement.getConfig(templateName)
-            if (configXml==null) {
+            if (configXml == null) {
                 throw new JobConfigurationNotFoundException()
             }
         } catch (JobConfigurationNotFoundException jcnfex) {
@@ -101,7 +101,7 @@ public class Job extends Item {
         def templateNode = new XmlParser().parse(new StringReader(configXml))
 
         if (type != getJobType(templateNode)) {
-            throw new JobTypeMismatchException(name, templateName);
+            throw new JobTypeMismatchException(name, templateName)
         }
 
         // Clean up our own indication that a job is a template

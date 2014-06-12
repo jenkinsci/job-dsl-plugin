@@ -16,23 +16,23 @@ class ScriptRequestGenerator {
         this.env = env
     }
 
-    public Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText, boolean ignoreExisting) throws IOException, InterruptedException {
-        Set<ScriptRequest> scriptRequests = Sets.newLinkedHashSet();
+    Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText, boolean ignoreExisting) throws IOException, InterruptedException {
+        Set<ScriptRequest> scriptRequests = Sets.newLinkedHashSet()
 
         if (usingScriptText) {
             URL workspaceUrl = WorkspaceProtocol.createWorkspaceUrl(build.project)
-            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl, ignoreExisting);
-            scriptRequests.add(request);
+            ScriptRequest request = new ScriptRequest(null, scriptText, workspaceUrl, ignoreExisting)
+            scriptRequests.add(request)
         } else {
-            String targetsStr = env.expand(targets);
+            String targetsStr = env.expand(targets)
 
-            FilePath[] filePaths =  build.workspace.list(targetsStr.replace("\n", ","));
+            FilePath[] filePaths =  build.workspace.list(targetsStr.replace("\n", ","))
             for (FilePath filePath : filePaths) {
                 URL relativeWorkspaceUrl = WorkspaceProtocol.createWorkspaceUrl(build, filePath.parent)
-                ScriptRequest request = new ScriptRequest(filePath.name, null, relativeWorkspaceUrl, ignoreExisting);
-                scriptRequests.add(request);
+                ScriptRequest request = new ScriptRequest(filePath.name, null, relativeWorkspaceUrl, ignoreExisting)
+                scriptRequests.add(request)
             }
         }
-        return scriptRequests;
+        return scriptRequests
     }
 }

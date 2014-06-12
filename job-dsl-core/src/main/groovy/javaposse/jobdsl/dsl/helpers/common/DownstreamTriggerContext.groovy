@@ -109,13 +109,13 @@ class DownstreamTriggerContext implements Context {
             if (usingPropertiesFile) {
                 'hudson.plugins.parameterizedtrigger.FileBuildParameters' {
                     delegate.createNode('propertiesFile', propFile)
-                    delegate.createNode('failTriggerOnMissing', failTriggerOnMissing?'true':'false')
+                    delegate.createNode('failTriggerOnMissing', failTriggerOnMissing)
                 }
             }
 
             if (usingGitRevision) {
                 'hudson.plugins.git.GitRevisionBuildParameters' {
-                    'combineQueuedCommits' combineQueuedCommits ? 'true' : 'false'
+                    'combineQueuedCommits' combineQueuedCommits
                 }
             }
 
@@ -133,7 +133,7 @@ class DownstreamTriggerContext implements Context {
 
             if (usingSubversionRevision) {
                 'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {
-                    delegate.createNode('includeUpstreamParameters', includeUpstreamParameters?'true':'false')
+                    delegate.createNode('includeUpstreamParameters', includeUpstreamParameters)
                 }
             }
 
@@ -146,7 +146,7 @@ class DownstreamTriggerContext implements Context {
                     configs {
                         boolParams.each { k, v ->
                             def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
-                                value(v?'true':'false')
+                                value(v)
                             }
                             boolConfigNode.appendNode('name', k)
                         }

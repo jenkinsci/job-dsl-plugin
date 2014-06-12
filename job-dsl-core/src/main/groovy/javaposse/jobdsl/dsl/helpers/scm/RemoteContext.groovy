@@ -50,10 +50,10 @@ class RemoteContext implements Context {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GithubWeb') {
             delegate.url(webUrl)
         }
-        withXmlActions << new WithXmlAction({
+        withXmlActions << WithXmlAction.create {
             it / 'properties' / 'com.coravy.hudson.plugins.github.GithubProjectProperty' {
                 projectUrl webUrl
             }
-        })
+        }
     }
 }

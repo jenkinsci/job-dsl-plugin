@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
 import groovy.xml.MarkupBuilder
 
@@ -7,7 +7,7 @@ import groovy.xml.MarkupBuilder
  * since it can be prodded with the expected value.
  * @author jryan
  */
-public class StringJobManagement extends AbstractJobManagement {
+class StringJobManagement extends AbstractJobManagement {
     /**
      * XML to return by default
      */
@@ -20,18 +20,18 @@ public class StringJobManagement extends AbstractJobManagement {
     Map<String,String> params = [:]
     List<String> jobScheduled = []
 
-    public StringJobManagement(PrintStream out) {
+    StringJobManagement(PrintStream out) {
         super(out)
     }
 
-    public StringJobManagement(String defaultXml) {
+    StringJobManagement(String defaultXml) {
         this.defaultXml = defaultXml
     }
 
-    public StringJobManagement() {
+    StringJobManagement() {
     }
 
-    public StringJobManagement(Closure closure) {
+    StringJobManagement(Closure closure) {
         StringWriter writer = new StringWriter()
         def build = new MarkupBuilder(writer)
         closure.delegate = build
@@ -45,7 +45,7 @@ public class StringJobManagement extends AbstractJobManagement {
     String getConfig(String jobName) {
         if (availableConfigs.containsKey(jobName)) {
             return availableConfigs[jobName]
-        } else if (defaultXml!=null) {
+        } else if (defaultXml != null) {
             return defaultXml
         } else {
             throw new JobConfigurationNotFoundException("No config found for ${jobName}")
@@ -54,7 +54,7 @@ public class StringJobManagement extends AbstractJobManagement {
 
     @Override
     boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException {
-        validateUpdateArgs(jobName, config);
+        validateUpdateArgs(jobName, config)
 
         savedConfigs[jobName] = config
         return false
@@ -76,19 +76,19 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public InputStream streamFileInWorkspace(String filePath) {
+    InputStream streamFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
-        if (body==null) {
-            throw new FileNotFoundException(filePath);
+        if (body == null) {
+            throw new FileNotFoundException(filePath)
         }
-        return new InputStreamReader(new StringReader(body));
+        return new InputStreamReader(new StringReader(body))
     }
 
     @Override
-    public String readFileInWorkspace(String filePath) {
+    String readFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
-        if (body==null) {
-            throw new FileNotFoundException(filePath);
+        if (body == null) {
+            throw new FileNotFoundException(filePath)
         }
         return body
     }

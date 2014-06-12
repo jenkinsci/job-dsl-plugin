@@ -4,10 +4,10 @@ import com.google.common.collect.Iterables
 import spock.lang.Ignore
 import spock.lang.Specification
 
-public class DslScriptLoaderTest extends Specification {
+class DslScriptLoaderTest extends Specification {
     def resourcesDir = getClass().getResource('/simple.dsl')
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    PrintStream ps = new PrintStream(baos);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream()
+    PrintStream ps = new PrintStream(baos)
     JobManagement jm = new FileJobManagement(new File(resourcesDir.toURI()), null, ps)
 
     @Ignore
@@ -41,7 +41,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine'() {
         setup:
-        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir, false);
+        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir, false)
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
@@ -54,7 +54,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine with reference to other class'() {
         setup:
-        ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir, false);
+        ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir, false)
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
@@ -62,8 +62,8 @@ public class DslScriptLoaderTest extends Specification {
         then:
         jobs != null
         jobs.size() == 2
-        jobs.any { it.jobName == 'test'}
-        jobs.any { it.jobName == 'test2'}
+        jobs.any { it.jobName == 'test' }
+        jobs.any { it.jobName == 'test2' }
 
     }
 
@@ -147,8 +147,8 @@ Callee.makeJob(this, 'test2')
         then:
         jobs != null
         jobs.size() == 2
-        jobs.any { it.jobName == 'test'}
-        jobs.any { it.jobName == 'test2'}
+        jobs.any { it.jobName == 'test' }
+        jobs.any { it.jobName == 'test2' }
     }
 
     def 'use @Grab'() {
@@ -178,7 +178,7 @@ def jobA = job {
 queue jobA
 queue 'JobB'
 '''
-        jm = new StringJobManagement();
+        jm = new StringJobManagement()
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
@@ -200,7 +200,7 @@ def jobA = job {
 def content = readFileFromWorkspace('foo.txt')
 println content
 '''
-        StringJobManagement sm = new StringJobManagement(ps);
+        StringJobManagement sm = new StringJobManagement(ps)
         sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
@@ -219,7 +219,7 @@ println content
         def scriptStr = '''
 readFileFromWorkspace('bar.txt')
 '''
-        StringJobManagement sm = new StringJobManagement(ps);
+        StringJobManagement sm = new StringJobManagement(ps)
         sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)

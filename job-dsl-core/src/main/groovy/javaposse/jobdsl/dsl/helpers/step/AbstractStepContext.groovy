@@ -55,11 +55,11 @@ class AbstractStepContext implements Context {
         def nodeBuilder = new NodeBuilder()
         def gradleNode = nodeBuilder.'hudson.plugins.gradle.Gradle' {
             description ''
-            switches switchesArg?:''
-            tasks tasksArg?:''
+            switches switchesArg ?: ''
+            tasks tasksArg ?: ''
             rootBuildScriptDir ''
             buildFile ''
-            useWrapper useWrapperArg==null?'true':useWrapperArg.toString()
+            useWrapper useWrapperArg == null ? 'true' : useWrapperArg.toString()
             wrapperScript ''
         }
         // Apply Context
@@ -85,10 +85,10 @@ class AbstractStepContext implements Context {
 
         def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
             name Preconditions.checkNotNull(sbtNameArg, "Please provide the name of the SBT to use" as Object)
-            jvmFlags jvmFlagsArg?:''
-            sbtFlags sbtFlagsArg?:''
-            actions actionsArg?:''
-            subdirPath subdirPathArg?:''
+            jvmFlags jvmFlagsArg ?: ''
+            sbtFlags sbtFlagsArg ?: ''
+            actions actionsArg ?: ''
+            subdirPath subdirPathArg ?: ''
         }
 
         // Apply Context
@@ -465,7 +465,7 @@ class AbstractStepContext implements Context {
             projectName jobName // Older name for field
             project jobName // Newer name for field
             filter includeGlob
-            target targetPath?:''
+            target targetPath ?: ''
 
             selector(class: "hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
                 if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
@@ -527,8 +527,8 @@ class AbstractStepContext implements Context {
                 phaseContext.jobsInPhase.each { jobInPhase ->
                     'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
                         jobName jobInPhase.jobName
-                        currParams jobInPhase.currentJobParameters?'true':'false'
-                        exposedSCM jobInPhase.exposedScm?'true':'false'
+                        currParams jobInPhase.currentJobParameters
+                        exposedSCM jobInPhase.exposedScm
                         if (jobInPhase.hasConfig()) {
                             configs(jobInPhase.configAsNode().children())
                         } else {

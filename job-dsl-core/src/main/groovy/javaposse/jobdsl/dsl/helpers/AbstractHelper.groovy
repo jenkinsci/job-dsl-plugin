@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 /**
  * Base for all helpers, providing an easy ability to create WithXmlActions
  */
-public class AbstractHelper implements Helper {
+class AbstractHelper implements Helper {
 
     /**
      * Global list of all withXmlActions. Helper should append to it as they get called. They could prepend to the list,

@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 /**
  * DSL element representing a Jenkins view.
  */
-public abstract class View {
+abstract class View {
     private final List<WithXmlAction> withXmlActions = []
 
     String name
@@ -63,5 +63,5 @@ public abstract class View {
         withXmlActions << new WithXmlAction(rootClosure)
     }
 
-    protected abstract String getTemplate();
+    protected abstract String getTemplate()
 }

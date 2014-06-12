@@ -35,12 +35,6 @@ ruleset {
         exclude 'ClassJavadoc'
         // TODO: fix violations
         exclude 'LineLength'
-        // TODO: fix violations
-        exclude 'SpaceAroundOperator'
-        // TODO: fix violations
-        exclude 'SpaceBeforeClosingBrace'
-        // TODO: fix violations
-        exclude 'SpaceBeforeOpeningBrace'
     }
 
     ruleset('rulesets/generic.xml')
@@ -92,13 +86,7 @@ ruleset {
         // TODO: fix violations
         exclude 'UnnecessaryObjectReferences'
         // TODO: fix violations
-        exclude 'UnnecessaryPublicModifier'
-        // TODO: fix violations
         exclude 'UnnecessaryReturnKeyword'
-        // TODO: fix violations
-        exclude 'UnnecessarySemicolon'
-        // TODO: fix violations
-        exclude 'UnnecessarySubstring'
     }
 
     ruleset('rulesets/unused.xml')

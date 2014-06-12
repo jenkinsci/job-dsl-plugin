@@ -18,4 +18,8 @@ class WithXmlAction {
             closure.call(root)
         }
     }
+
+    static WithXmlAction create(Closure closure) {
+        new WithXmlAction(closure)
+    }
 }

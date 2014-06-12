@@ -67,7 +67,7 @@ class ConditionalStepsContext extends AbstractStepContext {
         }
     }
 
-    public static enum EvaluationRunners {
+    static enum EvaluationRunners {
         Fail('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'),
         Unstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Unstable'),
         RunUnstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$RunUnstable'),
@@ -80,7 +80,7 @@ class ConditionalStepsContext extends AbstractStepContext {
             this.longForm = longForm
         }
 
-        public static find(String enumName) {
+        static find(String enumName) {
             values().find { it.name().toLowerCase() == enumName.toLowerCase() }
         }
 

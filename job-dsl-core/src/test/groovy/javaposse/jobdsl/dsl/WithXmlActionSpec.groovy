@@ -75,7 +75,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'add single child in left shift closure'() {
         when:
-        execute{ project ->
+        execute { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix << permission('hudson.model.Item.Delete:jryan')
         }

@@ -301,9 +301,9 @@ class TriggerContext implements Context {
      */
     def snapshotDependencies(boolean checkSnapshotDependencies) {
         Preconditions.checkState jobType == JobType.Maven, "snapshotDependencies can only be applied for Maven jobs"
-        withXmlActions << new WithXmlAction({
+        withXmlActions << WithXmlAction.create {
             it.children().removeAll { it instanceof Node && it.name() == "ignoreUpstremChanges" }
             it.appendNode "ignoreUpstremChanges", !checkSnapshotDependencies
-        })
+        }
     }
 }

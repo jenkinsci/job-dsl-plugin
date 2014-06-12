@@ -66,7 +66,7 @@ class ViolationsContext implements Context {
             pattern = args[3]
         }
 
-        addEntry(key, min, max, unstable, pattern);
+        addEntry(key, min, max, unstable, pattern)
     }
 
     @Canonical

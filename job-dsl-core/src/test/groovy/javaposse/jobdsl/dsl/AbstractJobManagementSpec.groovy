@@ -10,9 +10,9 @@ class AbstractJobManagementSpec extends Specification {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream()
         AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
 
-        GroovyClassLoader classLoader = new GroovyClassLoader();
-        Class scriptClass = classLoader.parseClass(this.class.getResourceAsStream('/deprecation.groovy').text);
-        Script script = createScript(scriptClass, new Binding([jm: jobManagement]));
+        GroovyClassLoader classLoader = new GroovyClassLoader()
+        Class scriptClass = classLoader.parseClass(this.class.getResourceAsStream('/deprecation.groovy').text)
+        Script script = createScript(scriptClass, new Binding([jm: jobManagement]))
 
         when:
         script.run()
@@ -30,7 +30,7 @@ class AbstractJobManagementSpec extends Specification {
         GroovyScriptEngine groovyScriptEngine = new GroovyScriptEngine(roots)
 
         when:
-        groovyScriptEngine.run('deprecation.groovy', new Binding([jm: jobManagement]));
+        groovyScriptEngine.run('deprecation.groovy', new Binding([jm: jobManagement]))
 
         then:
         buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'

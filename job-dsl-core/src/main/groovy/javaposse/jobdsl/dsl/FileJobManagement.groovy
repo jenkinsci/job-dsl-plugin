@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Maps
-
 class FileJobManagement extends AbstractJobManagement {
     /**
      * Root of where to look for job config files
@@ -17,12 +15,12 @@ class FileJobManagement extends AbstractJobManagement {
      * map to store job parameters from System properties and
      * Environment variables.
      */
-    protected Map params =  Maps.newHashMap();
+    protected Map params = [:]
 
-    public FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
+    FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
         super(out)
         this.root = root
-        this.ext = ext?:".xml"
+        this.ext = ext ?: ".xml"
     }
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
@@ -46,7 +44,7 @@ class FileJobManagement extends AbstractJobManagement {
 
     boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
         throws NameNotProvidedException, ConfigurationMissingException {
-        validateUpdateArgs(jobName, config);
+        validateUpdateArgs(jobName, config)
 
         new File(jobName + ext).write(config)
         return true
@@ -54,23 +52,23 @@ class FileJobManagement extends AbstractJobManagement {
 
     @Override
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
-        validateUpdateArgs(viewName, config);
+        validateUpdateArgs(viewName, config)
 
         new File(viewName + ext).write(config)
     }
 
     @Override
-    public Map<String, String> getParameters() {
-        return params;
+    Map<String, String> getParameters() {
+        return params
     }
 
     @Override
-    public InputStream streamFileInWorkspace(String filePath) {
-        return new FileInputStream(new File(root, filePath));
+    InputStream streamFileInWorkspace(String filePath) {
+        return new FileInputStream(new File(root, filePath))
     }
 
     @Override
-    public String readFileInWorkspace(String filePath) {
+    String readFileInWorkspace(String filePath) {
         new File(root, filePath).text
     }
 

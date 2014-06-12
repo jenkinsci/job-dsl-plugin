@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-public enum JobType {
+enum JobType {
     Freeform('project'),
     Maven('maven2-moduleset'),
     Multijob('com.tikal.jenkins.plugins.multijob.MultiJobProject'),
@@ -8,11 +8,11 @@ public enum JobType {
 
     String elementName
 
-    public JobType(String elementName) {
+    JobType(String elementName) {
         this.elementName = elementName
     }
 
-    public static find(String enumName) {
+    static find(String enumName) {
         values().find { it.name().toLowerCase() == enumName.toLowerCase() }
     }
 }

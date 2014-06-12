@@ -44,7 +44,7 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
         return new WithXmlAction(withXmlClosure)
     }
 
-    abstract Closure generateWithXmlClosure(T context);
+    abstract Closure generateWithXmlClosure(T context)
 
 }
 

@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 /**
  * DSL element representing a Jenkins folder.
  */
-public class Folder extends Item {
+class Folder extends Item {
     void displayName(String displayNameArg) {
         execute {
             it / methodMissing('displayName', displayNameArg)

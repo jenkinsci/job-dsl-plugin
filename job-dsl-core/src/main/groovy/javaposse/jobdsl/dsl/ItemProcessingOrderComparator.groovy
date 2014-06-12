@@ -7,13 +7,13 @@ import static javaposse.jobdsl.dsl.JobType.Multijob
  */
 class ItemProcessingOrderComparator implements Comparator<Item> {
     @Override
-    public int compare(Item item1, Item item2) {
+    int compare(Item item1, Item item2) {
         if (item1 instanceof Folder && !(item2 instanceof Folder)) {
             return -1
         } else if (!(item1 instanceof Folder) && item2 instanceof Folder) {
             return 1
         } else if (item1 instanceof Job && item2 instanceof Job) {
-            return compareJobs((Job) item1, (Job) item2);
+            return compareJobs((Job) item1, (Job) item2)
         } else {
             return 0
         }
