@@ -5,10 +5,10 @@ import spock.lang.Ignore
 import spock.lang.Specification
 
 public class DslScriptLoaderTest extends Specification {
-    def resourcesDir = new File("src/test/resources")
+    def resourcesDir = getClass().getResource('/simple.dsl')
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     PrintStream ps = new PrintStream(baos);
-    JobManagement jm = new FileJobManagement(resourcesDir, null, ps)
+    JobManagement jm = new FileJobManagement(new File(resourcesDir.toURI()), null, ps)
 
     @Ignore
     def getContent() {
@@ -41,7 +41,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine'() {
         setup:
-        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir.toURL(), false);
+        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir, false);
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
@@ -54,7 +54,7 @@ public class DslScriptLoaderTest extends Specification {
 
     def 'run engine with reference to other class'() {
         setup:
-        ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir.toURL(), false);
+        ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir, false);
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
@@ -76,7 +76,7 @@ job {
   name 'project-b'
 }
 '''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
@@ -99,7 +99,7 @@ job {
     name 'test'
 }
 '''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
@@ -120,7 +120,7 @@ job {
     localRepository LocalToExecutor
 }
 '''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
@@ -139,7 +139,7 @@ job {
 
 Callee.makeJob(this, 'test2')
 '''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
@@ -158,7 +158,7 @@ import org.apache.commons.lang.WordUtils
 
 println "Hello ${WordUtils.capitalize('world')}"
 '''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         DslScriptLoader.runDslEngine(request, jm)
@@ -179,7 +179,7 @@ queue jobA
 queue 'JobB'
 '''
         jm = new StringJobManagement();
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         DslScriptLoader.runDslEngine(request, jm)
@@ -203,7 +203,7 @@ println content
         StringJobManagement sm = new StringJobManagement(ps);
         sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
 
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         DslScriptLoader.runDslEngine(request, sm)
@@ -222,7 +222,7 @@ readFileFromWorkspace('bar.txt')
         StringJobManagement sm = new StringJobManagement(ps);
         sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
 
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir.toURL(), false)
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
         DslScriptLoader.runDslEngine(request, sm)

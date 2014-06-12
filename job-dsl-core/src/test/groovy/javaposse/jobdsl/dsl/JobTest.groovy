@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobTest extends Specification {
+    def resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
+
     def setup() {
         XMLUnit.setIgnoreWhitespace(true)
     }
@@ -65,7 +67,7 @@ class JobTest extends Specification {
 
     def 'load large template from file'() {
         setup:
-        JobManagement jm = new FileJobManagement(new File('src/test/resources'))
+        JobManagement jm = new FileJobManagement(resourcesDir)
         Job job = new Job(jm)
 
         when:
@@ -79,7 +81,7 @@ class JobTest extends Specification {
 
     def 'generate job from missing template - throws JobTemplateMissingException'() {
         setup:
-        JobManagement jm = new FileJobManagement(new File("src/test/resources"))
+        JobManagement jm = new FileJobManagement(resourcesDir)
         Job job = new Job(jm)
 
         when:
@@ -92,7 +94,7 @@ class JobTest extends Specification {
 
     def 'run engine and ensure canRoam values'() {
         setup:
-        JobManagement jm = new FileJobManagement(new File('src/test/resources'))
+        JobManagement jm = new FileJobManagement(resourcesDir)
         Job job = new Job(jm)
 
         when:
