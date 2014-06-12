@@ -40,8 +40,8 @@ public class Job extends Item {
 
     public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement;
-        def typeArg = arguments['type']?:JobType.Freeform
-        this.type = (typeArg instanceof JobType)?typeArg:JobType.find(typeArg)
+        def typeArg = arguments['type'] ?: JobType.Freeform
+        this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
 
         // Helpers
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
@@ -73,7 +73,7 @@ public class Job extends Item {
     }
 
     public Node getNode() {
-        Node project = templateName==null?executeEmptyTemplate():executeUsing()
+        Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
 
         executeWithXmlActions(project)
 
@@ -91,7 +91,7 @@ public class Job extends Item {
         String configXml
         try {
             configXml = jobManagement.getConfig(templateName)
-            if (configXml==null) {
+            if (configXml == null) {
                 throw new JobConfigurationNotFoundException()
             }
         } catch (JobConfigurationNotFoundException jcnfex) {

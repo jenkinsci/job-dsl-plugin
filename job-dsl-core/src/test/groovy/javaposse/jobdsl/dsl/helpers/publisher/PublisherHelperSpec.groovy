@@ -614,7 +614,7 @@ public class PublisherHelperSpec extends Specification {
         first.triggerWithNoParameters[0].value() == 'true'
         first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
         first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
-        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == 'false'
+        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
@@ -626,13 +626,13 @@ public class PublisherHelperSpec extends Specification {
         boolParams.children().size() == 3
         def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
         boolNode.name[0].value() == 'aParam'
-        boolNode.value[0].value() == 'false'
+        boolNode.value[0].value() == false
         def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
         boolNode1.name[0].value() == 'bParam'
-        boolNode1.value[0].value() == 'false'
+        boolNode1.value[0].value() == false
         def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
         boolNode2.name[0].value() == 'cParam'
-        boolNode2.value[0].value() == 'true'
+        boolNode2.value[0].value() == true
 
         def nodeNode = first.configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
         nodeNode != null

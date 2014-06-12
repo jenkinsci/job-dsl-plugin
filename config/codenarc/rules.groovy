@@ -35,8 +35,6 @@ ruleset {
         exclude 'ClassJavadoc'
         // TODO: fix violations
         exclude 'LineLength'
-        // TODO: fix violations
-        exclude 'SpaceAroundOperator'
     }
 
     ruleset('rulesets/generic.xml')

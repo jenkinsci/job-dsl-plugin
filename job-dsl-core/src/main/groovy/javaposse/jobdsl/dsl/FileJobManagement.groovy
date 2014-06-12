@@ -22,7 +22,7 @@ class FileJobManagement extends AbstractJobManagement {
     public FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
         super(out)
         this.root = root
-        this.ext = ext?:".xml"
+        this.ext = ext ?: ".xml"
     }
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {

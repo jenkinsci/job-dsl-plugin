@@ -204,7 +204,7 @@ public class StepHelperSpec extends Specification {
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
-            def nameNode = mavenNode/mavenName
+            def nameNode = mavenNode / mavenName
             nameNode.value = 'Maven 2.0.1'
         }
 
@@ -682,8 +682,8 @@ public class StepHelperSpec extends Specification {
         phaseNode2.phaseName[0].value() == 'Second'
         def jobNode = phaseNode2.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
         jobNode.jobName[0].value() == 'JobA'
-        jobNode.currParams[0].value() == 'true'
-        jobNode.exposedSCM[0].value() == 'true'
+        jobNode.currParams[0].value() == true
+        jobNode.exposedSCM[0].value() == true
         jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
     }
 
@@ -729,24 +729,24 @@ public class StepHelperSpec extends Specification {
         then:
         def phaseNode = context.stepNodes[0]
         def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.currParams[0].value() == 'false'
-        jobNode.exposedSCM[0].value() == 'true'
+        jobNode.currParams[0].value() == false
+        jobNode.exposedSCM[0].value() == true
         def configsNode = jobNode.configs[0]
         def boolParams = configsNode.'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
         boolParams.children().size() == 3
         def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
         boolNode.name[0].value() == 'aParam'
-        boolNode.value[0].value() == 'false'
+        boolNode.value[0].value() == false
         def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
         boolNode1.name[0].value() == 'bParam'
-        boolNode1.value[0].value() == 'false'
+        boolNode1.value[0].value() == false
         def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
         boolNode2.name[0].value() == 'cParam'
-        boolNode2.value[0].value() == 'true'
+        boolNode2.value[0].value() == true
 
         def fileNode = configsNode.'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0]
         fileNode.propertiesFile[0].value() == 'my.properties'
-        fileNode.failTriggerOnMissing[0].value() == 'false'
+        fileNode.failTriggerOnMissing[0].value() == false
 
         def nodeNode = configsNode.'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
         nodeNode != null
@@ -755,10 +755,10 @@ public class StepHelperSpec extends Specification {
         matrixNode.filter[0].value() == 'it.name=="hello"'
 
         def svnNode = configsNode.'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0]
-        svnNode.includeUpstreamParameters[0].value() == 'false'
+        svnNode.includeUpstreamParameters[0].value() == false
 
         def gitNode = configsNode.'hudson.plugins.git.GitRevisionBuildParameters'[0]
-        gitNode.combineQueuedCommits[0].value() == 'false'
+        gitNode.combineQueuedCommits[0].value() == false
 
         def propNode = configsNode.'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0]
         def propStr = propNode.'properties'[0].value()
@@ -1124,7 +1124,7 @@ still-another-dsl.groovy'''
         first.triggerWithNoParameters[0].value() == 'true'
         first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
         first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
-        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == 'false'
+        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
         first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                 'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'

@@ -98,7 +98,7 @@ public class TriggerHelperSpec extends Specification {
 
         def paths = ct.jsonPaths[0]
         def contentEntries = paths.'org.jenkinsci.plugins.urltrigger.content.JSONContentEntry'
-        contentEntries!= null
+        contentEntries != null
         contentEntries.size() == 2
         contentEntries[0].jsonPath != null
         contentEntries[0].jsonPath[0].value() == '/foo/bar'
@@ -138,7 +138,7 @@ public class TriggerHelperSpec extends Specification {
 
         def paths = ct.xPaths[0]
         def contentEntries = paths.'org.jenkinsci.plugins.urltrigger.content.XMLContentEntry'
-        contentEntries!= null
+        contentEntries != null
         contentEntries.size() == 1
         contentEntries[0].xPath != null
         contentEntries[0].xPath[0].value() == '//*[@name="foo"]'
@@ -176,7 +176,7 @@ public class TriggerHelperSpec extends Specification {
 
         def paths = ct.regExElements[0]
         def contentEntries = paths.'org.jenkinsci.plugins.urltrigger.content.TEXTContentEntry'
-        contentEntries!= null
+        contentEntries != null
         contentEntries.size() == 1
         contentEntries[0].regEx != null
         contentEntries[0].regEx[0].value() == '_(foo|bar).+'

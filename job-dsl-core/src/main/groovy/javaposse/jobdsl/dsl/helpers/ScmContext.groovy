@@ -63,7 +63,7 @@ class ScmContext implements Context {
             modules ''
             clean false
         }
-        scmNode.appendNode('branch', branch?:'')
+        scmNode.appendNode('branch', branch ?: '')
 
         // Apply Context
         if (configure) {
@@ -323,11 +323,10 @@ class ScmContext implements Context {
         def nodeBuilder = new NodeBuilder()
 
         PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor();
-        String cleanPassword = encryptor.appearsToBeAnEncryptedPassword(password)?password:encryptor.encryptString(password)
 
         Node p4Node = nodeBuilder.scm(class: 'hudson.plugins.perforce.PerforceSCM') {
             p4User user
-            p4Passwd cleanPassword
+            p4Passwd encryptor.appearsToBeAnEncryptedPassword(password) ? password : encryptor.encryptString(password)
             p4Port 'perforce:1666'
             p4Client 'builds-${JOB_NAME}'
             projectPath "${viewspec}"

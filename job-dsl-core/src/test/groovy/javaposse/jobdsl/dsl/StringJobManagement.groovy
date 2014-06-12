@@ -45,7 +45,7 @@ public class StringJobManagement extends AbstractJobManagement {
     String getConfig(String jobName) {
         if (availableConfigs.containsKey(jobName)) {
             return availableConfigs[jobName]
-        } else if (defaultXml!=null) {
+        } else if (defaultXml != null) {
             return defaultXml
         } else {
             throw new JobConfigurationNotFoundException("No config found for ${jobName}")
@@ -78,7 +78,7 @@ public class StringJobManagement extends AbstractJobManagement {
     @Override
     public InputStream streamFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
-        if (body==null) {
+        if (body == null) {
             throw new FileNotFoundException(filePath);
         }
         return new InputStreamReader(new StringReader(body));
@@ -87,7 +87,7 @@ public class StringJobManagement extends AbstractJobManagement {
     @Override
     public String readFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
-        if (body==null) {
+        if (body == null) {
             throw new FileNotFoundException(filePath);
         }
         return body

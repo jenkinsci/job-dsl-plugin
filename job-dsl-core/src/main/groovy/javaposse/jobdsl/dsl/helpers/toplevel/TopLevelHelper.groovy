@@ -127,7 +127,7 @@ class TopLevelHelper extends AbstractHelper {
 
     def disabled(boolean shouldDisable = true) {
         execute {
-            it / disabled(shouldDisable?'true':'false')
+            it / disabled(shouldDisable ? 'true' : 'false')
         }
     }
 

@@ -39,7 +39,7 @@ class MultiScmContextHelper extends AbstractContextHelper<ScmContext> {
 
     Closure generateWithXmlClosure(ScmContext context) {
         return { Node project ->
-            def scm = project/scm
+            def scm = project / scm
 
             if (scm) {
                     // There can only be only one SCM, so remove if there

@@ -63,7 +63,7 @@ class NodeEnhancement {
     }
 
     Node leftShift(boolean boolValue) {
-        leftShift( boolValue?'true':'false')
+        leftShift(boolValue ? 'true' : 'false')
     }
 
     Node leftShift(String appendChildName) {
