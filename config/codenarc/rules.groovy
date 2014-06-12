@@ -37,8 +37,6 @@ ruleset {
         exclude 'LineLength'
         // TODO: fix violations
         exclude 'SpaceAroundOperator'
-        // TODO: fix violations
-        exclude 'SpaceBeforeOpeningBrace'
     }
 
     ruleset('rulesets/generic.xml')

@@ -1492,7 +1492,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
         when:
-        context.publishRobotFrameworkReports{
+        context.publishRobotFrameworkReports {
             passThreshold(100.0)
             unstableThreshold(10.0)
         }
@@ -2132,7 +2132,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'wsCleanup with configuration of all parameters'() {
         when:
-        context.wsCleanup{
+        context.wsCleanup {
             includePattern('foo')
             includePattern('bar')
             excludePattern('foo')
@@ -2197,7 +2197,7 @@ public class PublisherHelperSpec extends Specification {
 
     def 'wsCleanup with configuration of all parameters using defaults for boolean parameter'() {
         when:
-        context.wsCleanup{
+        context.wsCleanup {
             includePattern('foo')
             includePattern('bar')
             excludePattern('foo')

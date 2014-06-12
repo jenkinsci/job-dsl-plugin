@@ -35,7 +35,7 @@ class ScmContext implements Context {
         return scmNodes[0]
     }
 
-    private validateMulti(){
+    private validateMulti() {
         Preconditions.checkState(multiEnabled || scmNodes.size() < 1, 'Outside "multiscm", only one SCM can be specified')
     }
 
