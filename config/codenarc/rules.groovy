@@ -70,12 +70,6 @@ ruleset {
             ignoreThisReference = true
         }
 
-        // TODO: fix violations
-        exclude 'ClosureAsLastMethodParameter'
-        // TODO: fix violations
-        exclude 'ExplicitArrayListInstantiation'
-        // TODO: fix violations
-        exclude 'ExplicitCallToGetAtMethod'
         // not necessarily an issue, problems should be detected by unit tests
         exclude 'GStringExpressionWithinString'
     }
@@ -94,10 +88,6 @@ ruleset {
         exclude 'ConfusingMethodName'
         // we don't care for now
         exclude 'FactoryMethodName'
-        // TODO: fix violations
-        exclude 'PropertyName'
-        // TODO: fix violations
-        exclude 'VariableName'
     }
 
     ruleset('rulesets/security.xml') {

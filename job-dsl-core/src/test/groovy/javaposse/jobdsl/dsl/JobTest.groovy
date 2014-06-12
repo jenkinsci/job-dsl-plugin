@@ -143,7 +143,7 @@ class JobTest extends Specification {
 
     def 'update Node using withXml'() {
         setup:
-        final Node project = new XmlParser().parse(new StringReader(minimalXml))
+        Node project = new XmlParser().parse(new StringReader(minimalXml))
         Job job = new Job(null)
         AtomicBoolean boolOutside = new AtomicBoolean(true)
 

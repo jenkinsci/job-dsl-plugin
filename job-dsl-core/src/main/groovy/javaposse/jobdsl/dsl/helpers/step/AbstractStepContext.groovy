@@ -316,7 +316,7 @@ class AbstractStepContext implements Context {
         AbstractContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
         def systemGroovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.SystemGroovy' {
-            bindings systemGroovyContext.bindings.collect({ key, value -> "${key}=${value}" }).join('\n')
+            bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
             classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
         }
         systemGroovyNode.append(groovyScriptSource(commandOrFileName, isCommand))

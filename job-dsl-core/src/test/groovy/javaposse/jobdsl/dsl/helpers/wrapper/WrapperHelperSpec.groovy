@@ -9,7 +9,7 @@ import spock.lang.Specification
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
 class WrapperHelperSpec extends Specification {
-    List<WithXmlAction> mockActions = new ArrayList()
+    List<WithXmlAction> mockActions = []
     JobManagement mockJobManagement = Mock()
     WrapperContextHelper helper = new WrapperContextHelper(mockActions, JobType.Freeform, mockJobManagement)
     WrapperContext context = new WrapperContext(JobType.Freeform, mockJobManagement)
