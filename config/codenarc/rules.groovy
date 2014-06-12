@@ -91,8 +91,6 @@ ruleset {
         exclude 'UnnecessaryReturnKeyword'
         // TODO: fix violations
         exclude 'UnnecessarySemicolon'
-        // TODO: fix violations
-        exclude 'UnnecessarySubstring'
     }
 
     ruleset('rulesets/unused.xml')

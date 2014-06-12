@@ -106,10 +106,10 @@ class GerritContext implements Context {
     static class GerritSpec {
         GerritSpec(String raw) {
             def idx = raw.indexOf(':')
-            def prefix = (idx == -1) ? '' : raw.substring(0, idx).toUpperCase()
+            def prefix = (idx == -1) ? '' : raw[0..(idx - 1)].toUpperCase()
             if (availableTypes.contains(prefix)) {
                 type = prefix
-                pattern = raw.substring(idx + 1)
+                pattern = raw[(idx + 1)..-1]
             } else {
                 type = 'PLAIN'
                 pattern = raw
