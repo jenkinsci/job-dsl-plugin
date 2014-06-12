@@ -75,7 +75,7 @@ class BuildParametersContext implements Context {
         if (description != null) {
             definitionNode.appendNode('description', description)
         }
-        definitionNode.appendNode('uuid', java.util.UUID.randomUUID())
+        definitionNode.appendNode('uuid', UUID.randomUUID())
 
         buildParameterNodes[parameterName] = definitionNode
     }
