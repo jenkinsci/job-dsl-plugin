@@ -184,7 +184,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call urltrigger methods with defaults and check for response status'() {
         when:
-        context.urlTrigger() {
+        context.urlTrigger {
             url('http://www.example.com/some/url') {
                 check 'status'
             }
@@ -212,7 +212,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call urltrigger methods with non-default status code and timeout'() {
         when:
-        context.urlTrigger() {
+        context.urlTrigger {
             url('http://www.example.com/some/url') {
                 status 404
                 timeout 6000
@@ -236,7 +236,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call urltrigger methods with non-default cron'() {
         when:
-        context.urlTrigger() {
+        context.urlTrigger {
             cron '* 0 * 0 *'
             url 'http://www.example.com/some/url'
         }
@@ -250,7 +250,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call urltrigger methods with label restriction'() {
         when:
-        context.urlTrigger() {
+        context.urlTrigger {
             restrictToLabel "foo"
             url 'http://www.example.com/some/url'
         }
@@ -320,7 +320,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call pull request trigger with multiple admins and orgs'() {
         when:
-        context.pullRequest() {
+        context.pullRequest {
             admins(['test1', 'test2'])
             userWhitelist(['test1', 'test2'])
             orgWhitelist(['test1', 'test2'])
@@ -337,7 +337,7 @@ public class TriggerHelperSpec extends Specification {
 
     def 'call pull request trigger with all args'() {
         when:
-        context.pullRequest() {
+        context.pullRequest {
             admins(['test'])
             userWhitelist(['test'])
             orgWhitelist(['test'])

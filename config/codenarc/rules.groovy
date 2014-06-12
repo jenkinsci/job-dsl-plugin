@@ -94,8 +94,6 @@ ruleset {
         // TODO: fix violations
         exclude 'UnnecessaryObjectReferences'
         // TODO: fix violations
-        exclude 'UnnecessaryParenthesesForMethodCallWithClosure'
-        // TODO: fix violations
         exclude 'UnnecessaryPublicModifier'
         // TODO: fix violations
         exclude 'UnnecessaryReturnKeyword'
