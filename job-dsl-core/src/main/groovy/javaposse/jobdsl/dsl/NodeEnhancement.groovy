@@ -9,7 +9,7 @@ import java.util.logging.Logger
  */
 @Category(Node)
 class NodeEnhancement {
-    private static final Logger LOGGER = Logger.getLogger(NodeEnhancement.getName())
+    private static final Logger LOGGER = Logger.getLogger(NodeEnhancement.class.name)
 
     Node div(Node orphan) {
         LOGGER.fine("Looking for child node ${orphan}")

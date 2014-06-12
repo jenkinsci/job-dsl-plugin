@@ -18,7 +18,7 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
         if(closure) {
             closure.delegate = freshContext
             closure.resolveStrategy = Closure.DELEGATE_FIRST
-            def result = closure.call() // No args
+            closure.call()
         }
     }
     /**

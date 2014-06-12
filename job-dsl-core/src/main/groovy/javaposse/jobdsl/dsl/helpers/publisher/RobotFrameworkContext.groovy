@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import groovy.transform.Canonical;
-
 import com.google.common.base.Preconditions;
 
 import javaposse.jobdsl.dsl.helpers.Context

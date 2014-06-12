@@ -15,7 +15,7 @@ public class ScmHelperSpec extends Specification {
     JobManagement mockJobManagement = Mock(JobManagement)
     ScmContextHelper helper = new ScmContextHelper(mockActions, JobType.Freeform, mockJobManagement)
     ScmContext context = new ScmContext(false, [], mockJobManagement)
-    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'base hg configuration'() {
         when:
@@ -789,7 +789,7 @@ public class ScmHelperSpec extends Specification {
     }
 
     def 'execute withXml Action'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
         def nodeBuilder = new NodeBuilder()
 
         Node scmNode = nodeBuilder.scm(class:'hudson.plugins.git.GitSCM') {

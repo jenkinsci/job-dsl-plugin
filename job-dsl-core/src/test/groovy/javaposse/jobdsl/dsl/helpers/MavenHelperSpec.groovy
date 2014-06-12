@@ -10,7 +10,7 @@ public class MavenHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     MavenHelper helper = new MavenHelper(mockActions, JobType.Maven)
-    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'can run rootPOM'() {
         when:

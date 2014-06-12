@@ -12,7 +12,7 @@ import java.util.logging.Logger
  * Work through the additional functionality we're offer over node
  */
 class WithXmlActionSpec extends Specification {
-    public static String xml = """<?xml version='1.0' encoding='UTF-8'?>
+    static final String XML = """<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -33,7 +33,7 @@ class WithXmlActionSpec extends Specification {
 </project>
 """
 
-    final Node root = new XmlParser().parse(new StringReader(xml))
+    final Node root = new XmlParser().parse(new StringReader(XML))
 
     def setup() {
         Logger.getLogger("javaposse.jobdsl").setLevel(Level.ALL)
@@ -42,12 +42,6 @@ class WithXmlActionSpec extends Specification {
         LogManager.logManager.getLogger("").handlers.each { Handler handler ->
             handler.setLevel(Level.ALL)
         }
-    }
-
-    def static printNode(Node n) {
-        def writer = new StringWriter()
-        new XmlNodePrinter(new PrintWriter(writer)).print(n)
-        println writer.toString()
     }
 
     def execute(Closure closure) {
@@ -61,9 +55,8 @@ class WithXmlActionSpec extends Specification {
         execute { project ->
             Preconditions.checkNotNull(project)
             Preconditions.checkArgument(project instanceof Node)
-            println "About to reference! ${owner} ${delegate}"
 
-            def matrix = project / builders / builder
+            project / builders / builder
         }
 
         then:
@@ -73,7 +66,7 @@ class WithXmlActionSpec extends Specification {
     def 'lookup with non-existent nodes'() {
         when:
         execute { project ->
-            def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
+            project / builders / 'hudson.security.AuthorizationMatrixProperty'
         }
 
         then:

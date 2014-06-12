@@ -61,7 +61,7 @@ public class AuthorizationHelperSpec extends Specification {
     }
 
     def 'execute withXml Action'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
         List<String> perms = ['hudson.model.Item.Configure:jill', 'hudson.model.Item.Configure:jack']
 
         when:

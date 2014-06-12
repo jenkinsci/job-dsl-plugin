@@ -22,7 +22,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        String xml = jm.getConfig("")
+        jm.getConfig("")
 
         then:
         thrown(JobConfigurationNotFoundException)

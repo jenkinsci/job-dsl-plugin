@@ -85,17 +85,9 @@ ruleset {
         MisorderedStaticImports {
             comesBefore = false
         }
-
-        // TODO: fix violations
-        exclude 'UnusedImport'
     }
 
-    ruleset('rulesets/logging.xml') {
-        // TODO: fix violations
-        exclude 'LoggerForDifferentClass'
-        // TODO: fix violations
-        exclude 'Println'
-    }
+    ruleset('rulesets/logging.xml')
 
     ruleset('rulesets/naming.xml') {
         // this is an issue, but currently the Context classes violate this by convention
@@ -111,8 +103,6 @@ ruleset {
     ruleset('rulesets/security.xml') {
         // we don't care because our classes need not to satisfy the Java Beans specification
         exclude 'JavaIoPackageAccess'
-        // TODO: fix violations
-        exclude 'NonFinalPublicField'
     }
 
     ruleset('rulesets/serialization.xml') {
@@ -154,10 +144,5 @@ ruleset {
         exclude 'UnnecessarySubstring'
     }
 
-    ruleset('rulesets/unused.xml') {
-        // TODO: fix violations
-        exclude 'UnusedPrivateField'
-        // TODO: fix violations
-        exclude 'UnusedVariable'
-    }
+    ruleset('rulesets/unused.xml')
 }

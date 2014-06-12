@@ -10,7 +10,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 public abstract class JobParent extends Script {
-    private static final Logger LOGGER = Logger.getLogger(JobParent.getName());
+    private static final Logger LOGGER = Logger.getLogger(JobParent.class.name);
     private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
             (null): ListView.class,
             (ViewType.ListView): ListView.class,

@@ -8,7 +8,7 @@ import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 
 import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
-import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.getValidCloneWorkspaceCriteria
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
 class ScmContext implements Context {
     boolean multiEnabled

@@ -499,7 +499,7 @@ public class TriggerHelperSpec extends Specification {
     }
 
     def 'execute withXml Action'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
         def nodeBuilder = new NodeBuilder()
 
         Node triggerNode = nodeBuilder.'hudson.triggers.SCMTrigger' {

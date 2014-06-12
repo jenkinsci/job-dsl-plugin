@@ -9,7 +9,7 @@ public class BuildFlowHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     BuildFlowHelper helper = new BuildFlowHelper(mockActions, JobType.BuildFlow)
-    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.xml))
+    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'can run buildFlowBlock'() {
         when:
