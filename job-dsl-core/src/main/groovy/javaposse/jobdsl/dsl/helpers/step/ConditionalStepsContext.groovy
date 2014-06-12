@@ -39,7 +39,7 @@ class ConditionalStepsContext extends AbstractStepContext {
         runnerClass = runner.longForm
     }
 
-    protected def createSingleStepNode() {
+    protected createSingleStepNode() {
         def nodeBuilder = new NodeBuilder()
 
         return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
@@ -55,7 +55,7 @@ class ConditionalStepsContext extends AbstractStepContext {
         }
     }
 
-    protected def createMultiStepNode() {
+    protected createMultiStepNode() {
         def nodeBuilder = new NodeBuilder()
 
         return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {

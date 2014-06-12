@@ -17,7 +17,7 @@ public class WorkspaceUrlHandler extends URLStreamHandler {
      * list of handlers. Do what ever possible to avoid this.
      * @return
      */
-    def static installHandler() {
+    static installHandler() {
         Map<String, URLStreamHandler> handlers = URL.handlers;
         if (!handlers.containsKey('workspace')) {
             URL.handlers.put('workspace', new WorkspaceUrlHandler());

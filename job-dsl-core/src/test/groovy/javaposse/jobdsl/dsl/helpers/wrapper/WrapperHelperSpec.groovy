@@ -149,7 +149,7 @@ class WrapperHelperSpec extends Specification {
         timeoutHasNoOperation()
     }
 
-    private def getTimeoutWrapper() {
+    private getTimeoutWrapper() {
         root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
     }
 
