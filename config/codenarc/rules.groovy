@@ -88,8 +88,6 @@ ruleset {
         // TODO: fix violations
         exclude 'UnnecessaryCollectCall'
         // TODO: fix violations
-        exclude 'UnnecessaryDefInFieldDeclaration'
-        // TODO: fix violations
         exclude 'UnnecessaryDefInMethodDeclaration'
         // TODO: fix violations
         exclude 'UnnecessaryDotClass'
