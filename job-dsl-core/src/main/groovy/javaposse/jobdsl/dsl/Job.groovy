@@ -19,7 +19,7 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
  * @author jryan
  * @author aharmel-law
  */
-public class Job extends Item {
+class Job extends Item {
     JobManagement jobManagement
 
     String templateName = null // Optional
@@ -38,7 +38,7 @@ public class Job extends Item {
     @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
 
-    public Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
+    Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement
         def typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
@@ -72,7 +72,7 @@ public class Job extends Item {
         name(nameClosure.call().toString())
     }
 
-    public Node getNode() {
+    Node getNode() {
         Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
 
         executeWithXmlActions(project)

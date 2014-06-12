@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-public class MultiScmHelperSpec extends Specification {
+class MultiScmHelperSpec extends Specification {
 
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
 

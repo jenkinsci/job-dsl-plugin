@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-public class BuildFlowHelperSpec extends Specification {
+class BuildFlowHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     BuildFlowHelper helper = new BuildFlowHelper(mockActions, JobType.BuildFlow)

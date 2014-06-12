@@ -5,7 +5,7 @@ package javaposse.jobdsl.plugin
  *
  * Don't need a URLStreamHandlerFactory because of the package name we're using.
  */
-public class WorkspaceUrlHandler extends URLStreamHandler {
+class WorkspaceUrlHandler extends URLStreamHandler {
 
     protected URLConnection openConnection(URL url) throws IOException {
         return new WorkspaceUrlConnection( url )

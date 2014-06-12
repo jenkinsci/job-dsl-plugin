@@ -9,7 +9,7 @@ import javaposse.jobdsl.dsl.views.ListView
 import java.util.logging.Level
 import java.util.logging.Logger
 
-public abstract class JobParent extends Script {
+abstract class JobParent extends Script {
     private static final Logger LOGGER = Logger.getLogger(JobParent.name)
     private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
             (null): ListView,
@@ -28,7 +28,7 @@ public abstract class JobParent extends Script {
         queueToBuild = Lists.newArrayList()
     }
 
-    public Job job(Map<String, Object> arguments=[:], Closure closure) {
+    Job job(Map<String, Object> arguments=[:], Closure closure) {
         LOGGER.log(Level.FINE, "Got closure and have ${jm}")
         Job job = new Job(jm, arguments)
 
@@ -42,7 +42,7 @@ public abstract class JobParent extends Script {
         return job
     }
 
-    public View view(Map<String, Object> arguments=[:], Closure closure) {
+    View view(Map<String, Object> arguments=[:], Closure closure) {
         Class<? extends View> viewClass = VIEW_TYPE_MAPPING[arguments['type'] as ViewType]
         View view = viewClass.newInstance()
         view.with(closure)
@@ -52,7 +52,7 @@ public abstract class JobParent extends Script {
         return view
     }
 
-    public Folder folder(Closure closure) {
+    Folder folder(Closure closure) {
         Folder folder = new Folder()
         folder.with(closure)
         referencedJobs << folder
@@ -64,7 +64,7 @@ public abstract class JobParent extends Script {
      * @param jobName
      * @return
      */
-    public queue(String jobName) {
+    def queue(String jobName) {
         queueToBuild << jobName
     }
 
@@ -73,17 +73,17 @@ public abstract class JobParent extends Script {
      * @param jobName
      * @return
      */
-    public queue(Job job) {
+    def queue(Job job) {
         Preconditions.checkArgument(job.name as Boolean)
         queueToBuild << job.name
     }
 
-    public InputStream streamFileFromWorkspace(String filePath) throws IOException {
+    InputStream streamFileFromWorkspace(String filePath) throws IOException {
         Preconditions.checkArgument(filePath as Boolean)
         return jm.streamFileInWorkspace(filePath)
     }
 
-    public String readFileFromWorkspace(String filePath) throws IOException {
+    String readFileFromWorkspace(String filePath) throws IOException {
         Preconditions.checkArgument(filePath as Boolean)
         return jm.readFileInWorkspace(filePath)
     }

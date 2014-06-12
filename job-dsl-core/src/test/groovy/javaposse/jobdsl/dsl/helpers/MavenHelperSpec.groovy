@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlActionSpec
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import spock.lang.Specification
 
-public class MavenHelperSpec extends Specification {
+class MavenHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     MavenHelper helper = new MavenHelper(mockActions, JobType.Maven)

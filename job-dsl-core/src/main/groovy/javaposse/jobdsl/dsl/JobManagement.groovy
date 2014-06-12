@@ -6,7 +6,7 @@ package javaposse.jobdsl.dsl
  * @author jryan
  * @author aharmel-law
  */
-public interface JobManagement {
+interface JobManagement {
     /**
      * Gets (loads) the job configuration for the Jenkins job with the specified name.  If no name is supplied, an empty
      * configuration is returned.

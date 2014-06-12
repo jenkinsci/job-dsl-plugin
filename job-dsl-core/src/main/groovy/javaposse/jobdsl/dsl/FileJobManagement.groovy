@@ -17,7 +17,7 @@ class FileJobManagement extends AbstractJobManagement {
      */
     protected Map params = [:]
 
-    public FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
+    FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
         super(out)
         this.root = root
         this.ext = ext ?: ".xml"
@@ -58,17 +58,17 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    Map<String, String> getParameters() {
         return params
     }
 
     @Override
-    public InputStream streamFileInWorkspace(String filePath) {
+    InputStream streamFileInWorkspace(String filePath) {
         return new FileInputStream(new File(root, filePath))
     }
 
     @Override
-    public String readFileInWorkspace(String filePath) {
+    String readFileInWorkspace(String filePath) {
         new File(root, filePath).text
     }
 

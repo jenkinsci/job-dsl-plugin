@@ -7,7 +7,7 @@ import groovy.xml.MarkupBuilder
  * since it can be prodded with the expected value.
  * @author jryan
  */
-public class StringJobManagement extends AbstractJobManagement {
+class StringJobManagement extends AbstractJobManagement {
     /**
      * XML to return by default
      */
@@ -20,18 +20,18 @@ public class StringJobManagement extends AbstractJobManagement {
     Map<String,String> params = [:]
     List<String> jobScheduled = []
 
-    public StringJobManagement(PrintStream out) {
+    StringJobManagement(PrintStream out) {
         super(out)
     }
 
-    public StringJobManagement(String defaultXml) {
+    StringJobManagement(String defaultXml) {
         this.defaultXml = defaultXml
     }
 
-    public StringJobManagement() {
+    StringJobManagement() {
     }
 
-    public StringJobManagement(Closure closure) {
+    StringJobManagement(Closure closure) {
         StringWriter writer = new StringWriter()
         def build = new MarkupBuilder(writer)
         closure.delegate = build
@@ -76,7 +76,7 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public InputStream streamFileInWorkspace(String filePath) {
+    InputStream streamFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
         if (body == null) {
             throw new FileNotFoundException(filePath)
@@ -85,7 +85,7 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public String readFileInWorkspace(String filePath) {
+    String readFileInWorkspace(String filePath) {
         String body = availableFiles.get(filePath)
         if (body == null) {
             throw new FileNotFoundException(filePath)

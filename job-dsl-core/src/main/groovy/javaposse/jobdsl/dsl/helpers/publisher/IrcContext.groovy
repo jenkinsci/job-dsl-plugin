@@ -28,7 +28,7 @@ class IrcContext implements Context {
 
     def notifyScmFixers = false
 
-    public IrcContext() {
+    IrcContext() {
         strategy = strategies[0]
         notificationMessage = notificationMessages[0]
     }

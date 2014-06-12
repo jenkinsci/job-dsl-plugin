@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-public class GeneratedItems {
+class GeneratedItems {
     Set<GeneratedJob> jobs
     Set<GeneratedView> views
 }

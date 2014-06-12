@@ -16,7 +16,7 @@ class ScriptRequestGenerator {
         this.env = env
     }
 
-    public Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText, boolean ignoreExisting) throws IOException, InterruptedException {
+    Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText, boolean ignoreExisting) throws IOException, InterruptedException {
         Set<ScriptRequest> scriptRequests = Sets.newLinkedHashSet()
 
         if (usingScriptText) {

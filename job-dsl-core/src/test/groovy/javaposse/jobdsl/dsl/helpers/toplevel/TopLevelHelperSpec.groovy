@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 import spock.lang.Unroll
 
-public class TopLevelHelperSpec extends Specification {
+class TopLevelHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     TopLevelHelper helper = new TopLevelHelper(mockActions, JobType.Freeform)

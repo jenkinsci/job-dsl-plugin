@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
 
-public class PublisherHelperSpec extends Specification {
+class PublisherHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     JobManagement jobManagement = Mock(JobManagement)

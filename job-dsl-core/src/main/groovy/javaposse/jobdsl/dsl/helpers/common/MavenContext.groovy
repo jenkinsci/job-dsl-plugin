@@ -35,13 +35,13 @@ interface MavenContext extends Context {
      */
     def mavenInstallation(String name)
 
-    public enum LocalRepositoryLocation {
+    enum LocalRepositoryLocation {
         LocalToExecutor('hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'),
         LocalToWorkspace('hudson.maven.local_repo.PerJobLocalRepositoryLocator')
 
         String type
 
-        public LocalRepositoryLocation(String type) {
+        LocalRepositoryLocation(String type) {
             this.type = type
         }
     }
