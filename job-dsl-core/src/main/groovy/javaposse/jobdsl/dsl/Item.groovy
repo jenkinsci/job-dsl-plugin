@@ -31,7 +31,7 @@ abstract class Item {
         }
         xmlNodePrinter.print(node)
 
-        return xmlOutput.toString()
+        xmlOutput.toString()
     }
 
     abstract Node getNode()

@@ -441,15 +441,15 @@ class AbstractStepContext implements Context {
      </selector>
      */
     def copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure) {
-        return copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
+        copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
     }
 
     def copyArtifacts(String jobName, String includeGlob, String targetPath, Closure copyArtifactClosure) {
-        return copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
+        copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
     }
 
     def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles, Closure copyArtifactClosure) {
-        return copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
+        copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
     def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles, boolean optionalAllowed, Closure copyArtifactClosure) {

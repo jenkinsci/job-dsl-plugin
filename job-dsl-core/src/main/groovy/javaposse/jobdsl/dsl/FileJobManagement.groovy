@@ -47,7 +47,7 @@ class FileJobManagement extends AbstractJobManagement {
         validateUpdateArgs(jobName, config)
 
         new File(jobName + ext).write(config)
-        return true
+        true
     }
 
     @Override
@@ -59,12 +59,12 @@ class FileJobManagement extends AbstractJobManagement {
 
     @Override
     Map<String, String> getParameters() {
-        return params
+        params
     }
 
     @Override
     InputStream streamFileInWorkspace(String filePath) {
-        return new FileInputStream(new File(root, filePath))
+        new FileInputStream(new File(root, filePath))
     }
 
     @Override

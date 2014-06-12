@@ -9,6 +9,6 @@ class RunConditionFactory {
         RunConditionContext conditionContext = new RunConditionContext()
         AbstractContextHelper.executeInContext(conditionClosure, conditionContext)
         Preconditions.checkNotNull(conditionContext?.condition, 'No condition specified')
-        return conditionContext.condition
+        conditionContext.condition
     }
 }

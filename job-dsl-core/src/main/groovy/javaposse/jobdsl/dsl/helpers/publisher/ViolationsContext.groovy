@@ -7,9 +7,7 @@ class ViolationsContext implements Context {
     static validTypes = ['checkstyle', 'codenarc', 'cpd', 'cpplint', 'csslint', 'findbugs', 'fxcop', 'gendarme',
             'jcreport', 'jslint', 'pep8', 'perlcritic', 'pmd', 'pylint', 'simian', 'stylecop', 'jshint']
 
-    private final Map<String, ViolationsEntry> entries = validTypes.collectEntries { String key ->
-        return [key, createEntry()]
-    } as TreeMap
+    private final Map<String, ViolationsEntry> entries = validTypes.collectEntries { [it, createEntry()] }
     String sourcePathPattern = null
     String fauxProjectPath = null
     Integer perFileDisplayLimit = null

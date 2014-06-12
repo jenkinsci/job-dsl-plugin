@@ -54,11 +54,11 @@ class PublisherContext implements Context {
      * @return
      */
     def extendedEmail(String recipients = null, Closure emailClosure = null) {
-        return extendedEmail(recipients, null, emailClosure)
+        extendedEmail(recipients, null, emailClosure)
     }
 
     def extendedEmail(String recipients, String subjectTemplate, Closure emailClosure = null) {
-        return extendedEmail(recipients, subjectTemplate, null, emailClosure)
+        extendedEmail(recipients, subjectTemplate, null, emailClosure)
     }
 
     def extendedEmail(String recipients, String subjectTemplate, String contentTemplate, Closure emailClosure = null) {

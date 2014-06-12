@@ -12,7 +12,7 @@ class DslScriptLoaderTest extends Specification {
 
     @Ignore
     def getContent() {
-        return baos.toString()  // Could send ISO-8859-1
+        baos.toString()  // Could send ISO-8859-1
     }
 
     def 'load template from file'() {

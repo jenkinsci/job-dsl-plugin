@@ -59,7 +59,7 @@ class NodeEnhancement {
     private static List<Node> buildChildren(c) {
         NodeBuilder b = new NodeBuilder()
         Node newNode = (Node) b.invokeMethod('dummyNode', c)
-        return newNode.children()
+        newNode.children()
     }
 
     Node leftShift(boolean boolValue) {
@@ -69,13 +69,13 @@ class NodeEnhancement {
     Node leftShift(String appendChildName) {
         LOGGER.fine("Setting value of ${appendChildName} for ${this.name()}")
         this.setValue(appendChildName)
-        return this
+        this
     }
 
     Node leftShift(Node child) {
         LOGGER.fine("Appending node ${child} to ${this}")
         this.append(child)
-        return this
+        this
     }
 
     Node leftShift(Closure configureBlock) {
@@ -83,6 +83,6 @@ class NodeEnhancement {
         configureBlock.resolveStrategy = Closure.DELEGATE_FIRST
         List<Node> newChildren = buildChildren(configureBlock)
         newChildren.each { this.append(it) }
-        return this
+        this
     }
 }

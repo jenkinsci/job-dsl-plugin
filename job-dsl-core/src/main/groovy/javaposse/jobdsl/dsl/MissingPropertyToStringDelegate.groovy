@@ -17,7 +17,7 @@ class MissingPropertyToStringDelegate {
      */
     def propertyMissing(String propertyName) {
         LOGGER.fine("Missing ${propertyName}")
-        return propertyName
+        propertyName
     }
 
     String toXml(Node n) {
@@ -38,6 +38,6 @@ class MissingPropertyToStringDelegate {
         NodeBuilder b = new NodeBuilder()
         Node newNode = (Node) b.invokeMethod(methodName, args)
         LOGGER.fine("Missing ${methodName} created ${toXml(newNode)}")
-        return newNode
+        newNode
     }
 }

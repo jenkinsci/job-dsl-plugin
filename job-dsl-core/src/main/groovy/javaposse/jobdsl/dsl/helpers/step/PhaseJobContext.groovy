@@ -79,10 +79,11 @@ class PhaseJobContext implements Context {
     }
 
     def configAsNode() {
-        return paramTrigger.createParametersNode()
+        paramTrigger.createParametersNode()
     }
 
     def hasConfig() {
-        return !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null || gitRevision != null || !props.isEmpty()
+        !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null ||
+                gitRevision != null || !props.isEmpty()
     }
 }

@@ -53,7 +53,7 @@ class ListView extends View {
 
     @Override
     protected String getTemplate() {
-        return '''<?xml version='1.0' encoding='UTF-8'?>
+        '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>

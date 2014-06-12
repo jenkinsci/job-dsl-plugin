@@ -33,6 +33,6 @@ class ScriptRequestGenerator {
                 scriptRequests.add(request)
             }
         }
-        return scriptRequests
+        scriptRequests
     }
 }

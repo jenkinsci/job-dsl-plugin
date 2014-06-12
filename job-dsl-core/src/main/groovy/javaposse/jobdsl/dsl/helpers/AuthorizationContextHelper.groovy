@@ -21,7 +21,7 @@ class AuthorizationContextHelper extends AbstractContextHelper<AuthorizationCont
     }
 
     AuthorizationContextHelper getAuthorization() {
-        return this
+        this
     }
 
     private addAuthorization(String perm) {

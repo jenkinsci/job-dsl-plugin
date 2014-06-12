@@ -8,7 +8,7 @@ package javaposse.jobdsl.plugin
 class WorkspaceUrlHandler extends URLStreamHandler {
 
     protected URLConnection openConnection(URL url) throws IOException {
-        return new WorkspaceUrlConnection( url )
+        new WorkspaceUrlConnection( url )
     }
 
     /**

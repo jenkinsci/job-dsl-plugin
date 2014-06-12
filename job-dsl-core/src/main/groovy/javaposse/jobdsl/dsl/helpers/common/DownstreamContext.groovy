@@ -84,7 +84,7 @@ class DownstreamContext implements Context {
             }
         }
 
-        return downstreamNode
+        downstreamNode
     }
 
     def validDownstreamConditionNames = ['SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED', 'ALWAYS']

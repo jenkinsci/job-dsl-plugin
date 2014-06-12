@@ -93,15 +93,14 @@ class DownstreamTriggerContext implements Context {
     }
 
     boolean hasParameter() {
-        return (usingCurrentBuild || usingGitRevision || usingMatrixSubset
-                || usingPredefined || usingPropertiesFile || usingSubversionRevision
-                || !boolParams.isEmpty() || sameNode)
+        usingCurrentBuild || usingGitRevision || usingMatrixSubset || usingPredefined || usingPropertiesFile ||
+                usingSubversionRevision || !boolParams.isEmpty() || sameNode
     }
 
     Node createParametersNode() {
         def nodeBuilder = NodeBuilder.newInstance()
 
-        return nodeBuilder.'configs' {
+        nodeBuilder.'configs' {
             if (usingCurrentBuild) {
                 'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'()
             }

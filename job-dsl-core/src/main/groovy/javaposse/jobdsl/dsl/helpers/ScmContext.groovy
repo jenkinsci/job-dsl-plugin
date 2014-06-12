@@ -32,7 +32,7 @@ class ScmContext implements Context {
      * Helper method for dealing with a single scm node
      */
     def getScmNode() {
-        return scmNodes[0]
+        scmNodes[0]
     }
 
     private validateMulti() {
@@ -311,13 +311,15 @@ class ScmContext implements Context {
      </scm>
      */
     def p4(String viewspec, Closure configure = null) {
-        return p4(viewspec, 'rolem', '', configure)
+        p4(viewspec, 'rolem', '', configure)
     }
+
     def p4(String viewspec, String user, Closure configure = null) {
-        return p4(viewspec, user, '', configure)
+        p4(viewspec, user, '', configure)
     }
+
     def p4(String viewspec, String user, String password, Closure configure = null) {
-            Preconditions.checkNotNull(viewspec)
+        Preconditions.checkNotNull(viewspec)
         validateMulti()
 
         def nodeBuilder = new NodeBuilder()

@@ -33,6 +33,6 @@ class PhaseContext implements Context {
 
         jobsInPhase << phaseJobContext
 
-        return phaseJobContext
+        phaseJobContext
     }
 }

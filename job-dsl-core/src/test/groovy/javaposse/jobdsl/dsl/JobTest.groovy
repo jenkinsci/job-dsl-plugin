@@ -132,7 +132,7 @@ class JobTest extends Specification {
 
         @Override
         Object run() {
-            return null // Used in tests
+            null // Used in tests
         }
     }
 

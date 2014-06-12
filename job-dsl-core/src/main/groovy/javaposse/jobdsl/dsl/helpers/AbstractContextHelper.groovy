@@ -34,14 +34,14 @@ abstract class AbstractContextHelper<T extends Context> extends AbstractHelper {
         // Queue up our action, using the concrete classes logic
         withXmlActions << generateWithXmlAction(freshContext)
 
-        return freshContext
+        freshContext
     }
 
     WithXmlAction generateWithXmlAction(T context) {
         // Closure to be run later, in this context we're given the root node with the WithXmlAction magic
         Closure withXmlClosure = generateWithXmlClosure(context)
 
-        return new WithXmlAction(withXmlClosure)
+        new WithXmlAction(withXmlClosure)
     }
 
     abstract Closure generateWithXmlClosure(T context)

@@ -57,7 +57,7 @@ class StringJobManagement extends AbstractJobManagement {
         validateUpdateArgs(jobName, config)
 
         savedConfigs[jobName] = config
-        return false
+        false
     }
 
     @Override
@@ -67,7 +67,7 @@ class StringJobManagement extends AbstractJobManagement {
 
     @Override
     Map<String, String> getParameters() {
-        return params
+        params
     }
 
     @Override
@@ -81,7 +81,7 @@ class StringJobManagement extends AbstractJobManagement {
         if (body == null) {
             throw new FileNotFoundException(filePath)
         }
-        return new InputStreamReader(new StringReader(body))
+        new InputStreamReader(new StringReader(body))
     }
 
     @Override
@@ -90,7 +90,7 @@ class StringJobManagement extends AbstractJobManagement {
         if (body == null) {
             throw new FileNotFoundException(filePath)
         }
-        return body
+        body
     }
 
     @Override

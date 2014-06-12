@@ -46,7 +46,7 @@ class WithXmlActionSpec extends Specification {
 
     def execute(Closure closure) {
         def withXmlAction = new WithXmlAction(closure)
-        return withXmlAction.execute(root)
+        withXmlAction.execute(root)
     }
 
     def 'lookup with existent nodes'() {

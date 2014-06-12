@@ -42,7 +42,7 @@ class ConditionalStepsContext extends AbstractStepContext {
     protected createSingleStepNode() {
         def nodeBuilder = new NodeBuilder()
 
-        return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
+        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
             delegate.condition(class: runCondition.conditionClass) {
                 runCondition.addArgs(delegate)
             }
@@ -58,7 +58,7 @@ class ConditionalStepsContext extends AbstractStepContext {
     protected createMultiStepNode() {
         def nodeBuilder = new NodeBuilder()
 
-        return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
+        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
             runCondition(class: runCondition.conditionClass) {
                 runCondition.addArgs(delegate)
             }

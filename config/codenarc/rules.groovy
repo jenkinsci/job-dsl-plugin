@@ -83,8 +83,6 @@ ruleset {
         exclude 'UnnecessaryElseStatement'
         // we don't care for now, does not necessarily lead to better code
         exclude 'UnnecessaryObjectReferences'
-        // TODO: fix violations
-        exclude 'UnnecessaryReturnKeyword'
     }
 
     ruleset('rulesets/unused.xml')

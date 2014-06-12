@@ -49,7 +49,7 @@ abstract class View {
         }
         xmlNodePrinter.print(node)
 
-        return xmlOutput.toString()
+        xmlOutput.toString()
     }
 
     Node getNode() {
