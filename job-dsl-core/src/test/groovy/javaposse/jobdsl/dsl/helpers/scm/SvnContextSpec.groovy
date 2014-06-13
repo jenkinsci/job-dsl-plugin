@@ -151,9 +151,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded regions'
         context.svn {
             location 'url'
-            excludedRegions (['exreg1','exreg2']) // In Groovy, parenthesis are required for
-                                                  // zero-argument methods or if the first
-                                                  // argument is a list or map.
+            excludedRegions 'exreg1','exreg2'
         }
 
         then: 'the excludedRegions node should contain the specified regions separated by a newline'
@@ -165,9 +163,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded region and a list of excluded regions'
         context.svn {
             location 'url'
-            excludedRegions (['exreg1','exreg2']) // In Groovy, parenthesis are required for
-                                                  // zero-argument methods or if the first
-                                                  // argument is a list or map.
+            excludedRegions 'exreg1','exreg2'
             excludedRegion 'exreg3'
         }
 
@@ -216,9 +212,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of included regions'
         context.svn {
             location 'url'
-            includedRegions (['increg1','increg2']) // In Groovy, parenthesis are required for
-                                                    // zero-argument methods or if the first
-                                                    // argument is a list or map.
+            includedRegions 'increg1','increg2'
         }
 
         then: 'the includedRegions node should contain the specified regions separated by a newline'
@@ -230,9 +224,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an included region and a list of included regions'
         context.svn {
             location 'url'
-            includedRegions (['increg1','increg2']) // In Groovy, parenthesis are required for
-                                                    // zero-argument methods or if the first
-                                                    // argument is a list or map.
+            includedRegions 'increg1','increg2'
             includedRegion 'increg3'
         }
 
@@ -281,9 +273,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded users'
         context.svn {
             location 'url'
-            excludedUsers (['user1','user2']) // In Groovy, parenthesis are required for
-                                              // zero-argument methods or if the first
-                                              // argument is a list or map.
+            excludedUsers (['user1','user2'])
         }
 
         then: 'the excludedUsers node should contain the specified users separated by a newline'
@@ -295,9 +285,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded user and a list of excluded users'
         context.svn {
             location 'url'
-            excludedUsers (['user1','user2']) // In Groovy, parenthesis are required for
-                                              // zero-argument methods or if the first
-                                              // argument is a list or map.
+            excludedUsers (['user1','user2'])
             excludedUser 'user3'
         }
 
@@ -346,9 +334,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded commit messages'
         context.svn {
             location 'url'
-            excludedCommitMsgs (['commit1','commit2']) // In Groovy, parenthesis are required for
-                                                       // zero-argument methods or if the first
-                                                       // argument is a list or map.
+            excludedCommitMsgs (['commit1','commit2'])
         }
 
         then: 'the excludedCommitMessages node should contain the specified commits separated by a newline'
@@ -360,9 +346,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded commit message and a list of excluded commit messages'
         context.svn {
             location 'url'
-            excludedCommitMsgs (['commit1','commit2']) // In Groovy, parenthesis are required for
-                                                       // zero-argument methods or if the first
-                                                       // argument is a list or map.
+            excludedCommitMsgs (['commit1','commit2'])
             excludedCommitMsg 'commit3'
         }
 
