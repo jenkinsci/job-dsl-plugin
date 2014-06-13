@@ -118,13 +118,13 @@ job(attributes) {
         toolenv(String.. tools)
         environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
         release(closure) // since 1.22, see [[Job Reference]] for details
-        mavenRelease(closure) // since 1.22, see [[Job Reference]] for closure syntax
         preBuildCleanup(closure) // since 1.22
+        logSizeChecker(closure) // since 1.23, see [Job Reference]] for details
+        injectPasswords() // since 1.23
     }
     steps {
         shell(String commandStr)
         batchFile(String commandStr)
-        gradle {} // since 1.23, see [[JobReference]]
         gradle(tasksArg, switchesArg, useWrapperArg) {}
         maven(targetsArg, pomArg) {}
         maven {} // since 1.20, see [[JobReference]]
@@ -188,9 +188,14 @@ job(attributes) {
         jshint(pattern, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax, since 1.20
         associatedFiles(String files = null) // since 1.20
         publishRobotFrameworkReports(Closure closure = null) // Since 1.21. See [[Job Reference]] for the closure syntax
-        buildPipelineTrigger(downstreamProjectNames) // since 1.21
+        buildPipelineTrigger(downstreamProjectNames, Closure closure) // since 1.21. Closure support since 1.23
         githubCommitNotifier() // since 1.21
         git(gitPublisherClosure) // since 1.22
+        flowdock(String token, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
+        flowdock(String[] tokens, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
+        stashNotifier(stashNotifierClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
+        mavenDeploymentLinker(String regex) // since 1.23
+        wsCleanup(wsCleanupClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
     }
     parameters {
         booleanParam(parameterName, defaultValue, description)
@@ -225,6 +230,7 @@ view(attributes) {  // since 1.21, see [[View Reference]]
         lastFailure()
         lastDuration()
         buildButton()
+        lastBuildConsole() // since 1.23
     }
 
     // BuildPipelineView options
@@ -240,6 +246,12 @@ view(attributes) {  // since 1.21, see [[View Reference]]
     showPipelineParametersInHeaders(showPipelineParametersInHeadersBool)
     refreshFrequency(seconds)
     showPipelineDefinitionHeader(showPipelineDefinitionHeaderBool)
+}
+
+folder { // since 1.23
+    name(nameStr)
+    displayName(displayNameStr)
+    configure(configBlock)
 }
 ```
 
@@ -289,6 +301,42 @@ view(type: ListView) {
 ```
 
 Please see the [[View Reference]] page for details.
+
+# Folder
+```groovy
+folder(Closure closure)
+```
+
+The folder method behaves like the job method explained above and will return a _Folder_ object.
+
+Folders will be created before jobs and views to ensure that a folder exists before entries are created.
+
+```groovy
+folder {
+  name 'project-a'
+  displayName 'Project A'
+}
+```
+
+Items can be created within folders by using the full path as job name.
+
+```groovy
+folder {
+  name 'project-a'
+}
+
+job {
+  name 'project-a/compile'
+}
+
+view {
+  name 'project-a/pipeline'
+}
+
+folder {
+  name 'project-a/testing'
+}
+```
 
 # Queue
 

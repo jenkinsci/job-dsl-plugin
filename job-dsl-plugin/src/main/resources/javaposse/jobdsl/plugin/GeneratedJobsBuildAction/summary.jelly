@@ -1,12 +1,12 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <j:set var="allJobs" value="${it.getModifiedJobs()}"/>
-    <j:if test="${allJobs != null &amp;&amp; !allJobs.isEmpty()}">
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
+    <j:set var="allFolders" value="${it.items}"/>
+    <j:if test="${!allFolders.isEmpty()}">
         <t:summary icon="folder.png">
-            Generated Jobs:
-            <ul class="jobList">
-                <j:forEach items="${allJobs}" var="af">
+            Generated Items:
+            <ul class="folderList">
+                <j:forEach items="${allFolders}" var="folder">
                     <li>
-                        <a href="${rootURL}/job/${af.jobName}/" class="model-link tl-tr">${af.jobName}</a>
+                        <a href="${h.getRelativeLinkTo(folder)}" class="model-link tl-tr">${folder.fullDisplayName}</a>
                     </li>
                 </j:forEach>
             </ul>

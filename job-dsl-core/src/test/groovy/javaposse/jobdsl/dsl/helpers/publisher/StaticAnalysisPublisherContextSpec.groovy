@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
@@ -7,8 +8,9 @@ import spock.lang.Unroll
 
 class StaticAnalysisPublisherContextSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
-    PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform)
-    PublisherContext context = new PublisherContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform, jobManagement)
+    PublisherContext context = new PublisherContext(jobManagement)
 
     @Unroll
     def 'add #analysisTool with default values'(analysisTool, extraNodes) {
@@ -73,6 +75,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
 
         def consoleParsers = warningsNode.consoleParsers.'hudson.plugins.warnings.ConsoleParser'
         assertValues(consoleParsers, parserName: 'Java Compiler (javac)')
+
+        1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
     }
 
 
@@ -193,6 +197,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 pattern: '**/*.log',
                 parserName: 'Java Compiler (javac)'
         )
+
+        1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
     }
 
 

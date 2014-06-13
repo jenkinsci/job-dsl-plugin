@@ -29,7 +29,7 @@ class GeneratedViewsActionSpec extends Specification {
         Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
 
         then:
-        views == null
+        views.empty
     }
 
     def 'findLastGeneratedViews no build action'() {
@@ -41,7 +41,7 @@ class GeneratedViewsActionSpec extends Specification {
         Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
 
         then:
-        views == null
+        views.empty
     }
 
     def 'findLastGeneratedViews from last build'() {

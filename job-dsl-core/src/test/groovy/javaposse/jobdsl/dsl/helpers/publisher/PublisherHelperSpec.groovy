@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
@@ -9,8 +10,9 @@ import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.M
 public class PublisherHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform)
-    PublisherContext context = new PublisherContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform, jobManagement)
+    PublisherContext context = new PublisherContext(jobManagement)
 
     def 'empty call extended email method'() {
         when:
@@ -246,7 +248,7 @@ public class PublisherHelperSpec extends Specification {
             exclusionPattern 'exclusiondir'
             minimumInstructionCoverage '1'
             minimumBranchCoverage '2'
-            minimumComplexityCoverage '3' 
+            minimumComplexityCoverage '3'
             minimumLineCoverage '4' 
             minimumMethodCoverage '5' 
             minimumClassCoverage '6' 
@@ -363,8 +365,8 @@ public class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        targetNode.name[0].value() == 'me@gmail.com'
+        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
+        targetNode.value[0].value() == 'me@gmail.com'
         targetNode.notificationOnly.size() == 0 // No noficationOnly when not a group
         publisherNode.strategy[0].value() == 'ALL'
         publisherNode.notifyOnBuildStart[0].value() == 'false'
@@ -386,15 +388,17 @@ public class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'.size() == 2
+        publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'.size() == 1
+        publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'.size() == 1
 
-        def emailTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        emailTargetNode.name[0].value() == 'me@gmail.com'
-        emailTargetNode.notificationOnly.size() == 0
-
-        def confTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[1]
+        def confTargetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
         confTargetNode.name[0].value() == 'tools@hipchat.com'
         confTargetNode.notificationOnly[0].value() == 'false'
+
+
+        def emailTargetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
+        emailTargetNode.value[0].value() == 'me@gmail.com'
+        emailTargetNode.notificationOnly.size() == 0
 
         publisherNode.strategy[0].value() == 'ANY_FAILURE'
         Node buildToNode = publisherNode.buildToChatNotifier[0]
@@ -417,8 +421,8 @@ public class PublisherHelperSpec extends Specification {
         then:
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.GroupChatIMMessageTarget'[0]
-        targetNode.name[0].value() == 'me@gmail.com'
+        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
+        targetNode.value[0].value() == 'me@gmail.com'
         targetNode.notificationOnly.size() == 0
         publisherNode.strategy[0].value() == 'FAILURE_AND_FIXED'
         publisherNode.notifyOnBuildStart[0].value() == 'true'
@@ -1063,10 +1067,9 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 3
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == ''
-        context.publisherNodes[0].description[0].value() == ''
-        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -1077,10 +1080,10 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 4
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == ''
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
-        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -1091,10 +1094,10 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 4
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
-        context.publisherNodes[0].descriptionForFailed == []
         context.publisherNodes[0].setForMatrix[0].value() == false
     }
 
@@ -1105,6 +1108,7 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 5
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
@@ -1119,6 +1123,7 @@ public class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.descriptionsetter.DescriptionSetterPublisher'
+        context.publisherNodes[0].children().size() == 5
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
@@ -1462,7 +1467,7 @@ public class PublisherHelperSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
-    
+
     def 'publish Robot framework report using default values'() {
         when:
         context.publishRobotFrameworkReports()
@@ -1539,8 +1544,56 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
-        context.publisherNodes[0].downstreamProjectNames[0].value() == 'next'
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+            configs.size() == 1
+            configs[0].value().empty
+        }
+    }
+
+    def 'call buildPipelineTrigger with empty parameters'() {
+        when:
+        context.buildPipelineTrigger('next') {
+            parameters {
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+            configs.size() == 1
+            configs[0].value().empty
+        }
+    }
+
+    def 'call buildPipelineTrigger with parameters'() {
+        when:
+        context.buildPipelineTrigger('next') {
+            parameters {
+                currentBuild()
+                predefinedProp('key1', 'value1')
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == 'next'
+
+            configs.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0].value().empty
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() == 'key1=value1'
+        }
     }
 
     def 'call buildPipelineTrigger with null argument'() {
@@ -1549,8 +1602,13 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
-        context.publisherNodes[0].downstreamProjectNames[0].value() == ''
+        with(context.publisherNodes[0]) {
+            name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger'
+            downstreamProjectNames.size() == 1
+            downstreamProjectNames[0].value() == ''
+            configs.size() == 1
+            configs[0].value().empty
+        }
     }
 
     def 'call github commit notifier methods'() {
@@ -1591,15 +1649,15 @@ public class PublisherHelperSpec extends Specification {
         }
 
         then:
-        context.publisherNodes.size() == 1        
-        context.publisherNodes[0].with {
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.git.GitPublisher'
             configVersion[0].value() == 2
             pushMerge[0].value() == true
             pushOnlyIfSuccess[0].value() == true
             tagsToPush.size() == 1
             tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
-            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+            with(tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0]) {
                 targetRepoName[0].value() == 'origin'
                 tagName[0].value() == 'test'
                 tagMessage[0].value() == 'test tag'
@@ -1608,7 +1666,7 @@ public class PublisherHelperSpec extends Specification {
             }
             branchesToPush.size() == 1
             branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'.size() == 1
-            branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'[0].with {
+            with(branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'[0]) {
                 targetRepoName[0].value() == 'origin'
                 branchName[0].value() == 'master'
             }
@@ -1623,14 +1681,14 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         context.publisherNodes.size() == 1        
-        context.publisherNodes[0].with {
+        with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.git.GitPublisher'
             configVersion[0].value() == 2
             pushMerge[0].value() == false
             pushOnlyIfSuccess[0].value() == false
             tagsToPush.size() == 1
             tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'.size() == 1
-            tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0].with {
+            with(tagsToPush[0].'hudson.plugins.git.GitPublisher_-TagToPush'[0]) {
                 targetRepoName[0].value() == 'origin'
                 tagName[0].value() == 'test'
                 tagMessage[0].value() == ''
@@ -1710,5 +1768,476 @@ public class PublisherHelperSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'flowdock with default notification settings'() {
+        when:
+        context.flowdock('some-madeup-token')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'some-madeup-token'
+            chatNotification[0].value() == false
+            notificationTags[0].value() == ''
+            notifySuccess[0].value() == true
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            with(notifyMap[0]) {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == true
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == false
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with some overridden notification settings'() {
+        when:
+        context.flowdock('another-token') {
+            unstable()
+            success(false)
+            chat()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == true
+            notificationTags[0].value() == ''
+            notifySuccess[0].value() == false
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            with(notifyMap[0]) {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == false
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == true
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock trigger methods with no args defaults their value to true'() {
+        when:
+        context.flowdock('another-token') {
+            unstable()
+            success()
+            aborted()
+            failure()
+            fixed()
+            notBuilt()
+            chat()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == true
+            notificationTags[0].value() == ''
+            notifySuccess[0].value() == true
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyAborted[0].value() == true
+            notifyNotBuilt[0].value() == true
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            with(notifyMap[0]) {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == true
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == true
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == true
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == true
+            }
+        }
+    }
+
+    def 'flowdock with all non-default args set'() {
+        when:
+        context.flowdock('another-token') {
+            unstable(true)
+            success(false)
+            aborted(true)
+            failure(false)
+            fixed(false)
+            notBuilt(true)
+            chat(true)
+            tag('tag1')
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == true
+            notificationTags[0].value() == 'tag1'
+            notifySuccess[0].value() == false
+            notifyFailure[0].value() == false
+            notifyFixed[0].value() == false
+            notifyUnstable[0].value() == true
+            notifyAborted[0].value() == true
+            notifyNotBuilt[0].value() == true
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            with(notifyMap[0]) {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == true
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == false
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == false
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == true
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == false
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == true
+            }
+        }
+    }
+
+    def 'flowdock with tags'() {
+        when:
+        context.flowdock('another-token') {
+            tags('tag1', 'tagTwo')
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == false
+            notificationTags[0].value() == 'tag1,tagTwo'
+            notifySuccess[0].value() == true
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            with(notifyMap[0]) {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == true
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == false
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with multiple tag calls'() {
+        when:
+        context.flowdock('another-token') {
+            tag('tag1')
+            tag('tagTwo')
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'another-token'
+            chatNotification[0].value() == false
+            notificationTags[0].value() == 'tag1,tagTwo'
+            notifySuccess[0].value() == true
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            with(notifyMap[0]) {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == true
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == false
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with empty tag'() {
+        when:
+        context.flowdock('token') {
+            tag('')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'flowdock with multiple tokens'() {
+        when:
+        context.flowdock('some-madeup-token', 'a-second-token')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'com.flowdock.jenkins.FlowdockNotifier'
+            flowToken[0].value() == 'some-madeup-token,a-second-token'
+            chatNotification[0].value() == false
+            notificationTags[0].value() == ''
+            notifySuccess[0].value() == true
+            notifyFailure[0].value() == true
+            notifyFixed[0].value() == true
+            notifyUnstable[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyMap.size() == 1
+            notifyMap[0].entry.size() == 6
+            with(notifyMap[0]) {
+                entry[0].'com.flowdock.jenkins.BuildResult'[0].value() == 'ABORTED'
+                entry[0].boolean[0].value() == false
+                entry[1].'com.flowdock.jenkins.BuildResult'[0].value() == 'SUCCESS'
+                entry[1].boolean[0].value() == true
+                entry[2].'com.flowdock.jenkins.BuildResult'[0].value() == 'FIXED'
+                entry[2].boolean[0].value() == true
+                entry[3].'com.flowdock.jenkins.BuildResult'[0].value() == 'UNSTABLE'
+                entry[3].boolean[0].value() == false
+                entry[4].'com.flowdock.jenkins.BuildResult'[0].value() == 'FAILURE'
+                entry[4].boolean[0].value() == true
+                entry[5].'com.flowdock.jenkins.BuildResult'[0].value() == 'NOT_BUILT'
+                entry[5].boolean[0].value() == false
+            }
+        }
+    }
+
+    def 'flowdock with no tokens'() {
+        when:
+        context.flowdock(null)
+
+        then:
+        thrown(AssertionError)
+    }
+
+    def 'stashNotifier with default configuration'() {
+        when:
+        context.stashNotifier {null}
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
+            stashServerBaseUrl[0].value().empty
+            stashUserName[0].value().empty
+            stashUserPassword[0].value().empty
+            ignoreUnverifiedSSLPeer[0].value() == false
+            commitSha1[0].value() == ''
+            includeBuildNumberInKey[0].value() == false
+        }
+    }
+
+    def 'stashNotifier with configuration of all parameters'() {
+        when:
+        context.stashNotifier {
+            commitSha1('sha1')
+            keepRepeatedBuilds(true)
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
+            stashServerBaseUrl[0].value().empty
+            stashUserName[0].value().empty
+            stashUserPassword[0].value().empty
+            ignoreUnverifiedSSLPeer[0].value() == false
+            commitSha1[0].value() == 'sha1'
+            includeBuildNumberInKey[0].value() == true
+        }
+    }
+
+    def 'stashNotifier with configuration of all parameters using defaults for boolean parameter'() {
+        when:
+        context.stashNotifier {
+            commitSha1('sha1')
+            keepRepeatedBuilds()
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
+            stashServerBaseUrl[0].value().empty
+            stashUserName[0].value().empty
+            stashUserPassword[0].value().empty
+            ignoreUnverifiedSSLPeer[0].value() == false
+            commitSha1[0].value() == 'sha1'
+            includeBuildNumberInKey[0].value() == true
+        }
+    }
+
+    def 'mavenDeploymentLinker with regex'() {
+        when:
+        context.mavenDeploymentLinker('.*.tar.gz')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder'
+            regexp[0].value() == '.*.tar.gz'
+        }
+    }
+
+    def 'wsCleanup with configuration of all parameters'() {
+        when:
+        context.wsCleanup{
+            includePattern('foo')
+            includePattern('bar')
+            excludePattern('foo')
+            excludePattern('bar')
+            deleteDirectories(true)
+            cleanWhenSuccess(false)
+            cleanWhenUnstable(false)
+            cleanWhenFailure(false)
+            cleanWhenNotBuilt(false)
+            cleanWhenAborted(false)
+            failBuildWhenCleanupFails(false)
+            deleteCommand('rm')
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.ws__cleanup.WsCleanup'
+            patterns.size() == 1
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'.size() == 4
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].type[0].value() == 'EXCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].type[0].value() == 'EXCLUDE'
+            deleteDirs[0].value() == true
+            cleanWhenSuccess[0].value() == false
+            cleanWhenUnstable[0].value() == false
+            cleanWhenFailure[0].value() == false
+            cleanWhenNotBuilt[0].value() == false
+            cleanWhenAborted[0].value() == false
+            notFailBuild[0].value() == true
+            externalDelete[0].value() == 'rm'
+        }
+    }
+
+    def 'wsCleanup with default configuration'() {
+        when:
+        context.wsCleanup()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.ws__cleanup.WsCleanup'
+            patterns.size() == 1
+            patterns[0].entry.size() == 0
+            deleteDirs[0].value() == false
+            cleanWhenSuccess[0].value() == true
+            cleanWhenUnstable[0].value() == true
+            cleanWhenFailure[0].value() == true
+            cleanWhenNotBuilt[0].value() == true
+            cleanWhenAborted[0].value() == true
+            notFailBuild[0].value() == false
+            externalDelete[0].value() == ''
+        }
+    }
+
+    def 'wsCleanup with configuration of all parameters using defaults for boolean parameter'() {
+        when:
+        context.wsCleanup{
+            includePattern('foo')
+            includePattern('bar')
+            excludePattern('foo')
+            excludePattern('bar')
+            deleteDirectories()
+            cleanWhenSuccess()
+            cleanWhenUnstable()
+            cleanWhenFailure()
+            cleanWhenNotBuilt()
+            cleanWhenAborted()
+            failBuildWhenCleanupFails()
+            deleteCommand('rm')
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.ws__cleanup.WsCleanup'
+            patterns.size() == 1
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'.size() == 4
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'INCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].pattern[0].value() == 'foo'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[2].type[0].value() == 'EXCLUDE'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].pattern[0].value() == 'bar'
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[3].type[0].value() == 'EXCLUDE'
+            deleteDirs[0].value() == true
+            cleanWhenSuccess[0].value() == true
+            cleanWhenUnstable[0].value() == true
+            cleanWhenFailure[0].value() == true
+            cleanWhenNotBuilt[0].value() == true
+            cleanWhenAborted[0].value() == true
+            notFailBuild[0].value() == false
+            externalDelete[0].value() == 'rm'
+        }
     }
 }

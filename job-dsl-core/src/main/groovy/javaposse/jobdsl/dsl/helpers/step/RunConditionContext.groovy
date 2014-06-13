@@ -1,53 +1,85 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.step.condition.BinaryLogicOperation
+import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir
+import javaposse.jobdsl.dsl.helpers.step.condition.NotCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
+import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 
 
 class RunConditionContext implements Context {
-    String conditionName
-    public Map<String, String> conditionArgs = [:]
 
-    def conditionClass() {
-        return "org.jenkins_ci.plugins.run_condition.core.${conditionName}Condition"
-    }
+    RunCondition condition
 
     def alwaysRun() {
-        this.conditionName = "AlwaysRun"
-        this.conditionArgs = [:]
+        this.condition = new SimpleCondition(name: 'AlwaysRun')
     }
 
     def neverRun() {
-        this.conditionName = "NeverRun"
-        this.conditionArgs = [:]
+        this.condition = new SimpleCondition(name: 'NeverRun')
     }
 
     def booleanCondition(String token) {
-        this.conditionName = "Boolean"
-        this.conditionArgs = ['token': token]
+        this.condition = new SimpleCondition(name: 'Boolean', args: ['token': token])
     }
 
     def stringsMatch(String arg1, String arg2, boolean ignoreCase) {
-        this.conditionName = "StringsMatch"
-        this.conditionArgs = ['arg1': arg1, 'arg2': arg2, 'ignoreCase': ignoreCase ? "true" : "false"]
+        this.condition = new SimpleCondition(
+                name: 'StringsMatch',
+                args: ['arg1': arg1, 'arg2': arg2, 'ignoreCase': ignoreCase.toString()])
     }
 
     def cause(String buildCause, boolean exclusiveCondition) {
-        this.conditionName = "Cause"
-        this.conditionArgs = ['buildCause': buildCause, 'exclusiveCondition': exclusiveCondition ? "true" : "false"]
+        this.condition = new SimpleCondition(
+                name: 'Cause',
+                args: ['buildCause': buildCause, 'exclusiveCondition': exclusiveCondition.toString()])
     }
 
     def expression(String expression, String label) {
-        this.conditionName = "Expression"
-        this.conditionArgs = ['expression': expression, 'label': label]
+        this.condition = new SimpleCondition(
+                name: 'Expression',
+                args: ['expression': expression, 'label': label])
     }
 
     def time(String earliest, String latest, boolean useBuildTime) {
-        this.conditionName = "Time"
-        this.conditionArgs = ['earliest': earliest, 'latest': latest, 'useBuildTime': useBuildTime ? 'true' : 'false']
+        this.condition = new SimpleCondition(
+                name: 'Time',
+                args: ['earliest': earliest, 'latest': latest, 'useBuildTime': useBuildTime ? 'true' : 'false'])
     }
 
     def status(String worstResult, String bestResult) {
-        this.conditionName = "Status"
-        this.conditionArgs = ['worstResult': worstResult, 'bestResult': bestResult]
+        this.condition = new SimpleCondition(
+                name: 'Status',
+                args: ['worstResult': worstResult, 'bestResult': bestResult])
     }
+
+    def shell(String command) {
+        this.condition = new SimpleCondition(name: 'Shell', subPackage: 'contributed', args: [command: command])
+    }
+
+    def batch(String command) {
+        this.condition = new SimpleCondition(name: 'BatchFile', subPackage: 'contributed', args: [command: command])
+    }
+
+    def fileExists(String file, BaseDir baseDir) {
+        condition = new FileExistsCondition(file, baseDir)
+    }
+
+    def not(Closure conditionClosure) {
+        this.condition = new NotCondition(RunConditionFactory.of(conditionClosure))
+    }
+
+    def and(Closure... conditionClosures) {
+        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
+        this.condition = new BinaryLogicOperation('And', conditions)
+    }
+
+    def or(Closure... conditionClosures) {
+        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
+        this.condition = new BinaryLogicOperation('Or', conditions)
+    }
+
 }

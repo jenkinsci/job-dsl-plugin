@@ -1,10 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 class ConditionalStepsContext extends AbstractStepContext {
 
-    RunConditionContext conditionContext
+    RunCondition runCondition
     String runnerClass
 
     ConditionalStepsContext() {
@@ -25,11 +26,7 @@ class ConditionalStepsContext extends AbstractStepContext {
     }
 
     def condition(Closure conditionClosure) {
-        conditionContext = new RunConditionContext()
-
-        AbstractContextHelper.executeInContext(conditionClosure, conditionContext)
-
-        Preconditions.checkNotNull(conditionContext?.conditionName, "No condition name specified")
+        this.runCondition = RunConditionFactory.of(conditionClosure)
     }
 
     def runner(String runnerName) {
@@ -45,10 +42,8 @@ class ConditionalStepsContext extends AbstractStepContext {
         def nodeBuilder = new NodeBuilder()
 
         return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
-            condition(class: conditionContext.conditionClass()) {
-                conditionContext.conditionArgs.each { k, v ->
-                    "${k}" v
-                }
+            delegate.condition(class: runCondition.conditionClass) {
+                runCondition.addArgs(delegate)
             }
             runner(class: runnerClass)
             buildStep(class: stepNodes[0].name()) {
@@ -63,10 +58,8 @@ class ConditionalStepsContext extends AbstractStepContext {
         def nodeBuilder = new NodeBuilder()
 
         return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
-            runCondition(class: conditionContext.conditionClass()) {
-                conditionContext.conditionArgs.each { k, v ->
-                    "${k}" v
-                }
+            runCondition(class: runCondition.conditionClass) {
+                runCondition.addArgs(delegate)
             }
             runner(class: runnerClass)
             conditionalbuilders(stepNodes)

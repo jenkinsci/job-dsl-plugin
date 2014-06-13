@@ -83,8 +83,7 @@ class AbstractStepContext implements Context {
 
         def nodeBuilder = new NodeBuilder()
 
-        def attributes = [plugin:'sbt@1.4']
-        def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder'(attributes) {
+        def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
             name Preconditions.checkNotNull(sbtNameArg, "Please provide the name of the SBT to use" as Object)
             jvmFlags jvmFlagsArg?:''
             sbtFlags sbtFlagsArg?:''
@@ -480,6 +479,9 @@ class AbstractStepContext implements Context {
             selector('class':"hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
                 if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
                     fallbackToLastSuccessful 'true'
+                }
+                if (copyArtifactContext.selectedSelector == 'StatusBuild' && copyArtifactContext.stable) {
+                    stable 'true'
                 }
                 if (copyArtifactContext.selectedSelector == 'PermalinkBuild') {
                     id copyArtifactContext.permalinkName

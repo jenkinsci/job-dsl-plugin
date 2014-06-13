@@ -18,16 +18,13 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
  * @author jryan
  * @author aharmel-law
  */
-public class Job {
+public class Job extends Item {
     JobManagement jobManagement
 
-    String name // Required
     String templateName = null // Optional
     JobType type = null // Required
-    List<WithXmlAction> withXmlActions = []
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
-    // TODO Use some methodMissing to do some sort of dynamic lookup
     @Delegate AuthorizationContextHelper helperAuthorization
     @Delegate ScmContextHelper helperScm
     @Delegate TriggerContextHelper helperTrigger
@@ -52,7 +49,7 @@ public class Job {
         helperTrigger = new TriggerContextHelper(withXmlActions, type)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperStep = new StepContextHelper(withXmlActions, type)
-        helperPublisher = new PublisherContextHelper(withXmlActions, type)
+        helperPublisher = new PublisherContextHelper(withXmlActions, type, jobManagement)
         helperTopLevel = new TopLevelHelper(withXmlActions, type)
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
@@ -72,76 +69,25 @@ public class Job {
         this.templateName = templateName
     }
 
-    /**
-     * Provide raw config.xml for direct manipulation. Provided as a StreamingMarkupBuilder
-     *
-     * Examples:
-     *
-     * <pre>
-     * configure {
-     *
-     * }
-     * </pre>
-     * @param withXmlClosure
-     * @return
-     */
-    def configure(Closure withXmlClosure) {
-        withXmlActions.add( new WithXmlAction(withXmlClosure) )
-    }
-
-    def name(String name) {
-        // TODO Validation
-        this.name = name
-    }
-
     def name(Closure nameClosure) {
-        // TODO do we need a delegate?
         name(nameClosure.call().toString())
     }
 
     public Node getNode() {
         Node project = templateName==null?executeEmptyTemplate():executeUsing()
 
-        // TODO check name field
-
         executeWithXmlActions(project)
 
         return project
     }
 
-    /**
-     * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
-     * even if the user didn't specify them in order.
-     * @return
-     */
-    public String getXml() {
-        Node project = getNode()
-
-        //new XmlNodePrinter(new PrintWriter(new FileWriter(new File('job.xml')))).print(project)
-
-        def xmlOutput = new StringWriter()
-        def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
-        xmlNodePrinter.with {
-            preserveWhitespace = true
-            expandEmptyElements = true
-            quote = "'" // Use single quote for attributes
-        }
-        xmlNodePrinter.print(project)
-
-        String configStr = xmlOutput.toString()
-        //String configStr = XmlUtil.serialize(project)
-        return configStr
-    }
-
     void executeWithXmlActions(final Node root) {
         // Create builder, based on what we already have
-        // TODO Some Node magic to copy it at each phase, and then presenting a diff in the logs
         withXmlActions.each { WithXmlAction withXmlClosure ->
             withXmlClosure.execute(root)
         }
     }
 
-    // TODO record which templates are used to generate jobs, so that they can be connected to this job
     private executeUsing() {
         String configXml
         try {
@@ -171,7 +117,6 @@ public class Job {
     }
 
     private String getTemplate(JobType type) {
-        // TODO Move this logic to the JobType Enum
         switch(type) {
             case JobType.Freeform: return emptyTemplate
             case JobType.BuildFlow: return emptyBuildFlowTemplate

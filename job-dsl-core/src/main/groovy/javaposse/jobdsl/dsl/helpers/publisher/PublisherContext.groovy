@@ -1,9 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
+import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 
 
 class PublisherContext implements Context {
@@ -13,13 +15,8 @@ class PublisherContext implements Context {
     StaticAnalysisPublisherContext staticAnalysisPublisherHelper
 
 
-    PublisherContext() {
-        staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes)
-    }
-
-    PublisherContext(List<Node> publisherNodes) {
-        this.publisherNodes = publisherNodes
-        staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(this.publisherNodes)
+    PublisherContext(JobManagement jobManagement) {
+        staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes, jobManagement)
     }
 
     /**
@@ -55,8 +52,6 @@ class PublisherContext implements Context {
      <attachmentsPattern/>
      </hudson.plugins.emailext.ExtendedEmailPublisher>
      * @return
-     * TODO Support list for recipients
-     * TODO Escape XML for all subject and content fields
      */
     def extendedEmail(String recipients = null, Closure emailClosure = null) {
         return extendedEmail(recipients, null, emailClosure)
@@ -348,11 +343,15 @@ class PublisherContext implements Context {
             targets {
                 targetsArg.split().each { target ->
                     def isGroup = target.startsWith('*')
-                    def targetClean = isGroup ? target.substring(1) : target
-                    'hudson.plugins.im.GroupChatIMMessageTarget' {
-                        delegate.createNode('name', targetClean)
-                        if (isGroup) {
+                    if (isGroup) {
+                        def targetClean = target.substring(1)
+                        'hudson.plugins.im.GroupChatIMMessageTarget' {
+                            delegate.createNode('name', targetClean)
                             notificationOnly 'false'
+                        }
+                    } else {
+                        'hudson.plugins.im.DefaultIMMessageTarget' {
+                            delegate.createNode('value', target)
                         }
                     }
                 }
@@ -392,7 +391,6 @@ class PublisherContext implements Context {
         assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
 
         def nodeBuilder = NodeBuilder.newInstance()
-        // TODO Possibility to update existing publish node
         def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
             entries {
@@ -543,7 +541,7 @@ class PublisherContext implements Context {
         AbstractContextHelper.executeInContext(violationsClosure, violationsContext)
 
         def nodeBuilder = NodeBuilder.newInstance()
-        def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher'(plugin: 'violations@0.7.11') {
+        def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher' {
             config {
                 suppressions(class: "tree-set") {
                     'no-comparator'()
@@ -686,7 +684,9 @@ class PublisherContext implements Context {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
             regexp(regularExpression)
             regexpForFailed(regularExpressionForFailed)
-            delegate.description(description)
+            if (description) {
+                delegate.description(description)
+            }
             if (descriptionForFailed) {
                 delegate.descriptionForFailed(descriptionForFailed)
             }
@@ -941,14 +941,23 @@ class PublisherContext implements Context {
      *
      * <publishers>
      *     <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+     *         <configs>
+     *             <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *                 <properties>ARTIFACT_BUILD_NUMBER=$BUILD_NUMBER</properties>
+     *             </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *         </configs>
      *         <downstreamProjectNames>acme-project</downstreamProjectNames>
      *     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
      * </publishers>
      */
-    def buildPipelineTrigger(String downstreamProjectNames) {
+    def buildPipelineTrigger(String downstreamProjectNames, Closure closure = null) {
+        BuildPipelineContext buildPipelineContext = new BuildPipelineContext()
+        AbstractContextHelper.executeInContext(closure, buildPipelineContext)
+
         def nodeBuilder = NodeBuilder.newInstance()
         publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
             delegate.downstreamProjectNames(downstreamProjectNames ?: '')
+            configs(buildPipelineContext.parameterNodes)
         }
     }
 
@@ -997,6 +1006,188 @@ class PublisherContext implements Context {
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
             tagsToPush(context.tags)
             branchesToPush(context.branches)
+        }
+    }
+
+    /**
+     * <publishers>
+     *     <com.flowdock.jenkins.FlowdockNotifier>
+     *         <flowToken>hash</flowToken>
+     *         <notificationTags/>
+     *         <chatNotification>false</chatNotification>
+     *         <notifyMap>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>ABORTED</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>SUCCESS</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>FIXED</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>UNSTABLE</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>FAILURE</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>true</boolean>
+     *             </entry>
+     *             <entry>
+     *                 <com.flowdock.jenkins.BuildResult>NOT_BUILT</com.flowdock.jenkins.BuildResult>
+     *                 <boolean>false</boolean>
+     *             </entry>
+     *         </notifyMap>
+     *         <notifySuccess>true</notifySuccess>
+     *         <notifyFailure>true</notifyFailure>
+     *         <notifyFixed>true</notifyFixed>
+     *         <notifyUnstable>false</notifyUnstable>
+     *         <notifyAborted>false</notifyAborted>
+     *         <notifyNotBuilt>false</notifyNotBuilt>
+     *     </com.flowdock.jenkins.FlowdockNotifier>
+     * </publishers>
+     */
+    def flowdock(String token, Closure flowdockPublisherClosure = null) {
+        FlowdockPublisherContext context = new FlowdockPublisherContext()
+        AbstractContextHelper.executeInContext(flowdockPublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'com.flowdock.jenkins.FlowdockNotifier' {
+            flowToken(token)
+            notificationTags(context.notificationTags.join(','))
+            chatNotification(context.chat)
+            notifyMap {
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('ABORTED')
+                    'boolean'(context.aborted)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('SUCCESS')
+                    'boolean'(context.success)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('FIXED')
+                    'boolean'(context.fixed)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('UNSTABLE')
+                    'boolean'(context.unstable)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('FAILURE')
+                    'boolean'(context.failure)
+                }
+                entry {
+                    'com.flowdock.jenkins.BuildResult'('NOT_BUILT')
+                    'boolean'(context.notBuilt)
+                }
+            }
+            notifySuccess(context.success)
+            notifyFailure(context.failure)
+            notifyFixed(context.fixed)
+            notifyUnstable(context.unstable)
+            notifyAborted(context.aborted)
+            notifyNotBuilt(context.notBuilt)
+        }
+    }
+
+    def flowdock(String[] tokens, Closure flowdockPublisherClosure = null) {
+        // Validate values
+        assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
+        flowdock(tokens.join(','), flowdockPublisherClosure)
+    }
+
+    /**
+     * Configures the StashNotifier plugin.
+     *
+     * <publishers>
+     *     <org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     *         <stashServerBaseUrl/>
+     *         <stashUserName/>
+     *         <stashUserPassword>y1/kpoWAZo+gBl7xAmdWIQ==</stashUserPassword>
+     *         <ignoreUnverifiedSSLPeer>false</ignoreUnverifiedSSLPeer>
+     *         <commitSha1/>
+     *         <includeBuildNumberInKey>false</includeBuildNumberInKey>
+     *     </org.jenkinsci.plugins.stashNotifier.StashNotifier>
+     * </publishers>
+     *
+     * See https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin
+     */
+    def stashNotifier(Closure stashNotifierClosure = null) {
+        StashNotifierContext context = new StashNotifierContext()
+        AbstractContextHelper.executeInContext(stashNotifierClosure, context)
+        publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
+            stashServerBaseUrl()
+            stashUserName()
+            stashUserPassword()
+            ignoreUnverifiedSSLPeer(false)
+            commitSha1(context.commitSha1)
+            includeBuildNumberInKey(context.keepRepeatedBuilds)
+        }
+    }
+
+    /**
+     *
+     * Configures the Maven Deployment Linker plugin.
+     *
+     * <publishers>
+     *     <hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder>
+     *         <regexp>*.tar.gz</regexp>
+     *     </hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder>
+     * </publishers
+     *
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker
+     */
+    def mavenDeploymentLinker(String regex) {
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder' {
+            regexp(regex)
+        }
+    }
+
+    /**
+     * Configures the post build action of the Workspace Cleanup Plugin to delete the workspace.
+     *
+     * <publishers>
+     *     <hudson.plugins.ws__cleanup.WsCleanup>
+     *         <patterns>
+     *             <hudson.plugins.ws__cleanup.Pattern>
+     *                 <pattern>*.java</pattern>
+     *                 <type>INCLUDE</type>
+     *             </hudson.plugins.ws__cleanup.Pattern>
+     *             <hudson.plugins.ws__cleanup.Pattern>
+     *                 <pattern>*.log</pattern>
+     *                 <type>EXCLUDE</type>
+     *             </hudson.plugins.ws__cleanup.Pattern>
+     *         </patterns>
+     *         <deleteDirs>false</deleteDirs>
+     *         <cleanWhenSuccess>true</cleanWhenSuccess>
+     *         <cleanWhenUnstable>true</cleanWhenUnstable>
+     *         <cleanWhenFailure>true</cleanWhenFailure>
+     *         <cleanWhenNotBuilt>true</cleanWhenNotBuilt>
+     *         <cleanWhenAborted>true</cleanWhenAborted>
+     *         <notFailBuild>false</notFailBuild>
+     *         <externalDelete>rm</externalDelete>
+     *     </hudson.plugins.ws__cleanup.WsCleanup>
+     * </publishers>
+     *
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
+     */
+    def wsCleanup(Closure closure = null) {
+        PostBuildCleanupContext context = new PostBuildCleanupContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.ws__cleanup.WsCleanup' {
+            patterns(context.patternNodes)
+            deleteDirs(context.deleteDirectories)
+            cleanWhenSuccess(context.cleanWhenSuccess)
+            cleanWhenUnstable(context.cleanWhenUnstable)
+            cleanWhenFailure(context.cleanWhenFailure)
+            cleanWhenNotBuilt(context.cleanWhenNotBuilt)
+            cleanWhenAborted(context.cleanWhenAborted)
+            notFailBuild(!context.failBuild)
+            externalDelete(context.deleteCommand ?: '')
         }
     }
 }

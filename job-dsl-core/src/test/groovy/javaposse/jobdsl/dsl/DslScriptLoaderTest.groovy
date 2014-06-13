@@ -15,13 +15,6 @@ public class DslScriptLoaderTest extends Specification {
         return baos.toString()  // Could send ISO-8859-1
     }
 
-    def 'load template from MarkupBuilder'() {
-        setup:
-        Job job = new Job(jm)
-
-        // TODO
-    }
-
     def 'load template from file'() {
         setup:
         Job job = new Job(jm)
@@ -44,8 +37,6 @@ public class DslScriptLoaderTest extends Specification {
 
         then:
         noExceptionThrown()
-        // TODO
-        //job.xml
     }
 
     def 'run engine'() {
@@ -268,5 +259,24 @@ view(type: ListView) {
         views.size() == 2
         views.any { it.name == 'view-a' }
         views.any { it.name == 'view-b' }
+    }
+
+    def 'run engine with folders'() {
+        setup:
+        def scriptStr = '''folder {
+    name 'folder-a'
+}
+folder {
+    name 'folder-b'
+}
+'''
+
+        when:
+        def jobs = DslScriptLoader.runDslEngine(scriptStr, jm).jobs
+
+        then:
+        jobs.size() == 2
+        jobs.any { it.jobName == 'folder-a' }
+        jobs.any { it.jobName == 'folder-b' }
     }
 }

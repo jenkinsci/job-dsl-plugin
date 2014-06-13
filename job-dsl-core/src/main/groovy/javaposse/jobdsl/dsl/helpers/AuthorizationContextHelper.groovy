@@ -20,7 +20,6 @@ class AuthorizationContextHelper extends AbstractContextHelper<AuthorizationCont
         context.perms
     }
 
-    // TODO: Support dotted notation. Currently because of perms being around for the closure, we can't just append to it outside of a closure
     AuthorizationContextHelper getAuthorization() {
         return this
     }
@@ -30,7 +29,6 @@ class AuthorizationContextHelper extends AbstractContextHelper<AuthorizationCont
     }
 
     def permission(String perm) {
-        // TODO Check formatting, e.g. has colon
         addAuthorization(perm)
         this
     }

@@ -1,12 +1,17 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <j:set var="allViews" value="${it.getModifiedViews()}"/>
-    <j:if test="${allViews != null &amp;&amp; !allViews.isEmpty()}">
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
+    <j:set var="allViews" value="${it.views}"/>
+    <j:if test="${!allViews.isEmpty()}">
         <t:summary icon="folder.png">
             Generated Views:
             <ul class="viewList">
-                <j:forEach items="${allViews}" var="af">
+                <j:forEach items="${allViews}" var="view">
                     <li>
-                        <a href="${rootURL}/view/${af.name}/" class="model-link tl-tr">${af.name}</a>
+                        <a href="${rootURL}/${view.url}" class="tl-tr">
+                            <j:if test="${not empty view.ownerItemGroup.fullDisplayName}">
+                                ${view.ownerItemGroup.fullDisplayName} &#x00BB;
+                            </j:if>
+                            ${view.displayName}
+                        </a>
                     </li>
                 </j:forEach>
             </ul>

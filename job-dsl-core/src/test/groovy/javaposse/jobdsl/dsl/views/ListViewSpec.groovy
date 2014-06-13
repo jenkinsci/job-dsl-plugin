@@ -228,6 +228,19 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[1].name() == 'hudson.views.BuildButtonColumn'
     }
 
+    def 'lastBuildConsole column'() {
+        when:
+        view.columns {
+            lastBuildConsole()
+        }
+
+        then:
+        Node root = view.getNode()
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildConsoleColumn'
+    }
+
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
     <filterExecutors>false</filterExecutors>

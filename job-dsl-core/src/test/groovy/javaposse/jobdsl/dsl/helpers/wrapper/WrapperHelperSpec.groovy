@@ -455,7 +455,7 @@ class WrapperHelperSpec extends Specification {
 
         then:
         root.buildWrappers[0].children().size() == 1
-        root.buildWrappers[0].children()[0].with {
+        with(root.buildWrappers[0].children()[0]) {
             name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
             children().size() == 4
             patterns[0].value() == []
@@ -480,19 +480,110 @@ class WrapperHelperSpec extends Specification {
 
         then:
         root.buildWrappers[0].children().size() == 1
-        root.buildWrappers[0].children()[0].with {
+        with(root.buildWrappers[0].children()[0]) {
             name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
             children().size() == 4
             patterns[0].children().size() == 2
-            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].children.size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].children().size() == 2
             patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].pattern[0].value() == '**/test/**'
             patterns[0].'hudson.plugins.ws__cleanup.Pattern'[0].type[0].value() == 'INCLUDE'
-            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].children.size() == 2
+            patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].children().size() == 2
             patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].pattern[0].value() == '*.test'
             patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'EXCLUDE'
             deleteDirs[0].value() == true
             cleanupParameter[0].value() == 'TEST'
             deleteCommand[0].value() == 'test'
+        }
+    }
+
+    def 'logSizeChecker with default configuration'() {
+        when:
+        helper.wrappers {
+            logSizeChecker()
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
+            setOwn[0].value() == false
+            maxLogSize[0].value() == 0
+            failBuild[0].value() == false
+        }
+    }
+
+    def 'logSizeChecker with configuration for all parameters'() {
+        when:
+        helper.wrappers {
+            logSizeChecker {
+                maxSize(10)
+                failBuild(true)
+            }
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
+            setOwn[0].value() == true
+            maxLogSize[0].value() == 10
+            failBuild[0].value() == true
+        }
+    }
+
+    def 'logSizeChecker with configuration for all parameters using defaults for boolean parameter'() {
+        when:
+        helper.wrappers {
+            logSizeChecker {
+                maxSize(10)
+                failBuild()
+            }
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
+            setOwn[0].value() == true
+            maxLogSize[0].value() == 10
+            failBuild[0].value() == true
+        }
+    }
+
+    def 'logSizeChecker with invalid maxSize'() {
+        when:
+        helper.wrappers {
+            logSizeChecker {
+                maxSize(-1)
+            }
+        }
+
+        executeHelperActionsOnRootNode()
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call injectPasswords' (){
+        when:
+        helper.wrappers {
+            injectPasswords()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'EnvInjectPasswordWrapper'
+            children().size() == 2
+            children()[0].name() == 'injectGlobalPasswords'
+            children()[0].value() == true
         }
     }
 }

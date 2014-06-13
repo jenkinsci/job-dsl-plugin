@@ -36,7 +36,7 @@ class ScmContext implements Context {
     }
 
     private validateMulti(){
-        Preconditions.checkState(scmNodes.size() < (multiEnabled?10:1), 'Outside "multiscm", only one SCM can be specified')
+        Preconditions.checkState(multiEnabled || scmNodes.size() < 1, 'Outside "multiscm", only one SCM can be specified')
     }
 
     /**
@@ -55,9 +55,7 @@ class ScmContext implements Context {
     def hg(String url, String branch = null, Closure configure = null) {
         validateMulti()
         Preconditions.checkNotNull(url)
-        // TODO Validate url as a Mercurial url (e.g. http, https or ssh)
 
-        // TODO Attempt to update existing scm node
         def nodeBuilder = new NodeBuilder()
 
         Node scmNode = nodeBuilder.scm(class:'hudson.plugins.mercurial.MercurialSCM') {
@@ -125,7 +123,6 @@ class ScmContext implements Context {
             gitContext.branches << '**'
         }
 
-        // TODO Attempt to update existing scm node
         def nodeBuilder = new NodeBuilder()
 
         Node gitNode = nodeBuilder.scm(class:'hudson.plugins.git.GitSCM') {
@@ -147,22 +144,14 @@ class ScmContext implements Context {
             pruneBranches 'false'
             remotePoll gitContext.remotePoll
             ignoreNotifyCommit 'false'
-            //buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"
             gitTool 'Default'
-            //submoduleCfg 'class="list"'
             if (gitContext.relativeTargetDir) {
                 relativeTargetDir gitContext.relativeTargetDir
             }
             if (gitContext.reference) {
                 reference gitContext.reference
             }
-            //excludedRegions
-            //excludedUsers
-            //gitConfigName
-            //gitConfigEmail
             skipTag !gitContext.createTag
-            //includedRegions
-            //scmName
             if (gitContext.shallowClone) {
                 useShallowClone gitContext.shallowClone
             }
@@ -343,9 +332,7 @@ class ScmContext implements Context {
     def p4(String viewspec, String user, String password, Closure configure = null) {
             Preconditions.checkNotNull(viewspec)
         validateMulti()
-        // TODO Validate viewspec as valid viewspec
 
-        // TODO Attempt to update existing scm node
         def nodeBuilder = new NodeBuilder()
 
         PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor();
