@@ -515,7 +515,7 @@ svn {
      * patterns when determining if a build needs to be triggered.
      *   patterns - RegEx
      */
-    excludedRegions(Iterable<String> patterns)
+    excludedRegions(String... patterns)
 
     /*
      * Add an included region.  Each call to includedRegion() adds to the list of
@@ -535,7 +535,7 @@ svn {
      * patterns when determining if a build needs to be triggered.
      *   patterns - RegEx
      */
-    includedRegions(Iterable<String> patterns)
+    includedRegions(String... patterns)
 
     /*
      * Add an excluded user.  Each call to excludedUser() adds to the list of
