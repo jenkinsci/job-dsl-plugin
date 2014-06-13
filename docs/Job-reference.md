@@ -468,7 +468,8 @@ git {
 ```
 
 ## Subversion
-c
+
+### Job DSL Plugin Version 1.24 or greater
 
 As of version 1.24 of the Job DSL Plugin, the Subversion plugin can be configured using an improved svn closure.  The following are the methods availble in the svn closure (note: these methods are **not** available in the older svn(...) closures):
 
