@@ -469,6 +469,132 @@ git {
 
 ## Subversion
 
+### Job DSL Plugin Version 1.24 or greater
+
+As of version 1.24 of the Job DSL Plugin, the Subversion plugin can be configured using an improved svn closure.  The following are the methods availble in the svn closure (note: these methods are **not** available in the older svn(...) closures):
+
+```groovy
+svn {
+    /*
+     * At least one location MUST be specified.
+     * Additional locations can be specified by calling location() multiple times.
+     *   svnUrl   - What to checkout from SVN.
+     *   localDir - Destination directory relative to workspace.
+     *              If not specified, defaults to '.'.
+     */
+    location(String svnUrl, String localDir = '.')
+
+    /*
+     * The checkout strategy that should be used.  This is a global setting for all
+     * locations.
+     *   strategy - Strategy to use. Possible values:
+     *                CheckoutStrategy.Update
+     *                CheckoutStrategy.Checkout
+     *                CheckoutStrategy.UpdateWithClean
+     *                CheckoutStrategy.UpdateWithRevert
+     *
+     * If no checkout strategy is configured, the default is CheckoutStrategy.Update.
+     */
+    checkoutStrategy(CheckoutStrategy strategy)
+
+    /*
+     * Add an excluded region.  Each call to excludedRegion() adds to the list of
+     * excluded regions.
+     * If excluded regions are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any files and/or folders that match the specified
+     * patterns when determining if a build needs to be triggered.
+     *   pattern - RegEx
+     */
+    excludedRegion(String pattern)
+
+    /*
+     * Add a list of excluded regions.  Each call to excludedRegions() adds to the
+     * list of excluded regions.
+     * If excluded regions are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any files and/or folders that match the specified
+     * patterns when determining if a build needs to be triggered.
+     *   patterns - RegEx
+     */
+    excludedRegions(String... patterns)
+
+    /*
+     * Add an included region.  Each call to includedRegion() adds to the list of
+     * included regions.
+     * If included regions are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any files and/or folders that do _not_ match the specified
+     * patterns when determining if a build needs to be triggered.
+     *   pattern - RegEx
+     */
+    includedRegion(String pattern)
+
+    /*
+     * Add a list of included regions.  Each call to includedRegions() adds to the
+     * list of included regions.
+     * If included regions are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any files and/or folders that do _not_ match the specified
+     * patterns when determining if a build needs to be triggered.
+     *   patterns - RegEx
+     */
+    includedRegions(String... patterns)
+
+    /*
+     * Add an excluded user.  Each call to excludedUser() adds to the list of
+     * excluded users.
+     * If excluded users are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any revisions committed by the specified users when
+     * determining if a build needs to be triggered.
+     *   user - User to ignore when triggering builds
+     */
+    excludedUser(String user)
+
+    /*
+     * Add a list of excluded users.  Each call to excludedUsers() adds to the
+     * list of excluded users.
+     * If excluded users are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any revisions committed by the specified users when
+     * determining if a build needs to be triggered.
+     *   users - Users to ignore when triggering builds
+     */
+    excludedUsers(Iterable<String> users)
+
+    /*
+     * Add an exluded commit message.  Each call to excludedCommitMsg() adds to the list of
+     * excluded commit messages.
+     * If excluded messages are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any revisions with commit messages that match the specified
+     * patterns when determining if a build needs to be triggered.
+     *   pattern - RegEx
+     */
+    excludedCommitMsg(String pattern)
+
+    /*
+     * Add a list of excluded commit messages.  Each call to excludedCommitMsgs() adds to the
+     * list of excluded commit messages.
+     * If excluded messages are configured, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any revisions with commit messages that match the specified
+     * patterns when determining if a build needs to be triggered.
+     *   patterns - RegEx
+     */
+    excludedCommitMsgs(Iterable<String> patterns)
+
+    /*
+     * Set an excluded revision property.
+     * If an excluded revision property is set, and Jenkins is set to poll for changes,
+     * Jenkins will ignore any revisions that are marked with the specified
+     * revision property when determining if a build needs to be triggered.
+     * This only works in Subversion 1.5 servers or greater.
+     *   pattern - RegEx
+     */
+    excludedRevProp(String revisionProperty)
+}
+```
+Note that no support for a configure block is available in the new svn closure. Use the job closure's configure method instead.
+
+### Job DSL Plugin Version less than X.XX
+
+If using a version of the Job DSL Plugin older than 1.24, the following configuration methods are available.
+Note; For backwards compatibility, these are still supported in version 1.24 and above.
+
 ```groovy
 svn(String svnUrl, String localDir='.', Closure configure = null)
 ```

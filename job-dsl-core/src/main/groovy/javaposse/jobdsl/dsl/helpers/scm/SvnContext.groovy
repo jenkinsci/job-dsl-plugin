@@ -64,7 +64,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param patterns RegEx
      */
-    def excludedRegions(Iterable<String> patterns) {
+    def excludedRegions(String... patterns) {
         patterns.each {
             excludedRegion(it)
         }
@@ -90,7 +90,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param patterns RegEx
      */
-    def includedRegions(Iterable<String> patterns) {
+    def includedRegions(String... patterns) {
         patterns.each {
             includedRegion(it)
         }
