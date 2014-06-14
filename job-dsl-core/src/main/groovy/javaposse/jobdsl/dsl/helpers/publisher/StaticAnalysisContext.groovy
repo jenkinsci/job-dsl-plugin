@@ -30,7 +30,8 @@ class StaticAnalysisContext implements Context {
     }
 
     def thresholdLimit(String limit) {
-        assert THRESHOLD_LIMITS.contains(limit), "thresholdLimit must be one of these values: ${THRESHOLD_LIMITS.join(',')}"
+        assert THRESHOLD_LIMITS.contains(limit),
+                "thresholdLimit must be one of these values: ${THRESHOLD_LIMITS.join(',')}"
         this.thresholdLimit = limit
     }
 

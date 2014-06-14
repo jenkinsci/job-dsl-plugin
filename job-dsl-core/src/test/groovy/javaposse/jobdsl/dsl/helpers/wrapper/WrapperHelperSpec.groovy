@@ -184,7 +184,8 @@ class WrapperHelperSpec extends Specification {
         def strategy = timeoutWrapper.strategy[0]
         strategy.timeout[0].value() == 15
         strategy.attribute('class') == Timeout.noActivity.className
-        timeoutWrapper.operationList[0].'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
+        def list = timeoutWrapper.operationList[0]
+        list.'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
     }
 
     def 'likelyStuck timeout configuration working' () {
@@ -378,13 +379,11 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'parameterDefinitions'.'hudson.model.TextParameterDefinition'
-        params[0].value()[0].value() == 'p1'
-
-        def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
-        steps[0].value()[0].name() == 'hudson.tasks.Shell'
-        steps[0].value()[0].value()[0].name() == 'command'
-        steps[0].value()[0].value()[0].value() == 'echo hello;'
+        def wrapper = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
+        wrapper.'parameterDefinitions'.'hudson.model.TextParameterDefinition'[0].value()[0].value() == 'p1'
+        wrapper.'preBuildSteps'[0].value()[0].name() == 'hudson.tasks.Shell'
+        wrapper.'preBuildSteps'[0].value()[0].value()[0].name() == 'command'
+        wrapper.'preBuildSteps'[0].value()[0].value()[0].value() == 'echo hello;'
     }
 
     def 'release plugin extended' () {

@@ -94,36 +94,42 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base listTagsParam usage'() {
         when:
-        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true, true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
+                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes['myParameterName'].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
-        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
-        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'theDefaultValue'
-        context.buildParameterNodes['myParameterName'].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
-        context.buildParameterNodes['myParameterName'].tagsFilter.text() == '^mytagsfilterregex'
-        context.buildParameterNodes['myParameterName'].reverseByDate.text() == 'true'
-        context.buildParameterNodes['myParameterName'].reverseByName.text() == 'true'
-        context.buildParameterNodes['myParameterName'].maxTags.text() == 'maximumNumberOfTagsToDisplay'
-        context.buildParameterNodes['myParameterName'].description.text() == 'myListTagsParameterDescription'
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            name.text() == 'myParameterName'
+            defaultValue.text() == 'theDefaultValue'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text() == '^mytagsfilterregex'
+            reverseByDate.text() == 'true'
+            reverseByName.text() == 'true'
+            maxTags.text() == 'maximumNumberOfTagsToDisplay'
+            description.text() == 'myListTagsParameterDescription'
+        }
     }
 
     def 'simplified listTagsParam usage'() {
         when:
-        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true, true)
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
+                true)
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes['myParameterName'].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
-        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
-        context.buildParameterNodes['myParameterName'].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
-        context.buildParameterNodes['myParameterName'].tagsFilter.text() == '^mytagsfilterregex'
-        context.buildParameterNodes['myParameterName'].reverseByDate.text() == 'true'
-        context.buildParameterNodes['myParameterName'].reverseByName.text() == 'true'
-        context.buildParameterNodes['myParameterName'].maxTags.text() == 'all'
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            name.text() == 'myParameterName'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text() == '^mytagsfilterregex'
+            reverseByDate.text() == 'true'
+            reverseByName.text() == 'true'
+            maxTags.text() == 'all'
+        }
     }
 
     def 'simplest listTagsParam usage'() {
@@ -133,13 +139,15 @@ class BuildParametersHelperSpec extends Specification {
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes['myParameterName'].name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
-        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
-        context.buildParameterNodes['myParameterName'].tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
-        context.buildParameterNodes['myParameterName'].tagsFilter.text() == '^mytagsfilterregex'
-        context.buildParameterNodes['myParameterName'].reverseByDate.text() == 'false'
-        context.buildParameterNodes['myParameterName'].reverseByName.text() == 'false'
-        context.buildParameterNodes['myParameterName'].maxTags.text() == 'all'
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            name.text() == 'myParameterName'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text() == '^mytagsfilterregex'
+            reverseByDate.text() == 'false'
+            reverseByName.text() == 'false'
+            maxTags.text() == 'all'
+        }
     }
 
     def 'listTagsParam name argument cant be null'() {
@@ -201,7 +209,7 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'base choiceParam usage'() {
         when:
-        context.choiceParam('myParameterName', ['option 1 (default)', 'option 2', 'option 3'], 'myChoiceParamDescription')
+        context.choiceParam('myParameterName', ['option 1 (default)', 'option 2'], 'myChoiceParamDescription')
 
         then:
         context.buildParameterNodes != null
@@ -213,10 +221,9 @@ class BuildParametersHelperSpec extends Specification {
         context.buildParameterNodes['myParameterName'].choices[0].attribute('class') == 'java.util.Arrays$ArrayList'
         context.buildParameterNodes['myParameterName'].choices[0].a.size() == 1
         context.buildParameterNodes['myParameterName'].choices[0].a[0].attribute('class') == 'string-array'
-        context.buildParameterNodes['myParameterName'].choices[0].a[0].string.size() == 3
+        context.buildParameterNodes['myParameterName'].choices[0].a[0].string.size() == 2
         context.buildParameterNodes['myParameterName'].choices[0].a[0].string[0].text() == 'option 1 (default)'
         context.buildParameterNodes['myParameterName'].choices[0].a[0].string[1].text() == 'option 2'
-        context.buildParameterNodes['myParameterName'].choices[0].a[0].string[2].text() == 'option 3'
     }
 
     def 'simplified choiceParam usage'() {

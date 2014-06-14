@@ -105,8 +105,11 @@ class Job extends Item {
         }
 
         // Clean up our own indication that a job is a template
-        List<Node> seedJobProperties = templateNode.depthFirst().findAll { it.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty' }
-        seedJobProperties.each { Node node -> node.parent().remove(node) }
+        templateNode.depthFirst().each { Node node ->
+            if (node.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty') {
+                node.parent().remove(node)
+            }
+        }
 
         templateNode
     }

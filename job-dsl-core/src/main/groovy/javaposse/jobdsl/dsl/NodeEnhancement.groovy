@@ -5,7 +5,8 @@ import java.util.logging.Logger
 /**
  * Add div and leftShift operators to Node.
  * * div - Will return the first child that matches name, and if it doesn't exists, it creates
- * * leftShift - Take node (or configure block to create) and appends as child, as opposed to plus which appends as a peer
+ * * leftShift - Take node (or configure block to create) and appends as child, as opposed to plus which appends as a
+ *               peer
  */
 @Category(Node)
 class NodeEnhancement {
@@ -15,7 +16,8 @@ class NodeEnhancement {
         LOGGER.fine("Looking for child node ${orphan}")
         def childName = orphan.name()
         def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
-            child instanceof Node && child.name() == childName && child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
+            child instanceof Node && child.name() == childName &&
+                    child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
         }
         if (children.size() == 0) {
             LOGGER.fine("Creating node for ${childName}")

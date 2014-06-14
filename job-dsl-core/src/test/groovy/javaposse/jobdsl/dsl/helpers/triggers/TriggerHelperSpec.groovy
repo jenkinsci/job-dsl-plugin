@@ -92,7 +92,7 @@ class TriggerHelperSpec extends Specification {
         entry.contentTypes.size() == 1
         entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.JSONContentType' != null
 
-        def ct =  entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.JSONContentType'[0]
+        def ct = entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.JSONContentType'[0]
         ct.jsonPaths != null
         ct.jsonPaths.size() == 1
 
@@ -132,7 +132,7 @@ class TriggerHelperSpec extends Specification {
         entry.contentTypes.size() == 1
         entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.XMLContentType' != null
 
-        def ct =  entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.XMLContentType'[0]
+        def ct = entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.XMLContentType'[0]
         ct.xPaths != null
         ct.xPaths.size() == 1
 
@@ -170,7 +170,7 @@ class TriggerHelperSpec extends Specification {
         entry.contentTypes.size() == 1
         entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.TEXTContentType' != null
 
-        def ct =  entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.TEXTContentType'[0]
+        def ct = entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.TEXTContentType'[0]
         ct.regExElements != null
         ct.regExElements.size() == 1
 
@@ -394,33 +394,33 @@ class TriggerHelperSpec extends Specification {
         }
 
         then:
-        def gerritTrigger = context.triggerNodes[0]
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue.size() == 1
-        gerritTrigger.gerritBuildSuccessfulVerifiedValue[0].value() as String == '10'
-
-        Node gerritEvents = gerritTrigger.triggerOnEvents[0]
-        gerritEvents.children().size() == 2
-        gerritEvents.children()[0].name().contains('com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin')
-
-        Node gerritProjects = gerritTrigger.gerritProjects[0]
-        gerritProjects.children().size() == 2
-
-        Node gerritProject = gerritProjects.children()[0]
-        gerritProject.name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'
-        gerritProject.compareType[0].value() == 'REG_EXP'
-        gerritProject.pattern[0].value() == 'myProject'
-        gerritProject.branches[0].children().size() == 2
-
-        Node gerritBranch = gerritProject.branches[0].children()[0]
-        gerritBranch.name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch'
-        gerritBranch.compareType[0].value() == 'ANT'
-        gerritBranch.pattern[0].value() == 'feature-branch'
-
-        Node gerritProjectSimple = gerritProjects.children()[1]
-        gerritProjectSimple.compareType[0].value() == 'PLAIN'
-        gerritProjectSimple.pattern[0].value() == 'test-project'
-        gerritProjectSimple.branches[0].children().size() == 1
-        // Assume branch is fine
+        with(context.triggerNodes[0]) {
+            gerritBuildSuccessfulVerifiedValue.size() == 1
+            gerritBuildSuccessfulVerifiedValue[0].value() == '10'
+            with(triggerOnEvents[0]) {
+                children().size() == 2
+                children()[0].name() =~ /com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin/
+            }
+            with(gerritProjects[0]) {
+                children().size() == 2
+                with(children()[0]) {
+                    name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'
+                    compareType[0].value() == 'REG_EXP'
+                    pattern[0].value() == 'myProject'
+                    branches[0].children().size() == 2
+                    with(branches[0].children()[0]) {
+                        name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch'
+                        compareType[0].value() == 'ANT'
+                        pattern[0].value() == 'feature-branch'
+                    }
+                }
+                with(children()[1]) {
+                    compareType[0].value() == 'PLAIN'
+                    pattern[0].value() == 'test-project'
+                    branches[0].children().size() == 1
+                }
+            }
+        }
     }
 
     def 'call gerrit trigger and verify build status value settings'() {

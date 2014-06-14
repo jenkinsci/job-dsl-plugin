@@ -184,13 +184,14 @@ class PublisherHelperSpec extends Specification {
         context.archiveJunit('include/*')
 
         then:
-        Node archiveNode = context.publisherNodes[0]
-        archiveNode.name() == 'hudson.tasks.junit.JUnitResultArchiver'
-        archiveNode.testResults[0].value() == 'include/*'
-        archiveNode.keepLongStdio[0].value() == 'false'
-        archiveNode.testDataPublishers[0] != null
-        !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
-        !archiveNode.testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            testResults[0].value() == 'include/*'
+            keepLongStdio[0].value() == 'false'
+            testDataPublishers[0] != null
+            !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
+            !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
+        }
     }
 
     def 'call jacoco code coverage with no args'() {
@@ -608,36 +609,39 @@ class PublisherHelperSpec extends Specification {
         Node publisherNode = context.publisherNodes[0]
         publisherNode.name() == 'hudson.plugins.parameterizedtrigger.BuildTrigger'
         publisherNode.configs[0].children().size() == 2
-        Node first = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
-        first.projects[0].value() == 'Project1, Project2'
-        first.condition[0].value() == 'UNSTABLE_OR_BETTER'
-        first.triggerWithNoParameters[0].value() == 'true'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-        first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
-        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
-        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
-        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
-                'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
-        first.block.size() == 0
+        with(publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project1, Project2'
+            condition[0].value() == 'UNSTABLE_OR_BETTER'
+            triggerWithNoParameters[0].value() == 'true'
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
+                    'dir/my.properties'
+            configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                    'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+            configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
+                    'label=="${TARGET}"'
+            configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+            block.size() == 0
 
-        def boolParams = first.configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
-        boolParams.children().size() == 3
-        def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
-        boolNode.name[0].value() == 'aParam'
-        boolNode.value[0].value() == false
-        def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
-        boolNode1.name[0].value() == 'bParam'
-        boolNode1.value[0].value() == false
-        def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
-        boolNode2.name[0].value() == 'cParam'
-        boolNode2.value[0].value() == true
+            def boolParams = configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
+            boolParams.children().size() == 3
+            def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
+            boolNode.name[0].value() == 'aParam'
+            boolNode.value[0].value() == false
+            def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
+            boolNode1.name[0].value() == 'bParam'
+            boolNode1.value[0].value() == false
+            def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
+            boolNode2.name[0].value() == 'cParam'
+            boolNode2.value[0].value() == true
 
-        def nodeNode = first.configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
-        nodeNode != null
+            def nodeNode = configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
+            nodeNode != null
 
-        first.block.isEmpty()
+            block.isEmpty()
+        }
 
         Node second = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[1]
         second.projects[0].value() == 'Project2'
@@ -846,7 +850,8 @@ class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         Node ircPublisher = context.publisherNodes[0]
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
-        ircPublisher.'buildToChatNotifier'[0].attributes()['class'] == 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
+        ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
+                'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
     }
 
     def 'default notification message is set if not specified'() {
@@ -859,7 +864,8 @@ class PublisherHelperSpec extends Specification {
         context.publisherNodes.size() == 1
         Node ircPublisher = context.publisherNodes[0]
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
-        ircPublisher.'buildToChatNotifier'[0].attributes()['class'] == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+        ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
+                'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
     }
 
     def 'default notification strategy is set if not specified'() {
@@ -901,8 +907,9 @@ class PublisherHelperSpec extends Specification {
     }
 
     private void assertTarget(String targetName, int position, String type, String value) {
-        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].'hudson.plugins.cobertura.targets.CoverageMetric'[0].value() == type
-        assert context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position].'int'[0].value() == value
+        def entry = context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position]
+        assert entry.'hudson.plugins.cobertura.targets.CoverageMetric'[0].value() == type
+        assert entry.'int'[0].value() == value
     }
 
     def 'the closure makes it possible to override all the cobertura flags'() {
@@ -1206,11 +1213,13 @@ class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.postbuildtask.PostbuildTask'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].EscalateStatus[0].value() == false
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].RunIfJobSuccessful[0].value() == false
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].script[0].value() == 'git clean -fdx'
+        with(context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0]) {
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+            EscalateStatus[0].value() == false
+            RunIfJobSuccessful[0].value() == false
+            script[0].value() == 'git clean -fdx'
+        }
     }
 
     def 'call postBuildTask with two tasks'() {
@@ -1223,17 +1232,20 @@ class PublisherHelperSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.postbuildtask.PostbuildTask'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].EscalateStatus[0].value() == false
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].RunIfJobSuccessful[0].value() == false
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0].script[0].value() == 'git clean -fdx'
-
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD FAILED'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].EscalateStatus[0].value() == true
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].RunIfJobSuccessful[0].value() == true
-        context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1].script[0].value() == 'git gc'
+        with(context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0]) {
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD SUCCESSFUL'
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+            EscalateStatus[0].value() == false
+            RunIfJobSuccessful[0].value() == false
+            script[0].value() == 'git clean -fdx'
+        }
+        with(context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[1]) {
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'BUILD FAILED'
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+            EscalateStatus[0].value() == true
+            RunIfJobSuccessful[0].value() == true
+            script[0].value() == 'git gc'
+        }
     }
 
     def 'call aggregate downstream test results with no args'() {
@@ -1588,7 +1600,8 @@ class PublisherHelperSpec extends Specification {
             configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'.size() == 1
             configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0].value().empty
             configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
-            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() == 'key1=value1'
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                    'key1=value1'
         }
     }
 

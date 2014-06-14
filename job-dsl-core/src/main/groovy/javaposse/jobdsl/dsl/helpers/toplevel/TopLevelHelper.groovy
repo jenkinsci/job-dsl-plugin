@@ -139,7 +139,8 @@ class TopLevelHelper extends AbstractHelper {
      <artifactNumToKeep>20</artifactNumToKeep>
      </logRotator>
      */
-    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1, int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
+    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1,
+                   int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
         execute {
             it / logRotator {
                 daysToKeep daysToKeepInt.toString()
@@ -189,8 +190,8 @@ class TopLevelHelper extends AbstractHelper {
     }
 
     /**
-     * Priority of this job.
-     * Requires the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
+     * Priority of this job. Requires the
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
      * Default value is 100.
      *
      * <properties>

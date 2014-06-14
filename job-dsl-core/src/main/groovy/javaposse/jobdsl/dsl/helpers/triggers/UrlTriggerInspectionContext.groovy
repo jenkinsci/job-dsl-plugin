@@ -15,13 +15,16 @@ class UrlTriggerInspectionContext implements Context {
         change('org.jenkinsci.plugins.urltrigger.content.SimpleContentType', null, null, null),
 
         /** JSON content */
-        json('org.jenkinsci.plugins.urltrigger.content.JSONContentType', 'jsonPaths', 'org.jenkinsci.plugins.urltrigger.content.JSONContentEntry', 'jsonPath'),
+        json('org.jenkinsci.plugins.urltrigger.content.JSONContentType', 'jsonPaths',
+                'org.jenkinsci.plugins.urltrigger.content.JSONContentEntry', 'jsonPath'),
 
         /** TEXT content */
-        text('org.jenkinsci.plugins.urltrigger.content.TEXTContentType', 'regExElements', 'org.jenkinsci.plugins.urltrigger.content.TEXTContentEntry', 'regEx'),
+        text('org.jenkinsci.plugins.urltrigger.content.TEXTContentType', 'regExElements',
+                'org.jenkinsci.plugins.urltrigger.content.TEXTContentEntry', 'regEx'),
 
         /** XML content */
-        xml('org.jenkinsci.plugins.urltrigger.content.XMLContentType', 'xPaths', 'org.jenkinsci.plugins.urltrigger.content.XMLContentEntry', 'xPath')
+        xml('org.jenkinsci.plugins.urltrigger.content.XMLContentType', 'xPaths',
+                'org.jenkinsci.plugins.urltrigger.content.XMLContentEntry', 'xPath')
 
         final String node
         final String list

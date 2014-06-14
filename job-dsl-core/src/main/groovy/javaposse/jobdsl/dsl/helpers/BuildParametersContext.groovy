@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
-import com.google.common.base.Preconditions
+import static com.google.common.base.Preconditions.checkNotNull
+import static com.google.common.base.Preconditions.checkArgument
 
 class BuildParametersContext implements Context {
 
@@ -53,14 +54,16 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false, boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null, String description = null) {
-        Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-        Preconditions.checkArgument(parameterName.length() > 0)
-        Preconditions.checkNotNull(scmUrl, 'scmUrl cannot be null')
-        Preconditions.checkArgument(scmUrl.length() > 0)
-        Preconditions.checkNotNull(tagFilterRegex, 'tagFilterRegex cannot be null')
-        Preconditions.checkArgument(tagFilterRegex.length() > 0)
+    def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
+                      boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
+                      String description = null) {
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+        checkNotNull(scmUrl, 'scmUrl cannot be null')
+        checkArgument(scmUrl.length() > 0)
+        checkNotNull(tagFilterRegex, 'tagFilterRegex cannot be null')
+        checkArgument(tagFilterRegex.length() > 0)
 
         Node definitionNode = new Node(null, 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition')
         definitionNode.appendNode('name', parameterName)
@@ -103,11 +106,11 @@ class BuildParametersContext implements Context {
      * @return
      */
     def choiceParam(String parameterName, List<String> options, String description = null) {
-        Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-        Preconditions.checkArgument(parameterName.length() > 0)
-        Preconditions.checkNotNull(options, 'options cannot be null')
-        Preconditions.checkArgument(options.size() > 0, 'at least one option must be specified')
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+        checkNotNull(options, 'options cannot be null')
+        checkArgument(options.size() > 0, 'at least one option must be specified')
 
         def definitionNode = NodeBuilder.newInstance().'hudson.model.ChoiceParameterDefinition' {
             choices(class: 'java.util.Arrays\$ArrayList') {
@@ -142,9 +145,9 @@ class BuildParametersContext implements Context {
      * @return
      */
     def fileParam(String fileLocation, String description = null) {
-        Preconditions.checkArgument(!buildParameterNodes.containsKey(fileLocation), 'parameter $fileLocation already defined')
-        Preconditions.checkNotNull(fileLocation, 'fileLocation cannot be null')
-        Preconditions.checkArgument(fileLocation.length() > 0)
+        checkArgument(!buildParameterNodes.containsKey(fileLocation), 'parameter $fileLocation already defined')
+        checkNotNull(fileLocation, 'fileLocation cannot be null')
+        checkArgument(fileLocation.length() > 0)
 
         Node definitionNode = new Node(null, 'hudson.model.FileParameterDefinition')
         definitionNode.appendNode('name', fileLocation)
@@ -173,11 +176,11 @@ class BuildParametersContext implements Context {
      * @return
      */
     def runParam(String parameterName, String jobToRun, String description = null, String filter = null) {
-        Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-        Preconditions.checkArgument(parameterName.length() > 0)
-        Preconditions.checkNotNull(jobToRun, 'jobToRun cannot be null')
-        Preconditions.checkArgument(jobToRun.length() > 0)
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+        checkNotNull(jobToRun, 'jobToRun cannot be null')
+        checkArgument(jobToRun.length() > 0)
 
         Node definitionNode = new Node(null, 'hudson.model.RunParameterDefinition')
         definitionNode.appendNode('name', parameterName)
@@ -233,9 +236,9 @@ class BuildParametersContext implements Context {
     }
 
     private simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
-        Preconditions.checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        Preconditions.checkNotNull(parameterName, 'parameterName cannot be null')
-        Preconditions.checkArgument(parameterName.length() > 0)
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
 
         Node definitionNode = new Node(null, type)
         definitionNode.appendNode('name', parameterName)

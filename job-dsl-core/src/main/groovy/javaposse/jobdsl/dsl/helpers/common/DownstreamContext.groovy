@@ -17,7 +17,8 @@ class DownstreamContext implements Context {
         trigger(projects, condition, false, downstreamTriggerClosure)
     }
 
-    def trigger(String projects, String condition, boolean triggerWithNoParameters, Closure downstreamTriggerClosure = null) {
+    def trigger(String projects, String condition, boolean triggerWithNoParameters,
+                Closure downstreamTriggerClosure = null) {
         trigger(projects, condition, triggerWithNoParameters, [:], downstreamTriggerClosure)
     }
 
@@ -32,12 +33,13 @@ class DownstreamContext implements Context {
         AbstractContextHelper.executeInContext(downstreamTriggerClosure, downstreamTriggerContext)
 
         // Validate this trigger
-        assert validDownstreamConditionNames.contains(downstreamTriggerContext.condition), "Trigger condition has to be one of these values: ${validDownstreamConditionNames.join(',')}"
+        assert validDownstreamConditionNames.contains(downstreamTriggerContext.condition),
+                "Trigger condition has to be one of these values: ${validDownstreamConditionNames.join(',')}"
 
         triggers << downstreamTriggerContext
     }
 
-    def createDownstreamNode(boolean isStep = false) {
+    Node createDownstreamNode(boolean isStep = false) {
         def nodeBuilder = NodeBuilder.newInstance()
 
         def nodeName
@@ -87,5 +89,7 @@ class DownstreamContext implements Context {
         downstreamNode
     }
 
-    def validDownstreamConditionNames = ['SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED', 'ALWAYS']
+    def validDownstreamConditionNames = [
+            'SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED', 'ALWAYS'
+    ]
 }

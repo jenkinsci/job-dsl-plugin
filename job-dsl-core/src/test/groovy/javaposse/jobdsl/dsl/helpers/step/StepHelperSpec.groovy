@@ -869,7 +869,7 @@ class StepHelperSpec extends Specification {
                 'SBT 0.12.3',
                 'test',
                 '-Dsbt.log.noformat=true',
-                '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M',
+                '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G',
                 'subproject'
         )
 
@@ -879,7 +879,7 @@ class StepHelperSpec extends Specification {
         def sbtStep = context.stepNodes[0]
         sbtStep.name() == 'org.jvnet.hudson.plugins.SbtPluginBuilder'
         sbtStep.name[0].value() == 'SBT 0.12.3'
-        sbtStep.jvmFlags[0].value() == '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M'
+        sbtStep.jvmFlags[0].value() == '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G'
         sbtStep.sbtFlags[0].value() == '-Dsbt.log.noformat=true'
         sbtStep.actions[0].value() == 'test'
         sbtStep.subdirPath[0].value() == 'subproject'
@@ -1116,36 +1116,40 @@ still-another-dsl.groovy'''
         Node stepNode = context.stepNodes[0]
         stepNode.name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
         stepNode.configs[0].children().size() == 2
-        Node first = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
-        first.projects[0].value() == 'Project1, Project2'
-        first.condition[0].value() == 'UNSTABLE_OR_BETTER'
-        first.triggerWithNoParameters[0].value() == 'true'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-        first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
-        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
-        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
-        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
-                'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
-        first.block.size() == 1
-        Node thresholds = first.block[0]
-        thresholds.children().size() == 3
-        Node unstableThreshold = thresholds.unstableThreshold[0]
-        unstableThreshold.name[0].value() == 'UNSTABLE'
-        unstableThreshold.ordinal[0].value() == 1
-        Node failureThreshold = thresholds.failureThreshold[0]
-        failureThreshold.name[0].value() == 'FAILURE'
-        failureThreshold.ordinal[0].value() == 2
-        Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
-        buildStepFailureThreshold.name[0].value() == 'FAILURE'
+        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project1, Project2'
+            condition[0].value() == 'UNSTABLE_OR_BETTER'
+            triggerWithNoParameters[0].value() == 'true'
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
+                    'dir/my.properties'
+            configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                    'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+            configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
+                    'label=="${TARGET}"'
+            configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+            block.size() == 1
+            Node thresholds = block[0]
+            thresholds.children().size() == 3
+            Node unstableThreshold = thresholds.unstableThreshold[0]
+            unstableThreshold.name[0].value() == 'UNSTABLE'
+            unstableThreshold.ordinal[0].value() == 1
+            Node failureThreshold = thresholds.failureThreshold[0]
+            failureThreshold.name[0].value() == 'FAILURE'
+            failureThreshold.ordinal[0].value() == 2
+            Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
+            buildStepFailureThreshold.name[0].value() == 'FAILURE'
+        }
 
-        Node second = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]
-        second.projects[0].value() == 'Project2'
-        second.condition[0].value() == 'SUCCESS'
-        second.triggerWithNoParameters[0].value() == 'false'
-        second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-        second.block.isEmpty()
+        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]) {
+            projects[0].value() == 'Project2'
+            condition[0].value() == 'SUCCESS'
+            triggerWithNoParameters[0].value() == 'false'
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            block.isEmpty()
+        }
 
         when:
         context.downstreamParameterized {
@@ -1154,11 +1158,12 @@ still-another-dsl.groovy'''
         }
 
         then:
-        Node third = context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
-        third.projects[0].value() == 'Project3'
-        third.condition[0].value() == 'SUCCESS'
-        third.triggerWithNoParameters[0].value() == 'false'
-        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        with(context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project3'
+            condition[0].value() == 'SUCCESS'
+            triggerWithNoParameters[0].value() == 'false'
+            configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        }
 
         when:
         context.downstreamParameterized {
@@ -1206,12 +1211,16 @@ still-another-dsl.groovy'''
         childStep.command[0].value() == 'look at me'
 
         where:
-        testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status']
-        testConditionArgs << [['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
+        testCondition << [
+                'stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status'
+        ]
+        testConditionArgs << [
+                ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
                 ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
-                ['worstResult': 'Success', 'bestResult': 'Success']]
+                ['worstResult': 'Success', 'bestResult': 'Success']
+        ]
     }
 
     @Unroll
@@ -1410,11 +1419,11 @@ still-another-dsl.groovy'''
         conditions.children().size() == 2
 
         def containers = conditions.'org.jenkins__ci.plugins.run__condition.logic.ConditionContainer'
-        def fileCondition = containers[0].condition[0]
-        fileCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
-        fileCondition.file[0].value() == 'someFile'
-        fileCondition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
-
+        with(containers[0].condition[0]) {
+            attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
+            file[0].value() == 'someFile'
+            baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
+        }
         containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
 
         where:
@@ -1424,6 +1433,7 @@ still-another-dsl.groovy'''
     }
 
     @Unroll
+    @SuppressWarnings('LineLength')
     def 'Simple Condition #conditionDsl is added correctly'(conditionDsl, args, conditionClass, argNodes) {
         when:
         context.conditionalSteps {

@@ -38,7 +38,8 @@ class WithXmlActionSpec extends Specification {
     def setup() {
         Logger.getLogger('javaposse.jobdsl').setLevel(Level.ALL)
 
-        // Our only choice to allow lower logging is to allow it for everyone since JUL puts the handler in one place and sets a horrible default
+        // Our only choice to allow lower logging is to allow it for everyone since JUL puts the handler in one place
+        // and sets a horrible default
         LogManager.logManager.getLogger('').handlers.each { Handler handler ->
             handler.setLevel(Level.ALL)
         }
@@ -232,7 +233,7 @@ class WithXmlActionSpec extends Specification {
         assert scmNode.browser.size() == 1
         assert scmNode.browser[0].attributes()['class'] == 'hudson.plugins.git.browser.GithubWeb'
         assert scmNode.browser[0].url.size() == 1
-        assert scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin'
+        assert scmNode.browser[0].url[0].value() == 'https://github.com/foo/bar'
     }
 
     def 'Setup git browser node'() {
@@ -244,7 +245,7 @@ class WithXmlActionSpec extends Specification {
             // Overwrite old value
             browserNode.attributes()['class'] = 'hudson.plugins.git.browser.GithubWeb'
 
-            browserNode / url << 'https://github.com/jenkinsci/job-dsl-plugin'
+            browserNode / url << 'https://github.com/foo/bar'
         }
 
         then:
@@ -254,7 +255,7 @@ class WithXmlActionSpec extends Specification {
     def 'configuring nodes with attributes purely nested'() {
         when:
         execute {
-            it / scm / browser(class: 'hudson.plugins.git.browser.GithubWeb') / url('https://github.com/jenkinsci/job-dsl-plugin')
+            it / scm / browser(class: 'hudson.plugins.git.browser.GithubWeb') / url('https://github.com/foo/bar')
         }
 
         then:
@@ -262,7 +263,7 @@ class WithXmlActionSpec extends Specification {
 
         when: // Do it again with the same values, but hopefully the same thing
         execute {
-            it / scm / browser(class: 'hudson.plugins.git.browser.GithubWeb') / url << 'https://github.com/jenkinsci/job-dsl-plugin'
+            it / scm / browser(class: 'hudson.plugins.git.browser.GithubWeb') / url << 'https://github.com/foo/bar'
         }
 
         then:
@@ -270,7 +271,7 @@ class WithXmlActionSpec extends Specification {
 
         when: // Do it again with different values, but hopefully the same thing
         execute {
-            it / scm / browser(class: 'hudson.plugins.git.browser.GitoriusWeb') / url << 'https://github.com/javaposse/job-dsl-plugin'
+            it / scm / browser(class: 'hudson.plugins.git.browser.GitoriusWeb') / url << 'https://github.com/foo/baz'
         }
 
         then:
@@ -278,10 +279,10 @@ class WithXmlActionSpec extends Specification {
         assert scmNode.browser.size() == 2
         assert scmNode.browser[0].attributes()['class'] == 'hudson.plugins.git.browser.GithubWeb'
         assert scmNode.browser[0].url.size() == 1
-        assert scmNode.browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin'
+        assert scmNode.browser[0].url[0].value() == 'https://github.com/foo/bar'
         assert scmNode.browser[1].attributes()['class'] == 'hudson.plugins.git.browser.GitoriusWeb'
         assert scmNode.browser[1].url.size() == 1
-        assert scmNode.browser[1].url[0].value() == 'https://github.com/javaposse/job-dsl-plugin'
+        assert scmNode.browser[1].url[0].value() == 'https://github.com/foo/baz'
 
     }
 }

@@ -1,8 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
 import groovy.transform.PackageScope
 import javaposse.jobdsl.dsl.helpers.Context
+
+import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Preconditions.checkNotNull
 
 class CoberturaContext implements Context {
 
@@ -232,12 +234,11 @@ class CoberturaContext implements Context {
      */
     @PackageScope
     void target(String targetType, Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
-        Preconditions.checkArgument(
-            TargetType.values().any { it.toString() == targetType }, "Invalid target type: $targetType " +
-            'Available target types: ' + TargetType.values())
-        Preconditions.checkArgument((0..100).contains(healthy), 'Invalid healthyTarget treshold, percentage (0-100) expected')
-        Preconditions.checkArgument((0..100).contains(unhealthy), 'Invalid unhealthyTarget treshold, percentage (0-100) expected')
-        Preconditions.checkArgument((0..100).contains(failing), 'Invalid failingTarget treshold, percentage (0-100) expected')
+        checkArgument(TargetType.values().any { it.toString() == targetType },
+                "Invalid target type: $targetType, available target types: ${TargetType.values()}")
+        checkArgument((0..100).contains(healthy), 'Invalid healthyTarget treshold, percentage (0-100) expected')
+        checkArgument((0..100).contains(unhealthy), 'Invalid unhealthyTarget treshold, percentage (0-100) expected')
+        checkArgument((0..100).contains(failing), 'Invalid failingTarget treshold, percentage (0-100) expected')
         this.targets.put(targetType, new CoberturaTarget(
             targetType: targetType,
             healthyTarget: healthy * 100000,
@@ -255,7 +256,7 @@ class CoberturaContext implements Context {
      * @param sourceEncoding
      */
     void sourceEncoding(String sourceEncoding) {
-        Preconditions.checkNotNull(sourceEncoding, 'Source encoding must not be null!')
+        checkNotNull(sourceEncoding, 'Source encoding must not be null!')
         this.sourceEncoding = sourceEncoding
     }
 

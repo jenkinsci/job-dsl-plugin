@@ -10,8 +10,8 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
  * The class {@link javaposse.jobdsl.dsl.helpers.publisher.PublisherContext} uses this class
  * as a delegate to make the corresponding methods appear as methods of the <code>publishers</code> Closure.
  *
- * Every Publisher has the following common set of xml, which is not added to the corresponding xml struckture in the javadoc
- * of the method:
+ * Every Publisher has the following common set of xml, which is not added to the corresponding xml structure in the
+ * javadoc of the method:
  * <pre>
  * {@code
  * <healthy></healthy>
@@ -180,7 +180,8 @@ class StaticAnalysisPublisherContext {
      * }
      * </pre>
      */
-    def tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false, Closure staticAnalysisClosure = null) {
+    def tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false,
+              Closure staticAnalysisClosure = null) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         AbstractContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
