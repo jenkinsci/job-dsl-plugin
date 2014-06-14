@@ -5,10 +5,10 @@ import spock.lang.Ignore
 import spock.lang.Specification
 
 class DslScriptLoaderTest extends Specification {
-    def resourcesDir = getClass().getResource('/simple.dsl')
-    ByteArrayOutputStream baos = new ByteArrayOutputStream()
-    PrintStream ps = new PrintStream(baos)
-    JobManagement jm = new FileJobManagement(new File(resourcesDir.toURI()), null, ps)
+    private final resourcesDir = getClass().getResource('/simple.dsl')
+    private final ByteArrayOutputStream baos = new ByteArrayOutputStream()
+    private final PrintStream ps = new PrintStream(baos)
+    private final JobManagement jm = new FileJobManagement(new File(resourcesDir.toURI()), null, ps)
 
     @Ignore
     def getContent() {
@@ -178,7 +178,7 @@ def jobA = job {
 queue jobA
 queue 'JobB'
 '''
-        jm = new StringJobManagement()
+        JobManagement jm = new StringJobManagement()
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:

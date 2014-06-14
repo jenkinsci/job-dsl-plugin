@@ -48,7 +48,7 @@ class DslSampleTest extends Specification {
         firstJob != null
     }
 
-    def sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    private final sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description>Description</description>
@@ -129,7 +129,7 @@ class DslSampleTest extends Specification {
 </project>
 '''
 
-    def sampleMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    private final sampleMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -182,7 +182,7 @@ class DslSampleTest extends Specification {
 </maven2-moduleset>
 '''
 
-    def sampleVarDsl = '''
+    private final sampleVarDsl = '''
 job {
     name "PROJ-${REPO}"
     scm {
@@ -197,7 +197,7 @@ job {
 }
 '''
 
-    def sampleDsl = '''
+    private final sampleDsl = '''
 def gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
 
 job {
@@ -288,7 +288,7 @@ job(type: Maven) {
 }
 '''
 
-    final mavenXml = '''
+    private final mavenXml = '''
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -341,7 +341,7 @@ job(type: Maven) {
 </maven2-moduleset>
 '''
 
-    final mavenXmlWithTemplate = '''
+    private final mavenXmlWithTemplate = '''
 <maven2-moduleset>
     <actions/>
     <description></description>

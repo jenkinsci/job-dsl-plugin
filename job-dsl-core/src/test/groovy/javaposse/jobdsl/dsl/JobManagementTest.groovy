@@ -75,7 +75,7 @@ class JobManagementTest extends Specification {
         thrown(ConfigurationMissingException)
     }
 
-def minimalXml = '''
+    private final minimalXml = '''
 <project>
   <actions/>
   <description/>
