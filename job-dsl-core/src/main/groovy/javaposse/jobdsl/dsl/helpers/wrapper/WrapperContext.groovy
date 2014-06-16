@@ -532,4 +532,28 @@ class WrapperContext implements Context {
             template nameTemplate
         }
     }
+
+    /**
+     * <com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
+     *     <keychainCertificatePairs>
+     *         <com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
+     *             <keychain></keychain>
+     *             <codeSigningIdentity></codeSigningIdentity>
+     *             <varPrefix></varPrefix>
+     *         </com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
+     *     </keychainCertificatePairs>
+     *     <deleteKeychainsAfterBuild>false</deleteKeychainsAfterBuild>
+     *     <overwriteExistingKeychains>false</overwriteExistingKeychains>
+     * </com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
+     */
+    def keychains(Closure keychainsClosure) {
+        KeychainsContext keychainsContext = new KeychainsContext()
+        AbstractContextHelper.executeInContext(keychainsClosure, keychainsContext)
+
+        wrapperNodes << new NodeBuilder().'com.sic.plugins.kpp.KPPKeychainsBuildWrapper' {
+            keychainCertificatePairs keychainsContext.keychains
+            deleteKeychainsAfterBuild keychainsContext.delete
+            overwriteExistingKeychains keychainsContext.overwrite
+        }
+    }
 }

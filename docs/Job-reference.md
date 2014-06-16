@@ -1139,6 +1139,42 @@ job {
 
 (since 1.24)
 
+## Keychains
+
+```groovy
+job {
+    wrappers {
+        keychains {
+            keychain(String keychain, String identity, String prefix = '')
+            delete(boolean delete = true)
+            overwrite(boolean overwrite = true)
+        }
+    }
+}
+```
+
+Configures keychains for the build. Requires the [Keychains and Provisioning Profiles
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Keychains+and+Provisioning+Profiles+Plugin).
+
+`keychain` can be used multiple times to add more keychains. With a single keychain, the prefix is optional. When using
+multiple keychains, a prefix to differentiate between them.
+
+Example:
+
+```groovy
+job {
+    wrappers {
+        keychains {
+            keychain('test1', 'test2')
+            delete()
+            overwrite()
+        }
+    }
+}
+```
+
+(since 1.24)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
