@@ -116,7 +116,7 @@ class SvnContext implements Context {
      * determining if a build needs to be triggered.
      * @param users Users to ignore when triggering builds
      */
-    def excludedUsers(Iterable<String> users) {
+    def excludedUsers(String... users) {
         users.each {
             excludedUser(it)
         }
@@ -142,7 +142,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param patterns RegEx
      */
-    def excludedCommitMsgs(Iterable<String> patterns) {
+    def excludedCommitMsgs(String... patterns) {
         patterns.each {
             excludedCommitMsg(it)
         }

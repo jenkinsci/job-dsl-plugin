@@ -273,7 +273,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded users'
         context.svn {
             location 'url'
-            excludedUsers (['user1','user2'])
+            excludedUsers 'user1','user2'
         }
 
         then: 'the excludedUsers node should contain the specified users separated by a newline'
@@ -285,7 +285,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded user and a list of excluded users'
         context.svn {
             location 'url'
-            excludedUsers (['user1','user2'])
+            excludedUsers 'user1','user2'
             excludedUser 'user3'
         }
 
@@ -334,7 +334,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded commit messages'
         context.svn {
             location 'url'
-            excludedCommitMsgs (['commit1','commit2'])
+            excludedCommitMsgs 'commit1','commit2'
         }
 
         then: 'the excludedCommitMessages node should contain the specified commits separated by a newline'
@@ -346,7 +346,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded commit message and a list of excluded commit messages'
         context.svn {
             location 'url'
-            excludedCommitMsgs (['commit1','commit2'])
+            excludedCommitMsgs 'commit1','commit2'
             excludedCommitMsg 'commit3'
         }
 
