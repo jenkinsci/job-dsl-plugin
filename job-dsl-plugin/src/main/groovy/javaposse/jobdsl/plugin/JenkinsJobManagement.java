@@ -56,6 +56,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -423,7 +424,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
-        SortedMap<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
+        Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
         if (candidates.isEmpty()) {
             LOGGER.fine(
                     "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
@@ -438,8 +439,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
 
         try {
-            ContextExtensionPoint extensionPoint = candidates.firstKey();
-            Method method = candidates.get(extensionPoint);
+            Map.Entry<ContextExtensionPoint, Method> candidate = candidates.entrySet().iterator().next();
+            ContextExtensionPoint extensionPoint = candidate.getKey();
+            Method method = candidate.getValue();
             Object result = method.invoke(extensionPoint, args);
 
             String xml;
@@ -460,19 +462,21 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    private static SortedMap<ContextExtensionPoint, Method> findExtensionPoints(String name,
-                                                                                      Class<? extends ExtensibleContext> contextType,
-                                                                                      Object... args) {
+    private static Map<ContextExtensionPoint, Method> findExtensionPoints(String name,
+                                                                          Class<? extends ExtensibleContext> contextType,
+                                                                          Object... args) {
         Jenkins jenkins = Jenkins.getInstance();
         Class[] parameterTypes = getParameterTypes(args);
-        SortedMap<ContextExtensionPoint, Method> candidates = new TreeMap<ContextExtensionPoint, Method>();
+        Map<ContextExtensionPoint, Method> candidates = new HashMap<ContextExtensionPoint, Method>();
 
         // Find extensions that match any @DslMethod annotated method with the given name and parameters
         for (ContextExtensionPoint extensionPoint : jenkins.getExtensionList(ContextExtensionPoint.class)) {
             Method candidateMethod = getMatchingAccessibleMethod(extensionPoint.getClass(), name, parameterTypes);
-            DslMethod annotation = candidateMethod.getAnnotation(DslMethod.class);
-            if (annotation != null && annotation.context().isAssignableFrom(contextType)) {
-                candidates.put(extensionPoint, candidateMethod);
+            if (candidateMethod != null) {
+                DslMethod annotation = candidateMethod.getAnnotation(DslMethod.class);
+                if (annotation != null && annotation.context().isAssignableFrom(contextType)) {
+                    candidates.put(extensionPoint, candidateMethod);
+                }
             }
         }
 

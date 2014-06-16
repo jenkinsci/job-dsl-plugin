@@ -15,6 +15,8 @@ import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.NameNotProvidedException
+import javaposse.jobdsl.dsl.helpers.PropertiesContext
+import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
@@ -338,5 +340,55 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         Exception e = thrown(IllegalStateException)
         e.message.contains(fileName)
+    }
+
+    def 'callExtension not found'() {
+        when:
+        Node result = jobManagement.callExtension('foo', PropertiesContext)
+
+        then:
+        result == null
+    }
+
+    def 'callExtension with string result'() {
+        when:
+        Node result = jobManagement.callExtension('test', PropertiesContext)
+
+        then:
+        result.name() == 'testNode'
+        result.children().size() == 0
+    }
+
+    def 'callExtension defined twice'() {
+        when:
+        jobManagement.callExtension('twice', PropertiesContext)
+
+        then:
+        Exception e = thrown(ExtensionPointException)
+        e.message.contains(TestContextExtensionPoint.name)
+        e.message.contains(TestContextExtensionPoint2.name)
+    }
+
+    def 'callExtension with object result'() {
+        when:
+        Node result = jobManagement.callExtension('testComplexObject', PropertiesContext, 'foo', 42, true)
+
+        then:
+        isXmlIdentical('/extension.xml', result)
+    }
+
+    private static boolean isXmlIdentical(String expected, Node actual) throws Exception {
+        XMLUnit.ignoreWhitespace = true
+
+        Reader expectedXml = new InputStreamReader(getClass().getResourceAsStream(expected))
+        String actualXml = nodeToString(actual)
+
+        XMLUnit.compareXML(expectedXml, actualXml).identical()
+    }
+
+    private static String nodeToString(Node node) {
+        StringWriter writer = new StringWriter()
+        new XmlNodePrinter(new PrintWriter(writer)).print(node)
+        writer.toString()
     }
 }
