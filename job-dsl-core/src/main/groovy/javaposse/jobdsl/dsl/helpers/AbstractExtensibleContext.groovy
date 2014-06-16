@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers
 
-import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.dsl.JobManagement
 
 abstract class AbstractExtensibleContext implements ExtensibleContext {
     JobManagement jobManagement
 
-    AbstractExtensibleContext(JobManagement jobManagement) {
+    protected AbstractExtensibleContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
     }
 
