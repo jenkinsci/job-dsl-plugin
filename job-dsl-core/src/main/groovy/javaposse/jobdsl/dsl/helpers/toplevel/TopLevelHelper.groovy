@@ -6,6 +6,8 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
 
+import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+
 class TopLevelHelper extends AbstractHelper {
 
     TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
@@ -328,6 +330,34 @@ class TopLevelHelper extends AbstractHelper {
     def concurrentBuild(boolean allowConcurrentBuild = true) {
         execute {
             it / concurrentBuild(allowConcurrentBuild ? 'true' : 'false')
+        }
+    }
+
+    /**
+     * Configures the Notification Plugin
+     *
+     * <properties>
+     *     <com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
+     *         <endpoints>
+     *             <com.tikal.hudson.plugins.notification.Endpoint>
+     *                 <protocol>HTTP</protocol>
+     *                 <format>JSON</format>
+     *                 <url />
+     *                 <event>all</event>
+     *                 <timeout>30000</timeout>
+     *             </com.tikal.hudson.plugins.notification.Endpoint>
+     *         </endpoints>
+     *     </com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
+     * </properties>
+     */
+    def notification(Closure notificationClosure) {
+        NotificationContext notificationContext = new NotificationContext()
+        executeInContext(notificationClosure, notificationContext)
+
+        execute {
+            it / 'properties' / 'com.tikal.hudson.plugins.notification.HudsonNotificationProperty' {
+                endpoints notificationContext.endpoints
+            }
         }
     }
 

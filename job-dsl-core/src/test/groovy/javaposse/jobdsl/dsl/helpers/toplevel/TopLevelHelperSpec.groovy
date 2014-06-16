@@ -502,4 +502,103 @@ class TopLevelHelperSpec extends Specification {
             taskName[0].value() == 'integration-tests'
         }
     }
+
+    def 'set notification with default properties'() {
+        when:
+        def action = helper.notification {
+            endpoint("http://endpoint.com")
+        }
+
+        action.execute(root)
+
+        then:
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+    }
+
+    def 'set notification with all required properties'() {
+        when:
+        def action = helper.notification {
+            endpoint("http://endpoint.com", "TCP", "XML")
+        }
+
+        action.execute(root)
+
+        then:
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'TCP'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'XML'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+    }
+
+    def 'set notification with default properties and using a closure'() {
+        when:
+        def action = helper.notification {
+            endpoint("http://endpoint.com") {
+                event("started")
+                timeout(10000)
+            }
+        }
+
+        action.execute(root)
+
+        then:
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'started'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
+    }
+
+    def 'set notification with all required properties and using a closure'() {
+        when:
+        def action = helper.notification {
+            endpoint("http://endpoint.com", "TCP", "XML") {
+                event("started")
+                timeout(10000)
+            }
+        }
+
+        action.execute(root)
+
+        then:
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'TCP'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'XML'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'started'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
+    }
+
+    def 'set notification with multiple endpoints'() {
+        when:
+        def action = helper.notification {
+            endpoint("http://endpoint1.com")
+            endpoint("http://endpoint2.com")
+        }
+
+        action.execute(root)
+
+        then:
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 2
+
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint1.com'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].url[0].text() == 'http://endpoint2.com'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].protocol[0].text() == 'HTTP'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].format[0].text() == 'JSON'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].event[0].text() == 'all'
+        root.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty'.endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].timeout[0].value() == 30000
+    }
 }
