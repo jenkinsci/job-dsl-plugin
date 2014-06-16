@@ -621,4 +621,68 @@ class WrapperHelperSpec extends Specification {
         then:
         thrown(NullPointerException)
     }
+
+    def 'call codeSigning with no args'() {
+        when:
+        helper.wrappers {
+            codeSigning ()
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'call codeSigning with minimal args'() {
+        when:
+        helper.wrappers {
+            codeSigning {
+                certPair('some_keychain', 'some_identity')
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'com.sic.plugins.kpp.KPPKeychainsBuildWrapper'
+            def certPair = keychainCertificatePairs[0].'com.sic.plugins.kpp.model.KPPKeychainCertificatePair'[0]
+            certPair.keychain[0].value()            == 'some_keychain'
+            certPair.codeSigningIdentity[0].value() == 'some_identity'
+            certPair.varPrefix[0].value()           == ''
+            deleteKeychainsAfterBuild[0].value()    == 'false'
+            overwriteExistingKeychains[0].value()   == 'false'
+        }
+    }
+
+    def 'call codeSigning with all args'() {
+        when:
+        helper.wrappers {
+            codeSigning {
+                certPair('some_keychain', 'some_identity', 'some_prefix')
+                certPair('some_keychain_again', 'some_identity_again', 'some_prefix_again')
+                delete()
+                overwrite()
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].children().size() == 1
+        with(root.buildWrappers[0].children()[0]) {
+            name() == 'com.sic.plugins.kpp.KPPKeychainsBuildWrapper'
+
+            def certPair0 = keychainCertificatePairs[0].'com.sic.plugins.kpp.model.KPPKeychainCertificatePair'[0]
+            certPair0.keychain[0].value()            == 'some_keychain'
+            certPair0.codeSigningIdentity[0].value() == 'some_identity'
+            certPair0.varPrefix[0].value()           == 'some_prefix'
+
+            def certPair1 = keychainCertificatePairs[0].'com.sic.plugins.kpp.model.KPPKeychainCertificatePair'[1]
+            certPair1.keychain[0].value()            == 'some_keychain_again'
+            certPair1.codeSigningIdentity[0].value() == 'some_identity_again'
+            certPair1.varPrefix[0].value()           == 'some_prefix_again'
+
+            deleteKeychainsAfterBuild[0].value()     == 'true'
+            overwriteExistingKeychains[0].value()    == 'true'
+        }
+    }
 }

@@ -1139,6 +1139,27 @@ job {
 
 (since 1.24)
 
+## Keychains and code signing
+
+Configures keychains and code signing section in the build env
+
+Example:
+```groovy
+job {
+    wrappers {
+        codeSigning {
+            certPair(String keychain, String identity, String prefix)
+            boolean delete
+            boolean overwrite
+        }
+    }
+}
+```
+
+With a single certPair, prefix is optional. Can take multiple certPairs but you will need to add a prefix to differenciate between them.
+
+(since 1.24)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.

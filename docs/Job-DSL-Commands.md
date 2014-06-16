@@ -124,6 +124,7 @@ job(attributes) {
         logSizeChecker(closure) // since 1.23, see [Job Reference]] for details
         injectPasswords() // since 1.23
         buildName(nameTemplate) // since 1.24
+        codeSigning(closure) // since 1.24, see [[Job Reference]] for details
     }
     steps {
         shell(String commandStr)

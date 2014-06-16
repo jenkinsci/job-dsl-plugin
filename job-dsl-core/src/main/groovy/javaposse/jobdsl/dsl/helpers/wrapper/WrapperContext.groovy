@@ -532,4 +532,40 @@ class WrapperContext implements Context {
             template nameTemplate
         }
     }
+
+    /**
+    * <com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
+    *   <keychainCertificatePairs>
+    *     <com.sic.plugins.kpp.model.KPPKeychainCertificatePair>        // One or more
+    *       <keychain></keychain>
+    *       <codeSigningIdentity></codeSigningIdentity>
+    *       <varPrefix></varPrefix>
+    *     </com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
+    *   </keychainCertificatePairs>
+    *   <deleteKeychainsAfterBuild>false</deleteKeychainsAfterBuild>
+    *   <overwriteExistingKeychains>false</overwriteExistingKeychains>
+    * </com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
+    */
+    def codeSigning(Closure codeSigningClosure) {
+        CodeSigningContext codeSigningContext = new CodeSigningContext()
+        AbstractContextHelper.executeInContext(codeSigningClosure, codeSigningContext)
+
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        Node codeSigningNode = nodeBuilder.'com.sic.plugins.kpp.KPPKeychainsBuildWrapper' {
+            keychainCertificatePairs {
+                codeSigningClosure.certPairs.each { CodeSigningContext.CertPair certPair ->
+                    'com.sic.plugins.kpp.model.KPPKeychainCertificatePair' {
+                        keychain certPair.keychain
+                        codeSigningIdentity certPair.identity
+                        varPrefix certPair.prefix
+                    }
+                }
+            }
+            deleteKeychainsAfterBuild codeSigningClosure.delete ? 'true' : 'false'
+            overwriteExistingKeychains codeSigningClosure.overwrite ? 'true' : 'false'
+        }
+
+        wrapperNodes << codeSigningNode
+    }
 }
