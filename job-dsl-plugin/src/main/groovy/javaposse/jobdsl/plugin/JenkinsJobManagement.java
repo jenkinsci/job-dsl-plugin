@@ -136,6 +136,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.log(Level.WARNING, String.format("Error writing config for new view %s.", viewName), e);
         }
     }

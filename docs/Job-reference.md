@@ -1139,24 +1139,39 @@ job {
 
 (since 1.24)
 
-## Keychains and code signing
+## Keychains
 
-Configures keychains and code signing section in the build env
-
-Example:
 ```groovy
 job {
     wrappers {
-        codeSigning {
-            certPair(String keychain, String identity, String prefix)
-            boolean delete
-            boolean overwrite
+        keychains {
+            keychain(String keychain, String identity, String prefix = '')
+            delete(boolean delete = true)
+            overwrite(boolean overwrite = true)
         }
     }
 }
 ```
 
-With a single certPair, prefix is optional. Can take multiple certPairs but you will need to add a prefix to differenciate between them.
+Configures keychains for the build. Requires the [Keychains and Provisioning Profiles
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Keychains+and+Provisioning+Profiles+Plugin).
+
+`keychain` can be used multiple times to add more keychains. With a single keychain, the prefix is optional. When using
+multiple keychains, a prefix to differentiate between them.
+
+Example:
+
+```groovy
+job {
+    wrappers {
+        keychains {
+            keychain('test1', 'test2')
+            delete()
+            overwrite()
+        }
+    }
+}
+```
 
 (since 1.24)
 

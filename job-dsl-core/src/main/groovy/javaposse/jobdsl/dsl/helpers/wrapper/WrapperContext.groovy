@@ -534,38 +534,26 @@ class WrapperContext implements Context {
     }
 
     /**
-    * <com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
-    *   <keychainCertificatePairs>
-    *     <com.sic.plugins.kpp.model.KPPKeychainCertificatePair>        // One or more
-    *       <keychain></keychain>
-    *       <codeSigningIdentity></codeSigningIdentity>
-    *       <varPrefix></varPrefix>
-    *     </com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
-    *   </keychainCertificatePairs>
-    *   <deleteKeychainsAfterBuild>false</deleteKeychainsAfterBuild>
-    *   <overwriteExistingKeychains>false</overwriteExistingKeychains>
-    * </com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
-    */
-    def codeSigning(Closure codeSigningClosure) {
-        CodeSigningContext codeSigningContext = new CodeSigningContext()
-        AbstractContextHelper.executeInContext(codeSigningClosure, codeSigningContext)
+     * <com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
+     *     <keychainCertificatePairs>
+     *         <com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
+     *             <keychain></keychain>
+     *             <codeSigningIdentity></codeSigningIdentity>
+     *             <varPrefix></varPrefix>
+     *         </com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
+     *     </keychainCertificatePairs>
+     *     <deleteKeychainsAfterBuild>false</deleteKeychainsAfterBuild>
+     *     <overwriteExistingKeychains>false</overwriteExistingKeychains>
+     * </com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
+     */
+    def keychains(Closure keychainsClosure) {
+        KeychainsContext keychainsContext = new KeychainsContext()
+        AbstractContextHelper.executeInContext(keychainsClosure, keychainsContext)
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        Node codeSigningNode = nodeBuilder.'com.sic.plugins.kpp.KPPKeychainsBuildWrapper' {
-            keychainCertificatePairs {
-                codeSigningClosure.certPairs.each { CodeSigningContext.CertPair certPair ->
-                    'com.sic.plugins.kpp.model.KPPKeychainCertificatePair' {
-                        keychain certPair.keychain
-                        codeSigningIdentity certPair.identity
-                        varPrefix certPair.prefix
-                    }
-                }
-            }
-            deleteKeychainsAfterBuild codeSigningClosure.delete ? 'true' : 'false'
-            overwriteExistingKeychains codeSigningClosure.overwrite ? 'true' : 'false'
+        wrapperNodes << new NodeBuilder().'com.sic.plugins.kpp.KPPKeychainsBuildWrapper' {
+            keychainCertificatePairs keychainsContext.keychains
+            deleteKeychainsAfterBuild keychainsContext.delete
+            overwriteExistingKeychains keychainsContext.overwrite
         }
-
-        wrapperNodes << codeSigningNode
     }
 }
