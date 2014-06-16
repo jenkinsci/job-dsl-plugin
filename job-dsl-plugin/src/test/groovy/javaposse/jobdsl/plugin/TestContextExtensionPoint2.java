@@ -5,21 +5,17 @@ import hudson.model.Item;
 import javaposse.jobdsl.dsl.helpers.PropertiesContext;
 
 @Extension
-public class TestPoint extends ContextExtensionPoint {
+public class TestContextExtensionPoint2 extends ContextExtensionPoint {
     @DslMethod(context = PropertiesContext.class)
-    public Object xxx(Runnable closure) {
-        return "<hudson.plugins.timestamper.TimestamperBuildWrapper/>";
+    public Object twice() {
+        return "error";
     }
 
     @Override
     public void notifyItemCreated(Item item) {
-        System.out.println(item);
-        System.out.println(getContext());
     }
 
     @Override
     public void notifyItemUpdated(Item item) {
-        System.out.println(item);
-        System.out.println(getContext());
     }
 }
