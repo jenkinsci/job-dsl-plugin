@@ -17,7 +17,7 @@ class ViewSpec extends Specification {
 
     def 'description'() {
         setup:
-        view.template >> "<View/>"
+        view.template >> '<View/>'
 
         when:
         view.description('test view')
@@ -30,7 +30,7 @@ class ViewSpec extends Specification {
 
     def 'filterBuildQueue'() {
         setup:
-        view.template >> "<View/>"
+        view.template >> '<View/>'
 
         when:
         view.filterBuildQueue(true)
@@ -43,7 +43,7 @@ class ViewSpec extends Specification {
 
     def 'filterBuildQueue without argument'() {
         setup:
-        view.template >> "<View/>"
+        view.template >> '<View/>'
 
         when:
         view.filterBuildQueue()
@@ -56,7 +56,7 @@ class ViewSpec extends Specification {
 
     def 'filterExecutors'() {
         setup:
-        view.template >> "<View/>"
+        view.template >> '<View/>'
 
         when:
         view.filterExecutors(true)
@@ -69,7 +69,7 @@ class ViewSpec extends Specification {
 
     def 'filterExecutors without argument'() {
         setup:
-        view.template >> "<View/>"
+        view.template >> '<View/>'
 
         when:
         view.filterExecutors()
@@ -82,7 +82,7 @@ class ViewSpec extends Specification {
 
     def 'configure'() {
         setup:
-        view.template >> "<View/>"
+        view.template >> '<View/>'
 
         when:
         view.configure {
@@ -97,12 +97,12 @@ class ViewSpec extends Specification {
 
     def 'xml'() {
         setup:
-        view.template >> "<View/>"
+        view.template >> '<View/>'
 
         when:
         String xml = view.xml
 
         then:
-        compareXML("<View/>", xml).similar()
+        compareXML('<View/>', xml).similar()
     }
 }

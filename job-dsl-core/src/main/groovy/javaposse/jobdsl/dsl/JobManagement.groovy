@@ -24,7 +24,8 @@ interface JobManagement {
      * @throws NameNotProvidedException if the jobName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException
+    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+            throws NameNotProvidedException, ConfigurationMissingException
 
     /**
      * Creates or updates the view config for the named Jenkins view with the config provided.
@@ -34,7 +35,8 @@ interface JobManagement {
      * @throws NameNotProvidedException if the viewName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
      */
-    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting)
+            throws NameNotProvidedException, ConfigurationMissingException
 
     /**
      * Queue a job to run. Useful for running jobs after they've been created.
@@ -42,6 +44,7 @@ interface JobManagement {
     void queueJob(String jobName) throws NameNotProvidedException
 
     InputStream streamFileInWorkspace(String filePath) throws IOException
+
     String readFileInWorkspace(String filePath) throws IOException
 
     /**
@@ -53,7 +56,7 @@ interface JobManagement {
     /**
      * Map if variables that should be available to the script.
      */
-    Map<String,String> getParameters()
+    Map<String, String> getParameters()
 
     /**
      * Returns the id of a Credentials object.

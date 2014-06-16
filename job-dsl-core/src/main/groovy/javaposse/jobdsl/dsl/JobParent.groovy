@@ -39,7 +39,7 @@ abstract class JobParent extends Script {
         referencedJobs << job
 
         // This job can have .configure { } called on
-        return job
+        job
     }
 
     View view(Map<String, Object> arguments=[:], Closure closure) {
@@ -49,14 +49,14 @@ abstract class JobParent extends Script {
         referencedViews << view
 
         // This view can have .configure { } called on
-        return view
+        view
     }
 
     Folder folder(Closure closure) {
         Folder folder = new Folder()
         folder.with(closure)
         referencedJobs << folder
-        return folder
+        folder
     }
 
     /**
@@ -80,11 +80,11 @@ abstract class JobParent extends Script {
 
     InputStream streamFileFromWorkspace(String filePath) throws IOException {
         Preconditions.checkArgument(filePath as Boolean)
-        return jm.streamFileInWorkspace(filePath)
+        jm.streamFileInWorkspace(filePath)
     }
 
     String readFileFromWorkspace(String filePath) throws IOException {
         Preconditions.checkArgument(filePath as Boolean)
-        return jm.readFileInWorkspace(filePath)
+        jm.readFileInWorkspace(filePath)
     }
 }

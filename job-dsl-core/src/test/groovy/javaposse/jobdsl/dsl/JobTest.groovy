@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobTest extends Specification {
-    def resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
+    private final resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
 
     def setup() {
         XMLUnit.setIgnoreWhitespace(true)
@@ -71,11 +71,10 @@ class JobTest extends Specification {
         Job job = new Job(jm)
 
         when:
-        job.using("config")
+        job.using('config')
         String project = job.xml
 
         then:
-        // assertXpathExists('/description', project) // java.lang.NoSuchMethodError: org.apache.xpath.XPathContext
         project.contains('<description>Description</description>')
     }
 
@@ -127,19 +126,13 @@ class JobTest extends Specification {
 
         then:
         !job.withXmlActions.empty
-
-        when:
-        job.configure("Not a closure")
-
-        then:
-        thrown(MissingMethodException)
     }
 
     class JobParentConcrete extends JobParent {
 
         @Override
         Object run() {
-            return null // Used in tests
+            null // Used in tests
         }
     }
 
@@ -246,7 +239,7 @@ class JobTest extends Specification {
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + buildFlowXml, xml
     }
 
-    final minimalXml = '''
+    private final minimalXml = '''
 <project>
   <actions/>
   <description/>
@@ -255,7 +248,7 @@ class JobTest extends Specification {
 </project>
 '''
 
-    final mavenXml = '''
+    private final mavenXml = '''
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -282,7 +275,7 @@ class JobTest extends Specification {
 </maven2-moduleset>
 '''
 
-    final buildFlowXml = '''
+    private final buildFlowXml = '''
 <com.cloudbees.plugins.flow.BuildFlow>
   <actions/>
   <description></description>

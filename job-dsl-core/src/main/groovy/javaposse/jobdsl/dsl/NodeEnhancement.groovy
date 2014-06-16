@@ -5,7 +5,8 @@ import java.util.logging.Logger
 /**
  * Add div and leftShift operators to Node.
  * * div - Will return the first child that matches name, and if it doesn't exists, it creates
- * * leftShift - Take node (or configure block to create) and appends as child, as opposed to plus which appends as a peer
+ * * leftShift - Take node (or configure block to create) and appends as child, as opposed to plus which appends as a
+ *               peer
  */
 @Category(Node)
 class NodeEnhancement {
@@ -15,7 +16,8 @@ class NodeEnhancement {
         LOGGER.fine("Looking for child node ${orphan}")
         def childName = orphan.name()
         def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
-            child instanceof Node && child.name() == childName && child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
+            child instanceof Node && child.name() == childName &&
+                    child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
         }
         if (children.size() == 0) {
             LOGGER.fine("Creating node for ${childName}")
@@ -58,8 +60,8 @@ class NodeEnhancement {
 
     private static List<Node> buildChildren(c) {
         NodeBuilder b = new NodeBuilder()
-        Node newNode = (Node) b.invokeMethod("dummyNode", c)
-        return newNode.children()
+        Node newNode = (Node) b.invokeMethod('dummyNode', c)
+        newNode.children()
     }
 
     Node leftShift(boolean boolValue) {
@@ -69,13 +71,13 @@ class NodeEnhancement {
     Node leftShift(String appendChildName) {
         LOGGER.fine("Setting value of ${appendChildName} for ${this.name()}")
         this.setValue(appendChildName)
-        return this
+        this
     }
 
     Node leftShift(Node child) {
         LOGGER.fine("Appending node ${child} to ${this}")
         this.append(child)
-        return this
+        this
     }
 
     Node leftShift(Closure configureBlock) {
@@ -83,6 +85,6 @@ class NodeEnhancement {
         configureBlock.resolveStrategy = Closure.DELEGATE_FIRST
         List<Node> newChildren = buildChildren(configureBlock)
         newChildren.each { this.append(it) }
-        return this
+        this
     }
 }

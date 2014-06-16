@@ -10,7 +10,7 @@ class ListView extends View {
     private final Set<String> jobNames = []
 
     void statusFilter(StatusFilter filter) {
-        checkNotNull(filter, "filter must not be null")
+        checkNotNull(filter, 'filter must not be null')
 
         execute {
             if (filter == StatusFilter.ALL) {
@@ -53,7 +53,7 @@ class ListView extends View {
 
     @Override
     protected String getTemplate() {
-        return '''<?xml version='1.0' encoding='UTF-8'?>
+        '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>

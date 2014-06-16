@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl.helpers
 
-import com.google.common.base.Preconditions
 import hudson.plugins.perforce.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 
+import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Preconditions.checkNotNull
+import static com.google.common.base.Preconditions.checkState
 import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
@@ -32,11 +34,11 @@ class ScmContext implements Context {
      * Helper method for dealing with a single scm node
      */
     def getScmNode() {
-        return scmNodes[0]
+        scmNodes[0]
     }
 
     private validateMulti() {
-        Preconditions.checkState(multiEnabled || scmNodes.size() < 1, 'Outside "multiscm", only one SCM can be specified')
+        checkState(multiEnabled || scmNodes.size() < 1, 'Outside "multiscm", only one SCM can be specified')
     }
 
     /**
@@ -54,7 +56,7 @@ class ScmContext implements Context {
      */
     def hg(String url, String branch = null, Closure configure = null) {
         validateMulti()
-        Preconditions.checkNotNull(url)
+        checkNotNull(url)
 
         def nodeBuilder = new NodeBuilder()
 
@@ -198,11 +200,12 @@ class ScmContext implements Context {
         }
     }
 
-    def github(String ownerAndProject, String branch = null, String protocol = "https", Closure closure) {
-        github(ownerAndProject, branch, protocol, "github.com", closure)
+    def github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
+        github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
 
-    def github(String ownerAndProject, String branch = null, String protocol = "https", String host = "github.com", Closure closure = null) {
+    def github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
+               Closure closure = null) {
         git {
             remote {
                 delegate.github(ownerAndProject, protocol, host)
@@ -244,8 +247,8 @@ class ScmContext implements Context {
         svn(svnUrl, '.', configure)
     }
     def svn(String svnUrl, String localDir, Closure configure = null) {
-        Preconditions.checkNotNull(svnUrl)
-        Preconditions.checkNotNull(localDir)
+        checkNotNull(svnUrl)
+        checkNotNull(localDir)
         validateMulti()
 
         def nodeBuilder = new NodeBuilder()
@@ -311,13 +314,15 @@ class ScmContext implements Context {
      </scm>
      */
     def p4(String viewspec, Closure configure = null) {
-        return p4(viewspec, 'rolem', '', configure)
+        p4(viewspec, 'rolem', '', configure)
     }
+
     def p4(String viewspec, String user, Closure configure = null) {
-        return p4(viewspec, user, '', configure)
+        p4(viewspec, user, '', configure)
     }
+
     def p4(String viewspec, String user, String password, Closure configure = null) {
-            Preconditions.checkNotNull(viewspec)
+        checkNotNull(viewspec)
         validateMulti()
 
         def nodeBuilder = new NodeBuilder()
@@ -372,9 +377,8 @@ class ScmContext implements Context {
      * </scm>
      */
     def cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
-        Preconditions.checkNotNull(parentProject)
-        Preconditions.checkArgument(
-                validCloneWorkspaceCriteria.contains(criteriaArg),
+        checkNotNull(parentProject)
+        checkArgument(validCloneWorkspaceCriteria.contains(criteriaArg),
                 "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}")
         validateMulti()
 

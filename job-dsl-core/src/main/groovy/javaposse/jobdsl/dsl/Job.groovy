@@ -77,7 +77,7 @@ class Job extends Item {
 
         executeWithXmlActions(project)
 
-        return project
+        project
     }
 
     void executeWithXmlActions(final Node root) {
@@ -105,14 +105,17 @@ class Job extends Item {
         }
 
         // Clean up our own indication that a job is a template
-        List<Node> seedJobProperties = templateNode.depthFirst().findAll { it.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty' }
-        seedJobProperties.each { Node node -> node.parent().remove(node) }
+        templateNode.depthFirst().each { Node node ->
+            if (node.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty') {
+                node.parent().remove(node)
+            }
+        }
 
-        return templateNode
+        templateNode
     }
 
     private executeEmptyTemplate() {
-        return new XmlParser().parse(new StringReader(getTemplate(type)))
+        new XmlParser().parse(new StringReader(getTemplate(type)))
     }
 
     private String getTemplate(JobType type) {
@@ -129,7 +132,7 @@ class Job extends Item {
      */
     private static JobType getJobType(Node node) {
         def nodeElement = node.name()
-        return JobType.values().find { it.elementName == nodeElement }
+        JobType.values().find { it.elementName == nodeElement }
     }
 
     def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>

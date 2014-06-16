@@ -16,7 +16,8 @@ class ScriptRequestGenerator {
         this.env = env
     }
 
-    Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText, boolean ignoreExisting) throws IOException, InterruptedException {
+    Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText,
+                                         boolean ignoreExisting) throws IOException, InterruptedException {
         Set<ScriptRequest> scriptRequests = Sets.newLinkedHashSet()
 
         if (usingScriptText) {
@@ -26,13 +27,13 @@ class ScriptRequestGenerator {
         } else {
             String targetsStr = env.expand(targets)
 
-            FilePath[] filePaths =  build.workspace.list(targetsStr.replace("\n", ","))
+            FilePath[] filePaths =  build.workspace.list(targetsStr.replace('\n', ','))
             for (FilePath filePath : filePaths) {
                 URL relativeWorkspaceUrl = WorkspaceProtocol.createWorkspaceUrl(build, filePath.parent)
                 ScriptRequest request = new ScriptRequest(filePath.name, null, relativeWorkspaceUrl, ignoreExisting)
                 scriptRequests.add(request)
             }
         }
-        return scriptRequests
+        scriptRequests
     }
 }

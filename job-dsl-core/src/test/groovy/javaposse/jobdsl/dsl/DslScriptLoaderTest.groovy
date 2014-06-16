@@ -5,14 +5,14 @@ import spock.lang.Ignore
 import spock.lang.Specification
 
 class DslScriptLoaderTest extends Specification {
-    def resourcesDir = getClass().getResource('/simple.dsl')
-    ByteArrayOutputStream baos = new ByteArrayOutputStream()
-    PrintStream ps = new PrintStream(baos)
-    JobManagement jm = new FileJobManagement(new File(resourcesDir.toURI()), null, ps)
+    private final resourcesDir = getClass().getResource('/simple.dsl')
+    private final ByteArrayOutputStream baos = new ByteArrayOutputStream()
+    private final PrintStream ps = new PrintStream(baos)
+    private final JobManagement jm = new FileJobManagement(new File(resourcesDir.toURI()), null, ps)
 
     @Ignore
     def getContent() {
-        return baos.toString()  // Could send ISO-8859-1
+        baos.toString()  // Could send ISO-8859-1
     }
 
     def 'load template from file'() {
@@ -166,7 +166,7 @@ println "Hello ${WordUtils.capitalize('world')}"
         then:
         def results = content
         results != null
-        results.contains("Hello World")
+        results.contains('Hello World')
     }
 
     def 'jobs scheduled to build'() {
@@ -178,7 +178,7 @@ def jobA = job {
 queue jobA
 queue 'JobB'
 '''
-        jm = new StringJobManagement()
+        JobManagement jm = new StringJobManagement()
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
@@ -201,7 +201,7 @@ def content = readFileFromWorkspace('foo.txt')
 println content
 '''
         StringJobManagement sm = new StringJobManagement(ps)
-        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+        sm.availableFiles['foo.txt'] = 'Bar bar, bar bar.'
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
@@ -220,7 +220,7 @@ println content
 readFileFromWorkspace('bar.txt')
 '''
         StringJobManagement sm = new StringJobManagement(ps)
-        sm.availableFiles['foo.txt'] = "Bar bar, bar bar."
+        sm.availableFiles['foo.txt'] = 'Bar bar, bar bar.'
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 

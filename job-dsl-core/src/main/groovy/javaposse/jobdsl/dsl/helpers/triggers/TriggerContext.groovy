@@ -5,13 +5,16 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
+
+import static javaposse.jobdsl.dsl.JobType.Freeform
 
 class TriggerContext implements Context {
     List<WithXmlAction> withXmlActions
     JobType jobType
     List<Node> triggerNodes
 
-    TriggerContext(List<WithXmlAction> withXmlActions = [], JobType jobType = JobType.Freeform, List<Node> triggerNodes = []) {
+    TriggerContext(List<WithXmlAction> withXmlActions = [], JobType jobType = Freeform, List<Node> triggerNodes = []) {
         this.withXmlActions = withXmlActions
         this.jobType = jobType
         this.triggerNodes = triggerNodes
@@ -199,8 +202,9 @@ class TriggerContext implements Context {
      </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
      *
      *
-     * @param triggerEvents Can be ommited and the plugin will user PatchsetCreated and DraftPublished by default. Provide in
-     *                      show name format: ChangeMerged, CommentAdded, DraftPublished, PatchsetCreated, RefUpdated
+     * @param triggerEvents Can be ommited and the plugin will user PatchsetCreated and DraftPublished by default.
+     *                      Provide in show name format: ChangeMerged, CommentAdded, DraftPublished, PatchsetCreated,
+     *                      RefUpdated
      * @return
      */
     def gerrit(Closure contextClosure = null) {
@@ -213,12 +217,12 @@ class TriggerContext implements Context {
             spec ''
             if (gerritContext.projects) {
                 gerritProjects {
-                    gerritContext.projects.each { GerritContext.GerritSpec project, List<GerritContext.GerritSpec> brancheSpecs ->
+                    gerritContext.projects.each { GerritSpec project, List<GerritSpec> brancheSpecs ->
                         'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject' {
                             compareType project.type
                             pattern project.pattern
                             branches {
-                                brancheSpecs.each { GerritContext.GerritSpec branch ->
+                                brancheSpecs.each { GerritSpec branch ->
                                     'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch' {
                                         compareType branch.type
                                         pattern branch.pattern
@@ -240,8 +244,8 @@ class TriggerContext implements Context {
             customUrl ''
             if (gerritContext.eventContext.eventShortNames) {
                 triggerOnEvents {
-                    gerritContext.eventContext.eventShortNames.each { eventShortName ->
-                        "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${eventShortName}Event" ''
+                    gerritContext.eventContext.eventShortNames.each {
+                        "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${it}Event" ''
                     }
                 }
             }
@@ -300,10 +304,10 @@ class TriggerContext implements Context {
      * @param checkSnapshotDependencies set to <code>true</code> to check snapshot dependencies
      */
     def snapshotDependencies(boolean checkSnapshotDependencies) {
-        Preconditions.checkState jobType == JobType.Maven, "snapshotDependencies can only be applied for Maven jobs"
+        Preconditions.checkState jobType == JobType.Maven, 'snapshotDependencies can only be applied for Maven jobs'
         withXmlActions << WithXmlAction.create {
-            it.children().removeAll { it instanceof Node && it.name() == "ignoreUpstremChanges" }
-            it.appendNode "ignoreUpstremChanges", !checkSnapshotDependencies
+            it.children().removeAll { it instanceof Node && it.name() == 'ignoreUpstremChanges' }
+            it.appendNode 'ignoreUpstremChanges', !checkSnapshotDependencies
         }
     }
 }

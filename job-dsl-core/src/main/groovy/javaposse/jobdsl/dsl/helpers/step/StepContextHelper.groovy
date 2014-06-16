@@ -12,7 +12,7 @@ class StepContextHelper extends AbstractContextHelper<StepContext> {
     }
 
     def steps(Closure closure) {
-        Preconditions.checkState(type != JobType.Maven, "steps cannot be applied for Maven jobs")
+        Preconditions.checkState(type != JobType.Maven, 'steps cannot be applied for Maven jobs')
         execute(closure, new StepContext(type))
     }
 

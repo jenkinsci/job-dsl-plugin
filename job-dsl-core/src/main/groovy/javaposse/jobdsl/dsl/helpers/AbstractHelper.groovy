@@ -26,7 +26,7 @@ class AbstractHelper implements Helper {
         rootClosure.resolveStrategy = Closure.DELEGATE_FIRST
         def action = new WithXmlAction(rootClosure)
         withXmlActions << action
-        return action
+        action
     }
 
     static void appendOrReplaceNode(Node node, String name, Object value) {

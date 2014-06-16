@@ -8,8 +8,8 @@ class PostBuildTaskContext implements Context {
     def tasks = []
 
     def task(String logText, String script, boolean escalate = false, boolean runIfSuccessful = false) {
-        Preconditions.checkArgument(logText != null && logText.length() > 0, "Log Text to match is required!")
-        Preconditions.checkArgument(script != null && script.length() > 0, "Script to run is required!")
+        Preconditions.checkArgument(logText != null && logText.length() > 0, 'Log Text to match is required!')
+        Preconditions.checkArgument(script != null && script.length() > 0, 'Script to run is required!')
 
         tasks << new PostBuildTask(
             logText: logText,

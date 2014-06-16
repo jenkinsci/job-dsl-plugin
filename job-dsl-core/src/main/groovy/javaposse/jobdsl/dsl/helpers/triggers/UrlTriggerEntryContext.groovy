@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
+import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection
+
 /** Configuration container for a monitored URL.*/
 class UrlTriggerEntryContext implements Context {
 
@@ -32,8 +34,8 @@ class UrlTriggerEntryContext implements Context {
      * @param url Required URL to monitor
      */
     UrlTriggerEntryContext(String url) {
-        this.url = Preconditions.checkNotNull(url, "The URL is required for urlTrigger()")
-        Preconditions.checkArgument(url != "", "URL must not be empty.")
+        this.url = Preconditions.checkNotNull(url, 'The URL is required for urlTrigger()')
+        Preconditions.checkArgument(url != '', 'URL must not be empty.')
         this.statusCode = statusCode
         this.timeout = timeout
     }
@@ -108,14 +110,11 @@ class UrlTriggerEntryContext implements Context {
      * @return
      */
     def inspection(String type, Closure inspectionClosure = null) {
-
-        UrlTriggerInspectionContext.Inspection itype
+        Inspection itype
         try {
-            itype = Preconditions.checkNotNull(
-                    UrlTriggerInspectionContext.Inspection.valueOf(type),
-                    'Inspection must not be null' as Object)
+            itype = Preconditions.checkNotNull(Inspection.valueOf(type), 'Inspection must not be null' as Object)
         } catch (IllegalArgumentException iae) {
-            throw new IllegalArgumentException("Inspection must be one of ${UrlTriggerInspectionContext.Inspection.values()}")
+            throw new IllegalArgumentException("Inspection must be one of ${Inspection.values()}")
         }
 
         UrlTriggerInspectionContext inspection = new UrlTriggerInspectionContext(itype)

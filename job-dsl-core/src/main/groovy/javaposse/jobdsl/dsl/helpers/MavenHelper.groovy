@@ -26,8 +26,8 @@ class MavenHelper extends AbstractHelper implements MavenContext {
      * @param rootPOM path to the root POM
      */
     def rootPOM(String rootPOM) {
-        checkState type == JobType.Maven, "rootPOM can only be applied for Maven jobs"
-        checkState !rootPOMAdded, "rootPOM can only be applied once"
+        checkState type == JobType.Maven, 'rootPOM can only be applied for Maven jobs'
+        checkState !rootPOMAdded, 'rootPOM can only be applied once'
         rootPOMAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'rootPOM', rootPOM
@@ -39,7 +39,7 @@ class MavenHelper extends AbstractHelper implements MavenContext {
      * @param goals the goals to execute
      */
     def goals(String goals) {
-        checkState type == JobType.Maven, "goals can only be applied for Maven jobs"
+        checkState type == JobType.Maven, 'goals can only be applied for Maven jobs'
         if (allGoals.length() == 0) {
             allGoals.append goals
             execute { Node node ->
@@ -56,7 +56,7 @@ class MavenHelper extends AbstractHelper implements MavenContext {
      * @param mavenOpts JVM options needed when launching Maven
      */
     def mavenOpts(String mavenOpts) {
-        checkState type == JobType.Maven, "mavenOpts can only be applied for Maven jobs"
+        checkState type == JobType.Maven, 'mavenOpts can only be applied for Maven jobs'
         if (allMavenOpts.length() == 0) {
             allMavenOpts.append mavenOpts
             execute { Node node ->
@@ -73,8 +73,8 @@ class MavenHelper extends AbstractHelper implements MavenContext {
      * @param perModuleEmail set to <code>true</code> to enable per module e-mail notifications
      */
     def perModuleEmail(boolean perModuleEmail) {
-        checkState type == JobType.Maven, "perModuleEmail can only be applied for Maven jobs"
-        checkState !perModuleEmailAdded, "perModuleEmail can only be applied once"
+        checkState type == JobType.Maven, 'perModuleEmail can only be applied for Maven jobs'
+        checkState !perModuleEmailAdded, 'perModuleEmail can only be applied once'
         perModuleEmailAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'perModuleEmail', perModuleEmail
@@ -87,8 +87,8 @@ class MavenHelper extends AbstractHelper implements MavenContext {
      * @param archivingDisabled set to <code>true</code> to disable automatic archiving
      */
     def archivingDisabled(boolean archivingDisabled) {
-        checkState type == JobType.Maven, "archivingDisabled can only be applied for Maven jobs"
-        checkState !archivingDisabledAdded, "archivingDisabled can only be applied once"
+        checkState type == JobType.Maven, 'archivingDisabled can only be applied for Maven jobs'
+        checkState !archivingDisabledAdded, 'archivingDisabled can only be applied once'
         archivingDisabledAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'archivingDisabled', archivingDisabled
@@ -100,8 +100,8 @@ class MavenHelper extends AbstractHelper implements MavenContext {
      * @param runHeadless set to <code>true</code> to run the build process in headless mode
      */
     def runHeadless(boolean runHeadless) {
-        checkState type == JobType.Maven, "runHeadless can only be applied for Maven jobs"
-        checkState !runHeadlessAdded, "runHeadless can only be applied once"
+        checkState type == JobType.Maven, 'runHeadless can only be applied for Maven jobs'
+        checkState !runHeadlessAdded, 'runHeadless can only be applied once'
         runHeadlessAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'runHeadless', runHeadless
@@ -115,15 +115,15 @@ class MavenHelper extends AbstractHelper implements MavenContext {
      * @param location the local repository to use for isolation
      */
     def localRepository(MavenContext.LocalRepositoryLocation location) {
-        checkState type == JobType.Maven, "localRepository can only be applied for Maven jobs"
-        checkNotNull location, "localRepository can not be null"
+        checkState type == JobType.Maven, 'localRepository can only be applied for Maven jobs'
+        checkNotNull location, 'localRepository can not be null'
         execute { Node node ->
             appendOrReplaceNode node, 'localRepository', [class: location.type]
         }
     }
 
     def preBuildSteps(Closure preBuildClosure) {
-        checkState type == JobType.Maven, "prebuildSteps can only be applied for Maven jobs"
+        checkState type == JobType.Maven, 'prebuildSteps can only be applied for Maven jobs'
         AbstractStepContext preBuildContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(preBuildClosure, preBuildContext)
 
@@ -135,7 +135,7 @@ class MavenHelper extends AbstractHelper implements MavenContext {
     }
 
     def postBuildSteps(Closure postBuildClosure) {
-        checkState type == JobType.Maven, "postBuildSteps can only be applied for Maven jobs"
+        checkState type == JobType.Maven, 'postBuildSteps can only be applied for Maven jobs'
         AbstractStepContext postBuildContext = new AbstractStepContext()
         AbstractContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
@@ -147,8 +147,8 @@ class MavenHelper extends AbstractHelper implements MavenContext {
     }
 
     def mavenInstallation(String name) {
-        checkState type == JobType.Maven, "mavenInstallation can only be applied for Maven jobs"
-        checkNotNull name, "name can not be null"
+        checkState type == JobType.Maven, 'mavenInstallation can only be applied for Maven jobs'
+        checkNotNull name, 'name can not be null'
         execute { Node node ->
             appendOrReplaceNode node, 'mavenName', name
         }

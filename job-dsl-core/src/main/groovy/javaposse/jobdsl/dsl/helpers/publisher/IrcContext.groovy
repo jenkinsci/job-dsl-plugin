@@ -34,7 +34,7 @@ class IrcContext implements Context {
     }
 
     def channel(String name, String password = '', boolean notificationOnly = false) {
-        Preconditions.checkArgument(name != null && name.length() > 0, "Channel name for irc channel is required!")
+        Preconditions.checkArgument(name != null && name.length() > 0, 'Channel name for irc channel is required!')
 
         channels << new IrcPublisherChannel(
             name: name,

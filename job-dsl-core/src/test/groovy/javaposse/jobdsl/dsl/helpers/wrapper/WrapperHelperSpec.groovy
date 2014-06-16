@@ -184,7 +184,8 @@ class WrapperHelperSpec extends Specification {
         def strategy = timeoutWrapper.strategy[0]
         strategy.timeout[0].value() == 15
         strategy.attribute('class') == Timeout.noActivity.className
-        timeoutWrapper.operationList[0].'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
+        def list = timeoutWrapper.operationList[0]
+        list.'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
     }
 
     def 'likelyStuck timeout configuration working' () {
@@ -332,13 +333,13 @@ class WrapperHelperSpec extends Specification {
     def 'toolenv' () {
         when:
         helper.wrappers {
-            toolenv("Ant 1.8.2", "Maven 3")
+            toolenv('Ant 1.8.2', 'Maven 3')
         }
         executeHelperActionsOnRootNode()
 
         then:
         def wrapper = root.buildWrappers[0].'hudson.plugins.toolenv.ToolEnvBuildWrapper'.'vars'
-        wrapper[0].value() == "ANT_1_8_2_HOME,MAVEN_3_HOME"
+        wrapper[0].value() == 'ANT_1_8_2_HOME,MAVEN_3_HOME'
     }
 
     def 'environmentVariables are added'() {
@@ -378,13 +379,11 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'parameterDefinitions'.'hudson.model.TextParameterDefinition'
-        params[0].value()[0].value() == "p1"
-
-        def steps = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'preBuildSteps'
-        steps[0].value()[0].name() == 'hudson.tasks.Shell'
-        steps[0].value()[0].value()[0].name() == 'command'
-        steps[0].value()[0].value()[0].value() == 'echo hello;'
+        def wrapper = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
+        wrapper.'parameterDefinitions'.'hudson.model.TextParameterDefinition'[0].value()[0].value() == 'p1'
+        wrapper.'preBuildSteps'[0].value()[0].name() == 'hudson.tasks.Shell'
+        wrapper.'preBuildSteps'[0].value()[0].value()[0].name() == 'command'
+        wrapper.'preBuildSteps'[0].value()[0].value()[0].value() == 'echo hello;'
     }
 
     def 'release plugin extended' () {
@@ -414,11 +413,11 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
-        params[0].value()[0].name() == "releaseVersionTemplate"
-        params[0].value()[0].value() == "templatename"
-        params[0].value()[1].name() == "doNotKeepLog"
+        params[0].value()[0].name() == 'releaseVersionTemplate'
+        params[0].value()[0].value() == 'templatename'
+        params[0].value()[1].name() == 'doNotKeepLog'
         params[0].value()[1].value() == true
-        params[0].value()[2].name() == "overrideBuildParameters"
+        params[0].value()[2].name() == 'overrideBuildParameters'
         params[0].value()[2].value() == false
 
         def stepsPostSuccess = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postSuccessfulBuildSteps'
@@ -456,8 +455,8 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'testCommand'
-        params[0].value()[0].name() == "custom"
-        params[0].value()[0].value() == "value"
+        params[0].value()[0].name() == 'custom'
+        params[0].value()[0].value() == 'value'
     }
 
     def 'call preBuildCleanup with minimal options' () {

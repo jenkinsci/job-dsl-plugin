@@ -19,7 +19,7 @@ class Folder extends Item {
     Node getNode() {
         Node root = new XmlParser().parse(new StringReader(TEMPLATE))
         withXmlActions.each { it.execute(root) }
-        return root
+        root
     }
 
     protected void execute(Closure rootClosure) {

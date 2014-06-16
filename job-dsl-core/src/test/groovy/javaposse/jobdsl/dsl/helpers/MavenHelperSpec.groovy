@@ -14,7 +14,7 @@ class MavenHelperSpec extends Specification {
 
     def 'can run rootPOM'() {
         when:
-        helper.rootPOM("my_module/pom.xml")
+        helper.rootPOM('my_module/pom.xml')
 
         then:
         1 * mockActions.add(_)
@@ -22,8 +22,8 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run rootPOM twice'() {
         when:
-        helper.rootPOM("pom.xml")
-        helper.rootPOM("my_module/pom.xml")
+        helper.rootPOM('pom.xml')
+        helper.rootPOM('my_module/pom.xml')
 
         then:
         thrown(IllegalStateException)
@@ -34,7 +34,7 @@ class MavenHelperSpec extends Specification {
         MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.rootPOM("pom.xml")
+        helper.rootPOM('pom.xml')
 
         then:
         thrown(IllegalStateException)
@@ -42,17 +42,17 @@ class MavenHelperSpec extends Specification {
 
     def 'rootPOM constructs xml'() {
         when:
-        def action = helper.rootPOM("my_module/pom.xml")
+        def action = helper.rootPOM('my_module/pom.xml')
         action.execute(root)
 
         then:
         root.rootPOM.size() == 1
-        root.rootPOM[0].value() == "my_module/pom.xml"
+        root.rootPOM[0].value() == 'my_module/pom.xml'
     }
 
     def 'can run goals'() {
         when:
-        helper.goals("clean verify")
+        helper.goals('clean verify')
 
         then:
         1 * mockActions.add(_)
@@ -60,14 +60,14 @@ class MavenHelperSpec extends Specification {
 
     def 'run goals twice'() {
         when:
-        def action = helper.goals("clean")
-        helper.goals("verify")
+        def action = helper.goals('clean')
+        helper.goals('verify')
         action.execute(root)
 
         then:
         1 * mockActions.add(_)
         root.goals.size() == 1
-        root.goals[0].value() == "clean verify"
+        root.goals[0].value() == 'clean verify'
     }
 
     def 'cannot run goals for free style jobs'() {
@@ -75,7 +75,7 @@ class MavenHelperSpec extends Specification {
         MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.goals("package")
+        helper.goals('package')
 
         then:
         thrown(IllegalStateException)
@@ -83,17 +83,17 @@ class MavenHelperSpec extends Specification {
 
     def 'goals constructs xml'() {
         when:
-        def action = helper.goals("clean verify")
+        def action = helper.goals('clean verify')
         action.execute(root)
 
         then:
         root.goals.size() == 1
-        root.goals[0].value() == "clean verify"
+        root.goals[0].value() == 'clean verify'
     }
 
     def 'can run mavenOpts'() {
         when:
-        helper.mavenOpts("-DskipTests")
+        helper.mavenOpts('-DskipTests')
 
         then:
         1 * mockActions.add(_)
@@ -101,14 +101,14 @@ class MavenHelperSpec extends Specification {
 
     def 'run mavenOpts twice'() {
         when:
-        def action = helper.mavenOpts("-Xms512m")
-        helper.mavenOpts("-Xmx1024m")
+        def action = helper.mavenOpts('-Xms512m')
+        helper.mavenOpts('-Xmx1024m')
         action.execute(root)
 
         then:
         1 * mockActions.add(_)
         root.mavenOpts.size() == 1
-        root.mavenOpts[0].value() == "-Xms512m -Xmx1024m"
+        root.mavenOpts[0].value() == '-Xms512m -Xmx1024m'
     }
 
     def 'cannot run mavenOpts for free style jobs'() {
@@ -116,7 +116,7 @@ class MavenHelperSpec extends Specification {
         MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.mavenOpts("-Xmx512m")
+        helper.mavenOpts('-Xmx512m')
 
         then:
         thrown(IllegalStateException)
@@ -124,12 +124,12 @@ class MavenHelperSpec extends Specification {
 
     def 'mavenOpts constructs xml'() {
         when:
-        def action = helper.mavenOpts("-DskipTests")
+        def action = helper.mavenOpts('-DskipTests')
         action.execute(root)
 
         then:
         root.mavenOpts.size() == 1
-        root.mavenOpts[0].value() == "-DskipTests"
+        root.mavenOpts[0].value() == '-DskipTests'
     }
 
     def 'can run perModuleEmail'() {
@@ -298,7 +298,7 @@ class MavenHelperSpec extends Specification {
     def 'can add preBuildSteps'() {
         when:
         def action = helper.preBuildSteps {
-            shell("ls")
+            shell('ls')
         }
         action.execute(root)
 
@@ -322,7 +322,7 @@ class MavenHelperSpec extends Specification {
     def 'can add postBuildSteps'() {
         when:
         def action = helper.postBuildSteps {
-            shell("ls")
+            shell('ls')
         }
         action.execute(root)
 

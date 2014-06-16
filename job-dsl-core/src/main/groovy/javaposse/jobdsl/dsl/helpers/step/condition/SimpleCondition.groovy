@@ -7,7 +7,7 @@ class SimpleCondition implements RunCondition {
 
     @Override
     String getConditionClass() {
-        return "org.jenkins_ci.plugins.run_condition.${subPackage}.${name}Condition"
+        "org.jenkins_ci.plugins.run_condition.${subPackage}.${name}Condition"
     }
 
     @Override
@@ -15,6 +15,5 @@ class SimpleCondition implements RunCondition {
         args.each { k, v ->
             builder."${k}" v
         }
-
     }
 }

@@ -5,6 +5,6 @@ abstract class AbstractLogicCondition implements RunCondition {
 
     @Override
     String getConditionClass() {
-        return "org.jenkins_ci.plugins.run_condition.logic.${operation}"
+        "org.jenkins_ci.plugins.run_condition.logic.${operation}"
     }
 }

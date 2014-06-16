@@ -17,7 +17,7 @@ class UrlTriggerEntryContextSpec extends Specification {
 
     def 'empty URL causes IllegalArgumentException' () {
         when:
-        new UrlTriggerEntryContext("")
+        new UrlTriggerEntryContext('')
 
         then:
         thrown(IllegalArgumentException)

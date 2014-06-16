@@ -28,7 +28,7 @@ class TopLevelHelper extends AbstractHelper {
     boolean labelAlreadyAdded = false
 
     def label(String labelExpression = null) {
-        Preconditions.checkState(!labelAlreadyAdded, "Label can only be appplied once")
+        Preconditions.checkState(!labelAlreadyAdded, 'Label can only be appplied once')
         labelAlreadyAdded = true
         execute {
             if (labelExpression) {
@@ -139,7 +139,8 @@ class TopLevelHelper extends AbstractHelper {
      <artifactNumToKeep>20</artifactNumToKeep>
      </logRotator>
      */
-    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1, int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
+    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1,
+                   int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
         execute {
             it / logRotator {
                 daysToKeep daysToKeepInt.toString()
@@ -189,8 +190,8 @@ class TopLevelHelper extends AbstractHelper {
     }
 
     /**
-     * Priority of this job.
-     * Requires the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
+     * Priority of this job. Requires the
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
      * Default value is 100.
      *
      * <properties>
@@ -250,7 +251,7 @@ class TopLevelHelper extends AbstractHelper {
      * @param workspacePath workspace path to use
      */
     def customWorkspace(String workspacePath) {
-        def workspace = Preconditions.checkNotNull(workspacePath, "Workspace path must not be null")
+        def workspace = Preconditions.checkNotNull(workspacePath, 'Workspace path must not be null')
         execute {
             def node = methodMissing('customWorkspace', workspace)
             it / node

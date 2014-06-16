@@ -32,13 +32,13 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'createOrUpdateView without name'() {
         when:
-        jobManagement.createOrUpdateView(null, "<View/>", true)
+        jobManagement.createOrUpdateView(null, '<View/>', true)
 
         then:
         thrown(NameNotProvidedException)
 
         when:
-        jobManagement.createOrUpdateView("", "<View/>", true)
+        jobManagement.createOrUpdateView('', '<View/>', true)
 
         then:
         thrown(NameNotProvidedException)
@@ -46,13 +46,13 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'createOrUpdateView without config'() {
         when:
-        jobManagement.createOrUpdateView("test", null, true)
+        jobManagement.createOrUpdateView('test', null, true)
 
         then:
         thrown(ConfigurationMissingException)
 
         when:
-        jobManagement.createOrUpdateView("test", null, true)
+        jobManagement.createOrUpdateView('test', null, true)
 
         then:
         thrown(ConfigurationMissingException)
@@ -60,7 +60,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'createOrUpdateView with invalid name'() {
         when:
-        jobManagement.createOrUpdateView("t<e*st", "<View/>", true)
+        jobManagement.createOrUpdateView('t<e*st', '<View/>', true)
 
         then:
         thrown(Failure)

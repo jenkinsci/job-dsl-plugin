@@ -9,7 +9,7 @@ class JobsContext implements Context {
     String regex
 
     void name(String jobName) {
-        checkNotNull(jobName, "jobName must not be null")
+        checkNotNull(jobName, 'jobName must not be null')
 
         this.jobNames.add(jobName)
     }

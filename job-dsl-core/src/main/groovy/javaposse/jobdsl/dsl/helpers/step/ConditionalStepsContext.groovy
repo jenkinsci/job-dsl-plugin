@@ -1,8 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
+
+import static com.google.common.base.Preconditions.checkArgument
 
 class ConditionalStepsContext extends AbstractStepContext {
 
@@ -19,7 +20,7 @@ class ConditionalStepsContext extends AbstractStepContext {
 
     ConditionalStepsContext(String runnerName, List<Node> stepNodes, Closure conditionClosure) {
         super(stepNodes)
-        Preconditions.checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid evaluation runner.")
+        checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid evaluation runner.")
 
         condition(conditionClosure)
 
@@ -31,7 +32,7 @@ class ConditionalStepsContext extends AbstractStepContext {
     }
 
     def runner(String runnerName) {
-        Preconditions.checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")
+        checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")
         runnerClass = EvaluationRunners.find(runnerName).longForm
     }
 
@@ -39,10 +40,10 @@ class ConditionalStepsContext extends AbstractStepContext {
         runnerClass = runner.longForm
     }
 
-    protected createSingleStepNode() {
+    protected Node createSingleStepNode() {
         def nodeBuilder = new NodeBuilder()
 
-        return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
+        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
             delegate.condition(class: runCondition.conditionClass) {
                 runCondition.addArgs(delegate)
             }
@@ -55,10 +56,10 @@ class ConditionalStepsContext extends AbstractStepContext {
         }
     }
 
-    protected createMultiStepNode() {
+    protected Node createMultiStepNode() {
         def nodeBuilder = new NodeBuilder()
 
-        return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
+        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
             runCondition(class: runCondition.conditionClass) {
                 runCondition.addArgs(delegate)
             }

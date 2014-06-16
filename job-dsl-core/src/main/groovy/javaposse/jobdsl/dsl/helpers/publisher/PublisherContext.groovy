@@ -54,11 +54,11 @@ class PublisherContext implements Context {
      * @return
      */
     def extendedEmail(String recipients = null, Closure emailClosure = null) {
-        return extendedEmail(recipients, null, emailClosure)
+        extendedEmail(recipients, null, emailClosure)
     }
 
     def extendedEmail(String recipients, String subjectTemplate, Closure emailClosure = null) {
-        return extendedEmail(recipients, subjectTemplate, null, emailClosure)
+        extendedEmail(recipients, subjectTemplate, null, emailClosure)
     }
 
     def extendedEmail(String recipients, String subjectTemplate, String contentTemplate, Closure emailClosure = null) {
@@ -114,7 +114,8 @@ class PublisherContext implements Context {
      <sendToIndividuals>true</sendToIndividuals>
      </hudson.tasks.Mailer>
      */
-    def mailer(String mailRecipients, Boolean dontNotifyEveryUnstableBuildBoolean = false, Boolean sendToIndividualsBoolean = false) {
+    def mailer(String mailRecipients, Boolean dontNotifyEveryUnstableBuildBoolean = false,
+               Boolean sendToIndividualsBoolean = false) {
         def nodeBuilder = new NodeBuilder()
         Node mailerNode = nodeBuilder.'hudson.tasks.Mailer' {
             recipients(mailRecipients)
@@ -179,7 +180,8 @@ class PublisherContext implements Context {
      </testDataPublishers>
      </hudson.tasks.junit.JUnitResultArchiver>
      */
-    def archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false, boolean publishTestAttachments = false) {
+    def archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false,
+                     boolean publishTestAttachments = false) {
         def nodeBuilder = new NodeBuilder()
 
         Node archiverNode = nodeBuilder.'hudson.tasks.junit.JUnitResultArchiver' {
@@ -289,32 +291,24 @@ class PublisherContext implements Context {
         }
         publisherNodes << htmlPublisherNode
     }
-    /**
-     * With only the target specified:
-     <hudson.plugins.jabber.im.transport.JabberPublisher>
-     <targets>
-     <hudson.plugins.im.GroupChatIMMessageTarget>
-     <name>api@conference.jabber.netflix.com</name>
-     <notificationOnly>false</notificationOnly>
-     </hudson.plugins.im.GroupChatIMMessageTarget>
-     </targets>
-     <strategy>ALL</strategy> // all
-     or <strategy>FAILURE_AND_FIXED</strategy> // failure and fixed
-     or <strategy>ANY_FAILURE</strategy> // failure
-     or <strategy>STATECHANGE_ONLY</strategy> // change
-     <notifyOnBuildStart>false</notifyOnBuildStart> // Notify on build starts
-     <notifySuspects>false</notifySuspects> // Notify SCM committers
-     <notifyCulprits>false</notifyCulprits> // Notify SCM culprits
-     <notifyFixers>false</notifyFixers> // Notify upstream committers
-     <notifyUpstreamCommitters>false</notifyUpstreamCommitters> // Notify SCM fixers
 
-     // Channel Notification Message
-     <buildToChatNotifier class="hudson.plugins.im.build_notify.DefaultBuildToChatNotifier"/> // Summary + SCM change
-     or <buildToChatNotifier class="hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier"/> // Just Summary
-     or <buildToChatNotifier class="hudson.plugins.im.build_notify.BuildParametersBuildToChatNotifier"/> // Summary and build parameters
-     or <buildToChatNotifier class="hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier"/> // Summary, SCM changes and failed tests
-     <matrixMultiplier>ONLY_CONFIGURATIONS</matrixMultiplier>
-     </hudson.plugins.jabber.im.transport.JabberPublisher>
+    /**
+     * <hudson.plugins.jabber.im.transport.JabberPublisher>
+     *     <targets>
+     *         <hudson.plugins.im.GroupChatIMMessageTarget>
+     *             <name>api@conference.jabber.netflix.com</name>
+     *             <notificationOnly>false</notificationOnly>
+     *         </hudson.plugins.im.GroupChatIMMessageTarget>
+     *     </targets>
+     *     <strategy>ALL</strategy>
+     *     <notifyOnBuildStart>false</notifyOnBuildStart>
+     *     <notifySuspects>false</notifySuspects>
+     *     <notifyCulprits>false</notifyCulprits>
+     *     <notifyFixers>false</notifyFixers>
+     *     <notifyUpstreamCommitters>false</notifyUpstreamCommitters>
+     *     <buildToChatNotifier class="hudson.plugins.im.build_notify.DefaultBuildToChatNotifier"/>
+     *     <matrixMultiplier>ONLY_CONFIGURATIONS</matrixMultiplier>
+     * </hudson.plugins.jabber.im.transport.JabberPublisher>
      */
     def publishJabber(String target, Closure jabberClosure = null) {
         publishJabber(target, null, null, jabberClosure)
@@ -324,15 +318,21 @@ class PublisherContext implements Context {
         publishJabber(target, strategyName, null, jabberClosure)
     }
 
-    def publishJabber(String targetsArg, String strategyName, String channelNotificationName, Closure jabberClosure = null) {
+    def publishJabber(String targetsArg, String strategyName, String channelNotificationName,
+                      Closure jabberClosure = null) {
         JabberContext jabberContext = new JabberContext()
         jabberContext.strategyName = strategyName ?: 'ALL'
         jabberContext.channelNotificationName = channelNotificationName ?: 'Default'
         AbstractContextHelper.executeInContext(jabberClosure, jabberContext)
 
         // Validate values
-        assert validJabberStrategyNames.contains(jabberContext.strategyName), "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
-        assert validJabberChannelNotificationNames.contains(jabberContext.channelNotificationName), "Jabber Channel Notification name needs to be one of these values: ${validJabberChannelNotificationNames.join(',')}"
+        assert validJabberStrategyNames.contains(jabberContext.strategyName),
+                "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
+        assert validJabberChannelNotificationNames.contains(jabberContext.channelNotificationName),
+                'Jabber Channel Notification name needs to be one of these values: ' +
+                        validJabberChannelNotificationNames.join(',')
+
+        def notifierClass = "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier"
 
         def nodeBuilder = NodeBuilder.newInstance()
         def publishNode = nodeBuilder.'hudson.plugins.jabber.im.transport.JabberPublisher' {
@@ -358,7 +358,7 @@ class PublisherContext implements Context {
             notifyCulprits jabberContext.notifyCulprits ? 'true' : 'false'
             notifyFixers jabberContext.notifyFixers ? 'true' : 'false'
             notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters ? 'true' : 'false'
-            buildToChatNotifier('class': "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier")
+            buildToChatNotifier(class: notifierClass)
             matrixMultiplier 'ONLY_CONFIGURATIONS'
         }
         publisherNodes << publishNode
@@ -384,7 +384,7 @@ class PublisherContext implements Context {
         AbstractContextHelper.executeInContext(scpClosure, scpContext)
 
         // Validate values
-        assert !scpContext.entries.isEmpty(), "Scp publish requires at least one entry"
+        assert !scpContext.entries.isEmpty(), 'Scp publish requires at least one entry'
 
         def nodeBuilder = NodeBuilder.newInstance()
         def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
@@ -421,11 +421,16 @@ class PublisherContext implements Context {
         publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, cloneWorkspaceClosure)
     }
 
-    def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod, Closure cloneWorkspaceClosure) {
-        publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, cloneWorkspaceClosure)
+    def publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod,
+                              Closure cloneWorkspaceClosure) {
+        publishCloneWorkspace(
+                workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, cloneWorkspaceClosure
+        )
     }
 
-    def publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any', String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false, Closure cloneWorkspaceClosure = null) {
+    def publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any',
+                              String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false,
+                              Closure cloneWorkspaceClosure = null) {
         CloneWorkspaceContext cloneWorkspaceContext = new CloneWorkspaceContext()
         cloneWorkspaceContext.criteria = criteriaArg ?: 'Any'
         cloneWorkspaceContext.archiveMethod = archiveMethodArg ?: 'TAR'
@@ -434,8 +439,11 @@ class PublisherContext implements Context {
         AbstractContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
 
         // Validate values
-        assert validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria), "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
-        assert validCloneWorkspaceArchiveMethods.contains(cloneWorkspaceContext.archiveMethod), "Clone Workspace Archive Method needs to be one of these values: ${validCloneWorkspaceArchiveMethods.join(',')}"
+        assert validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria),
+                "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
+        assert validCloneWorkspaceArchiveMethods.contains(cloneWorkspaceContext.archiveMethod),
+                'Clone Workspace Archive Method needs to be one of these values: ' +
+                        validCloneWorkspaceArchiveMethods.join(',')
 
         def nodeBuilder = NodeBuilder.newInstance()
         def publishNode = nodeBuilder.'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
@@ -468,7 +476,8 @@ class PublisherContext implements Context {
      </hudson.tasks.BuildTrigger>
      */
     def downstream(String projectName, String thresholdName = 'SUCCESS') {
-        assert DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName), "thresholdName must be one of these values ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
+        assert DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
+                "thresholdName must be one of these values ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
 
         def nodeBuilder = new NodeBuilder()
         Node publishNode = nodeBuilder.'hudson.tasks.BuildTrigger' {
@@ -539,7 +548,7 @@ class PublisherContext implements Context {
         def nodeBuilder = NodeBuilder.newInstance()
         def publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher' {
             config {
-                suppressions(class: "tree-set") {
+                suppressions(class: 'tree-set') {
                     'no-comparator'()
                 }
                 typeConfigs {
@@ -627,7 +636,7 @@ class PublisherContext implements Context {
             failNoReports(coberturaContext.failNoReports)
             ['healthyTarget', 'unhealthyTarget', 'failingTarget'].each { targetName ->
                 "$targetName" {
-                    targets(class: "enum-map", 'enum-type': "hudson.plugins.cobertura.targets.CoverageMetric") {
+                    targets(class: 'enum-map', 'enum-type': 'hudson.plugins.cobertura.targets.CoverageMetric') {
                         coberturaContext.targets.values().each { target ->
                             entry {
                                 'hudson.plugins.cobertura.targets.CoverageMetric' target.targetType
@@ -676,7 +685,8 @@ class PublisherContext implements Context {
      *         <setForMatrix>false</setForMatrix>
      *     </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
      */
-    def buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '', String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
+    def buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '',
+                         String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
             regexp(regularExpression)
             regexpForFailed(regularExpressionForFailed)
@@ -702,7 +712,8 @@ class PublisherContext implements Context {
      *         <alsoCheckConsoleOutput>false</alsoCheckConsoleOutput>
      *     </hudson.plugins.textfinder.TextFinderPublisher>
      */
-    def textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false, boolean succeedIfFound = false, unstableIfFound = false) {
+    def textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false,
+                   boolean succeedIfFound = false, unstableIfFound = false) {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.textfinder.TextFinderPublisher' {
             if (fileSet) {
                 delegate.fileSet(fileSet)
@@ -758,8 +769,8 @@ class PublisherContext implements Context {
     }
 
     /**
-     * Configures Aggregate Downstream Test Results. Pass no args or null for jobs (first arg) to
-     * automatically aggregate downstream test results. Pass in comma-delimited list for first arg to manually choose jobs.
+     * Configures Aggregate Downstream Test Results. Pass no args or null for jobs (first arg) to automatically
+     * aggregate downstream test results. Pass in comma-delimited list for first arg to manually choose jobs.
      * Second argument is optional and sets whether failed builds are included.
      *
      * <publishers>
@@ -1093,7 +1104,7 @@ class PublisherContext implements Context {
 
     def flowdock(String[] tokens, Closure flowdockPublisherClosure = null) {
         // Validate values
-        assert tokens != null && tokens.length > 0, "Flowdock publish requires at least one flow token"
+        assert tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token'
         flowdock(tokens.join(','), flowdockPublisherClosure)
     }
 
@@ -1139,7 +1150,7 @@ class PublisherContext implements Context {
      * See https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker
      */
     def mavenDeploymentLinker(String regex) {
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder' {
             regexp(regex)
         }
     }

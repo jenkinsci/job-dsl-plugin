@@ -1,7 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.Context
+
+import static com.google.common.base.Preconditions.checkArgument
 
 class EmailContext implements Context {
     def emailTriggerNames = ['PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement',
@@ -10,14 +11,17 @@ class EmailContext implements Context {
 
     // Not sure why a map syntax wouldn't call method below, so creating this one
     def trigger(Map args) {
-        trigger(args.triggerName, args.subject, args.body, args.recipientList, args.sendToDevelopers, args.sendToRequester, args.includeCulprits, args.sendToRecipientList)
+        trigger(args.triggerName, args.subject, args.body, args.recipientList, args.sendToDevelopers,
+                args.sendToRequester, args.includeCulprits, args.sendToRecipientList)
     }
 
     def trigger(String triggerName, String subject = null, String body = null, String recipientList = null,
-                Boolean sendToDevelopers = null, Boolean sendToRequester = null, Boolean includeCulprits = null, Boolean sendToRecipientList = null) {
-        Preconditions.checkArgument(emailTriggerNames.contains(triggerName), "Possible values: ${emailTriggerNames.join(',')}")
+                Boolean sendToDevelopers = null, Boolean sendToRequester = null, Boolean includeCulprits = null,
+                Boolean sendToRecipientList = null) {
+        checkArgument(emailTriggerNames.contains(triggerName), "Possible values: ${emailTriggerNames.join(',')}")
 
-        emailTriggers << new EmailTrigger(triggerName, recipientList, subject, body, sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList)
+        emailTriggers << new EmailTrigger(triggerName, recipientList, subject, body, sendToDevelopers, sendToRequester,
+                includeCulprits, sendToRecipientList)
     }
 
     Closure configureClosure

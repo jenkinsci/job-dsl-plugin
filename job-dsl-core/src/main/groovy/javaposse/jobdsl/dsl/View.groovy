@@ -41,7 +41,7 @@ abstract class View {
      */
     String getXml() {
         Writer xmlOutput = new StringWriter()
-        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
+        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), '    ')
         xmlNodePrinter.with {
             preserveWhitespace = true
             expandEmptyElements = true
@@ -49,7 +49,7 @@ abstract class View {
         }
         xmlNodePrinter.print(node)
 
-        return xmlOutput.toString()
+        xmlOutput.toString()
     }
 
     Node getNode() {

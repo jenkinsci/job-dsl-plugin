@@ -16,7 +16,7 @@ class FlowdockPublisherContext implements Context {
     boolean notBuilt = false
 
     void tag(String tag) {
-        Preconditions.checkArgument(tag != null && tag.length() > 0, "A non-empty tag is required!")
+        Preconditions.checkArgument(tag != null && tag.length() > 0, 'A non-empty tag is required!')
         this.notificationTags.addAll(tag.tokenize(','))
     }
 

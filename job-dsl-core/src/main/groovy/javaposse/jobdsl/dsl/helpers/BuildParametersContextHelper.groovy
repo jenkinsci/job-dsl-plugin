@@ -15,9 +15,9 @@ class BuildParametersContextHelper extends AbstractContextHelper<BuildParameters
 
     Closure generateWithXmlClosure(BuildParametersContext context) {
         return { Node project ->
-            def parameterDefinitions = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / parameterDefinitions
+            def node = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / parameterDefinitions
             context.buildParameterNodes.values().each {
-                parameterDefinitions << it
+                node << it
             }
         }
     }

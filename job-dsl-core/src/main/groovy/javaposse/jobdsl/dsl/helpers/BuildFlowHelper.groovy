@@ -18,8 +18,8 @@ class BuildFlowHelper extends AbstractHelper implements Context {
      * @param block of groovy DSL to be applied to the Build Flow block.
      */
     def buildFlow(String buildFlowText) {
-        checkState type == JobType.BuildFlow, "Build Flow text can only be applied to Build Flow jobs."
-        checkState !buildFlowAdded, "Build Flow text can only be applied once"
+        checkState type == JobType.BuildFlow, 'Build Flow text can only be applied to Build Flow jobs.'
+        checkState !buildFlowAdded, 'Build Flow text can only be applied once'
         buildFlowAdded = true
         execute { Node node ->
             appendOrReplaceNode node, 'dsl', buildFlowText

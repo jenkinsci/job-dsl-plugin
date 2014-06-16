@@ -367,13 +367,13 @@ class StepHelperSpec extends Specification {
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
         acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
         acmeGroovyNode.javaOpts[0].value() == 'test me too'
         acmeGroovyNode.scriptSource.size() == 1
@@ -430,13 +430,13 @@ class StepHelperSpec extends Specification {
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
         acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
         acmeGroovyNode.javaOpts[0].value() == 'test me too'
         acmeGroovyNode.scriptSource.size() == 1
@@ -476,11 +476,11 @@ class StepHelperSpec extends Specification {
         scriptSourceNode.command[0].value() == "println 'Hello World!'"
 
         when:
-        context.systemGroovyCommand("acme.Acme.doSomething()") {
-            binding("foo", "bar")
-            binding("test", "0815")
-            classpath("/foo/acme.jar")
-            classpath("/foo/test.jar")
+        context.systemGroovyCommand('acme.Acme.doSomething()') {
+            binding('foo', 'bar')
+            binding('test', '0815')
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
         }
 
         then:
@@ -488,19 +488,19 @@ class StepHelperSpec extends Specification {
         def acmeSystemGroovyNode = context.stepNodes[1]
         acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
         acmeSystemGroovyNode.bindings.size() == 1
-        acmeSystemGroovyNode.bindings[0].value() == "foo=bar\ntest=0815"
+        acmeSystemGroovyNode.bindings[0].value() == 'foo=bar\ntest=0815'
         acmeSystemGroovyNode.classpath.size() == 1
         acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeSystemGroovyNode.scriptSource.size() == 1
         def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
         acmeScriptSourceNode.command.size() == 1
-        acmeScriptSourceNode.command[0].value() == "acme.Acme.doSomething()"
+        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
     }
 
     def 'call systemGroovyScriptFile methods'() {
         when:
-        context.systemGroovyScriptFile("scripts/hello.groovy")
+        context.systemGroovyScriptFile('scripts/hello.groovy')
 
         then:
         context.stepNodes.size() == 1
@@ -514,14 +514,14 @@ class StepHelperSpec extends Specification {
         def scriptSourceNode = systemGroovyNode.scriptSource[0]
         scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
         scriptSourceNode.scriptFile.size() == 1
-        scriptSourceNode.scriptFile[0].value() == "scripts/hello.groovy"
+        scriptSourceNode.scriptFile[0].value() == 'scripts/hello.groovy'
 
         when:
-        context.systemGroovyScriptFile("acme.groovy") {
-            binding("foo", "bar")
-            binding("test", "0815")
-            classpath("/foo/acme.jar")
-            classpath("/foo/test.jar")
+        context.systemGroovyScriptFile('acme.groovy') {
+            binding('foo', 'bar')
+            binding('test', '0815')
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
         }
 
         then:
@@ -529,14 +529,14 @@ class StepHelperSpec extends Specification {
         def acmeSystemGroovyNode = context.stepNodes[1]
         acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
         acmeSystemGroovyNode.bindings.size() == 1
-        acmeSystemGroovyNode.bindings[0].value() == "foo=bar\ntest=0815"
+        acmeSystemGroovyNode.bindings[0].value() == 'foo=bar\ntest=0815'
         acmeSystemGroovyNode.classpath.size() == 1
         acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeSystemGroovyNode.scriptSource.size() == 1
         def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
         acmeScriptSourceNode.scriptFile.size() == 1
-        acmeScriptSourceNode.scriptFile[0].value() == "acme.groovy"
+        acmeScriptSourceNode.scriptFile[0].value() == 'acme.groovy'
     }
 
     def 'call minimal copyArtifacts'() {
@@ -869,7 +869,7 @@ class StepHelperSpec extends Specification {
                 'SBT 0.12.3',
                 'test',
                 '-Dsbt.log.noformat=true',
-                '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M',
+                '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G',
                 'subproject'
         )
 
@@ -879,7 +879,7 @@ class StepHelperSpec extends Specification {
         def sbtStep = context.stepNodes[0]
         sbtStep.name() == 'org.jvnet.hudson.plugins.SbtPluginBuilder'
         sbtStep.name[0].value() == 'SBT 0.12.3'
-        sbtStep.jvmFlags[0].value() == '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M'
+        sbtStep.jvmFlags[0].value() == '-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G'
         sbtStep.sbtFlags[0].value() == '-Dsbt.log.noformat=true'
         sbtStep.actions[0].value() == 'test'
         sbtStep.subdirPath[0].value() == 'subproject'
@@ -1097,9 +1097,7 @@ still-another-dsl.groovy'''
         when:
         context.downstreamParameterized {
             trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
-                    ["buildStepFailure": "FAILURE",
-                            "failure": "FAILURE",
-                            "unstable": "UNSTABLE"]) {
+                    [buildStepFailure: 'FAILURE', failure: 'FAILURE', unstable: 'UNSTABLE']) {
                 currentBuild() // Current build parameters
                 propertiesFile('dir/my.properties') // Parameters from properties file
                 gitRevision(false) // Pass-through Git commit that was built
@@ -1118,36 +1116,40 @@ still-another-dsl.groovy'''
         Node stepNode = context.stepNodes[0]
         stepNode.name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
         stepNode.configs[0].children().size() == 2
-        Node first = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
-        first.projects[0].value() == 'Project1, Project2'
-        first.condition[0].value() == 'UNSTABLE_OR_BETTER'
-        first.triggerWithNoParameters[0].value() == 'true'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-        first.configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() == 'dir/my.properties'
-        first.configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
-        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
-        first.configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
-                'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() == 'label=="${TARGET}"'
-        first.configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
-        first.block.size() == 1
-        Node thresholds = first.block[0]
-        thresholds.children().size() == 3
-        Node unstableThreshold = thresholds.unstableThreshold[0]
-        unstableThreshold.name[0].value() == 'UNSTABLE'
-        unstableThreshold.ordinal[0].value() == 1
-        Node failureThreshold = thresholds.failureThreshold[0]
-        failureThreshold.name[0].value() == 'FAILURE'
-        failureThreshold.ordinal[0].value() == 2
-        Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
-        buildStepFailureThreshold.name[0].value() == 'FAILURE'
+        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project1, Project2'
+            condition[0].value() == 'UNSTABLE_OR_BETTER'
+            triggerWithNoParameters[0].value() == 'true'
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
+                    'dir/my.properties'
+            configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                    'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+            configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
+                    'label=="${TARGET}"'
+            configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+            block.size() == 1
+            Node thresholds = block[0]
+            thresholds.children().size() == 3
+            Node unstableThreshold = thresholds.unstableThreshold[0]
+            unstableThreshold.name[0].value() == 'UNSTABLE'
+            unstableThreshold.ordinal[0].value() == 1
+            Node failureThreshold = thresholds.failureThreshold[0]
+            failureThreshold.name[0].value() == 'FAILURE'
+            failureThreshold.ordinal[0].value() == 2
+            Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
+            buildStepFailureThreshold.name[0].value() == 'FAILURE'
+        }
 
-        Node second = stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]
-        second.projects[0].value() == 'Project2'
-        second.condition[0].value() == 'SUCCESS'
-        second.triggerWithNoParameters[0].value() == 'false'
-        second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-        second.block.isEmpty()
+        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]) {
+            projects[0].value() == 'Project2'
+            condition[0].value() == 'SUCCESS'
+            triggerWithNoParameters[0].value() == 'false'
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            block.isEmpty()
+        }
 
         when:
         context.downstreamParameterized {
@@ -1156,11 +1158,12 @@ still-another-dsl.groovy'''
         }
 
         then:
-        Node third = context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]
-        third.projects[0].value() == 'Project3'
-        third.condition[0].value() == 'SUCCESS'
-        third.triggerWithNoParameters[0].value() == 'false'
-        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        with(context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project3'
+            condition[0].value() == 'SUCCESS'
+            triggerWithNoParameters[0].value() == 'false'
+            configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        }
 
         when:
         context.downstreamParameterized {
@@ -1178,8 +1181,8 @@ still-another-dsl.groovy'''
             condition {
                 delegate.invokeMethod(testCondition, testConditionArgs.values().toArray())
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
         }
 
         then:
@@ -1198,7 +1201,7 @@ still-another-dsl.groovy'''
         condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${condClass}Condition"
         if (!testConditionArgs.isEmpty()) {
             testConditionArgs.each { k, v ->
-                condition."${k}"[0].value() == "${v}"
+                condition[k][0].value() == v
             }
         }
         step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
@@ -1208,12 +1211,16 @@ still-another-dsl.groovy'''
         childStep.command[0].value() == 'look at me'
 
         where:
-        testCondition << ['stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status']
-        testConditionArgs << [['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
+        testCondition << [
+                'stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status'
+        ]
+        testConditionArgs << [
+                ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
                 ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
-                ['worstResult': 'Success', 'bestResult': 'Success']]
+                ['worstResult': 'Success', 'bestResult': 'Success']
+        ]
     }
 
     @Unroll
@@ -1224,7 +1231,7 @@ still-another-dsl.groovy'''
                 alwaysRun()
             }
             runner(runnerName)
-            shell("look at me")
+            shell('look at me')
         }
 
         then:
@@ -1247,8 +1254,8 @@ still-another-dsl.groovy'''
             condition {
                 alwaysRun()
             }
-            runner("invalid-runner")
-            shell("look at me")
+            runner('invalid-runner')
+            shell('look at me')
         }
 
         then:
@@ -1260,8 +1267,8 @@ still-another-dsl.groovy'''
         context.conditionalSteps {
             condition {
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
         }
 
         then:
@@ -1274,8 +1281,8 @@ still-another-dsl.groovy'''
             condition {
                 invalidCondition()
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
         }
 
         then:
@@ -1287,10 +1294,10 @@ still-another-dsl.groovy'''
         context.conditionalSteps {
             condition {
                 not {
-                    stringsMatch("foo", "bar", false)
+                    stringsMatch('foo', 'bar', false)
                 }
             }
-            shell("echo Test")
+            shell('echo Test')
         }
 
         then:
@@ -1310,10 +1317,10 @@ still-another-dsl.groovy'''
         when:
         context.conditionalSteps {
             condition {
-                stringsMatch("foo", "bar", false)
+                stringsMatch('foo', 'bar', false)
             }
-            runner("Fail")
-            shell("look at me")
+            runner('Fail')
+            shell('look at me')
             groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
                 groovyParam('foo')
                 groovyParams(['bar', 'baz'])
@@ -1352,13 +1359,13 @@ still-another-dsl.groovy'''
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == "foo\nbar\nbaz"
+        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == "alfa\nbravo\ncharlie"
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
         acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == "one=two\nthree=four\nfive=six"
+        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
         acmeGroovyNode.javaOpts[0].value() == 'test me too'
         acmeGroovyNode.scriptSource.size() == 1
@@ -1374,7 +1381,7 @@ still-another-dsl.groovy'''
             condition {
                 fileExists('someFile', WORKSPACE)
             }
-            shell("echo Test")
+            shell('echo Test')
         }
 
         then:
@@ -1398,7 +1405,7 @@ still-another-dsl.groovy'''
                     alwaysRun()
                 }
             }
-            shell("echo Test")
+            shell('echo Test')
         }
 
         then:
@@ -1412,11 +1419,11 @@ still-another-dsl.groovy'''
         conditions.children().size() == 2
 
         def containers = conditions.'org.jenkins__ci.plugins.run__condition.logic.ConditionContainer'
-        def fileCondition = containers[0].condition[0]
-        fileCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
-        fileCondition.file[0].value() == 'someFile'
-        fileCondition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
-
+        with(containers[0].condition[0]) {
+            attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
+            file[0].value() == 'someFile'
+            baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
+        }
         containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
 
         where:
@@ -1426,13 +1433,14 @@ still-another-dsl.groovy'''
     }
 
     @Unroll
+    @SuppressWarnings('LineLength')
     def 'Simple Condition #conditionDsl is added correctly'(conditionDsl, args, conditionClass, argNodes) {
         when:
         context.conditionalSteps {
             condition {
                 "${conditionDsl}"(*args)
             }
-            shell("echo something outside")
+            shell('echo something outside')
         }
 
         then:
@@ -1442,7 +1450,7 @@ still-another-dsl.groovy'''
 
         conditionNode.attribute('class') == conditionClass
         def ignored = argNodes.each { name, value ->
-            assert conditionNode."${name}"[0].value() == value
+            assert conditionNode[name][0].value() == value
         }
 
         where:

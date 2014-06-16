@@ -26,7 +26,7 @@ class AbstractJobManagementSpec extends Specification {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream()
         AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
 
-        URL[] roots = [this.class.getResource("/deprecation.groovy")]
+        URL[] roots = [this.class.getResource('/deprecation.groovy')]
         GroovyScriptEngine groovyScriptEngine = new GroovyScriptEngine(roots)
 
         when:

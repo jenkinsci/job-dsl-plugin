@@ -51,7 +51,8 @@ class AbstractStepContext implements Context {
      <wrapperScript/>
      </hudson.plugins.gradle.Gradle>
      */
-    def gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg = true, Closure configure = null) {
+    def gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg = true,
+               Closure configure = null) {
         def nodeBuilder = new NodeBuilder()
         def gradleNode = nodeBuilder.'hudson.plugins.gradle.Gradle' {
             description ''
@@ -79,12 +80,13 @@ class AbstractStepContext implements Context {
      <subdirPath></subdirPath>
      </org.jvnet.hudson.plugins.SbtPluginBuilder>
      */
-    def sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null, String subdirPathArg=null, Closure configure = null) {
+    def sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null,
+            String subdirPathArg=null, Closure configure = null) {
 
         def nodeBuilder = new NodeBuilder()
 
         def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
-            name Preconditions.checkNotNull(sbtNameArg, "Please provide the name of the SBT to use" as Object)
+            name Preconditions.checkNotNull(sbtNameArg, 'Please provide the name of the SBT to use' as Object)
             jvmFlags jvmFlagsArg ?: ''
             sbtFlags sbtFlagsArg ?: ''
             actions actionsArg ?: ''
@@ -413,51 +415,79 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.plugins.copyartifact.CopyArtifact>
-     <projectName>jryan-odin-test</projectName>
-     <filter>*ivy-locked.xml</filter>
-     <target>target/</target>
-     <selector class="hudson.plugins.copyartifact.TriggeredBuildSelector"/> <!-- Upstream build that triggered this job -->
-     <flatten>true</flatten>
-     <optional>true</optional>
-     </hudson.plugins.copyartifact.CopyArtifact>
-     <hudson.plugins.copyartifact.CopyArtifact>
-     <projectName>jryan-odin-test</projectName>
-     <filter>*ivy-locked.xml</filter>
-     <target/>
-     <selector class="hudson.plugins.copyartifact.StatusBuildSelector"/> <!-- Latest successful build -->
-     </hudson.plugins.copyartifact.CopyArtifact>
-     <selector class="hudson.plugins.copyartifact.SavedBuildSelector"/> <!-- Latest saved build (marked "keep forever")-->
-     <selector class="hudson.plugins.copyartifact.PermalinkBuildSelector"> <!-- Specified by permalink -->
-     <id>lastBuild</id> <!-- Last Build-->
-     <id>lastStableBuild</id> <!-- Latest Stable Build -->
-     </selector>
-     <selector class="hudson.plugins.copyartifact.SpecificBuildSelector"> <!-- Specific Build -->
-     <buildNumber>43</buildNumber>
-     </selector>
-     <selector class="hudson.plugins.copyartifact.WorkspaceSelector"/> <!-- Copy from WORKSPACE of latest completed build -->
-     <selector class="hudson.plugins.copyartifact.ParameterizedBuildSelector"> <!-- Specified by build parameter -->
-     <parameterName>BUILD_SELECTOR</parameterName>
-     </selector>
+     * Upstream build that triggered this job
+     * <hudson.plugins.copyartifact.CopyArtifact>
+     *     <projectName>jryan-odin-test</projectName>
+     *     <filter>*ivy-locked.xml</filter>
+     *     <target>target/</target>
+     *     <selector class="hudson.plugins.copyartifact.TriggeredBuildSelector"/>
+     *     <flatten>true</flatten>
+     *     <optional>true</optional>
+     * </hudson.plugins.copyartifact.CopyArtifact>
+     *
+     * Latest successful build
+     * <hudson.plugins.copyartifact.CopyArtifact>
+     *     ...
+     *     <selector class="hudson.plugins.copyartifact.StatusBuildSelector"/>
+     * </hudson.plugins.copyartifact.CopyArtifact>
+     *
+     * Latest saved build (marked "keep forever")
+     * <hudson.plugins.copyartifact.CopyArtifact>
+     *     ...
+     *     <selector class="hudson.plugins.copyartifact.SavedBuildSelector"/>
+     * </hudson.plugins.copyartifact.CopyArtifact>
+     *
+     * Specified by permalink
+     * <hudson.plugins.copyartifact.CopyArtifact>
+     *     ...
+     *     <selector class="hudson.plugins.copyartifact.PermalinkBuildSelector">
+     *         <id>lastBuild</id> <!-- Last Build-->
+     *         <id>lastStableBuild</id> <!-- Latest Stable Build -->
+     *     </selector>
+     * </hudson.plugins.copyartifact.CopyArtifact>
+     *
+     * Specific Build
+     * <hudson.plugins.copyartifact.CopyArtifact>
+     *     ...
+     *     <selector class="hudson.plugins.copyartifact.SpecificBuildSelector">
+     *         <buildNumber>43</buildNumber>
+     *     </selector>
+     * </hudson.plugins.copyartifact.CopyArtifact>
+     *
+     * Copy from WORKSPACE of latest completed build
+     * <hudson.plugins.copyartifact.CopyArtifact>
+     *     ...
+     *     <selector class="hudson.plugins.copyartifact.WorkspaceSelector"/>
+     * </hudson.plugins.copyartifact.CopyArtifact>
+     *
+     * Specified by build parameter
+     * <hudson.plugins.copyartifact.CopyArtifact>
+     *     ...
+     *     <selector class="hudson.plugins.copyartifact.ParameterizedBuildSelector">
+     *         <parameterName>BUILD_SELECTOR</parameterName>
+     *     </selector>
+     * </hudson.plugins.copyartifact.CopyArtifact>
      */
     def copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure) {
-        return copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
+        copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
     }
 
     def copyArtifacts(String jobName, String includeGlob, String targetPath, Closure copyArtifactClosure) {
-        return copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
+        copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
     }
 
-    def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles, Closure copyArtifactClosure) {
-        return copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
+    def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
+                      Closure copyArtifactClosure) {
+        copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
-    def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles, boolean optionalAllowed, Closure copyArtifactClosure) {
+    def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
+                      boolean optionalAllowed, Closure copyArtifactClosure) {
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
         AbstractContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
         if (!copyArtifactContext.selectedSelector) {
-            throw new IllegalArgumentException("A selector has to be select in the closure argument")
+            throw new IllegalArgumentException('A selector has to be select in the closure argument')
         }
 
         def nodeBuilder = NodeBuilder.newInstance()
@@ -514,10 +544,11 @@ class AbstractStepContext implements Context {
         PhaseContext phaseContext = new PhaseContext(name, continuationConditionArg)
         AbstractContextHelper.executeInContext(phaseClosure, phaseContext)
 
-        Preconditions.checkArgument phaseContext.phaseName as Boolean, "A phase needs a name"
+        Preconditions.checkArgument phaseContext.phaseName as Boolean, 'A phase needs a name'
 
         def validConditions = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
-        Preconditions.checkArgument(validConditions.contains(phaseContext.continuationCondition), "Continuation Condition need to be one of these values: ${validConditions.join(',')}" )
+        Preconditions.checkArgument(validConditions.contains(phaseContext.continuationCondition),
+                "Continuation Condition need to be one of these values: ${validConditions.join(',')}" )
 
         def nodeBuilder = NodeBuilder.newInstance()
         def multiJobPhaseNode = nodeBuilder.'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
@@ -550,7 +581,7 @@ class AbstractStepContext implements Context {
     def prerequisite(String projectList = '', boolean warningOnlyBool = false) {
         def nodeBuilder = new NodeBuilder()
         def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
-             // Important that there are no spaces for comma delimited values, plugin doesn't handle by trimming, so we will
+             // Important that there are no spaces for comma delimited values, plugin doesn't trim, so we will
             projects(projectList.tokenize(',')*.trim().join(','))
             warningOnly(warningOnlyBool)
         }
@@ -611,16 +642,16 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.2.2">
-     <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@0.10">
-     <arg1/><arg2/>
-     <ignoreCase>false</ignoreCase>
-     </condition>
-     <buildStep class="hudson.tasks.Shell">
-     <command/>
-     </buildStep>
-     <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@0.10"/>
-     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+     * <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+     *     <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
+     *         <arg1/><arg2/>
+     *         <ignoreCase>false</ignoreCase>
+     *     </condition>
+     *     <buildStep class="hudson.tasks.Shell">
+     *         <command/>
+     *     </buildStep>
+     *     <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail"/>
+     * </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
      */
     def conditionalSteps(Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext()
@@ -684,8 +715,8 @@ class AbstractStepContext implements Context {
      * </org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
      */
     def remoteTrigger(String remoteJenkins, String jobName, Closure closure = null) {
-        Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), "remoteJenkins must be specified")
-        Preconditions.checkArgument(!isNullOrEmpty(jobName), "jobName must be specified")
+        Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), 'remoteJenkins must be specified')
+        Preconditions.checkArgument(!isNullOrEmpty(jobName), 'jobName must be specified')
 
         ParameterizedRemoteTriggerContext context = new ParameterizedRemoteTriggerContext()
         AbstractContextHelper.executeInContext(closure, context)

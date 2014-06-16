@@ -33,8 +33,6 @@ ruleset {
 
         // we don't care for now
         exclude 'ClassJavadoc'
-        // TODO: fix violations
-        exclude 'LineLength'
     }
 
     ruleset('rulesets/generic.xml')
@@ -81,12 +79,8 @@ ruleset {
     ruleset('rulesets/unnecessary.xml') {
         // we don't care, does not necessarily lead to better code
         exclude 'UnnecessaryElseStatement'
-        // TODO: fix violations
-        exclude 'UnnecessaryGString'
-        // TODO: fix violations
+        // we don't care for now, does not necessarily lead to better code
         exclude 'UnnecessaryObjectReferences'
-        // TODO: fix violations
-        exclude 'UnnecessaryReturnKeyword'
     }
 
     ruleset('rulesets/unused.xml')

@@ -12,8 +12,8 @@ class GeneratedViewsBuildActionSpec extends Specification {
 
         then:
         action.iconFileName == null
-        action.displayName == "Generated Views"
-        action.urlName == "generatedViews"
+        action.displayName == 'Generated Views'
+        action.urlName == 'generatedViews'
         action.modifiedViews != null
         action.modifiedViews.size() == modifiedViews.size()
         action.modifiedViews.containsAll(modifiedViews)

@@ -12,7 +12,7 @@ class WorkspaceProtocol {
      */
     static URL createWorkspaceUrl(AbstractProject project) {
         String jobName = project.fullName
-        String encodedJobName = URLEncoder.encode(jobName, "UTF-8")
+        String encodedJobName = URLEncoder.encode(jobName, 'UTF-8')
         new URL(null, "workspace://$encodedJobName/", new WorkspaceUrlHandler())
     }
 
@@ -32,11 +32,11 @@ class WorkspaceProtocol {
     static AbstractProject getProjectFromWorkspaceUrl(URL url) {
         Jenkins jenkins = Jenkins.instance
         if (!jenkins) {
-            throw new IllegalStateException("Not in a running Jenkins")
+            throw new IllegalStateException('Not in a running Jenkins')
         }
 
         String jobName = url.host
-        String decodedJobName = URLDecoder.decode(jobName, "UTF-8")
+        String decodedJobName = URLDecoder.decode(jobName, 'UTF-8')
         (AbstractProject) Jenkins.instance.getItemByFullName(decodedJobName)
     }
 
