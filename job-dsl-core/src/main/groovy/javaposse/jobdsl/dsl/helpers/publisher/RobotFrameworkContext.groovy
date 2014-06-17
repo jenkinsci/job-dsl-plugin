@@ -8,8 +8,6 @@ import javaposse.jobdsl.dsl.helpers.Context
  * A Job DSL context for Robot Framework. Specifically,
  * take a look at
  * https://github.com/jenkinsci/robot-plugin/blob/master/src/main/java/hudson/plugins/robot/RobotPublisher.java
- *
- * @author Behrooz Nobakht
  */
 class RobotFrameworkContext implements Context {
 

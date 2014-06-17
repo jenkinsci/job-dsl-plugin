@@ -36,8 +36,6 @@ import static java.util.Arrays.asList;
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
  * update Jenkins jobs.
- *
- * @author jryan
  */
 public class ExecuteDslScripts extends Builder {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());

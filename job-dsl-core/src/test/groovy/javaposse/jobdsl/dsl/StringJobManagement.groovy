@@ -5,7 +5,6 @@ import groovy.xml.MarkupBuilder
 /**
  * Testing JobManagement which will deal with a single template and single saved job. Useful for testing
  * since it can be prodded with the expected value.
- * @author jryan
  */
 class StringJobManagement extends AbstractJobManagement {
     /**

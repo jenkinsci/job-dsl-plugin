@@ -15,9 +15,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
-/**
- * @author stimmslocal
- */
 public class PerforcePasswordEncryptor {
 
     private static final String keyString = "405kqo0gc20f9985142rj17779v4922568on29pwj92toqt884";

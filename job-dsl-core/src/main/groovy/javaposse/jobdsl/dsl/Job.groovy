@@ -14,10 +14,7 @@ import javaposse.jobdsl.dsl.helpers.triggers.TriggerContextHelper
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
 
 /**
- * DSL Element representing a Jenkins Job
- *
- * @author jryan
- * @author aharmel-law
+ * DSL element representing a Jenkins job.
  */
 class Job extends Item {
     JobManagement jobManagement

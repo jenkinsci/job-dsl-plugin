@@ -11,8 +11,6 @@ import java.util.Map;
 
 /**
  * Seed Jobs which reference this template.
- * @author jryan
- *
  */
 class SeedJobsProperty extends JobProperty<AbstractProject<?,?>> {
     public final Map<String,String> seedJobs;
