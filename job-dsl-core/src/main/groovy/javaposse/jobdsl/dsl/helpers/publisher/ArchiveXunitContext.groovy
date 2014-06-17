@@ -8,7 +8,7 @@ class ArchiveXunitContext implements Context {
         NUMBER(1),
         PERCENT(2)
 
-        public final int xmlValue
+        final int xmlValue
 
         ThresholdMode(int xmlValue) {
             this.xmlValue = xmlValue

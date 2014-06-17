@@ -294,7 +294,7 @@ class PublisherHelperSpec extends Specification {
         xunitNode.extraConfiguration[0].testTimeMargin[0].value() == 2000
     }
 
-    def 'call xunit archive with all valid thresholdMode values'(){
+    def 'call xunit archive with all valid thresholdMode values'() {
         when:
         context.archiveXunit {
             thresholdMode input
