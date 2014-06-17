@@ -7,7 +7,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
-import groovy.lang.Closure;
 import groovy.util.Node;
 import groovy.util.XmlParser;
 import hudson.EnvVars;
@@ -31,6 +30,7 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
+import javaposse.jobdsl.plugin.api.ContextExtensionPoint;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.lang.ClassUtils;
@@ -51,8 +51,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -368,7 +366,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                                                                           Class<? extends ExtensibleContext> contextType,
                                                                           Object... args) {
         Jenkins jenkins = Jenkins.getInstance();
-        Class[] parameterTypes = getParameterTypes(args);
+        Class[] parameterTypes = ClassUtils.toClass(args);
         Map<ContextExtensionPoint, Method> candidates = new HashMap<ContextExtensionPoint, Method>();
 
         // Find extensions that match any @DslMethod annotated method with the given name and parameters
@@ -383,19 +381,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
 
         return candidates;
-    }
-
-    private static Class[] getParameterTypes(Object... args) {
-        Class[] parameterTypes = ClassUtils.toClass(args);
-
-        // Switch Closure type to Runnable, so that extension must not include Closure as import type
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (Closure.class.isAssignableFrom(parameterTypes[i])) {
-                parameterTypes[i] = Runnable.class;
-            }
-        }
-
-        return parameterTypes;
     }
 
     public static class ExtractTemplate implements Function<GeneratedJob, String> {

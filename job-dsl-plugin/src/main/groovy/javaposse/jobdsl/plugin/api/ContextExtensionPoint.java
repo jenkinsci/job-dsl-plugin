@@ -1,4 +1,4 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.api;
 
 import com.google.common.base.Preconditions;
 import groovy.lang.Closure;
@@ -37,18 +37,22 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
     }
 
     /**
-     * Notifies the ExtensionPoint if an item has been created.
+     * Notifies the ExtensionPoint if an item has been created. Implementations should override this to get notified.
+     * The default implementation is empty.
      *
      * @param item the newly created item
      */
-    public abstract void notifyItemCreated(Item item);
+    public void notifyItemCreated(Item item) {
+    }
 
     /**
-     * Notifies the ExtensionPoint if an item has been updated.
+     * Notifies the ExtensionPoint if an item has been updated. Implementations should override this to get notified.
+     * The default implementation is empty.
      *
      * @param item the updated item
      */
-    public abstract void notifyItemUpdated(Item item);
+    public void notifyItemUpdated(Item item) {
+    }
 
     /**
      * Call the {@link Runnable}, which must be a Groovy closure, in the given {@link Context}.
@@ -57,9 +61,9 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
      * @param context  the {@link Context} for the {@link Runnable}
      */
     public static void executeInContext(Runnable runnable, Context context) {
-        Preconditions.checkArgument(runnable instanceof Closure, "runnable must be a Groovy closure");
-
         if (runnable != null) {
+            Preconditions.checkArgument(runnable instanceof Closure, "runnable must be a Groovy closure");
+
             AbstractContextHelper.executeInContext((Closure) runnable, context);
         }
     }
