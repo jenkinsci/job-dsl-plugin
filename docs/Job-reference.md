@@ -2813,69 +2813,69 @@ job {
 
 (since 1.24)
 
-## xUnit plugin
+## xUnit
 
 ```groovy
 job {
     publishers {
-        archiveXunit {
+        archiveXUnit {
             aUnit {
-                pattern(String = '')
-                skipNoTestFiles(boolean = false)
-                failIfNotNew(boolean = true)
-                deleteOutputFiles(boolean = true)
-                stopProcessingIfError(boolean = true)
-                customXSL(String = '') // This is only valid for 'customTool'
+                pattern(String pattern)                     // empty by default
+                skipNoTestFiles(boolean value = true)       // defaults to false
+                failIfNotNew(boolean value = true)          // defaults to true
+                deleteOutputFiles(boolean value = true)     // defaults to true
+                stopProcessingIfError(boolean value = true) // defaults to true
+            }
+            boostTest { ... }                               // see aUnit closure above
+            cTest { ... }                                   // see aUnit closure above
+            check { ... }                                   // see aUnit closure above
+            cppTest { ... }                                 // see aUnit closure above
+            cppUnit { ... }                                 // see aUnit closure above
+            embUnit { ... }                                 // see aUnit closure above
+            fpcUnit { ... }                                 // see aUnit closure above
+            googleTest { ... }                              // see aUnit closure above
+            jUnit { ... }                                   // see aUnit closure above
+            msTest { ... }                                  // see aUnit closure above
+            mbUnit { ... }                                  // see aUnit closure above
+            nUnit { ... }                                   // see aUnit closure above
+            phpUnit { ... }                                 // see aUnit closure above
+            qTestLib { ... }                                // see aUnit closure above
+            unitTestvalgrind { ... }                        // see aUnit closure above
+            customTool {
+                // all options from the aUnit closure above, plus
+                stylesheet(String url)                      // empty by default
             }
             failedThresholds {
-                unstable(int = 0)
-                unstableNew(int = 0)
-                failure(int = 0)
-                failureNew(int = 0)
+                unstable(int threshold)                     // defaults to 0
+                unstableNew(int threshold)                  // defaults to 0
+                failure(int threshold)                      // defaults to 0
+                failureNew(int threshold)                   // defaults to 0
             }
             skippedThresholds {
-                unstable(int = 0)
-                unstableNew(int = 0)
-                failure(int = 0)
-                failureNew(int = 0)
+                unstable(int threshold)                     // defaults to 0
+                unstableNew(int threshold)                  // defaults to 0
+                failure(int threshold)                      // defaults to 0
+                failureNew(int threshold)                   // defaults to 0
             }
-            thresholdMode(ThresholdMode = ThresholdMode.NUMBER)
-            timeMargin(int = 2000)
+            thresholdMode(ThresholdMode mode)               // defaults to ThresholdMode.NUMBER
+            timeMargin(int margin)                          // defaults to 3000
         }
     }
 }
 ```
 
-Configures a job to collect xunit results. Requires the [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin).
+Configures a job to collect test results. Requires the
+[xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin).
 For more details about individual options, please see the plugin page.
 
-Supported result file types are:
-* aUnit
-* boostTest
-* cTest
-* check
-* cppTest
-* cppUnit
-* customTool
-* embUnit
-* fpcUnit
-* googleTest
-* jUnit
-* msTest
-* mbUnit
-* nUnit
-* phpUnit
-* qTestLib
-* unitTestvalgrind
-
-ThresholdMode can either be ThresholdMode.NUMBER or ThresholdMode.PERCENT
+The threshold mode can either be `ThresholdMode.NUMBER` or `ThresholdMode.PERCENT`.
 
 Examples:
 
 ```groovy
 job {
     publishers {
-        archiveXunit {
+        archiveXUnit {
             jUnit {
                 pattern 'my_file.xml'
             }
@@ -2887,8 +2887,8 @@ job {
 ```groovy
 job {
     publishers {
-        archiveXunit {
-            jUnit {
+        archiveXUnit {
+            aUnit {
                 pattern 'my_file.xml'
             }
             jUnit {

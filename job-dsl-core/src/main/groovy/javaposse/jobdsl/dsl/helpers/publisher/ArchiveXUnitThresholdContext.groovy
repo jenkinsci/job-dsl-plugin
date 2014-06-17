@@ -1,6 +1,8 @@
+package javaposse.jobdsl.dsl.helpers.publisher
+
 import javaposse.jobdsl.dsl.helpers.Context
 
-class ArchiveXunitThresholdContext implements Context {
+class ArchiveXUnitThresholdContext implements Context {
     int unstable = 0
     int unstableNew = 0
     int failure = 0

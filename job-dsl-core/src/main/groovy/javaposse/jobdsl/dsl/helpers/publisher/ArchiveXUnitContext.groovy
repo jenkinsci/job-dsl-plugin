@@ -3,23 +3,12 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-class ArchiveXunitContext implements Context {
-    static enum ThresholdMode {
-        NUMBER(1),
-        PERCENT(2)
-
-        final int xmlValue
-
-        ThresholdMode(int xmlValue) {
-            this.xmlValue = xmlValue
-        }
-    }
-
-    ArchiveXunitThresholdContext failedThresholdsContext = new ArchiveXunitThresholdContext()
-    ArchiveXunitThresholdContext skippedThresholdsContext = new ArchiveXunitThresholdContext()
+class ArchiveXUnitContext implements Context {
+    ArchiveXUnitThresholdContext failedThresholdsContext = new ArchiveXUnitThresholdContext()
+    ArchiveXUnitThresholdContext skippedThresholdsContext = new ArchiveXUnitThresholdContext()
     ThresholdMode thresholdMode = ThresholdMode.NUMBER
     int timeMargin = 3000
-    def resultFiles = []
+    List<ArchiveXUnitResultFileContext> resultFiles = []
 
     void failedThresholds(Closure thresholdsClosure) {
         AbstractContextHelper.executeInContext(thresholdsClosure, failedThresholdsContext)
@@ -59,10 +48,6 @@ class ArchiveXunitContext implements Context {
 
     void cppUnit(Closure resultFileClosure) {
         addResultFile('CppUnitJunitHudsonTestType', resultFileClosure)
-    }
-
-    void customTool(Closure resultFileClosure) {
-        addResultFile('CustomType', resultFileClosure)
     }
 
     void embUnit(Closure resultFileClosure) {
@@ -109,10 +94,28 @@ class ArchiveXunitContext implements Context {
         addResultFile('ValgrindJunitHudsonTestType', resultFileClosure)
     }
 
-    private void addResultFile(String type, Closure resultFileClosure) {
-        ArchiveXunitResultFileContext resultFileContext = new ArchiveXunitResultFileContext(type)
+    void customTool(Closure resultFileClosure) {
+        ArchiveXUnitResultFileContext resultFileContext = new ArchiveXUnitCustomToolContext()
         AbstractContextHelper.executeInContext(resultFileClosure, resultFileContext)
 
         resultFiles << resultFileContext
+    }
+
+    private void addResultFile(String type, Closure resultFileClosure) {
+        ArchiveXUnitResultFileContext resultFileContext = new ArchiveXUnitResultFileContext(type)
+        AbstractContextHelper.executeInContext(resultFileClosure, resultFileContext)
+
+        resultFiles << resultFileContext
+    }
+
+    static enum ThresholdMode {
+        NUMBER(1),
+        PERCENT(2)
+
+        final int xmlValue
+
+        ThresholdMode(int xmlValue) {
+            this.xmlValue = xmlValue
+        }
     }
 }

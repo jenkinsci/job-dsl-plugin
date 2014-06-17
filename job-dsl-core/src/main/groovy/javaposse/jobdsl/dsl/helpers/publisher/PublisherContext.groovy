@@ -202,80 +202,82 @@ class PublisherContext implements Context {
     }
 
     /**
-     <xunit>
-       <types>  // Optional - only generated when result file(s) specified
-         <JUnitType>  // Must be in the list of 'known' types - see ArchiveXunitContext
-           <pattern></pattern>
-           <skipNoTestFiles>false</skipNoTestFiles>
-           <failIfNotNew>true</failIfNotNew>
-           <deleteOutputFiles>true</deleteOutputFiles>
-           <stopProcessingIfError>true</stopProcessingIfError>
-           <customXSL></customXSL>  // Only valid for 'CustomType'
-         </JUnitType>
-       </types>
-       <thresholds>  // Always generated
-         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
-           <unstableThreshold></unstableThreshold>
-           <unstableNewThreshold></unstableNewThreshold>
-           <failureThreshold></failureThreshold>
-           <failureNewThreshold></failureNewThreshold>
-         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
-         <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-           <unstableThreshold></unstableThreshold>
-           <unstableNewThreshold></unstableNewThreshold>
-           <failureThreshold></failureThreshold>
-           <failureNewThreshold></failureNewThreshold>
-         </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-       </thresholds>
-       <thresholdMode>1</thresholdMode>
-       <extraConfiguration>
-         <testTimeMargin>3000</testTimeMargin>
-       </extraConfiguration>
-     </xunit>
-    */
-    def archiveXunit(Closure xunitClosure = null) {
+     * <xunit>
+     *     <types>
+     *         <JUnitType>
+     *             <pattern></pattern>
+     *             <skipNoTestFiles>false</skipNoTestFiles>
+     *             <failIfNotNew>true</failIfNotNew>
+     *             <deleteOutputFiles>true</deleteOutputFiles>
+     *             <stopProcessingIfError>true</stopProcessingIfError>
+     *         </JUnitType>
+     *         <CustomType>
+     *             <pattern></pattern>
+     *             <skipNoTestFiles>false</skipNoTestFiles>
+     *             <failIfNotNew>true</failIfNotNew>
+     *             <deleteOutputFiles>true</deleteOutputFiles>
+     *             <stopProcessingIfError>true</stopProcessingIfError>
+     *             <customXSL></customXSL>
+     *         </CustomType>
+     *     </types>
+     *     <thresholds>
+     *         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+     *             <unstableThreshold></unstableThreshold>
+     *             <unstableNewThreshold></unstableNewThreshold>
+     *             <failureThreshold></failureThreshold>
+     *             <failureNewThreshold></failureNewThreshold>
+     *         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+     *         <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+     *             <unstableThreshold></unstableThreshold>
+     *             <unstableNewThreshold></unstableNewThreshold>
+     *             <failureThreshold></failureThreshold>
+     *             <failureNewThreshold></failureNewThreshold>
+     *         </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+     *     </thresholds>
+     *     <thresholdMode>1</thresholdMode>
+     *     <extraConfiguration>
+     *         <testTimeMargin>3000</testTimeMargin>
+     *     </extraConfiguration>
+     * </xunit>
+     */
+    def archiveXUnit(Closure xUnitClosure) {
+        ArchiveXUnitContext xUnitContext = new ArchiveXUnitContext()
+        AbstractContextHelper.executeInContext(xUnitClosure, xUnitContext)
 
-        ArchiveXunitContext xunitContext = new ArchiveXunitContext()
-        AbstractContextHelper.executeInContext(xunitClosure, xunitContext)
-
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-
-        Node xunitNode = nodeBuilder.'xunit' {
+        publisherNodes << NodeBuilder.newInstance().'xunit' {
             types {
-                xunitContext.resultFiles.each { ArchiveXunitResultFileContext resultFile ->
+                xUnitContext.resultFiles.each { ArchiveXUnitResultFileContext resultFile ->
                     "${resultFile.type}" {
                         pattern resultFile.pattern
-                        skipNoTestFiles resultFile.skipNoTestFiles ? 'true' : 'false'
-                        failIfNotNew resultFile.failIfNotNew ? 'true' : 'false'
-                        deleteOutputFiles resultFile.deleteOutputFiles ? 'true' : 'false'
-                        stopProcessingIfError resultFile.stopProcessingIfError ? 'true' : 'false'
-                        if (resultFile.type == 'CustomType') {  // Only valid for CustomType
-                            customXSL resultFile.styleSheet
+                        skipNoTestFiles resultFile.skipNoTestFiles
+                        failIfNotNew resultFile.failIfNotNew
+                        deleteOutputFiles resultFile.deleteOutputFiles
+                        stopProcessingIfError resultFile.stopProcessingIfError
+                        if (resultFile instanceof ArchiveXUnitCustomToolContext) {
+                            customXSL resultFile.stylesheet
                         }
                     }
                 }
             }
             thresholds {
                 'org.jenkinsci.plugins.xunit.threshold.FailedThreshold' {
-                    unstableThreshold xunitContext.failedThresholdsContext.unstable
-                    unstableNewThreshold xunitContext.failedThresholdsContext.unstableNew
-                    failureThreshold xunitContext.failedThresholdsContext.failure
-                    failureNewThreshold xunitContext.failedThresholdsContext.failureNew
+                    unstableThreshold xUnitContext.failedThresholdsContext.unstable
+                    unstableNewThreshold xUnitContext.failedThresholdsContext.unstableNew
+                    failureThreshold xUnitContext.failedThresholdsContext.failure
+                    failureNewThreshold xUnitContext.failedThresholdsContext.failureNew
                 }
                 'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold' {
-                    unstableThreshold xunitContext.skippedThresholdsContext.unstable
-                    unstableNewThreshold xunitContext.skippedThresholdsContext.unstableNew
-                    failureThreshold xunitContext.skippedThresholdsContext.failure
-                    failureNewThreshold xunitContext.skippedThresholdsContext.failureNew
+                    unstableThreshold xUnitContext.skippedThresholdsContext.unstable
+                    unstableNewThreshold xUnitContext.skippedThresholdsContext.unstableNew
+                    failureThreshold xUnitContext.skippedThresholdsContext.failure
+                    failureNewThreshold xUnitContext.skippedThresholdsContext.failureNew
                 }
             }
-            thresholdMode xunitContext.thresholdMode.xmlValue
+            thresholdMode xUnitContext.thresholdMode.xmlValue
             extraConfiguration {
-                testTimeMargin xunitContext.timeMargin
+                testTimeMargin xUnitContext.timeMargin
             }
         }
-
-        publisherNodes << xunitNode
     }
 
     /**

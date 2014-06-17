@@ -1,15 +1,16 @@
+package javaposse.jobdsl.dsl.helpers.publisher
+
 import javaposse.jobdsl.dsl.helpers.Context
 
-class ArchiveXunitResultFileContext implements Context {
-    String type
+class ArchiveXUnitResultFileContext implements Context {
+    final String type
     String pattern = ''
     boolean skipNoTestFiles = false
     boolean failIfNotNew = true
     boolean deleteOutputFiles = true
     boolean stopProcessingIfError = true
-    String styleSheet = ''
 
-    ArchiveXunitResultFileContext(String type) {
+    ArchiveXUnitResultFileContext(String type) {
         this.type = type
     }
 
@@ -21,19 +22,15 @@ class ArchiveXunitResultFileContext implements Context {
         this.skipNoTestFiles = skipNoTestFiles
     }
 
-    void failIfNotNew(boolean failIfNotNew) {
+    void failIfNotNew(boolean failIfNotNew = true) {
         this.failIfNotNew = failIfNotNew
     }
 
-    void deleteOutputFiles(boolean deleteOutputFiles) {
+    void deleteOutputFiles(boolean deleteOutputFiles = true) {
         this.deleteOutputFiles = deleteOutputFiles
     }
 
-    void stopProcessingIfError(boolean stopProcessingIfError) {
+    void stopProcessingIfError(boolean stopProcessingIfError = true) {
         this.stopProcessingIfError = stopProcessingIfError
-    }
-
-    void styleSheet(String styleSheet) {
-        this.styleSheet = styleSheet
     }
 }
