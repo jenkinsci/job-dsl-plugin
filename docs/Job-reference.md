@@ -2813,6 +2813,108 @@ job {
 
 (since 1.24)
 
+## xUnit plugin
+
+```groovy
+job {
+    publishers {
+        archiveXunit {
+            aUnit {
+                pattern(String = '')
+                skipNoTestFiles(boolean = false)
+                failIfNotNew(boolean = true)
+                deleteOutputFiles(boolean = true)
+                stopProcessingIfError(boolean = true)
+                customXSL(String = '') // This is only valid for 'customTool'
+            }
+            failedThresholds {
+                unstable(int = 0)
+                unstableNew(int = 0)
+                failure(int = 0)
+                failureNew(int = 0)
+            }
+            skippedThresholds {
+                unstable(int = 0)
+                unstableNew(int = 0)
+                failure(int = 0)
+                failureNew(int = 0)
+            }
+            thresholdMode(ThresholdMode = ThresholdMode.NUMBER)
+            timeMargin(int = 2000)
+        }
+    }
+}
+```
+
+Configures a job to collect xunit results. Requires the [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin).
+For more details about individual options, please see the plugin page.
+
+Supported result file types are:
+* aUnit
+* boostTest
+* cTest
+* check
+* cppTest
+* cppUnit
+* customTool
+* embUnit
+* fpcUnit
+* googleTest
+* jUnit
+* msTest
+* mbUnit
+* nUnit
+* phpUnit
+* qTestLib
+* unitTestvalgrind
+
+ThresholdMode can either be ThresholdMode.NUMBER or ThresholdMode.PERCENT
+
+Examples:
+
+```groovy
+job {
+    publishers {
+        archiveXunit {
+            jUnit {
+                pattern 'my_file.xml'
+            }
+        }
+    }
+}
+```
+
+```groovy
+job {
+    publishers {
+        archiveXunit {
+            jUnit {
+                pattern 'my_file.xml'
+            }
+            jUnit {
+                pattern 'my_other_file.xml'
+            }
+            failedThresholds {
+                unstable 10
+                unstableNew 10
+                failure 10
+                failureNew 10
+            }
+            skippedThresholds {
+                unstable 5
+                unstableNew 5
+                failure 5
+                failureNew 5
+            }
+            thresholdMode ThresholdMode.PERCENT
+            timeMargin 4000
+        }
+    }
+}
+```
+
+(since 1.24)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_
