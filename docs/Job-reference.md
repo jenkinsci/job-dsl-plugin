@@ -2813,6 +2813,108 @@ job {
 
 (since 1.24)
 
+## xUnit
+
+```groovy
+job {
+    publishers {
+        archiveXUnit {
+            aUnit {
+                pattern(String pattern)                     // empty by default
+                skipNoTestFiles(boolean value = true)       // defaults to false
+                failIfNotNew(boolean value = true)          // defaults to true
+                deleteOutputFiles(boolean value = true)     // defaults to true
+                stopProcessingIfError(boolean value = true) // defaults to true
+            }
+            boostTest { ... }                               // see aUnit closure above
+            cTest { ... }                                   // see aUnit closure above
+            check { ... }                                   // see aUnit closure above
+            cppTest { ... }                                 // see aUnit closure above
+            cppUnit { ... }                                 // see aUnit closure above
+            embUnit { ... }                                 // see aUnit closure above
+            fpcUnit { ... }                                 // see aUnit closure above
+            googleTest { ... }                              // see aUnit closure above
+            jUnit { ... }                                   // see aUnit closure above
+            msTest { ... }                                  // see aUnit closure above
+            mbUnit { ... }                                  // see aUnit closure above
+            nUnit { ... }                                   // see aUnit closure above
+            phpUnit { ... }                                 // see aUnit closure above
+            qTestLib { ... }                                // see aUnit closure above
+            unitTestvalgrind { ... }                        // see aUnit closure above
+            customTool {
+                // all options from the aUnit closure above, plus
+                stylesheet(String url)                      // empty by default
+            }
+            failedThresholds {
+                unstable(int threshold)                     // defaults to 0
+                unstableNew(int threshold)                  // defaults to 0
+                failure(int threshold)                      // defaults to 0
+                failureNew(int threshold)                   // defaults to 0
+            }
+            skippedThresholds {
+                unstable(int threshold)                     // defaults to 0
+                unstableNew(int threshold)                  // defaults to 0
+                failure(int threshold)                      // defaults to 0
+                failureNew(int threshold)                   // defaults to 0
+            }
+            thresholdMode(ThresholdMode mode)               // defaults to ThresholdMode.NUMBER
+            timeMargin(int margin)                          // defaults to 3000
+        }
+    }
+}
+```
+
+Configures a job to collect test results. Requires the
+[xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin).
+For more details about individual options, please see the plugin page.
+
+The threshold mode can either be `ThresholdMode.NUMBER` or `ThresholdMode.PERCENT`.
+
+Examples:
+
+```groovy
+job {
+    publishers {
+        archiveXUnit {
+            jUnit {
+                pattern 'my_file.xml'
+            }
+        }
+    }
+}
+```
+
+```groovy
+job {
+    publishers {
+        archiveXUnit {
+            aUnit {
+                pattern 'my_file.xml'
+            }
+            jUnit {
+                pattern 'my_other_file.xml'
+            }
+            failedThresholds {
+                unstable 10
+                unstableNew 10
+                failure 10
+                failureNew 10
+            }
+            skippedThresholds {
+                unstable 5
+                unstableNew 5
+                failure 5
+                failureNew 5
+            }
+            thresholdMode ThresholdMode.PERCENT
+            timeMargin 4000
+        }
+    }
+}
+```
+
+(since 1.24)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_

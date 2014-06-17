@@ -202,6 +202,85 @@ class PublisherContext implements Context {
     }
 
     /**
+     * <xunit>
+     *     <types>
+     *         <JUnitType>
+     *             <pattern></pattern>
+     *             <skipNoTestFiles>false</skipNoTestFiles>
+     *             <failIfNotNew>true</failIfNotNew>
+     *             <deleteOutputFiles>true</deleteOutputFiles>
+     *             <stopProcessingIfError>true</stopProcessingIfError>
+     *         </JUnitType>
+     *         <CustomType>
+     *             <pattern></pattern>
+     *             <skipNoTestFiles>false</skipNoTestFiles>
+     *             <failIfNotNew>true</failIfNotNew>
+     *             <deleteOutputFiles>true</deleteOutputFiles>
+     *             <stopProcessingIfError>true</stopProcessingIfError>
+     *             <customXSL></customXSL>
+     *         </CustomType>
+     *     </types>
+     *     <thresholds>
+     *         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+     *             <unstableThreshold></unstableThreshold>
+     *             <unstableNewThreshold></unstableNewThreshold>
+     *             <failureThreshold></failureThreshold>
+     *             <failureNewThreshold></failureNewThreshold>
+     *         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+     *         <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+     *             <unstableThreshold></unstableThreshold>
+     *             <unstableNewThreshold></unstableNewThreshold>
+     *             <failureThreshold></failureThreshold>
+     *             <failureNewThreshold></failureNewThreshold>
+     *         </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+     *     </thresholds>
+     *     <thresholdMode>1</thresholdMode>
+     *     <extraConfiguration>
+     *         <testTimeMargin>3000</testTimeMargin>
+     *     </extraConfiguration>
+     * </xunit>
+     */
+    def archiveXUnit(Closure xUnitClosure) {
+        ArchiveXUnitContext xUnitContext = new ArchiveXUnitContext()
+        AbstractContextHelper.executeInContext(xUnitClosure, xUnitContext)
+
+        publisherNodes << NodeBuilder.newInstance().'xunit' {
+            types {
+                xUnitContext.resultFiles.each { ArchiveXUnitResultFileContext resultFile ->
+                    "${resultFile.type}" {
+                        pattern resultFile.pattern
+                        skipNoTestFiles resultFile.skipNoTestFiles
+                        failIfNotNew resultFile.failIfNotNew
+                        deleteOutputFiles resultFile.deleteOutputFiles
+                        stopProcessingIfError resultFile.stopProcessingIfError
+                        if (resultFile instanceof ArchiveXUnitCustomToolContext) {
+                            customXSL resultFile.stylesheet
+                        }
+                    }
+                }
+            }
+            thresholds {
+                'org.jenkinsci.plugins.xunit.threshold.FailedThreshold' {
+                    unstableThreshold xUnitContext.failedThresholdsContext.unstable
+                    unstableNewThreshold xUnitContext.failedThresholdsContext.unstableNew
+                    failureThreshold xUnitContext.failedThresholdsContext.failure
+                    failureNewThreshold xUnitContext.failedThresholdsContext.failureNew
+                }
+                'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold' {
+                    unstableThreshold xUnitContext.skippedThresholdsContext.unstable
+                    unstableNewThreshold xUnitContext.skippedThresholdsContext.unstableNew
+                    failureThreshold xUnitContext.skippedThresholdsContext.failure
+                    failureNewThreshold xUnitContext.skippedThresholdsContext.failureNew
+                }
+            }
+            thresholdMode xUnitContext.thresholdMode.xmlValue
+            extraConfiguration {
+                testTimeMargin xUnitContext.timeMargin
+            }
+        }
+    }
+
+    /**
      <hudson.plugins.jacoco.JacocoPublisher>
      <execPattern>"target/*.exec"</execPattern>
      <classPattern>"target/classes"</classPattern>
