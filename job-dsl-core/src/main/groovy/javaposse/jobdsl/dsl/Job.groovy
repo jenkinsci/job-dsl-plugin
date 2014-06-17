@@ -104,13 +104,6 @@ class Job extends Item {
             throw new JobTypeMismatchException(name, templateName)
         }
 
-        // Clean up our own indication that a job is a template
-        templateNode.depthFirst().each { Node node ->
-            if (node.name() == 'javaposse.jobdsl.plugin.SeedJobsProperty') {
-                node.parent().remove(node)
-            }
-        }
-
         templateNode
     }
 
