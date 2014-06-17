@@ -1,4 +1,4 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.api;
 
 import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
 

@@ -36,6 +36,7 @@ import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
 import javaposse.jobdsl.plugin.api.ContextExtensionPoint;
+import javaposse.jobdsl.plugin.api.DslMethod;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.lang.ClassUtils;
