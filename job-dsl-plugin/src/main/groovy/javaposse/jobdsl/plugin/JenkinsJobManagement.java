@@ -49,25 +49,17 @@ import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
 
 /**
- * Manages Jenkins Jobs, providing facilities to retrieve and create / update.
+ * Manages Jenkins jobs, providing facilities to retrieve and create / update.
  */
 public final class JenkinsJobManagement extends AbstractJobManagement {
-    static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
-    EnvVars envVars;
-    Set<GeneratedJob> modifiedJobs;
-    AbstractBuild<?, ?> build;
-
-    JenkinsJobManagement() {
-        super();
-        envVars = new EnvVars();
-        modifiedJobs = Sets.newLinkedHashSet();
-    }
+    private final EnvVars envVars;
+    private final AbstractBuild<?, ?> build;
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build) {
         super(outputLogger);
         this.envVars = envVars;
-        this.modifiedJobs = Sets.newLinkedHashSet();
         this.build = build;
     }
 
@@ -82,7 +74,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         try {
             xml = lookupJob(jobName);
-        } catch (IOException ioex) {
+        } catch (IOException e) {
             LOGGER.log(Level.WARNING, String.format("Named Job Config not found: %s", jobName));
             throw new JobConfigurationNotFoundException(jobName);
         }
@@ -166,9 +158,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName);
 
-        AbstractProject<?,?> project = (AbstractProject<?,?>) Jenkins.getInstance().getItemByFullName(jobName);
+        AbstractProject<?, ?> project = (AbstractProject<?, ?>) Jenkins.getInstance().getItemByFullName(jobName);
 
-        if(build != null && build instanceof Run) {
+        if (build != null) {
             Run run = (Run) build;
             LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", jobName, run.getParent().getName()));
             project.scheduleBuild(new Cause.UpstreamCause(run));
@@ -221,20 +213,17 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     private String lookupJob(String jobName) throws IOException {
         LOGGER.log(Level.FINE, String.format("Looking up item %s", jobName));
-        String jobXml = "";
 
         AbstractItem item = (AbstractItem) Jenkins.getInstance().getItemByFullName(jobName);
         if (item != null) {
             XmlFile xmlFile = item.getConfigFile();
-            jobXml = xmlFile.asString();
+            String jobXml = xmlFile.asString();
+            LOGGER.log(Level.FINE, String.format("Looked up item with config %s", jobXml));
+            return jobXml;
         } else {
             LOGGER.log(Level.WARNING, String.format("No item called %s could be found.", jobName));
             throw new IOException(String.format("No item called %s could be found.", jobName));
-
         }
-
-        LOGGER.log(Level.FINE, String.format("Looked up item with config %s", jobXml));
-        return jobXml;
     }
 
     private boolean updateExistingItem(AbstractItem item, String config) {
@@ -259,8 +248,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             item.updateByXml(streamSource);
             created = true;
-        } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing updated item to file."), ioex);
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, String.format("Error writing updated item to file."), e);
             created = false;
         }
         return created;
@@ -278,11 +267,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             ctx.createProjectFromXML(itemName, is);
 
             created = true;
-        } catch (UnsupportedEncodingException ueex) {
+        } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
             created = false;
-        } catch (IOException ioex) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new item %s.", fullItemName), ioex);
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new item %s.", fullItemName), e);
             created = false;
         }
         return created;
@@ -304,7 +293,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     static String getItemNameFromFullName(String fullName) {
         int i = fullName.lastIndexOf('/');
-        return i > 0 ? fullName.substring(i+1) : fullName;
+        return i > 0 ? fullName.substring(i + 1) : fullName;
     }
 
     static ViewGroup getViewGroup(String fullName) {
@@ -317,14 +306,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
     }
 
-    public static class ExtractJobName implements Function<GeneratedJob, String> {
-        @Override public String apply(GeneratedJob input) {
-            return input.getJobName();
-        }
-    }
-
     public static class ExtractTemplate implements Function<GeneratedJob, String> {
-        @Override public String apply(GeneratedJob input) {
+        @Override
+        public String apply(GeneratedJob input) {
             return input.getTemplateName();
         }
     }
