@@ -350,13 +350,12 @@ class JenkinsJobManagementSpec extends Specification {
         result == null
     }
 
-    def 'callExtension with string result'() {
+    def 'callExtension with no args'() {
         when:
         Node result = jobManagement.callExtension('test', PropertiesContext)
 
         then:
-        result.name() == 'testNode'
-        result.children().size() == 0
+        isXmlIdentical('/extension.xml', result)
     }
 
     def 'callExtension defined twice'() {
@@ -372,6 +371,21 @@ class JenkinsJobManagementSpec extends Specification {
     def 'callExtension with object result'() {
         when:
         Node result = jobManagement.callExtension('testComplexObject', PropertiesContext, 'foo', 42, true)
+
+        then:
+        isXmlIdentical('/extension.xml', result)
+    }
+
+    def 'callExtension with closure'() {
+        setup:
+        Closure closure = {
+            value1('foo')
+            value2(42)
+            value3(true)
+        }
+
+        when:
+        Node result = jobManagement.callExtension('withNestedContext', PropertiesContext, closure)
 
         then:
         isXmlIdentical('/extension.xml', result)
