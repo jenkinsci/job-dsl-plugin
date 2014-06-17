@@ -313,6 +313,37 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return null;
     }
 
+    public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+        Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
+        if (candidates.isEmpty()) {
+            LOGGER.fine(
+                    "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
+            );
+            return null;
+        } else if (candidates.size() > 1) {
+            throw new ExtensionPointException(
+                    "Found multiple extensions which provide method " + name + " with arguments " +
+                            Arrays.toString(args) + ": " +
+                            Arrays.toString(ClassUtils.toClass(candidates.keySet().toArray()))
+            );
+        }
+
+        try {
+            Map.Entry<ContextExtensionPoint, Method> candidate = candidates.entrySet().iterator().next();
+            ContextExtensionPoint extensionPoint = candidate.getKey();
+            Method method = candidate.getValue();
+            Object result = method.invoke(extensionPoint, args);
+            String xml = XSTREAM.toXML(result);
+            LOGGER.fine(
+                    "Call to extension " + extensionPoint.getClass().getName() + "." + name + " with arguments " +
+                            Arrays.toString(args) + " produced " + xml
+            );
+            return new XmlParser().parseText(xml);
+        } catch (Exception e) {
+            throw new ExtensionPointException("Error calling extension", e);
+        }
+    }
+
     private void markBuildAsUnstable(String message) {
         getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
         build.setResult(UNSTABLE);
@@ -367,8 +398,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             item.updateByXml(streamSource);
 
-            Jenkins jenkins = Jenkins.getInstance();
-            for (ContextExtensionPoint extensionPoint : jenkins.getExtensionList(ContextExtensionPoint.class)) {
+            for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
                 extensionPoint.notifyItemUpdated(item);
             }
 
@@ -392,8 +422,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             if (parent instanceof ModifiableTopLevelItemGroup) {
                 Item item = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
 
-                Jenkins jenkins = Jenkins.getInstance();
-                for (ContextExtensionPoint extensionPoint : jenkins.getExtensionList(ContextExtensionPoint.class)) {
+                for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
                     extensionPoint.notifyItemCreated(item);
                 }
 
@@ -420,55 +449,14 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
     }
 
-    @Override
-    public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
-        Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
-        if (candidates.isEmpty()) {
-            LOGGER.fine(
-                    "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
-            );
-            return null;
-        } else if (candidates.size() > 1) {
-            throw new ExtensionPointException(
-                    "Found multiple extensions which provide method " + name + " with arguments " +
-                            Arrays.toString(args) + ": " +
-                            Arrays.toString(ClassUtils.toClass(candidates.keySet().toArray()))
-            );
-        }
-
-        try {
-            Map.Entry<ContextExtensionPoint, Method> candidate = candidates.entrySet().iterator().next();
-            ContextExtensionPoint extensionPoint = candidate.getKey();
-            Method method = candidate.getValue();
-            Object result = method.invoke(extensionPoint, args);
-
-            String xml;
-            if (result instanceof String) {
-                // if the result is already a String, this String is supposed to be (or better: must be) correct XML
-                xml = (String) result;
-            } else {
-                // otherwise transform object to XML ...
-                xml = XSTREAM.toXML(result);
-            }
-            LOGGER.fine(
-                    "Call to extension " + extensionPoint.getClass().getName() + "." + name + " with arguments " +
-                            Arrays.toString(args) + " produced " + xml
-            );
-            return new XmlParser().parseText(xml);
-        } catch (Exception e) {
-            throw new ExtensionPointException("Error calling extension", e);
-        }
-    }
-
     private static Map<ContextExtensionPoint, Method> findExtensionPoints(String name,
                                                                           Class<? extends ExtensibleContext> contextType,
                                                                           Object... args) {
-        Jenkins jenkins = Jenkins.getInstance();
         Class[] parameterTypes = ClassUtils.toClass(args);
         Map<ContextExtensionPoint, Method> candidates = new HashMap<ContextExtensionPoint, Method>();
 
         // Find extensions that match any @DslMethod annotated method with the given name and parameters
-        for (ContextExtensionPoint extensionPoint : jenkins.getExtensionList(ContextExtensionPoint.class)) {
+        for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
             Method candidateMethod = getMatchingAccessibleMethod(extensionPoint.getClass(), name, parameterTypes);
             if (candidateMethod != null) {
                 DslMethod annotation = candidateMethod.getAnnotation(DslMethod.class);
