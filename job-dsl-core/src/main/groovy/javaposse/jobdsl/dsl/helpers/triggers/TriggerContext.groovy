@@ -23,22 +23,10 @@ class TriggerContext implements Context {
     /**
      * Adds DSL  for adding and configuring the URL trigger plugin to a job.
      *
-     * Uses a default cron execution schedule "H/5 * * * *", every 5 minutes with some jitter to prevent load spikes.
-     *
-     * @param contextClosure closure for configuring the context
-     */
-    def urlTrigger(Closure contextClosure) {
-        urlTrigger(null, contextClosure)
-    }
-
-    /**
-     * Adds DSL  for adding and configuring the URL trigger plugin to a job.
-     *
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
      */
-    def urlTrigger(String crontab, Closure contextClosure) {
-
+    def urlTrigger(String crontab = null, Closure contextClosure) {
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
         AbstractContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
