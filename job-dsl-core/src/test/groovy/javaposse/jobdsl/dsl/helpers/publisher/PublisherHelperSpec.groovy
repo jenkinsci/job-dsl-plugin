@@ -6,6 +6,8 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
+import static javaposse.jobdsl.dsl.helpers.publisher.PlotPluginPlotCSVContext.InclusionFlag
+import static javaposse.jobdsl.dsl.helpers.publisher.PlotPluginPlotXMLContext.NodeType
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
 
 class PublisherHelperSpec extends Specification {
@@ -554,6 +556,396 @@ class PublisherHelperSpec extends Specification {
         jacocoNode.maximumMethodCoverage[0].value() == '11'
         jacocoNode.maximumClassCoverage[0].value() == '12'
         jacocoNode.changeBuildStatus[0].value() == 'true'
+    }
+
+    def 'call plotPlugin with some basic args'() {
+        when:
+        context.plotPlugin {
+            area('some.csv', 'my group') {
+                title 'my title'
+                numBuilds 12
+            }
+        }
+
+        then:
+        Node plotPluginNode = context.publisherNodes[0]
+        plotPluginNode.name() == 'hudson.plugins.plot.PlotPublisher'
+
+        def plotNode = plotPluginNode.plots.'hudson.plugins.plot.Plot'[0]
+        plotNode.title[0].value() == 'my title'
+        plotNode.yaxis[0].value() == ''
+        plotNode.group[0].value() == 'my group'
+        plotNode.numBuilds[0].value() == 12
+        plotNode.csvFileName[0].value() == 'some.csv'
+        plotNode.style[0].value() == 'area'
+        plotNode.useDescr[0].value() == 'false'
+    }
+
+    def 'call plotPlugin with all basic args'() {
+        when:
+        context.plotPlugin {
+            bar('some.csv', 'my group') {
+                title 'my title'
+                numBuilds 12
+                yAxis 'axis lable'
+                useBuildDescr true
+            }
+        }
+
+        then:
+        Node plotPluginNode = context.publisherNodes[0]
+        plotPluginNode.name() == 'hudson.plugins.plot.PlotPublisher'
+
+        def plotNode = plotPluginNode.plots.'hudson.plugins.plot.Plot'[0]
+        plotNode.title[0].value() == 'my title'
+        plotNode.yaxis[0].value() == 'axis lable'
+        plotNode.group[0].value() == 'my group'
+        plotNode.numBuilds[0].value() == 12
+        plotNode.csvFileName[0].value() == 'some.csv'
+        plotNode.style[0].value() == 'bar'
+        plotNode.useDescr[0].value() == 'true'
+    }
+
+    def 'call plotPlugin with all chart styles'() {
+        when:
+        context.plotPlugin {
+            "${input}"('some.csv', 'my group') {
+            }
+        }
+
+        then:
+        Node plotPluginNode = context.publisherNodes[0]
+        plotPluginNode.name() == 'hudson.plugins.plot.PlotPublisher'
+
+        def plotNode = plotPluginNode.plots.'hudson.plugins.plot.Plot'[0]
+        plotNode.title[0].value() == ''
+        plotNode.yaxis[0].value() == ''
+        plotNode.group[0].value() == 'my group'
+        plotNode.numBuilds[0].value() == ''
+        plotNode.csvFileName[0].value() == 'some.csv'
+        plotNode.style[0].value() == input
+        plotNode.useDescr[0].value() == 'false'
+
+        where:
+        input << ['area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall']
+    }
+
+    def 'call plotPlugin with a data series'() {
+        when:
+        context.plotPlugin {
+            line('some.csv', 'my group') {
+                propertiesFile {
+                    file 'prop_file_name'
+                }
+            }
+        }
+
+        then:
+        Node plotPluginNode = context.publisherNodes[0]
+        plotPluginNode.name() == 'hudson.plugins.plot.PlotPublisher'
+
+        def plotNode = plotPluginNode.plots.'hudson.plugins.plot.Plot'[0]
+        plotNode.title[0].value() == ''
+        plotNode.yaxis[0].value() == ''
+        plotNode.group[0].value() == 'my group'
+        plotNode.numBuilds[0].value() == ''
+        plotNode.csvFileName[0].value() == 'some.csv'
+        plotNode.style[0].value() == 'line'
+        plotNode.useDescr[0].value() == 'false'
+
+        def propertiesFileSeries = plotNode.series[0].'hudson.plugins.plot.PropertiesSeries'[0]
+        propertiesFileSeries.file[0].value() == 'prop_file_name'
+        propertiesFileSeries.label[0].value() == ''
+        propertiesFileSeries.fileType[0].value() == 'properties'
+    }
+
+    def 'call plotPlugin with all data series types miminal args'() {
+        when:
+        context.plotPlugin {
+            line('some.csv', 'my group') {
+                propertiesFile {
+                    file 'prop_file_name'
+                }
+                csvFile {
+                    file 'csv_file_name'
+                }
+                xmlFile {
+                    file 'xml_file_name'
+                }
+            }
+        }
+
+        then:
+        Node plotPluginNode = context.publisherNodes[0]
+        plotPluginNode.name() == 'hudson.plugins.plot.PlotPublisher'
+
+        def plotNode = plotPluginNode.plots.'hudson.plugins.plot.Plot'[0]
+        plotNode.title[0].value() == ''
+        plotNode.yaxis[0].value() == ''
+        plotNode.group[0].value() == 'my group'
+        plotNode.numBuilds[0].value() == ''
+        plotNode.csvFileName[0].value() == 'some.csv'
+        plotNode.style[0].value() == 'line'
+        plotNode.useDescr[0].value() == 'false'
+
+        def propertiesFileSeries = plotNode.series[0].'hudson.plugins.plot.PropertiesSeries'[0]
+        propertiesFileSeries.file[0].value() == 'prop_file_name'
+        propertiesFileSeries.label[0].value() == ''
+        propertiesFileSeries.fileType[0].value() == 'properties'
+
+        def csvFileSeries = plotNode.series[0].'hudson.plugins.plot.CSVSeries'[0]
+        csvFileSeries.file[0].value() == 'csv_file_name'
+        csvFileSeries.label[0].value() == ''
+        csvFileSeries.fileType[0].value() == 'csv'
+        csvFileSeries.url[0].value() == ''
+        csvFileSeries.inclusionFlag[0].value() == 'OFF'
+        csvFileSeries.exclusionValues[0].value() == ''
+        csvFileSeries.displayTableFlag[0].value() == 'false'
+
+        def xmlFileSeries = plotNode.series[0].'hudson.plugins.plot.XMLSeries'[0]
+        xmlFileSeries.file[0].value() == 'xml_file_name'
+        xmlFileSeries.label[0].value() == ''
+        xmlFileSeries.fileType[0].value() == 'xml'
+        xmlFileSeries.url[0].value() == ''
+        xmlFileSeries.xpathString[0].value() == ''
+        xmlFileSeries.nodeTypeString[0].value() == 'NODESET'
+    }
+
+    def 'call plotPlugin with all data series types and all args'() {
+        when:
+        context.plotPlugin {
+            bar('some.csv', 'my group') {
+                title 'my title'
+                numBuilds 12
+                yAxis 'axis lable'
+                useBuildDescr()
+                propertiesFile {
+                    file 'prop_file_name'
+                    label 'prop_label'
+                }
+                csvFile {
+                    file 'csv_file_name'
+                    label 'csv_label'
+                    url 'csv_url'
+                    inclusionFlag InclusionFlag.INCLUDE_BY_STRING
+                    exclusionValues 'exclude'
+                    showTable true
+                }
+                xmlFile {
+                    file 'xml_file_name'
+                    label 'xml_label'
+                    url 'xml_url'
+                    xpath 'xpath'
+                    nodeType NodeType.STRING
+                }
+            }
+        }
+
+        then:
+        Node plotPluginNode = context.publisherNodes[0]
+        plotPluginNode.name() == 'hudson.plugins.plot.PlotPublisher'
+
+        def plotNode = plotPluginNode.plots.'hudson.plugins.plot.Plot'[0]
+        plotNode.title[0].value() == 'my title'
+        plotNode.yaxis[0].value() == 'axis lable'
+        plotNode.group[0].value() == 'my group'
+        plotNode.numBuilds[0].value() == 12
+        plotNode.csvFileName[0].value() == 'some.csv'
+        plotNode.style[0].value() == 'bar'
+        plotNode.useDescr[0].value() == 'true'
+
+        def propertiesFileSeries = plotNode.series[0].'hudson.plugins.plot.PropertiesSeries'[0]
+        propertiesFileSeries.file[0].value() == 'prop_file_name'
+        propertiesFileSeries.label[0].value() == 'prop_label'
+        propertiesFileSeries.fileType[0].value() == 'properties'
+
+        def csvFileSeries = plotNode.series[0].'hudson.plugins.plot.CSVSeries'[0]
+        csvFileSeries.file[0].value() == 'csv_file_name'
+        csvFileSeries.label[0].value() == 'csv_label'
+        csvFileSeries.fileType[0].value() == 'csv'
+        csvFileSeries.url[0].value() == 'csv_url'
+        csvFileSeries.inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
+        csvFileSeries.exclusionValues[0].value() == 'exclude'
+        csvFileSeries.displayTableFlag[0].value() == 'true'
+
+        def xmlFileSeries = plotNode.series[0].'hudson.plugins.plot.XMLSeries'[0]
+        xmlFileSeries.file[0].value() == 'xml_file_name'
+        xmlFileSeries.label[0].value() == 'xml_label'
+        xmlFileSeries.fileType[0].value() == 'xml'
+        xmlFileSeries.url[0].value() == 'xml_url'
+        xmlFileSeries.xpathString[0].value() == 'xpath'
+        xmlFileSeries.nodeTypeString[0].value() == 'STRING'
+    }
+
+    def 'call plotPlugin with a little of everything'() {
+        when:
+        context.plotPlugin {
+            line('some0.csv', 'my group 0') {
+                propertiesFile {
+                    file 'prop_file_name_0'
+                    label 'prop_label_0'
+                }
+            }
+            bar('some1.csv', 'my group 1') {
+                title 'my title 1'
+                csvFile {
+                    file 'csv_file_name_0'
+                }
+                xmlFile {
+                    file 'xml_file_name_0'
+                }
+            }
+            stackedArea('some2.csv', 'my group 2') {
+                numBuilds 12
+                propertiesFile {
+                    file 'prop_file_name_1'
+                }
+                propertiesFile {
+                    file 'prop_file_name_2'
+                    label 'prop_label_2'
+                }
+                propertiesFile {
+                    file 'prop_file_name_3'
+                    label 'prop_label_3'
+                }
+                csvFile {
+                    file 'csv_file_name_1'
+                }
+            }
+            bar('some3.csv', 'my group 3') {
+                title 'my title 3'
+                numBuilds 21
+                yAxis 'axis label 3'
+                useBuildDescr true
+                propertiesFile {
+                    file 'prop_file_name_4'
+                    label 'prop_label_4'
+                }
+                csvFile {
+                    file 'csv_file_name_2'
+                    label 'csv_label_2'
+                    url 'csv_url_2'
+                    inclusionFlag InclusionFlag.INCLUDE_BY_STRING
+                    exclusionValues 'exclude_3'
+                    showTable()
+                }
+                xmlFile {
+                    file 'xml_file_name_1'
+                    label 'xml_label_1'
+                    url 'xml_url_1'
+                    xpath 'xpath_1'
+                    nodeType NodeType.NUMBER
+                }
+            }
+        }
+
+        then:
+        Node plotPluginNode = context.publisherNodes[0]
+        plotPluginNode.name() == 'hudson.plugins.plot.PlotPublisher'
+
+        def plotNode0 = plotPluginNode.plots.'hudson.plugins.plot.Plot'[0]
+        plotNode0.title[0].value() == ''
+        plotNode0.yaxis[0].value() == ''
+        plotNode0.group[0].value() == 'my group 0'
+        plotNode0.numBuilds[0].value() == ''
+        plotNode0.csvFileName[0].value() == 'some0.csv'
+        plotNode0.style[0].value() == 'line'
+        plotNode0.useDescr[0].value() == 'false'
+
+        def propFile00 = plotNode0.series[0].'hudson.plugins.plot.PropertiesSeries'[0]
+        propFile00.file[0].value() == 'prop_file_name_0'
+        propFile00.label[0].value() == 'prop_label_0'
+        propFile00.fileType[0].value() == 'properties'
+
+        def plotNode1 = plotPluginNode.plots.'hudson.plugins.plot.Plot'[1]
+        plotNode1.title[0].value() == 'my title 1'
+        plotNode1.yaxis[0].value() == ''
+        plotNode1.group[0].value() == 'my group 1'
+        plotNode1.numBuilds[0].value() == ''
+        plotNode1.csvFileName[0].value() == 'some1.csv'
+        plotNode1.style[0].value() == 'bar'
+        plotNode1.useDescr[0].value() == 'false'
+
+        def csvFile10 = plotNode1.series[0].'hudson.plugins.plot.CSVSeries'[0]
+        csvFile10.file[0].value() == 'csv_file_name_0'
+        csvFile10.label[0].value() == ''
+        csvFile10.fileType[0].value() == 'csv'
+        csvFile10.url[0].value() == ''
+        csvFile10.inclusionFlag[0].value() == 'OFF'
+        csvFile10.exclusionValues[0].value() == ''
+        csvFile10.displayTableFlag[0].value() == 'false'
+
+        def xmlFile10 = plotNode1.series[0].'hudson.plugins.plot.XMLSeries'[0]
+        xmlFile10.file[0].value() == 'xml_file_name_0'
+        xmlFile10.label[0].value() == ''
+        xmlFile10.fileType[0].value() == 'xml'
+        xmlFile10.url[0].value() == ''
+        xmlFile10.xpathString[0].value() == ''
+        xmlFile10.nodeTypeString[0].value() == 'NODESET'
+
+        def plotNode2 = plotPluginNode.plots.'hudson.plugins.plot.Plot'[2]
+        plotNode2.title[0].value() == ''
+        plotNode2.yaxis[0].value() == ''
+        plotNode2.group[0].value() == 'my group 2'
+        plotNode2.numBuilds[0].value() == 12
+        plotNode2.csvFileName[0].value() == 'some2.csv'
+        plotNode2.style[0].value() == 'stackedArea'
+        plotNode2.useDescr[0].value() == 'false'
+
+        def propFile20 = plotNode2.series[0].'hudson.plugins.plot.PropertiesSeries'[0]
+        propFile20.file[0].value() == 'prop_file_name_1'
+        propFile20.label[0].value() == ''
+        propFile20.fileType[0].value() == 'properties'
+
+        def propFile21 = plotNode2.series[0].'hudson.plugins.plot.PropertiesSeries'[1]
+        propFile21.file[0].value() == 'prop_file_name_2'
+        propFile21.label[0].value() == 'prop_label_2'
+        propFile21.fileType[0].value() == 'properties'
+
+        def propFile22 = plotNode2.series[0].'hudson.plugins.plot.PropertiesSeries'[2]
+        propFile22.file[0].value() == 'prop_file_name_3'
+        propFile22.label[0].value() == 'prop_label_3'
+        propFile22.fileType[0].value() == 'properties'
+
+        def csvFile20 = plotNode2.series[0].'hudson.plugins.plot.CSVSeries'[0]
+        csvFile20.file[0].value() == 'csv_file_name_1'
+        csvFile20.label[0].value() == ''
+        csvFile20.fileType[0].value() == 'csv'
+        csvFile20.url[0].value() == ''
+        csvFile20.inclusionFlag[0].value() == 'OFF'
+        csvFile20.exclusionValues[0].value() == ''
+        csvFile20.displayTableFlag[0].value() == 'false'
+
+        def plotNode3 = plotPluginNode.plots.'hudson.plugins.plot.Plot'[3]
+        plotNode3.title[0].value() == 'my title 3'
+        plotNode3.yaxis[0].value() == 'axis label 3'
+        plotNode3.group[0].value() == 'my group 3'
+        plotNode3.numBuilds[0].value() == 21
+        plotNode3.csvFileName[0].value() == 'some3.csv'
+        plotNode3.style[0].value() == 'bar'
+        plotNode3.useDescr[0].value() == 'true'
+
+        def propFile30 = plotNode3.series[0].'hudson.plugins.plot.PropertiesSeries'[0]
+        propFile30.file[0].value() == 'prop_file_name_4'
+        propFile30.label[0].value() == 'prop_label_4'
+        propFile30.fileType[0].value() == 'properties'
+
+        def csvFile30 = plotNode3.series[0].'hudson.plugins.plot.CSVSeries'[0]
+        csvFile30.file[0].value() == 'csv_file_name_2'
+        csvFile30.label[0].value() == 'csv_label_2'
+        csvFile30.fileType[0].value() == 'csv'
+        csvFile30.url[0].value() == 'csv_url_2'
+        csvFile30.inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
+        csvFile30.exclusionValues[0].value() == 'exclude_3'
+        csvFile30.displayTableFlag[0].value() == 'true'
+
+        def xmlFile30 = plotNode3.series[0].'hudson.plugins.plot.XMLSeries'[0]
+        xmlFile30.file[0].value() == 'xml_file_name_1'
+        xmlFile30.label[0].value() == 'xml_label_1'
+        xmlFile30.fileType[0].value() == 'xml'
+        xmlFile30.url[0].value() == 'xml_url_1'
+        xmlFile30.xpathString[0].value() == 'xpath_1'
+        xmlFile30.nodeTypeString[0].value() == 'NUMBER'
     }
 
     def 'calling minimal html publisher'() {
