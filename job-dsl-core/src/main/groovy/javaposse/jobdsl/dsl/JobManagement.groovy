@@ -2,9 +2,6 @@ package javaposse.jobdsl.dsl
 
 /**
  * Interface to manage jobs, which the DSL needs to do.
- *
- * @author jryan
- * @author aharmel-law
  */
 interface JobManagement {
     /**
