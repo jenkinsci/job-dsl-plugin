@@ -196,6 +196,48 @@ class BuildParametersContext implements Context {
     }
 
     /**
+    * <project>
+    *   <properties>
+    *       <hudson.model.ParametersDefinitionProperty>
+    *           <parameterDefinitions>
+    *           <org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition>
+    *             <name></name>
+    *             <description></description>
+    *             <defaultValue></defaultValue>
+    *             <allNodesMatchingLabel>false</allNodesMatchingLabel>
+    *             <triggerIfResult>allCases</triggerIfResult>
+    *             <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+    *           </org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition>
+    *
+    * @param parameterName
+    * @param defaultValue (optional)
+    * @param description (optional)
+    * @param allNodes (default = false)
+    * @param trigger (one of allCases, success, unstable)
+    * @param eligibility (one of AllNodeEligibility, IgnoreOfflineNodeEligibility, IgnoreTempOfflineNodeEligibility)
+    * @return
+    */
+    def labelParam(String parameterName, String defaultValue = '', String description = '',
+        boolean allNodes = false, String trigger = 'allCases', String eligibility = 'AllNodeEligibility') {
+        checkArgument(!buildParameterNodes.containsKey(parameterName),
+            'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+
+        def definitionNode = NodeBuilder.newInstance().
+            'org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition' {
+            nodeEligibility(class: "org.jvnet.jenkins.plugins.nodelabelparameter.node.${eligibility}")
+        }
+        definitionNode.appendNode('name', parameterName)
+        definitionNode.appendNode('defaultValue', defaultValue)
+        definitionNode.appendNode('description', description)
+        definitionNode.appendNode('allNodesMatchingLabel', allNodes ? 'true' : 'false')
+        definitionNode.appendNode('triggerIfResult', trigger)
+
+        buildParameterNodes[parameterName] = definitionNode
+    }
+
+    /**
      * <project>
      *     <properties>
      *         <hudson.model.ParametersDefinitionProperty>

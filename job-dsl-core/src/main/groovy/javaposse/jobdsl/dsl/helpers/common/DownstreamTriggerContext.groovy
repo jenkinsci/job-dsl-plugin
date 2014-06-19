@@ -14,6 +14,8 @@ class DownstreamTriggerContext implements Context {
     String projects
     String condition
     String matrixSubsetFilter
+    String nodeLabelParam
+    String nodeLabel
     Map<String, Boolean> boolParams = [:]
 
     boolean triggerWithNoParameters
@@ -26,6 +28,7 @@ class DownstreamTriggerContext implements Context {
     boolean combineQueuedCommits = false
     boolean usingPredefined = false
     boolean usingMatrixSubset = false
+    boolean usingNodeLabel = false
     boolean sameNode = false
 
     def currentBuild() {
@@ -75,6 +78,12 @@ class DownstreamTriggerContext implements Context {
 
     def sameNode(boolean sameNode = true) {
         this.sameNode = sameNode
+    }
+
+    def nodeLabel(String paramName, String nodeLabel) {
+        usingNodeLabel = true
+        this.nodeLabelParam = paramName
+        this.nodeLabel = nodeLabel
     }
 
     def blockingThresholdsFromMap(Map<String, String> thresholdMap) {
@@ -133,6 +142,13 @@ class DownstreamTriggerContext implements Context {
             if (usingSubversionRevision) {
                 'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {
                     delegate.createNode('includeUpstreamParameters', includeUpstreamParameters)
+                }
+            }
+
+            if (usingNodeLabel) {
+                'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter' {
+                    name nodeLabelParam
+                    nodeLabel nodeLabel
                 }
             }
 

@@ -723,6 +723,7 @@ class StepHelperSpec extends Specification {
                         prop3: 'value3',
                         prop4: 'value4'
                 ])
+                nodeLabel('nodeParam', 'node_label')
             }
         }
 
@@ -766,6 +767,11 @@ class StepHelperSpec extends Specification {
         propStr.contains('prop2=value2')
         propStr.contains('prop3=value3')
         propStr.contains('prop4=value4')
+
+        def nodeLabel = configsNode.
+            'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
+        nodeLabel.name[0].value() == 'nodeParam'
+        nodeLabel.nodeLabel[0].value() == 'node_label'
     }
 
     def 'call phases with multiple calls'() {
@@ -1106,6 +1112,7 @@ still-another-dsl.groovy'''
                 predefinedProps('key4=value4\nkey5=value5') // Newline separated
                 matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
                 subversionRevision() // Subversion Revision
+                nodeLabel('nodeParam', 'node_label') // Limit to node label selection
             }
             trigger('Project2') {
                 currentBuild()
@@ -1130,6 +1137,11 @@ still-another-dsl.groovy'''
             configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
                     'label=="${TARGET}"'
             configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
+                name[0].value() == 'nodeParam'
+            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
+                nodeLabel[0].value() == 'node_label'
+
             block.size() == 1
             Node thresholds = block[0]
             thresholds.children().size() == 3
