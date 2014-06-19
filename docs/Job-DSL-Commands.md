@@ -211,6 +211,7 @@ job(attributes) {
         runParam(parameterName, jobToRun, description, filter)
         stringParam(parameterName, defaultValue, description)
         textParam(parameterName, defaultValue, description)
+        labelParam(parameterName, nodeLabel, description, allNodes, trigger, eligibility) // See [[Job Reference]] for more detail
     }
 }
 

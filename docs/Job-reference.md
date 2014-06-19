@@ -1475,6 +1475,7 @@ phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phase
         gitRevision(boolean combineQueuedCommits = false) 
         prop(Object key, Object value)
         props(Map<String, String> map)
+        nodeLabel(String paramName, String nodeLabel)
     }
 }
 ```
@@ -1505,6 +1506,7 @@ job(type: Multijob) {
                 subversionRevision()
                 gitRevision()
                 prop('prop1', 'value1')
+                nodeLabel('lParam', 'my_nodes')
             }
         }
    }
@@ -1542,6 +1544,7 @@ downstreamParameterized(Closure downstreamClosure) {
         predefinedProps(String predefinedProps) // Newline separated
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
+        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
      }
 }
 ```
@@ -1576,6 +1579,7 @@ steps {
             predefinedProps('key4=value4\nkey5=value5') // Newline separated
             matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
             subversionRevision() // Subversion Revision
+            nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
         }
         trigger('Project2') {
             currentBuild()
@@ -1916,6 +1920,7 @@ downstreamParameterized(Closure downstreamClosure) {
         predefinedProps(String predefinedProps) // Newline separated
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
+        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
      }
 }
 ```
@@ -1939,6 +1944,7 @@ publishers {
             predefinedProps('key4=value4\nkey5=value5') // Newline separated
             matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
             subversionRevision() // Subversion Revision
+            nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
         }
         trigger('Project2') {
             currentBuild()
@@ -2498,6 +2504,7 @@ buildPipelineTrigger(String downstreamProjectNames, Closure closure) {
         predefinedProps(String predefinedProps) // Newline separated
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
+        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
     }
 }
 ```
@@ -3031,3 +3038,36 @@ Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
 ```
+
+## Label Parameter
+Simplest usage (taking advantage of defaults for nodeLabel, description, allNodes)
+Usage
+```groovy
+// In this case nodeLabel='', description='', allNodes=false
+// trigger and eligibility have no effect when allNodes=false
+labelParam("myParameterName")
+```
+Simple usage (taking advantage of defaults for description, allNodes)
+```groovy
+// In this case description='', allNodes=false
+// trigger and eligibility have no effect when allNodes=false
+labelParam("myParameterName", "my_node_label")
+```
+Simple usage (taking advantage of defaults for allNodes)
+```groovy
+// In this case allNodes=false
+// trigger and eligibility have no effect when allNodes=false
+labelParam("myParameterName", "my_node_label", "my description")
+```
+Complex usage (taking advantage of defaults for trigger and eligibility)
+```groovy
+// In this case trigger='allCases' and eligibility='AllNodeEligibility'
+labelParam("myParameterName", "my_node_label", "my description", true)
+```
+Full usage
+```groovy
+// trigger options: 'allCases', 'success', 'unstable'
+// eligibility options: 'AllNodeEligibility', 'IgnoreOfflineNodeEligibility', 'IgnoreTempOfflineNodeEligibility'
+labelParam("myParameterName", "my_node_label", "my description", true, "allCases")
+```
+NOTE: More info about trigger and eligibility effects can be found via the jenkins UI
