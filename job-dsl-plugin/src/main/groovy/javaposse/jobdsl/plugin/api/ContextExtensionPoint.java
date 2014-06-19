@@ -14,29 +14,6 @@ import jenkins.model.Jenkins;
  */
 public abstract class ContextExtensionPoint implements ExtensionPoint {
     /**
-     * Internally shared object.
-     */
-    private Context context;
-
-    /**
-     * Set the context to use it later inside the notification methods.
-     *
-     * @param context The context object.
-     */
-    protected void setContext(Context context) {
-        this.context = context;
-    }
-
-    /**
-     * The previously stored context.
-     *
-     * @return The context object.
-     */
-    protected Context getContext() {
-        return context;
-    }
-
-    /**
      * Notifies the ExtensionPoint if an item has been created. Implementations should override this to get notified.
      * The default implementation is empty.
      *

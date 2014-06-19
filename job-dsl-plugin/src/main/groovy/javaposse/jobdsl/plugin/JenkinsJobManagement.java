@@ -37,6 +37,7 @@ import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
 import javaposse.jobdsl.plugin.api.ContextExtensionPoint;
 import javaposse.jobdsl.plugin.api.DslMethod;
+import javaposse.jobdsl.plugin.api.DslSession;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.lang.ClassUtils;
@@ -70,6 +71,8 @@ import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
+import static javaposse.jobdsl.plugin.api.DslSession.clearCurrentSession;
+import static javaposse.jobdsl.plugin.api.DslSession.setCurrentSession;
 import static org.apache.commons.lang.reflect.MethodUtils.getMatchingAccessibleMethod;
 
 /**
@@ -82,6 +85,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private final EnvVars envVars;
     private final AbstractBuild<?, ?> build;
     private final LookupStrategy lookupStrategy;
+    private final Map<String, DslSession> sessions = new HashMap<String, DslSession>();
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build,
                                 LookupStrategy lookupStrategy) {
@@ -399,9 +403,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             item.updateByXml(streamSource);
 
+            setCurrentSession(getSession(item.getFullName()));
             for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
                 extensionPoint.notifyItemUpdated(item);
             }
+            clearCurrentSession();
 
             created = true;
         } catch (IOException e) {
@@ -423,9 +429,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             if (parent instanceof ModifiableTopLevelItemGroup) {
                 Item item = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
 
-                for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
-                    extensionPoint.notifyItemCreated(item);
-                }
+            setCurrentSession(getSession(path));
+            for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
+                extensionPoint.notifyItemCreated(item);
+            }
+            clearCurrentSession();
 
                 created = true;
             } else if (parent == null) {
@@ -444,6 +452,15 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     static String getItemNameFromPath(String path) {
         int i = path.lastIndexOf('/');
         return i > -1 ? path.substring(i + 1) : path;
+    }
+
+    private DslSession getSession(String fullItemName) {
+        DslSession session = sessions.get(fullItemName);
+        if (session == null) {
+            session = new DslSession();
+            sessions.put(fullItemName, session);
+        }
+        return session;
     }
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
