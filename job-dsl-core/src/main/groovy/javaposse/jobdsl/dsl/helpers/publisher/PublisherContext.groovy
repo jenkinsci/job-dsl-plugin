@@ -399,6 +399,13 @@ class PublisherContext implements Context {
                                     file data.file
                                     label data.label
                                     fileType data.fileType
+
+                                    if (data.type == 'CSVSeries') {
+                                        inclusionFlag data.inclusionFlag.name()
+                                        exclusionValues data.exclusionValues
+                                        url data.url
+                                        displayTableFlag data.showTable ? 'true' : 'false'
+                                    }
                                 }
                             }
                         }

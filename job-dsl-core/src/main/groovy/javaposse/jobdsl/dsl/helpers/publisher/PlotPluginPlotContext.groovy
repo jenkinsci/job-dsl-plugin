@@ -42,4 +42,11 @@ class PlotPluginPlotContext implements Context {
 
         dataSeriesList << plotPluginPlotSeriesClosure
     }
+
+    void csvFile(Closure plotPluginPlotSeriesClosure) {
+        PlotPluginPlotSeriesContext plotPluginPlotSeriesContext = new PlotPluginPlotCSVContext()
+        AbstractContextHelper.executeInContext(plotPluginPlotSeriesClosure, plotPluginPlotSeriesContext)
+
+        dataSeriesList << plotPluginPlotSeriesClosure
+    }
 }
