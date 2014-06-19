@@ -49,4 +49,11 @@ class PlotPluginPlotContext implements Context {
 
         dataSeriesList << plotPluginPlotSeriesClosure
     }
+
+    void xmlFile(Closure plotPluginPlotSeriesClosure) {
+        PlotPluginPlotSeriesContext plotPluginPlotSeriesContext = new PlotPluginPlotXMLContext()
+        AbstractContextHelper.executeInContext(plotPluginPlotSeriesClosure, plotPluginPlotSeriesContext)
+
+        dataSeriesList << plotPluginPlotSeriesClosure
+    }
 }

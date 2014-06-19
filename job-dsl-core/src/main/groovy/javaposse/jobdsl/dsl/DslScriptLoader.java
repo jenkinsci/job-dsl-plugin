@@ -176,6 +176,7 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PlotPluginPlotCSVContext.InclusionFlag");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PlotPluginPlotXMLContext.NodeType");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
         icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");

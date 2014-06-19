@@ -406,6 +406,12 @@ class PublisherContext implements Context {
                                         url data.url
                                         displayTableFlag data.showTable ? 'true' : 'false'
                                     }
+
+                                    if (data.type == 'XMLSeries') {
+                                        xpathString data.xpath
+                                        url data.url
+                                        nodeTypeString data.nodeType.name()
+                                    }
                                 }
                             }
                         }
