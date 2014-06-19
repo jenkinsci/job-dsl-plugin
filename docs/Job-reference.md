@@ -2915,6 +2915,100 @@ job {
 
 (since 1.24)
 
+## Plot Plugin
+
+'''groovy
+jobs {
+    publishers {
+        plotPlugin {
+            area(String dataStoreCSV, String group) {
+                title(String title)                     // defaults to ''
+                yAxis(String axis)                      // defaults to ''
+                numBuilds(int builds)                   // defaults to '' (all builds)
+                useBuildDescr(boolean value = true)     // defaults to false
+                propertiesFile {
+                    file(String fileName)               // defaults to ''
+                    label(String label)                 // defaults to ''
+                }
+                csvFile {
+                    // all options from the propertiesFile closure above, plus
+                    url(String url)                     // defaults to ''
+                    inclusionFlag(InclusionFlag flag)   // defaults to InclusionFlag.OFF
+                    exclusionValues(String value)       // defaults to ''
+                    showTable(boolean value = true)     // defaults to false
+                }
+                xmlFile {
+                    // all options from the propertiesFile closure above, plus
+                    url(String url)                     // defaults to ''
+                    xpath(String path)                  // defaults to ''
+                    nodeType(NodeType type)             // defaults to NodeType.NODESET
+                }
+            }
+            bar { ... }                                 // see area closure above
+            bar3d { ... }                               // see area closure above
+            line { ... }                                // see area closure above
+            line3d { ... }                              // see area closure above
+            stackedArea { ... }                         // see area closure above
+            stackedbar { ... }                          // see area closure above
+            stackedbar3d { ... }                        // see area closure above
+            waterfall { ... }                           // see area closure above
+        }
+    }
+}
+'''
+
+Creates plots for various files. Requires the
+[plot plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin).
+For more details about individual options, please see the plugin page.
+
+Valid choices for the inclusionFlag are:
+'''groovy
+OFF, INCLUDE_BY_STRING, EXCLUDE_BY_STRING, INCLUDE_BY_COLUMN, EXCLUDE_BY_COLUMN
+'''
+
+Valid choices for the nodeType are:
+'''groovy
+NODESET, NODE, STRING, BOOLEAN, NUMBER
+'''
+
+Examples:
+
+'''groovy
+plotPlugin {
+    bar('bardata.csv', 'performance plots') {
+        title 'some bar plot'
+        propertiesFile {
+            file 'performance_data.properties'
+        }
+    }
+}
+'''
+
+'''groovy
+plotPlugin {
+    line('linedata.csv', 'example plots') {
+        title 'first example'
+        numBuilds 100
+        csvFile {
+            file 'my_data.csv'
+            showTable()
+        }
+    }
+    waterfall('waterfalldata.csv', 'example plots') {
+        title 'second example'
+        csvFile {
+            file 'more_data.csv'
+        }
+        xmlFile {
+            file 'last_data.xml'
+            xpath 'valid xpath expression'
+        }
+    }
+}
+'''
+
+(Since 1.24)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_
