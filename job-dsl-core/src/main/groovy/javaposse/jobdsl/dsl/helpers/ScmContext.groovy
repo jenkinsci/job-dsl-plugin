@@ -143,7 +143,7 @@ class ScmContext implements Context {
             authorOrCommitter 'false'
             clean gitContext.clean
             wipeOutWorkspace gitContext.wipeOutWorkspace
-            pruneBranches 'false'
+            pruneBranches gitContext.pruneBranches
             remotePoll gitContext.remotePoll
             ignoreNotifyCommit 'false'
             gitTool 'Default'

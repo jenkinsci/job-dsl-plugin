@@ -185,6 +185,36 @@ class ScmHelperSpec extends Specification {
         context.scmNode.useShallowClone[0].text() == 'true'
     }
 
+    def 'call git scm with pruneBranches'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            pruneBranches(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.pruneBranches.size() == 1
+        context.scmNode.pruneBranches[0].text() == 'true'
+    }
+
+    def 'call git scm with pruneBranches, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            pruneBranches()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.pruneBranches.size() == 1
+        context.scmNode.pruneBranches[0].text() == 'true'
+    }
+
     def 'call git scm with createTag'() {
         when:
         context.git {

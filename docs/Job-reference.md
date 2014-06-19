@@ -395,6 +395,7 @@ git {
     wipeOutWorkspace(boolean wipeOutWorkspace = true) // wipe out workspace and force clone, optional, defaults to false
     remotePoll(boolean remotePoll = true) // force polling using workspace, optional, defaults to false
     shallowClone(boolean shallowClone = true) // perform shallow clone, optional, defaults to false
+    pruneBranches(boolean pruneBranches = true) // prune obsolete local branches, optional, defaults to false
     relativeTargetDir(String relativeTargetDir) // checkout to a sub-directory, optional
     reference(String reference) // path to a reference repository, optional
     configure(Closure configure) // optional configure block, the GitSCM node is passed in 
