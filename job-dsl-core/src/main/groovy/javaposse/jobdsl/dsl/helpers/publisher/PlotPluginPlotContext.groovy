@@ -34,4 +34,12 @@ class PlotPluginPlotContext implements Context {
     void useBuildDescr(boolean useBuildDescr = true) {
         this.useBuildDescr = useBuildDescr
     }
+
+    void propertiesFile(Closure plotPluginPlotSeriesClosure) {
+        PlotPluginPlotSeriesContext plotPluginPlotSeriesContext =
+            new PlotPluginPlotSeriesContext('PropertiesSeries', 'properties')
+        AbstractContextHelper.executeInContext(plotPluginPlotSeriesClosure, plotPluginPlotSeriesContext)
+
+        dataSeriesList << plotPluginPlotSeriesClosure
+    }
 }

@@ -393,6 +393,15 @@ class PublisherContext implements Context {
                         csvFileName plot.dataStore
                         style plot.style
                         useDescr plot.useBuildDescr ? 'true' : 'false'
+                        series {
+                            plot.dataSeriesList.each { def data ->
+                                "hudson.plugins.plot.${data.type}" {
+                                    file data.file
+                                    label data.label
+                                    fileType data.fileType
+                                }
+                            }
+                        }
                     }
                 }
             }
