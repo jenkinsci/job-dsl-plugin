@@ -336,6 +336,72 @@ class PublisherContext implements Context {
     }
 
     /**
+    * <hudson.plugins.plot.PlotPublisher>
+    *     <plots>
+    *         <hudson.plugins.plot.Plot>
+    *             <title></title>
+    *             <yaxis></yaxis>
+    *             <series>
+    *                 <hudson.plugins.plot.PropertiesSeries>
+    *                     <file>Properties</file>
+    *                     <label></label>
+    *                     <fileType>properties</fileType>
+    *                 </hudson.plugins.plot.PropertiesSeries>
+    *                 <hudson.plugins.plot.CSVSeries>
+    *                     <file>CSV</file>
+    *                     <label></label>
+    *                     <fileType>csv</fileType>
+    *                     <inclusionFlag>OFF</inclusionFlag>
+    *                     <exclusionValues></exclusionValues>
+    *                     <url></url>
+    *                     <displayTableFlag>false</displayTableFlag>
+    *                 </hudson.plugins.plot.CSVSeries>
+    *                 <hudson.plugins.plot.XMLSeries>
+    *                     <file>XML</file>
+    *                     <label></label>
+    *                     <fileType>xml</fileType>
+    *                     <xpathString></xpathString>
+    *                     <url></url>
+    *                     <nodeTypeString>NODESET</nodeTypeString>
+    *                 </hudson.plugins.plot.XMLSeries>
+    *             </series>
+    *             <group></group>
+    *             <numBuilds></numBuilds>
+    *             <csvFileName></csvFileName>
+    *             <csvLastModification></csvLastModification>
+    *             <style></style>
+    *             <useDescr></useDescr>
+    *         </hudson.plugins.plot.Plot>
+    *     </plots>
+    * </hudson.plugins.plot.PlotPublisher>
+    */
+    def plotPlugin(Closure plotPluginClosure) {
+
+        PlotPluginContext plotPluginContext = new PlotPluginContext()
+        AbstractContextHelper.executeInContext(plotPluginClosure, plotPluginContext)
+
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+
+        Node plotPluginNode = nodeBuilder.'hudson.plugins.plot.PlotPublisher' {
+            plots {
+                plotPluginContext.plots.each { PlotPluginPlotContext plot ->
+                    'hudson.plugins.plot.Plot' {
+                        title plot.title
+                        yaxis plot.yAxis
+                        group plot.group
+                        numBuilds plot.numBuilds ?: ''
+                        csvFileName plot.dataStore
+                        style plot.style
+                        useDescr plot.useBuildDescr ? 'true' : 'false'
+                    }
+                }
+            }
+        }
+
+        publisherNodes << plotPluginNode
+    }
+
+    /**
      <htmlpublisher.HtmlPublisher>
      <reportTargets>
      <htmlpublisher.HtmlPublisherTarget>
