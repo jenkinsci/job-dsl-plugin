@@ -23,6 +23,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added pruneBranches option for Git SCM
  * Fixed ClassCastException when removing folder ([JENKINS-23289](https://issues.jenkins-ci.org/browse/JENKINS-23289))
  * Fixed GerritContext not honoring default settings ([JENKINS-23318](https://issues.jenkins-ci.org/browse/JENKINS-23318))
+ * Moved PerforcePasswordEncryptor to javaposse.jobdsl.dsl.helpers.scm package
 * 1.23 (May 23 2014)
  * Added support for injecting globally defined passwords ([EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin))
  * Added file name to exception message when reading missing workspace files ([JENKINS-23006](https://issues.jenkins-ci.org/browse/JENKINS-23006))

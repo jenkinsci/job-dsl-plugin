@@ -1,10 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
-import hudson.plugins.perforce.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
+import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
@@ -331,7 +331,7 @@ class ScmContext implements Context {
 
         Node p4Node = nodeBuilder.scm(class: 'hudson.plugins.perforce.PerforceSCM') {
             p4User user
-            p4Passwd encryptor.appearsToBeAnEncryptedPassword(password) ? password : encryptor.encryptString(password)
+            p4Passwd encryptor.isEncrypted(password) ? password : encryptor.encrypt(password)
             p4Port 'perforce:1666'
             p4Client 'builds-${JOB_NAME}'
             projectPath "${viewspec}"
