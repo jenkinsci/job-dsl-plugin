@@ -302,4 +302,26 @@ class TopLevelHelper extends AbstractHelper {
             it / concurrentBuild(allowConcurrentBuild ? 'true' : 'false')
         }
     }
+
+    /**
+     * <properties>
+     *     <hudson.plugins.batch__task.BatchTaskProperty>
+     *         <tasks>
+     *             <hudson.plugins.batch__task.BatchTask>
+     *                 <name>Hello World</name>
+     *                 <script>echo Hello World</script>
+     *             </hudson.plugins.batch__task.BatchTask>
+     *         </tasks>
+     *     </hudson.plugins.batch__task.BatchTaskProperty>
+     * </properties>
+     */
+    def batchTask(String name, String script) {
+        execute {
+            def batchTaskProperty = it / 'properties' / 'hudson.plugins.batch__task.BatchTaskProperty'
+            batchTaskProperty / 'tasks' << 'hudson.plugins.batch__task.BatchTask' {
+                delegate.name name
+                delegate.script script
+            }
+        }
+    }
 }

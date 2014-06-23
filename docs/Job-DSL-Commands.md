@@ -49,6 +49,7 @@ job(Map<String, ?> arguments = [:]) {
     configure(Closure configBlock)
 
     // common options
+    batchTask(String name, String script)
     blockOn(String projectNames)
     blockOn(Iterable<String> projectNames)
     blockOnDownstreamProjects()

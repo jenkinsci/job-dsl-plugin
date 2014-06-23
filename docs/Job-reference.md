@@ -111,6 +111,29 @@ jdk(String jdkStr)
 
 Selects the JDK to be used for this project. The jdkStr must match the name of a JDK installation defined in the Jenkins system configuration. The default JDK will be used when the jdk method is omitted.
 
+## Batch Tasks
+
+```groovy
+job {
+    batchTask(String name, String script)
+}
+```
+
+Adds batch tasks that are not regularly executed to projects, such as releases, integration, archiving. Can be called
+multiple times to add more batch tasks. Requires the
+[Batch Task Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Batch+Task+Plugin).
+
+Example:
+
+```groovy
+job {
+    batchTask('upload', 'curl --upload-file build/dist.zip http://www.example.com/upload')
+    batchTask('release', readFileFromWorkspace('scripts/release.sh'))
+}
+```
+
+(since 1.24)
+
 ## Security
 ```groovy
 permission(String)
