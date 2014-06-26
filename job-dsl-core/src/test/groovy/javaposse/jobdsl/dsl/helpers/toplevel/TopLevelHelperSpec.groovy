@@ -384,4 +384,44 @@ class TopLevelHelperSpec extends Specification {
         then:
         root.concurrentBuild[0].value() == 'true'
     }
+
+    def 'add batch task'() {
+        when:
+        def action = helper.batchTask('Hello World', 'echo Hello World')
+        action.execute(root)
+
+        then:
+        root.'properties'.size() == 1
+        root.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'.size() == 1
+        with(root.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'[0]) {
+            tasks.size() == 1
+            tasks[0].'hudson.plugins.batch__task.BatchTask'.size() == 1
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].children().size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'name'[0].value() == 'Hello World'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'script'[0].value() == 'echo Hello World'
+        }
+    }
+
+    def 'add two batch tasks'() {
+        when:
+        def action = helper.batchTask('Hello World', 'echo Hello World')
+        action.execute(root)
+        action = helper.batchTask('foo', 'echo bar')
+        action.execute(root)
+        new XmlNodePrinter().print(root)
+
+        then:
+        root.'properties'.size() == 1
+        root.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'.size() == 1
+        with(root.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'[0]) {
+            tasks.size() == 1
+            tasks[0].'hudson.plugins.batch__task.BatchTask'.size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].children().size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'name'[0].value() == 'Hello World'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'script'[0].value() == 'echo Hello World'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].children().size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'name'[0].value() == 'foo'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'script'[0].value() == 'echo bar'
+        }
+    }
 }
