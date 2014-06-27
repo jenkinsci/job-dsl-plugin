@@ -74,14 +74,22 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
+    private final LookupStrategy lookupStrategy;
+
     @DataBoundConstructor
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
+                             LookupStrategy lookupStrategy) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation == null ? null : scriptLocation.targets;
         this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
+        this.lookupStrategy = lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
+    }
+
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
+        this(scriptLocation, ignoreExisting, removedJobAction, LookupStrategy.JENKINS_ROOT);
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -90,6 +98,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
+        this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
     }
 
     ExecuteDslScripts() {
@@ -132,7 +141,7 @@ public class ExecuteDslScripts extends Builder {
         env.putAll(build.getBuildVariables());
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build);
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, lookupStrategy);
 
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
         Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
@@ -164,10 +173,10 @@ public class ExecuteDslScripts extends Builder {
         updateGeneratedViews(build, listener, freshViews);
 
         // Save onto Builder, which belongs to a Project.
-        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs);
+        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, lookupStrategy);
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
-        GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews);
+        GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews, lookupStrategy);
         gvba.getModifiedViews().addAll(freshViews); // Relying on Set to keep only unique values
         build.addAction(gvba);
 
@@ -183,8 +192,10 @@ public class ExecuteDslScripts extends Builder {
      */
     private Set<String> updateTemplates(AbstractBuild<?, ?> build, BuildListener listener,
                                         Set<GeneratedJob> freshJobs) throws IOException {
+        AbstractProject<?, ?> seedJob = build.getProject();
+
         Set<String> freshTemplates = JenkinsJobManagement.getTemplates(freshJobs);
-        Set<String> existingTemplates = JenkinsJobManagement.getTemplates(extractGeneratedJobs(build.getProject()));
+        Set<String> existingTemplates = JenkinsJobManagement.getTemplates(extractGeneratedJobs(seedJob));
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
         Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
 
@@ -193,7 +204,7 @@ public class ExecuteDslScripts extends Builder {
         listener.getLogger().println("Unreferenced Templates: " + Joiner.on(",").join(removedTemplates));
 
         // Collect information about the templates we loaded
-        final String seedJobName = build.getProject().getName();
+        final String seedJobName = seedJob.getName();
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
         boolean descriptorMutated = false;
 
@@ -212,7 +223,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = Jenkins.getInstance().getItemByFullName(templateName, AbstractProject.class);
+            AbstractProject templateProject = lookupStrategy.getItem(seedJob, templateName, AbstractProject.class);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -253,7 +264,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for (GeneratedJob removedJob : removed) {
-            Item removedItem = Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
+            Item removedItem = lookupStrategy.getItem(build.getProject(), removedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {

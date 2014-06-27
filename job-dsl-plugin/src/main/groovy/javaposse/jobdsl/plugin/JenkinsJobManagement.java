@@ -13,9 +13,9 @@ import hudson.Plugin;
 import hudson.XmlFile;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Cause;
-import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.Run;
 import hudson.model.View;
 import hudson.model.ViewGroup;
@@ -56,11 +56,18 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     private final EnvVars envVars;
     private final AbstractBuild<?, ?> build;
+    private final LookupStrategy lookupStrategy;
 
-    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build) {
+    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build,
+                                LookupStrategy lookupStrategy) {
         super(outputLogger);
         this.envVars = envVars;
         this.build = build;
+        this.lookupStrategy = lookupStrategy;
+    }
+
+    public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build) {
+        this(outputLogger, envVars, build, LookupStrategy.JENKINS_ROOT);
     }
 
     @Override
@@ -84,20 +91,20 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public boolean createOrUpdateConfig(String fullItemName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String itemName, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", fullItemName));
+        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", itemName));
         boolean created = false;
 
-        validateUpdateArgs(fullItemName, config);
+        validateUpdateArgs(itemName, config);
 
-        AbstractItem item = (AbstractItem) Jenkins.getInstance().getItemByFullName(fullItemName);
-        String jobName = getItemNameFromFullName(fullItemName);
+        AbstractItem item = lookupStrategy.getItem(build.getProject(), itemName, AbstractItem.class);
+        String jobName = getItemNameFromFullName(itemName);
         Jenkins.checkGoodName(jobName);
 
         if (item == null) {
-            created = createNewItem(fullItemName, config);
+            created = createNewItem(itemName, config);
         } else if (!ignoreExisting) {
             created = updateExistingItem(item, config);
         }
@@ -112,18 +119,22 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             InputStream inputStream = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
-            ViewGroup viewGroup = getViewGroup(viewName);
-            View view = viewGroup.getView(viewBaseName);
-            if (view == null) {
-                if (viewGroup instanceof Jenkins) {
-                    ((Jenkins) viewGroup).addView(createViewFromXML(viewBaseName, inputStream));
-                } else if (viewGroup instanceof Folder) {
-                    ((Folder) viewGroup).addView(createViewFromXML(viewBaseName, inputStream));
-                } else {
-                    LOGGER.log(Level.WARNING, String.format("Could not create view within %s", viewGroup.getClass()));
+            ItemGroup parent = getParent(viewName, lookupStrategy.getContext(build.getProject()));
+            if (parent instanceof ViewGroup) {
+                View view = ((ViewGroup) parent).getView(viewBaseName);
+                if (view == null) {
+                    if (parent instanceof Jenkins) {
+                        ((Jenkins) parent).addView(createViewFromXML(viewBaseName, inputStream));
+                    } else if (parent instanceof Folder) {
+                        ((Folder) parent).addView(createViewFromXML(viewBaseName, inputStream));
+                    } else {
+                        LOGGER.log(Level.WARNING, String.format("Could not create view within %s", parent.getClass()));
+                    }
+                } else if (!ignoreExisting) {
+                    view.updateByXml(new StreamSource(inputStream));
                 }
-            } else if (!ignoreExisting) {
-                view.updateByXml(new StreamSource(inputStream));
+            } else {
+                LOGGER.log(Level.WARNING, String.format("Could not create view within %s", parent.getClass()));
             }
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
@@ -158,16 +169,10 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName);
 
-        AbstractProject<?, ?> project = (AbstractProject<?, ?>) Jenkins.getInstance().getItemByFullName(jobName);
+        BuildableItem project = lookupStrategy.getItem(build.getParent(), jobName, BuildableItem.class);
 
-        if (build != null) {
-            Run run = (Run) build;
-            LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", jobName, run.getParent().getName()));
-            project.scheduleBuild(new Cause.UpstreamCause(run));
-        } else {
-            LOGGER.log(Level.INFO, String.format("Scheduling build of %s", jobName));
-            project.scheduleBuild(new Cause.UserIdCause());
-        }
+        LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", jobName, build.getParent().getName()));
+        project.scheduleBuild(new Cause.UpstreamCause((Run) build));
     }
 
 
@@ -214,7 +219,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private String lookupJob(String jobName) throws IOException {
         LOGGER.log(Level.FINE, String.format("Looking up item %s", jobName));
 
-        AbstractItem item = (AbstractItem) Jenkins.getInstance().getItemByFullName(jobName);
+        AbstractItem item = lookupStrategy.getItem(build.getProject(), jobName, AbstractItem.class);
         if (item != null) {
             XmlFile xmlFile = item.getConfigFile();
             String jobXml = xmlFile.asString();
@@ -257,49 +262,43 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     private boolean createNewItem(String fullItemName, String config) {
         LOGGER.log(Level.FINE, String.format("Creating item as %s", config));
-        boolean created;
+        boolean created = false;
 
         try {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
-            ModifiableTopLevelItemGroup ctx = getContextFromFullName(fullItemName);
+            ItemGroup parent = getParent(fullItemName, lookupStrategy.getContext(build.getProject()));
             String itemName = getItemNameFromFullName(fullItemName);
-            ctx.createProjectFromXML(itemName, is);
-
-            created = true;
+            if (parent instanceof ModifiableTopLevelItemGroup) {
+                ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+                created = true;
+            } else {
+                LOGGER.log(Level.WARNING, String.format("Could not create item within %s", parent.getClass()));
+            }
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
-            created = false;
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, String.format("Error writing config for new item %s.", fullItemName), e);
-            created = false;
         }
         return created;
     }
 
-    private static ModifiableTopLevelItemGroup getContextFromFullName(String fullName) {
-        int i = fullName.lastIndexOf('/');
+    static ItemGroup getParent(String itemName, ItemGroup context) {
         Jenkins jenkins = Jenkins.getInstance();
-        ModifiableTopLevelItemGroup ctx = jenkins;
-        if (i > 0) {
-            String contextName = fullName.substring(0, i);
-            Item contextItem = jenkins.getItemByFullName(contextName);
-            if (contextItem instanceof ModifiableTopLevelItemGroup) {
-                ctx = (ModifiableTopLevelItemGroup) contextItem;
-            }
+        int i = itemName.lastIndexOf('/');
+        switch (i) {
+            case -1:
+                return context;
+            case 0:
+                return jenkins;
+            default:
+                return jenkins.getItem(itemName.substring(0, i), context, Folder.class);
         }
-        return ctx;
     }
 
     static String getItemNameFromFullName(String fullName) {
         int i = fullName.lastIndexOf('/');
-        return i > 0 ? fullName.substring(i + 1) : fullName;
-    }
-
-    static ViewGroup getViewGroup(String fullName) {
-        Jenkins jenkins = Jenkins.getInstance();
-        int i = fullName.lastIndexOf('/');
-        return i > 0 ? jenkins.getItemByFullName(fullName.substring(0, i), Folder.class) : jenkins;
+        return i > -1 ? fullName.substring(i + 1) : fullName;
     }
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
