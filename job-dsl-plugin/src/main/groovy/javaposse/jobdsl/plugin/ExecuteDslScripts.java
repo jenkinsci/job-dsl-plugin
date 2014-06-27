@@ -78,8 +78,8 @@ public class ExecuteDslScripts extends Builder {
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
-        this.targets = scriptLocation==null?null:scriptLocation.targets; // May be null;
-        this.scriptText = scriptLocation==null?null:scriptLocation.scriptText; // May be null
+        this.targets = scriptLocation == null ? null : scriptLocation.targets;
+        this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
     }
@@ -92,13 +92,8 @@ public class ExecuteDslScripts extends Builder {
         this.removedJobAction = RemovedJobAction.DISABLE;
     }
 
-    ExecuteDslScripts() { /// Where is the empty constructor called?
-        super();
-        this.usingScriptText = true;
-        this.scriptText = null;
-        this.targets = null;
-        this.ignoreExisting = false;
-        this.removedJobAction = RemovedJobAction.DISABLE;
+    ExecuteDslScripts() {
+        this(null);
     }
 
     public String getTargets() {
@@ -129,18 +124,10 @@ public class ExecuteDslScripts extends Builder {
     /**
      * Runs every job DSL script provided in the plugin configuration, which results in new /
      * updated Jenkins jobs. The created / updated jobs are reported in the build result.
-     *
-     * @param build
-     * @param launcher
-     * @param listener
-     * @return
-     * @throws InterruptedException
-     * @throws IOException
      */
-    @SuppressWarnings("rawtypes")
     @Override
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
-                    throws InterruptedException, IOException {
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher,
+                           final BuildListener listener) throws InterruptedException, IOException {
         EnvVars env = build.getEnvironment(listener);
         env.putAll(build.getBuildVariables());
 
@@ -161,7 +148,7 @@ public class ExecuteDslScripts extends Builder {
         }
 
         Set<GeneratedJob> failedJobs = new HashSet<GeneratedJob>();
-        for (GeneratedJob gj: freshJobs) {
+        for (GeneratedJob gj : freshJobs) {
             if (gj.isCreated()) {
                 failedJobs.add(gj);
             }
@@ -193,20 +180,16 @@ public class ExecuteDslScripts extends Builder {
 
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
-     * @param build
-     * @param listener
-     * @param freshJobs
-     * @return
-     * @throws IOException
      */
-    private Set<String> updateTemplates(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedJob> freshJobs) throws IOException {
+    private Set<String> updateTemplates(AbstractBuild<?, ?> build, BuildListener listener,
+                                        Set<GeneratedJob> freshJobs) throws IOException {
         Set<String> freshTemplates = JenkinsJobManagement.getTemplates(freshJobs);
         Set<String> existingTemplates = JenkinsJobManagement.getTemplates(extractGeneratedJobs(build.getProject()));
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
         Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
 
-        listener.getLogger().println("Existing Templates: " + Joiner.on(",").join( existingTemplates ));
-        listener.getLogger().println("New Templates: " + Joiner.on(",").join( newTemplates ));
+        listener.getLogger().println("Existing Templates: " + Joiner.on(",").join(existingTemplates));
+        listener.getLogger().println("New Templates: " + Joiner.on(",").join(newTemplates));
         listener.getLogger().println("Unreferenced Templates: " + Joiner.on(",").join(removedTemplates));
 
         // Collect information about the templates we loaded
@@ -215,7 +198,7 @@ public class ExecuteDslScripts extends Builder {
         boolean descriptorMutated = false;
 
         // Clean up
-        for(String templateName: removedTemplates) {
+        for (String templateName : removedTemplates) {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
             if (!matching.isEmpty()) {
@@ -225,7 +208,7 @@ public class ExecuteDslScripts extends Builder {
         }
 
         // Ensure we have a reference
-        for(String templateName: freshTemplates) {
+        for (String templateName : freshTemplates) {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
@@ -256,30 +239,26 @@ public class ExecuteDslScripts extends Builder {
     }
 
 
-    /**
-     * @param listener
-     * @param freshJobs
-     * @throws IOException
-     */
-    private void updateGeneratedJobs(final AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedJob> freshJobs) throws IOException {
+    private void updateGeneratedJobs(final AbstractBuild<?, ?> build, BuildListener listener,
+                                     Set<GeneratedJob> freshJobs) throws IOException {
         // Update Project
         Set<GeneratedJob> generatedJobs = extractGeneratedJobs(build.getProject());
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = Sets.difference(generatedJobs, freshJobs);
 
-        listener.getLogger().println("Adding items: "   + Joiner.on(",").join(added));
+        listener.getLogger().println("Adding items: " + Joiner.on(",").join(added));
         listener.getLogger().println("Existing items: " + Joiner.on(",").join(existing));
         listener.getLogger().println("Removing items: " + Joiner.on(",").join(removed));
 
         // Update unreferenced jobs
-        for(GeneratedJob removedJob: removed) {
+        for (GeneratedJob removedJob : removed) {
             Item removedItem = Jenkins.getInstance().getItemByFullName(removedJob.getJobName());
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
                         removedItem.delete();
-                    } catch(InterruptedException e) {
+                    } catch (InterruptedException e) {
                         listener.getLogger().println(String.format("Delete item failed: %s", removedJob));
                         if (removedItem instanceof AbstractProject) {
                             listener.getLogger().println(String.format("Disabling item instead: %s", removedJob));
@@ -293,14 +272,11 @@ public class ExecuteDslScripts extends Builder {
                 }
             }
         }
-
-        // BuildAction is created with the result, we'll look at an aggregation of builds to know figure out our generated jobs
-
     }
 
     private Set<GeneratedJob> extractGeneratedJobs(AbstractProject project) {
         GeneratedJobsAction gja = project.getAction(GeneratedJobsAction.class);
-        if (gja==null) {
+        if (gja == null) {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedJobs();
