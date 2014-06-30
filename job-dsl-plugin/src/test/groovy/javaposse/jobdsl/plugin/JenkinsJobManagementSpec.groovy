@@ -26,13 +26,15 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'getItemNameFromFullName'() {
         expect:
-        JenkinsJobManagement.getItemNameFromPath(fullName) == itemName
+        JenkinsJobManagement.getItemNameFromPath(path) == itemName
 
         where:
-        fullName     || itemName
-        'a/b/c'      || 'c'
-        'folder/job' || 'job'
-        'myjob'      || 'myjob'
+        path          || itemName
+        'a/b/c'       || 'c'
+        'folder/job'  || 'job'
+        'myjob'       || 'myjob'
+        '/folder/job' || 'job'
+        '/myjob'      || 'myjob'
     }
 
     def 'createOrUpdateView without name'() {

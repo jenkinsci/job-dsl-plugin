@@ -71,19 +71,19 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public String getConfig(String jobName) throws JobConfigurationNotFoundException {
-        LOGGER.log(Level.INFO, String.format("Getting config for Job %s", jobName));
+    public String getConfig(String path) throws JobConfigurationNotFoundException {
+        LOGGER.log(Level.INFO, String.format("Getting config for Job %s", path));
         String xml;
 
-        if (jobName.isEmpty()) {
-            throw new JobConfigurationNotFoundException(jobName);
+        if (path.isEmpty()) {
+            throw new JobConfigurationNotFoundException(path);
         }
 
         try {
-            xml = lookupJob(jobName);
+            xml = lookupJob(path);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, String.format("Named Job Config not found: %s", jobName));
-            throw new JobConfigurationNotFoundException(jobName);
+            LOGGER.log(Level.WARNING, String.format("Named Job Config not found: %s", path));
+            throw new JobConfigurationNotFoundException(path);
         }
 
         LOGGER.log(Level.FINE, String.format("Job config %s", xml));
@@ -91,20 +91,20 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public boolean createOrUpdateConfig(String itemName, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String path, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", itemName));
+        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", path));
         boolean created = false;
 
-        validateUpdateArgs(itemName, config);
+        validateUpdateArgs(path, config);
 
-        AbstractItem item = lookupStrategy.getItem(build.getProject(), itemName, AbstractItem.class);
-        String jobName = getItemNameFromPath(itemName);
+        AbstractItem item = lookupStrategy.getItem(build.getProject(), path, AbstractItem.class);
+        String jobName = getItemNameFromPath(path);
         Jenkins.checkGoodName(jobName);
 
         if (item == null) {
-            created = createNewItem(itemName, config);
+            created = createNewItem(path, config);
         } else if (!ignoreExisting) {
             created = updateExistingItem(item, config);
         }
@@ -166,12 +166,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public void queueJob(String jobName) throws NameNotProvidedException {
-        validateNameArg(jobName);
+    public void queueJob(String path) throws NameNotProvidedException {
+        validateNameArg(path);
 
-        BuildableItem project = lookupStrategy.getItem(build.getParent(), jobName, BuildableItem.class);
+        BuildableItem project = lookupStrategy.getItem(build.getParent(), path, BuildableItem.class);
 
-        LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", jobName, build.getParent().getName()));
+        LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", path, build.getParent().getName()));
         project.scheduleBuild(new Cause.UpstreamCause((Run) build));
     }
 
@@ -216,18 +216,18 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return filePath;
     }
 
-    private String lookupJob(String jobName) throws IOException {
-        LOGGER.log(Level.FINE, String.format("Looking up item %s", jobName));
+    private String lookupJob(String path) throws IOException {
+        LOGGER.log(Level.FINE, String.format("Looking up item %s", path));
 
-        AbstractItem item = lookupStrategy.getItem(build.getProject(), jobName, AbstractItem.class);
+        AbstractItem item = lookupStrategy.getItem(build.getProject(), path, AbstractItem.class);
         if (item != null) {
             XmlFile xmlFile = item.getConfigFile();
             String jobXml = xmlFile.asString();
             LOGGER.log(Level.FINE, String.format("Looked up item with config %s", jobXml));
             return jobXml;
         } else {
-            LOGGER.log(Level.WARNING, String.format("No item called %s could be found.", jobName));
-            throw new IOException(String.format("No item called %s could be found.", jobName));
+            LOGGER.log(Level.WARNING, String.format("No item called %s could be found.", path));
+            throw new IOException(String.format("No item called %s could be found.", path));
         }
     }
 
@@ -283,9 +283,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    static String getItemNameFromPath(String fullName) {
-        int i = fullName.lastIndexOf('/');
-        return i > -1 ? fullName.substring(i + 1) : fullName;
+    static String getItemNameFromPath(String path) {
+        int i = path.lastIndexOf('/');
+        return i > -1 ? path.substring(i + 1) : path;
     }
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
