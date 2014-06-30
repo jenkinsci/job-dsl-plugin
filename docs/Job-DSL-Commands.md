@@ -281,6 +281,18 @@ job(Map<String, ?> arguments = [:]) {
 
     // BuildFlow options
     buildFlow(String buildFlowText) // since 1.21
+    
+    //MatrixJob options // since 1.24
+    axis {
+        text(String name, [String val1, val2,...])
+        label(String name [String label1, label2,...])
+        labelExpression(String name, [String expression1, expression2,...])
+        jdk(String name, [String jdk1,jdk2,...])
+        configure(Closure configBlock)
+    }
+    sequential(boolean runSequentially)
+    touchStoneFilter(String expression, boolean continueOnFailure)
+    combinationFilter(String expression)
 }
 
 view(Map<String, Object> arguments = [:]) { // since 1.21
@@ -363,8 +375,7 @@ myJob.with {
 }
 ```
 
-A job can have optional attributes. Currently only a `type` attribute with value of `Freeform`, `Maven`, `Multijob`, or
-`BuildFlow` is supported. When no type is specified, a free-style job will be generated. Some methods will only be
+A job can have optional attributes. Currently only a `type` attribute with value of `Freeform`, `Maven`, `Multijob`, `BuildFlow` or `MatrixJob` is supported. When no type is specified, a free-style job will be generated. Some methods will only be
 available in some job types, e.g. `phase` can only be used in Multijob. Each DSL method documents where they are
 relevant.
 

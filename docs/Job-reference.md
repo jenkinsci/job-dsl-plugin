@@ -1534,6 +1534,85 @@ job(type: Multijob) {
    }
 }
 ```
+# [MatrixJob](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project)
+
+Creates a MatrixJob project. You need to pass in the `type: MatrixJob` when creating or rebuilding the project.  
+
+```groovy
+job(type: MatrixJob) {
+   axis{
+      text('axisName1', ['val1', 'val2'...])
+      label('axisName2' ['label-node','label-node'...])
+      labelExpression('axisName3', ['label-node-expression'...])
+      jdk('axisName4', ['jdk1','jdk2'...])
+
+      configure { project ->
+        def ax = project/'axes'
+        ax << {
+          'hudson.matrix.TextAxis' {
+            delegate.createNode('name', 'axis1')
+            values {
+              string 'z'
+              string 'y'
+              string 'x'
+            }
+          }
+        }
+      }
+   }
+   sequential(true)
+   touchStoneFilter('axisName1=="val1"', true)
+   combinationFilter('axisName1=="val1"||axisName2=="master"')
+}
+```
+## axis
+```groovy
+axis{
+  text(String name, [String val1, val2,...])
+  label(String name [String label1, label2,...])
+  labelExpression(String name, [String expression1, expression2,...])
+  jdk(String name, [String jdk1,jdk2,...])
+}
+```
+This block builds the separate axis and the individual methods can be called multiple times with separate label names. Supported axis are:
+
+* text
+* label
+* label expression
+* JDK
+
+You can also use a `configure` block to create other axes.
+
+## sequential
+```groovy
+sequential(boolean runSequentially)
+```
+run each matrix combination in sequence.
+
+## touchStoneFilter
+```groovy
+touchStoneFilter(String expression, boolean continueOnFailure)
+```
+An expression of which combination to run first, the second parameter controls if a failure stops the other builds. 
+
+## combinationFilter
+```groovy
+combinationFilter(String expression)
+```
+An expression to limit which combinations can be run.
+
+## Other elements
+```groovy
+job(type: MatrixJob) {
+   axis{...}
+   scm{...}
+   steps{...}
+   publishers{...}
+   ...
+}
+```
+Any elements which can be added to a freestyle project can also be added to a MatrixJob and these will be run for each of the matrix combinations added and limited by the combination filter.
+
 
 # [Prerequisite Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Prerequisite+build+step+plugin)
 
