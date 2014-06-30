@@ -239,6 +239,18 @@ class JobTest extends Specification {
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + buildFlowXml, xml
     }
 
+    def 'construct simple Matrix job and generate xml from it'() {
+        setup:
+        JobManagement jm = Mock()
+        Job job = new Job(jm, [type: 'MatrixJob'])
+
+        when:
+        def xml = job.xml
+
+        then:
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + matrixJobXml, xml
+    }
+
     private final minimalXml = '''
 <project>
   <actions/>
@@ -294,5 +306,27 @@ class JobTest extends Specification {
   <icon/>
   <dsl></dsl>
 </com.cloudbees.plugins.flow.BuildFlow>
+'''
+
+private final matrixJobXml = '''
+<matrix-project>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <axes/>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+  <runSequentially>true</runSequentially>
+  </executionStrategy>
+</matrix-project>
 '''
 }

@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
-import javaposse.jobdsl.dsl.helpers.MatrixContextHelper
+import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
@@ -35,7 +35,7 @@ class Job extends Item {
     @Delegate MavenHelper helperMaven
     @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
-    @Delegate MatrixContextHelper helperMatrix
+    @Delegate MatrixHelper helperMatrix
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement
@@ -54,7 +54,7 @@ class Job extends Item {
         helperMaven = new MavenHelper(withXmlActions, type)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
-        helperMatrix = new MatrixContextHelper(withXmlActions, type)
+        helperMatrix = new MatrixHelper(withXmlActions, type)
     }
 
     /**

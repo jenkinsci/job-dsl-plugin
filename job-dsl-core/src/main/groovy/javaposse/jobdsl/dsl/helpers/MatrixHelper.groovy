@@ -5,13 +5,13 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import static com.google.common.base.Preconditions.checkState
 
-class MatrixContextHelper extends AbstractContextHelper<axis.AxisContext> {
+class MatrixHelper extends AbstractContextHelper<axis.AxisContext> {
     List<Node> touchStoneResultConditionNode  = []
     boolean combinationFilterAlreadyAdded = false
     boolean runSequentiallyAlreadyAdded = false
     boolean touchStoneAlreadyAdded = false
 
-    MatrixContextHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+    MatrixHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)
     }
 
@@ -46,6 +46,7 @@ class MatrixContextHelper extends AbstractContextHelper<axis.AxisContext> {
   * </project>
   */
     def combinationFilter(String filterExpression = '') {
+        checkState type == JobType.MatrixJob, 'combinationFilter can only be applied for Matrix jobs'
         Preconditions.checkState(!combinationFilterAlreadyAdded, 'combinationFilter can only be applied once')
         combinationFilterAlreadyAdded = true
 
@@ -62,7 +63,8 @@ class MatrixContextHelper extends AbstractContextHelper<axis.AxisContext> {
      * </project>
      */
     def sequential(Boolean runInSequence = true) {
-      Preconditions.checkState(!runSequentiallyAlreadyAdded, 'sequential can only be applied once')
+        checkState type == JobType.MatrixJob, 'sequential can only be applied for Matrix jobs'
+        Preconditions.checkState(!runSequentiallyAlreadyAdded, 'sequential can only be applied once')
         runSequentiallyAlreadyAdded = true
 
         execute {
@@ -88,7 +90,8 @@ class MatrixContextHelper extends AbstractContextHelper<axis.AxisContext> {
         def colorVal = 'BLUE'
         def ordinalVal = 0
 
-        Preconditions.checkState( !touchStoneAlreadyAdded, 'touchStone can only be applied once' )
+        checkState type == JobType.MatrixJob, 'touchStoneFilter can only be applied for Matrix jobs'
+        Preconditions.checkState( !touchStoneAlreadyAdded, 'touchStoneFilter can only be applied once' )
         touchStoneAlreadyAdded = true
 
         if ( continueOnUnstable ) {
