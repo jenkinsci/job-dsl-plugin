@@ -1,5 +1,6 @@
 package javaposse.jobdsl.plugin;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
@@ -15,12 +16,12 @@ public enum LookupStrategy {
      */
     JENKINS_ROOT("Jenkins Root") {
         @Override
-        public <T extends Item> T getItem(Item seedJob, String pathName, Class<T> type) {
-            return Jenkins.getInstance().getItemByFullName(pathName, type);
+        public <T extends Item> T getItem(Item seedJob, String path, Class<T> type) {
+            return Jenkins.getInstance().getItemByFullName(path, type);
         }
 
         @Override
-        public ItemGroup getContext(Item seedJob) {
+        protected ItemGroup getContext(Item seedJob) {
             return Jenkins.getInstance();
         }
     },
@@ -31,12 +32,12 @@ public enum LookupStrategy {
      */
     SEED_JOB("Seed Job") {
         @Override
-        public <T extends Item> T getItem(Item seedJob, String pathName, Class<T> type) {
-            return Jenkins.getInstance().getItem(pathName, seedJob.getParent(), type);
+        public <T extends Item> T getItem(Item seedJob, String path, Class<T> type) {
+            return Jenkins.getInstance().getItem(path, seedJob.getParent(), type);
         }
 
         @Override
-        public ItemGroup getContext(Item seedJob) {
+        protected ItemGroup getContext(Item seedJob) {
             return seedJob.getParent();
         }
     };
@@ -48,19 +49,39 @@ public enum LookupStrategy {
     /**
      * Get an item by its path name in the context of a seed job.
      *
-     * @param seedJob  the seed job
-     * @param pathName the path name
+     * @param seedJob the seed job
+     * @param path    the path name
      * @return the item for the given path
      */
-    public abstract <T extends Item> T getItem(Item seedJob, String pathName, Class<T> type);
+    public abstract <T extends Item> T getItem(Item seedJob, String path, Class<T> type);
 
     /**
-     * Get the context in which new jobs should be created for the given seed job.
+     * Get the context in which new items should be created for the given seed job.
      *
      * @param seedJob a seed job
      * @return the context
      */
-    public abstract ItemGroup getContext(Item seedJob);
+    protected abstract ItemGroup getContext(Item seedJob);
+
+    /**
+     * Get the parent {@link hudson.model.ItemGroup} of the item addressed by the given path.
+     *
+     * @param seedJob the seed job
+     * @param path    path to the item for which the parent should be looked up
+     * @return parent {@link hudson.model.ItemGroup} of the item with the given path
+     */
+    public ItemGroup getParent(Item seedJob, String path) {
+        Jenkins jenkins = Jenkins.getInstance();
+        int i = path.lastIndexOf('/');
+        switch (i) {
+            case -1:
+                return getContext(seedJob);
+            case 0:
+                return jenkins;
+            default:
+                return jenkins.getItem(path.substring(0, i), getContext(seedJob), Folder.class);
+        }
+    }
 
     public String getDisplayName() {
         return displayName;

@@ -23,6 +23,9 @@ folder {
 }
 ```
 
+The name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret names
+relative to the seed job. (since 1.24)
+
 In the closure provided to `job` there are a few top level methods, like `label` and `chucknorris`. Others are nested
 deeper in blocks which represent their role in Jenkins, e.g. the `publishers` block contains all the publisher actions.
 

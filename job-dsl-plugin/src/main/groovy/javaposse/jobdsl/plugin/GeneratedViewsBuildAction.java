@@ -15,8 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import static javaposse.jobdsl.plugin.JenkinsJobManagement.getParent;
-import static javaposse.jobdsl.plugin.JenkinsJobManagement.getItemNameFromFullName;
+import static javaposse.jobdsl.plugin.JenkinsJobManagement.getItemNameFromPath;
 
 public class GeneratedViewsBuildAction implements RunAction {
     public final Set<GeneratedView> modifiedViews;
@@ -71,9 +70,9 @@ public class GeneratedViewsBuildAction implements RunAction {
         Set<View> allGeneratedViews = Sets.newLinkedHashSet();
         if (modifiedViews != null) {
             for (GeneratedView generatedView : modifiedViews) {
-                ItemGroup itemGroup = getParent(generatedView.getName(), getLookupStrategy().getContext(owner.getProject()));
+                ItemGroup itemGroup = getLookupStrategy().getParent(owner.getProject(), generatedView.getName());
                 if (itemGroup instanceof ViewGroup) {
-                    View view = ((ViewGroup) itemGroup).getView(getItemNameFromFullName(generatedView.getName()));
+                    View view = ((ViewGroup) itemGroup).getView(getItemNameFromPath(generatedView.getName()));
                     if (view != null) {
                         allGeneratedViews.add(view);
                     }

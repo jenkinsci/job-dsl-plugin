@@ -26,7 +26,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'getItemNameFromFullName'() {
         expect:
-        JenkinsJobManagement.getItemNameFromFullName(fullName) == itemName
+        JenkinsJobManagement.getItemNameFromPath(fullName) == itemName
 
         where:
         fullName     || itemName

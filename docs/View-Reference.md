@@ -107,6 +107,9 @@ name(String viewName)
 
 The name of the view, **required**.
 
+The view name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret
+names relative to the seed job. (since 1.24)
+
 ```groovy
 name('project-A')
 ```

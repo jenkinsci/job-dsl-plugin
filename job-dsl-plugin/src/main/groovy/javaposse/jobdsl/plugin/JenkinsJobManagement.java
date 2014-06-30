@@ -100,7 +100,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         validateUpdateArgs(itemName, config);
 
         AbstractItem item = lookupStrategy.getItem(build.getProject(), itemName, AbstractItem.class);
-        String jobName = getItemNameFromFullName(itemName);
+        String jobName = getItemNameFromPath(itemName);
         Jenkins.checkGoodName(jobName);
 
         if (item == null) {
@@ -112,14 +112,14 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
-        validateUpdateArgs(viewName, config);
-        String viewBaseName = getItemNameFromFullName(viewName);
+    public void createOrUpdateView(String path, String config, boolean ignoreExisting) {
+        validateUpdateArgs(path, config);
+        String viewBaseName = getItemNameFromPath(path);
         Jenkins.checkGoodName(viewBaseName);
         try {
             InputStream inputStream = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
-            ItemGroup parent = getParent(viewName, lookupStrategy.getContext(build.getProject()));
+            ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
             if (parent instanceof ViewGroup) {
                 View view = ((ViewGroup) parent).getView(viewBaseName);
                 if (view == null) {
@@ -140,7 +140,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
         } catch (IOException e) {
             e.printStackTrace();
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new view %s.", viewName), e);
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new view %s.", path), e);
         }
     }
 
@@ -260,15 +260,15 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    private boolean createNewItem(String fullItemName, String config) {
+    private boolean createNewItem(String path, String config) {
         LOGGER.log(Level.FINE, String.format("Creating item as %s", config));
         boolean created = false;
 
         try {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
-            ItemGroup parent = getParent(fullItemName, lookupStrategy.getContext(build.getProject()));
-            String itemName = getItemNameFromFullName(fullItemName);
+            ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
+            String itemName = getItemNameFromPath(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
                 ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
                 created = true;
@@ -278,25 +278,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new item %s.", fullItemName), e);
+            LOGGER.log(Level.WARNING, String.format("Error writing config for new item %s.", path), e);
         }
         return created;
     }
 
-    static ItemGroup getParent(String itemName, ItemGroup context) {
-        Jenkins jenkins = Jenkins.getInstance();
-        int i = itemName.lastIndexOf('/');
-        switch (i) {
-            case -1:
-                return context;
-            case 0:
-                return jenkins;
-            default:
-                return jenkins.getItem(itemName.substring(0, i), context, Folder.class);
-        }
-    }
-
-    static String getItemNameFromFullName(String fullName) {
+    static String getItemNameFromPath(String fullName) {
         int i = fullName.lastIndexOf('/');
         return i > -1 ? fullName.substring(i + 1) : fullName;
     }
