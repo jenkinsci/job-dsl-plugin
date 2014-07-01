@@ -1199,6 +1199,43 @@ job {
 
 (since 1.24)
 
+## Exclusion Plugin
+
+```groovy
+job {
+    wrappers {
+        exclusionResources {
+            resource(String name)
+        }
+    }
+}
+```
+
+Configures exclusion plugin resources that are required for the criticalBlockStart/criticalBlockEnd steps.
+Requires the [exclusion plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin).
+
+`resource` can be used multiple times to add more resources.
+
+Example:
+
+```groovy
+job {
+    wrappers {
+        exclusionResources {
+            resource('FirstResource')
+            resource('SecondResource')
+        }
+    }
+    steps {
+        criticalBlockStart()
+        // Steps that require resources
+        criticalBlockEnd()
+    }
+}
+```
+
+(since 1.24)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
