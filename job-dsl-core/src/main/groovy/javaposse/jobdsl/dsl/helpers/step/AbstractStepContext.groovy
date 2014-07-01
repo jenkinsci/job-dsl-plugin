@@ -754,4 +754,20 @@ class AbstractStepContext implements Context {
             queryString()
         }
     }
+
+    /**
+    * <builders>
+    *     <org.jvnet.hudson.plugins.exclusion.CriticalBlockStart/>
+    *     <org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd/>
+    * </builders>
+    */
+    def criticalBlockStart() {
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart' {
+        }
+    }
+
+    def criticalBlockEnd() {
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd' {
+        }
+    }
 }

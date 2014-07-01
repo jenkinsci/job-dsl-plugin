@@ -1604,4 +1604,22 @@ still-another-dsl.groovy'''
         then:
         thrown(IllegalArgumentException)
     }
+
+    def 'critical block start'() {
+        when:
+        context.criticalBlockStart()
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'
+    }
+
+    def 'critical block end'() {
+        when:
+        context.criticalBlockEnd()
+
+        then:
+        context.stepNodes.size() == 1
+        context.stepNodes[0].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'
+    }
 }
