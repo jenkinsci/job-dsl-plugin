@@ -1,54 +1,43 @@
 package javaposse.jobdsl.dsl.helpers
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
+
 import static com.google.common.base.Preconditions.checkState
 
-class MatrixHelper extends AbstractContextHelper<axis.AxisContext> {
-    List<Node> touchStoneResultConditionNode  = []
-    boolean combinationFilterAlreadyAdded = false
-    boolean runSequentiallyAlreadyAdded = false
-    boolean touchStoneAlreadyAdded = false
-
+class MatrixHelper extends AbstractContextHelper<AxisContext> {
     MatrixHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
         super(withXmlActions, jobType)
     }
 
-    def axis(Closure closure) {
-        checkState type == JobType.MatrixJob, 'axis can only be applied for Matrix jobs'
+    def axes(Closure closure) {
+        checkState(type == JobType.Matrix, 'axes can only be applied for Matrix jobs')
 
-        execute(closure, new axis.AxisContext())
+        execute(closure, new AxisContext())
     }
 
-    Closure generateWithXmlClosure(axis.AxisContext context) {
+    Closure generateWithXmlClosure(AxisContext context) {
         return { Node project ->
-
-            //there might not be any actual axes defined...
-            if ( !context.axisNodes.isEmpty() ) {
-                def axisNode
-                if (project.axes.isEmpty()) {
-                    axisNode = project.appendNode('axes')
-                } else {
-                    axisNode = project.axes[0]
-                }
-
-                context.axisNodes.each {
-                    axisNode << it
-                }
+            def axesNode
+            if (project.axes.isEmpty()) {
+                axesNode = project.appendNode('axes')
+            } else {
+                axesNode = project.axes[0]
+            }
+            context.axisNodes.each {
+                axesNode << it
+            }
+            context.configureBlocks.each {
+                new WithXmlAction(it).execute(axesNode)
             }
         }
     }
 
-    /*
-  * <project>
-  *   <combinationFilter>axis_label=='a'||axis_label=='b'</combinationFilter>
-  * </project>
-  */
-    def combinationFilter(String filterExpression = '') {
-        checkState type == JobType.MatrixJob, 'combinationFilter can only be applied for Matrix jobs'
-        Preconditions.checkState(!combinationFilterAlreadyAdded, 'combinationFilter can only be applied once')
-        combinationFilterAlreadyAdded = true
+    /**
+     * <combinationFilter>axis_label=='a'||axis_label=='b'</combinationFilter>
+     */
+    def combinationFilter(String filterExpression) {
+        checkState(type == JobType.Matrix, 'combinationFilter can only be applied for Matrix jobs')
 
         execute {
             def node = methodMissing('combinationFilter', filterExpression)
@@ -56,56 +45,40 @@ class MatrixHelper extends AbstractContextHelper<axis.AxisContext> {
         }
     }
 
-    /* <project>
-     *   <executionStrategy class='hudson.matrix.DefaultMatrixExecutionStrategyImpl'>
-     *          <runSequentially>false</runSequentially>
-     *   </executionStrategy>
-     * </project>
+    /**
+     * <executionStrategy>
+     *     <runSequentially>false</runSequentially>
+     * </executionStrategy>
      */
-    def sequential(Boolean runInSequence = true) {
-        checkState type == JobType.MatrixJob, 'sequential can only be applied for Matrix jobs'
-        Preconditions.checkState(!runSequentiallyAlreadyAdded, 'sequential can only be applied once')
-        runSequentiallyAlreadyAdded = true
+    def runSequentially(boolean sequentially = true) {
+        checkState(type == JobType.Matrix, 'runSequentially can only be applied for Matrix jobs')
 
         execute {
-            it / 'executionStrategy' / 'runSequentially' ( runInSequence ? 'true' : 'false')
+            def node = methodMissing('runSequentially', sequentially)
+            it / 'executionStrategy' / node
         }
     }
 
-    /*
-     * <project>
-     *   <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+    /**
+     * <executionStrategy>
      *     <touchStoneCombinationFilter>axis_label=='a'||axis_label=='b'</touchStoneCombinationFilter>
      *     <touchStoneResultCondition>
-     *       <name>UNSTABLE|STABLE</name>
-     *       <ordinal>1|0</ordinal>
-     *       <color>YELLOW|BLUE</color>
-     *       <completeBuild>true</completeBuild>
+     *         <name>UNSTABLE</name>
+     *         <ordinal>1</ordinal>
+     *         <color>YELLOW</color>
+     *         <completeBuild>true</completeBuild>
      *     </touchStoneResultCondition>
-     *   </executionStrategy>
-     * </project>
+     * </executionStrategy>
      */
-    def touchStoneFilter( String filter = '', Boolean continueOnUnstable = false ) {
-        def nameVal = 'STABLE'
-        def colorVal = 'BLUE'
-        def ordinalVal = 0
-
-        checkState type == JobType.MatrixJob, 'touchStoneFilter can only be applied for Matrix jobs'
-        Preconditions.checkState( !touchStoneAlreadyAdded, 'touchStoneFilter can only be applied once' )
-        touchStoneAlreadyAdded = true
-
-        if ( continueOnUnstable ) {
-            nameVal = 'UNSTABLE'
-            colorVal = 'YELLOW'
-            ordinalVal = 1
-        }
+    def touchStoneFilter(String filter, boolean continueOnUnstable = false) {
+        checkState(type == JobType.Matrix, 'touchStoneFilter can only be applied for Matrix jobs')
 
         execute {
-            it / 'executionStrategy' /  'touchStoneCombinationFilter' (filter)
-            it / 'executionStrategy' /  'touchStoneResultCondition'  {
-                name nameVal
-                color colorVal
-                ordinal ordinalVal
+            it / 'executionStrategy' / 'touchStoneCombinationFilter'(filter)
+            it / 'executionStrategy' / 'touchStoneResultCondition' {
+                name continueOnUnstable ? 'UNSTABLE' : 'STABLE'
+                color continueOnUnstable ? 'YELLOW' : 'BLUE'
+                ordinal continueOnUnstable ? 1 : 0
             }
         }
     }

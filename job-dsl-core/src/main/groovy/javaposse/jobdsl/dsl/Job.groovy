@@ -117,7 +117,7 @@ class Job extends Item {
             case JobType.BuildFlow: return emptyBuildFlowTemplate
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
-            case JobType.MatrixJob: return emptyMatrixJobTemplate
+            case JobType.Matrix: return emptyMatrixJobTemplate
         }
     }
 
@@ -232,7 +232,7 @@ class Job extends Item {
   <publishers/>
   <buildWrappers/>
   <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-  <runSequentially>true</runSequentially>
+    <runSequentially>false</runSequentially>
   </executionStrategy>
 </matrix-project>
 '''

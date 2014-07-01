@@ -242,7 +242,7 @@ class JobTest extends Specification {
     def 'construct simple Matrix job and generate xml from it'() {
         setup:
         JobManagement jm = Mock()
-        Job job = new Job(jm, [type: 'MatrixJob'])
+        Job job = new Job(jm, [type: 'Matrix'])
 
         when:
         def xml = job.xml
@@ -325,7 +325,7 @@ private final matrixJobXml = '''
   <publishers/>
   <buildWrappers/>
   <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-  <runSequentially>true</runSequentially>
+    <runSequentially>false</runSequentially>
   </executionStrategy>
 </matrix-project>
 '''

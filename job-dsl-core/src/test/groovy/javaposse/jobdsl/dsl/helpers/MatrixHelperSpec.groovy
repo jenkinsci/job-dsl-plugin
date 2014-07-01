@@ -6,9 +6,8 @@ import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
 class MatrixHelperSpec extends Specification {
-
-    List<WithXmlAction> mockActions = Mock()
-    MatrixHelper helper = new MatrixHelper(mockActions, JobType.MatrixJob)
+    List<WithXmlAction> mockActions = Mock(List)
+    MatrixHelper helper = new MatrixHelper(mockActions, JobType.Matrix)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'can set combinationFilter'() {
@@ -17,15 +16,6 @@ class MatrixHelperSpec extends Specification {
 
         then:
         1 * mockActions.add(_)
-    }
-
-    def 'cannot set combinationFilter twice'() {
-        when:
-        helper.combinationFilter('LABEL1 == "TEST"')
-        helper.combinationFilter('LABEL1 == "TEST"')
-
-        then:
-        thrown(IllegalStateException)
     }
 
     def 'cannot run combinationFilter for free style jobs'() {
@@ -49,42 +39,33 @@ class MatrixHelperSpec extends Specification {
         root.combinationFilter[0].value() == 'LABEL1 == "TEST"'
     }
 
-    def 'can set sequential'() {
+    def 'can set runSequentially'() {
         when:
-        helper.sequential(false)
+        helper.runSequentially(false)
 
         then:
         1 * mockActions.add(_)
     }
 
-    def 'cannot set sequential twice'() {
-        when:
-        helper.sequential(true)
-        helper.sequential(true)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'cannot set sequential for free style jobs'() {
+    def 'cannot set runSequentially for free style jobs'() {
         setup:
         MatrixHelper helper = new MatrixHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.sequential(true)
+        helper.runSequentially(true)
 
         then:
         thrown(IllegalStateException)
     }
 
-    def 'sequential constructs xml'() {
+    def 'runSequentially constructs xml'() {
         when:
-        def action = helper.sequential(false)
+        def action = helper.runSequentially(false)
         action.execute(root)
 
         then:
         root.executionStrategy.runSequentially.size() == 1
-        root.executionStrategy.runSequentially[0].value() == 'false'
+        root.executionStrategy.runSequentially[0].value() == false
     }
 
     def 'can set touchStoneFilter'() {
@@ -93,15 +74,6 @@ class MatrixHelperSpec extends Specification {
 
         then:
         1 * mockActions.add(_)
-    }
-
-    def 'cannot set touchStoneFilter twice'() {
-        when:
-        helper.touchStoneFilter('LABEL1 == "TEST"', true)
-        helper.touchStoneFilter('LABEL1 == "TEST"', true)
-
-        then:
-        thrown(IllegalStateException)
     }
 
     def 'cannot set touchStoneFilter for free style jobs'() {
@@ -117,29 +89,54 @@ class MatrixHelperSpec extends Specification {
 
     def 'touchStoneFilter constructs xml'() {
         when:
-        def action = helper.touchStoneFilter( 'LABEL1 == "TEST"', true )
+        def action = helper.touchStoneFilter('LABEL1 == "TEST"', true)
         action.execute(root)
 
         then:
-        root.executionStrategy.touchStoneCombinationFilter.size() == 1
-        root.executionStrategy.touchStoneCombinationFilter[0].value() == 'LABEL1 == "TEST"'
+        with(root.executionStrategy) {
+            touchStoneCombinationFilter.size() == 1
+            touchStoneCombinationFilter[0].value() == 'LABEL1 == "TEST"'
+            touchStoneResultCondition.size() == 1
+            touchStoneResultCondition[0].children().size() == 3
+            touchStoneResultCondition[0].name[0].value() == 'UNSTABLE'
+            touchStoneResultCondition[0].color[0].value() == 'YELLOW'
+            touchStoneResultCondition[0].ordinal[0].value() == 1
+        }
 
-        root.executionStrategy.touchStoneResultCondition.size() == 1
-        //would like to check elements are [name,color,ordinal] here...
-        root.executionStrategy.touchStoneResultCondition[0].value().each { it in [ 'UNSTABLE', 'YELLOW', 1 ] }
+        when:
+        action = helper.touchStoneFilter('LABEL1 == "TEST"', false)
+        action.execute(root)
+
+        then:
+        with(root.executionStrategy) {
+            touchStoneCombinationFilter.size() == 1
+            touchStoneCombinationFilter[0].value() == 'LABEL1 == "TEST"'
+            touchStoneResultCondition.size() == 1
+            touchStoneResultCondition[0].children().size() == 3
+            touchStoneResultCondition[0].name[0].value() == 'STABLE'
+            touchStoneResultCondition[0].color[0].value() == 'BLUE'
+            touchStoneResultCondition[0].ordinal[0].value() == 0
+        }
     }
 
     def 'can set axis'() {
         when:
-        helper.axis { label( 'LABEL1', [ 'a', 'b', 'c'] ) }
+        helper.axes {
+            label('LABEL1', 'a', 'b', 'c')
+        }
 
         then:
         1 * mockActions.add(_)
     }
+
     def 'can set axis twice'() {
         when:
-        helper.axis { label( 'LABEL1', [ 'a', 'b', 'c' ] ) }
-        helper.axis { label( 'LABEL2', [ 'x', 'y', 'z' ] ) }
+        helper.axes {
+            label('LABEL1', 'a', 'b', 'c')
+        }
+        helper.axes {
+            label('LABEL2', 'x', 'y', 'z')
+        }
 
         then:
         2 * mockActions.add(_)
@@ -150,10 +147,36 @@ class MatrixHelperSpec extends Specification {
         MatrixHelper helper = new MatrixHelper(mockActions, JobType.Freeform)
 
         when:
-        helper.axis { label( 'LABEL1', [ 'a', 'b', 'c' ] ) }
+        helper.axes {
+            label('LABEL1', 'a', 'b', 'c')
+        }
 
         then:
         thrown(IllegalStateException)
+    }
+
+    def 'axes configure block constructs xml'() {
+        setup:
+        List<WithXmlAction> actions = []
+        MatrixHelper helper = new MatrixHelper(actions, JobType.Matrix)
+
+        when:
+        helper.axes {
+            configure { axes ->
+                axes << 'FooAxis'()
+            }
+        }
+
+        then:
+        actions.size() == 1
+
+        when:
+        actions[0].execute(root)
+
+        then:
+        root.axes.size() == 1
+        root.axes[0].children().size() == 1
+        root.axes[0].children()[0].name() == 'FooAxis'
     }
 }
 

@@ -1536,83 +1536,103 @@ job(type: Multijob) {
 ```
 # [MatrixJob](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project)
 
-Creates a MatrixJob project. You need to pass in the `type: MatrixJob` when creating or rebuilding the project.  
+The `axes`, `sequential`, `touchStoneFiler` and `combinationFilter` methods can only be used in jobs with type `Matrix`.
+Any elements which can be added to a freestyle project can also be added to a MatrixJob and these will be run for each
+of the matrix combinations.
+
+See also [Building a matrix project](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project).
+
+## Axes
 
 ```groovy
-job(type: MatrixJob) {
-   axis{
-      text('axisName1', ['val1', 'val2'...])
-      label('axisName2' ['label-node','label-node'...])
-      labelExpression('axisName3', ['label-node-expression'...])
-      jdk('axisName4', ['jdk1','jdk2'...])
+job(type: Matrix) {
+    axes {
+        text(String name, String... values)
+        text(String name, Iterable<String> values)
+        label(String name, String... labels)
+        label(String name, Iterable<String> labels)
+        labelExpression(String name, String... expressions)
+        labelExpression(String name, Iterable<String> expressions)
+        jdk(String... jdks)
+        jdk(Iterable<String> jdks)
+        configure(Closure configClosure)
+    }
+}
+```
 
-      configure { project ->
-        def ax = project/'axes'
-        ax << {
-          'hudson.matrix.TextAxis' {
-            delegate.createNode('name', 'axis1')
-            values {
-              string 'z'
-              string 'y'
-              string 'x'
-            }
-          }
+This block builds the separate axes and the individual methods (except for `jdk`) can be called multiple times with
+separate label names.
+
+The configure block can be used to add axes that are currently not supported by the Job DSL Plugin. The `axes` node is
+passed into the configure block.
+
+Example:
+
+```groovy
+job(type: Matrix) {
+    axes {
+        label('label', 'linux', 'windows')
+        jdk('jdk6', 'jdk7')
+        configure { axes ->
+            axes << 'org.acme.FooAxis'()
         }
-      }
-   }
-   sequential(true)
-   touchStoneFilter('axisName1=="val1"', true)
-   combinationFilter('axisName1=="val1"||axisName2=="master"')
+    }
 }
 ```
-## axis
+
+## Run Sequentially
+
 ```groovy
-axis{
-  text(String name, [String val1, val2,...])
-  label(String name [String label1, label2,...])
-  labelExpression(String name, [String expression1, expression2,...])
-  jdk(String name, [String jdk1,jdk2,...])
+job(type: Matrix) {
+    runSequentially(boolean runSequentially = true)
 }
 ```
-This block builds the separate axis and the individual methods can be called multiple times with separate label names. Supported axis are:
 
-* text
-* label
-* label expression
-* JDK
+Run each matrix combination in sequence. If omitted, Jenkins will try to build the combinations in parallel if possible.
 
-You can also use a `configure` block to create other axes.
+Example:
 
-## sequential
 ```groovy
-sequential(boolean runSequentially)
+job(type: Matrix) {
+    sequential()
+}
 ```
-run each matrix combination in sequence.
 
-## touchStoneFilter
+## Touchstone Builds
+
 ```groovy
-touchStoneFilter(String expression, boolean continueOnFailure)
+job(type: Matrix) {
+    touchStoneFilter(String expression, boolean continueOnFailure = false)
+}
 ```
+
 An expression of which combination to run first, the second parameter controls if a failure stops the other builds. 
 
-## combinationFilter
-```groovy
-combinationFilter(String expression)
-```
-An expression to limit which combinations can be run.
+Example:
 
-## Other elements
 ```groovy
-job(type: MatrixJob) {
-   axis{...}
-   scm{...}
-   steps{...}
-   publishers{...}
-   ...
+job(type: Matrix) {
+    touchStoneFilter('label=="linux"')
 }
 ```
-Any elements which can be added to a freestyle project can also be added to a MatrixJob and these will be run for each of the matrix combinations added and limited by the combination filter.
 
+## Combination Filter
+
+```groovy
+job(type: Matrix) {
+    combinationFilter(String expression)
+}
+```
+
+An expression to limit which combinations can be run.
+
+Example:
+
+```groovy
+job(type: Matrix) {
+    combinationFilter('jdk=="jdk-6" || label=="linux"')
+}
+```
 
 # [Prerequisite Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Prerequisite+build+step+plugin)
 
