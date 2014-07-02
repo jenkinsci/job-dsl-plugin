@@ -20,7 +20,8 @@ ruleset {
     // the DRY rules do not necessarily lead to better code
     // ruleset('rulesets/dry.xml')
 
-    ruleset('rulesets/enhanced.xml')
+    // these rules cause compilation failure warnings
+    // ruleset('rulesets/enhanced.xml')
 
     ruleset('rulesets/exceptions.xml')
 
