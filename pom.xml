@@ -42,6 +42,11 @@
                 <version>1.8.6</version>
             </dependency>
             <dependency>
+                <groupId>org.jenkins-ci</groupId>
+                <artifactId>version-number</artifactId>
+                <version>1.1</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jenkins-ci.main</groupId>
                 <artifactId>jenkins-core</artifactId>
                 <version>1.480</version>

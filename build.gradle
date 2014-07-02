@@ -14,6 +14,9 @@ project(':job-dsl-core') {
     // jpi plugin will install appropriate repos for job-dsl-plugin
     repositories {
         mavenCentral()
+        maven {
+            url('http://maven.jenkins-ci.org/content/repositories/releases')
+        }
     }
 }
 
@@ -60,6 +63,7 @@ project(':job-dsl-core') {
         compile 'commons-codec:commons-codec:1.8' // For perforce
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // For runtime use, not just for testing
+        compile 'org.jenkins-ci:version-number:1.1'
     }
     jar {
         manifest {

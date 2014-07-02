@@ -198,6 +198,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
+    @Override
+    public VersionNumber getPluginVersion(String pluginShortName) {
+        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        return plugin == null ? null : plugin.getWrapper().getVersionNumber();
+    }
+
     private void markBuildAsUnstable(String message) {
         getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
         build.setResult(UNSTABLE);

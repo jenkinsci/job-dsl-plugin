@@ -6,6 +6,7 @@ import hudson.EnvVars
 import hudson.model.AbstractBuild
 import hudson.model.Failure
 import hudson.model.FreeStyleProject
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import org.junit.Rule
@@ -130,5 +131,21 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         folder.getView('view') != null
+    }
+
+    def 'get plugin version'() {
+        when:
+        VersionNumber version = jobManagement.getPluginVersion('cvs')
+
+        then:
+        version != null
+    }
+
+    def 'get plugin version of unknown plugin'() {
+        when:
+        VersionNumber version = jobManagement.getPluginVersion('foo')
+
+        then:
+        version == null
     }
 }
