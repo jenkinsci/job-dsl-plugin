@@ -20,6 +20,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Support for [Keychains and Provisioning Profiles Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Keychains+and+Provisioning+Profiles+Plugin)
  * Support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
  * Support for [Batch Task Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Batch+Task+Plugin)
+ * Support for [Matrix Projects](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project)
  * Extend support for [Build Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
  * Added pruneBranches option for Git SCM
  * Fixed ClassCastException when removing folder ([JENKINS-23289](https://issues.jenkins-ci.org/browse/JENKINS-23289))

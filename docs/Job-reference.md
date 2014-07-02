@@ -1534,6 +1534,105 @@ job(type: Multijob) {
    }
 }
 ```
+# [MatrixJob](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project)
+
+The `axes`, `sequential`, `touchStoneFiler` and `combinationFilter` methods can only be used in jobs with type `Matrix`.
+Any elements which can be added to a freestyle project can also be added to a MatrixJob and these will be run for each
+of the matrix combinations.
+
+See also [Building a matrix project](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project).
+
+## Axes
+
+```groovy
+job(type: Matrix) {
+    axes {
+        text(String name, String... values)
+        text(String name, Iterable<String> values)
+        label(String name, String... labels)
+        label(String name, Iterable<String> labels)
+        labelExpression(String name, String... expressions)
+        labelExpression(String name, Iterable<String> expressions)
+        jdk(String... jdks)
+        jdk(Iterable<String> jdks)
+        configure(Closure configClosure)
+    }
+}
+```
+
+This block builds the separate axes and the individual methods (except for `jdk`) can be called multiple times with
+separate label names.
+
+The configure block can be used to add axes that are currently not supported by the Job DSL Plugin. The `axes` node is
+passed into the configure block.
+
+Example:
+
+```groovy
+job(type: Matrix) {
+    axes {
+        label('label', 'linux', 'windows')
+        jdk('jdk6', 'jdk7')
+        configure { axes ->
+            axes << 'org.acme.FooAxis'()
+        }
+    }
+}
+```
+
+## Run Sequentially
+
+```groovy
+job(type: Matrix) {
+    runSequentially(boolean runSequentially = true)
+}
+```
+
+Run each matrix combination in sequence. If omitted, Jenkins will try to build the combinations in parallel if possible.
+
+Example:
+
+```groovy
+job(type: Matrix) {
+    sequential()
+}
+```
+
+## Touchstone Builds
+
+```groovy
+job(type: Matrix) {
+    touchStoneFilter(String expression, boolean continueOnFailure = false)
+}
+```
+
+An expression of which combination to run first, the second parameter controls if a failure stops the other builds. 
+
+Example:
+
+```groovy
+job(type: Matrix) {
+    touchStoneFilter('label=="linux"')
+}
+```
+
+## Combination Filter
+
+```groovy
+job(type: Matrix) {
+    combinationFilter(String expression)
+}
+```
+
+An expression to limit which combinations can be run.
+
+Example:
+
+```groovy
+job(type: Matrix) {
+    combinationFilter('jdk=="jdk-6" || label=="linux"')
+}
+```
 
 # [Prerequisite Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Prerequisite+build+step+plugin)
 
