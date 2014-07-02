@@ -125,6 +125,10 @@ public class ExecuteDslScripts extends Builder {
         return removedJobAction;
     }
 
+    public LookupStrategy getLookupStrategy() {
+        return lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
+    }
+
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
         return asList(new GeneratedJobsAction(project), new GeneratedViewsAction(project));
@@ -141,7 +145,7 @@ public class ExecuteDslScripts extends Builder {
         env.putAll(build.getBuildVariables());
 
         // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, lookupStrategy);
+        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy());
 
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
         Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
@@ -173,10 +177,10 @@ public class ExecuteDslScripts extends Builder {
         updateGeneratedViews(build, listener, freshViews);
 
         // Save onto Builder, which belongs to a Project.
-        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, lookupStrategy);
+        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, getLookupStrategy());
         gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
         build.addAction(gjba);
-        GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews, lookupStrategy);
+        GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews, getLookupStrategy());
         gvba.getModifiedViews().addAll(freshViews); // Relying on Set to keep only unique values
         build.addAction(gvba);
 
@@ -223,7 +227,7 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = lookupStrategy.getItem(seedJob, templateName, AbstractProject.class);
+            AbstractProject templateProject = getLookupStrategy().getItem(seedJob, templateName, AbstractProject.class);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
@@ -264,7 +268,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for (GeneratedJob removedJob : removed) {
-            Item removedItem = lookupStrategy.getItem(build.getProject(), removedJob.getJobName(), Item.class);
+            Item removedItem = getLookupStrategy().getItem(build.getProject(), removedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
