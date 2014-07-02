@@ -8,7 +8,7 @@ class GeneratedViewsBuildActionSpec extends Specification {
 
     def 'interface methods'() {
         when:
-        GeneratedViewsBuildAction action = new GeneratedViewsBuildAction(modifiedViews)
+        GeneratedViewsBuildAction action = new GeneratedViewsBuildAction(modifiedViews, LookupStrategy.JENKINS_ROOT)
 
         then:
         action.iconFileName == null

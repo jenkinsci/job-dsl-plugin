@@ -1,14 +1,19 @@
 package javaposse.jobdsl.plugin
 
+import com.cloudbees.hudson.plugins.folder.Folder
+import com.google.common.io.Resources
 import hudson.EnvVars
 import hudson.model.AbstractBuild
 import hudson.model.Failure
+import hudson.model.FreeStyleProject
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
 
+import static com.google.common.base.Charsets.UTF_8
+import static com.google.common.io.Resources.getResource
 import static hudson.model.Result.UNSTABLE
 
 class JenkinsJobManagementSpec extends Specification {
@@ -21,13 +26,15 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'getItemNameFromFullName'() {
         expect:
-        JenkinsJobManagement.getItemNameFromFullName(fullName) == itemName
+        JenkinsJobManagement.getItemNameFromPath(path) == itemName
 
         where:
-        fullName     || itemName
-        'a/b/c'      || 'c'
-        'folder/job' || 'job'
-        'myjob'      || 'myjob'
+        path          || itemName
+        'a/b/c'       || 'c'
+        'folder/job'  || 'job'
+        'myjob'       || 'myjob'
+        '/folder/job' || 'job'
+        '/myjob'      || 'myjob'
     }
 
     def 'createOrUpdateView without name'() {
@@ -91,5 +98,37 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         0 * build.setResult(UNSTABLE)
         buffer.size() == 0
+    }
+
+    def 'createOrUpdateConfig relative to folder'() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        JenkinsJobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+        )
+
+        when:
+        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/folder/project') != null
+    }
+
+    def 'createOrUpdateView relative to folder'() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        JenkinsJobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+        )
+
+        when:
+        jobManagement.createOrUpdateView('view', Resources.toString(getResource('minimal-view.xml'), UTF_8), true)
+
+        then:
+        folder.getView('view') != null
     }
 }

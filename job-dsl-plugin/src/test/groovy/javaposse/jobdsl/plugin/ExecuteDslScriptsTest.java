@@ -193,6 +193,32 @@ public class ExecuteDslScriptsTest {
     }
 
     @Test
+    public void deleteJobRelative() throws Exception {
+        // setup
+        Folder folder = jenkinsRule.jenkins.createProject(Folder.class, "folder");
+        FreeStyleProject job = folder.createProject(FreeStyleProject.class, "seed");
+
+        // when
+        String script1 = "job { name 'test-job' }";
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script1),
+                false, RemovedJobAction.DELETE, LookupStrategy.SEED_JOB);
+        runBuild(job, builder1);
+
+        // then
+        assertTrue(jenkinsRule.jenkins.getItemByFullName("/folder/test-job") instanceof FreeStyleProject);
+
+        // when
+        String script2 = "job { name '/folder/different-job' }";
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script2),
+                false, RemovedJobAction.DELETE, LookupStrategy.SEED_JOB);
+        runBuild(job, builder2);
+
+        // then
+        assertTrue(jenkinsRule.jenkins.getItemByFullName("/folder/different-job") instanceof FreeStyleProject);
+        assertNull(jenkinsRule.jenkins.getItemByFullName("/folder/test-job"));
+    }
+
+    @Test
     public void useTemplateInRoot() throws Exception {
         // setup
         FreeStyleProject template = jenkinsRule.createFreeStyleProject("template");
@@ -227,6 +253,26 @@ public class ExecuteDslScriptsTest {
         // then
         assertEquals(SUCCESS, build.getResult());
         assertEquals(jenkinsRule.jenkins.getItemByFullName("test-job", FreeStyleProject.class).getDescription(), description);
+    }
+
+    @Test
+    public void useRelativeTemplate() throws Exception {
+        // setup
+        Folder folder = jenkinsRule.jenkins.createProject(Folder.class, "folder");
+        FreeStyleProject template = folder.createProject(FreeStyleProject.class, "template");
+        String description = "relative template";
+        template.setDescription(description);
+        FreeStyleProject job = folder.createProject(FreeStyleProject.class, "seed");
+
+        // when
+        String script = "job { name('test-job'); using('template') }";
+        ExecuteDslScripts builder = new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation("true", null, script),
+                false, RemovedJobAction.DELETE, LookupStrategy.SEED_JOB);
+        FreeStyleBuild build = runBuild(job, builder);
+
+        // then
+        assertEquals(SUCCESS, build.getResult());
+        assertEquals(jenkinsRule.jenkins.getItemByFullName("/folder/test-job", FreeStyleProject.class).getDescription(), description);
     }
 
     private FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) throws Exception {

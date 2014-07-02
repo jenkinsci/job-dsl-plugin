@@ -12,6 +12,10 @@ If using the [folders plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudB
 name('path/to/myjob')
 ```
 Note that the folders must already exist. (Available since 1.17).
+
+The name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret names
+relative to the seed job. (since 1.24)
+
 ## Display Name
 ```groovy
 displayName(String displayName)
@@ -24,7 +28,13 @@ The name to display instead of the actual job name. (Available since 1.16)
 using(String templateName)
 ```
 
-Refers to a template Job to be used as the basis for this job. These are loaded before any configure blocks or DSL commands.  Template Jobs are just standard Jenkins Jobs which are used for their underlying config.xml. When they are changed, the seed job will attempt to re-run, which has the side-effect of cascading changes of the template the jobs generated from it.
+Refers to a template Job to be used as the basis for this job. These are loaded before any configure blocks or DSL
+commands.  Template Jobs are just standard Jenkins Jobs which are used for their underlying config.xml. When they are
+changed, the seed job will attempt to re-run, which has the side-effect of cascading changes of the template the jobs
+generated from it.
+
+The template name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret
+names relative to the seed job. (since 1.24)
 
 ## Description
 ```groovy
