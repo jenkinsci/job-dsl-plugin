@@ -22,7 +22,6 @@ defaultTasks 'build' // For BuildHive
 subprojects {
     group = 'org.jenkins-ci.plugins'
     apply plugin: 'groovy'
-    apply plugin: 'idea'
     apply plugin: 'maven' // For artifactory publishing
     apply plugin: 'codenarc'
 
@@ -143,8 +142,6 @@ project(':job-dsl-plugin') {
 }
 
 task wrapper(type: Wrapper) { gradleVersion = '1.8' }
-
-apply from: './job-dsl-plugin/ide.gradle'
 
 apply plugin: 'github-pages'
 
