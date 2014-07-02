@@ -56,7 +56,6 @@ project(':job-dsl-core') {
 
     description = "Generates Jenkins jobs via a DSL"
     dependencies {
-        compile 'org.slf4j:slf4j-simple:1.4.3' // For perforce
         compile 'commons-codec:commons-codec:1.8' // For perforce
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // For runtime use, not just for testing
