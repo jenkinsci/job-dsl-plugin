@@ -7,20 +7,20 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class StaticAnalysisPublisherContextSpec extends Specification {
-    List<WithXmlAction> mockActions = Mock()
+    List<WithXmlAction> mockActions = Mock(List)
     JobManagement jobManagement = Mock(JobManagement)
     PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform, jobManagement)
     PublisherContext context = new PublisherContext(jobManagement)
 
     @Unroll
-    def 'add #analysisTool with default values'(analysisTool, extraNodes) {
+    def 'add #analysisTool with default values'(String analysisTool, Map extraNodes) {
         when:
         context."${analysisTool}"('somewhere')
 
         then:
         context.publisherNodes.size() == 1
         def pmdNode = context.publisherNodes[0]
-        assertValues(pmdNode, [],
+        assertValues(pmdNode, [], extraNodes,
                 pattern: 'somewhere',
                 healthy: null,
                 unHealthy: null,
@@ -32,8 +32,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 shouldDetectModules: false,
                 dontComputeNew: true,
                 doNotResolveRelativePaths: true,
-                thresholds: [],
-                *:extraNodes
+                thresholds: []
         )
 
         where:
@@ -56,7 +55,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         def warningsNode = context.publisherNodes[0]
-        assertValues(warningsNode, ['consoleParsers'],
+        assertValues(warningsNode, ['consoleParsers'], [:],
                 healthy: null,
                 unHealthy: null,
                 thresholdLimit: 'low',
@@ -80,7 +79,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
     }
 
     @Unroll
-    def 'add #analysisTool with all values'(analysisTool, nodeName, extraArgs, extraValues) {
+    def 'add #analysisTool with all values'(String analysisTool, String nodeName, List extraArgs, Map extraValues) {
         when:
         context."${analysisTool}"('somewhere', *extraArgs) {
             healthLimits 3, 20
@@ -102,7 +101,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         def analysisNode = context.publisherNodes[0]
         analysisNode.name() == nodeName
-        assertValues(analysisNode, ['thresholds'],
+        assertValues(analysisNode, ['thresholds'], extraValues,
                 pattern: 'somewhere',
                 healthy: 3, unHealthy: 20,
                 thresholdLimit: 'high',
@@ -112,8 +111,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 useDeltaValues: true,
                 shouldDetectModules: true,
                 dontComputeNew: false,
-                doNotResolveRelativePaths: true,
-                *:extraValues
+                doNotResolveRelativePaths: true
         )
         def thresholds = analysisNode.thresholds
         assertValues(thresholds,
@@ -200,8 +198,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
     }
 
-    private void assertValues(Map map, baseNode, List notCheckedNodes = []) {
-        map.each { key, expectedValue ->
+    private static void assertValues(Map map, baseNode, List notCheckedNodes = [], Map extraNodes = [:]) {
+        (map + extraNodes).each { String key, expectedValue ->
             def nodeList = baseNode[key]
             assert nodeList.size() == 1
             def node = nodeList[0]
@@ -209,6 +207,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             assert node.value() == expectedValue
         }
         def children = baseNode instanceof Node ? baseNode.children() : baseNode*.children().flatten()
-        assert children*.name().toSet() == map.keySet() + notCheckedNodes
+        assert children*.name().toSet() == (map + extraNodes).keySet() + notCheckedNodes
     }
 }
