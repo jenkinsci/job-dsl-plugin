@@ -227,6 +227,67 @@ job(type: BuildFlow) {
 
 Since 1.21.
 
+## Notification Plugin
+
+```groovy
+notification(Closure notificationClosure)
+```
+
+Configures notifications for the build. Requires the [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin).
+
+Examples:
+
+One notification endpoint. The protocol defaults to `HTTP`, and the format defaults to `JSON`.
+
+```groovy
+job {
+    ...
+    notification {
+        // Possible values for protocol: HTTP, TCP, or UDP
+        // Possible values for format: JSON or XML
+        endpoint(String url, String protocol = "HTTP", String format = "JSON")
+    }
+    ...
+}
+```
+
+One notification endpoint with an additional closure to configure `event` and `timeout` (introduced in Notification Plugin 1.6)
+
+```groovy
+job {
+    ...
+    notification {
+        // Possible values for protocol: HTTP, TCP, or UDP
+        // Possible values for format: JSON or XML
+        endpoint(String url, String protocol = "HTTP", String format = "JSON") {
+            event(String event = "all") // Use all, started, completed, or finalized. introduced in Notification Plugin 1.6 
+            timeout(int timeout = 30000) // Endpoint call timeout (in ms). introduced in Notification Plugin 1.6
+        }
+    }
+    ...
+}
+```
+
+Multiple notification endpoints.
+
+```groovy
+job {
+    ...
+    notification {
+        // Possible values for protocol: HTTP, TCP, or UDP
+        // Possible values for format: JSON or XML
+        endpoint(String url, String protocol = "HTTP", String format = "JSON")
+        endpoint(String url, String protocol = "HTTP", String format = "JSON") {
+            event(String event = "all") // Use all, started, completed, or finalized. introduced in Notification Plugin 1.6 
+            timeout(int timeout = 30000) // Endpoint call timeout (in ms). introduced in Notification Plugin 1.6
+        }
+    }
+    ...
+}
+```
+
+Since 1.24.
+
 # Maven
 
 The 'rootPOM', 'goals', 'mavenOpts', 'mavenInstallation', 'perModuleEmail', 'archivingDisabled', 'runHeadless', 'preBuildSteps' and 'postBuildSteps' methods can only be used in jobs with type 'Maven'.

@@ -70,6 +70,7 @@ job(Map<String, ?> arguments = [:]) {
     priority(int value)
     quietPeriod(int seconds = 5)
     throttleConcurrentBuilds(Closure throttleClosure)
+    notification(notificationClosure) // See [[Job Reference]] for notificationClosure syntax. Since 1.24
     authorization {
         permission(String permission)
         permission(String permEnumName, String user)
