@@ -20,13 +20,6 @@ build
 /out
 /classes
 
-*/test.xml
-*/test2.xml
-*/view-a.xml
-*/view-b.xml
-*/folder-a.xml
-*/folder-b.xml
-
 #Jenkins specific out
 *.hpi
 
