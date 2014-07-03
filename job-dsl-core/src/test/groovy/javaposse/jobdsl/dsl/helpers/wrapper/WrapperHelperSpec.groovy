@@ -697,9 +697,7 @@ class WrapperHelperSpec extends Specification {
     def 'call exclusion with single arg'() {
         when:
         helper.wrappers {
-            exclusionResources {
-                resource('first')
-            }
+            exclusionResources('first')
         }
         executeHelperActionsOnRootNode()
 
@@ -707,7 +705,6 @@ class WrapperHelperSpec extends Specification {
         root.buildWrappers[0].children().size() == 1
         with(root.buildWrappers[0].children()[0]) {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
-
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
         }
     }
@@ -715,11 +712,7 @@ class WrapperHelperSpec extends Specification {
     def 'call exclusion with multiple args'() {
         when:
         helper.wrappers {
-            exclusionResources {
-                resource('first')
-                resource('second')
-                resource('third')
-            }
+            exclusionResources(['first', 'second', 'third'])
         }
         executeHelperActionsOnRootNode()
 
@@ -727,7 +720,6 @@ class WrapperHelperSpec extends Specification {
         root.buildWrappers[0].children().size() == 1
         with(root.buildWrappers[0].children()[0]) {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
-
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[1].name[0].value() == 'second'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[2].name[0].value() == 'third'

@@ -756,18 +756,16 @@ class AbstractStepContext implements Context {
     }
 
     /**
-    * <builders>
-    *     <org.jvnet.hudson.plugins.exclusion.CriticalBlockStart/>
-    *     <org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd/>
-    * </builders>
-    */
-    def criticalBlockStart() {
-        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart' {
-        }
-    }
+     * <org.jvnet.hudson.plugins.exclusion.CriticalBlockStart/>
+     * ...
+     * <org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd/>
+     */
+    def criticalBlock(Closure closure) {
+        AbstractStepContext stepContext = new AbstractStepContext()
+        AbstractContextHelper.executeInContext(closure, stepContext)
 
-    def criticalBlockEnd() {
-        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd' {
-        }
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'()
+        stepNodes.addAll(stepContext.stepNodes)
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'()
     }
 }

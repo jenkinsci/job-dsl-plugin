@@ -1605,21 +1605,16 @@ still-another-dsl.groovy'''
         thrown(IllegalArgumentException)
     }
 
-    def 'critical block start'() {
+    def 'critical block'() {
         when:
-        context.criticalBlockStart()
+        context.criticalBlock {
+            shell('echo foo')
+        }
 
         then:
-        context.stepNodes.size() == 1
+        context.stepNodes.size() == 3
         context.stepNodes[0].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'
-    }
-
-    def 'critical block end'() {
-        when:
-        context.criticalBlockEnd()
-
-        then:
-        context.stepNodes.size() == 1
-        context.stepNodes[0].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'
+        context.stepNodes[1].name() == 'hudson.tasks.Shell'
+        context.stepNodes[2].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'
     }
 }

@@ -558,23 +558,24 @@ class WrapperContext implements Context {
     }
 
     /**
-    * <org.jvnet.hudson.plugins.exclusion.IdAllocator>
-    *     <ids>
-    *         <org.jvnet.hudson.plugins.exclusion.DefaultIdType>
-    *             <name></name>
-    *         </org.jvnet.hudson.plugins.exclusion.DefaultIdType>
-    *     </ids>
-    * </org.jvnet.hudson.plugins.exclusion.IdAllocator>
-    */
-    def exclusionResources(Closure exclusionClosure) {
-        ExclusionContext exclusionContext = new ExclusionContext()
-        AbstractContextHelper.executeInContext(exclusionClosure, exclusionContext)
+     * <org.jvnet.hudson.plugins.exclusion.IdAllocator>
+     *     <ids>
+     *         <org.jvnet.hudson.plugins.exclusion.DefaultIdType>
+     *             <name>example</name>
+     *         </org.jvnet.hudson.plugins.exclusion.DefaultIdType>
+     *     </ids>
+     * </org.jvnet.hudson.plugins.exclusion.IdAllocator>
+     */
+    def exclusionResources(String... resourceNames) {
+        exclusionResources(resourceNames.toList())
+    }
 
+    def exclusionResources(Iterable<String> resourceNames) {
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.IdAllocator' {
             ids {
-                exclusionContext.names.each { String exclusionName ->
+                resourceNames.each { String resourceName ->
                     'org.jvnet.hudson.plugins.exclusion.DefaultIdType' {
-                        name exclusionName
+                        name resourceName
                     }
                 }
             }
