@@ -1209,6 +1209,38 @@ job {
 
 (since 1.24)
 
+## Exclusion Resources
+
+```groovy
+job {
+    wrappers {
+        exclusionResources(String... resourceNames)
+        exclusionResources(Iterable<String> resourceNames)
+    }
+}
+```
+
+Configures exclusion plugin resources that are required for the `criticalBlock` step. The critical block contains
+the build steps of the critical zone.
+Requires the [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin).
+
+Example:
+
+```groovy
+job {
+    wrappers {
+        exclusionResources('first', 'second')
+    }
+    steps {
+        criticalBlock {
+            shell('echo Hello World!')
+        }
+    }
+}
+```
+
+(since 1.24)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
@@ -1839,6 +1871,20 @@ job {
 ```
 
 (since 1.22)
+
+# Critical Block Start/End
+
+```groovy
+job {
+    steps {
+        criticalBlock(Closure stepClosure)
+    }
+}
+```
+
+See [Exclusion Resources](#exclusion-resources).
+
+(since 1.24)
 
 # Publishers
 

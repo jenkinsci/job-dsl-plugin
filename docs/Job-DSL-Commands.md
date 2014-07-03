@@ -128,6 +128,8 @@ job(Map<String, ?> arguments = [:]) {
         buildName(String nameTemplate) // since 1.24
         colorizeOutput(String colorMap)
         environmentVariables(Closure envClosure)
+        exclusionResources(String... resourceNames) // since 1.24
+        exclusionResources(Iterable<String> resourceNames) // since 1.24
         injectPasswords() // since 1.23
         keychains(Closure closure) // since 1.24
         logSizeChecker(Closure closure = null) // since 1.23
@@ -159,6 +161,7 @@ job(Map<String, ?> arguments = [:]) {
         copyArtifacts(String jobName, String includeGlob, String targetPath = '',
                       boolean flattenFiles, boolean optionalAllowed,
                       Closure copyArtifactClosure)
+        criticalBlock(Closure stepClosure) // since 1.24
         downstreamParameterized(Closure downstreamClosure)
         dsl(Closure dslClosure = null)
         dsl(String scriptText, String removedJobAction = null, 

@@ -556,4 +556,29 @@ class WrapperContext implements Context {
             overwriteExistingKeychains keychainsContext.overwrite
         }
     }
+
+    /**
+     * <org.jvnet.hudson.plugins.exclusion.IdAllocator>
+     *     <ids>
+     *         <org.jvnet.hudson.plugins.exclusion.DefaultIdType>
+     *             <name>example</name>
+     *         </org.jvnet.hudson.plugins.exclusion.DefaultIdType>
+     *     </ids>
+     * </org.jvnet.hudson.plugins.exclusion.IdAllocator>
+     */
+    def exclusionResources(String... resourceNames) {
+        exclusionResources(resourceNames.toList())
+    }
+
+    def exclusionResources(Iterable<String> resourceNames) {
+        wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.IdAllocator' {
+            ids {
+                resourceNames.each { String resourceName ->
+                    'org.jvnet.hudson.plugins.exclusion.DefaultIdType' {
+                        name resourceName
+                    }
+                }
+            }
+        }
+    }
 }
