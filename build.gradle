@@ -4,28 +4,17 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.rholder:gradle-one-jar:1.0.3'
-    }
-    dependencies {
         classpath 'org.ajoberstar:gradle-git:0.6.5'
     }
 }
 
-project(':job-dsl-core') {
-    // jpi plugin will install appropriate repos for job-dsl-plugin
-    repositories {
-        mavenCentral()
-        maven {
-            url('http://maven.jenkins-ci.org/content/repositories/releases')
-        }
-    }
-}
-
-defaultTasks 'build' // For BuildHive
+defaultTasks 'build' // for BuildHive
 
 subprojects {
     group = 'org.jenkins-ci.plugins'
+
     apply plugin: 'groovy'
-    apply plugin: 'maven' // For artifactory publishing
+    apply plugin: 'maven' // for publishing
     apply plugin: 'codenarc'
 
     sourceCompatibility = 1.5
@@ -36,53 +25,58 @@ subprojects {
         compile 'com.google.guava:guava:14.0.1'
         testCompile 'org.spockframework:spock-core:0.7-groovy-1.8'
         testCompile 'junit:junit-dep:4.10'
-        testCompile 'cglib:cglib-nodep:2.2.2' // Used by Spock
-        testCompile 'org.objenesis:objenesis:1.2' // Used by Spock
-    }
-    test {
-        useJUnit() // Causes "failed to create temp file to extract class from jar into"
+        testCompile 'cglib:cglib-nodep:2.2.2' // used by Spock
+        testCompile 'org.objenesis:objenesis:1.2' // used by Spock
     }
 
     codenarc {
         toolVersion = '0.21'
-        configFile = file("../config/codenarc/rules.groovy")
+        configFile = file('../config/codenarc/rules.groovy')
     }
 
     codenarcTest {
-        configFile = file("../config/codenarc/rules-test.groovy")
+        configFile = file('../config/codenarc/rules-test.groovy')
     }
 }
 
 project(':job-dsl-core') {
-    apply plugin: 'application'
-
-    description = "Generates Jenkins jobs via a DSL"
-    dependencies {
-        compile 'commons-codec:commons-codec:1.8' // For perforce
-        compile 'org.apache.ivy:ivy:2.2.0' // Groovy Optional dependency, needed for @Grab
-        compile 'xmlunit:xmlunit:1.4' // For runtime use, not just for testing
-        compile 'org.jenkins-ci:version-number:1.1'
-    }
-    jar {
-        manifest {
-            attributes('Main-Class': 'javaposse.jobdsl.Run')
+    repositories {
+        mavenCentral()
+        maven {
+            url('http://maven.jenkins-ci.org/content/repositories/releases')
         }
     }
-    mainClassName = 'javaposse.jobdsl.Run'
 
+    apply plugin: 'application'
     apply plugin: 'gradle-one-jar'
 
-    task jarSources(type:Jar){
+    description = 'Generates Jenkins jobs via a DSL'
+    mainClassName = 'javaposse.jobdsl.Run'
+
+    dependencies {
+        compile 'commons-codec:commons-codec:1.8' // for Perforce
+        compile 'org.apache.ivy:ivy:2.2.0' // Groovy optional dependency, needed for @Grab
+        compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
+        compile 'org.jenkins-ci:version-number:1.1'
+    }
+
+    jar {
+        manifest {
+            attributes 'Main-Class': project.mainClassName
+        }
+    }
+
+    task jarSources(type: Jar) {
         from sourceSets.main.allSource
         classifier = 'sources'
     }
 
-    task jarJavadocs (type: Jar, dependsOn: 'javadoc') {
+    task jarJavadocs(type: Jar, dependsOn: 'javadoc') {
         from project.javadoc.destinationDir
         classifier = 'javadoc'
     }
 
-    task jarGroovydocs (type: Jar, dependsOn: 'groovydoc') {
+    task jarGroovydocs(type: Jar, dependsOn: 'groovydoc') {
         from project.groovydoc.destinationDir
         classifier = 'groovydoc'
     }
@@ -99,14 +93,14 @@ project(':job-dsl-core') {
     }
 
     run {
-        if ( project.hasProperty('args') ) {
+        if (project.hasProperty('args')) {
             args project.args.split('\\s+')
         }
     }
 
-    // gradle-jpi plugin does this for plugins, so we're mimicing it to get our additional artifacts up to repo.jenkinsci.org
+    // gradle-jpi plugin does this for plugins, so we're mimicking it to get our additional artifacts up to repo.jenkinsci.org
     gradle.taskGraph.whenReady { taskGraph ->
-        if ( taskGraph.hasTask(uploadArchives) ) {
+        if (taskGraph.hasTask(uploadArchives)) {
             uploadArchives {
                 repositories {
                     mavenDeployer {
@@ -126,26 +120,20 @@ project(':job-dsl-core') {
 }
 
 private Map loadCredentialsForJenkinsCommunityRepository() {
-    Properties props = new Properties()
-    def dot = new File(System.getProperty("user.home"), ".jenkins-ci.org")
+    def dot = new File(System.getProperty('user.home'), '.jenkins-ci.org')
 
-    if ( ! dot.exists() ) {
+    if (!dot.exists()) {
         throw new Exception("Trying to deploy to Jenkins community repository but there's no credential file ${dot}. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
     }
 
+    Properties props = new Properties()
     dot.withInputStream { i -> props.load(i) }
-    return [userName: props["userName"], password: props["password"]]
+    props
 }
 
-
-project(':job-dsl-plugin') {
-    description = "This plugin allows definition of Jobs via a DSL, using existing Jobs as a template."
-    dependencies {
-        compile project(':job-dsl-core')
-    }
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
 }
-
-task wrapper(type: Wrapper) { gradleVersion = '1.8' }
 
 apply plugin: 'github-pages'
 
