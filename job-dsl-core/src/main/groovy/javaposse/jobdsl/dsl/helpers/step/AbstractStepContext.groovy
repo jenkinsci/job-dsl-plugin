@@ -17,9 +17,9 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.tasks.Shell>
-     <command>echo Hello</command>
-     </hudson.tasks.Shell>
+     * <hudson.tasks.Shell>
+     *     <command>echo Hello</command>
+     * </hudson.tasks.Shell>
      */
     def shell(String commandStr) {
         def nodeBuilder = new NodeBuilder()
@@ -29,9 +29,9 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.tasks.BatchFile>
-     <command>echo Hello from Windows</command>
-     </hudson.tasks.BatchFile>
+     * <hudson.tasks.BatchFile>
+     *     <command>echo Hello from Windows</command>
+     * </hudson.tasks.BatchFile>
      */
     def batchFile(String commandStr) {
         def nodeBuilder = new NodeBuilder()
@@ -41,15 +41,15 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.plugins.gradle.Gradle>
-     <description/>
-     <switches>-Dtiming-multiple=5 -P${Status}=true -I ${WORKSPACE}/netflix-oss.gradle ${Option}</switches>
-     <tasks>clean${Task}</tasks>
-     <rootBuildScriptDir/>
-     <buildFile/>
-     <useWrapper>true</useWrapper>
-     <wrapperScript/>
-     </hudson.plugins.gradle.Gradle>
+     * <hudson.plugins.gradle.Gradle>
+     *     <description/>
+     *     <switches>-Dtiming-multiple=5 -P${Status}=true -I ${WORKSPACE}/netflix-oss.gradle ${Option}</switches>
+     *     <tasks>clean${Task}</tasks>
+     *     <rootBuildScriptDir/>
+     *     <buildFile/>
+     *     <useWrapper>true</useWrapper>
+     *     <wrapperScript/>
+     * </hudson.plugins.gradle.Gradle>
      */
     def gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg = true,
                Closure configure = null) {
@@ -72,13 +72,13 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <org.jvnet.hudson.plugins.SbtPluginBuilder plugin="sbt@1.4">
-     <name>SBT 0.12.3</name>
-     <jvmFlags>-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M</jvmFlags>
-     <sbtFlags>-Dsbt.log.noformat=true</sbtFlags>
-     <actions>clean update &quot;env development&quot; test dist publish</actions>
-     <subdirPath></subdirPath>
-     </org.jvnet.hudson.plugins.SbtPluginBuilder>
+     * <org.jvnet.hudson.plugins.SbtPluginBuilder plugin="sbt@1.4">
+     *     <name>SBT 0.12.3</name>
+     *     <jvmFlags>-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dfile.encoding=UTF-8 -Xmx2G -Xms512M</jvmFlags>
+     *     <sbtFlags>-Dsbt.log.noformat=true</sbtFlags>
+     *     <actions>clean update &quot;env development&quot; test dist publish</actions>
+     *     <subdirPath></subdirPath>
+     * </org.jvnet.hudson.plugins.SbtPluginBuilder>
      */
     def sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null,
             String subdirPathArg=null, Closure configure = null) {
@@ -104,12 +104,13 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16">
-        <targets>sbt-template.groovy</targets>
-        <usingScriptText>false</usingScriptText>
-        <ignoreExisting>false</ignoreExisting>
-        <removedJobAction>IGNORE</removedJobAction>
-     </javaposse.jobdsl.plugin.ExecuteDslScripts>     */
+     * <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16">
+     *     <targets>sbt-template.groovy</targets>
+     *     <usingScriptText>false</usingScriptText>
+     *     <ignoreExisting>false</ignoreExisting>
+     *     <removedJobAction>IGNORE</removedJobAction>
+     * </javaposse.jobdsl.plugin.ExecuteDslScripts>
+     */
     def dsl(Closure configure = null) {
         DslContext context = new DslContext()
         AbstractContextHelper.executeInContext(configure, context)
@@ -151,21 +152,17 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.tasks.Ant>
-     <targets>target</targets>
-     <antName>Ant 1.8</antName>
-     <antOpts>-Xmx1g -XX:MaxPermSize=128M -Dorg.apache.jasper.compiler.Parser.STRICT_QUOTE_ESCAPING=false</antOpts>
-     <buildFile>build.xml</buildFile>
-     <properties>test.jvmargs=-Xmx=1g
-     test.maxmemory=2g
-     multiline=true</properties>
-     </hudson.tasks.Ant>
-
-     Empty:
-     <hudson.tasks.Ant>
-     <targets/>
-     <antName>(Default)</antName>
-     </hudson.tasks.Ant>
+     * <hudson.tasks.Ant>
+     *     <targets>target</targets>
+     *     <antName>Ant 1.8</antName>
+     *     <antOpts>-XX:MaxPermSize=128M -Dorg.apache.jasper.compiler.Parser.STRICT_QUOTE_ESCAPING=false</antOpts>
+     *     <buildFile>build.xml</buildFile>
+     *     <properties>
+     *         test.jvmargs=-Xmx=1g
+     *         test.maxmemory=2g
+     *         multiline=true
+     *     </properties>
+     * </hudson.tasks.Ant>
      */
     def ant(Closure antClosure = null) {
         ant(null, null, null, antClosure)
@@ -218,17 +215,17 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.plugins.groovy.Groovy>
-     <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-     <command>Command</command>
-     </scriptSource>
-     <groovyName>(Default)</groovyName>
-     <parameters/>
-     <scriptParameters/>
-     <properties/>
-     <javaOpts/>
-     <classPath/>
-     </hudson.plugins.groovy.Groovy>
+     * <hudson.plugins.groovy.Groovy>
+     *     <scriptSource class="hudson.plugins.groovy.StringScriptSource">
+     *         <command>Command</command>
+     *     </scriptSource>
+     *     <groovyName>(Default)</groovyName>
+     *     <parameters/>
+     *     <scriptParameters/>
+     *     <properties/>
+     *     <javaOpts/>
+     *     <classPath/>
+     * </hudson.plugins.groovy.Groovy>
      */
     def groovyCommand(String command, Closure groovyClosure = null) {
         groovy(command, true, null, groovyClosure)
@@ -239,17 +236,17 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.plugins.groovy.Groovy>
-     <scriptSource class="hudson.plugins.groovy.FileScriptSource">
-     <scriptFile>acme.groovy</scriptFile>
-     </scriptSource>
-     <groovyName>(Default)</groovyName>
-     <parameters/>
-     <scriptParameters/>
-     <properties/>
-     <javaOpts/>
-     <classPath/>
-     </hudson.plugins.groovy.Groovy>
+     * <hudson.plugins.groovy.Groovy>
+     *     <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+     *         <scriptFile>acme.groovy</scriptFile>
+     *     </scriptSource>
+     *     <groovyName>(Default)</groovyName>
+     *     <parameters/>
+     *     <scriptParameters/>
+     *     <properties/>
+     *     <javaOpts/>
+     *     <classPath/>
+     * </hudson.plugins.groovy.Groovy>
      */
     def groovyScriptFile(String fileName, Closure groovyClosure = null) {
         groovy(fileName, false, null, groovyClosure)
@@ -288,26 +285,26 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.plugins.groovy.SystemGroovy>
-     <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-     <command>System Groovy</command>
-     </scriptSource>
-     <bindings/>
-     <classpath/>
-     </hudson.plugins.groovy.SystemGroovy>
+     * <hudson.plugins.groovy.SystemGroovy>
+     *     <scriptSource class="hudson.plugins.groovy.StringScriptSource">
+     *         <command>System Groovy</command>
+     *     </scriptSource>
+     *     <bindings/>
+     *     <classpath/>
+     * </hudson.plugins.groovy.SystemGroovy>
      */
     def systemGroovyCommand(String command, Closure systemGroovyClosure = null) {
         systemGroovy(command, true, systemGroovyClosure)
     }
 
     /**
-     <hudson.plugins.groovy.SystemGroovy>
-     <scriptSource class="hudson.plugins.groovy.FileScriptSource">
-     <scriptFile>System Groovy</scriptFile>
-     </scriptSource>
-     <bindings/>
-     <classpath/>
-     </hudson.plugins.groovy.SystemGroovy>
+     * <hudson.plugins.groovy.SystemGroovy>
+     *     <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+     *         <scriptFile>System Groovy</scriptFile>
+     *     </scriptSource>
+     *     <bindings/>
+     *     <classpath/>
+     * </hudson.plugins.groovy.SystemGroovy>
      */
     def systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
         systemGroovy(fileName, false, systemGroovyClosure)
@@ -370,18 +367,18 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <com.g2one.hudson.grails.GrailsBuilder>
-     <targets/>
-     <name>(Default)</name>
-     <grailsWorkDir/>
-     <projectWorkDir/>
-     <projectBaseDir/>
-     <serverPort/>
-     <properties/>
-     <forceUpgrade>false</forceUpgrade>
-     <nonInteractive>true</nonInteractive>
-     <useWrapper>false</useWrapper>
-     </com.g2one.hudson.grails.GrailsBuilder>
+     * <com.g2one.hudson.grails.GrailsBuilder>
+     *     <targets/>
+     *     <name>(Default)</name>
+     *     <grailsWorkDir/>
+     *     <projectWorkDir/>
+     *     <projectBaseDir/>
+     *     <serverPort/>
+     *     <properties/>
+     *     <forceUpgrade>false</forceUpgrade>
+     *     <nonInteractive>true</nonInteractive>
+     *     <useWrapper>false</useWrapper>
+     * </com.g2one.hudson.grails.GrailsBuilder>
      */
     def grails(Closure grailsClosure) {
         grails null, false, grailsClosure
@@ -529,8 +526,6 @@ class AbstractStepContext implements Context {
 
     /**
      * phaseName will have to be provided in the closure
-     * @param phaseContext
-     * @return
      */
     def phase(Closure phaseContext) {
         phase(null, 'SUCCESSFUL', phaseContext)
@@ -589,49 +584,52 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.21">
-     <configs>
-     <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-     <configs>
-     <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/> // Current build parameters
-     <hudson.plugins.parameterizedtrigger.FileBuildParameters> // Parameters from properties file
-     <propertiesFile>some.properties</propertiesFile>
-     </hudson.plugins.parameterizedtrigger.FileBuildParameters>
-     <hudson.plugins.git.GitRevisionBuildParameters> // Pass-through Git commit that was built
-     <combineQueuedCommits>false</combineQueuedCommits>
-     </hudson.plugins.git.GitRevisionBuildParameters>
-     <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters> // Predefined properties
-     <properties>prop1=value1
-     prop2=value2</properties>
-     </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-     <hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters> // Restrict matrix execution to a subset
-     <filter>label=="${TARGET}"</filter>
-     </hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters>
-     <hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters/> // Subversion revision
-     <projects>one-project,another-project</projects>
-     <condition>ALWAYS</condition>
-     <triggerWithNoParameters>false</triggerWithNoParameters>
-     <block>
-     <unstableThreshold>
-     <name>UNSTABLE</name>
-     <ordinal>1</ordinal>
-     <color>YELLOW</color>
-     </unstableThreshold>
-     <buildStepFailureThreshold>
-     <name>FAILURE</name>
-     <ordinal>2</ordinal>
-     <color>RED</color>
-     </buildStepFailureThreshold>
-     <failureThreshold>
-     <name>FAILURE</name>
-     <ordinal>2</ordinal>
-     <color>RED</color>
-     </failureThreshold>
-     </block>
-     <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
-     </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-     </configs>
-     </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+     * <hudson.plugins.parameterizedtrigger.TriggerBuilder>
+     *     <configs>
+     *         <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+     *             <projects>one-project,another-project</projects>
+     *             <condition>ALWAYS</condition>
+     *             <triggerWithNoParameters>false</triggerWithNoParameters>
+     *             <configs>
+     *                 <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
+     *                 <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+     *                     <propertiesFile>some.properties</propertiesFile>
+     *                 </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+     *                 <hudson.plugins.git.GitRevisionBuildParameters>
+     *                     <combineQueuedCommits>false</combineQueuedCommits>
+     *                 </hudson.plugins.git.GitRevisionBuildParameters>
+     *                 <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *                     <properties>
+     *                         prop1=value1
+     *                         prop2=value2
+     *                     </properties>
+     *                 </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+     *                 <hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters>
+     *                     <filter>label=="${TARGET}"</filter>
+     *                 </hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters>
+     *                 <hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters/>
+     *             </configs>
+     *             <block>
+     *                 <unstableThreshold>
+     *                     <name>UNSTABLE</name>
+     *                     <ordinal>1</ordinal>
+     *                     <color>YELLOW</color>
+     *                 </unstableThreshold>
+     *                 <buildStepFailureThreshold>
+     *                     <name>FAILURE</name>
+     *                     <ordinal>2</ordinal>
+     *                     <color>RED</color>
+     *                 </buildStepFailureThreshold>
+     *                 <failureThreshold>
+     *                     <name>FAILURE</name>
+     *                     <ordinal>2</ordinal>
+     *                     <color>RED</color>
+     *                 </failureThreshold>
+     *             </block>
+     *             <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+     *         </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+     *     </configs>
+     * </hudson.plugins.parameterizedtrigger.TriggerBuilder>
      */
     def downstreamParameterized(Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext()
@@ -665,16 +663,12 @@ class AbstractStepContext implements Context {
     }
 
     /**
-     * <pre>
-     * {@code
      * <EnvInjectBuilder>
-     *   <info>
-     *     <propertiesFilePath>some.properties</propertiesFilePath>
-     *     <propertiesContent>REV=15</propertiesContent>
-     *   </info>
+     *     <info>
+     *         <propertiesFilePath>some.properties</propertiesFilePath>
+     *         <propertiesContent>REV=15</propertiesContent>
+     *     </info>
      * </EnvInjectBuilder>
-     * }
-     * </pre>
      */
     def environmentVariables(Closure envClosure) {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
