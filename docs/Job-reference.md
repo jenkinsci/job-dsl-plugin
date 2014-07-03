@@ -2667,16 +2667,20 @@ publishRobotFrameworkReports()
 ## Build Pipeline Trigger
 
 ```groovy
-buildPipelineTrigger(String downstreamProjectNames, Closure closure) {
-    parameters { // Parameters closure (Since 1.23)
-        currentBuild() // Current build parameters
-        propertiesFile(String propFile) // Parameters from properties file
-        gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built
-        predefinedProp(String key, String value) // Predefined properties
-        predefinedProps(Map<String, String> predefinedPropsMap)
-        predefinedProps(String predefinedProps) // Newline separated
-        matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
-        subversionRevision() // Subversion Revision
+job {
+    publishers {
+        buildPipelineTrigger(String downstreamProjectNames) {
+            parameters { // since 1.23
+                currentBuild()
+                propertiesFile(String propFile)
+                gitRevision(boolean combineQueuedCommits = false)
+                predefinedProp(String key, String value)
+                predefinedProps(Map<String, String> predefinedPropsMap)
+                predefinedProps(String predefinedProps)
+                matrixSubset(String groovyFilter)
+                subversionRevision()
+            }
+        }
     }
 }
 ```
@@ -2688,21 +2692,32 @@ Jenkins. The argument takes a comma separated list of job names. Requires the
 The `parameters` closure and the methods inside it are optional, though it makes the most sense to call at least one.
 Each one is relatively self documenting, mapping directly to what is seen in the UI. The `predefinedProp` and
 `predefinedProps` methods are used to accumulate properties, meaning that they can be called multiple times to build a
-superset of properties. They are basically equivalent to the ones defined for `downstreamParameterized()`
+superset of properties. They are basically equivalent to the ones defined for `downstreamParameterized`.
 
-
-```groovy
-buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2')
-```
+Examples:
 
 ```groovy
-buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2') {
-    predefinedProp('GIT_COMMIT', '$GIT_COMMIT')
-    predefinedProp('ARTIFACT_BUILD_NUMBER', '$BUILD_NUMBER')
+job {
+    publishers {
+        buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2')
+    }
 }
 ```
 
-(Since 1.21)
+```groovy
+job {
+    publishers {
+        buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2') {
+            parameters {
+                predefinedProp('GIT_COMMIT', '$GIT_COMMIT')
+                predefinedProp('ARTIFACT_BUILD_NUMBER', '$BUILD_NUMBER')
+            }
+        }
+    }
+}
+```
+
+(since 1.21)
 
 ## Github Commit Notifier
 
