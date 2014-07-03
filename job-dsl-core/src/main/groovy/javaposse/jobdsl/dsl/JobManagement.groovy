@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
+
 /**
  * Interface to manage jobs, which the DSL needs to do.
  */
@@ -72,4 +74,9 @@ interface JobManagement {
      * the given version.
      */
     void requireMinimumPluginVersion(String pluginShortName, String version)
+
+    /**
+     * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
+     */
+    VersionNumber getPluginVersion(String pluginShortName)
 }

@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
 import spock.lang.Specification
 
 import static org.codehaus.groovy.runtime.InvokerHelper.createScript
@@ -36,8 +37,23 @@ class AbstractJobManagementSpec extends Specification {
         buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'
     }
 
+    def 'plugin version is always null'() {
+        setup:
+        AbstractJobManagement jobManagement = new TestJobManagement()
+
+        when:
+        VersionNumber version = jobManagement.getPluginVersion('foo')
+
+        then:
+        version == null
+    }
+
     static class TestJobManagement extends AbstractJobManagement {
-        protected TestJobManagement(PrintStream out) {
+        TestJobManagement() {
+            super()
+        }
+
+        TestJobManagement(PrintStream out) {
             super(out)
         }
 
