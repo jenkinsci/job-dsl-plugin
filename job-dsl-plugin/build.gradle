@@ -2,15 +2,17 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            name 'jenkins-ci-plugins'
-            url('http://maven.jenkins-ci.org/content/repositories/releases')
+            url 'http://repo.jenkins-ci.org/releases/'
         }
     }
-    dependencies { classpath('org.jenkins-ci.tools:gradle-jpi-plugin:0.5.0') }
+    dependencies {
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.5.0'
+    }
 }
+
 apply plugin: 'jpi'
 
-description = "Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins."
+description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
 
 jenkinsPlugin {
     coreVersion = '1.480'
@@ -45,11 +47,11 @@ jenkinsPlugin {
 
 dependencies {
     compile project(':job-dsl-core')
-    optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'cloudbees-folder', version: '4.2', ext: 'jar'])
-    optionalJenkinsPlugins([group: 'org.jenkins-ci.plugins', name: 'credentials', version: '1.9.4', ext: 'jar'])
-    jenkinsTest([group: 'org.jenkins-ci.plugins', name: 'ant', version: '1.2', ext: 'jar']) // see JENKINS-17129
-    jenkinsTest([group: 'org.jenkins-ci.main', name: 'maven-plugin', version: '1.480', ext: 'jar'])
-    jenkinsTest([group: 'org.jenkins-ci.plugins', name: 'javadoc', version: '1.1', ext: 'jar'])
+    optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.2@jar'
+    optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:ant:1.2@jar' // see JENKINS-17129
+    jenkinsTest 'org.jenkins-ci.main:maven-plugin:1.480@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:javadoc:1.1@jar'
 }
 
-tasks.jpi.manifest.attributes(["PluginFirstClassLoader": "true" ])
+tasks.jpi.manifest.attributes PluginFirstClassLoader: true
