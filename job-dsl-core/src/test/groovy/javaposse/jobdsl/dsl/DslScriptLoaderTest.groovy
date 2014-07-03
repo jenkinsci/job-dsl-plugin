@@ -8,7 +8,7 @@ class DslScriptLoaderTest extends Specification {
     private final resourcesDir = getClass().getResource('/simple.dsl')
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream()
     private final PrintStream ps = new PrintStream(baos)
-    private final JobManagement jm = new FileJobManagement(new File(resourcesDir.toURI()), null, ps)
+    private final JobManagement jm = new StringJobManagement(ps)
 
     @Ignore
     def getContent() {
@@ -230,15 +230,6 @@ readFileFromWorkspace('bar.txt')
         then:
         thrown(IOException)
     }
-//
-//    def 'Able to run engine for string'() {
-//        setup:
-//        JobManagement jm = new FileJobManagement(new File("src/test/resources"))
-//
-//        when:
-//        Set<GeneratedJob> results = DslScriptLoader.runDslShell(sampleDsl, jm)
-//
-//    }
 
     def 'run engine with views'() {
         setup:
