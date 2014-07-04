@@ -69,10 +69,12 @@ public abstract class AbstractJobManagement implements JobManagement {
         getOutputStream().println("Warning: " + stackTrace.get(0).getMethodName() + " is deprecated (" + details + ")");
     }
 
+    @Override
     public VersionNumber getPluginVersion(String pluginShortName) {
         return null;
     }
 
+    @Override
     public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         return null;
     }

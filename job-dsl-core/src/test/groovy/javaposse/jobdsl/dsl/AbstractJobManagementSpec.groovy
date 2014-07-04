@@ -61,11 +61,11 @@ class AbstractJobManagementSpec extends Specification {
     }
 
     static class TestJobManagement extends AbstractJobManagement {
-        protected TestJobManagement() {
+        TestJobManagement() {
             super()
         }
 
-        protected TestJobManagement(PrintStream out) {
+        TestJobManagement(PrintStream out) {
             super(out)
         }
 
