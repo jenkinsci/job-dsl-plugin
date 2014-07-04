@@ -29,6 +29,16 @@ subprojects {
         testCompile 'org.objenesis:objenesis:1.2' // used by Spock
     }
 
+    task jarSources(type: Jar) {
+        from sourceSets.main.allSource
+        classifier = 'sources'
+    }
+
+    task jarJavadocs(type: Jar, dependsOn: 'javadoc') {
+        from project.javadoc.destinationDir
+        classifier = 'javadoc'
+    }
+
     codenarc {
         toolVersion = '0.21'
         configFile = file('../config/codenarc/rules.groovy')
@@ -64,16 +74,6 @@ project(':job-dsl-core') {
         manifest {
             attributes 'Main-Class': project.mainClassName
         }
-    }
-
-    task jarSources(type: Jar) {
-        from sourceSets.main.allSource
-        classifier = 'sources'
-    }
-
-    task jarJavadocs(type: Jar, dependsOn: 'javadoc') {
-        from project.javadoc.destinationDir
-        classifier = 'javadoc'
     }
 
     task jarGroovydocs(type: Jar, dependsOn: 'groovydoc') {
