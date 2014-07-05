@@ -33,7 +33,7 @@ DSL methods can be cumulative or overriding, meaning that some methods will add 
 and some will replace nodes (e.g. `disabled` will replace any existing disabled nodes). Some methods like `scm` and
 `multiscm` are mutually exclusive. Likewise, when using the `scm` block, only one SCM can be specified.
 
-When a DSL method isn't available, look at the [[Configure Block]] for extending the DSL.
+When a DSL method isn't available, look at [[The Configure Block]] for extending the DSL.
 
 **NOTE: when using these methods, remember that you need to use them in context. I.e. to use the `downstream` method,
 it needs to be enclosed in a `publishers` context.**
@@ -360,7 +360,7 @@ folder { // since 1.23
 ```
 
 The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods
-fail you, you can always generate the XML yourself via the [[Configure Block]]. Sometimes, a DSL
+fail you, you can always generate the XML yourself via [[The Configure Block]]. Sometimes, a DSL
 method will provide a configure block of its own, which will set the a good context to help modify a few fields. 
 This gives native access to the job config XML, which is typically very straight forward to understand.
 
@@ -503,7 +503,7 @@ println "Hello ${WordUtils.capitalize('world')}"
 
 # Configure
 
-When an option is not supported by the Job DSL, then a [[Configure Block]] can be used for extending the DSL.
+When an option is not supported by the Job DSL, then [[The Configure Block]] can be used for extending the DSL.
 
 Here is a simple example which adds a EnvInjectPasswordWrapper node:
 
@@ -518,7 +518,7 @@ job {
 }
 ```
 
-See the [[Configure Block]] page for details.
+See [[The Configure Block]] page for details.
 
 # Job Factory
 
