@@ -128,7 +128,7 @@ private Map loadCredentialsForJenkinsCommunityRepository() {
 
     Properties props = new Properties()
     dot.withInputStream { i -> props.load(i) }
-    props
+    [userName: props.userName, password: props.password]
 }
 
 task wrapper(type: Wrapper) {
