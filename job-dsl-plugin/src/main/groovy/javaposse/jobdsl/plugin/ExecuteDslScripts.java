@@ -13,7 +13,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Item;
-import hudson.model.Result;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedItems;
@@ -158,18 +157,6 @@ public class ExecuteDslScripts extends Builder {
             GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
             freshJobs.addAll(generatedItems.getJobs());
             freshViews.addAll(generatedItems.getViews());
-        }
-
-        Set<GeneratedJob> failedJobs = new HashSet<GeneratedJob>();
-        for (GeneratedJob gj : freshJobs) {
-            if (gj.isCreated()) {
-                failedJobs.add(gj);
-            }
-        }
-
-        if (!failedJobs.isEmpty()) {
-            listener.getLogger().println("Failed jobs: " + Joiner.on(",").join(failedJobs));
-            build.setResult(Result.UNSTABLE);
         }
 
         updateTemplates(build, listener, freshJobs);

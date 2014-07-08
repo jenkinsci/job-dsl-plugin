@@ -467,7 +467,7 @@ public class ExecuteDslScriptsTest {
         assertNotNull(buildAction);
         assertNotNull(buildAction.getModifiedJobs());
         assertEquals(1, buildAction.getModifiedJobs().size());
-        assertTrue(buildAction.getModifiedJobs().contains(new GeneratedJob(null, "test-folder", true)));
+        assertTrue(buildAction.getModifiedJobs().contains(new GeneratedJob(null, "test-folder")));
 
         // when
         GeneratedJobsAction action = job.getAction(GeneratedJobsAction.class);
@@ -476,10 +476,10 @@ public class ExecuteDslScriptsTest {
         assertNotNull(action);
         assertNotNull(action.findLastGeneratedJobs());
         assertEquals(1, action.findLastGeneratedJobs().size());
-        assertTrue(action.findLastGeneratedJobs().contains(new GeneratedJob(null, "test-folder", true)));
+        assertTrue(action.findLastGeneratedJobs().contains(new GeneratedJob(null, "test-folder")));
         assertNotNull(action.findAllGeneratedJobs());
         assertEquals(1, action.findAllGeneratedJobs().size());
-        assertTrue(action.findAllGeneratedJobs().contains(new GeneratedJob(null, "test-folder", true)));
+        assertTrue(action.findAllGeneratedJobs().contains(new GeneratedJob(null, "test-folder")));
         assertNotNull(action.getItems());
         assertEquals(1, action.getItems().size());
         assertTrue(action.getItems().contains(jenkinsRule.getInstance().getItem("test-folder")));
