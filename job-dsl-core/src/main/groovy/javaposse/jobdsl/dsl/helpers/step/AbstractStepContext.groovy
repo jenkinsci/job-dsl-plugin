@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import hudson.util.VersionNumber
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -529,6 +530,21 @@ class AbstractStepContext implements Context {
 
     /**
      * phaseName will have to be provided in the closure
+     *
+     * <com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
+     *   <phaseName>name-of-phase</phaseName>
+     *   <phaseJobs>
+     *     <com.tikal.jenkins.plugins.multijob.PhaseJobsConfig>
+     *       <jobName>job-in-phase</jobName>
+     *       <currParams>true</currParams>
+     *       <exposedSCM>false</exposedSCM>
+     *       <disableJob>false</disableJob>
+     *       <configs class="empty-list"/>
+     *       <killPhaseOnJobResultCondition>FAILURE</killPhaseOnJobResultCondition>
+     *     </com.tikal.jenkins.plugins.multijob.PhaseJobsConfig>
+     *   </phaseJobs>
+     *   <continuationCondition>COMPLETED</continuationCondition>
+     * </com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
      */
     def phase(Closure phaseContext) {
         phase(null, 'SUCCESSFUL', phaseContext)
@@ -546,18 +562,26 @@ class AbstractStepContext implements Context {
 
         def validConditions = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
         Preconditions.checkArgument(validConditions.contains(phaseContext.continuationCondition),
-                "Continuation Condition need to be one of these values: ${validConditions.join(',')}" )
+                "Continuation Condition needs to be one of these values: ${validConditions.join(',')}" )
 
         def nodeBuilder = NodeBuilder.newInstance()
+        VersionNumber multijobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
+
         def multiJobPhaseNode = nodeBuilder.'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName
             continuationCondition phaseContext.continuationCondition
+
             phaseJobs {
+
                 phaseContext.jobsInPhase.each { jobInPhase ->
                     'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
                         jobName jobInPhase.jobName
                         currParams jobInPhase.currentJobParameters
                         exposedSCM jobInPhase.exposedScm
+                        if (multijobPluginVersion.isNewerThan(new VersionNumber("1.11"))) {
+                            disableJob jobInPhase.disableJob
+                            killPhaseOnJobResultCondition jobInPhase.killPhaseOnJobResultCondition == null ? 'FAILURE' : jobInPhase.killPhaseOnJobResultCondition
+                        }
                         if (jobInPhase.hasConfig()) {
                             configs(jobInPhase.configAsNode().children())
                         } else {

@@ -19,6 +19,8 @@ class PhaseJobContext implements Context {
     Boolean subversionRevision
     Boolean gitRevision
     def props = []
+    boolean disableJob = false
+    String killPhaseOnJobResultCondition
 
     void jobName(String jobName) {
         this.jobName = jobName
@@ -85,5 +87,17 @@ class PhaseJobContext implements Context {
     def hasConfig() {
         !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null ||
                 gitRevision != null || !props.isEmpty()
+    }
+
+    def disableJob(boolean disableJob = false) {
+        this.disableJob = disableJob
+    }
+
+    def killPhaseOnJobResultCondition(String killPhaseOnJobResultCondition) {
+        def validKillConditions = ['FAILURE', 'NEVER', 'UNSTABLE']
+        Preconditions.checkArgument(validKillConditions.contains(killPhaseOnJobResultCondition),
+                "Kill Phase on Job Result Condition needs to be one of these values: ${validKillConditions.join(',')}" )
+
+        this.killPhaseOnJobResultCondition = killPhaseOnJobResultCondition
     }
 }

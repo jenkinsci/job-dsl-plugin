@@ -1658,6 +1658,8 @@ phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phase
         gitRevision(boolean combineQueuedCommits = false) 
         prop(Object key, Object value)
         props(Map<String, String> map)
+        disableJob(boolean exposedScm = false)
+        killPhaseOnJobResultCondition(String killPhaseOnJobResultCondition)
     }
 }
 ```
