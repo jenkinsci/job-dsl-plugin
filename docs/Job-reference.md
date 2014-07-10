@@ -1363,6 +1363,40 @@ sbt(/*standard parameters here*/) {
 }
 ```
 
+## [Rake](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
+
+Executes Rake as a build step. (Since 1.25)
+
+```groovy
+rake (String tasksArg, Closure rakeClosure = null) {
+    task(String taskName)             // a single task to execute
+    tasks(Iterable<String> tasks)     // a list of tasks to execute
+    file(String file)                 // path to a Rakefile
+    installation(String installation) // Ruby installation to use
+    libDir(String libDir)             // path to Rake library directory
+    workingDir(String workingDir)     // path the working directory in which Rake should be executed
+    bundleExec(boolean bundleExec)    // execute Rake with Bundler 'bundle exec rake'
+    silent(boolean silent)            // do not print to STDOUT
+}
+```
+
+Examples:
+
+```groovy
+rake('task')
+
+rake('first') {
+    task('second')
+    tasks(['third', 'fourth'])
+    file('/opt/app/Rakefile')
+    installation('ruby-2.0.0-p481')
+    libDir('./rakelib')
+    workingDir('/opt/app')
+    bundleExec(true)
+    silent(true)
+}
+```
+
 ## DSL
 ```groovy
 dsl {

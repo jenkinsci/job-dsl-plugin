@@ -1617,4 +1617,94 @@ still-another-dsl.groovy'''
         context.stepNodes[1].name() == 'hudson.tasks.Shell'
         context.stepNodes[2].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'
     }
+
+    def 'call rake method'() {
+        when:
+        context.rake()
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == '(Default)'
+        rakeStep.rakeFile[0].value() == ''
+        rakeStep.rakeLibDir[0].value() == ''
+        rakeStep.rakeWorkingDir[0].value() == ''
+        rakeStep.tasks[0].value() == ''
+        rakeStep.silent[0].value() == 'false'
+        rakeStep.bundleExec[0].value() == 'false'
+    }
+
+    def 'call rake method with tasks as argument'() {
+        when:
+        context.rake('test') {
+            file '/tmp/Rakefile'
+            installation 'ruby-2.0.0-p481'
+            libDir './rakelib'
+            workingDir '/opt/application'
+            bundleExec true
+            silent true
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == 'ruby-2.0.0-p481'
+        rakeStep.rakeFile[0].value() == '/tmp/Rakefile'
+        rakeStep.rakeLibDir[0].value() == './rakelib'
+        rakeStep.rakeWorkingDir[0].value() == '/opt/application'
+        rakeStep.tasks[0].value() == 'test'
+        rakeStep.silent[0].value() == 'true'
+        rakeStep.bundleExec[0].value() == 'true'
+    }
+
+    def 'call rake method with tasks in closure'() {
+        when:
+        context.rake {
+            task('first')
+            task('second')
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == '(Default)'
+        rakeStep.rakeFile[0].value() == ''
+        rakeStep.rakeLibDir[0].value() == ''
+        rakeStep.rakeWorkingDir[0].value() == ''
+        rakeStep.tasks[0].value() == 'first second'
+        rakeStep.silent[0].value() == 'false'
+        rakeStep.bundleExec[0].value() == 'false'
+    }
+
+    def 'call rake method with task as argument and tasks in closure'() {
+        when:
+        context.rake('first') {
+            task('second')
+            task('third')
+            tasks(['fourth', 'fifth'])
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == '(Default)'
+        rakeStep.rakeFile[0].value() == ''
+        rakeStep.rakeLibDir[0].value() == ''
+        rakeStep.rakeWorkingDir[0].value() == ''
+        rakeStep.tasks[0].value() == 'first second third fourth fifth'
+        rakeStep.silent[0].value() == 'false'
+        rakeStep.bundleExec[0].value() == 'false'
+    }
 }

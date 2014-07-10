@@ -762,4 +762,41 @@ class AbstractStepContext implements Context {
         stepNodes.addAll(stepContext.stepNodes)
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'()
     }
+
+    /**
+     * <hudson.plugins.rake.Rake>
+     *     <rakeInstallation>(Default)</rakeInstallation>
+     *     <rakeFile/>
+     *     <rakeLibDir/>
+     *     <rakeWorkingDir/>
+     *     <tasks/>
+     *     <silent>false</silent>
+     *     <bundleExec>false</bundleExec>
+     * </hudson.plugins.rake.Rake>
+     */
+    def rake(Closure rakeClosure = null) {
+        rake(null, rakeClosure)
+    }
+
+    def rake(String tasksArg, Closure rakeClosure = null) {
+        RakeContext rakeContext = new RakeContext()
+
+        if (tasksArg) {
+            rakeContext.task(tasksArg)
+        }
+
+        AbstractContextHelper.executeInContext(rakeClosure, rakeContext)
+
+        def rakeNode = new NodeBuilder().'hudson.plugins.rake.Rake' {
+            rakeInstallation rakeContext.installation
+            rakeFile rakeContext.file
+            rakeLibDir rakeContext.libDir
+            rakeWorkingDir rakeContext.workingDir
+            tasks rakeContext.tasksString
+            silent rakeContext.silent.toString()
+            bundleExec rakeContext.bundleExec.toString()
+        }
+
+        stepNodes << rakeNode
+    }
 }
