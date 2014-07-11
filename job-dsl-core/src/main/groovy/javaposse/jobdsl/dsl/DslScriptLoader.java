@@ -109,7 +109,7 @@ public class DslScriptLoader {
                 LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
                 boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
                 String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
-                generatedJobs.add(new GeneratedJob(templateName, job.getName(), created));
+                generatedJobs.add(new GeneratedJob(templateName, job.getName()));
             }
         }
         return generatedJobs;

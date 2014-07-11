@@ -3,9 +3,8 @@ package javaposse.jobdsl.dsl;
 public class GeneratedJob implements Comparable {
     private String templateName;
     private String jobName;
-    private boolean created;
 
-    public GeneratedJob(String templateName, String jobName, boolean created) {
+    public GeneratedJob(String templateName, String jobName) {
         super();
         this.templateName = templateName;
         this.jobName = jobName;
@@ -17,10 +16,6 @@ public class GeneratedJob implements Comparable {
 
     public String getTemplateName() {
         return templateName;
-    }
-
-    public boolean isCreated() {
-        return created;
     }
 
     @Override
