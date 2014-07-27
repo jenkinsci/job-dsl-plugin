@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
+import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -28,10 +29,15 @@ class Job extends Item {
     String templateName = null // Optional
     JobType type = null // Required
 
+    @Delegate PromotionsContextHelper helperPromotions
+
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
+        super(ItemType.JOB)
         this.jobManagement = jobManagement
         Object typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
+
+        helperPromotions = new PromotionsContextHelper(super.withXmlActions, additionalConfigs, type)
     }
 
     /**
@@ -788,22 +794,13 @@ class Job extends Item {
         }
     }
 
-    Node getNode() {
+    Node getRootNode() {
         Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
-
-        executeWithXmlActions(project)
 
         project
     }
 
-    void executeWithXmlActions(final Node root) {
-        // Create builder, based on what we already have
-        withXmlActions.each { WithXmlAction withXmlClosure ->
-            withXmlClosure.execute(root)
-        }
-    }
-
-    private Node executeUsing() {
+    private executeUsing() {
         String configXml
         try {
             configXml = jobManagement.getConfig(templateName)

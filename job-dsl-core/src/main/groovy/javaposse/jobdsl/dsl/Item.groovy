@@ -1,9 +1,21 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig
+
 abstract class Item implements Context {
     String name
 
     List<WithXmlAction> withXmlActions = []
+
+    ItemType configType
+
+    protected Item(ItemType configType) {
+        this.configType = configType
+    }
+
+    List<AdditionalXmlConfig> additionalConfigs = []
+
+    String templateName = null // Optional
 
     void name(String name) {
         this.name = name
@@ -39,5 +51,24 @@ abstract class Item implements Context {
         throw new UnsupportedOperationException()
     }
 
-    abstract Node getNode()
+    protected void executeWithXmlActions(final Node root) {
+        // Create builder, based on what we already have
+        // TODO Some Node magic to copy it at each phase, and then presenting a diff in the logs
+        withXmlActions.each { WithXmlAction withXmlClosure ->
+            withXmlClosure.execute(root)
+        }
+    }
+
+    /**
+     * The root node of the template. Empty content.
+     * @return Node
+     */
+    protected abstract Node getRootNode()
+
+    @SuppressWarnings('UnnecessaryGetter')
+    Node getNode() {
+        Node root = getRootNode()
+        executeWithXmlActions(root)
+        root
+    }
 }

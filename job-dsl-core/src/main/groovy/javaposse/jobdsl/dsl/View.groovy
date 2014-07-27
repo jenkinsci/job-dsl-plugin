@@ -6,7 +6,9 @@ package javaposse.jobdsl.dsl
 abstract class View implements Context {
     private final List<WithXmlAction> withXmlActions = []
 
-    String name
+    protected View() {
+        super(ItemType.VIEW)
+    }
 
     void name(String name) {
         this.name = name
@@ -30,7 +32,7 @@ abstract class View implements Context {
         }
     }
 
-    void configure(Closure withXmlClosure) {
+    def configure(Closure withXmlClosure) {
         withXmlActions.add(new WithXmlAction(withXmlClosure))
     }
 
@@ -52,9 +54,9 @@ abstract class View implements Context {
         xmlOutput.toString()
     }
 
-    Node getNode() {
-        Node root = new XmlParser().parse(new StringReader(template))
-
+    @SuppressWarnings('UnnecessaryGetter')
+    Node getRootNode() {
+        Node root = new XmlParser().parse(new StringReader(getTemplate()))
         withXmlActions.each { it.execute(root) }
         root
     }
@@ -63,5 +65,6 @@ abstract class View implements Context {
         withXmlActions << new WithXmlAction(rootClosure)
     }
 
+    @SuppressWarnings('UnnecessaryGetter')
     protected abstract String getTemplate()
 }

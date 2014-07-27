@@ -23,7 +23,7 @@ interface JobManagement {
      * @throws NameNotProvidedException if the jobName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+    boolean createOrUpdateConfig(String jobName, JobConfig config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException
 
     /**

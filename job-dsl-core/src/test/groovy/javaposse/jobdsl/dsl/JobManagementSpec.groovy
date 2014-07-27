@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
-
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class JobManagementSpec extends Specification {
@@ -33,7 +32,9 @@ class JobManagementSpec extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig(null, minimalXml, false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig(minimalXml)
+        jm.createOrUpdateConfig(null, config, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -45,7 +46,9 @@ class JobManagementSpec extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig('', minimalXml, false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig(minimalXml)
+        jm.createOrUpdateConfig('', config, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -57,7 +60,9 @@ class JobManagementSpec extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig('NEW-JOB-NAME', null, false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig(null)
+        jm.createOrUpdateConfig('NEW-JOB-NAME', config, false)
 
         then:
         thrown(ConfigurationMissingException)
@@ -69,7 +74,9 @@ class JobManagementSpec extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig('NEW-JOB-NAME', '', false)
+        JobConfig config = new JobConfig()
+        config.setMainConfig('')
+        jm.createOrUpdateConfig('NEW-JOB-NAME', config, false)
 
         then:
         thrown(ConfigurationMissingException)

@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
-
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 /**
@@ -29,6 +28,32 @@ class DslSampleSpec extends Specification {
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, mavenJob
         def mavenJobWithTemplate = jm.savedConfigs['PROJ-maven-with-template']
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXmlWithTemplate, mavenJobWithTemplate
+    }
+
+    def 'load sample promotions dsl'() {
+        setup:
+        StringJobManagement jm = new StringJobManagement()
+        jm.addConfig('TMPL-test', sampleTemplate)
+        jm.addConfig('TMPL-test-maven', sampleMavenTemplate)
+
+        when:
+        GeneratedItems results = DslScriptLoader.runDslEngine(samplePromotionsDsl, jm)
+
+        then:
+        results != null
+        results.jobs.size() == 1
+        jm.savedConfigs.size() == 1
+        def firstJob = jm.savedConfigs['promos']
+        firstJob != null
+        // TODO Review actual results
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + promotionJobXml, firstJob
+
+        // Promotions
+        jm.savedConfigsPromotions.size() == 1
+        def firstConfigs = jm.savedConfigsPromotions['promos']
+        def devConfig = firstConfigs[new JobConfigId(ItemType.ADDITIONAL, 'promotions/dev')]
+        // TODO Review actual results
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + promotionXml, devConfig
     }
 
     def 'use parameters when loading script'() {
@@ -193,6 +218,26 @@ job {
     }
     steps { // build step
         maven('install')
+    }
+}
+'''
+    private final samplePromotionsDsl = '''
+job(type:'Maven') {
+    name('promos')
+    promotions {
+        promotion('dev') {
+            conditions {
+                manual('name')
+            }
+            actions {
+                shell('bring nach test')
+            }
+        }
+        promotion('test') {
+            conditions {
+                manual('name')
+            }
+        }
     }
 }
 '''
@@ -393,5 +438,65 @@ job(type: Maven) {
         </branches>
     </scm>
 </maven2-moduleset>
+'''
+    private final promotionJobXml = '''
+<maven2-moduleset>
+    <actions></actions>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <hudson.plugins.promoted__builds.JobPropertyImpl plugin='promoted-builds@2.15'>
+            <activeProcessNames>
+                <string>dev</string>
+                <string>test</string>
+            </activeProcessNames>
+        </hudson.plugins.promoted__builds.JobPropertyImpl>
+    </properties>
+    <scm class='hudson.scm.NullSCM'></scm>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class='vector'></triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <perModuleEmail>false</perModuleEmail>
+    <ignoreUpstremChanges>true</ignoreUpstremChanges>
+    <archivingDisabled>false</archivingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>false</runHeadless>
+    <publishers></publishers>
+    <buildWrappers></buildWrappers>
+</maven2-moduleset>
+'''
+
+    private final promotionXml = '''
+<hudson.plugins.promoted__builds.PromotionProcess plugin='promoted-builds@2.15'>
+    <actions></actions>
+    <keepDependencies>false</keepDependencies>
+    <properties></properties>
+    <scm class='hudson.scm.NullSCM'></scm>
+    <canRoam>false</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers></triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <icon></icon>
+    <conditions>
+        <hudson.plugins.promoted__builds.conditions.ManualCondition>
+            <users>name</users>
+            <parameterDefinitions></parameterDefinitions>
+        </hudson.plugins.promoted__builds.conditions.ManualCondition>
+    </conditions>
+    <buildSteps>
+        <hudson.tasks.Shell>
+            <command>bring nach test</command>
+        </hudson.tasks.Shell>
+    </buildSteps>
+</hudson.plugins.promoted__builds.PromotionProcess>
 '''
 }

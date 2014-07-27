@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig;
+
 /**
  * Runs provided DSL scripts via an external JObManager
  */
@@ -110,7 +112,16 @@ public class DslScriptLoader {
             for (Item job : referencedItems) {
                 String xml = job.getXml();
                 LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
+                JobConfig config = new JobConfig();
+                config.setMainConfig(xml);
+                List<AdditionalXmlConfig> additionalConfigs = job.getAdditionalConfigs();
+                for (AdditionalXmlConfig xmlConfig : additionalConfigs) {
+                    String xmlAdditional = xmlConfig.getXml();
+                    String path = xmlConfig.getRelativePath();
+                    config.addConfig(new JobConfigId(ItemType.ADDITIONAL, path), xmlAdditional);
+                    LOGGER.log(Level.FINE, String.format("Saving additional config %s as %s", path, xmlAdditional));
+                }
+                jp.getJm().createOrUpdateConfig(job.getName(), config, ignoreExisting);
                 String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
                 generatedJobs.add(new GeneratedJob(templateName, job.getName()));
             }
