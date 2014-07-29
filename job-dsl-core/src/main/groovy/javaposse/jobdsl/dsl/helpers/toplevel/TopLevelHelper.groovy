@@ -121,6 +121,38 @@ class TopLevelHelper extends AbstractHelper {
         }
     }
 
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <properties>
+     *         <org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
+     *             <resourceNames>lock-resource</resourceNames>
+     *             <resourceNamesVar>NAMES</resourceNamesVar>
+     *             <resourceNumber>0</resourceNumber>
+     *         </org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
+     *     <properties>
+     * </project>
+     * }
+     * </pre>
+     */
+    def lockableResources(Closure lockClosure) {
+        LockableResourcesContext lockContext = new LockableResourcesContext()
+        AbstractContextHelper.executeInContext(lockClosure, lockContext)
+
+        execute {
+            it / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
+                resourceNames lockContext.resourceNames
+				if (lockContext.resourceNamesVar != null) {
+					resourceNamesVar lockContext.resourceNamesVar
+				}
+				if (lockContext.resourceNumber != -1) {
+					resourceNumber lockContext.resourceNumber
+				}
+            }
+        }
+    }
+
     /*
     <disabled>true</disabled>
      */
