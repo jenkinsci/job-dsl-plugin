@@ -1,3 +1,6 @@
+**WARNING:** Monkey-patching causes memory-leaks, so avoid monkey-patching if you do not want your Jenkins to die a slow
+and painful death. See [JENKINS-23762](https://issues.jenkins-ci.org/browse/JENKINS-23762) for details.
+
 If you want to introduce custom DSL commands, you can monkey-patch **Context classes from your scripts. For example:
 ```groovy
 import javaposse.jobdsl.dsl.helpers.*
