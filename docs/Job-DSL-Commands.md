@@ -68,6 +68,8 @@ job(Map<String, ?> arguments = [:]) {
     jdk(String jdk)
     keepDependencies(boolean keep = true)
     label(String label)
+    lockableResources(String resources)
+    lockableResources(Closure lockClosure)
     logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1,
                int artifactNumToKeep = -1)
     priority(int value)

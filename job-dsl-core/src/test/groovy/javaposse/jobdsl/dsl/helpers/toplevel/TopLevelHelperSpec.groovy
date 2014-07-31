@@ -231,6 +231,56 @@ class TopLevelHelperSpec extends Specification {
         root.canRoam[0].value() == 'true'
     }
 
+    def 'lockable resources simple'() {
+        when:
+        def action = helper.lockableResources('lock-resource')
+        action.execute(root)
+
+        then:
+        def node = root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]
+        node.children().size() == 1
+        node.resourceNames.size() == 1
+        node.resourceNamesVar.size() == 0
+        node.resourceNumber.size() == 0
+        node.resourceNames[0].value() == 'lock-resource'
+    }
+
+    def 'lockable resources minimal'() {
+        when:
+        def action = helper.lockableResources {
+            resourceNames 'lock-resource'
+        }
+        action.execute(root)
+
+        then:
+        def node = root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]
+        node.children().size() == 1
+        node.resourceNames.size() == 1
+        node.resourceNamesVar.size() == 0
+        node.resourceNumber.size() == 0
+        node.resourceNames[0].value() == 'lock-resource'
+    }
+
+    def 'lockable resources with all parameters'() {
+        when:
+        def action = helper.lockableResources {
+            resourceNames 'res0 res1 res2'
+            resourceNamesVar 'RESOURCES'
+            resourceNumber = 1
+        }
+        action.execute(root)
+
+        then:
+        def node = root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]
+        node.children().size() == 3
+        node.resourceNames.size() == 1
+        node.resourceNamesVar.size() == 1
+        node.resourceNumber.size() == 1
+        node.resourceNames[0].value() == 'res0 res1 res2'
+        node.resourceNamesVar[0].value() == 'RESOURCES'
+        node.resourceNumber[0].value() == 1
+    }
+
     def 'log rotate xml'() {
         when:
         def action = helper.logRotator(14, 50)

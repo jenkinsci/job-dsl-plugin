@@ -7,13 +7,13 @@ class LockableResourcesContext implements Context {
     def resourceNamesVar = null
     def resourceNumber = -1
 
-	def resourceNames(String resourceNames) {
+    def resourceNames(String resourceNames) {
         this.resourceNames = resourceNames
-	}
-	def resourceNamesVar(String resourceNamesVar) {
+    }
+    def resourceNamesVar(String resourceNamesVar) {
         this.resourceNamesVar = resourceNamesVar
-	}
-	def resourceNumber(int resourceNumber) {
+    }
+    def resourceNumber(int resourceNumber) {
         this.resourceNumber = resourceNumber
-	}
+    }
 }
