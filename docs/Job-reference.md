@@ -501,6 +501,20 @@ git {
 }
 ```
 
+```groovy
+// checkout branch 'featureA' from repository 'repo1' to local branch 'local'
+git {
+    remote {
+        name('remoteB')
+        url('git@server:account/repo1.git')      
+    }
+    branch('featureA')
+    extensions {
+        localBranch('local')
+    }
+}
+```
+
 ## Subversion
 
 ```groovy
