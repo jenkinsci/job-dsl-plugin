@@ -578,9 +578,9 @@ class ScmHelperSpec extends Specification {
         context.scmNode != null
         context.scmNode.extensions.size() == 1
         context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.LocalBranch'.size() == 1
-        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.LocalBranch'[0].localBranch[0].value() == 'localBranchName'
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.LocalBranch'[0].localBranch[0].value() ==
+                'localBranchName'
     }
-
 
     def 'call github scm method'() {
         when:

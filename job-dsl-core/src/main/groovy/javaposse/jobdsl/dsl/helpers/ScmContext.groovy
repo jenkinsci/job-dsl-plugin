@@ -175,7 +175,7 @@ class ScmContext implements Context {
         if (gitContext.extensions) {
             def extensions = nodeBuilder.extensions {
             }
-            gitContext.extensions.each {Node extension ->
+            gitContext.extensions.each { Node extension ->
                 extensions.append(extension)
             }
             gitNode.append(extensions)
