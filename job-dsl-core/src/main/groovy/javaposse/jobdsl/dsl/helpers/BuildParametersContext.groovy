@@ -238,6 +238,99 @@ class BuildParametersContext implements Context {
     }
 
     /**
+    * <project>
+    *   <properties>
+    *       <hudson.model.ParametersDefinitionProperty>
+    *           <parameterDefinitions>
+    *           <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+    *             <name></name>
+    *             <description></description>
+    *             <allowedSlaves>
+    *                 <string>nodeName</string>
+    *             </allowedSlaves>
+    *             <defaultSlaves>
+    *                 <string>nodeName</string>
+    *             </defaultSlaves>
+    *             <triggerIfResult>allCases</triggerIfResult>
+    *             <allowMultiNodeSelection>true</allowMultiNodeSelection>
+    *             <triggerConcurrentBuilds>false</triggerConcurrentBuilds>
+    *             <ignoreOfflineNodes>false</ignoreOfflineNodes>
+    *             <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+    *           </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+    *
+    * @param parameterName
+    * @param allowedNodes
+    * @param defaultNodes (optional)
+    * @param description (optional)
+    * @param trigger (one of allCases, success, unstable,
+    *                 allowMultiSelectionForConcurrentBuilds, or
+    *                 multiSelectionDisallowed)
+    * @param eligibility (one of AllNodeEligibility, IgnoreOfflineNodeEligibility, IgnoreTempOfflineNodeEligibility)
+    * @return
+    */
+    def nodeParam(String parameterName, List<String> allowedNodes,
+        List<String> defaultNodesArg = null, String description = '',
+        String trigger = 'allCases',
+        String eligibility = 'AllNodeEligibility') {
+        checkArgument(!buildParameterNodes.containsKey(parameterName),
+            'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+        checkNotNull(allowedNodes, 'allowedNodes cannot be null')
+        checkArgument(allowedNodes.size() > 0)
+        checkArgument(eligibility in ['AllNodeEligibility',
+                                     'IgnoreOfflineNodeEligibility',
+                                     'IgnoreTempOfflineNodeEligibility'],
+                      'eligibility ' + eligibility + ' is invalid')
+
+        def defaultNodes = defaultNodesArg ?: [allowedNodes[0]]
+
+        // Its unclear why this parameter is always false.
+        def ignoreOfflineNodes = 'false'
+        def allowMultiNodeSelection = ''
+        def triggerConcurrentBuilds = ''
+
+        switch (trigger) {
+        case 'success':
+        case 'unstable':
+        case 'allCases':
+            allowMultiNodeSelection = 'true'
+            triggerConcurrentBuilds = 'false'
+            break
+        case 'allowMultiSelectionForConcurrentBuilds':
+            allowMultiNodeSelection = 'true'
+            triggerConcurrentBuilds = 'true'
+            break
+        case 'multiSelectionDisallowed':
+            allowMultiNodeSelection = 'false'
+            triggerConcurrentBuilds = 'false'
+            break
+        default:
+            throw new IllegalArgumentException('trigger ' + trigger + ' is invalid')
+        }
+
+        def definitionNode = NodeBuilder.newInstance().
+            'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition' {
+            nodeEligibility(class: "org.jvnet.jenkins.plugins.nodelabelparameter.node.${eligibility}")
+            allowedSlaves {
+                allowedNodes.each { delegate.string it }
+            }
+            defaultSlaves {
+                defaultNodes.each { delegate.string it }
+            }
+        }
+
+        definitionNode.appendNode('name', parameterName)
+        definitionNode.appendNode('description', description)
+        definitionNode.appendNode('allowMultiNodeSelection', allowMultiNodeSelection)
+        definitionNode.appendNode('triggerConcurrentBuilds', triggerConcurrentBuilds)
+        definitionNode.appendNode('ignoreOfflineNodes', ignoreOfflineNodes)
+        definitionNode.appendNode('triggerIfResult', trigger)
+
+        buildParameterNodes[parameterName] = definitionNode
+    }
+
+    /**
      * <project>
      *     <properties>
      *         <hudson.model.ParametersDefinitionProperty>

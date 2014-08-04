@@ -3071,3 +3071,36 @@ Full usage
 labelParam("myParameterName", "my_node_label", "my description", true, "allCases")
 ```
 NOTE: More info about trigger and eligibility effects can be found via the jenkins UI
+
+## Node parameter
+
+### Default values
+
+If null (the default) is passed for `defaultSlaves`, then the first argument
+to `allowedSlaves` will be the default slave (much like how the default to
+`choiceParam` is the first possible value).
+
+The default value for `trigger` is `allCases`. `trigger` must be
+one of the following values: `success`, `unstable`, `allCases`,
+`allowMultiSelectionForConcurrentBuilds`, or `multiSelectionDisallowed`
+
+The default value for `eligibility` is `AllNodeEligibility`. `eligibility` must
+be one of the following values: `AllNodeEligibility`,
+`IgnoreOfflineNodeEligibility`, or `IgnoreTempOfflineNodeEligibility`.
+
+### Example usages
+
+Simplest usage (taking advantage of defaults for defaultSlaves, trigger, eligibility)
+In this case `defaultSlaves` is `['node1 (default)']`, `description` is empty,
+`trigger` is `multiSelectionDisallowed`, and `eligibility` is
+`AllNodeElegibility`
+Usage
+```groovy
+nodeParam("myParameterName", ['node1 (default)', 'node2'])
+```
+
+Complex usage ()
+Usage
+```groovy
+nodeParam("myParameterName", ['node1', 'node2', 'node3'], ['node1'], 'my_description', 'multiSelectionDisallowed', 'IgnoreOfflineNodeEligibility')
+```
