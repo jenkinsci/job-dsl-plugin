@@ -58,6 +58,43 @@ class WrapperHelperSpec extends Specification {
         }
     }
 
+    def 'add rbenv-controlled ruby version'() {
+        when:
+        helper.wrappers {
+            rbenv('2.1.2')
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].version[0].value() == '2.1.2'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].gem__list[0].value() == ''
+    }
+
+    def 'add rbenv-controlled override defaults'() {
+        when:
+        helper.wrappers {
+            rbenv('2.1.2',{ root('foo') })
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].version[0].value() == '2.1.2'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].gem__list[0].value() == ''
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].rbenv_root[0].value() == 'foo'
+    }
+
+    def 'add rbenv-controlled ruby version and gems'() {
+        when:
+        helper.wrappers {
+            rbenv('2.1.2',['bundler','rake'])
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].version[0].value() == '2.1.2'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].gem__list[0].value() == 'bundler,rake,'
+    }
+
     def 'add rvm-controlled ruby version'() {
         when:
         helper.wrappers {
