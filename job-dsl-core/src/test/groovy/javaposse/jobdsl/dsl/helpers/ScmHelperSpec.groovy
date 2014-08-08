@@ -566,6 +566,22 @@ class ScmHelperSpec extends Specification {
         context.scmNode.scmName[0].text() == 'Kittner'
     }
 
+    def 'call git scm with extensions'() {
+        when:
+        context.git {
+            extensions {
+                localBranch('localBranchName')
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.extensions.size() == 1
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.LocalBranch'.size() == 1
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.LocalBranch'[0].localBranch[0].value() ==
+                'localBranchName'
+    }
+
     def 'call github scm method'() {
         when:
         context.github('jenkinsci/job-dsl-plugin')

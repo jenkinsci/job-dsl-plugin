@@ -23,6 +23,7 @@ class GitContext implements Context {
     Closure withXmlClosure
     Node browser
     Node mergeOptions
+    List<Node> extensions = []
 
     GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
         this.jobManagement = jobManagement
@@ -48,6 +49,15 @@ class GitContext implements Context {
 
         if (remoteContext.browser) {
             this.browser = remoteContext.browser
+        }
+    }
+
+    void extensions(Closure extensionsClosure) {
+        GitExtensionsContext extensionsContext = new GitExtensionsContext(withXmlActions)
+        executeInContext(extensionsClosure, extensionsContext)
+
+        if (extensionsContext.localBranchExtension) {
+            extensions.add(extensionsContext.localBranchExtension)
         }
     }
 

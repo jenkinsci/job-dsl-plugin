@@ -113,6 +113,11 @@ class ScmContext implements Context {
        <useShallowClone>false</useShallowClone>
        <includedRegions/>
        <scmName/>
+       <extensions>
+         <hudson.plugins.git.extensions.impl.LocalBranch>
+           <localBranch>master</localBranch>
+         </hudson.plugins.git.extensions.impl.LocalBranch>
+       </extensions>
      </hudson.plugins.git.GitSCM>
      */
     def git(Closure gitClosure) {
@@ -165,6 +170,15 @@ class ScmContext implements Context {
 
         if (gitContext.mergeOptions) {
             gitNode.children().add(gitContext.mergeOptions)
+        }
+
+        if (gitContext.extensions) {
+            def extensions = nodeBuilder.extensions {
+            }
+            gitContext.extensions.each { Node extension ->
+                extensions.append(extension)
+            }
+            gitNode.append(extensions)
         }
 
         // Apply Context
