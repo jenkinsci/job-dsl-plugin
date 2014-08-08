@@ -12,17 +12,13 @@ class RakeContext implements Context {
     boolean silent = false
 
     def task(String task) {
-        tasks << task
+        this.tasks << task
     }
 
-    def tasks(Iterable<String> addlTasks) {
-        addlTasks.each {
+    def tasks(Iterable<String> tasks) {
+        tasks.each {
             task(it)
         }
-    }
-
-    String getTasksString() {
-        tasks.join(' ')
     }
 
     def file(String file) {
@@ -41,11 +37,11 @@ class RakeContext implements Context {
         this.workingDir = workingDir
     }
 
-    def bundleExec(boolean bundleExec) {
+    def bundleExec(boolean bundleExec = true) {
         this.bundleExec = bundleExec
     }
 
-    def silent(boolean silent) {
+    def silent(boolean silent = true) {
         this.silent = silent
     }
 }

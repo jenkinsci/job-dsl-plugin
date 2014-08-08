@@ -787,16 +787,14 @@ class AbstractStepContext implements Context {
 
         AbstractContextHelper.executeInContext(rakeClosure, rakeContext)
 
-        def rakeNode = new NodeBuilder().'hudson.plugins.rake.Rake' {
+        stepNodes << new NodeBuilder().'hudson.plugins.rake.Rake' {
             rakeInstallation rakeContext.installation
             rakeFile rakeContext.file
             rakeLibDir rakeContext.libDir
             rakeWorkingDir rakeContext.workingDir
-            tasks rakeContext.tasksString
-            silent rakeContext.silent.toString()
-            bundleExec rakeContext.bundleExec.toString()
+            tasks rakeContext.tasks.join(' ')
+            silent rakeContext.silent
+            bundleExec rakeContext.bundleExec
         }
-
-        stepNodes << rakeNode
     }
 }

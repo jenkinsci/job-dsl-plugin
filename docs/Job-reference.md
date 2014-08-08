@@ -1363,39 +1363,50 @@ sbt(/*standard parameters here*/) {
 }
 ```
 
-## [Rake](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
-
-Executes Rake as a build step. (Since 1.25)
+## Rake
 
 ```groovy
-rake (String tasksArg, Closure rakeClosure = null) {
-    task(String taskName)             // a single task to execute
-    tasks(Iterable<String> tasks)     // a list of tasks to execute
-    file(String file)                 // path to a Rakefile
-    installation(String installation) // Ruby installation to use
-    libDir(String libDir)             // path to Rake library directory
-    workingDir(String workingDir)     // path the working directory in which Rake should be executed
-    bundleExec(boolean bundleExec)    // execute Rake with Bundler 'bundle exec rake'
-    silent(boolean silent)            // do not print to STDOUT
+job {
+    steps {
+        rake {
+            task(String task)                     // a single task to execute
+            tasks(Iterable<String> tasks)         // a list of tasks to execute
+            file(String file)                     // path to a Rakefile
+            installation(String installation)     // Ruby installation to use
+            libDir(String libDir)                 // path to Rake library directory
+            workingDir(String workingDir)         // path the working directory in which Rake should be executed
+            bundleExec(boolean bundleExec = true) // execute Rake with Bundler 'bundle exec rake'
+            silent(boolean silent = true)         // do not print to STDOUT
+        }
+        rake(String tasksArg, Closure rakeClosure = null) // see above for rakeClosure syntax
+    }
 }
 ```
+
+Executes Rake as a build step. Requires the [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin).
 
 Examples:
 
 ```groovy
-rake('task')
-
-rake('first') {
-    task('second')
-    tasks(['third', 'fourth'])
-    file('/opt/app/Rakefile')
-    installation('ruby-2.0.0-p481')
-    libDir('./rakelib')
-    workingDir('/opt/app')
-    bundleExec(true)
-    silent(true)
+job {
+    steps {
+        rake('task')
+        
+        rake('first') {
+            task('second')
+            tasks(['third', 'fourth'])
+            file('/opt/app/Rakefile')
+            installation('ruby-2.0.0-p481')
+            libDir('./rakelib')
+            workingDir('/opt/app')
+            bundleExec()
+            silent()
+        }
+    }
 }
 ```
+
+(Since 1.25)
 
 ## DSL
 ```groovy
