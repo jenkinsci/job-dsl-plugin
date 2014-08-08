@@ -14,7 +14,6 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -44,7 +43,7 @@ public class DslScriptLoader {
         icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
-        GroovyScriptEngine engine = new GroovyScriptEngine(new URL[]{scriptRequest.urlRoot}, cl);
+        GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.urlRoots, cl);
 
         engine.setConfig(config);
 
