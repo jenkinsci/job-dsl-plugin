@@ -19,6 +19,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 * 1.25 (unreleased)
  * Dropped support for Java 5, Java 6 or later is required at runtime
  * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
+ * Support for [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
 * 1.24 (July 05 2014)
  * Support for [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
  * Support for [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)

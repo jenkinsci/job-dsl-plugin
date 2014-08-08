@@ -144,6 +144,47 @@ job {
 
 (since 1.24)
 
+## Lockable Resources
+
+```groovy
+job {
+    lockableResources(String resources) {
+        resourcesVariable(String name) // reserved resources variable name
+        resourceNumber(int number)     // number of the listed resources to request
+    }
+}
+```
+
+Lock resources while a job is running. Requires the
+[Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin).
+
+Examples:
+
+```groovy
+// lock single resource
+job {
+    lockableResources('lock-resource')
+}
+
+// notation that locks three resources at once
+job {
+    lockableResources('resource1 resource2 resource3')
+}
+
+// lock two available resources from given three and capture locked resources in the variable name
+job {
+    lockableResources('resource1 resource2 resource3') {
+        resourcesVariable('LOCKED_RESOURCES')
+        resourceNumber(2)
+    }
+    steps {
+        shell('echo Following resources are locked: $LOCKED_RESOURCES')
+    }
+}
+```
+
+(Since 1.25)
+
 ## Security
 ```groovy
 permission(String)
