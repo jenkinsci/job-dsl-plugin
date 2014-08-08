@@ -153,6 +153,9 @@ class ScmContext implements Context {
             if (gitContext.reference) {
                 reference gitContext.reference
             }
+            if (gitContext.localBranch) {
+                localBranch gitContext.localBranch
+            }
             skipTag !gitContext.createTag
             if (gitContext.shallowClone) {
                 useShallowClone gitContext.shallowClone
