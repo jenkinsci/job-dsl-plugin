@@ -50,49 +50,6 @@ label(String labelStr)
 
 Label which specifies which nodes this job can run on, e.g. 'X86&&Ubuntu'
 
-## Lockable Resources
-```groovy
-lockableResources(String resources)
-lockableResources(Closure lockClosure)
-```
-
-Lock resources while this job is running. Requires the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin">Lockable Resources Plugin</a>.
-
-Examples:
-
-Lock single resource.
-
-```groovy
-job {
-  lockableResources {
-    resourceNames "lock-resource"
-  }
-}
-```
-
-Short notation that locks three resources at once.
-
-```groovy
-job {
-  lockableResources ("resource1 resource2 resource2")
-}
-```
-
-Lock two available resources from given three and capture locked resources in the variable name.
-
-```groovy
-job {
-  lockableResources {
-    resourceNames "resource1 resource2 resource3"
-    resourceNamesVar "LOCKED_RESOURCES"
-    resourceNumber 2
-  }
-  steps {
-     shell "echo Following resources are locked: \$LOCKED_RESOURCES"
-  }
-}
-```
-
 ## Disable
 
 ```groovy
@@ -186,6 +143,47 @@ job {
 ```
 
 (since 1.24)
+
+## Lockable Resources
+
+```groovy
+job {
+    lockableResources(String resources) {
+        resourcesVariable(String name) // reserved resources variable name
+        resourceNumber(int number)     // number of the listed resources to request
+    }
+}
+```
+
+Lock resources while a job is running. Requires the
+[Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin).
+
+Examples:
+
+```groovy
+// lock single resource
+job {
+    lockableResources('lock-resource')
+}
+
+// notation that locks three resources at once
+job {
+    lockableResources('resource1 resource2 resource3')
+}
+
+// lock two available resources from given three and capture locked resources in the variable name
+job {
+    lockableResources('resource1 resource2 resource3') {
+        resourcesVariable('LOCKED_RESOURCES')
+        resourceNumber(2)
+    }
+    steps {
+        shell('echo Following resources are locked: $LOCKED_RESOURCES')
+    }
+}
+```
+
+(Since 1.25)
 
 ## Security
 ```groovy

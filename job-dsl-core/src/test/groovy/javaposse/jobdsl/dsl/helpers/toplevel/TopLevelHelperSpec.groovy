@@ -237,48 +237,33 @@ class TopLevelHelperSpec extends Specification {
         action.execute(root)
 
         then:
-        def node = root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]
-        node.children().size() == 1
-        node.resourceNames.size() == 1
-        node.resourceNamesVar.size() == 0
-        node.resourceNumber.size() == 0
-        node.resourceNames[0].value() == 'lock-resource'
-    }
-
-    def 'lockable resources minimal'() {
-        when:
-        def action = helper.lockableResources {
-            resourceNames 'lock-resource'
+        with(root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 1
+            resourceNames.size() == 1
+            resourceNamesVar.size() == 0
+            resourceNumber.size() == 0
+            resourceNames[0].value() == 'lock-resource'
         }
-        action.execute(root)
-
-        then:
-        def node = root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]
-        node.children().size() == 1
-        node.resourceNames.size() == 1
-        node.resourceNamesVar.size() == 0
-        node.resourceNumber.size() == 0
-        node.resourceNames[0].value() == 'lock-resource'
     }
 
     def 'lockable resources with all parameters'() {
         when:
-        def action = helper.lockableResources {
-            resourceNames 'res0 res1 res2'
-            resourceNamesVar 'RESOURCES'
-            resourceNumber = 1
+        def action = helper.lockableResources('res0 res1 res2') {
+            resourcesVariable('RESOURCES')
+            resourceNumber(1)
         }
         action.execute(root)
 
         then:
-        def node = root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]
-        node.children().size() == 3
-        node.resourceNames.size() == 1
-        node.resourceNamesVar.size() == 1
-        node.resourceNumber.size() == 1
-        node.resourceNames[0].value() == 'res0 res1 res2'
-        node.resourceNamesVar[0].value() == 'RESOURCES'
-        node.resourceNumber[0].value() == 1
+        with(root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 3
+            resourceNames.size() == 1
+            resourceNamesVar.size() == 1
+            resourceNumber.size() == 1
+            resourceNames[0].value() == 'res0 res1 res2'
+            resourceNamesVar[0].value() == 'RESOURCES'
+            resourceNumber[0].value() == 1
+        }
     }
 
     def 'log rotate xml'() {

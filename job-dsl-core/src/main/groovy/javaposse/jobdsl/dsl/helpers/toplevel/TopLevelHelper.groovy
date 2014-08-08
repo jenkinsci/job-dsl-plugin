@@ -122,8 +122,6 @@ class TopLevelHelper extends AbstractHelper {
     }
 
     /**
-     * <pre>
-     * {@code
      * <project>
      *     <properties>
      *         <org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
@@ -133,26 +131,18 @@ class TopLevelHelper extends AbstractHelper {
      *         </org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
      *     <properties>
      * </project>
-     * }
-     * </pre>
      */
-    def lockableResources(String resources) {
-        lockableResources {
-            resourceNames resources
-        }
-    }
-
-    def lockableResources(Closure lockClosure) {
+    def lockableResources(String resources, Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()
         AbstractContextHelper.executeInContext(lockClosure, lockContext)
 
         execute {
             it / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
-                resourceNames lockContext.resourceNames
-                if (lockContext.resourceNamesVar != null) {
-                    resourceNamesVar lockContext.resourceNamesVar
+                resourceNames resources
+                if (lockContext.resourcesVariable) {
+                    resourceNamesVar lockContext.resourcesVariable
                 }
-                if (lockContext.resourceNumber != -1) {
+                if (lockContext.resourceNumber != null) {
                     resourceNumber lockContext.resourceNumber
                 }
             }
