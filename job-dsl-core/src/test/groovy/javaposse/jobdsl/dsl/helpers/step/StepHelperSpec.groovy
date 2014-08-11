@@ -1730,4 +1730,56 @@ still-another-dsl.groovy'''
         rakeStep.silent[0].value() == true
         rakeStep.bundleExec[0].value() == true
     }
+
+    def 'vSphere power off'() {
+        when:
+        context.vSpherePowerOff('vsphere.acme.org', 'foo')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 2
+            buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.PowerOff'
+            buildStep[0].children().size() == 3
+            buildStep[0].vm[0].value() == 'foo'
+            buildStep[0].evenIfSuspended[0].value() == false
+            buildStep[0].shutdownGracefully[0].value() == false
+            serverName[0].value() == 'vsphere.acme.org'
+        }
+    }
+
+    def 'vSphere power on'() {
+        when:
+        context.vSpherePowerOn('vsphere.acme.org', 'foo')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 2
+            buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.PowerOn'
+            buildStep[0].children().size() == 2
+            buildStep[0].vm[0].value() == 'foo'
+            buildStep[0].timeoutInSeconds[0].value() == 180
+            serverName[0].value() == 'vsphere.acme.org'
+        }
+    }
+
+    def 'vSphere revert to snapshot'() {
+        when:
+        context.vSphereRevertToSnapshot('vsphere.acme.org', 'foo', 'clean')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 2
+            buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.RevertToSnapshot'
+            buildStep[0].children().size() == 2
+            buildStep[0].vm[0].value() == 'foo'
+            buildStep[0].snapshotName[0].value() == 'clean'
+            serverName[0].value() == 'vsphere.acme.org'
+        }
+    }
 }

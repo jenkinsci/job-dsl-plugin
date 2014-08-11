@@ -1569,6 +1569,36 @@ systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
 
 Runs a system groovy script, which is executed inside the Jenkins master. Thus it will have access to all the internal objects of Jenkins and can be used to alter the state of Jenkins. The `systemGroovyCommand` method will run an inline script and the `systemGroovyScriptFile` will execute a script file from the generated job's workspace. The closure block can be used to add variable bindings and extra classpath entries for a script. The methods in the closure block can be called multiple times to add any number of bindings or classpath entries. The Groovy plugin must be installed to use these build steps.
 
+## vSphere Cloud
+
+```groovy
+job {
+    steps {
+        vSpherePowerOff(String server, String vm)
+        vSpherePowerOn(String server, String vm)
+        vSphereRevertToSnapshot(String server, String vm, String snapshot)
+    }
+}
+```
+
+These build steps manage virtual machines running in VMWare vSphere. Requires the
+[vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin).
+
+Example:
+
+```groovy
+// power off the VM 'foo' on server 'vsphere.acme.org', then revert to snapshot 'clean' and power on again
+job {
+    steps {
+        vSpherePowerOff('vsphere.acme.org', 'foo')
+        vSphereRevertToSnapshot('vsphere.acme.org', 'foo', 'clean')
+        vSpherePowerOn('vsphere.acme.org', 'foo')
+    }
+}
+```
+
+(Since 1.25)
+
 ## Grails
 ```groovy
 grails {

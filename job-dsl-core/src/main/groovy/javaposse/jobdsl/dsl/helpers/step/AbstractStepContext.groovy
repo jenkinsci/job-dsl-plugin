@@ -797,4 +797,64 @@ class AbstractStepContext implements Context {
             bundleExec rakeContext.bundleExec
         }
     }
+
+    /**
+     * <org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     *     <buildStep class="org.jenkinsci.plugins.vsphere.builders.PowerOff">
+     *         <vm>test</vm>
+     *         <evenIfSuspended>false</evenIfSuspended>
+     *         <shutdownGracefully>false</shutdownGracefully>
+     *     </buildStep>
+     *     <serverName>test</serverName>
+     *     <serverHash>320615527</serverHash> // not used for deserialization
+     * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     */
+    def vSpherePowerOff(String server, String vm) {
+        vSphereBuildStep(server, 'PowerOff') {
+            delegate.vm vm
+            evenIfSuspended false
+            shutdownGracefully false
+        }
+    }
+
+    /**
+     * <org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     *     <buildStep class="org.jenkinsci.plugins.vsphere.builders.PowerOn">
+     *         <vm>test</vm>
+     *         <timeoutInSeconds>180</timeoutInSeconds>
+     *     </buildStep>
+     *     <serverName>test</serverName>
+     *     <serverHash>320615527</serverHash> // not used for deserialization
+     * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     */
+    def vSpherePowerOn(String server, String vm) {
+        vSphereBuildStep(server, 'PowerOn') {
+            delegate.vm vm
+            timeoutInSeconds 180
+        }
+    }
+
+    /**
+     * <org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     *     <buildStep class="org.jenkinsci.plugins.vsphere.builders.PowerOm">
+     *         <vm>test</vm>
+     *         <timeoutInSeconds>180</timeoutInSeconds>
+     *     </buildStep>
+     *     <serverName>test</serverName>
+     *     <serverHash>320615527</serverHash> // not used for deserialization
+     * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     */
+    def vSphereRevertToSnapshot(String server, String vm, String snapshot) {
+        vSphereBuildStep(server, 'RevertToSnapshot') {
+            delegate.vm vm
+            snapshotName snapshot
+        }
+    }
+
+    private vSphereBuildStep(String server, String builder, Closure configuration) {
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer' {
+            buildStep(class: "org.jenkinsci.plugins.vsphere.builders.${builder}", configuration)
+            serverName server
+        }
+    }
 }
