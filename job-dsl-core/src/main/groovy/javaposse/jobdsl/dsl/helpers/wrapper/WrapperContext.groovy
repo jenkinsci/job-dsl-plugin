@@ -17,11 +17,6 @@ class WrapperContext implements Context {
         this.type = jobType
     }
 
-    WrapperContext(List<Node> wrapperNodes, JobType jobType, JobManagement jobManagement) {
-        this(jobType, jobManagement)
-        this.wrapperNodes = wrapperNodes
-    }
-
     def timestamps() {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.timestamper.TimestamperBuildWrapper'()
@@ -430,7 +425,7 @@ class WrapperContext implements Context {
      * @param releaseClosure attributes and steps used by the plugin
      */
     def release(Closure releaseClosure) {
-        ReleaseContext releaseContext = new ReleaseContext()
+        ReleaseContext releaseContext = new ReleaseContext(jobManagement)
         AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()

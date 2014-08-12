@@ -67,6 +67,11 @@
                 <version>1.9.4</version>
             </dependency>
             <dependency>
+                <groupId>org.jenkins-ci.plugins</groupId>
+                <artifactId>vsphere-cloud</artifactId>
+                <version>1.1.11</version>
+            </dependency>
+            <dependency>
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
                 <version>1.2</version>

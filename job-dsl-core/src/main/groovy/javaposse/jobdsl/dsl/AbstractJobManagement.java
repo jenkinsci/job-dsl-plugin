@@ -72,6 +72,11 @@ public abstract class AbstractJobManagement implements JobManagement {
         return null;
     }
 
+    @Override
+    public Integer getVSphereCloudHash(String name) {
+        return null;
+    }
+
     protected void validateUpdateArgs(String jobName, String config) {
         validateNameArg(jobName);
         validateConfigArg(config);

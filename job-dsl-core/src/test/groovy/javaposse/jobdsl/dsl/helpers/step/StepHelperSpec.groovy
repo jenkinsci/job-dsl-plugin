@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -12,8 +13,9 @@ import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.Ba
 class StepHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    StepContextHelper helper = new StepContextHelper(mockActions, JobType.Freeform)
-    StepContext context = new StepContext(JobType.Freeform)
+    JobManagement jobManagement = Mock(JobManagement)
+    StepContextHelper helper = new StepContextHelper(mockActions, JobType.Freeform, jobManagement)
+    StepContext context = new StepContext(jobManagement)
 
     def 'call shell method'() {
         when:
@@ -812,7 +814,7 @@ class StepHelperSpec extends Specification {
         }
 
         when:
-        def withXmlAction = helper.generateWithXmlAction(new StepContext([stepNode], JobType.Freeform))
+        def withXmlAction = helper.generateWithXmlAction(new StepContext([stepNode], jobManagement))
         withXmlAction.execute(root)
 
         then:
@@ -822,7 +824,7 @@ class StepHelperSpec extends Specification {
     def 'no steps for Maven jobs'() {
         setup:
         List<WithXmlAction> mockActions = Mock()
-        StepContextHelper helper = new StepContextHelper(mockActions, JobType.Maven)
+        StepContextHelper helper = new StepContextHelper(mockActions, JobType.Maven, jobManagement)
 
         when:
         helper.steps {
@@ -1732,6 +1734,9 @@ still-another-dsl.groovy'''
     }
 
     def 'vSphere power off'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
         when:
         context.vSpherePowerOff('vsphere.acme.org', 'foo')
 
@@ -1739,17 +1744,21 @@ still-another-dsl.groovy'''
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
-            children().size() == 2
+            children().size() == 3
             buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.PowerOff'
             buildStep[0].children().size() == 3
             buildStep[0].vm[0].value() == 'foo'
             buildStep[0].evenIfSuspended[0].value() == false
             buildStep[0].shutdownGracefully[0].value() == false
             serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
         }
     }
 
     def 'vSphere power on'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
         when:
         context.vSpherePowerOn('vsphere.acme.org', 'foo')
 
@@ -1757,16 +1766,20 @@ still-another-dsl.groovy'''
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
-            children().size() == 2
+            children().size() == 3
             buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.PowerOn'
             buildStep[0].children().size() == 2
             buildStep[0].vm[0].value() == 'foo'
             buildStep[0].timeoutInSeconds[0].value() == 180
             serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
         }
     }
 
     def 'vSphere revert to snapshot'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
         when:
         context.vSphereRevertToSnapshot('vsphere.acme.org', 'foo', 'clean')
 
@@ -1774,12 +1787,21 @@ still-another-dsl.groovy'''
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
-            children().size() == 2
+            children().size() == 3
             buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.RevertToSnapshot'
             buildStep[0].children().size() == 2
             buildStep[0].vm[0].value() == 'foo'
             buildStep[0].snapshotName[0].value() == 'clean'
             serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
         }
+    }
+
+    def 'vSphere server not found'() {
+        when:
+        context.vSpherePowerOff('vsphere.acme.org', 'foo')
+
+        then:
+        thrown(NullPointerException)
     }
 }

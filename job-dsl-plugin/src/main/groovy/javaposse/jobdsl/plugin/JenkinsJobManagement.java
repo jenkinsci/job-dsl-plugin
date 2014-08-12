@@ -19,6 +19,7 @@ import hudson.model.ItemGroup;
 import hudson.model.Run;
 import hudson.model.View;
 import hudson.model.ViewGroup;
+import hudson.slaves.Cloud;
 import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
@@ -29,6 +30,7 @@ import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.jenkinsci.plugins.vSphereCloud;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -202,6 +204,19 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public VersionNumber getPluginVersion(String pluginShortName) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         return plugin == null ? null : plugin.getWrapper().getVersionNumber();
+    }
+
+    @Override
+    public Integer getVSphereCloudHash(String name) {
+        Jenkins jenkins = Jenkins.getInstance();
+        if (jenkins.getPlugin("vsphere-cloud") != null) {
+            for (Cloud cloud : jenkins.clouds) {
+                if (cloud instanceof vSphereCloud && ((vSphereCloud) cloud).getVsDescription().equals(name)) {
+                    return ((vSphereCloud) cloud).getHash();
+                }
+            }
+        }
+        return null;
     }
 
     private void markBuildAsUnstable(String message) {

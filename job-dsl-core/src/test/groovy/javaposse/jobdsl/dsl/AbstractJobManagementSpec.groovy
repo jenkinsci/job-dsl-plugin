@@ -48,6 +48,17 @@ class AbstractJobManagementSpec extends Specification {
         version == null
     }
 
+    def 'vSphere cloud hash is always null'() {
+        setup:
+        AbstractJobManagement jobManagement = new TestJobManagement()
+
+        when:
+        Integer hash = jobManagement.getVSphereCloudHash('foo')
+
+        then:
+        hash == null
+    }
+
     static class TestJobManagement extends AbstractJobManagement {
         TestJobManagement() {
             super()
