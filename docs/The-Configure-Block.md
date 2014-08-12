@@ -279,6 +279,7 @@ steps {
 
 _configure_:
 ```groovy
+configure { project ->
 project / scm('hudson.scm.SubversionSCM') {
     locations {
         'hudson.scm.SubversionSCM_-ModuleLocation' {
@@ -291,6 +292,8 @@ project / scm('hudson.scm.SubversionSCM') {
     excludedRevprop ''
     excludedCommitMessages ''
     workspaceUpdater(class: "hudson.scm.subversion.UpdateUpdater")
+        }
+    }
 }
 ```
 
