@@ -279,7 +279,8 @@ steps {
 
 _configure_:
 ```groovy
-project / scm('hudson.scm.SubversionSCM') {
+configure { project ->
+scm(class: "hudson.scm.SubversionSCM") {
     locations {
         'hudson.scm.SubversionSCM_-ModuleLocation' {
             remote 'http://svn.apache.org/repos/asf/tomcat/maven-plugin/trunk'
@@ -291,6 +292,8 @@ project / scm('hudson.scm.SubversionSCM') {
     excludedRevprop ''
     excludedCommitMessages ''
     workspaceUpdater(class: "hudson.scm.subversion.UpdateUpdater")
+        }
+    }
 }
 ```
 
