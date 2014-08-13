@@ -13,8 +13,10 @@ import hudson.Plugin;
 import hudson.XmlFile;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
+import hudson.model.AbstractProject;
 import hudson.model.BuildableItem;
 import hudson.model.Cause;
+import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Run;
 import hudson.model.View;
@@ -180,14 +182,34 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public InputStream streamFileInWorkspace(String relLocation) throws IOException {
-        FilePath filePath = locateValidFileInWorkspace(relLocation);
+        FilePath filePath = locateValidFileInWorkspace(build.getWorkspace(), relLocation);
         return filePath.read();
     }
 
     @Override
     public String readFileInWorkspace(String relLocation) throws IOException {
-        FilePath filePath = locateValidFileInWorkspace(relLocation);
+        FilePath filePath = locateValidFileInWorkspace(build.getWorkspace(), relLocation);
         return filePath.readToString();
+    }
+
+    @Override
+    public String readFileInWorkspace(String jobName, String relLocation) throws IOException {
+        Item item = Jenkins.getInstance().getItemByFullName(jobName);
+        if (item instanceof AbstractProject) {
+            FilePath workspace = ((AbstractProject) item).getSomeWorkspace();
+            if (workspace != null) {
+                try {
+                    return locateValidFileInWorkspace(workspace, relLocation).readToString();
+                } catch (IllegalStateException e) {
+                    logWarning(Messages.ReadFileFromWorkspace_JobFileNotFound(), relLocation, jobName);
+                }
+            } else {
+                logWarning(Messages.ReadFileFromWorkspace_WorkspaceNotFound(), relLocation, jobName);
+            }
+        } else {
+            logWarning(Messages.ReadFileFromWorkspace_JobNotFound(), relLocation, jobName);
+        }
+        return null;
     }
 
     @Override
@@ -224,15 +246,14 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         build.setResult(UNSTABLE);
     }
 
-    private FilePath locateValidFileInWorkspace(String relLocation) throws IOException {
-        FilePath filePath = build.getWorkspace().child(relLocation);
+    private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation) throws IOException {
+        FilePath filePath = workspace.child(relLocation);
         try {
             if (!filePath.exists()) {
-                String path = filePath.getRemote();
-                throw new IllegalStateException(String.format("File %s does not exist in workspace.", path));
+                throw new IllegalStateException(String.format("File %s does not exist in workspace", relLocation));
             }
         } catch (InterruptedException ie) {
-            throw new RuntimeException(ie);
+            throw new IOException(ie);
         }
         return filePath;
     }

@@ -46,6 +46,8 @@ interface JobManagement {
 
     String readFileInWorkspace(String filePath) throws IOException
 
+    String readFileInWorkspace(String jobName, String filePath) throws IOException
+
     /**
      * Stream to write to, for stdout.
      * @return PrintWriter
