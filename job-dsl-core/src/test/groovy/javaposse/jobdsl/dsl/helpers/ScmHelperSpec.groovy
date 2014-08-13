@@ -215,6 +215,21 @@ class ScmHelperSpec extends Specification {
         context.scmNode.pruneBranches[0].text() == 'true'
     }
 
+    def 'call git scm with localBranch'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            localBranch('bugfix')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.localBranch.size() == 1
+        context.scmNode.localBranch[0].text() == 'bugfix'
+    }
+
     def 'call git scm with createTag'() {
         when:
         context.git {
