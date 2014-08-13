@@ -481,7 +481,7 @@ class WrapperContext implements Context {
             patterns(context.patternNodes)
             deleteDirs(context.deleteDirectories)
             cleanupParameter(context.cleanupParameter ?: '')
-            deleteCommand(context.deleteCommand ?: '')
+            externalDelete(context.deleteCommand ?: '')
         }
     }
 

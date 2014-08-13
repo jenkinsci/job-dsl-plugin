@@ -3015,7 +3015,7 @@ job {
             cleanWhenNotBuilt(boolean value = true) // defaults to true if omitted
             cleanWhenAborted(boolean value = true) // defaults to true if omitted
             failBuildWhenCleanupFails(boolean value = true) // defaults to true if omitted
-            externalDeleteCommand(String command)
+            deleteCommand(String command)
         }
     }
 }
