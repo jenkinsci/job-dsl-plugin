@@ -474,7 +474,7 @@ class WrapperHelperSpec extends Specification {
             patterns[0].value() == []
             deleteDirs[0].value() == false
             cleanupParameter[0].value() == ''
-            deleteCommand[0].value() == ''
+            externalDelete[0].value() == ''
         }
     }
 
@@ -505,7 +505,7 @@ class WrapperHelperSpec extends Specification {
             patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'EXCLUDE'
             deleteDirs[0].value() == true
             cleanupParameter[0].value() == 'TEST'
-            deleteCommand[0].value() == 'test'
+            externalDelete[0].value() == 'test'
         }
     }
 
