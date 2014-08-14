@@ -45,6 +45,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>vsphere-cloud</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
             <scope>test</scope>

@@ -194,6 +194,9 @@ job(Map<String, ?> arguments = [:]) {
         shell(String command)
         systemGroovyCommand(String command, Closure systemGroovyClosure = null)
         systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null)
+        vSpherePowerOff(String server, String vm)
+        vSpherePowerOn(String server, String vm)
+        vSphereRevertToSnapshot(String server, String vm, String snapshot)
     }
     publishers {
         aggregateDownstreamTestResults(String jobs = null, 
