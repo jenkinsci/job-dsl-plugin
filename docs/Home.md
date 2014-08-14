@@ -23,6 +23,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added option to add classpath entries for Job DSL runs
  * Added localBranch option for Git SCM
  * Fixed workspace cleanup external delete command ([JENKINS-24231](https://issues.jenkins-ci.org/browse/JENKINS-24231))
+ * Fixed Build Timeout Plugin no activity timeout ([JENKINS-24258](https://issues.jenkins-ci.org/browse/JENKINS-24258))
 * 1.24 (July 05 2014)
  * Support for [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
  * Support for [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)

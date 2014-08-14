@@ -148,7 +148,7 @@ class WrapperContext implements Context {
                     case Timeout.likelyStuck:
                         break
                     case Timeout.noActivity:
-                        delegate.timeout(ctx.noActivitySeconds)
+                        delegate.timeout(ctx.noActivitySeconds * 1000)
                         break
                     default:
                         Preconditions.checkArgument(false, 'Timeout type must be selected!')
