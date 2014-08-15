@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.ListView
+import javaposse.jobdsl.dsl.views.SectionedView
 import spock.lang.Specification
 
 class JobParentSpec extends Specification {
@@ -45,6 +46,18 @@ class JobParentSpec extends Specification {
         then:
         view.name == 'test'
         view instanceof BuildPipelineView
+        parent.referencedViews.contains(view)
+    }
+
+    def 'sectioned view'() {
+        when:
+        View view = parent.view(type: ViewType.SectionedView) {
+            name 'test'
+        }
+
+        then:
+        view.name == 'test'
+        view instanceof SectionedView
         parent.referencedViews.contains(view)
     }
 

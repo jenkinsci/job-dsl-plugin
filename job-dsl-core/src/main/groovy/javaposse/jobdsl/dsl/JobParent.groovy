@@ -5,6 +5,7 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.ListView
+import javaposse.jobdsl.dsl.views.SectionedView
 
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -14,6 +15,7 @@ abstract class JobParent extends Script {
     private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
             (null): ListView,
             (ViewType.ListView): ListView,
+            (ViewType.SectionedView): SectionedView,
             (ViewType.BuildPipelineView): BuildPipelineView,
     ]
 
