@@ -719,7 +719,7 @@ gerrit {
 
 ```groovy
 pullRequest {
-    admins(String admin) // add admin
+    admin(String admin) // add admin
     admins(Iterable<String> admins) // add admins
     userWhitelist(String user) // add user to whitelist
     userWhitelist(Iterable<String> users) // add users to whitelist
