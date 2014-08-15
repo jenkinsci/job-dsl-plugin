@@ -9,7 +9,7 @@ import javaposse.jobdsl.dsl.views.ListView
 import java.util.logging.Level
 import java.util.logging.Logger
 
-abstract class JobParent extends Script {
+abstract class JobParent extends Script implements DslFactory {
     private static final Logger LOGGER = Logger.getLogger(JobParent.name)
     private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
             (null): ListView,
@@ -28,6 +28,7 @@ abstract class JobParent extends Script {
         queueToBuild = Lists.newArrayList()
     }
 
+    @Override
     Job job(Map<String, Object> arguments=[:], Closure closure) {
         LOGGER.log(Level.FINE, "Got closure and have ${jm}")
         Job job = new Job(jm, arguments)
@@ -42,6 +43,7 @@ abstract class JobParent extends Script {
         job
     }
 
+    @Override
     View view(Map<String, Object> arguments=[:], Closure closure) {
         Class<? extends View> viewClass = VIEW_TYPE_MAPPING[arguments['type'] as ViewType]
         View view = viewClass.newInstance()
@@ -52,6 +54,7 @@ abstract class JobParent extends Script {
         view
     }
 
+    @Override
     Folder folder(Closure closure) {
         Folder folder = new Folder()
         folder.with(closure)
@@ -59,36 +62,31 @@ abstract class JobParent extends Script {
         folder
     }
 
-    /**
-     * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
-     * @param jobName
-     * @return
-     */
-    def queue(String jobName) {
+    @Override
+    void queue(String jobName) {
         queueToBuild << jobName
     }
 
-    /**
-     * Schedule a job to be run later.
-     * @param jobName
-     * @return
-     */
-    def queue(Job job) {
+    @Override
+    void queue(Job job) {
         Preconditions.checkArgument(job.name as Boolean)
         queueToBuild << job.name
     }
 
-    InputStream streamFileFromWorkspace(String filePath) throws IOException {
+    @Override
+    InputStream streamFileFromWorkspace(String filePath) {
         Preconditions.checkArgument(filePath as Boolean)
         jm.streamFileInWorkspace(filePath)
     }
 
-    String readFileFromWorkspace(String filePath) throws IOException {
+    @Override
+    String readFileFromWorkspace(String filePath) {
         Preconditions.checkArgument(filePath as Boolean)
         jm.readFileInWorkspace(filePath)
     }
 
-    String readFileFromWorkspace(String jobName, String filePath) throws IOException {
+    @Override
+    String readFileFromWorkspace(String jobName, String filePath) {
         Preconditions.checkArgument(jobName as Boolean)
         Preconditions.checkArgument(filePath as Boolean)
         jm.readFileInWorkspace(jobName, filePath)
