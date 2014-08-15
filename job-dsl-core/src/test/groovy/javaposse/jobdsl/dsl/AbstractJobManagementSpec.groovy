@@ -59,6 +59,29 @@ class AbstractJobManagementSpec extends Specification {
         hash == null
     }
 
+    def 'reading files from workspace is not supported'() {
+        setup:
+        AbstractJobManagement jobManagement = new TestJobManagement()
+
+        when:
+        jobManagement.readFileInWorkspace('test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        jobManagement.streamFileInWorkspace('test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        jobManagement.readFileInWorkspace('my-job', 'test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
+    }
+
     static class TestJobManagement extends AbstractJobManagement {
         TestJobManagement() {
             super()

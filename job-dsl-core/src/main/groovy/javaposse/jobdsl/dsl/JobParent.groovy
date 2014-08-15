@@ -87,4 +87,10 @@ abstract class JobParent extends Script {
         Preconditions.checkArgument(filePath as Boolean)
         jm.readFileInWorkspace(filePath)
     }
+
+    String readFileFromWorkspace(String jobName, String filePath) throws IOException {
+        Preconditions.checkArgument(jobName as Boolean)
+        Preconditions.checkArgument(filePath as Boolean)
+        jm.readFileInWorkspace(jobName, filePath)
+    }
 }

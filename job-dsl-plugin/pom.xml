@@ -64,4 +64,12 @@
             <artifactId>xmlunit</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.localizer</groupId>
+                <artifactId>maven-localizer-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
