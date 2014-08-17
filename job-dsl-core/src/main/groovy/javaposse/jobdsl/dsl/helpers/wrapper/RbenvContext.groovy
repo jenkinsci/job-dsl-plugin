@@ -7,7 +7,7 @@ class RbenvContext implements Context {
     String rubyBuildRevision = 'master'
     String rbenvRevision = 'master'
     String rbenvRepository = 'https://github.com/sstephenson/rbenv.git'
-    boolean ignoreLocalVersion = 'false'
+    String ignoreLocalVersion = 'FalseClass'
 
     def root(String root) {
         this.root = root
@@ -30,7 +30,7 @@ class RbenvContext implements Context {
     }
 
     def ignoreLocalVersion(boolean ignore){
-        this.ignoreLocalVersion = ignore
+        this.ignoreLocalVersion = ignore.toString().capitalize()+"Class"
     }
   
 

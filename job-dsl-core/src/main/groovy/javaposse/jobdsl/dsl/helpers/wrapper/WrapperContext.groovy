@@ -97,6 +97,7 @@ class WrapperContext implements Context {
                     rbenv__repository(rbenvContext.rbenvRepository, [pluginid: 'rbenv', 'ruby-class': 'String'])
                     rbenv__revision(rbenvContext.rbenvRevision, [pluginid: 'rbenv', 'ruby-class': 'String'])
                     gem__list(gemString,[pluginid: 'rbenv', 'ruby-class': 'String'])
+                    ignore__local__version([pluginid: 'rbenv','ruby-class': rbenvContext.ignoreLocalVersion])
                 }
             }
         }
