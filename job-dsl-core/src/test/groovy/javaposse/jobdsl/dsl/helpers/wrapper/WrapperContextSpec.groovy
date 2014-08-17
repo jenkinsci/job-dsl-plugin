@@ -65,7 +65,13 @@ class WrapperContextSpec extends Specification {
     def 'add rbenv-controlled override defaults'() {
         when:
         helper.wrappers {
-            rbenv('2.1.2',{ root('foo') })
+            rbenv('2.1.2',{ 
+                root('foo') 
+                rubyBuildRepository('foobar') 
+                rubyBuildRevision('1.0') 
+                rbenvRevision('2.0') 
+                rbenvRepository('barfoo') 
+                ignoreLocalVersion(true) })
         }
         executeHelperActionsOnRootNode()
 
@@ -73,6 +79,12 @@ class WrapperContextSpec extends Specification {
         root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].version[0].value() == '2.1.2'
         root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].gem__list[0].value() == ''
         root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].rbenv_root[0].value() == 'foo'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].ruby__build__repository[0].value() == 'foobar'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].rbenv__revision[0].value() == '2.0'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].rbenv__repository[0].value() == 'barfoo'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].ruby__build__revision[0].value() == '1.0'
+        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].ignore__local__version[0].'@ruby-class' == 'TrueClass'
+
     }
 
     def 'add rbenv-controlled ruby version and gems'() {
