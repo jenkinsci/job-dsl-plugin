@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
@@ -9,7 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
 
 class MavenHelper extends AbstractHelper implements MavenContext {
-
+    JobManagement jobManagement
     StringBuilder allGoals = new StringBuilder()
     StringBuilder allMavenOpts = new StringBuilder()
     boolean rootPOMAdded = false
@@ -17,8 +18,9 @@ class MavenHelper extends AbstractHelper implements MavenContext {
     boolean archivingDisabledAdded = false
     boolean runHeadlessAdded = false
 
-    MavenHelper(List<WithXmlAction> withXmlActions, JobType type) {
+    MavenHelper(List<WithXmlAction> withXmlActions, JobType type, JobManagement jobManagement) {
         super(withXmlActions, type)
+        this.jobManagement = jobManagement
     }
 
     /**
@@ -124,7 +126,7 @@ class MavenHelper extends AbstractHelper implements MavenContext {
 
     def preBuildSteps(Closure preBuildClosure) {
         checkState type == JobType.Maven, 'prebuildSteps can only be applied for Maven jobs'
-        AbstractStepContext preBuildContext = new AbstractStepContext()
+        AbstractStepContext preBuildContext = new AbstractStepContext(jobManagement)
         AbstractContextHelper.executeInContext(preBuildClosure, preBuildContext)
 
         if (!preBuildContext.stepNodes.isEmpty()) {
@@ -136,7 +138,7 @@ class MavenHelper extends AbstractHelper implements MavenContext {
 
     def postBuildSteps(Closure postBuildClosure) {
         checkState type == JobType.Maven, 'postBuildSteps can only be applied for Maven jobs'
-        AbstractStepContext postBuildContext = new AbstractStepContext()
+        AbstractStepContext postBuildContext = new AbstractStepContext(jobManagement)
         AbstractContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
         if (!postBuildContext.stepNodes.isEmpty()) {

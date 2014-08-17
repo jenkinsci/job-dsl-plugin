@@ -18,6 +18,7 @@ class GitContext implements Context {
     boolean remotePoll = false
     boolean shallowClone = false
     boolean pruneBranches = false
+    String localBranch
     String relativeTargetDir
     String reference
     Closure withXmlClosure
@@ -88,6 +89,10 @@ class GitContext implements Context {
 
     void pruneBranches(boolean pruneBranches = true) {
         this.pruneBranches = pruneBranches
+    }
+
+    void localBranch(String localBranch) {
+        this.localBranch = localBranch
     }
 
     void relativeTargetDir(String relativeTargetDir) {

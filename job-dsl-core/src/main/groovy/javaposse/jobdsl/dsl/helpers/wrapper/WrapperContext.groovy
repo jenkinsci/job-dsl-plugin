@@ -17,11 +17,6 @@ class WrapperContext implements Context {
         this.type = jobType
     }
 
-    WrapperContext(List<Node> wrapperNodes, JobType jobType, JobManagement jobManagement) {
-        this(jobType, jobManagement)
-        this.wrapperNodes = wrapperNodes
-    }
-
     def timestamps() {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.timestamper.TimestamperBuildWrapper'()
@@ -202,7 +197,7 @@ class WrapperContext implements Context {
                     case Timeout.likelyStuck:
                         break
                     case Timeout.noActivity:
-                        delegate.timeout(ctx.noActivitySeconds)
+                        delegate.timeout(ctx.noActivitySeconds * 1000)
                         break
                     default:
                         Preconditions.checkArgument(false, 'Timeout type must be selected!')
@@ -484,7 +479,7 @@ class WrapperContext implements Context {
      * @param releaseClosure attributes and steps used by the plugin
      */
     def release(Closure releaseClosure) {
-        ReleaseContext releaseContext = new ReleaseContext()
+        ReleaseContext releaseContext = new ReleaseContext(jobManagement)
         AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
@@ -535,7 +530,7 @@ class WrapperContext implements Context {
             patterns(context.patternNodes)
             deleteDirs(context.deleteDirectories)
             cleanupParameter(context.cleanupParameter ?: '')
-            deleteCommand(context.deleteCommand ?: '')
+            externalDelete(context.deleteCommand ?: '')
         }
     }
 

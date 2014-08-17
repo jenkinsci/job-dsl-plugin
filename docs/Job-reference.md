@@ -144,6 +144,47 @@ job {
 
 (since 1.24)
 
+## Lockable Resources
+
+```groovy
+job {
+    lockableResources(String resources) {
+        resourcesVariable(String name) // reserved resources variable name
+        resourceNumber(int number)     // number of the listed resources to request
+    }
+}
+```
+
+Lock resources while a job is running. Requires the
+[Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin).
+
+Examples:
+
+```groovy
+// lock single resource
+job {
+    lockableResources('lock-resource')
+}
+
+// notation that locks three resources at once
+job {
+    lockableResources('resource1 resource2 resource3')
+}
+
+// lock two available resources from given three and capture locked resources in the variable name
+job {
+    lockableResources('resource1 resource2 resource3') {
+        resourcesVariable('LOCKED_RESOURCES')
+        resourceNumber(2)
+    }
+    steps {
+        shell('echo Following resources are locked: $LOCKED_RESOURCES')
+    }
+}
+```
+
+(Since 1.25)
+
 ## Security
 ```groovy
 permission(String)
@@ -429,6 +470,7 @@ git {
     remotePoll(boolean remotePoll = true) // force polling using workspace, optional, defaults to false
     shallowClone(boolean shallowClone = true) // perform shallow clone, optional, defaults to false
     pruneBranches(boolean pruneBranches = true) // prune obsolete local branches, optional, defaults to false
+    localBranch(String branch) // check out to specific local branch
     relativeTargetDir(String relativeTargetDir) // checkout to a sub-directory, optional
     reference(String reference) // path to a reference repository, optional
     configure(Closure configure) // optional configure block, the GitSCM node is passed in 
@@ -677,7 +719,7 @@ gerrit {
 
 ```groovy
 pullRequest {
-    admins(String admin) // add admin
+    admin(String admin) // add admin
     admins(Iterable<String> admins) // add admins
     userWhitelist(String user) // add user to whitelist
     userWhitelist(Iterable<String> users) // add users to whitelist
@@ -1363,6 +1405,51 @@ sbt(/*standard parameters here*/) {
 }
 ```
 
+## Rake
+
+```groovy
+job {
+    steps {
+        rake {
+            task(String task)                     // a single task to execute
+            tasks(Iterable<String> tasks)         // a list of tasks to execute
+            file(String file)                     // path to a Rakefile
+            installation(String installation)     // Ruby installation to use
+            libDir(String libDir)                 // path to Rake library directory
+            workingDir(String workingDir)         // path the working directory in which Rake should be executed
+            bundleExec(boolean bundleExec = true) // execute Rake with Bundler 'bundle exec rake'
+            silent(boolean silent = true)         // do not print to STDOUT
+        }
+        rake(String tasksArg, Closure rakeClosure = null) // see above for rakeClosure syntax
+    }
+}
+```
+
+Executes Rake as a build step. Requires the [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin).
+
+Examples:
+
+```groovy
+job {
+    steps {
+        rake('task')
+        
+        rake('first') {
+            task('second')
+            tasks(['third', 'fourth'])
+            file('/opt/app/Rakefile')
+            installation('ruby-2.0.0-p481')
+            libDir('./rakelib')
+            workingDir('/opt/app')
+            bundleExec()
+            silent()
+        }
+    }
+}
+```
+
+(Since 1.25)
+
 ## DSL
 ```groovy
 dsl {
@@ -1482,6 +1569,36 @@ systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
 ```
 
 Runs a system groovy script, which is executed inside the Jenkins master. Thus it will have access to all the internal objects of Jenkins and can be used to alter the state of Jenkins. The `systemGroovyCommand` method will run an inline script and the `systemGroovyScriptFile` will execute a script file from the generated job's workspace. The closure block can be used to add variable bindings and extra classpath entries for a script. The methods in the closure block can be called multiple times to add any number of bindings or classpath entries. The Groovy plugin must be installed to use these build steps.
+
+## vSphere Cloud
+
+```groovy
+job {
+    steps {
+        vSpherePowerOff(String server, String vm)
+        vSpherePowerOn(String server, String vm)
+        vSphereRevertToSnapshot(String server, String vm, String snapshot)
+    }
+}
+```
+
+These build steps manage virtual machines running in VMWare vSphere. Requires the
+[vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin).
+
+Example:
+
+```groovy
+// power off the VM 'foo' on server 'vsphere.acme.org', then revert to snapshot 'clean' and power on again
+job {
+    steps {
+        vSpherePowerOff('vsphere.acme.org', 'foo')
+        vSphereRevertToSnapshot('vsphere.acme.org', 'foo', 'clean')
+        vSpherePowerOn('vsphere.acme.org', 'foo')
+    }
+}
+```
+
+(Since 1.25)
 
 ## Grails
 ```groovy
@@ -2929,7 +3046,7 @@ job {
             cleanWhenNotBuilt(boolean value = true) // defaults to true if omitted
             cleanWhenAborted(boolean value = true) // defaults to true if omitted
             failBuildWhenCleanupFails(boolean value = true) // defaults to true if omitted
-            externalDeleteCommand(String command)
+            deleteCommand(String command)
         }
     }
 }

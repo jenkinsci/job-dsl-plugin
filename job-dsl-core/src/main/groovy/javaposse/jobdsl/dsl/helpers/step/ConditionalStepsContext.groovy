@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
@@ -10,21 +11,8 @@ class ConditionalStepsContext extends AbstractStepContext {
     RunCondition runCondition
     String runnerClass
 
-    ConditionalStepsContext() {
-        super()
-    }
-
-    ConditionalStepsContext(String runnerName, Closure conditionClosure) {
-        this(runnerName, [], conditionClosure)
-    }
-
-    ConditionalStepsContext(String runnerName, List<Node> stepNodes, Closure conditionClosure) {
-        super(stepNodes)
-        checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid evaluation runner.")
-
-        condition(conditionClosure)
-
-        this.runnerClass = EvaluationRunners.find(runnerName)
+    ConditionalStepsContext(JobManagement jobManagement) {
+        super(jobManagement)
     }
 
     def condition(Closure conditionClosure) {

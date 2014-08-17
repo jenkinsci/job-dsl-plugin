@@ -25,7 +25,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,9 +74,11 @@ public class ExecuteDslScripts extends Builder {
 
     private final LookupStrategy lookupStrategy;
 
+    private final String additionalClasspath;
+
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             LookupStrategy lookupStrategy) {
+                             LookupStrategy lookupStrategy, String additionalClasspath) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation == null ? null : scriptLocation.targets;
@@ -85,6 +86,12 @@ public class ExecuteDslScripts extends Builder {
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
         this.lookupStrategy = lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
+        this.additionalClasspath = additionalClasspath;
+    }
+
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
+                             LookupStrategy lookupStrategy) {
+        this(scriptLocation, ignoreExisting, removedJobAction, lookupStrategy, null);
     }
 
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
@@ -98,6 +105,7 @@ public class ExecuteDslScripts extends Builder {
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
         this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
+        this.additionalClasspath = null;
     }
 
     ExecuteDslScripts() {
@@ -128,6 +136,10 @@ public class ExecuteDslScripts extends Builder {
         return lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
     }
 
+    public String getAdditionalClasspath() {
+        return additionalClasspath;
+    }
+
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
         return asList(new GeneratedJobsAction(project), new GeneratedViewsAction(project));
@@ -147,7 +159,9 @@ public class ExecuteDslScripts extends Builder {
         JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy());
 
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
-        Set<ScriptRequest> scriptRequests = generator.getScriptRequests(targets, usingScriptText, scriptText, ignoreExisting);
+        Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
+                targets, usingScriptText, scriptText, ignoreExisting, additionalClasspath
+        );
 
         Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
         Set<GeneratedView> freshViews = Sets.newLinkedHashSet();

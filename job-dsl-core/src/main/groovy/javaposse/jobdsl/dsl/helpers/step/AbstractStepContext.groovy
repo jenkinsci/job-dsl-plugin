@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
@@ -11,9 +12,11 @@ import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLo
 
 class AbstractStepContext implements Context {
     List<Node> stepNodes = []
+    JobManagement jobManagement
 
-    AbstractStepContext(List<Node> stepNodes = []) {
+    AbstractStepContext(List<Node> stepNodes = [], JobManagement jobManagement) {
         this.stepNodes = stepNodes
+        this.jobManagement = jobManagement
     }
 
     /**
@@ -652,7 +655,7 @@ class AbstractStepContext implements Context {
      * </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
      */
     def conditionalSteps(Closure conditionalStepsClosure) {
-        ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext()
+        ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)
         AbstractContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
         if (conditionalStepsContext.stepNodes.size() > 1) {
@@ -755,11 +758,111 @@ class AbstractStepContext implements Context {
      * <org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd/>
      */
     def criticalBlock(Closure closure) {
-        AbstractStepContext stepContext = new AbstractStepContext()
+        AbstractStepContext stepContext = new AbstractStepContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, stepContext)
 
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'()
         stepNodes.addAll(stepContext.stepNodes)
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'()
+    }
+
+    /**
+     * <hudson.plugins.rake.Rake>
+     *     <rakeInstallation>(Default)</rakeInstallation>
+     *     <rakeFile/>
+     *     <rakeLibDir/>
+     *     <rakeWorkingDir/>
+     *     <tasks/>
+     *     <silent>false</silent>
+     *     <bundleExec>false</bundleExec>
+     * </hudson.plugins.rake.Rake>
+     */
+    def rake(Closure rakeClosure = null) {
+        rake(null, rakeClosure)
+    }
+
+    def rake(String tasksArg, Closure rakeClosure = null) {
+        RakeContext rakeContext = new RakeContext()
+
+        if (tasksArg) {
+            rakeContext.task(tasksArg)
+        }
+
+        AbstractContextHelper.executeInContext(rakeClosure, rakeContext)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.rake.Rake' {
+            rakeInstallation rakeContext.installation
+            rakeFile rakeContext.file
+            rakeLibDir rakeContext.libDir
+            rakeWorkingDir rakeContext.workingDir
+            tasks rakeContext.tasks.join(' ')
+            silent rakeContext.silent
+            bundleExec rakeContext.bundleExec
+        }
+    }
+
+    /**
+     * <org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     *     <buildStep class="org.jenkinsci.plugins.vsphere.builders.PowerOff">
+     *         <vm>test</vm>
+     *         <evenIfSuspended>false</evenIfSuspended>
+     *         <shutdownGracefully>false</shutdownGracefully>
+     *     </buildStep>
+     *     <serverName>test</serverName>
+     *     <serverHash>320615527</serverHash>
+     * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     */
+    def vSpherePowerOff(String server, String vm) {
+        vSphereBuildStep(server, 'PowerOff') {
+            delegate.vm vm
+            evenIfSuspended false
+            shutdownGracefully false
+        }
+    }
+
+    /**
+     * <org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     *     <buildStep class="org.jenkinsci.plugins.vsphere.builders.PowerOn">
+     *         <vm>test</vm>
+     *         <timeoutInSeconds>180</timeoutInSeconds>
+     *     </buildStep>
+     *     <serverName>test</serverName>
+     *     <serverHash>320615527</serverHash>
+     * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     */
+    def vSpherePowerOn(String server, String vm) {
+        vSphereBuildStep(server, 'PowerOn') {
+            delegate.vm vm
+            timeoutInSeconds 180
+        }
+    }
+
+    /**
+     * <org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     *     <buildStep class="org.jenkinsci.plugins.vsphere.builders.PowerOm">
+     *         <vm>test</vm>
+     *         <timeoutInSeconds>180</timeoutInSeconds>
+     *     </buildStep>
+     *     <serverName>test</serverName>
+     *     <serverHash>320615527</serverHash>
+     * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
+     */
+    def vSphereRevertToSnapshot(String server, String vm, String snapshot) {
+        vSphereBuildStep(server, 'RevertToSnapshot') {
+            delegate.vm vm
+            snapshotName snapshot
+        }
+    }
+
+    private vSphereBuildStep(String server, String builder, Closure configuration) {
+        int hash = Preconditions.checkNotNull(
+                jobManagement.getVSphereCloudHash(server),
+                "vSphere server ${server} does not exist"
+        )
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer' {
+            buildStep(class: "org.jenkinsci.plugins.vsphere.builders.${builder}", configuration)
+            serverName server
+            serverHash hash
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.google.common.io.Resources
 import hudson.EnvVars
 import hudson.model.AbstractBuild
 import hudson.model.Failure
+import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigurationMissingException
@@ -18,6 +19,9 @@ import static com.google.common.io.Resources.getResource
 import static hudson.model.Result.UNSTABLE
 
 class JenkinsJobManagementSpec extends Specification {
+    private static final String FILE_NAME = 'test.txt'
+    private static final String JOB_NAME = 'test-job'
+
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
@@ -147,5 +151,61 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         version == null
+    }
+
+    def 'get vSphere cloud hash without vSphere cloud plugin'() {
+        when:
+        Integer hash = jobManagement.getVSphereCloudHash('test')
+
+        then:
+        hash == null
+    }
+
+    def 'read file from any workspace, job does not exist'() {
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == null
+        buffer.toString().contains(FILE_NAME)
+        buffer.toString().contains(JOB_NAME)
+    }
+
+    def 'read file from any workspace, no build, no workspace'() {
+        setup:
+        jenkinsRule.createFreeStyleProject(JOB_NAME)
+
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == null
+        buffer.toString().contains(FILE_NAME)
+        buffer.toString().contains(JOB_NAME)
+    }
+
+    def 'read file from any workspace, file does not exist'() {
+        setup:
+        jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject(JOB_NAME))
+
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == null
+        buffer.toString().contains(FILE_NAME)
+        buffer.toString().contains(JOB_NAME)
+    }
+
+    def 'read file from any workspace, file exists'() {
+        setup:
+        FreeStyleBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject(JOB_NAME))
+        build.workspace.child(FILE_NAME).write('hello', 'UTF-8')
+
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == 'hello'
     }
 }

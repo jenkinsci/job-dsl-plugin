@@ -46,6 +46,8 @@ interface JobManagement {
 
     String readFileInWorkspace(String filePath) throws IOException
 
+    String readFileInWorkspace(String jobName, String filePath) throws IOException
+
     /**
      * Stream to write to, for stdout.
      * @return PrintWriter
@@ -79,4 +81,11 @@ interface JobManagement {
      * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
      */
     VersionNumber getPluginVersion(String pluginShortName)
+
+    /**
+     * Return the hash of the vSphere cloud with the given name.
+     * @param name name of the vSphere cloud
+     * @return hash of the vSphere cloud or <code>null</code> if a cloud with the given name does not exist
+     */
+    Integer getVSphereCloudHash(String name)
 }

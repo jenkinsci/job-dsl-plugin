@@ -231,10 +231,11 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def strategy = timeoutWrapper.strategy[0]
-        strategy.timeout[0].value() == 15
+        strategy.timeout[0].value() == 15000
         strategy.attribute('class') == Timeout.noActivity.className
         def list = timeoutWrapper.operationList[0]
         list.'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
     }
 
     def 'likelyStuck timeout configuration working' () {
@@ -523,7 +524,7 @@ class WrapperHelperSpec extends Specification {
             patterns[0].value() == []
             deleteDirs[0].value() == false
             cleanupParameter[0].value() == ''
-            deleteCommand[0].value() == ''
+            externalDelete[0].value() == ''
         }
     }
 
@@ -554,7 +555,7 @@ class WrapperHelperSpec extends Specification {
             patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'EXCLUDE'
             deleteDirs[0].value() == true
             cleanupParameter[0].value() == 'TEST'
-            deleteCommand[0].value() == 'test'
+            externalDelete[0].value() == 'test'
         }
     }
 

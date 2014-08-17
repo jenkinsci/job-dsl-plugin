@@ -231,6 +231,41 @@ class TopLevelHelperSpec extends Specification {
         root.canRoam[0].value() == 'true'
     }
 
+    def 'lockable resources simple'() {
+        when:
+        def action = helper.lockableResources('lock-resource')
+        action.execute(root)
+
+        then:
+        with(root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 1
+            resourceNames.size() == 1
+            resourceNamesVar.size() == 0
+            resourceNumber.size() == 0
+            resourceNames[0].value() == 'lock-resource'
+        }
+    }
+
+    def 'lockable resources with all parameters'() {
+        when:
+        def action = helper.lockableResources('res0 res1 res2') {
+            resourcesVariable('RESOURCES')
+            resourceNumber(1)
+        }
+        action.execute(root)
+
+        then:
+        with(root.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 3
+            resourceNames.size() == 1
+            resourceNamesVar.size() == 1
+            resourceNumber.size() == 1
+            resourceNames[0].value() == 'res0 res1 res2'
+            resourceNamesVar[0].value() == 'RESOURCES'
+            resourceNumber[0].value() == 1
+        }
+    }
+
     def 'log rotate xml'() {
         when:
         def action = helper.logRotator(14, 50)

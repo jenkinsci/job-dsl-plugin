@@ -1,19 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.JobType
+import javaposse.jobdsl.dsl.JobManagement
 
 class StepContext extends AbstractStepContext {
-
-    JobType type
-
-    StepContext(JobType jobType) {
-        super()
-        this.type = jobType
+    StepContext(List<Node> stepNodes = [], JobManagement jobManagement) {
+        super(stepNodes, jobManagement)
     }
-
-    StepContext(List<Node> stepNodes, JobType jobType) {
-        super(stepNodes)
-        this.type = jobType
-    }
-
 }

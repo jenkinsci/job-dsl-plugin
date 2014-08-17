@@ -61,14 +61,24 @@ public abstract class AbstractJobManagement implements JobManagement {
     }
 
     @Override
+    public String readFileInWorkspace(String jobName, String filePath) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void logDeprecationWarning() {
         List<StackTraceElement> stackTrace = getStackTrace();
         String details = getSourceDetails(stackTrace);
-        getOutputStream().println("Warning: " + stackTrace.get(0).getMethodName() + " is deprecated (" + details + ")");
+        logWarning("%s is deprecated (%s)", stackTrace.get(0).getMethodName(), details);
     }
 
     @Override
     public VersionNumber getPluginVersion(String pluginShortName) {
+        return null;
+    }
+
+    @Override
+    public Integer getVSphereCloudHash(String name) {
         return null;
     }
 
@@ -111,5 +121,9 @@ public abstract class AbstractJobManagement implements JobManagement {
             }
         }
         return details;
+    }
+
+    protected void logWarning(String message, Object... args) {
+        getOutputStream().printf("Warning: " + message + "\n", args);
     }
 }
