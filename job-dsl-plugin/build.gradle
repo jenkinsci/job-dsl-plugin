@@ -56,3 +56,9 @@ dependencies {
 }
 
 tasks.jpi.manifest.attributes PluginFirstClassLoader: true
+
+task cleanLocalizer(type: Delete) {
+    delete tasks.localizer.destinationDir
+}
+
+tasks.localizer.dependsOn 'cleanLocalizer'
