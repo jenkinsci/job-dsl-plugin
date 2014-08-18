@@ -18,6 +18,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 ## Release Notes
 * 1.25 (unreleased)
  * Dropped support for Java 5, Java 6 or later is required at runtime
+ * Support for [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin)
  * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
  * Support for [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
  * Support for [vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin)

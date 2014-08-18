@@ -138,6 +138,7 @@ job(Map<String, ?> arguments = [:]) {
         release(Closure releaseClosure) // since 1.22
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
         rvm(String rubySpecification)
+        rbenv(String rubyVersion StringList gems, Closure rbenvClosure)
         sshAgent(String credentials)
         timeout(Closure timeoutClosure)
         timeout(String type = 'absolute', Closure timeoutClosure = null) // deprecated
