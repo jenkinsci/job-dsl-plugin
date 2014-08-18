@@ -1,4 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
+
 import  javaposse.jobdsl.dsl.helpers.Context
 
 class RbenvContext implements Context {
@@ -29,9 +30,7 @@ class RbenvContext implements Context {
         this.rbenvRepository = repo
     }
 
-    def ignoreLocalVersion(boolean ignore){
-        this.ignoreLocalVersion = ignore.toString().capitalize()+"Class"
+    def ignoreLocalVersion(boolean ignore) {
+        this.ignoreLocalVersion = ignore.toString().capitalize() + 'Class'
     }
-  
-
 }
