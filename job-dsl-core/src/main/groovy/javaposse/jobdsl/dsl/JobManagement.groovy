@@ -88,4 +88,11 @@ interface JobManagement {
      * @return hash of the vSphere cloud or <code>null</code> if a cloud with the given name does not exist
      */
     Integer getVSphereCloudHash(String name)
+
+    /**
+     * Return the config ID of the Maven settings with the given name.
+     * @param settingsName name of the Maven settings
+     * @return the config ID of the Maven settings or <code>null</code> if no Maven settings can be found
+     */
+    String getMavenSettingsId(String settingsName)
 }

@@ -82,6 +82,11 @@ public abstract class AbstractJobManagement implements JobManagement {
         return null;
     }
 
+    @Override
+    public String getMavenSettingsId(String settingsName) {
+        return null;
+    }
+
     protected void validateUpdateArgs(String jobName, String config) {
         validateNameArg(jobName);
         validateConfigArg(config);

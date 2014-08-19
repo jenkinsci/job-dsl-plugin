@@ -156,4 +156,14 @@ class MavenHelper extends AbstractHelper implements MavenContext {
         }
     }
 
+    def providedSettings(String settingsName) {
+        String settingsId = jobManagement.getMavenSettingsId(settingsName)
+        checkNotNull settingsId, "Managed Maven settings with name '${settingsName}' not found"
+
+        execute { Node node ->
+            node / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
+                settingsConfigId(settingsId)
+            }
+        }
+    }
 }

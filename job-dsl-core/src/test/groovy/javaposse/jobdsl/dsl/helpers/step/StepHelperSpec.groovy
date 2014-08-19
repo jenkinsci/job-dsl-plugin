@@ -266,6 +266,47 @@ class StepHelperSpec extends Specification {
         mavenStep.mavenName[0].value() == '(Default)'
     }
 
+    def 'call maven method with unknown provided settings'() {
+        setup:
+        String settingsName = 'lalala'
+
+        when:
+        context.maven {
+            providedSettings(settingsName)
+        }
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(settingsName)
+    }
+
+    def 'call maven method with provided settings'() {
+        setup:
+        String settingsName = 'maven-proxy'
+        String settingsId = '123123415'
+        jobManagement.getMavenSettingsId(settingsName) >> settingsId
+
+        when:
+        context.maven {
+            providedSettings(settingsName)
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Maven'
+            children().size() == 5
+            targets[0].value() == ''
+            jvmOptions[0].value() == ''
+            usePrivateRepository[0].value() == 'false'
+            mavenName[0].value() == '(Default)'
+            settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+            settings[0].children().size() == 1
+            settings[0].settingsConfigId[0].value() == settingsId
+        }
+    }
+
     def 'call ant methods'() {
         when:
         context.ant()

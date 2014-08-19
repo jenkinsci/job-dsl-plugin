@@ -361,4 +361,33 @@ class MavenHelperSpec extends Specification {
         root.mavenName.size() == 1
         root.mavenName[0].value() == 'test'
     }
+
+    def 'call maven method with unknown provided settings'() {
+        setup:
+        String settingsName = 'lalala'
+
+        when:
+        helper.providedSettings(settingsName)
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(settingsName)
+    }
+
+    def 'call maven method with provided settings'() {
+        setup:
+        String settingsName = 'maven-proxy'
+        String settingsId = '123123415'
+        jobManagement.getMavenSettingsId(settingsName) >> settingsId
+
+        when:
+        def action = helper.providedSettings(settingsName)
+        action.execute(root)
+
+        then:
+        root.settings.size() == 1
+        root.settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+        root.settings[0].children().size() == 1
+        root.settings[0].settingsConfigId[0].value() == settingsId
+    }
 }

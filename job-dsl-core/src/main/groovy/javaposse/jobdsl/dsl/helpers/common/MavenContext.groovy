@@ -35,6 +35,12 @@ interface MavenContext extends Context {
      */
     def mavenInstallation(String name)
 
+    /**
+     * Specifies the managed Maven settings to be used.
+     * @param settings name of the managed Maven settings
+     */
+    def providedSettings(String settings)
+
     enum LocalRepositoryLocation {
         LocalToExecutor('hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'),
         LocalToWorkspace('hudson.maven.local_repo.PerJobLocalRepositoryLocator')

@@ -208,4 +208,12 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         result == 'hello'
     }
+
+    def 'get Maven settings without config files provider plugin'() {
+        when:
+        String id = jobManagement.getMavenSettingsId('test')
+
+        then:
+        id == null
+    }
 }
