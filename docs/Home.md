@@ -21,6 +21,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
  * Support for [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
  * Support for [vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin)
+ * Support for [Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin)
  * Added option to add classpath entries for Job DSL runs
  * Added localBranch option for Git SCM
  * Added method to read a file from any job's workspace

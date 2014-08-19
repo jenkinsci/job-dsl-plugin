@@ -9,6 +9,7 @@ view(type: ListView) {  // since 1.21
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
 
     // list view options
     statusFilter(StatusFilter filter)
@@ -26,7 +27,6 @@ view(type: ListView) {  // since 1.21
         lastDuration()
         buildButton()
     }
-    configure(Closure configureBlock)
 }
 ```
 
@@ -63,6 +63,7 @@ view(type: BuildPipelineView) {  // since 1.21
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
 
     // build pipeline view options
     displayedBuilds(int displayedBuilds)
@@ -77,7 +78,6 @@ view(type: BuildPipelineView) {  // since 1.21
     showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
     refreshFrequency(int seconds)
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
-    configure(Closure configureBlock)
 }
 ```
 
@@ -94,6 +94,63 @@ view(type: BuildPipelineView) {
     alwaysAllowManualTrigger()
     showPipelineParameters()
     refreshFrequency(60)
+}
+```
+
+## Sectioned View
+
+```groovy
+view(type: SectionedView) {  // since 1.25
+    // common options
+    name(String name)
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // sections view options
+    sections {
+        listView(Closure listViewSectionClosure)
+    }
+}
+```
+
+Create a view that can be divided into sections. Details about the options can be found below. Requires the
+[Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin).
+
+```groovy
+view(type: SectionedView) {
+    name('project-summary')
+    filterBuildQueue()
+    filterExecutors()
+    sections {
+        listView {
+            name('Project A')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+        listView {
+            name('Project B')
+            jobs {
+                regex('project-B-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+    }
 }
 ```
 
@@ -345,4 +402,47 @@ Use this method if you want to show the pipeline definition header in the pipeli
 
 ```groovy
 showPipelineDefinitionHeader()
+```
+
+## Sectioned View Options
+
+### List View Section
+
+```groovy
+view(type: SectionedView) {
+    sections {
+        listView {
+            name(String name)               // name of the section
+            width(String width)             // either FULL, HALF, THIRD or TWO_THIRDS
+            alignment(String alignment)     // either CENTER, LEFT or RIGHT
+            jobs(Closure jobClosure)        // see the jobs closure for list views above
+            columns(Closure columnsClosure) // see the columns closure for list views above
+        }
+    }
+}
+```
+
+Creates a section containing a list of jobs. Width defaults to `FULL` and alignment defaults to `CENTER` if not
+specified.
+
+```groovy
+view(type: SectionedView) {
+    sections {
+        listView {
+            name('project-A')
+            width('HALF')
+            alignment('LEFT')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+    }
+}
 ```

@@ -352,6 +352,11 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
     showPipelineParameters(boolean showPipelineParameters = true)
     showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
+
+    // SectionedView options, since 1.25
+    sections {
+        listView(Closure listNiewSectionClosure)
+    }
 }
 
 folder { // since 1.23
@@ -412,8 +417,8 @@ view(Map<String, Object> attributes = [:], Closure closure)
 
 The `view` method behaves like the `job` method explained above and will return a _View_ object.
 
-Currently only a `type` attribute with value of `ListView` or `BuildPipelineView` is supported. When no type is
-specified, a list view will be generated.
+Currently only a `type` attribute with value of `ListView`, `BuildPipelineView` or `SectionedView` is supported. When no
+type is specified, a list view will be generated.
 
 ```groovy
 view(type: ListView) {
