@@ -1283,6 +1283,51 @@ job {
 
 (since 1.24)
 
+## Maven Release
+
+```groovy {
+job(type: Maven) {
+    wrappers {
+        mavenRelease {
+            scmUserEnvVar(String scmUserEnvVar) // empty by default
+            scmPasswordEnvVar(String scmPasswordEnvVar) // empty by default
+            releaseEnvVar(String releaseEnvVar) // default to 'IS_M2RELEASEBUILD'
+            releaseGoals(String releaseGoals) // defaults to '-Dresume=false release:prepare release:perform'
+            dryRunGoals(String dryRunGoals) // defaults to '-Dresume=false -DdryRun=true release:prepare'
+            selectCustomScmCommentPrefix(boolean selected = true) // defaults to false
+            selectAppendJenkinsUsername(boolean selected = true) // defaults to false
+            selectScmCredentials(boolean selected = true) // defaults to false
+            numberOfReleaseBuildsToKeep(int number) // defaults to 1
+        }
+    }
+}
+```
+
+Allows to perform a release build using the maven-release-plugin. Only available for jobs with type `Maven`. Requires
+the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin).
+
+Example:
+
+```groovy
+job(type: Maven) {
+    wrappers {
+        mavenRelease {
+            scmUserEnvVar('MY_USER_ENV')
+            scmPasswordEnvVar('MY_PASSWORD_ENV')
+            releaseEnvVar('RELEASE_ENV')
+            releaseGoals('release:prepare release:perform')
+            dryRunGoals('-DdryRun=true release:prepare')
+            selectCustomScmCommentPrefix()
+            selectAppendJenkinsUsername()
+            selectScmCredentials()
+            numberOfReleaseBuildsToKeep(10)
+        }
+    }
+}
+```
+
+(since 1.25)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
