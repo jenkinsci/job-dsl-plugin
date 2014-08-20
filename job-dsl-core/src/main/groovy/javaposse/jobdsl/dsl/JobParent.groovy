@@ -3,21 +3,12 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
-import javaposse.jobdsl.dsl.views.BuildPipelineView
-import javaposse.jobdsl.dsl.views.ListView
-import javaposse.jobdsl.dsl.views.SectionedView
 
 import java.util.logging.Level
 import java.util.logging.Logger
 
 abstract class JobParent extends Script implements DslFactory {
     private static final Logger LOGGER = Logger.getLogger(JobParent.name)
-    private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
-            (null): ListView,
-            (ViewType.ListView): ListView,
-            (ViewType.SectionedView): SectionedView,
-            (ViewType.BuildPipelineView): BuildPipelineView,
-    ]
 
     JobManagement jm
     Set<Item> referencedJobs
@@ -47,8 +38,8 @@ abstract class JobParent extends Script implements DslFactory {
 
     @Override
     View view(Map<String, Object> arguments=[:], Closure closure) {
-        Class<? extends View> viewClass = VIEW_TYPE_MAPPING[arguments['type'] as ViewType]
-        View view = viewClass.newInstance()
+        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
+        View view = viewType.viewClass.newInstance()
         view.with(closure)
         referencedViews << view
 

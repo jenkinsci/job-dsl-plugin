@@ -154,6 +154,56 @@ view(type: SectionedView) {
 }
 ```
 
+## Nested View
+
+```groovy
+view(type: NestedView) {  // since 1.25
+    // common options
+    name(String name)
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // sections view options
+    views {
+        view(Map<String, Object> arguments = [:], Closure viewClosure)
+    }
+    columns {
+        status()
+        weather()
+    }
+}
+```
+
+Create a view that allows grouping views into multiple levels. Details about the options can be found below. Requires
+the [Nested View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Nested+View+Plugin).
+
+```groovy
+view(type: NestedView) {
+    name('project-a')
+    views {
+        view {
+            name('overview')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+        view(type: BuildPipelineView) {
+            name('pipeline')
+            selectedJob('project-a-compile')
+        }
+    }
+}
+```
+
 ## Common View Options
 
 ### Name
@@ -446,3 +496,51 @@ view(type: SectionedView) {
     }
 }
 ```
+
+## Nested View Options
+
+### Views
+
+```groovy
+view(type: NestedView) {
+    views {
+        view(Map<String, Object> arguments = [:], Closure viewClosure)
+    }
+}
+```
+
+Creates the nested views. The view methods works like the top-level view method.
+
+```groovy
+view(type: NestedView) {
+    views {
+        view {
+            name('overview')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                name()
+            }
+        }
+        view(type: BuildPipelineView) {
+            name('pipeline')
+            selectedJob('project-a-compile')
+        }
+    }
+}
+```
+
+### Columns
+
+```groovy
+view(type: NestedView) {
+    columns {
+        status()
+        weather()
+    }
+}
+```
+
+Adds columns to the view. Only the status and weather column are supported.
