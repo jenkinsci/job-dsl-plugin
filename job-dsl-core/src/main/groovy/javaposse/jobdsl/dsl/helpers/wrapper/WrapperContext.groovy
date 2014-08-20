@@ -120,13 +120,15 @@ class WrapperContext implements Context {
             jobManagement.logDeprecationWarning()
             try {
                 timeoutType = Timeout.valueOf(type)
-            } catch (IllegalArgumentException iae) {
+            } catch (IllegalArgumentException ignore) {
                 throw new IllegalArgumentException("Timeout type was ${type} but must be one of: ${Timeout.values()}")
             }
         }
 
         TimeoutContext ctx = new TimeoutContext(timeoutType, jobManagement)
         AbstractContextHelper.executeInContext(timeoutClosure, ctx)
+
+        Preconditions.checkArgument(ctx.type != null, 'Timeout type must be selected!')
 
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
@@ -145,8 +147,6 @@ class WrapperContext implements Context {
                     case Timeout.noActivity:
                         delegate.timeout(ctx.noActivitySeconds * 1000)
                         break
-                    default:
-                        Preconditions.checkArgument(false, 'Timeout type must be selected!')
                 }
             }
             operationList {

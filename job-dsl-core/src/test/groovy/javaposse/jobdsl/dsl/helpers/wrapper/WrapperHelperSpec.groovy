@@ -89,6 +89,17 @@ class WrapperHelperSpec extends Specification {
         mockActions.size() == 1
     }
 
+    def 'can not run timeout with empty closure'() {
+        when:
+        helper.wrappers {
+            timeout {
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'timeout constructs xml'() {
         when:
         helper.wrappers {
