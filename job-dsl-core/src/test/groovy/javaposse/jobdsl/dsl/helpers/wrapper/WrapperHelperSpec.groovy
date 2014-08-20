@@ -761,14 +761,14 @@ class WrapperHelperSpec extends Specification {
     def 'configure m2release plugin with all args'() {
         when:
         context = new WrapperContext(JobType.Maven, mockJobManagement)
-        context.mavenRelease() {
+        context.mavenRelease {
             scmUserEnvVar 'MY_USER_ENV'
             scmPasswordEnvVar 'MY_PASSWORD_ENV'
             releaseEnvVar 'RELEASE_ENV'
             releaseGoals 'release:prepare release:perform'
             dryRunGoals '-DdryRun=true release:prepare'
             selectCustomScmCommentPrefix()
-            selectAppendHudsonUsername()
+            selectAppendJenkinsUsername()
             selectScmCredentials()
             numberOfReleaseBuildsToKeep 10
         }

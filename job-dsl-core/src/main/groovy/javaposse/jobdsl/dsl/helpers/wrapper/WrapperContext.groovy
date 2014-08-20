@@ -600,24 +600,21 @@ class WrapperContext implements Context {
      * </pre>
      */
     def mavenRelease(Closure releaseClosure = null) {
-        Preconditions.checkState type == JobType.Maven, "mavenRelease can only be applied for Maven jobs"
+        Preconditions.checkState type == JobType.Maven, 'mavenRelease can only be applied for Maven jobs'
 
-        M2ReleaseContext context = new M2ReleaseContext()
+        MavenReleaseContext context = new MavenReleaseContext()
         AbstractContextHelper.executeInContext(releaseClosure, context)
 
-        def nodeBuilder = NodeBuilder.newInstance()
-        def m2releaseNode = nodeBuilder.'org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper' {
+        wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper' {
             scmUserEnvVar context.scmUserEnvVar
             scmPasswordEnvVar context.scmPasswordEnvVar
             releaseEnvVar context.releaseEnvVar
             releaseGoals context.releaseGoals
             dryRunGoals context.dryRunGoals
             selectCustomScmCommentPrefix context.selectCustomScmCommentPrefix
-            selectAppendHudsonUsername context.selectAppendHudsonUsername
+            selectAppendHudsonUsername context.selectAppendJenkinsUsername
             selectScmCredentials context.selectScmCredentials
             numberOfReleaseBuildsToKeep context.numberOfReleaseBuildsToKeep
         }
-
-        wrapperNodes << m2releaseNode
     }
 }

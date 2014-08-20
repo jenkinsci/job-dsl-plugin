@@ -290,6 +290,9 @@ job(Map<String, ?> arguments = [:]) {
     runHeadless(boolean shouldRunHeadless)
     preBuildSteps(Closure stepsClosure)
     postBuildSteps(Closure stepsClosure)
+    wrappers {
+        mavenRelease(Closure mavenReleaseClosure = null) // since 1.25
+    }
 
     // BuildFlow options
     buildFlow(String buildFlowText) // since 1.21
