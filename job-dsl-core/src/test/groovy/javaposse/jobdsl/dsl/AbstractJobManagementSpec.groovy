@@ -82,6 +82,17 @@ class AbstractJobManagementSpec extends Specification {
         thrown(UnsupportedOperationException)
     }
 
+    def 'maven settings id is always null'() {
+        setup:
+        AbstractJobManagement jobManagement = new TestJobManagement()
+
+        when:
+        String id = jobManagement.getMavenSettingsId('foo')
+
+        then:
+        id == null
+    }
+
     static class TestJobManagement extends AbstractJobManagement {
         TestJobManagement() {
             super()

@@ -66,6 +66,11 @@
             </dependency>
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
+                <artifactId>config-file-provider</artifactId>
+                <version>2.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>credentials</artifactId>
                 <version>1.9.4</version>
             </dependency>

@@ -336,7 +336,7 @@ class AbstractStepContext implements Context {
      * </hudson.tasks.Maven>
      */
     def maven(Closure closure) {
-        MavenContext mavenContext = new MavenContext()
+        MavenContext mavenContext = new MavenContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, mavenContext)
 
         Node mavenNode = new NodeBuilder().'hudson.tasks.Maven' {
@@ -350,6 +350,11 @@ class AbstractStepContext implements Context {
                 pom mavenContext.rootPOM
             }
             usePrivateRepository mavenContext.localRepositoryLocation == LocalToWorkspace ? 'true' : 'false'
+            if (mavenContext.providedSettingsId) {
+                settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
+                    settingsConfigId(mavenContext.providedSettingsId)
+                }
+            }
         }
 
         // Apply Context

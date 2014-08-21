@@ -8,6 +8,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import hudson.EnvVars;
+import hudson.ExtensionList;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
@@ -32,6 +33,10 @@ import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.jenkinsci.lib.configprovider.ConfigProvider;
+import org.jenkinsci.lib.configprovider.model.Config;
+import org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig;
+import org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider;
 import org.jenkinsci.plugins.vSphereCloud;
 
 import javax.xml.transform.Source;
@@ -51,6 +56,7 @@ import java.util.logging.Logger;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
+import static org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig.MavenSettingsConfigProvider;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -235,6 +241,22 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             for (Cloud cloud : jenkins.clouds) {
                 if (cloud instanceof vSphereCloud && ((vSphereCloud) cloud).getVsDescription().equals(name)) {
                     return ((vSphereCloud) cloud).getHash();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getMavenSettingsId(String settingsName) {
+        Jenkins jenkins = Jenkins.getInstance();
+        if (jenkins.getPlugin("config-file-provider") != null) {
+            ExtensionList<MavenSettingsConfigProvider> configProviders = jenkins.getExtensionList(MavenSettingsConfigProvider.class);
+            if (!configProviders.isEmpty()) {
+                for (Config config : configProviders.get(0).getAllConfigs()) {
+                    if (config.name.equals(settingsName)) {
+                        return config.id;
+                    }
                 }
             }
         }
