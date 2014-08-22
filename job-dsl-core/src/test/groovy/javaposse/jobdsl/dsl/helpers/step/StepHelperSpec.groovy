@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -724,10 +725,34 @@ class StepHelperSpec extends Specification {
         def phaseNode2 = context.stepNodes[1]
         phaseNode2.phaseName[0].value() == 'Second'
         def jobNode = phaseNode2.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
+        jobNode.children().size() == 4
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == true
         jobNode.exposedSCM[0].value() == true
         jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+    }
+
+    def 'call phases with minimal arguments and plugin version 1.11'() {
+        setup:
+        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.11')
+
+        when:
+        context.phase {
+            phaseName 'Second'
+            job('JobA')
+        }
+
+        then:
+        def phaseNode = context.stepNodes[0]
+        phaseNode.phaseName[0].value() == 'Second'
+        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
+        jobNode.children().size() == 6
+        jobNode.jobName[0].value() == 'JobA'
+        jobNode.currParams[0].value() == true
+        jobNode.exposedSCM[0].value() == true
+        jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        jobNode.disableJob[0].value() == false
+        jobNode.killPhaseOnJobResultCondition[0].value() == 'FAILURE'
     }
 
     def 'call phases with multiple jobs'() {
@@ -833,6 +858,45 @@ class StepHelperSpec extends Specification {
 
         then:
         thrown(IllegalStateException)
+    }
+
+    def 'call phases with plugin version 1.11 options'() {
+        setup:
+        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.11')
+
+        when:
+        context.phase {
+            phaseName 'Second'
+            job('JobA') {
+                disableJob()
+                killPhaseCondition('UNSTABLE')
+            }
+        }
+
+        then:
+        def phaseNode = context.stepNodes[0]
+        phaseNode.phaseName[0].value() == 'Second'
+        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
+        jobNode.children().size() == 6
+        jobNode.jobName[0].value() == 'JobA'
+        jobNode.currParams[0].value() == true
+        jobNode.exposedSCM[0].value() == true
+        jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        jobNode.disableJob[0].value() == true
+        jobNode.killPhaseOnJobResultCondition[0].value() == 'UNSTABLE'
+    }
+
+    def 'call killPhaseCondition with invalid argument'() {
+        when:
+        context.phase {
+            phaseName 'Second'
+            job('JobA') {
+                killPhaseCondition('UNKNOWN')
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'call step via helper'() {

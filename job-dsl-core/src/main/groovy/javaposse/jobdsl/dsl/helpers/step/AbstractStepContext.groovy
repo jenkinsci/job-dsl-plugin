@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import hudson.util.VersionNumber
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -11,6 +12,8 @@ import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 
 class AbstractStepContext implements Context {
+    private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
+
     List<Node> stepNodes = []
     JobManagement jobManagement
 
@@ -534,6 +537,21 @@ class AbstractStepContext implements Context {
 
     /**
      * phaseName will have to be provided in the closure
+     *
+     * <com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
+     *   <phaseName>name-of-phase</phaseName>
+     *   <phaseJobs>
+     *     <com.tikal.jenkins.plugins.multijob.PhaseJobsConfig>
+     *       <jobName>job-in-phase</jobName>
+     *       <currParams>true</currParams>
+     *       <exposedSCM>false</exposedSCM>
+     *       <disableJob>false</disableJob>
+     *       <configs class="empty-list"/>
+     *       <killPhaseOnJobResultCondition>FAILURE</killPhaseOnJobResultCondition>
+     *     </com.tikal.jenkins.plugins.multijob.PhaseJobsConfig>
+     *   </phaseJobs>
+     *   <continuationCondition>COMPLETED</continuationCondition>
+     * </com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
      */
     def phase(Closure phaseContext) {
         phase(null, 'SUCCESSFUL', phaseContext)
@@ -544,25 +562,30 @@ class AbstractStepContext implements Context {
     }
 
     def phase(String name, String continuationConditionArg, Closure phaseClosure) {
-        PhaseContext phaseContext = new PhaseContext(name, continuationConditionArg)
+        PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationConditionArg)
         AbstractContextHelper.executeInContext(phaseClosure, phaseContext)
 
-        Preconditions.checkArgument phaseContext.phaseName as Boolean, 'A phase needs a name'
+        Preconditions.checkArgument(phaseContext.phaseName as Boolean, 'A phase needs a name')
+        Preconditions.checkArgument(
+                VALID_CONTINUATION_CONDITIONS.contains(phaseContext.continuationCondition),
+                "Continuation Condition needs to be one of these values: ${VALID_CONTINUATION_CONDITIONS.join(', ')}"
+        )
 
-        def validConditions = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
-        Preconditions.checkArgument(validConditions.contains(phaseContext.continuationCondition),
-                "Continuation Condition need to be one of these values: ${validConditions.join(',')}" )
+        VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
 
-        def nodeBuilder = NodeBuilder.newInstance()
-        def multiJobPhaseNode = nodeBuilder.'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
+        stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName
             continuationCondition phaseContext.continuationCondition
             phaseJobs {
-                phaseContext.jobsInPhase.each { jobInPhase ->
+                phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
                         jobName jobInPhase.jobName
                         currParams jobInPhase.currentJobParameters
                         exposedSCM jobInPhase.exposedScm
+                        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.10'))) {
+                            disableJob jobInPhase.disableJob
+                            killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
+                        }
                         if (jobInPhase.hasConfig()) {
                             configs(jobInPhase.configAsNode().children())
                         } else {
@@ -572,7 +595,6 @@ class AbstractStepContext implements Context {
                 }
             }
         }
-        stepNodes << multiJobPhaseNode
     }
 
     /**

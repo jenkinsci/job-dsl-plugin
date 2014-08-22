@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.ScriptRequest;
+import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext;
 
 import java.io.File;
 import java.net.URL;

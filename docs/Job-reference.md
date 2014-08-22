@@ -1689,25 +1689,36 @@ Injects environment variables into the build. Requires the [EnvInject plugin](ht
 # Multijob Phase
 
 ```
-phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phaseClosure = null) {
-    phaseName(String phaseName)
-    continuationCondition(String continuationCondition)
-    job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true, Closure phaseJobClosure = null)  {
-        currentJobParameters(boolean currentJobParameters = true) 
-        exposedScm(boolean exposedScm = true)
-        boolParam(String paramName, boolean defaultValue = false)
-        fileParam(String propertyFile, boolean failTriggerOnMissing = false)
-        sameNode(boolean nodeParam = true) 
-        matrixParam(String filter)
-        subversionRevision(boolean includeUpstreamParameters = false)
-        gitRevision(boolean combineQueuedCommits = false) 
-        prop(Object key, Object value)
-        props(Map<String, String> map)
+job(type: Multijob) {
+    steps {
+        phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phaseClosure = null) {
+            phaseName(String phaseName)
+            continuationCondition(String continuationCondition)
+            job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true, Closure phaseJobClosure = null) {
+                currentJobParameters(boolean currentJobParameters = true)
+                exposedScm(boolean exposedScm = true)
+                boolParam(String paramName, boolean defaultValue = false)
+                fileParam(String propertyFile, boolean failTriggerOnMissing = false)
+                sameNode(boolean nodeParam = true)
+                matrixParam(String filter)
+                subversionRevision(boolean includeUpstreamParameters = false)
+                gitRevision(boolean combineQueuedCommits = false)
+                prop(Object key, Object value)
+                props(Map<String, String> map)
+                disableJob(boolean exposedScm = true) // since 1.25
+                killPhaseCondition(String killPhaseCondition) // since 1.25
+            }
+        }
     }
 }
 ```
 
-Phases allow jobs to be group together to be run in parallel, they only exist in a Multijob typed job. The name and continuationConditionArg can be set directly in the phase method or in the closure. The job method is used to list each job in the phase, and hence can be called multiple times. Each call can be further configured with the parameters which will be sent to it. The parameters are show above and documented in different parts of this page. See below for an example of multiple phases strung together:
+Phases allow jobs to be group together to be run in parallel, they only exist in a Multijob typed job. The name and
+continuationConditionArg can be set directly in the phase method or in the closure. The job method is used to list each
+job in the phase, and hence can be called multiple times. Each call can be further configured with the parameters which
+will be sent to it. The parameters are show above and documented in different parts of this page. See below for an
+example of multiple phases strung together. Requires the
+[Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin).
 
 ```
 job(type: Multijob) {
@@ -1716,7 +1727,6 @@ job(type: Multijob) {
             phaseName 'Second'
             job('JobZ') {
                 fileParam('my1.properties')
-                fileParam('my2.properties')
             }
         }
         phase('Third') {
@@ -1738,6 +1748,9 @@ job(type: Multijob) {
    }
 }
 ```
+
+(since 1.16)
+
 # [MatrixJob](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project)
 
 The `axes`, `sequential`, `touchStoneFiler` and `combinationFilter` methods can only be used in jobs with type `Matrix`.
