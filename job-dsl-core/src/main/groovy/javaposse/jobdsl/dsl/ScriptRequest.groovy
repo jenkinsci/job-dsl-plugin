@@ -1,37 +1,34 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
-import java.net.URL;
-
-public class ScriptRequest {
-    public ScriptRequest(String location, String body, URL urlRoot) {
-        this(location, body, new URL[]{urlRoot});
-    }
-
-    public ScriptRequest(String location, String body, URL[] urlRoots) {
-        this(location, body, urlRoots, false);
-    }
-
-    public ScriptRequest(String location, String body, URL urlRoot, boolean ignoreExisting) {
-        this(location, body, new URL[]{urlRoot}, ignoreExisting);
-    }
-
-    public ScriptRequest(String location, String body, URL[] urlRoots, boolean ignoreExisting) {
-        this.location = location;
-        this.body = body;
-        this.urlRoots = urlRoots;
-        this.ignoreExisting = ignoreExisting;
-    }
-
+class ScriptRequest {
     // Starting Object
-    public String location;
+    final String location
 
     // Starting Script
-    public String body;
+    final String body
 
-    // Where can we load objects from
-    //ResourceConnector resourceConnector; // OR
-    public URL[] urlRoots; // file://. or http://server/ or workspace://JOBNAME/
+    // Where can we load objects from, file://. or http://server/ or workspace://JOBNAME/
+    final URL[] urlRoots
 
     // Ignore existing jobs
-    public boolean ignoreExisting;
+    final boolean ignoreExisting
+
+    ScriptRequest(String location, String body, URL urlRoot) {
+        this(location, body, [urlRoot] as URL[])
+    }
+
+    ScriptRequest(String location, String body, URL[] urlRoots) {
+        this(location, body, urlRoots, false)
+    }
+
+    ScriptRequest(String location, String body, URL urlRoot, boolean ignoreExisting) {
+        this(location, body, [urlRoot] as URL[], ignoreExisting)
+    }
+
+    ScriptRequest(String location, String body, URL[] urlRoots, boolean ignoreExisting) {
+        this.location = location
+        this.body = body
+        this.urlRoots = urlRoots
+        this.ignoreExisting = ignoreExisting
+    }
 }

@@ -1,55 +1,44 @@
-package javaposse.jobdsl;
+package javaposse.jobdsl
 
-import javaposse.jobdsl.dsl.DslScriptLoader;
-import javaposse.jobdsl.dsl.FileJobManagement;
-import javaposse.jobdsl.dsl.GeneratedItems;
-import javaposse.jobdsl.dsl.GeneratedJob;
-import javaposse.jobdsl.dsl.GeneratedView;
-import javaposse.jobdsl.dsl.ScriptRequest;
-import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext;
+import javaposse.jobdsl.dsl.DslScriptLoader
+import javaposse.jobdsl.dsl.FileJobManagement
+import javaposse.jobdsl.dsl.GeneratedItems
+import javaposse.jobdsl.dsl.GeneratedJob
+import javaposse.jobdsl.dsl.GeneratedView
+import javaposse.jobdsl.dsl.ScriptRequest
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.logging.Logger
 
 /**
  * Able to run from the command line to test out. Leverage FileJobManagement
  */
-public class Run {
+class Run {
+    private static final Logger LOG = Logger.getLogger(Run.name)
 
-    public static void main(String[] args) throws Exception {
-        if(args.length == 0) {
-            throw new RuntimeException("Script name is required");
+    static void main(String[] args) throws Exception {
+        if (args.length == 0) {
+            LOG.severe('Script name is required')
+            return
         }
 
-        File cwd = new File(".");
-        URL cwdURL = cwd.toURI().toURL();
+        File cwd = new File('.')
+        URL cwdURL = cwd.toURI().toURL()
 
-        FileJobManagement jm = new FileJobManagement(cwd);
-        jm.getParameters().putAll(System.getenv());
-        for(Map.Entry entry: System.getProperties().entrySet()) {
-            jm.getParameters().put(entry.getKey().toString(), entry.getValue().toString());
+        FileJobManagement jm = new FileJobManagement(cwd)
+        jm.parameters.putAll(System.getenv())
+        System.properties.each { def key, def value ->
+            jm.parameters.put(key.toString(), value.toString())
         }
 
-        Collection<String> scripts = new ArrayList<String>();
-        for(String arg: args) {
-            if(arg.startsWith("--")) {
-                scripts.add(arg);
+        args.each { String scriptName ->
+            ScriptRequest request = new ScriptRequest(scriptName, null, cwdURL, false)
+            GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm)
+
+            for (GeneratedJob job : generatedItems.jobs) {
+                LOG.info("From $scriptName, Generated item: $job")
             }
-        }
-
-        for(String scriptName: args) {
-            ScriptRequest request = new ScriptRequest(scriptName, null, cwdURL, false);
-            GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
-
-            for(GeneratedJob job: generatedItems.getJobs()) {
-                System.out.println("From "+ scriptName + ", Generated item: " + job);
-            }
-            for(GeneratedView view: generatedItems.getViews()) {
-                System.out.println("From "+ scriptName + ", Generated view: " + view);
+            for (GeneratedView view : generatedItems.views) {
+                LOG.info("From $scriptName, Generated view: $view")
             }
         }
     }
