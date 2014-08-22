@@ -12,6 +12,8 @@ import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 
 class AbstractStepContext implements Context {
+    private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
+
     List<Node> stepNodes = []
     JobManagement jobManagement
 
@@ -555,32 +557,29 @@ class AbstractStepContext implements Context {
     }
 
     def phase(String name, String continuationConditionArg, Closure phaseClosure) {
-        PhaseContext phaseContext = new PhaseContext(name, continuationConditionArg)
+        PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationConditionArg)
         AbstractContextHelper.executeInContext(phaseClosure, phaseContext)
 
-        Preconditions.checkArgument phaseContext.phaseName as Boolean, 'A phase needs a name'
+        Preconditions.checkArgument(phaseContext.phaseName as Boolean, 'A phase needs a name')
+        Preconditions.checkArgument(
+                VALID_CONTINUATION_CONDITIONS.contains(phaseContext.continuationCondition),
+                "Continuation Condition needs to be one of these values: ${VALID_CONTINUATION_CONDITIONS.join(', ')}"
+        )
 
-        def validConditions = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
-        Preconditions.checkArgument(validConditions.contains(phaseContext.continuationCondition),
-                "Continuation Condition needs to be one of these values: ${validConditions.join(',')}" )
+        VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
 
-        def nodeBuilder = NodeBuilder.newInstance()
-        VersionNumber multijobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
-
-        def multiJobPhaseNode = nodeBuilder.'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
+        stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName
             continuationCondition phaseContext.continuationCondition
-
             phaseJobs {
-
-                phaseContext.jobsInPhase.each { jobInPhase ->
+                phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
                         jobName jobInPhase.jobName
                         currParams jobInPhase.currentJobParameters
                         exposedSCM jobInPhase.exposedScm
-                        if (multijobPluginVersion.isNewerThan(new VersionNumber("1.11"))) {
+                        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.10'))) {
                             disableJob jobInPhase.disableJob
-                            killPhaseOnJobResultCondition jobInPhase.killPhaseOnJobResultCondition == null ? 'FAILURE' : jobInPhase.killPhaseOnJobResultCondition
+                            killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
                         }
                         if (jobInPhase.hasConfig()) {
                             configs(jobInPhase.configAsNode().children())
@@ -591,7 +590,6 @@ class AbstractStepContext implements Context {
                 }
             }
         }
-        stepNodes << multiJobPhaseNode
     }
 
     /**
