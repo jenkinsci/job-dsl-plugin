@@ -360,6 +360,15 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
     sections {
         listView(Closure listNiewSectionClosure)
     }
+
+    // NestedView options, since 1.25
+    views {
+        view(Map<String, Object> arguments = [:], Closure viewClosure)
+    }
+    columns {
+        status()
+        weather()
+    }
 }
 
 folder { // since 1.23
@@ -420,8 +429,8 @@ view(Map<String, Object> attributes = [:], Closure closure)
 
 The `view` method behaves like the `job` method explained above and will return a _View_ object.
 
-Currently only a `type` attribute with value of `ListView`, `BuildPipelineView` or `SectionedView` is supported. When no
-type is specified, a list view will be generated.
+Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView` or `NestedView` is
+supported. When no type is specified, a list view will be generated.
 
 ```groovy
 view(type: ListView) {
