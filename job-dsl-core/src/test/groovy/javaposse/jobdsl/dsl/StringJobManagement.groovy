@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
+
 /**
  * Testing JobManagement which will deal with a single template and single saved job. Useful for testing
  * since it can be prodded with the expected value.
@@ -74,6 +76,26 @@ class StringJobManagement extends AbstractJobManagement {
 
     @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
+    }
+
+    @Override
+    String getCredentialsId(String credentialsDescription) {
+        null
+    }
+
+    @Override
+    VersionNumber getPluginVersion(String pluginShortName) {
+        null
+    }
+
+    @Override
+    Integer getVSphereCloudHash(String name) {
+        null
+    }
+
+    @Override
+    String getMavenSettingsId(String settingsName) {
+        null
     }
 }
 

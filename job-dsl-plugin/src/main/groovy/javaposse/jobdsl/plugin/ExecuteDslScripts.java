@@ -166,7 +166,7 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
         Set<GeneratedView> freshViews = Sets.newLinkedHashSet();
         for (ScriptRequest request : scriptRequests) {
-            LOGGER.log(Level.FINE, String.format("Request for %s", request.location));
+            LOGGER.log(Level.FINE, String.format("Request for %s", request.getLocation()));
 
             GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
             freshJobs.addAll(generatedItems.getJobs());

@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
+
 class FileJobManagement extends AbstractJobManagement {
     /**
      * Root of where to look for job config files
@@ -9,7 +11,7 @@ class FileJobManagement extends AbstractJobManagement {
     /**
      * Extension to append to job name when looking at the filesystem
      */
-    String ext
+    String ext = '.xml'
 
     /**
      * map to store job parameters from System properties and
@@ -17,10 +19,8 @@ class FileJobManagement extends AbstractJobManagement {
      */
     protected Map params = [:]
 
-    FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
-        super(out)
+    FileJobManagement(File root) {
         this.root = root
-        this.ext = ext ?: '.xml'
     }
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
@@ -37,7 +37,7 @@ class FileJobManagement extends AbstractJobManagement {
 
         try {
             new File(root, jobName + ext).text
-        } catch (IOException ioex) {
+        } catch (IOException ignored) {
             throw new JobConfigurationNotFoundException(jobName)
         }
     }
@@ -75,5 +75,26 @@ class FileJobManagement extends AbstractJobManagement {
     @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
     }
+
+    @Override
+    String getCredentialsId(String credentialsDescription) {
+        null
+    }
+
+    @Override
+    VersionNumber getPluginVersion(String pluginShortName) {
+        null
+    }
+
+    @Override
+    Integer getVSphereCloudHash(String name) {
+        null
+    }
+
+    @Override
+    String getMavenSettingsId(String settingsName) {
+        null
+    }
+
 }
 

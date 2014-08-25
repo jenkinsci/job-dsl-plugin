@@ -37,28 +37,6 @@ class AbstractJobManagementSpec extends Specification {
         buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'
     }
 
-    def 'plugin version is always null'() {
-        setup:
-        AbstractJobManagement jobManagement = new TestJobManagement()
-
-        when:
-        VersionNumber version = jobManagement.getPluginVersion('foo')
-
-        then:
-        version == null
-    }
-
-    def 'vSphere cloud hash is always null'() {
-        setup:
-        AbstractJobManagement jobManagement = new TestJobManagement()
-
-        when:
-        Integer hash = jobManagement.getVSphereCloudHash('foo')
-
-        then:
-        hash == null
-    }
-
     def 'reading files from workspace is not supported'() {
         setup:
         AbstractJobManagement jobManagement = new TestJobManagement()
@@ -80,17 +58,6 @@ class AbstractJobManagementSpec extends Specification {
 
         then:
         thrown(UnsupportedOperationException)
-    }
-
-    def 'maven settings id is always null'() {
-        setup:
-        AbstractJobManagement jobManagement = new TestJobManagement()
-
-        when:
-        String id = jobManagement.getMavenSettingsId('foo')
-
-        then:
-        id == null
     }
 
     static class TestJobManagement extends AbstractJobManagement {
@@ -120,6 +87,26 @@ class AbstractJobManagementSpec extends Specification {
         @Override
         void requireMinimumPluginVersion(String pluginShortName, String version) {
             throw new UnsupportedOperationException()
+        }
+
+        @Override
+        String getCredentialsId(String credentialsDescription) {
+            null
+        }
+
+        @Override
+        VersionNumber getPluginVersion(String pluginShortName) {
+            null
+        }
+
+        @Override
+        Integer getVSphereCloudHash(String name) {
+            null
+        }
+
+        @Override
+        String getMavenSettingsId(String settingsName) {
+            null
         }
 
         void testMethod() {
