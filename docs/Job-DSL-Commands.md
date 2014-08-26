@@ -290,6 +290,7 @@ job(Map<String, ?> arguments = [:]) {
     runHeadless(boolean shouldRunHeadless)
     preBuildSteps(Closure stepsClosure)
     postBuildSteps(Closure stepsClosure)
+    providedSettings(String mavenSettingsName) // since 1.25
     wrappers {
         mavenRelease(Closure mavenReleaseClosure = null) // since 1.25
     }

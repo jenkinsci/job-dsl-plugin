@@ -280,14 +280,15 @@ Since 1.21.
 
 # Maven
 
-The 'rootPOM', 'goals', 'mavenOpts', 'mavenInstallation', 'perModuleEmail', 'archivingDisabled', 'runHeadless', 'preBuildSteps' and 'postBuildSteps' methods can only be used in jobs with type 'Maven'.
+The `rootPOM`, `goals`, `mavenOpts`, `mavenInstallation`, `perModuleEmail`, `archivingDisabled`, `runHeadless`,
+ `preBuildSteps`, `postBuildSteps` and `providedSettings` methods can only be used in jobs with type `Maven`.
 
 ## Root POM
 ```groovy
 rootPOM(String rootPOM)
 ```
 
-To use a different 'pom.xml' in some other directory than the workspace root.
+To use a different `pom.xml` in some other directory than the workspace root.
 
 ## Goals
 ```groovy
@@ -371,7 +372,7 @@ For Maven jobs, you can also run arbitrary build steps before and after the Mave
 
 Examples:
 ```groovy
-job(type: 'Maven') {
+job(type: Maven) {
   preBuildSteps {
     shell("echo 'run before Maven'")
   }
@@ -382,6 +383,27 @@ job(type: 'Maven') {
 ```
 
 (since 1.20)
+
+## Maven Settings
+
+```groovy
+job(type: Maven) {
+    providedSettings(String mavenSettingsName)
+}
+```
+
+Use managed Maven settings. Requires the
+[Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
+
+Example:
+
+```groovy
+job(type: Maven) {
+    providedSettings('central-mirror')
+}
+```
+
+(since 1.25)
 
 ## Environment Variables
 ```groovy
@@ -1365,11 +1387,14 @@ maven {                                               // since 1.20; all methods
     mavenInstallation(String name)                    // name of the Maven installation to use
     properties(Map properties)                        // since 1.21; add (system)-properties
     property(String key, String value)                // since 1.21; add a (system)-property
+    providedSettings(String mavenSettingsName)        // since 1.25
     configure(Closure configure)                      // configure block
 }
 ```
 
-Runs Apache Maven. Configure block is handed hudson.tasks.Maven.
+Runs Apache Maven. Configure block is handed `hudson.tasks.Maven`. The 
+[Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) is required to
+use `providedSettings`.
 
 Examples:
 
@@ -1386,6 +1411,7 @@ maven {
     localRepository(LocalToWorkspace)
     properties skipTests: true
     mavenInstallation('Maven 3.1.1')
+    providedSettings('central-mirror')
 }
 ```
 
