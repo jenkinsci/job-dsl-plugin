@@ -205,7 +205,8 @@ class TriggerContext implements Context {
             spec ''
             if (gerritContext.projects) {
                 gerritProjects {
-                    gerritContext.projects.each { GerritSpec project, List<GerritSpec> brancheSpecs ->
+                    gerritContext.projects.each { GerritSpec project, List<GerritSpec> brancheSpecs,
+                                                  List<GerritSpec> topicSpecs ->
                         'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject' {
                             compareType project.type
                             pattern project.pattern
@@ -217,6 +218,15 @@ class TriggerContext implements Context {
                                     }
                                 }
                             }
+                            topics {
+                                topicSpecs.each { GerritSpec topic ->
+                                    'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Topic' {
+                                        compareType topic.type
+                                        pattern topic.pattern
+                                    }
+                                }
+                            }
+
                         }
                     }
                 }
