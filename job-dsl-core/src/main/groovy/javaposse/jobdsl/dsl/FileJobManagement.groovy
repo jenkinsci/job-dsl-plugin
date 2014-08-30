@@ -58,6 +58,11 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
     Map<String, String> getParameters() {
         params
     }
@@ -92,9 +97,7 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    String getMavenSettingsId(String settingsName) {
+    String getConfigFileId(ConfigFileType type, String name) {
         null
     }
-
 }
-

@@ -23,8 +23,8 @@ public class GeneratedViewsBuildAction implements RunAction {
     private transient AbstractBuild owner;
     private LookupStrategy lookupStrategy = LookupStrategy.JENKINS_ROOT;
 
-    public GeneratedViewsBuildAction(Collection<GeneratedView> modifiedJobs, LookupStrategy lookupStrategy) {
-        this.modifiedViews = Sets.newLinkedHashSet(modifiedJobs);
+    public GeneratedViewsBuildAction(Collection<GeneratedView> modifiedViews, LookupStrategy lookupStrategy) {
+        this.modifiedViews = Sets.newLinkedHashSet(modifiedViews);
         this.lookupStrategy = lookupStrategy;
     }
 

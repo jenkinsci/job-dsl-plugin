@@ -15,8 +15,9 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         actions != null
-        actions.size() == 2
+        actions.size() == 3
         actions[0] instanceof GeneratedJobsAction
         actions[1] instanceof GeneratedViewsAction
+        actions[2] instanceof GeneratedConfigFilesAction
     }
 }

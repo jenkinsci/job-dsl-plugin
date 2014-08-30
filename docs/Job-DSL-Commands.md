@@ -11,7 +11,7 @@ job {
 }
 ```
 
-There are similar methods to create Jenkins views and folders:
+There are similar methods to create Jenkins views, folders and config files:
 
 ```groovy
 view {
@@ -21,10 +21,14 @@ view {
 folder {
     name 'my-folder'
 }
+
+configFile {
+    name 'my-config'
+}
 ```
 
-The name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret names
-relative to the seed job. (since 1.24)
+When defining jobs, views or folders the name is treated as absolute to the Jenkins root by default, but the seed job
+can be configured to interpret names relative to the seed job. (since 1.24)
 
 In the closure provided to `job` there are a few top level methods, like `label` and `chucknorris`. Others are nested
 deeper in blocks which represent their role in Jenkins, e.g. the `publishers` block contains all the publisher actions.
@@ -381,10 +385,16 @@ folder { // since 1.23
     // common options
     displayName(String displayName)
 }
+
+configFile(Map<String, Object> arguments = [:]) { // since 1.25
+    name(String name)
+    comment(String comment)
+    content(String content)
+}
 ```
 
 The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods
-fail you, you can always generate the XML yourself via [[The Configure Block]]. Sometimes, a DSL
+fail you, you can always generate the underlying XML yourself via [[The Configure Block]]. Sometimes, a DSL
 method will provide a configure block of its own, which will set the a good context to help modify a few fields. 
 This gives native access to the job config XML, which is typically very straight forward to understand.
 
@@ -475,6 +485,32 @@ view {
 
 folder {
   name 'project-a/testing'
+}
+```
+
+# Config File
+
+```groovy
+configFile(Map<String, Object> attributes = [:], Closure closure)
+```
+
+The `configFile` method behaves like the `job` method explained above and will return a _ConfigFile_ object.
+
+A config file can have optional attributes. Currently only a `type` attribute with value of `Custom` or `MavenSettings`
+is supported. When no type is specified, a custom config file will be generated.
+
+Config files will be created before jobs to ensure that the file exists before it is referenced.
+
+```groovy
+configFile {
+  name 'my-config'
+  comment 'My important configuration'
+  content '<some-xml/>'
+}
+
+configFile(type: MavenSettings) {
+  name 'central-mirror'
+  content readFileFromWorkspace('maven-settings/central-mirror.xml')
 }
 ```
 

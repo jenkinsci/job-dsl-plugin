@@ -85,6 +85,42 @@ class JobParentSpec extends Specification {
         parent.referencedJobs.contains(folder)
     }
 
+    def 'default config file'() {
+        when:
+        ConfigFile configFile = parent.configFile {
+            name 'test'
+        }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.Custom
+        parent.referencedConfigFiles.contains(configFile)
+    }
+
+    def 'custom config file'() {
+        when:
+        ConfigFile configFile = parent.configFile(type: ConfigFileType.Custom) {
+            name 'test'
+        }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.Custom
+        parent.referencedConfigFiles.contains(configFile)
+    }
+
+    def 'Maven settings config file'() {
+        when:
+        ConfigFile configFile = parent.configFile(type: ConfigFileType.MavenSettings) {
+            name 'test'
+        }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.MavenSettings
+        parent.referencedConfigFiles.contains(configFile)
+    }
+
     def 'readFileInWorkspace from seed job'() {
         jobManagement.readFileInWorkspace('foo.txt') >> 'hello'
 

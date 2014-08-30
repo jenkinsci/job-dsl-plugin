@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -285,7 +286,7 @@ class StepHelperSpec extends Specification {
         setup:
         String settingsName = 'maven-proxy'
         String settingsId = '123123415'
-        jobManagement.getMavenSettingsId(settingsName) >> settingsId
+        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
 
         when:
         context.maven {

@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation
 
@@ -47,7 +48,7 @@ class MavenContext implements javaposse.jobdsl.dsl.helpers.common.MavenContext {
 
     @Override
     def providedSettings(String settingsName) {
-        String settingsId = jobManagement.getMavenSettingsId(settingsName)
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull settingsId, "Managed Maven settings with name '${settingsName}' not found"
 
         this.providedSettingsId = settingsId
