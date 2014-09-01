@@ -31,6 +31,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added method to read a file from any job's workspace
  * Fixed workspace cleanup external delete command ([JENKINS-24231](https://issues.jenkins-ci.org/browse/JENKINS-24231))
  * Fixed Build Timeout Plugin no activity timeout ([JENKINS-24258](https://issues.jenkins-ci.org/browse/JENKINS-24258))
+ * Fixed alwaysRun and neverRun conditions ([JENKINS-24510](https://issues.jenkins-ci.org/browse/JENKINS-24510))
 * 1.24 (July 05 2014)
  * Support for [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
  * Support for [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)

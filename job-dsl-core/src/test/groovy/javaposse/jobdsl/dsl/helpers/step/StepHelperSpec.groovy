@@ -1299,14 +1299,7 @@ still-another-dsl.groovy'''
         step.condition[0].children().size() == testConditionArgs.values().size()
 
         Node condition = step.condition[0]
-        def condClass
-        if (testCondition == 'booleanCondition') {
-            condClass = 'Boolean'
-        } else {
-            condClass = testCondition.capitalize()
-        }
-
-        condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${condClass}Condition"
+        condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${testConditionClass}"
         if (!testConditionArgs.isEmpty()) {
             testConditionArgs.each { k, v ->
                 condition[k][0].value() == v
@@ -1328,6 +1321,10 @@ still-another-dsl.groovy'''
                 ['expression': 'some-expression', 'label': 'some-label'],
                 ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
                 ['worstResult': 'Success', 'bestResult': 'Success']
+        ]
+        testConditionClass << [
+                'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
+                'ExpressionCondition', 'TimeCondition', 'StatusCondition'
         ]
     }
 
@@ -1532,7 +1529,7 @@ still-another-dsl.groovy'''
             file[0].value() == 'someFile'
             baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
         }
-        containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
+        containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
 
         where:
         dslOperation | operation
@@ -1565,8 +1562,8 @@ still-another-dsl.groovy'''
         conditionDsl       | args                         | conditionClass                                                        | argNodes
         'shell'            | ['echo test']                | 'org.jenkins_ci.plugins.run_condition.contributed.ShellCondition'     | [command: 'echo test']
         'batch'            | ['xcopy * ..\\']             | 'org.jenkins_ci.plugins.run_condition.contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
-        'alwaysRun'        | []                           | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'        | [:]
-        'neverRun'         | []                           | 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'         | [:]
+        'alwaysRun'        | []                           | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
+        'neverRun'         | []                           | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
         'booleanCondition' | ['someToken']                | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
         'cause'            | ['userCause', true]          | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
                                                                                                                                      exclusiveCondition: 'true']
