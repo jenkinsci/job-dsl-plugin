@@ -11,6 +11,10 @@ interface DslFactory {
 
     Folder folder(Closure closure)
 
+    ConfigFile configFile(Closure closure)
+
+    ConfigFile configFile(Map<String, Object> arguments, Closure closure)
+
     /**
      * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
      * @param jobName the name of the job to be queued

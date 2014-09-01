@@ -38,6 +38,14 @@ interface JobManagement {
             throws NameNotProvidedException, ConfigurationMissingException
 
     /**
+     * Creates or updates the managed config file.
+     * @param configFile the config file to create or update
+     * @param ignoreExisting do not update existing config files
+     * @return the id of the created or updated config file
+     */
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting)
+
+    /**
      * Queue a job to run. Useful for running jobs after they've been created.
      */
     void queueJob(String jobName) throws NameNotProvidedException
@@ -90,9 +98,12 @@ interface JobManagement {
     Integer getVSphereCloudHash(String name)
 
     /**
-     * Return the config ID of the Maven settings with the given name.
-     * @param settingsName name of the Maven settings
-     * @return the config ID of the Maven settings or <code>null</code> if no Maven settings can be found
+     * Return the id of the config file with the given type and name.
+     *
+     * @param type type of the config file
+     * @param name name of the config file
+     * @return the config ID of the config file or <code>null</code> if no config file with the given type and name can
+     *         be found
      */
-    String getMavenSettingsId(String settingsName)
+    String getConfigFileId(ConfigFileType type, String name)
 }

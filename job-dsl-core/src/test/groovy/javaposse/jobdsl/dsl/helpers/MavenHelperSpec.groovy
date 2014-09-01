@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -378,7 +379,7 @@ class MavenHelperSpec extends Specification {
         setup:
         String settingsName = 'maven-proxy'
         String settingsId = '123123415'
-        jobManagement.getMavenSettingsId(settingsName) >> settingsId
+        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
 
         when:
         def action = helper.providedSettings(settingsName)

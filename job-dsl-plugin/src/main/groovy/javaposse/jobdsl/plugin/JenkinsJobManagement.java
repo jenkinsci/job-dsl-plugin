@@ -8,7 +8,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import hudson.EnvVars;
-import hudson.ExtensionList;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
@@ -25,7 +24,10 @@ import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
 import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
+import javaposse.jobdsl.dsl.ConfigFile;
+import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
+import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
@@ -35,8 +37,6 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
 import org.jenkinsci.lib.configprovider.model.Config;
-import org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig;
-import org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider;
 import org.jenkinsci.plugins.vSphereCloud;
 
 import javax.xml.transform.Source;
@@ -56,7 +56,10 @@ import java.util.logging.Logger;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
-import static org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig.MavenSettingsConfigProvider;
+import static java.lang.String.format;
+import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
+import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
+import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -82,7 +85,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public String getConfig(String path) throws JobConfigurationNotFoundException {
-        LOGGER.log(Level.INFO, String.format("Getting config for Job %s", path));
+        LOGGER.log(Level.INFO, format("Getting config for Job %s", path));
         String xml;
 
         if (path.isEmpty()) {
@@ -92,11 +95,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             xml = lookupJob(path);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, String.format("Named Job Config not found: %s", path));
+            LOGGER.log(Level.WARNING, format("Named Job Config not found: %s", path));
             throw new JobConfigurationNotFoundException(path);
         }
 
-        LOGGER.log(Level.FINE, String.format("Job config %s", xml));
+        LOGGER.log(Level.FINE, format("Job config %s", xml));
         return xml;
     }
 
@@ -104,7 +107,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     public boolean createOrUpdateConfig(String path, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 
-        LOGGER.log(Level.INFO, String.format("createOrUpdateConfig for %s", path));
+        LOGGER.log(Level.INFO, format("createOrUpdateConfig for %s", path));
         boolean created = false;
 
         validateUpdateArgs(path, config);
@@ -138,20 +141,55 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                     } else if (parent instanceof Folder) {
                         ((Folder) parent).addView(createViewFromXML(viewBaseName, inputStream));
                     } else {
-                        LOGGER.log(Level.WARNING, String.format("Could not create view within %s", parent.getClass()));
+                        LOGGER.log(Level.WARNING, format("Could not create view within %s", parent.getClass()));
                     }
                 } else if (!ignoreExisting) {
                     view.updateByXml(new StreamSource(inputStream));
                 }
             } else {
-                LOGGER.log(Level.WARNING, String.format("Could not create view within %s", parent.getClass()));
+                LOGGER.log(Level.WARNING, format("Could not create view within %s", parent.getClass()));
             }
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
         } catch (IOException e) {
             e.printStackTrace();
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new view %s.", path), e);
+            LOGGER.log(Level.WARNING, format("Error writing config for new view %s.", path), e);
         }
+    }
+
+    @Override
+    public String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+        validateNameArg(configFile.getName());
+
+        Jenkins jenkins = Jenkins.getInstance();
+
+        if (jenkins.getPlugin("config-file-provider") == null) {
+            throw new DslException(Messages.CreateOrUpdateConfigFile_PluginNotInstalled());
+        }
+
+        ConfigProvider configProvider = findConfigProvider(configFile.getType());
+        if (configProvider == null) {
+            throw new DslException(
+                    format(Messages.CreateOrUpdateConfigFile_ConfigProviderNotFound(), configFile.getClass())
+            );
+        }
+
+        Config config = findConfig(configProvider, configFile.getName());
+        if (config == null) {
+            config = configProvider.newConfig();
+        } else if (ignoreExisting) {
+            return config.id;
+        }
+
+        config = createNewConfig(config, configFile);
+        if (config == null) {
+            throw new DslException(
+                    format(Messages.CreateOrUpdateConfigFile_UnknownConfigFileType(), configFile.getClass())
+            );
+        }
+
+        configProvider.save(config);
+        return config.id;
     }
 
     @Override
@@ -181,7 +219,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         BuildableItem project = lookupStrategy.getItem(build.getParent(), path, BuildableItem.class);
 
-        LOGGER.log(Level.INFO, String.format("Scheduling build of %s from %s", path, build.getParent().getName()));
+        LOGGER.log(Level.INFO, format("Scheduling build of %s from %s", path, build.getParent().getName()));
         project.scheduleBuild(new Cause.UpstreamCause((Run) build));
     }
 
@@ -248,15 +286,14 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public String getMavenSettingsId(String settingsName) {
+    public String getConfigFileId(ConfigFileType type, String name) {
         Jenkins jenkins = Jenkins.getInstance();
         if (jenkins.getPlugin("config-file-provider") != null) {
-            ExtensionList<MavenSettingsConfigProvider> configProviders = jenkins.getExtensionList(MavenSettingsConfigProvider.class);
-            if (!configProviders.isEmpty()) {
-                for (Config config : configProviders.get(0).getAllConfigs()) {
-                    if (config.name.equals(settingsName)) {
-                        return config.id;
-                    }
+            ConfigProvider configProvider = findConfigProvider(type);
+            if (configProvider != null) {
+                Config config = findConfig(configProvider, name);
+                if (config != null) {
+                    return config.id;
                 }
             }
         }
@@ -272,7 +309,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         FilePath filePath = workspace.child(relLocation);
         try {
             if (!filePath.exists()) {
-                throw new IllegalStateException(String.format("File %s does not exist in workspace", relLocation));
+                throw new IllegalStateException(format("File %s does not exist in workspace", relLocation));
             }
         } catch (InterruptedException ie) {
             throw new IOException(ie);
@@ -281,17 +318,17 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private String lookupJob(String path) throws IOException {
-        LOGGER.log(Level.FINE, String.format("Looking up item %s", path));
+        LOGGER.log(Level.FINE, format("Looking up item %s", path));
 
         AbstractItem item = lookupStrategy.getItem(build.getProject(), path, AbstractItem.class);
         if (item != null) {
             XmlFile xmlFile = item.getConfigFile();
             String jobXml = xmlFile.asString();
-            LOGGER.log(Level.FINE, String.format("Looked up item with config %s", jobXml));
+            LOGGER.log(Level.FINE, format("Looked up item with config %s", jobXml));
             return jobXml;
         } else {
-            LOGGER.log(Level.WARNING, String.format("No item called %s could be found.", path));
-            throw new IOException(String.format("No item called %s could be found.", path));
+            LOGGER.log(Level.WARNING, format("No item called %s could be found.", path));
+            throw new IOException(format("No item called %s could be found.", path));
         }
     }
 
@@ -304,7 +341,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             String oldJob = item.getConfigFile().asString();
             diff = XMLUnit.compareXML(oldJob, config);
             if (diff.similar()) {
-                LOGGER.log(Level.FINE, String.format("Item %s is identical", item.getName()));
+                LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
                 return false;
             }
         } catch (Exception e) {
@@ -312,20 +349,20 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.warning(e.getMessage());
         }
 
-        LOGGER.log(Level.FINE, String.format("Updating item %s as %s", item.getName(), config));
+        LOGGER.log(Level.FINE, format("Updating item %s as %s", item.getName(), config));
         Source streamSource = new StreamSource(new StringReader(config));
         try {
             item.updateByXml(streamSource);
             created = true;
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, String.format("Error writing updated item to file."), e);
+            LOGGER.log(Level.WARNING, format("Error writing updated item to file."), e);
             created = false;
         }
         return created;
     }
 
     private boolean createNewItem(String path, String config) {
-        LOGGER.log(Level.FINE, String.format("Creating item as %s", config));
+        LOGGER.log(Level.FINE, format("Creating item as %s", config));
         boolean created = false;
 
         try {
@@ -337,12 +374,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                 ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
                 created = true;
             } else {
-                LOGGER.log(Level.WARNING, String.format("Could not create item within %s", parent.getClass()));
+                LOGGER.log(Level.WARNING, format("Could not create item within %s", parent.getClass()));
             }
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING, "Unsupported encoding used in config. Should be UTF-8.");
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, String.format("Error writing config for new item %s.", path), e);
+            LOGGER.log(Level.WARNING, format("Error writing config for new item %s.", path), e);
         }
         return created;
     }

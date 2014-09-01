@@ -8,7 +8,10 @@ import hudson.model.Failure
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFile
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
+import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
@@ -209,11 +212,34 @@ class JenkinsJobManagementSpec extends Specification {
         result == 'hello'
     }
 
-    def 'get Maven settings without config files provider plugin'() {
+    def 'get config file id without config files provider plugin'() {
         when:
-        String id = jobManagement.getMavenSettingsId('test')
+        String id = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, 'test')
 
         then:
         id == null
+    }
+
+    def 'create config file without config files provider plugin'() {
+        setup:
+        ConfigFile configFile = Mock(ConfigFile)
+        configFile.name >> 'foo'
+
+        when:
+        jobManagement.createOrUpdateConfigFile(configFile, false)
+
+        then:
+        thrown(DslException)
+    }
+
+    def 'create config file without name'() {
+        setup:
+        ConfigFile configFile = Mock(ConfigFile)
+
+        when:
+        jobManagement.createOrUpdateConfigFile(configFile, false)
+
+        then:
+        thrown(NameNotProvidedException)
     }
 }

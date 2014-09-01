@@ -26,6 +26,7 @@ class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer()
         icz.addStaticStars('javaposse.jobdsl.dsl.JobType')
         icz.addStaticStars('javaposse.jobdsl.dsl.ViewType')
+        icz.addStaticStars('javaposse.jobdsl.dsl.ConfigFileType')
         icz.addStaticStars('javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation')
         config.addCompilationCustomizers(icz)
 
@@ -74,6 +75,7 @@ class DslScriptLoader {
         LOGGER.log(Level.FINE, String.format('Ran script and got back %s', jp))
 
         GeneratedItems generatedItems = new GeneratedItems()
+        generatedItems.configFiles = extractGeneratedConfigFiles(jp, scriptRequest.ignoreExisting)
         generatedItems.jobs = extractGeneratedJobs(jp, scriptRequest.ignoreExisting)
         generatedItems.views = extractGeneratedViews(jp, scriptRequest.ignoreExisting)
 
@@ -107,6 +109,16 @@ class DslScriptLoader {
             generatedViews.add(gv)
         }
         generatedViews
+    }
+
+    private static Set<GeneratedConfigFile> extractGeneratedConfigFiles(JobParent jp, boolean ignoreExisting) {
+        Set<GeneratedConfigFile> generatedConfigFiles = []
+        jp.referencedConfigFiles.each { ConfigFile configFile ->
+            LOGGER.log(Level.FINE, "Saving config file ${configFile.name}")
+            String id = jp.jm.createOrUpdateConfigFile(configFile, ignoreExisting)
+            generatedConfigFiles.add(new GeneratedConfigFile(id, configFile.name))
+        }
+        generatedConfigFiles
     }
 
     static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {

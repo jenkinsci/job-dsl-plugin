@@ -13,11 +13,13 @@ abstract class JobParent extends Script implements DslFactory {
     JobManagement jm
     Set<Item> referencedJobs
     Set<View> referencedViews
+    Set<ConfigFile> referencedConfigFiles
     List<String> queueToBuild
 
     protected JobParent() {
         referencedJobs = Sets.newLinkedHashSet()
         referencedViews = Sets.newLinkedHashSet()
+        referencedConfigFiles = Sets.newLinkedHashSet()
         queueToBuild = Lists.newArrayList()
     }
 
@@ -53,6 +55,16 @@ abstract class JobParent extends Script implements DslFactory {
         folder.with(closure)
         referencedJobs << folder
         folder
+    }
+
+    @Override
+    ConfigFile configFile(Map<String, Object> arguments=[:], Closure closure) {
+        ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
+        ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType)
+        configFile.with(closure)
+        referencedConfigFiles << configFile
+
+        configFile
     }
 
     @Override

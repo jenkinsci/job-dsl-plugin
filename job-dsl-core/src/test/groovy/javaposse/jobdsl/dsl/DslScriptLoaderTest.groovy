@@ -268,4 +268,16 @@ folder {
         jobs.any { it.jobName == 'folder-a' }
         jobs.any { it.jobName == 'folder-b' }
     }
+
+    def 'generate config files'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('configfiles.dsl', null, resourcesDir, false)
+
+        when:
+        List<GeneratedConfigFile> files = DslScriptLoader.runDslEngine(request, jm).configFiles.toList()
+
+        then:
+        files.size() == 1
+        files[0].name == 'foo'
+    }
 }

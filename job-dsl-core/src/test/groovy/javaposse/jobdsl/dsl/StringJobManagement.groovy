@@ -51,6 +51,12 @@ class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+        validateNameArg(configFile.name)
+        UUID.randomUUID().toString()
+    }
+
+    @Override
     Map<String, String> getParameters() {
         params
     }
@@ -94,7 +100,7 @@ class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    String getMavenSettingsId(String settingsName) {
+    String getConfigFileId(ConfigFileType type, String name) {
         null
     }
 }

@@ -85,6 +85,11 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
+        String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+            throw new UnsupportedOperationException()
+        }
+
+        @Override
         void requireMinimumPluginVersion(String pluginShortName, String version) {
             throw new UnsupportedOperationException()
         }
@@ -105,7 +110,7 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
-        String getMavenSettingsId(String settingsName) {
+        String getConfigFileId(ConfigFileType type, String name) {
             null
         }
 

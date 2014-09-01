@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -157,7 +158,7 @@ class MavenHelper extends AbstractHelper implements MavenContext {
     }
 
     def providedSettings(String settingsName) {
-        String settingsId = jobManagement.getMavenSettingsId(settingsName)
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         checkNotNull settingsId, "Managed Maven settings with name '${settingsName}' not found"
 
         execute { Node node ->

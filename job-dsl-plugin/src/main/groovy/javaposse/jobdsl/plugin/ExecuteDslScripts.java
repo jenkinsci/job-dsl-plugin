@@ -15,6 +15,7 @@ import hudson.model.BuildListener;
 import hudson.model.Item;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslScriptLoader;
+import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedView;
@@ -142,7 +143,11 @@ public class ExecuteDslScripts extends Builder {
 
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
-        return asList(new GeneratedJobsAction(project), new GeneratedViewsAction(project));
+        return asList(
+                new GeneratedJobsAction(project),
+                new GeneratedViewsAction(project),
+                new GeneratedConfigFilesAction(project)
+        );
     }
 
     /**
@@ -165,25 +170,25 @@ public class ExecuteDslScripts extends Builder {
 
         Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
         Set<GeneratedView> freshViews = Sets.newLinkedHashSet();
+        Set<GeneratedConfigFile> freshConfigFiles = Sets.newLinkedHashSet();
         for (ScriptRequest request : scriptRequests) {
             LOGGER.log(Level.FINE, String.format("Request for %s", request.getLocation()));
 
             GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
             freshJobs.addAll(generatedItems.getJobs());
             freshViews.addAll(generatedItems.getViews());
+            freshConfigFiles.addAll(generatedItems.getConfigFiles());
         }
 
         updateTemplates(build, listener, freshJobs);
         updateGeneratedJobs(build, listener, freshJobs);
         updateGeneratedViews(build, listener, freshViews);
+        updateGeneratedConfigFiles(build, listener, freshConfigFiles);
 
         // Save onto Builder, which belongs to a Project.
-        GeneratedJobsBuildAction gjba = new GeneratedJobsBuildAction(freshJobs, getLookupStrategy());
-        gjba.getModifiedJobs().addAll(freshJobs); // Relying on Set to keep only unique values
-        build.addAction(gjba);
-        GeneratedViewsBuildAction gvba = new GeneratedViewsBuildAction(freshViews, getLookupStrategy());
-        gvba.getModifiedViews().addAll(freshViews); // Relying on Set to keep only unique values
-        build.addAction(gvba);
+        build.addAction(new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
+        build.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
+        build.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
 
         // Hint that our new jobs might have really shaken things up
         Jenkins.getInstance().rebuildDependencyGraph();
@@ -316,6 +321,27 @@ public class ExecuteDslScripts extends Builder {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedViews();
+        }
+    }
+
+    private void updateGeneratedConfigFiles(AbstractBuild<?, ?> build, BuildListener listener,
+                                            Set<GeneratedConfigFile> freshConfigFiles) {
+        Set<GeneratedConfigFile> generatedConfigFiles = extractGeneratedConfigFiles(build.getProject());
+        Set<GeneratedConfigFile> added = Sets.difference(freshConfigFiles, generatedConfigFiles);
+        Set<GeneratedConfigFile> existing = Sets.intersection(generatedConfigFiles, freshConfigFiles);
+        Set<GeneratedConfigFile> removed = Sets.difference(generatedConfigFiles, freshConfigFiles);
+
+        listener.getLogger().println("Adding config files: " + Joiner.on(",").join(added));
+        listener.getLogger().println("Existing config files: " + Joiner.on(",").join(existing));
+        listener.getLogger().println("Removing config files: " + Joiner.on(",").join(removed));
+    }
+
+    private Set<GeneratedConfigFile> extractGeneratedConfigFiles(AbstractProject<?, ?> project) {
+        GeneratedConfigFilesAction gja = project.getAction(GeneratedConfigFilesAction.class);
+        if (gja == null) {
+            return Sets.newLinkedHashSet();
+        } else {
+            return gja.findLastGeneratedConfigFiles();
         }
     }
 
