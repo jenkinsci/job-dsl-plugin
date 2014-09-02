@@ -3313,6 +3313,72 @@ job {
 
 (since 1.24)
 
+## Flexible publish
+
+```groovy
+job {
+    publishers {
+        flexiblePublish {
+            condition {
+                /* Any run condition closure, see conditionalSteps above. */
+            }
+            publisher {
+                /* Any single publisher closure. */ 
+            }
+            step {
+                /* Any single build step closure. */
+            }
+        }
+    }
+}
+```
+
+Configures a conditional publisher action. Requires the 
+[Flexible publish plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin).
+If the
+[Any build step plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
+is installed, then a build step can be used instead of a publisher. Note that
+in any case, only one build step or one publisher can be given (this is a
+limitation of the jenkins FlexiblePublish publisher).
+
+Examples:
+
+```groovy
+job {
+    publishers {
+        flexiblePublish {
+            condition {
+                status 'ABORTED', 'FAILURE'
+            }
+            publisher {
+               wsCleanup()
+            }
+        }
+    }
+}
+```
+
+```groovy
+job {
+    publishers {
+        flexiblePublish {
+            condition {
+                and {
+                    stringsEqual 'foo', 'bar'
+                } {
+                    status 'SUCCESS'
+                }
+            }
+            step {
+               shell 'echo hello!'
+            }
+        }
+    }
+}
+```
+
+(since 1.24)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_

@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.NodeEnhancement
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -15,8 +16,11 @@ class PublisherContext implements Context {
     @Delegate
     StaticAnalysisPublisherContext staticAnalysisPublisherHelper
 
+    JobManagement jobManagement
+
     PublisherContext(JobManagement jobManagement) {
         staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes, jobManagement)
+        this.jobManagement = jobManagement
     }
 
     /**
@@ -1214,6 +1218,64 @@ class PublisherContext implements Context {
             commitSha1(context.commitSha1)
             includeBuildNumberInKey(context.keepRepeatedBuilds)
         }
+    }
+
+    /**
+     * Configures the FlexiblePublish plugin.
+     *
+     * https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin
+     *
+     * <org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher plugin="flexible-publish@0.12">
+     *   <publishers>
+     *     <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+     *       <condition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun" plugin="run-condition@1.0"/>
+     *       <publisher class="hudson.tasks.ArtifactArchiver">
+     *         <artifacts/>
+     *         <latestOnly>false</latestOnly>
+     *         <allowEmptyArchive>false</allowEmptyArchive>
+     *         <onlyIfSuccessful>false</onlyIfSuccessful>
+     *       </publisher>
+     *       <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+     *     </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+     *   </publishers>
+     * </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
+     */
+    def flexiblePublish(Closure closure = null) {
+	def innerContext = new FlexiblePublisherContext(jobManagement)
+	AbstractContextHelper.executeInContext(closure, innerContext)
+
+        def node = new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+            delegate.publishers {
+                'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+                    /* Who ever wants the condition to do anything other than fail? */
+                    runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
+                }
+            }
+        }
+
+        def conditionNode = new NodeBuilder().condition(class: innerContext.condition.conditionClass) {
+            innerContext.condition.addArgs(delegate)
+        }
+        use (NodeEnhancement) {
+            (node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher') << conditionNode
+        }
+
+	def addAction = { action ->
+	    action.@class = action.name()
+	    action.name = 'publisher'
+            use (NodeEnhancement) {
+	        (node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher') << action
+            }
+	}
+
+        if (innerContext.publisherContext) {
+            innerContext.publisherContext.publisherNodes.each addAction
+        }
+        if (innerContext.stepContext) {
+            innerContext.stepContext.stepNodes.each addAction
+        }
+
+	publisherNodes << node
     }
 
     /**
