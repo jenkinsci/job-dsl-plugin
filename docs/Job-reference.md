@@ -1980,6 +1980,8 @@ conditionalSteps {
 
 See the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin) for details on the run conditions - note that not all run conditions supported by the Run Condition Plugin are supported here yet.
 
+The worstResult and bestResult for status can be any of the following strings:
+"SUCCESS", "UNSTABLE", "FAILURE",  "NOT_BUILT", or "ABORTED".
 The runner can be any one of "Fail", "Unstable", "RunUnstable", "Run", "DontRun".
 
 Examples:
@@ -2015,7 +2017,7 @@ steps {
     conditionalSteps {
         condition {
             and {
-                time("9:00", "13:00", false)
+                status('ABORTED', 'FAILURE')
             } {
                 not {
                    fileExists('script.sh', BaseDir.WORKSPACE)
