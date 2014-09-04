@@ -1908,6 +1908,7 @@ downstreamParameterized(Closure downstreamClosure) {
         predefinedProps(String predefinedProps) // Newline separated
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
+        sameNode() //Run the next job on the same node
      }
 }
 ```
