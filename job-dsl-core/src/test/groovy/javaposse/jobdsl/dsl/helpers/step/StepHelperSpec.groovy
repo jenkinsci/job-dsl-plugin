@@ -1599,6 +1599,26 @@ still-another-dsl.groovy'''
     }
 
     @Unroll
+    def 'Status Condition with invalid arguments'(String worstResult, String bestResult) {
+        when:
+        context.conditionalSteps {
+            condition {
+                status(worstResult, bestResult)
+            }
+            shell('echo something outside')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        worstResult | bestResult
+        'FOO'       | 'SUCCESS'
+        'FAILURE'   | 'BAR'
+        'SUCCESS'   | 'ABORTED'
+    }
+
+    @Unroll
     def 'Method #method should work within Category'(method, parameters) {
         when:
         use(ArbitraryCategory) {

@@ -53,7 +53,7 @@ class RunConditionContext implements Context {
     }
 
     def status(String worstResult, String bestResult) {
-	this.condition = new StatusCondition(worstResult, bestResult ?: worstResult)
+        this.condition = new StatusCondition(worstResult, bestResult)
     }
 
     def shell(String command) {

@@ -17,35 +17,34 @@ import static com.google.common.base.Preconditions.checkArgument
  * </condition>
  */
 class StatusCondition extends SimpleCondition {
-
-    static statuses = [
-        'SUCCESS',
-        'UNSTABLE',
-        'FAILURE',
-        'NOT_BUILT',
-        'ABORTED',
+    private static final STATUSES = [
+            'SUCCESS',
+            'UNSTABLE',
+            'FAILURE',
+            'NOT_BUILT',
+            'ABORTED',
     ]
 
-    final String worstResult
-    final String bestResult
+    final int worstResult
+    final int bestResult
 
     StatusCondition(String worstResult, String bestResult) {
         this.name = 'Status'
-        this.worstResult = worstResult
-        this.bestResult = bestResult
+        this.worstResult = STATUSES.findIndexOf { it == worstResult }
+        this.bestResult = STATUSES.findIndexOf { it == bestResult }
 
-        checkArgument(statuses.contains(worstResult))
-        checkArgument(statuses.contains(bestResult))
-        checkArgument(statuses.findIndexOf { it == worstResult } >= statuses.findIndexOf { it == bestResult })
+        checkArgument(this.worstResult > -1, "worstResult must be one of ${STATUSES.join(',')}")
+        checkArgument(this.bestResult > -1, "bestResult must be one of ${STATUSES.join(',')}")
+        checkArgument(this.worstResult >= this.bestResult, 'worstResult must be equal or worse than bestResult')
     }
 
     @Override
     void addArgs(NodeBuilder builder) {
         builder.worstResult {
-            ordinal statuses.findIndexOf { it == worstResult }
+            ordinal worstResult
         }
         builder.bestResult {
-            ordinal statuses.findIndexOf { it == bestResult }
+            ordinal bestResult
         }
     }
 }
