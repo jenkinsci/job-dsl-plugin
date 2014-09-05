@@ -1313,18 +1313,17 @@ still-another-dsl.groovy'''
 
         where:
         testCondition << [
-                'stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status'
+                'stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time'
         ]
         testConditionArgs << [
                 ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
-                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
-                ['worstResult': 'Success', 'bestResult': 'Success']
+                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false]
         ]
         testConditionClass << [
                 'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
-                'ExpressionCondition', 'TimeCondition', 'StatusCondition'
+                'ExpressionCondition', 'TimeCondition'
         ]
     }
 
@@ -1499,6 +1498,28 @@ still-another-dsl.groovy'''
         condition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
     }
 
+    def 'status condition is added correctly'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                status 'FAILURE', 'SUCCESS'
+            }
+            shell 'echo Test'
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        Node condition = step.condition[0]
+
+        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'
+        condition.children().size() == 2
+
+        condition.worstResult[0].children().size() == 1
+        condition.worstResult[0].ordinal[0].value() == 2
+        condition.bestResult[0].children().size() == 1
+        condition.bestResult[0].ordinal[0].value() == 0
+    }
+
     @Unroll
     def 'Logical Operation #dslOperation is added correctly'(String dslOperation, String operation) {
         when:
@@ -1575,8 +1596,26 @@ still-another-dsl.groovy'''
         'time'             | ['earliest', 'latest', true] | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliest    : 'earliest',
                                                                                                                                      latest      : 'latest',
                                                                                                                                      useBuildTime: 'true']
-        'status'           | ['FAILED', 'STABLE']         | 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'           | [worstResult: 'FAILED',
-                                                                                                                                     bestResult : 'STABLE']
+    }
+
+    @Unroll
+    def 'Status Condition with invalid arguments'(String worstResult, String bestResult) {
+        when:
+        context.conditionalSteps {
+            condition {
+                status(worstResult, bestResult)
+            }
+            shell('echo something outside')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        worstResult | bestResult
+        'FOO'       | 'SUCCESS'
+        'FAILURE'   | 'BAR'
+        'SUCCESS'   | 'ABORTED'
     }
 
     @Unroll

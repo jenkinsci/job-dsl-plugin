@@ -10,6 +10,7 @@ import javaposse.jobdsl.dsl.helpers.step.condition.NotCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.StatusCondition
 
 class RunConditionContext implements Context {
 
@@ -52,9 +53,7 @@ class RunConditionContext implements Context {
     }
 
     def status(String worstResult, String bestResult) {
-        this.condition = new SimpleCondition(
-                name: 'Status',
-                args: ['worstResult': worstResult, 'bestResult': bestResult])
+        this.condition = new StatusCondition(worstResult, bestResult)
     }
 
     def shell(String command) {
