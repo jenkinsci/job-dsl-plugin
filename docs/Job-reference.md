@@ -512,6 +512,8 @@ The Git plugin has a lot of configurable options, which are currently not all su
 
 Version 2.0 or later of the Git Plugin is required to use Jenkins managed credentials for Git authentication. The arguments for the credentials method is the description field or the UUID generated from Jenkins | Manage Jenkins | Manage Credentials. The easiest way to find this value, is to navigate Jenkins | Credentials | Global credentials | (Key Name). Then look at the description in parenthesis or using the UUID in the URL.
 
+When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch.
+
 Examples:
 
 ```groovy
