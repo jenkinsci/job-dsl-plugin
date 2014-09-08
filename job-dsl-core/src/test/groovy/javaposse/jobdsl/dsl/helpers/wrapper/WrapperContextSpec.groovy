@@ -72,9 +72,9 @@ class WrapperContextSpec extends Specification {
         then:
         then:
         def rootObject = root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0]
-        rootObject.'@ruby-class' == "Jenkins::Tasks::BuildWrapperProxy"
+        rootObject.'@ruby-class' == 'Jenkins::Tasks::BuildWrapperProxy'
         rootObject.'@pluginid' == 'rbenv'
-        rootObject.'pluginid'[0].'@ruby-class' == "String"
+        rootObject.'pluginid'[0].'@ruby-class' == 'String'
         rootObject.'pluginid'[0].'@pluginid' == 'rbenv'
 
         def rootRbenvObject = rootObject.object[0]
