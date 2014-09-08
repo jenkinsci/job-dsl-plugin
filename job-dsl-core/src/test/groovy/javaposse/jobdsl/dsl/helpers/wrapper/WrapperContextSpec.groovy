@@ -62,6 +62,54 @@ class WrapperContextSpec extends Specification {
         root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].gem__list[0].value() == ''
     }
 
+    def 'test rbenv xml structure and attributes'() {
+        when:
+        helper.wrappers {
+            rbenv('2.1.2')
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        then:
+        def rootObject = root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0]
+        rootObject.'@ruby-class' == "Jenkins::Tasks::BuildWrapperProxy"
+        rootObject.'@pluginid' == 'rbenv'
+        rootObject.'pluginid'[0].'@ruby-class' == "String"
+        rootObject.'pluginid'[0].'@pluginid' == 'rbenv'
+
+        def rootRbenvObject = rootObject.object[0]
+        rootRbenvObject.version[0].value() == '2.1.2'
+        rootRbenvObject.version[0].'@pluginid' == 'rbenv'
+        rootRbenvObject.version[0].'@ruby-class' == 'String'
+
+        rootRbenvObject.gem__list[0].value() == ''
+        rootRbenvObject.gem__list[0].'@pluginid' == 'rbenv'
+        rootRbenvObject.gem__list[0].'@ruby-class' == 'String'
+
+        rootRbenvObject.rbenv_root[0].value() == '$HOME/.rbenv'
+        rootRbenvObject.rbenv_root[0].'@pluginid' == 'rbenv'
+        rootRbenvObject.rbenv_root[0].'@ruby-class' == 'String'
+
+        rootRbenvObject.ruby__build__repository[0].value() == 'https://github.com/sstephenson/ruby-build.git'
+        rootRbenvObject.ruby__build__repository[0].'@pluginid' == 'rbenv'
+        rootRbenvObject.ruby__build__repository[0].'@ruby-class' == 'String'
+
+        rootRbenvObject.rbenv__revision[0].value() == 'master'
+        rootRbenvObject.rbenv__revision[0].'@pluginid' == 'rbenv'
+        rootRbenvObject.rbenv__revision[0].'@ruby-class' == 'String'
+
+        rootRbenvObject.rbenv__repository[0].value() == 'https://github.com/sstephenson/rbenv.git'
+        rootRbenvObject.rbenv__repository[0].'@pluginid' == 'rbenv'
+        rootRbenvObject.rbenv__repository[0].'@ruby-class' == 'String'
+
+        rootRbenvObject.ruby__build__revision[0].value() == 'master'
+        rootRbenvObject.ruby__build__revision[0].'@pluginid' == 'rbenv'
+        rootRbenvObject.ruby__build__revision[0].'@ruby-class' == 'String'
+
+        rootRbenvObject.ignore__local__version[0].'@ruby-class' == 'FalseClass'
+        rootRbenvObject.ignore__local__version[0].'@pluginid' == 'rbenv'
+    }
+
     def 'add rbenv-controlled override defaults'() {
         when:
         helper.wrappers {
