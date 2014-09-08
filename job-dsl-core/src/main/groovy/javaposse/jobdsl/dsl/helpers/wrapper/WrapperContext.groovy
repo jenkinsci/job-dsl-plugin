@@ -83,8 +83,8 @@ class WrapperContext implements Context {
         }
 
         wrapperNodes << nodeBuilder.'ruby-proxy-object' {
-            'ruby-object'('ruby-class': 'Jenkins::Plugin::Proxies::BuildWrapper', pluginid: 'rbenv') {
-                pluginid('rvm', [pluginid: 'rbenv', 'ruby-class': 'String'])
+            'ruby-object'('ruby-class': 'Jenkins::Tasks::BuildWrapperProxy', pluginid: 'rbenv') {
+                pluginid('rbenv', [pluginid: 'rbenv', 'ruby-class': 'String'])
                 object('ruby-class': 'RbenvWrapper', pluginid: 'rbenv') {
                     version(rubyVersion, [pluginid: 'rbenv', 'ruby-class': 'String'])
                     rbenv_root(rbenvContext.root, [pluginid: 'rbenv', 'ruby-class': 'String'])
