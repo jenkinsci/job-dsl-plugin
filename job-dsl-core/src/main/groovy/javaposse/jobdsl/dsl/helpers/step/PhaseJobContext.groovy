@@ -21,6 +21,8 @@ class PhaseJobContext implements Context {
     String matrixFilter
     Boolean subversionRevision
     Boolean gitRevision
+    String nodeLabelParam
+    String nodeLabel
     def props = []
     boolean disableJob = false
     String killPhaseCondition = 'FAILURE'
@@ -90,13 +92,20 @@ class PhaseJobContext implements Context {
         paramTrigger.predefinedProps(map)
     }
 
+    def nodeLabel(String paramName, String nodeLabel)  {
+        Preconditions.checkState(!this.nodeLabelParam, "nodeLabel parameter already set with ${this.nodeLabelParam}")
+        this.nodeLabelParam = paramName
+        this.nodeLabel = nodeLabel
+        paramTrigger.nodeLabel(paramName, nodeLabel)
+    }
+
     def configAsNode() {
         paramTrigger.createParametersNode()
     }
 
     def hasConfig() {
         !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null ||
-                gitRevision != null || !props.isEmpty()
+                gitRevision != null || !props.isEmpty() || nodeLabelParam
     }
 
     def disableJob(boolean disableJob = true) {

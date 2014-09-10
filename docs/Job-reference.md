@@ -1854,6 +1854,7 @@ job(type: Multijob) {
                 props(Map<String, String> map)
                 disableJob(boolean exposedScm = true) // since 1.25
                 killPhaseCondition(String killPhaseCondition) // since 1.25
+                nodeLabel(String paramName, String nodeLabel)
             }
         }
     }
@@ -1890,6 +1891,7 @@ job(type: Multijob) {
                 subversionRevision()
                 gitRevision()
                 prop('prop1', 'value1')
+                nodeLabel('lParam', 'my_nodes')
             }
         }
    }
@@ -2030,6 +2032,7 @@ downstreamParameterized(Closure downstreamClosure) {
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
         sameNode() //Run the next job on the same node
+        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
      }
 }
 ```
@@ -2064,6 +2067,7 @@ steps {
             predefinedProps('key4=value4\nkey5=value5') // Newline separated
             matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
             subversionRevision() // Subversion Revision
+            nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
         }
         trigger('Project2') {
             currentBuild()
@@ -2453,6 +2457,7 @@ downstreamParameterized(Closure downstreamClosure) {
         predefinedProps(String predefinedProps) // Newline separated
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
+        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
      }
 }
 ```
@@ -2476,6 +2481,7 @@ publishers {
             predefinedProps('key4=value4\nkey5=value5') // Newline separated
             matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
             subversionRevision() // Subversion Revision
+            nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
         }
         trigger('Project2') {
             currentBuild()
@@ -3067,6 +3073,7 @@ job {
                 predefinedProps(String predefinedProps)
                 matrixSubset(String groovyFilter)
                 subversionRevision()
+                nodeLabel(String paramName, String nodeLabel) // Limit to node label selection
             }
         }
     }
@@ -3652,4 +3659,45 @@ textParam("myParameterName", "my default textParam value")
 Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
+```
+
+## Node parameter
+
+```groovy
+job {
+    parameters {
+        nodeParam(String name, List<String> allowedSlaves, String description = '') {
+            // The collection of default slaves on which this can be run. Defaults to all allowedSlaves.
+            defaultSlaves(List<String> defaultSlaves)
+            // trigger must be one of 'allCases', 'success', 'unstable', 'allowMultiSelectionForConcurrentBuilds', or 'multiSelectionDisallowed'.
+            // Defaults to allCases if not specified
+	    trigger(String trigger)
+            // eligibility options must be one of 'AllNodeEligibility', 'IgnoreOfflineNodeEligibility', 'IgnoreTempOfflineNodeEligibility'.
+            // Defaults to AllNodeEligibility if not specified.
+            eligibility(String eligibility)
+        }
+    }
+}
+```
+
+nodeParam has two usages: the simple usage (with no closure, using the default) and the extended usage (with a closure defining trigger, defaultSlaves, or eligibility)
+
+### Simple usage
+
+Simplest usage In this case `defaultSlaves` is `['node1', 'node2']`, `description` is empty,
+`trigger` is `multiSelectionDisallowed`, and `eligibility` is
+`AllNodeElegibility`
+Usage
+```groovy
+nodeParam("myParameterName", ['node1', 'node2'])
+```
+### Complex usage
+
+Usage
+```groovy
+nodeParam("myParameterName", ['node1', 'node2', 'node3'], 'my_description') {
+    defaultSlaves(['node1'])
+    trigger 'multiSelectionDisallowed'
+    eligibility 'IgnoreOfflineNodeEligibility'
+}
 ```

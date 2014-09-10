@@ -196,6 +196,68 @@ class BuildParametersContext implements Context {
     }
 
     /**
+    * <project>
+    *   <properties>
+    *       <hudson.model.ParametersDefinitionProperty>
+    *           <parameterDefinitions>
+    *           <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+    *             <name></name>
+    *             <description></description>
+    *             <allowedSlaves>
+    *                 <string>nodeName</string>
+    *             </allowedSlaves>
+    *             <defaultSlaves>
+    *                 <string>nodeName</string>
+    *             </defaultSlaves>
+    *             <triggerIfResult>allCases</triggerIfResult>
+    *             <allowMultiNodeSelection>true</allowMultiNodeSelection>
+    *             <triggerConcurrentBuilds>false</triggerConcurrentBuilds>
+    *             <ignoreOfflineNodes>false</ignoreOfflineNodes>
+    *             <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+    *           </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+    *
+    * @param parameterName
+    * @param allowedNodes
+    * @param defaultNodes (optional)
+    * @param description (optional)
+    * @param trigger (one of allCases, success, unstable,
+    *                 allowMultiSelectionForConcurrentBuilds, or
+    *                 multiSelectionDisallowed)
+    * @param eligibility (one of AllNodeEligibility, IgnoreOfflineNodeEligibility, IgnoreTempOfflineNodeEligibility)
+    * @return
+    */
+    def nodeParam(String parameterName, List<String> allowedNodes, String description = '',
+        Closure nodeParamClosure = null) {
+        checkArgument(!buildParameterNodes.containsKey(parameterName),
+            'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+        checkNotNull(allowedNodes, 'allowedNodes cannot be null')
+        checkArgument(allowedNodes.size() > 0)
+
+        NodeParamContext context = new NodeParamContext(allowedNodes)
+        AbstractContextHelper.executeInContext(nodeParamClosure, context)
+
+        buildParameterNodes[parameterName] = NodeBuilder.newInstance().
+            'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition' {
+            nodeEligibility(class: "org.jvnet.jenkins.plugins.nodelabelparameter.node.${context.pEligibility}")
+            allowedSlaves {
+                allowedNodes.each { delegate.string it }
+            }
+            defaultSlaves {
+                context.pDefaultNodes.each { delegate.string it }
+            }
+            name parameterName
+            delegate.description description
+            allowMultiNodeSelection context.pAllowMultiNodeSelection
+            triggerConcurrentBuilds context.pTriggerConcurrentBuilds
+            // Its unclear why this parameter is always false.
+            ignoreOfflineNodes 'false'
+            triggerIfResult context.pTrigger
+        }
+    }
+
+    /**
      * <project>
      *     <properties>
      *         <hudson.model.ParametersDefinitionProperty>

@@ -101,6 +101,7 @@ job(Map<String, ?> arguments = [:]) {
                     String description = null)
         textParam(String parameterName, String defaultValue = null,
                   String description = null)
+        nodeParam(parameterName, allowedSlaves, description, Closure closure) // See [[Job Reference]] for more detail
     }
     scm {
         baseClearCase(Closure closure) // since 1.24
