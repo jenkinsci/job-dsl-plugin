@@ -17,6 +17,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.26 (unreleased)
+ * Allow to merge more than one branch with Git SCM
 * 1.25 (September 01 2014)
  * Dropped support for Java 5, Java 6 or later is required at runtime
  * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)

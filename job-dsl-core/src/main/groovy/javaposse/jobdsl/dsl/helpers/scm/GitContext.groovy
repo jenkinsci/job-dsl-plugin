@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.Context
@@ -24,6 +25,7 @@ class GitContext implements Context {
     Closure withXmlClosure
     Node browser
     Node mergeOptions
+    List<Node> extensions = []
 
     GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
         this.jobManagement = jobManagement
@@ -53,9 +55,19 @@ class GitContext implements Context {
     }
 
     void mergeOptions(String remote = null, String branch) {
-        mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
-            mergeRemote(remote ?: '')
-            mergeTarget(branch)
+        if (jobManagement.getPluginVersion('git-plugin')?.isOlderThan(new VersionNumber('2.0.0'))) {
+            mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
+                mergeRemote(remote ?: '')
+                mergeTarget(branch)
+            }
+        } else {
+            extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.PreBuildMerge' {
+                options {
+                    mergeRemote(remote ?: '')
+                    mergeTarget(branch)
+                    mergeStrategy('default')
+                }
+            }
         }
     }
 

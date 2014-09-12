@@ -160,6 +160,9 @@ class ScmContext implements Context {
             if (gitContext.shallowClone) {
                 useShallowClone gitContext.shallowClone
             }
+            if (gitContext.extensions) {
+                extensions gitContext.extensions
+            }
         }
 
         if (gitContext.browser) {
