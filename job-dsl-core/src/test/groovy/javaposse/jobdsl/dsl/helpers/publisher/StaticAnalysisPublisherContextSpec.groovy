@@ -198,6 +198,92 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
     }
 
+    def 'add analysis collector with default values'() {
+        when:
+        context.analysisCollector()
+
+        then:
+        context.publisherNodes.size() == 1
+        def analysisCollectorNode = context.publisherNodes[0]
+        assertValues(
+                analysisCollectorNode,
+                healthy: null,
+                unHealthy: null,
+                thresholdLimit: 'low',
+                defaultEncoding: '',
+                canRunOnFailed: false,
+                useStableBuildAsReference: false,
+                useDeltaValues: false,
+                shouldDetectModules: false,
+                dontComputeNew: true,
+                doNotResolveRelativePaths: true,
+                thresholds: [],
+                isCheckStyleDeactivated: true,
+                isDryDeactivated: true,
+                isFindBugsDeactivated: true,
+                isPmdDeactivated: true,
+                isOpenTasksDeactivated: true,
+                isWarningsDeactivated: true
+        )
+    }
+
+    def 'add analysis collector with all values'() {
+        when:
+        context.analysisCollector {
+            healthLimits 3, 20
+            thresholdLimit 'high'
+            defaultEncoding 'UTF-8'
+            canRunOnFailed true
+            useStableBuildAsReference true
+            useDeltaValues true
+            shouldDetectModules true
+            thresholds(
+                    unstableTotal: [all: 1, high: 2, normal: 3, low: 4],
+                    failedTotal: [all: 5, high: 6, normal: 7, low: 8],
+                    unstableNew: [all: 9, high: 10, normal: 11, low: 12],
+                    failedNew: [all: 13, high: 14, normal: 15, low: 16]
+            )
+            checkstyle true
+            dry true
+            findbugs true
+            pmd true
+            tasks true
+            warnings true
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        def analysisCollectorNode = context.publisherNodes[0]
+        analysisCollectorNode.name() == 'hudson.plugins.analysis.collector.AnalysisPublisher'
+        assertValues(
+                analysisCollectorNode,
+                ['thresholds'],
+                healthy: 3,
+                unHealthy: 20,
+                thresholdLimit: 'high',
+                defaultEncoding: 'UTF-8',
+                canRunOnFailed: true,
+                useStableBuildAsReference: true,
+                useDeltaValues: true,
+                shouldDetectModules: true,
+                dontComputeNew: false,
+                doNotResolveRelativePaths: true,
+                isCheckStyleDeactivated: false,
+                isDryDeactivated: false,
+                isFindBugsDeactivated: false,
+                isPmdDeactivated: false,
+                isOpenTasksDeactivated: false,
+                isWarningsDeactivated: false,
+        )
+        assertValues(
+                analysisCollectorNode.thresholds,
+                unstableTotalAll: 1, unstableTotalHigh: 2, unstableTotalNormal: 3, unstableTotalLow: 4,
+                failedTotalAll: 5, failedTotalHigh: 6, failedTotalNormal: 7, failedTotalLow: 8,
+                unstableNewAll: 9, unstableNewHigh: 10, unstableNewNormal: 11, unstableNewLow: 12,
+                failedNewAll: 13, failedNewHigh: 14, failedNewNormal: 15, failedNewLow: 16,
+        )
+    }
+
     private static void assertValues(Map map, baseNode, List notCheckedNodes = [], Map extraNodes = [:]) {
         (map + extraNodes).each { String key, expectedValue ->
             def nodeList = baseNode[key]

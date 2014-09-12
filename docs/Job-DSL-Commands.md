@@ -206,6 +206,7 @@ job(Map<String, ?> arguments = [:]) {
         aggregateDownstreamTestResults(String jobs = null, 
                                        boolean includeFailedBuilds = false) // since 1.19
         allowBrokenBuildClaiming()
+        analysisCollector(Closure analysisCollectorClosure = null) // since 1.26
         androidLint(String pattern, Closure staticAnalysisClosure = null)
         archiveArtifacts(String glob, String excludeGlob = null,
                          boolean latestOnlyBoolean = false)

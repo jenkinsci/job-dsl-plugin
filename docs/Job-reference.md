@@ -2633,6 +2633,36 @@ Moreover, the warningsClosure takes, additional to all the options from the stat
 
 Requires version 4.0 or later of the [Warnings Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Warnings+Plugin).
 
+### [Analysis Collector](https://wiki.jenkins-ci.org/display/JENKINS/Analysis+Collector+Plugin)
+
+The analysisCollectorClosure takes, additional to all the options from the staticAnalysisClosure, the following options:
+* checkstyle,  defaults to false
+* dry, defaults to false
+* findbugs, defaults to false
+* pmd, defaults to false
+* tasks, defaults to false
+* warnings, defaults to false
+
+```groovy
+job {
+    publishers {
+        analysisCollector {
+            checkstyle()
+            dry()
+            findbugs()
+            pmd()
+            tasks()
+            warnings()
+            thresholds(
+                unstableTotal: [all: 1, high: 2, normal: 3, low: 4]
+            )
+        }
+    }
+}
+```
+
+(since 1.26)
+
 ## Text Finder
 
 Searches for keywords in files or the console log and uses that to downgrade a build to be unstable or a failure. Requires the [Text Finder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin).
