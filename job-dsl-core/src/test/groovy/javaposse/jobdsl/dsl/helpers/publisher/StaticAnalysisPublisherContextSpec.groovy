@@ -205,7 +205,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         def analysisCollectorNode = context.publisherNodes[0]
-        assertValues(analysisCollectorNode,
+        assertValues(
+                analysisCollectorNode,
                 healthy: null,
                 unHealthy: null,
                 thresholdLimit: 'low',
@@ -254,7 +255,9 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         def analysisCollectorNode = context.publisherNodes[0]
         analysisCollectorNode.name() == 'hudson.plugins.analysis.collector.AnalysisPublisher'
-        assertValues(analysisCollectorNode, ['thresholds'],
+        assertValues(
+                analysisCollectorNode,
+                ['thresholds'],
                 healthy: 3,
                 unHealthy: 20,
                 thresholdLimit: 'high',
@@ -270,14 +273,14 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 isFindBugsDeactivated: false,
                 isPmdDeactivated: false,
                 isOpenTasksDeactivated: false,
-                isWarningsDeactivated: false
+                isWarningsDeactivated: false,
         )
-        def thresholds = analysisCollectorNode.thresholds
-        assertValues(thresholds,
+        assertValues(
+                analysisCollectorNode.thresholds,
                 unstableTotalAll: 1, unstableTotalHigh: 2, unstableTotalNormal: 3, unstableTotalLow: 4,
                 failedTotalAll: 5, failedTotalHigh: 6, failedTotalNormal: 7, failedTotalLow: 8,
                 unstableNewAll: 9, unstableNewHigh: 10, unstableNewNormal: 11, unstableNewLow: 12,
-                failedNewAll: 13, failedNewHigh: 14, failedNewNormal: 15, failedNewLow: 16
+                failedNewAll: 13, failedNewHigh: 14, failedNewNormal: 15, failedNewLow: 16,
         )
     }
 

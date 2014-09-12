@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 class AnalysisCollectorContext extends StaticAnalysisContext {
-
     boolean includeCheckstyle = false
     boolean includeDry = false
     boolean includeFindbugs = false
@@ -9,27 +8,27 @@ class AnalysisCollectorContext extends StaticAnalysisContext {
     boolean includeTasks = false
     boolean includeWarnings = false
 
-    def checkstyle(boolean includeCheckstyle = false) {
+    def checkstyle(boolean includeCheckstyle = true) {
         this.includeCheckstyle = includeCheckstyle
     }
 
-    def dry(boolean includeDry = false) {
+    def dry(boolean includeDry = true) {
         this.includeDry = includeDry
     }
 
-    def findbugs(boolean includeFindbugs = false) {
+    def findbugs(boolean includeFindbugs = true) {
         this.includeFindbugs = includeFindbugs
     }
 
-    def pmd(boolean includePmd = false) {
+    def pmd(boolean includePmd = true) {
         this.includePmd = includePmd
     }
 
-    def tasks(boolean includeTasks = false) {
+    def tasks(boolean includeTasks = true) {
         this.includeTasks = includeTasks
     }
 
-    def warnings(boolean includeWarnings = false) {
+    def warnings(boolean includeWarnings = true) {
         this.includeWarnings = includeWarnings
     }
 }

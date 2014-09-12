@@ -308,41 +308,37 @@ class StaticAnalysisPublisherContext {
     }
 
     /**
-     * Configures the Analysis Collector Publisher
+     * Configures the Analysis Collector Publisher.
      *
-     * <pre>
-     * {@code
      * <hudson.plugins.analysis.collector.AnalysisPublisher>
-     *   <healthy/>
-     *   <unHealthy/>
-     *   <thresholdLimit>low</thresholdLimit>
-     *   <pluginName>[ANALYSIS-COLLECTOR]</pluginName>
-     *   <defaultEncoding/>
-     *   <canRunOnFailed>false</canRunOnFailed>
-     *   <useStableBuildAsReference>false</useStableBuildAsReference>
-     *   <useDeltaValues>false</useDeltaValues>
-     *   <thresholds plugin="analysis-core@1.57">
-     *     <unstableTotalAll/>
-     *     <unstableTotalHigh/>
-     *     <unstableTotalNormal/>
-     *     <unstableTotalLow/>
-     *     <failedTotalAll/>
-     *     <failedTotalHigh/>
-     *     <failedTotalNormal/>
-     *     <failedTotalLow/>
-     *   </thresholds>
-     *   <shouldDetectModules>false</shouldDetectModules>
-     *   <dontComputeNew>true</dontComputeNew>
-     *   <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
-     *   <isCheckStyleDeactivated>false</isCheckStyleDeactivated>
-     *   <isDryDeactivated>true</isDryDeactivated>
-     *   <isFindBugsDeactivated>false</isFindBugsDeactivated>
-     *   <isPmdDeactivated>false</isPmdDeactivated>
-     *   <isOpenTasksDeactivated>true</isOpenTasksDeactivated>
-     *   <isWarningsDeactivated>true</isWarningsDeactivated>
+     *     <healthy/>
+     *     <unHealthy/>
+     *     <thresholdLimit>low</thresholdLimit>
+     *     <pluginName>[ANALYSIS-COLLECTOR]</pluginName>
+     *     <defaultEncoding/>
+     *     <canRunOnFailed>false</canRunOnFailed>
+     *     <useStableBuildAsReference>false</useStableBuildAsReference>
+     *     <useDeltaValues>false</useDeltaValues>
+     *     <thresholds>
+     *         <unstableTotalAll/>
+     *         <unstableTotalHigh/>
+     *         <unstableTotalNormal/>
+     *         <unstableTotalLow/>
+     *         <failedTotalAll/>
+     *         <failedTotalHigh/>
+     *         <failedTotalNormal/>
+     *         <failedTotalLow/>
+     *     </thresholds>
+     *     <shouldDetectModules>false</shouldDetectModules>
+     *     <dontComputeNew>true</dontComputeNew>
+     *     <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *     <isCheckStyleDeactivated>false</isCheckStyleDeactivated>
+     *     <isDryDeactivated>true</isDryDeactivated>
+     *     <isFindBugsDeactivated>false</isFindBugsDeactivated>
+     *     <isPmdDeactivated>false</isPmdDeactivated>
+     *     <isOpenTasksDeactivated>true</isOpenTasksDeactivated>
+     *     <isWarningsDeactivated>true</isWarningsDeactivated>
      * </hudson.plugins.analysis.collector.AnalysisPublisher>
-     * }
-     * </pre
      */
     def analysisCollector(Closure analysisCollectorClosure = null) {
         AnalysisCollectorContext analysisCollectorContext = new AnalysisCollectorContext()
