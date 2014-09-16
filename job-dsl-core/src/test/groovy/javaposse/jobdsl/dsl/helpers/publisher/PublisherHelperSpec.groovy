@@ -2574,4 +2574,80 @@ class PublisherHelperSpec extends Specification {
         rundeckNode.shouldWaitForRundeckJob[0].value() == false
         rundeckNode.shouldFailTheBuild[0].value() == false
     }
+
+    def 'call s3 with minimal options'() {
+        when:
+        context.s3 {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.s3.S3BucketPublisher'
+    }
+
+    def 'call s3 with some options'() {
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar')
+            metadata('key', 'value')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.s3.S3BucketPublisher'
+            profileName[0].value() == 'profile'
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 1
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                sourceFile[0].value() == 'foo'
+                bucket[0].value() == 'bar'
+            }
+            userMetadata.size() == 1
+            userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
+            with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                key[0].value() == 'key'
+                value[0].value() == 'value'
+            }
+        }
+    }
+
+    def 'call s3 with more options'() {
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar')
+            entry('bar', 'baz') {
+                noUploadOnFailure(true)
+                uploadFromSlave(true)
+                managedArtifacts(true)
+            }
+            metadata('key', 'value')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.s3.S3BucketPublisher'
+            profileName[0].value() == 'profile'
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 2
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                sourceFile[0].value() == 'foo'
+                bucket[0].value() == 'bar'
+            }
+            with(entries[0].'hudson.plugins.s3.Entry'[1]) {
+                sourceFile[0].value() == 'bar'
+                bucket[0].value() == 'baz'
+                noUploadOnFailure[0].value() == true
+                uploadFromSlave[0].value() == true
+                managedArtifacts[0].value() == true
+            }
+            userMetadata.size() == 1
+            userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
+            with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                key[0].value() == 'key'
+                value[0].value() == 'value'
+            }
+        }
+    }
 }

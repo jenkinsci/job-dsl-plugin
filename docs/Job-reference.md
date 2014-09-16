@@ -3461,3 +3461,25 @@ Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
 ```
+
+## S3
+```groovy
+s3(String profile) {
+    // since 1.26
+    entry(String source, String bucket) {
+        noUploadOnFailure(Boolean noUploadOnFailure = true)
+        uploadFromSlave(Boolean uploadFromSlave = true)
+        managedArtifacts(Boolean managedArtifacts = true)
+    }
+
+    metadata(String key, String value)
+}
+```
+
+Adds a S3 bucket publisher. Requires the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin).
+
+```groovy
+s3('myProfile') {
+    entry('foo', 'bar')
+}
+```

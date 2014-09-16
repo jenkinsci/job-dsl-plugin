@@ -1306,4 +1306,42 @@ class PublisherContext implements Context {
             shouldFailTheBuild rundeckContext.shouldFailTheBuild
         }
     }
+
+    /**
+     * <publishers>
+     *     <hudson.plugins.s3.S3BucketPublisher>
+     *         <profileName>profile</profileName>
+     *         <entries>
+     *             <hudson.plugins.s3.Entry>
+     *                 <bucket>b</bucket>
+     *                 <sourceFile>a</sourceFile>
+     *                 <noUploadOnFailure>true</noUploadOnFailure>
+     *                 <uploadFromSlave>true</uploadFromSlave>
+     *                 <managedArtifacts>true</managedArtifacts>
+     *             </hudson.plugins.s3.Entry>
+     *         </entries>
+     *         <userMetadata>
+     *             <hudson.plugins.s3.MetadataPair>
+     *                 <key>foo</key>
+     *                 <value>bar</value>
+     *             </hudson.plugins.s3.MetadataPair>
+     *         </userMetadata>
+     *     </hudson.plugins.s3.S3BucketPublisher>
+     * </publisher>
+     */
+    def s3(Closure s3PublisherClosure = null) {
+        s3(null, s3PublisherClosure)
+    }
+
+    def s3(String profile, Closure s3PublisherClosure = null) {
+        S3BucketPublisherContext context = new S3BucketPublisherContext()
+        context.profile = profile
+        AbstractContextHelper.executeInContext(s3PublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.s3.S3BucketPublisher' {
+            profileName context.profile
+            entries context.entries
+            userMetadata context.metadata
+        }
+    }
 }
