@@ -71,6 +71,11 @@ project(':job-dsl-core') {
         classifier = 'sources'
     }
 
+    task jarTests(type: Jar) {
+        from sourceSets.test.allSource
+        classifier = 'sources'
+    }
+
     task jarJavadocs(type: Jar, dependsOn: 'javadoc') {
         from project.javadoc.destinationDir
         classifier = 'javadoc'
@@ -89,6 +94,7 @@ project(':job-dsl-core') {
         archives jarJavadocs
         archives jarGroovydocs
         archives jarSources
+        archives jarTests
         archives oneJar
     }
 
