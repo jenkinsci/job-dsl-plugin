@@ -3319,27 +3319,21 @@ job {
 job {
     publishers {
         flexiblePublish {
-            condition {
-                /* Any run condition closure, see conditionalSteps above. */
-            }
-            publisher {
-                /* Any single publisher closure. */ 
-            }
-            step {
-                /* Any single build step closure. */
-            }
+            condition(Closure runConditionClosure) // any run condition closure, see conditionalSteps above
+            publisher(Closure publishersClosure)   // publishers closure containing a single publisher
+            step(Closure stepsClosure)             // steps closure containing a single build step
         }
     }
 }
 ```
 
-Configures a conditional publisher action. Requires the 
-[Flexible publish plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin).
+Configures a conditional publisher action. Requires the
+[Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin).
 If the
-[Any build step plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
+[Any Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
 is installed, then a build step can be used instead of a publisher. Note that
 in any case, only one build step or one publisher can be given (this is a
-limitation of the jenkins FlexiblePublish publisher).
+limitation of the Flexible Publish Plugin).
 
 Examples:
 
@@ -3348,10 +3342,10 @@ job {
     publishers {
         flexiblePublish {
             condition {
-                status 'ABORTED', 'FAILURE'
+                status('ABORTED', 'FAILURE')
             }
             publisher {
-               wsCleanup()
+                wsCleanup()
             }
         }
     }
@@ -3364,20 +3358,20 @@ job {
         flexiblePublish {
             condition {
                 and {
-                    stringsEqual 'foo', 'bar'
+                    stringsMatch('foo', 'bar')
                 } {
-                    status 'SUCCESS'
+                    status('SUCCESS', 'SUCCESS')
                 }
             }
             step {
-               shell 'echo hello!'
+                shell('echo hello!')
             }
         }
     }
 }
 ```
 
-(since 1.24)
+(since 1.26)
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**

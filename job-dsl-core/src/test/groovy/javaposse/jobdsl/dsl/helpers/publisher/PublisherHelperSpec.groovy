@@ -2579,7 +2579,7 @@ class PublisherHelperSpec extends Specification {
         when:
         context.flexiblePublish {
             condition {
-                stringsMatch 'foo', 'bar', false
+                stringsMatch('foo', 'bar', false)
             }
             publisher {
                 mailer('test@test.com')
@@ -2587,26 +2587,28 @@ class PublisherHelperSpec extends Specification {
         }
 
         then:
-        Node fpn = context.publisherNodes[0]
-        fpn.name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
-        fpn.children().size() == 1
-        fpn.publishers[0].children().size == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
 
-        Node cpn = fpn.publishers[0].children()[0]
-        cpn.name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
-        cpn.condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
-        cpn.condition[0].arg1[0].value() == 'foo'
-        cpn.condition[0].arg2[0].value() == 'bar'
-        cpn.condition[0].ignoreCase[0].value() == 'false'
-        cpn.publisher[0].attribute('class') == 'hudson.tasks.Mailer'
-        cpn.publisher[0].recipients[0].value() == 'test@test.com'
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.tasks.Mailer'
+                publisher[0].recipients[0].value() == 'test@test.com'
+            }
+        }
     }
 
     def 'call flexible publish with build step'() {
         when:
         context.flexiblePublish {
             condition {
-                stringsMatch 'foo', 'bar', false
+                stringsMatch('foo', 'bar', false)
             }
             step {
                 shell('echo hello')
@@ -2614,18 +2616,53 @@ class PublisherHelperSpec extends Specification {
         }
 
         then:
-        Node fpn = context.publisherNodes[0]
-        fpn.name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
-        fpn.children().size() == 1
-        fpn.publishers[0].children().size == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
 
-        Node cpn = fpn.publishers[0].children()[0]
-        cpn.name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
-        cpn.condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
-        cpn.condition[0].arg1[0].value() == 'foo'
-        cpn.condition[0].arg2[0].value() == 'bar'
-        cpn.condition[0].ignoreCase[0].value() == 'false'
-        cpn.publisher[0].attribute('class') == 'hudson.tasks.Shell'
-        cpn.publisher[0].command[0].value() == 'echo hello'
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.tasks.Shell'
+                publisher[0].command[0].value() == 'echo hello'
+            }
+        }
+    }
+
+    def 'call flexible publish without condition'() {
+        when:
+        context.flexiblePublish {
+            step {
+                shell('echo hello')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+                condition[0].children().size() == 0
+                publisher[0].attribute('class') == 'hudson.tasks.Shell'
+                publisher[0].command[0].value() == 'echo hello'
+            }
+        }
+    }
+
+    def 'call flexible publish without action'() {
+        when:
+        context.flexiblePublish {
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 }

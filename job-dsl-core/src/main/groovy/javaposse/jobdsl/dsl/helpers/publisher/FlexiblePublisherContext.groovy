@@ -1,22 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.JobManagement
-
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
+import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Preconditions.checkState
-
 class FlexiblePublisherContext implements Context {
-    final JobManagement jobManagement
+    private final JobManagement jobManagement
 
-    RunCondition condition
-    AbstractStepContext stepContext
-    PublisherContext publisherContext
+    RunCondition condition = new AlwaysRunCondition()
+    Node action
 
     FlexiblePublisherContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
@@ -27,18 +23,18 @@ class FlexiblePublisherContext implements Context {
     }
 
     def step(Closure closure) {
-        checkState(publisherContext == null, 'Only 1 of step or publisher can be provided')
-
-        stepContext = new AbstractStepContext(jobManagement)
+        AbstractStepContext stepContext = new AbstractStepContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, stepContext)
-        checkArgument(stepContext.stepNodes.size() == 1, 'Only 1 build step action allowed')
+        if (stepContext.stepNodes.size() > 0) {
+            action = stepContext.stepNodes[0]
+        }
     }
 
     def publisher(Closure closure) {
-        checkState(stepContext == null, 'Only 1 of step or publisher can be provided')
-        /* We pass null as the 'jobManagement' parameter because it appears to be unused. */
-        publisherContext = new PublisherContext(jobManagement)
+        PublisherContext publisherContext = new PublisherContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, publisherContext)
-        checkArgument(publisherContext.publisherNodes.size() == 1, 'Only 1 publish action allowed')
+        if (publisherContext.publisherNodes.size() > 0) {
+            action = publisherContext.publisherNodes[0]
+        }
     }
 }

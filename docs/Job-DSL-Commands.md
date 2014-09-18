@@ -238,7 +238,7 @@ job(Map<String, ?> arguments = [:]) {
         findbugs(String pattern, boolean isRankActivated = false,
                  Closure staticAnalysisClosure = null)
         fingerprint(String targets, boolean recordBuildArtifacts = false)
-        flexiblePublish(Closure flexiblePublishClosure = null) // since 1.24
+        flexiblePublish(Closure flexiblePublishClosure) // since 1.26
         flowdock(String token, Closure flowdockClosure = null) // since 1.23
         flowdock(String[] tokens, flowdockClosure = null) // since 1.23
         git(Closure gitPublisherClosure) // since 1.22
