@@ -4,7 +4,7 @@
 $script = <<SCRIPT
 wget --quiet --output-document=/etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat-stable/jenkins-ci.org.key
-yum --assumeyes --quiet install java-1.7.0-openjdk jenkins-1.565.1-1.1
+yum --assumeyes --quiet install java-1.7.0-openjdk jenkins-1.565.2-1.1
 service jenkins start
 SCRIPT
 
