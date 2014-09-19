@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.views.BuildPipelineView
+import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.SectionedView
@@ -71,6 +72,18 @@ class JobParentSpec extends Specification {
         then:
         view.name == 'test'
         view instanceof NestedView
+        parent.referencedViews.contains(view)
+    }
+
+    def 'delivery pipeline view'() {
+        when:
+        View view = parent.view(type: ViewType.DeliveryPipelineView) {
+            name 'test'
+        }
+
+        then:
+        view.name == 'test'
+        view instanceof DeliveryPipelineView
         parent.referencedViews.contains(view)
     }
 

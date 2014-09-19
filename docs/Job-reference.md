@@ -239,6 +239,32 @@ job {
 }
 ```
 
+## Delivery Pipeline Configuration
+
+```groovy
+job {
+    deliveryPipelineConfiguration(String stageName, String taskName = null)
+}
+```
+
+Sets the stage name and task name for the delivery pipeline view. Each of the parameters can be set to `null` to use the
+job name as stage or task name. Requires the
+[Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin).
+
+```groovy
+// use job name as task name
+job {    
+    deliveryPipelineConfiguration('qa')
+}
+
+// use custom task name
+job {
+    deliveryPipelineConfiguration('qa', 'integration-tests')
+}
+```
+
+(since 1.26)
+
 ## Build Flow 
 
 ```groovy
@@ -1351,6 +1377,29 @@ job(type: Maven) {
 ```
 
 (since 1.25)
+
+## Delivery Pipeline Version
+
+```groovy
+job {
+    wrappers {
+        deliveryPipelineVersion(String template, boolean setDisplayName = false)
+    }
+}
+```
+
+Create a version based on the template and optionally sets that version as display name for the build. Requires the
+[Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin).
+
+```groovy
+job {
+    wrappers {
+        deliveryPipelineVersion('1.0.${BUILD_NUMBER}', true)
+    }
+}
+```
+
+(since 1.26)
 
 # Build Steps
 

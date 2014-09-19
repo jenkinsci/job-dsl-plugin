@@ -617,4 +617,17 @@ class WrapperContext implements Context {
             numberOfReleaseBuildsToKeep context.numberOfReleaseBuildsToKeep
         }
     }
+
+    /**
+     * <se.diabol.jenkins.pipeline.PipelineVersionContributor>
+     *     <versionTemplate>1.0.${BUILD_NUMBER}</versionTemplate>
+     *     <updateDisplayName>true</updateDisplayName>
+     * </se.diabol.jenkins.pipeline.PipelineVersionContributor>
+     */
+    def deliveryPipelineVersion(String template, boolean setDisplayName = false) {
+        wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
+            versionTemplate(template)
+            updateDisplayName(setDisplayName)
+        }
+    }
 }

@@ -64,6 +64,7 @@ job(Map<String, ?> arguments = [:]) {
     checkoutRetryCount(int times = 3)
     concurrentBuild(boolean allowConcurrentBuild = true) // since 1.21
     customWorkspace(String workspacePath)
+    deliveryPipelineConfiguration(String stageName, String taskName = null) // since 1.26
     description(String description)
     disabled(boolean shouldDisable = true)
     displayName(String displayName)
@@ -132,6 +133,7 @@ job(Map<String, ?> arguments = [:]) {
         allocatePorts(String[] ports, Closure closure = null)
         buildName(String nameTemplate) // since 1.24
         colorizeOutput(String colorMap)
+        deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
         environmentVariables(Closure envClosure)
         exclusionResources(String... resourceNames) // since 1.24
         exclusionResources(Iterable<String> resourceNames) // since 1.24
@@ -375,6 +377,20 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
         status()
         weather()
     }
+
+    // DeliveryPipelineView options, since 1.26
+    pipelineInstances(int number)
+    showAggregatedPipeline(boolean showAggregatedPipeline = true)
+    columns(int number)
+    sorting(Sorting sorting)
+    updateInterval(int seconds)
+    enableManualTriggers(boolean enable = true)
+    showAvatars(boolean showAvatars = true)
+    showChangeLog(boolean showChangeLog = true)
+    pipelines {
+        component(String name, String initialJob)
+        regex(String regex)
+    }
 }
 
 folder { // since 1.23
@@ -441,8 +457,8 @@ view(Map<String, Object> attributes = [:], Closure closure)
 
 The `view` method behaves like the `job` method explained above and will return a _View_ object.
 
-Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView` or `NestedView` is
-supported. When no type is specified, a list view will be generated.
+Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView` or
+`DeliveryPipelineView` is supported. When no type is specified, a list view will be generated.
 
 ```groovy
 view(type: ListView) {
