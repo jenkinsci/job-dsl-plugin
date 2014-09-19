@@ -34,7 +34,6 @@ class NestedView extends View {
     protected String getTemplate() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.nested__view.NestedView>
-    <name>nested</name>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
     <properties class="hudson.model.View$PropertyList"/>

@@ -49,7 +49,6 @@ class NestedViewSpec extends Specification {
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.nested__view.NestedView>
-    <name>nested</name>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
     <properties class='hudson.model.View$PropertyList'></properties>
@@ -58,7 +57,6 @@ class NestedViewSpec extends Specification {
 
     def nestedViewColumnsXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.nested__view.NestedView>
-    <name>nested</name>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
     <properties class='hudson.model.View$PropertyList'></properties>
@@ -72,7 +70,6 @@ class NestedViewSpec extends Specification {
 </hudson.plugins.nested__view.NestedView>'''
 
     def nestedViewViewsXml = '''<hudson.plugins.nested__view.NestedView>
-    <name>nested</name>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
     <properties class='hudson.model.View$PropertyList'></properties>
