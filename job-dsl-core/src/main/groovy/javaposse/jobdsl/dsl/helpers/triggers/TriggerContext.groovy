@@ -7,21 +7,18 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
-import static javaposse.jobdsl.dsl.JobType.Freeform
-
 class TriggerContext implements Context {
-    List<WithXmlAction> withXmlActions
-    JobType jobType
-    List<Node> triggerNodes
+    private final List<WithXmlAction> withXmlActions
+    private final JobType jobType
+    final List<Node> triggerNodes = []
 
-    TriggerContext(List<WithXmlAction> withXmlActions = [], JobType jobType = Freeform, List<Node> triggerNodes = []) {
+    TriggerContext(List<WithXmlAction> withXmlActions, JobType jobType) {
         this.withXmlActions = withXmlActions
         this.jobType = jobType
-        this.triggerNodes = triggerNodes
     }
 
     /**
-     * Adds DSL  for adding and configuring the URL trigger plugin to a job.
+     * Adds DSL for adding and configuring the URL trigger plugin to a job.
      *
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
@@ -30,8 +27,7 @@ class TriggerContext implements Context {
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
         AbstractContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
-        def nodeBuilder = new NodeBuilder()
-        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger' {
+        def urlTriggerNode = new NodeBuilder().'org.jenkinsci.plugins.urltrigger.URLTrigger' {
             spec urlTriggerContext.crontab
             if (urlTriggerContext.label) {
                 labelRestriction true
@@ -95,11 +91,9 @@ class TriggerContext implements Context {
     }
 
     /**
-     <triggers class="vector">
-     <hudson.triggers.SCMTrigger>
-     <spec>10 * * * *</spec>
-     </hudson.triggers.SCMTrigger>
-     </triggers>
+     * <hudson.triggers.SCMTrigger>
+     *     <spec>10 * * * *</spec>
+     * </hudson.triggers.SCMTrigger>
      */
     def scm(String cronString) {
         Preconditions.checkNotNull(cronString)
@@ -109,7 +103,11 @@ class TriggerContext implements Context {
     }
 
     /**
-     * Trigger that runs jobs on push notifications from Github/Github enterprise
+     * Trigger that runs jobs on push notifications from Github/Github enterprise.
+     *
+     * <com.cloudbees.jenkins.GitHubPushTrigger>
+     *     <spec/>
+     * </com.cloudbees.jenkins.GitHubPushTrigger>
      */
     def githubPush() {
         triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
@@ -126,6 +124,7 @@ class TriggerContext implements Context {
      *      <whitelist></whitelist>
      *      <orgslist></orgslist>
      *      <cron></cron>
+     *      <spec></spec>
      *      <triggerPhrase></triggerPhrase>
      *      <onlyTriggerPhrase>false</onlyTriggerPhrase>
      *      <useGitHubHooks>true</useGitHubHooks>
@@ -134,13 +133,10 @@ class TriggerContext implements Context {
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
     def pullRequest(Closure contextClosure) {
-
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
         AbstractContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
-        def nodeBuilder = NodeBuilder.newInstance()
-
-        def pullRequestNode = nodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
@@ -152,43 +148,40 @@ class TriggerContext implements Context {
             permitAll pullRequestBuilderContext.permitAll
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
         }
-
-        triggerNodes << pullRequestNode
     }
 
     /**
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
-     <spec></spec>
-     <gerritProjects>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
-     <compareType>PLAIN</compareType>
-     <pattern>test-project</pattern>
-     <branches>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
-     <compareType>ANT</compareType>
-     <pattern>**</pattern>
-     </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
-     </branches>
-     </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
-     </gerritProjects>
-     <silentMode>false</silentMode>
-     <escapeQuotes>true</escapeQuotes>
-     <buildStartMessage></buildStartMessage>
-     <buildFailureMessage></buildFailureMessage>
-     <buildSuccessfulMessage></buildSuccessfulMessage>
-     <buildUnstableMessage></buildUnstableMessage>
-     <buildNotBuiltMessage></buildNotBuiltMessage>
-     <buildUnsuccessfulFilepath></buildUnsuccessfulFilepath>
-     <customUrl></customUrl>
-     <triggerOnEvents>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginChangeMergedEvent/>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginPatchsetCreatedEvent/>
-     </triggerOnEvents>
-     <dynamicTriggerConfiguration>false</dynamicTriggerConfiguration>
-     <triggerConfigURL></triggerConfigURL>
-     <triggerInformationAction/>
-     </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
-     *
+     * <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
+     *     <spec></spec>
+     *     <gerritProjects>
+     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
+     *             <compareType>PLAIN</compareType>
+     *             <pattern>test-project</pattern>
+     *             <branches>
+     *                 <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
+     *                    <compareType>ANT</compareType>
+     *                    <pattern>**</pattern>
+     *                 </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
+     *             </branches>
+     *         </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
+     *     </gerritProjects>
+     *     <silentMode>false</silentMode>
+     *     <escapeQuotes>true</escapeQuotes>
+     *     <buildStartMessage></buildStartMessage>
+     *     <buildFailureMessage></buildFailureMessage>
+     *     <buildSuccessfulMessage></buildSuccessfulMessage>
+     *     <buildUnstableMessage></buildUnstableMessage>
+     *     <buildNotBuiltMessage></buildNotBuiltMessage>
+     *     <buildUnsuccessfulFilepath></buildUnsuccessfulFilepath>
+     *     <customUrl></customUrl>
+     *     <triggerOnEvents>
+     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginChangeMergedEvent/>
+     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginPatchsetCreatedEvent/>
+     *     </triggerOnEvents>
+     *     <dynamicTriggerConfiguration>false</dynamicTriggerConfiguration>
+     *     <triggerConfigURL></triggerConfigURL>
+     *     <triggerInformationAction/>
+     * </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
      *
      * @param triggerEvents Can be ommited and the plugin will user PatchsetCreated and DraftPublished by default.
      *                      Provide in show name format: ChangeMerged, CommentAdded, DraftPublished, PatchsetCreated,
@@ -281,7 +274,6 @@ class TriggerContext implements Context {
         }
 
         triggerNodes << gerritNode
-
     }
 
     /**

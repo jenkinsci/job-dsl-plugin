@@ -9,7 +9,7 @@ class TriggerHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
     TriggerContextHelper helper = new TriggerContextHelper(mockActions, JobType.Freeform)
-    TriggerContext context = new TriggerContext()
+    TriggerContext context = new TriggerContext(mockActions, JobType.Freeform)
 
     def 'call github trigger methods'() {
         when:
@@ -498,14 +498,11 @@ class TriggerHelperSpec extends Specification {
 
     def 'execute withXml Action'() {
         Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
-        def nodeBuilder = new NodeBuilder()
-
-        Node triggerNode = nodeBuilder.'hudson.triggers.SCMTrigger' {
-            spec '2 3 * * * *'
-        }
+        TriggerContext triggerContext = new TriggerContext([], JobType.Freeform)
+        triggerContext.scm('2 3 * * * *')
 
         when:
-        def withXmlAction = helper.generateWithXmlAction(new TriggerContext([], JobType.Freeform, [triggerNode]))
+        def withXmlAction = helper.generateWithXmlAction(triggerContext)
         withXmlAction.execute(root)
 
         then:
@@ -522,7 +519,7 @@ class TriggerHelperSpec extends Specification {
 
     def 'call snapshotDependencies for Maven job succeeds'() {
         when:
-        TriggerContext context = new TriggerContext([], JobType.Maven, [])
+        TriggerContext context = new TriggerContext([], JobType.Maven)
         context.snapshotDependencies(false)
 
         then:

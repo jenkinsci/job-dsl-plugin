@@ -18,7 +18,7 @@ class TriggerContextHelper extends AbstractContextHelper<TriggerContext> {
      * @return
      */
     def triggers(Closure closure) {
-        execute(closure, new TriggerContext(withXmlActions, type, []))
+        execute(closure, new TriggerContext(withXmlActions, type))
     }
 
     Closure generateWithXmlClosure(TriggerContext context) {
