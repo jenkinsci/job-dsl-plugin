@@ -9,6 +9,9 @@ import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 
+import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Strings.isNullOrEmpty
+
 class PublisherContext implements Context {
     List<Node> publisherNodes = []
 
@@ -1329,19 +1332,16 @@ class PublisherContext implements Context {
      *     </hudson.plugins.s3.S3BucketPublisher>
      * </publisher>
      */
-    def s3(Closure s3PublisherClosure = null) {
-        s3(null, s3PublisherClosure)
-    }
+    def s3(String profile, Closure s3PublisherClosure) {
+        checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
 
-    def s3(String profile, Closure s3PublisherClosure = null) {
         S3BucketPublisherContext context = new S3BucketPublisherContext()
-        context.profile = profile
         AbstractContextHelper.executeInContext(s3PublisherClosure, context)
 
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.s3.S3BucketPublisher' {
-            profileName context.profile
-            entries context.entries
-            userMetadata context.metadata
+            profileName(profile)
+            entries(context.entries)
+            userMetadata(context.metadata)
         }
     }
 }

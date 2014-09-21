@@ -270,8 +270,7 @@ job(Map<String, ?> arguments = [:]) {
         publishRobotFrameworkReports(Closure closure = null) // since 1.21
         publishScp(String site, Closure scpClosure)
         rundeck(String jobId, Closure rundeckClosure = null) // since 1.24
-        s3(Closure s3Closure = null) // since 1.26
-        s3(String profile, Closure s3Closure = null) // since 1.26
+        s3(String profile, Closure s3Closure) // since 1.26
         stashNotifier(Closure stashNotifierClosure = null) // since 1.23
         tasks(String pattern, excludePattern = '', high = '', normal = '', low = '',
               ignoreCase = false, Closure staticAnalysisClosure = null)

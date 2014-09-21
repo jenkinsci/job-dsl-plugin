@@ -7,34 +7,37 @@ import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
 class S3BucketPublisherContext implements Context {
-    String profile
+    private static final List<String> REGIONS = [
+            'GovCloud', 'US_EAST_1', 'US_WEST_1', 'US_WEST_2', 'EU_WEST_1', 'AP_SOUTHEAST_1', 'AP_SOUTHEAST_2',
+            'AP_NORTHEAST_1', 'SA_EAST_1', 'CN_NORTH_1'
+    ]
+
     List<Node> entries = []
     List<Node> metadata = []
 
-    void profile(String profile) {
-        checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
-        this.profile = profile
-    }
+    void entry(String source, String bucketName, String region, Closure closure = null) {
+        checkArgument(!isNullOrEmpty(source), 'source must be specified')
+        checkArgument(!isNullOrEmpty(bucketName), 'bucket must be specified')
+        checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")
 
-    void entry(String source, String bucketName, Closure closure = null) {
         S3EntryContext context = new S3EntryContext()
-        context.source = source
-        context.bucket = bucketName
         AbstractContextHelper.executeInContext(closure, context)
 
         this.entries << NodeBuilder.newInstance().'hudson.plugins.s3.Entry' {
-            sourceFile(context.source)
-            bucket(context.bucket)
+            sourceFile(source)
+            bucket(bucketName)
+            storageClass(context.storageClass)
+            selectedRegion(region)
             noUploadOnFailure(context.noUploadOnFailure)
             uploadFromSlave(context.uploadFromSlave)
             managedArtifacts(context.managedArtifacts)
         }
     }
 
-    void metadata(String k, String v) {
+    void metadata(String key, String value) {
         this.metadata << NodeBuilder.newInstance().'hudson.plugins.s3.MetadataPair' {
-            key(k)
-            value(v)
+            delegate.key(key)
+            delegate.value(value)
         }
     }
 }

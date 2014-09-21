@@ -1,37 +1,34 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.Context
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Strings.isNullOrEmpty
-
 class S3EntryContext implements Context {
-    String source
-    String bucket
-    Boolean noUploadOnFailure = false
-    Boolean uploadFromSlave = false
-    Boolean managedArtifacts = false
+    private static final List<String> STORAGE_CLASSES = ['STANDARD', 'REDUCED_REDUNDANCY']
 
-    void source(String source) {
-        checkArgument(!isNullOrEmpty(source), 'source must be specified')
-        this.source = source
+    String storageClass = 'STANDARD'
+    boolean noUploadOnFailure = false
+    boolean uploadFromSlave = false
+    boolean managedArtifacts = false
+
+    void storageClass(String storageClass) {
+        Preconditions.checkArgument(
+                STORAGE_CLASSES.contains(storageClass),
+                "storageClass must be one of ${STORAGE_CLASSES.join(', ')}"
+        )
+
+        this.storageClass = storageClass
     }
 
-    void bucket(String bucket) {
-        checkArgument(!isNullOrEmpty(bucket), 'bucket must be specified')
-        this.bucket = bucket
-    }
-
-    void noUploadOnFailure(Boolean noUploadOnFailure = true) {
+    void noUploadOnFailure(boolean noUploadOnFailure = true) {
         this.noUploadOnFailure = noUploadOnFailure
     }
 
-    void uploadFromSlave(Boolean uploadFromSlave = true) {
+    void uploadFromSlave(boolean uploadFromSlave = true) {
         this.uploadFromSlave = uploadFromSlave
     }
 
-    void managedArtifacts(Boolean managedArtifacts = true) {
+    void managedArtifacts(boolean managedArtifacts = true) {
         this.managedArtifacts = managedArtifacts
     }
-
 }

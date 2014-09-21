@@ -2575,20 +2575,58 @@ class PublisherHelperSpec extends Specification {
         rundeckNode.shouldFailTheBuild[0].value() == false
     }
 
-    def 'call s3 with minimal options'() {
+    def 'call s3 without profile'(String profile) {
         when:
-        context.s3 {
+        context.s3(profile) {
         }
 
         then:
-        context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'hudson.plugins.s3.S3BucketPublisher'
+        thrown(IllegalArgumentException)
+
+        where:
+        profile << [null, '']
+    }
+
+    def 'call s3 without source or bucket or with invalid region'(String source, String bucket, String region) {
+        when:
+        context.s3('test') {
+            entry(source, bucket, region)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        source | bucket | region
+        null   | 'test' | 'EU_WEST_1'
+        ''     | 'test' | 'EU_WEST_1'
+        'test' | null   | 'EU_WEST_1'
+        'test' | ''     | 'EU_WEST_1'
+        null   | null   | 'EU_WEST_1'
+        ''     | ''     | 'EU_WEST_1'
+        'test' | 'test' | ''
+        'test' | 'test' | null
+    }
+
+    def 'call s3 with invalid storage class'(String storageClass) {
+        when:
+        context.s3('test') {
+            entry('foo', 'bar', 'EU_WEST_1') {
+                delegate.storageClass(storageClass)
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        storageClass << [null, '', 'FOO']
     }
 
     def 'call s3 with some options'() {
         when:
         context.s3('profile') {
-            entry('foo', 'bar')
+            entry('foo', 'bar', 'US_EAST_1')
             metadata('key', 'value')
         }
 
@@ -2602,6 +2640,11 @@ class PublisherHelperSpec extends Specification {
             with(entries[0].'hudson.plugins.s3.Entry'[0]) {
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
+                storageClass[0].value() == 'STANDARD'
+                selectedRegion[0].value() == 'US_EAST_1'
+                noUploadOnFailure[0].value() == false
+                uploadFromSlave[0].value() == false
+                managedArtifacts[0].value() == false
             }
             userMetadata.size() == 1
             userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
@@ -2615,8 +2658,9 @@ class PublisherHelperSpec extends Specification {
     def 'call s3 with more options'() {
         when:
         context.s3('profile') {
-            entry('foo', 'bar')
-            entry('bar', 'baz') {
+            entry('foo', 'bar', 'EU_WEST_1')
+            entry('bar', 'baz', 'US_EAST_1') {
+                storageClass('REDUCED_REDUNDANCY')
                 noUploadOnFailure(true)
                 uploadFromSlave(true)
                 managedArtifacts(true)
@@ -2634,10 +2678,17 @@ class PublisherHelperSpec extends Specification {
             with(entries[0].'hudson.plugins.s3.Entry'[0]) {
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
+                storageClass[0].value() == 'STANDARD'
+                selectedRegion[0].value() == 'EU_WEST_1'
+                noUploadOnFailure[0].value() == false
+                uploadFromSlave[0].value() == false
+                managedArtifacts[0].value() == false
             }
             with(entries[0].'hudson.plugins.s3.Entry'[1]) {
                 sourceFile[0].value() == 'bar'
                 bucket[0].value() == 'baz'
+                storageClass[0].value() == 'REDUCED_REDUNDANCY'
+                selectedRegion[0].value() == 'US_EAST_1'
                 noUploadOnFailure[0].value() == true
                 uploadFromSlave[0].value() == true
                 managedArtifacts[0].value() == true
