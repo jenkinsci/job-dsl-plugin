@@ -456,10 +456,10 @@ class TriggerHelperSpec extends Specification {
             project('test-project', '**')
 
             buildSuccessful(11, 10)
-            buildFailed('-21', 20)
-            buildUnstable(30, '32')
-            buildNotBuilt('40', '42')
-            buildStarted('50', '55')
+            buildFailed(-21, 20)
+            buildUnstable(30, 32)
+            buildNotBuilt(40, 42)
+            buildStarted(50, 55)
         }
 
         then:
