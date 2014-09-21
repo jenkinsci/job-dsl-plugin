@@ -795,4 +795,32 @@ class WrapperHelperSpec extends Specification {
         then:
         thrown IllegalStateException
     }
+
+    def 'set delivery pipeline version'() {
+        when:
+        context.deliveryPipelineVersion('1.0.${BUILD_NUMBER}')
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'se.diabol.jenkins.pipeline.PipelineVersionContributor'
+            children().size() == 2
+            versionTemplate[0].value() == '1.0.${BUILD_NUMBER}'
+            updateDisplayName[0].value() == false
+        }
+    }
+
+    def 'set delivery pipeline version and display name'() {
+        when:
+        context.deliveryPipelineVersion('1.0.${BUILD_NUMBER}', true)
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'se.diabol.jenkins.pipeline.PipelineVersionContributor'
+            children().size() == 2
+            versionTemplate[0].value() == '1.0.${BUILD_NUMBER}'
+            updateDisplayName[0].value() == true
+        }
+    }
 }

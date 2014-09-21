@@ -459,4 +459,47 @@ class TopLevelHelperSpec extends Specification {
             tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'script'[0].value() == 'echo bar'
         }
     }
+
+    def 'delivery pipeline configuration with stage and task names'() {
+        when:
+        def action = helper.deliveryPipelineConfiguration('qa', 'integration-tests')
+        action.execute(root)
+
+        then:
+        root.'properties'.size() == 1
+        root.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
+        with(root.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
+            children().size() == 2
+            taskName[0].value() == 'integration-tests'
+            stageName[0].value() == 'qa'
+        }
+    }
+
+    def 'delivery pipeline configuration with stage name'() {
+        when:
+        def action = helper.deliveryPipelineConfiguration('qa')
+        action.execute(root)
+
+        then:
+        root.'properties'.size() == 1
+        root.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
+        with(root.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
+            children().size() == 1
+            stageName[0].value() == 'qa'
+        }
+    }
+
+    def 'delivery pipeline configuration with task name'() {
+        when:
+        def action = helper.deliveryPipelineConfiguration(null, 'integration-tests')
+        action.execute(root)
+
+        then:
+        root.'properties'.size() == 1
+        root.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
+        with(root.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
+            children().size() == 1
+            taskName[0].value() == 'integration-tests'
+        }
+    }
 }

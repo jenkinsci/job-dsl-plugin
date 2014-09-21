@@ -352,4 +352,27 @@ class TopLevelHelper extends AbstractHelper {
             }
         }
     }
+
+    /**
+     * <properties>
+     *     <se.diabol.jenkins.pipeline.PipelineProperty>
+     *         <taskName>integration-tests</taskName>
+     *         <stageName>qa</stageName>
+     *     </se.diabol.jenkins.pipeline.PipelineProperty>
+     * </properties>
+     */
+    def deliveryPipelineConfiguration(String stageName, String taskName = null) {
+        if (stageName || taskName) {
+            execute {
+                it / 'properties' / 'se.diabol.jenkins.pipeline.PipelineProperty' {
+                    if (taskName) {
+                        delegate.taskName(taskName)
+                    }
+                    if (stageName) {
+                        delegate.stageName(stageName)
+                    }
+                }
+            }
+        }
+    }
 }
