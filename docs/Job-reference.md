@@ -730,7 +730,16 @@ Enables the job to be started whenever a change is pushed to a github repository
 
 ```groovy
 gerrit {
-    events(Closure eventClosure)                          // free form listing of event names
+    events {
+        changeAbandoned() // since 1.26
+        changeMerged()    // since 1.26
+        changeRestored()  // since 1.26
+        commentAdded()    // since 1.26
+        draftPublished()  // since 1.26
+        patchsetCreated() // since 1.26
+        refUpdated()      // since 1.26
+        // free form listing of event names is deprecated since 1.26
+    }
     project(String projectName, List<String> branches)    // can be called multiple times
     project(String projectName, String branches)          // can be called multiple times
     buildStarted(Integer verified, Integer codeReview)    // updates the Gerrit report values for the build started event, use null to keep the default value
@@ -743,11 +752,9 @@ gerrit {
 ```
 
 Polls Gerrit for changes. This DSL method works slightly differently by exposing most of its functionality in its own
-block. This is accommodating how the plugin can be pointed to multiple projects and trigger on many events. The events
-block takes the "short name" of an event. When looking at the raw config.xml for a job which uses the Gerrit trigger,
-you'll see multiple class names in the triggerOnEvents element. The DSL method will take the names in the events block
-and prepend it with 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin' and append 'Event',
-meaning that shorter names like ChangeMerged and DraftPublished can be used.
+block. This is accommodating how the plugin can be pointed to multiple projects and trigger on many events.
+
+The usage "short names" in the event closure is deprecated since 1.26.
 
 Requires the [Gerrit Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger).
 
@@ -756,8 +763,8 @@ Example:
 ```groovy
 gerrit {
     events {
-        ChangeMerged
-        DraftPublished
+        changeMerged()
+        draftPublished()
     }
     project('reg_exp:myProject', ['ant:feature-branch', 'plain:origin/refs/mybranch'])
     project('test-project', '**')

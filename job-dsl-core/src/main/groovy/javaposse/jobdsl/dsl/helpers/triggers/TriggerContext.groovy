@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
@@ -10,11 +11,13 @@ import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 class TriggerContext implements Context {
     private final List<WithXmlAction> withXmlActions
     private final JobType jobType
+    private final JobManagement jobManagement
     final List<Node> triggerNodes = []
 
-    TriggerContext(List<WithXmlAction> withXmlActions, JobType jobType) {
+    TriggerContext(List<WithXmlAction> withXmlActions, JobType jobType, JobManagement jobManagement) {
         this.withXmlActions = withXmlActions
         this.jobType = jobType
+        this.jobManagement = jobManagement
     }
 
     /**
@@ -190,7 +193,7 @@ class TriggerContext implements Context {
      */
     def gerrit(Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
-        GerritContext gerritContext = new GerritContext()
+        GerritContext gerritContext = new GerritContext(jobManagement)
         AbstractContextHelper.executeInContext(contextClosure, gerritContext)
 
         def nodeBuilder = new NodeBuilder()

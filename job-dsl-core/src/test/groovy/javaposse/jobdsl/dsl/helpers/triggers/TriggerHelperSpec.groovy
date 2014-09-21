@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -8,8 +9,9 @@ import spock.lang.Specification
 class TriggerHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    TriggerContextHelper helper = new TriggerContextHelper(mockActions, JobType.Freeform)
-    TriggerContext context = new TriggerContext(mockActions, JobType.Freeform)
+    JobManagement mockJobManagement = Mock(JobManagement)
+    TriggerContextHelper helper = new TriggerContextHelper(mockActions, JobType.Freeform, mockJobManagement)
+    TriggerContext context = new TriggerContext(mockActions, JobType.Freeform, mockJobManagement)
 
     def 'call github trigger methods'() {
         when:
@@ -423,6 +425,51 @@ class TriggerHelperSpec extends Specification {
         }
     }
 
+    def 'call gerrit trigger with events'(String event) {
+        when:
+        context.gerrit {
+            events {
+                delegate."${event}"()
+            }
+        }
+
+        then:
+        String xmlEvent = event.capitalize()
+        with(context.triggerNodes[0].triggerOnEvents[0]) {
+            children().size() == 1
+            children()[0].name() ==
+                    "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${xmlEvent}Event"
+        }
+
+        where:
+        event << [
+                'changeAbandoned', 'changeMerged', 'changeRestored', 'commentAdded', 'draftPublished',
+                'patchsetCreated', 'refUpdated'
+        ]
+    }
+
+    def 'call gerrit trigger with deprecated events'(String event) {
+        when:
+        context.gerrit {
+            events {
+                delegate."${event}"
+            }
+        }
+
+        then:
+        with(context.triggerNodes[0].triggerOnEvents[0]) {
+            children().size() == 1
+            children()[0].name() ==
+                    "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${event}Event"
+        }
+
+        where:
+        event << [
+                'ChangeAbandoned', 'ChangeMerged', 'ChangeRestored', 'CommentAdded', 'DraftPublished',
+                'PatchsetCreated', 'RefUpdated'
+        ]
+    }
+
     def 'call gerrit trigger and verify build status value settings'() {
         when:
         context.gerrit {
@@ -498,7 +545,7 @@ class TriggerHelperSpec extends Specification {
 
     def 'execute withXml Action'() {
         Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
-        TriggerContext triggerContext = new TriggerContext([], JobType.Freeform)
+        TriggerContext triggerContext = new TriggerContext([], JobType.Freeform, mockJobManagement)
         triggerContext.scm('2 3 * * * *')
 
         when:
@@ -519,7 +566,7 @@ class TriggerHelperSpec extends Specification {
 
     def 'call snapshotDependencies for Maven job succeeds'() {
         when:
-        TriggerContext context = new TriggerContext([], JobType.Maven)
+        TriggerContext context = new TriggerContext([], JobType.Maven, mockJobManagement)
         context.snapshotDependencies(false)
 
         then:

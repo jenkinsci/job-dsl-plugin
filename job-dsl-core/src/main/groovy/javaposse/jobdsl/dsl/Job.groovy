@@ -46,7 +46,7 @@ class Job extends Item {
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
         helperScm = new ScmContextHelper(withXmlActions, type, jobManagement)
         helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
-        helperTrigger = new TriggerContextHelper(withXmlActions, type)
+        helperTrigger = new TriggerContextHelper(withXmlActions, type, jobManagement)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperStep = new StepContextHelper(withXmlActions, type, jobManagement)
         helperPublisher = new PublisherContextHelper(withXmlActions, type, jobManagement)
