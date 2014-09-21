@@ -3345,6 +3345,46 @@ job {
 
 (since 1.24)
 
+## S3
+
+```groovy
+job {
+    publishers {
+        s3(String profile) {
+            entry(String source, String bucket, String region) {
+                storageClass(String storageClass)                   // default is 'STANDARD'
+                noUploadOnFailure(boolean noUploadOnFailure = true) // default is false
+                uploadFromSlave(boolean uploadFromSlave = true)     // default is false
+                managedArtifacts(boolean managedArtifacts = true)   // default is false
+            }
+            metadata(String key, String value)
+        }
+    }
+}
+```
+
+Adds a S3 bucket publisher. Requires the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin).
+
+Valid values for region are `'GovCloud'`, `'US_EAST_1'`, `'US_WEST_1'`, `'US_WEST_2'`, `'EU_WEST_1'`,
+`'AP_SOUTHEAST_1'`, `'AP_SOUTHEAST_2'`, `'AP_NORTHEAST_1'`, `'SA_EAST_1'` or `'CN_NORTH_1'`. The storage class can be
+either `'STANDARD'` or `'REDUCED_REDUNDANCY'`.
+
+```groovy
+job {
+    publishers {
+        s3('myProfile') {
+            entry('foo', 'bar', 'EU_WEST_1') {
+                storageClass('REDUCED_REDUNDANCY')
+                noUploadOnFailure()
+                uploadFromSlave()
+            }
+        }
+    }
+}
+```
+
+(since 1.26)
+
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
 _Note: The Password Parameter is not yet supported. See https://issues.jenkins-ci.org/browse/JENKINS-18141_

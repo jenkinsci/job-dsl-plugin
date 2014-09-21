@@ -2574,4 +2574,131 @@ class PublisherHelperSpec extends Specification {
         rundeckNode.shouldWaitForRundeckJob[0].value() == false
         rundeckNode.shouldFailTheBuild[0].value() == false
     }
+
+    def 'call s3 without profile'(String profile) {
+        when:
+        context.s3(profile) {
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        profile << [null, '']
+    }
+
+    def 'call s3 without source or bucket or with invalid region'(String source, String bucket, String region) {
+        when:
+        context.s3('test') {
+            entry(source, bucket, region)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        source | bucket | region
+        null   | 'test' | 'EU_WEST_1'
+        ''     | 'test' | 'EU_WEST_1'
+        'test' | null   | 'EU_WEST_1'
+        'test' | ''     | 'EU_WEST_1'
+        null   | null   | 'EU_WEST_1'
+        ''     | ''     | 'EU_WEST_1'
+        'test' | 'test' | ''
+        'test' | 'test' | null
+    }
+
+    def 'call s3 with invalid storage class'(String storageClass) {
+        when:
+        context.s3('test') {
+            entry('foo', 'bar', 'EU_WEST_1') {
+                delegate.storageClass(storageClass)
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        storageClass << [null, '', 'FOO']
+    }
+
+    def 'call s3 with some options'() {
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar', 'US_EAST_1')
+            metadata('key', 'value')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.s3.S3BucketPublisher'
+            profileName[0].value() == 'profile'
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 1
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                sourceFile[0].value() == 'foo'
+                bucket[0].value() == 'bar'
+                storageClass[0].value() == 'STANDARD'
+                selectedRegion[0].value() == 'US_EAST_1'
+                noUploadOnFailure[0].value() == false
+                uploadFromSlave[0].value() == false
+                managedArtifacts[0].value() == false
+            }
+            userMetadata.size() == 1
+            userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
+            with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                key[0].value() == 'key'
+                value[0].value() == 'value'
+            }
+        }
+    }
+
+    def 'call s3 with more options'() {
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar', 'EU_WEST_1')
+            entry('bar', 'baz', 'US_EAST_1') {
+                storageClass('REDUCED_REDUNDANCY')
+                noUploadOnFailure(true)
+                uploadFromSlave(true)
+                managedArtifacts(true)
+            }
+            metadata('key', 'value')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.s3.S3BucketPublisher'
+            profileName[0].value() == 'profile'
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 2
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                sourceFile[0].value() == 'foo'
+                bucket[0].value() == 'bar'
+                storageClass[0].value() == 'STANDARD'
+                selectedRegion[0].value() == 'EU_WEST_1'
+                noUploadOnFailure[0].value() == false
+                uploadFromSlave[0].value() == false
+                managedArtifacts[0].value() == false
+            }
+            with(entries[0].'hudson.plugins.s3.Entry'[1]) {
+                sourceFile[0].value() == 'bar'
+                bucket[0].value() == 'baz'
+                storageClass[0].value() == 'REDUCED_REDUNDANCY'
+                selectedRegion[0].value() == 'US_EAST_1'
+                noUploadOnFailure[0].value() == true
+                uploadFromSlave[0].value() == true
+                managedArtifacts[0].value() == true
+            }
+            userMetadata.size() == 1
+            userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
+            with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                key[0].value() == 'key'
+                value[0].value() == 'value'
+            }
+        }
+    }
 }

@@ -9,6 +9,9 @@ import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 
+import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Strings.isNullOrEmpty
+
 class PublisherContext implements Context {
     List<Node> publisherNodes = []
 
@@ -1304,6 +1307,41 @@ class PublisherContext implements Context {
             tag rundeckContext.tag
             shouldWaitForRundeckJob rundeckContext.shouldWaitForRundeckJob
             shouldFailTheBuild rundeckContext.shouldFailTheBuild
+        }
+    }
+
+    /**
+     * <publishers>
+     *     <hudson.plugins.s3.S3BucketPublisher>
+     *         <profileName>profile</profileName>
+     *         <entries>
+     *             <hudson.plugins.s3.Entry>
+     *                 <bucket>b</bucket>
+     *                 <sourceFile>a</sourceFile>
+     *                 <noUploadOnFailure>true</noUploadOnFailure>
+     *                 <uploadFromSlave>true</uploadFromSlave>
+     *                 <managedArtifacts>true</managedArtifacts>
+     *             </hudson.plugins.s3.Entry>
+     *         </entries>
+     *         <userMetadata>
+     *             <hudson.plugins.s3.MetadataPair>
+     *                 <key>foo</key>
+     *                 <value>bar</value>
+     *             </hudson.plugins.s3.MetadataPair>
+     *         </userMetadata>
+     *     </hudson.plugins.s3.S3BucketPublisher>
+     * </publisher>
+     */
+    def s3(String profile, Closure s3PublisherClosure) {
+        checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
+
+        S3BucketPublisherContext context = new S3BucketPublisherContext()
+        AbstractContextHelper.executeInContext(s3PublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.s3.S3BucketPublisher' {
+            profileName(profile)
+            entries(context.entries)
+            userMetadata(context.metadata)
         }
     }
 }
