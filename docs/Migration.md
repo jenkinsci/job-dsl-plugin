@@ -1,3 +1,49 @@
+## Migrating to 1.26
+
+### Gerrit Trigger
+
+The usage "short names" in the event closure is deprecated and has been replaced by explicit DSL methods for each event.
+
+DSL prior to 1.26
+```groovy
+job {
+    triggers {
+        gerrit {
+            events {
+                ChangeAbandoned
+                ChangeMerged
+                ChangeRestored
+                CommentAdded
+                DraftPublished
+                PatchsetCreated
+                RefUpdated
+            }
+        }
+    }
+}
+```
+
+DSL since 1.26
+```groovy
+job {
+    triggers {
+        gerrit {
+            events {
+                changeAbandoned()
+                changeMerged()
+                changeRestored()
+                commentAdded()
+                draftPublished()
+                patchsetCreated()
+                refUpdated()
+            }
+        }
+    }
+}
+```
+
+See the [[Job Reference]] for further details.
+
 ## Migrating to 1.24
 
 ### Build Timeout
