@@ -50,7 +50,7 @@ from right to left. Many methods provide options in deeper nested blocks which a
 ```groovy
 job(Map<String, ?> arguments = [:]) {
     name(String name)
-    
+
     // DSL specific methods
     using(String templateName)
     configure(Closure configBlock)
@@ -171,7 +171,7 @@ job(Map<String, ?> arguments = [:]) {
         criticalBlock(Closure stepClosure) // since 1.24
         downstreamParameterized(Closure downstreamClosure)
         dsl(Closure dslClosure = null)
-        dsl(String scriptText, String removedJobAction = null, 
+        dsl(String scriptText, String removedJobAction = null,
             boolean ignoreExisting = false)
         dsl(Collection<String> externalScripts, String removedJobAction = null,
             boolean ignoreExisting = false)
@@ -190,7 +190,7 @@ job(Map<String, ?> arguments = [:]) {
         phase(Closure phaseClosure)
         phase(String name, Closure phaseClosure = null)
         phase(String name, String continuationConditionArg, Closure phaseClosure)
-        prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19 
+        prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
         rake(Closure rakeClosure = null) // since 1.25
         rake(String tasksArg, Closure rakeClosure = null) // since 1.25
         remoteTrigger(String remoteJenkinsName, String jobName,
@@ -205,7 +205,7 @@ job(Map<String, ?> arguments = [:]) {
         vSphereRevertToSnapshot(String server, String vm, String snapshot)
     }
     publishers {
-        aggregateDownstreamTestResults(String jobs = null, 
+        aggregateDownstreamTestResults(String jobs = null,
                                        boolean includeFailedBuilds = false) // since 1.19
         allowBrokenBuildClaiming()
         analysisCollector(Closure analysisCollectorClosure = null) // since 1.26
@@ -260,8 +260,8 @@ job(Map<String, ?> arguments = [:]) {
         publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
                               String criteria, String archiveMethod,
                               Closure cloneWorkspaceClosure)
-        publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob = '', 
-                              String criteria = 'Any', String archiveMethod = 'TAR', 
+        publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob = '',
+                              String criteria = 'Any', String archiveMethod = 'TAR',
                               boolean overrideDefaultExcludes = false,
                               Closure cloneWorkspaceClosure = null)
         publishHtml(Closure htmlReportClosure)
@@ -325,10 +325,10 @@ job(Map<String, ?> arguments = [:]) {
 
 view(Map<String, Object> arguments = [:]) { // since 1.21
     name(String name)
-    
+
     // DSL specific methods
     configure(Closure configBlock)
-    
+
     // common options
     description(String description)
     filterBuildQueue(boolean filterBuildQueue)
@@ -396,7 +396,7 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
 
 folder { // since 1.23
     name(String name)
-    
+
     // DSL specific methods
     configure(Closure configBlock)
 
@@ -413,7 +413,7 @@ configFile(Map<String, Object> arguments = [:]) { // since 1.25
 
 The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods
 fail you, you can always generate the underlying XML yourself via [[The Configure Block]]. Sometimes, a DSL
-method will provide a configure block of its own, which will set the a good context to help modify a few fields. 
+method will provide a configure block of its own, which will set the a good context to help modify a few fields.
 This gives native access to the job config XML, which is typically very straight forward to understand.
 
 (Note: The full XML can be found for any job, view or folder by taking the Jenkins URL and appending `/config.xml` to

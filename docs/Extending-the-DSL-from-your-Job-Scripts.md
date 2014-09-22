@@ -18,7 +18,7 @@ ScmContext.metaClass.our_p4 = { String mapping ->
 }
 
 // Then you can use the new DSL command(s) just as any other:
-job {  
+job {
     // ....
     scm {
         our_p4("//p4path/... //workspace/...")

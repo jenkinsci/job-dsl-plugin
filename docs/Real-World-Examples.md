@@ -6,9 +6,9 @@
 
 This page capture the most common use cases, of which we'll try our best to make into actual DSL methods to greatly simplify use them. Please add your own uses cases, there is a high likelihood that if you provide an sample here, it'll get made into a DSL method.
 
-First every job has to be encased in a job block with a name. Feel free to add variables, e.g. 
+First every job has to be encased in a job block with a name. Feel free to add variables, e.g.
 ```
-def jobName = 
+def jobName =
 job {
     name jobName
 }
@@ -48,7 +48,7 @@ job {
 
 ```groovy
 def giturl = 'git://github.com/quidryan/aws-sdk-test.git'
-for(i in 0..10) {   
+for(i in 0..10) {
     job {
         name "DSL-Tutorial-1-Test-${i}"
         scm {
@@ -83,7 +83,7 @@ job {
 def project = 'Netflix/asgard'
 def branchApi = new URL("https://api.github.com/repos/${project}/branches")
 def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
-branches.each { 
+branches.each {
     def branchName = it.name
     job {
         name "${project}-${branchName}".replaceAll('/','-')
@@ -96,7 +96,7 @@ branches.each {
 
 * Set up a chain of builds - compile & unit test, integration test, static analysis; each passing the build results of the former to the next step in the chain - TBD
 
-* Add Gradle Build Step 
+* Add Gradle Build Step
 ```
 job {
     name 'GradleJob'

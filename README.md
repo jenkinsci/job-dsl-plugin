@@ -78,27 +78,27 @@ job {
         git(gitUrl)
     }
     // No Trigger
-    authorization { 
+    authorization {
         // Limit builds to just jack and jill
         permission(Permissions.ItemBuild, 'jill')
         permission(Permissions.ItemBuild, 'jack')
     }
-    steps { 
+    steps {
         maven('release')
         shell('cleanup.sh')
     }
 }
 ```
 
-NOTE: This example does depend on existing jobs which are used as templates, and hence won't run "out of the box". Read 
+NOTE: This example does depend on existing jobs which are used as templates, and hence won't run "out of the box". Read
 the wiki for isolated examples and step-by-step guides to get this example working.
 
 Manually creating these jobs wouldn't be too hard, but doing the same thing all over again for every new branch or for
-a hundred other projects is where it gets interesting (and by "interesting" we mean "difficult"). An anti-pattern that 
-people use in Jenkins to minimize the amount of job configuration, they make a single parameterized job to do all these 
+a hundred other projects is where it gets interesting (and by "interesting" we mean "difficult"). An anti-pattern that
+people use in Jenkins to minimize the amount of job configuration, they make a single parameterized job to do all these
 things in one job, but then the history of the job is skewed and they were limited in some settings like triggers. This
-provides a much more powerful way of defining them. Likewise, if using the jenkins plugin of the DSL then when the 
-template is changed, the test jobs will be re-created! 
+provides a much more powerful way of defining them. Likewise, if using the jenkins plugin of the DSL then when the
+template is changed, the test jobs will be re-created!
 
 Please refer to the wiki, https://github.com/jenkinsci/job-dsl-plugin/wiki, for further documentation and examples.
 
