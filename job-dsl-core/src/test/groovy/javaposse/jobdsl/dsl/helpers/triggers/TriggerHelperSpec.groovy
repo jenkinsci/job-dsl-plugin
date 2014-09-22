@@ -423,6 +423,41 @@ class TriggerHelperSpec extends Specification {
         }
     }
 
+    def 'call avanced gerrit trigger methods with topic args' () {
+        when:
+        context.gerrit {
+            events {
+                ChangeMerged
+                DraftPublished
+            }
+            project('reg_exp:myProject', ['ant:feature-branch'], ['ant:topic'])
+        }
+        then:
+        with(context.triggerNodes[0]) {
+            with(gerritProjects[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'
+                    compareType[0].value() == 'REG_EXP'
+                    pattern[0].value() == 'myProject'
+                    branches[0].children().size() == 1
+                    with(branches[0].children()[0]) {
+                        name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch'
+                        compareType[0].value() == 'ANT'
+                        pattern[0].value() == 'feature-branch'
+                    }
+                    topics[0].children().size() == 1
+                    with(topics[0].children()[0]) {
+                        name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Topic'
+                        compareType[0].value() == 'ANT'
+                        pattern[0].value() == 'topic'
+                    }
+                }
+            }
+        }
+
+    }
+
     def 'call gerrit trigger and verify build status value settings'() {
         when:
         context.gerrit {

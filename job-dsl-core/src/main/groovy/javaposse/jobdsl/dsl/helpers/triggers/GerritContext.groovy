@@ -57,14 +57,27 @@ class GerritContext implements Context {
     }
 
     def project(String projectName, List<String> branches) {
-        projects << [
-                new GerritSpec(projectName),
-                branches.collect { new GerritSpec(it) }
-        ]
+        project(projectName, branches, [])
     }
 
     def project(String projectName, String branch) {
         project(projectName, [branch])
+    }
+
+    def project(String projectName, List<String> branches, List<String> topics) {
+         projects << [
+                new GerritSpec(projectName),
+                branches.collect { new GerritSpec(it) },
+                topics.collect { new GerritSpec(it) }
+        ]
+    }
+
+    def project(String projectName, String branch, List<String> topics) {
+        project(projectName, [branch], topics)
+    }
+
+    def project(String projectName, String branch, String topic) {
+        project(projectName, [branch], [topic])
     }
 
     static class GerritSpec {

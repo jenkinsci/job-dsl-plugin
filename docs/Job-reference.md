@@ -730,15 +730,18 @@ Enables the job to be started whenever a change is pushed to a github repository
 
 ```groovy
 gerrit {
-    events(Closure eventClosure)                          // free form listing of event names
-    project(String projectName, List<String> branches)    // can be called multiple times
-    project(String projectName, String branches)          // can be called multiple times
-    buildStarted(Integer verified, Integer codeReview)    // updates the Gerrit report values for the build started event, use null to keep the default value
-    buildSuccessful(Integer verified, Integer codeReview) // updates the Gerrit report values for the build successful event, use null to keep the default value
-    buildFailed(Integer verified, Integer codeReview)     // updates the Gerrit report values for the build failed event, use null to keep the default value
-    buildUnstable(Integer verified, Integer codeReview)   // updates the Gerrit report values for the build unstable event, use null to keep the default value
-    buildNotBuilt(Integer verified, Integer codeReview)   // updates the Gerrit report values for the build not built event, use null to keep the default value
-    configure(Closure configureClosure)                   // the com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger node is handed in
+    events(Closure eventClosure)                             // free form listing of event names
+    project(String projectName, List<String> branches)       // can be called multiple times
+    project(String projectName, String branch)               // can be called multiple times
+    project(String projectName, String branch, String topic) // can be called multiple times
+    project(String projectName, String branch, List<String> topics) // can be called multiple times 
+    project(String projectName, List<String> branches, List<String> topics) // can be called multiple times
+    buildStarted(Integer verified, Integer codeReview)       // updates the Gerrit report values for the build started event, use null to keep the default value
+    buildSuccessful(Integer verified, Integer codeReview)    // updates the Gerrit report values for the build successful event, use null to keep the default value
+    buildFailed(Integer verified, Integer codeReview)        // updates the Gerrit report values for the build failed event, use null to keep the default value
+    buildUnstable(Integer verified, Integer codeReview)      // updates the Gerrit report values for the build unstable event, use null to keep the default value
+    buildNotBuilt(Integer verified, Integer codeReview)      // updates the Gerrit report values for the build not built event, use null to keep the default value
+    configure(Closure configureClosure)                      // the com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger node is handed in
 }
 ```
 
