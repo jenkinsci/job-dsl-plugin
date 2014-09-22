@@ -7,6 +7,8 @@ import hudson.model.AbstractBuild
 import hudson.model.Failure
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
+import hudson.model.ListView
+import hudson.model.View
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
@@ -241,5 +243,78 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         thrown(NameNotProvidedException)
+    }
+
+    def 'getCredentialsId without Credentials Plugin'() {
+        when:
+        String id = jobManagement.getCredentialsId('test')
+
+        then:
+        id == null
+    }
+
+    def 'create view'() {
+        when:
+        jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+    }
+
+    def 'update view'() {
+        setup:
+        jenkinsRule.instance.addView(new ListView('test-view'))
+
+        when:
+        jobManagement.createOrUpdateView(
+                'test-view',
+                '<hudson.model.ListView><description>lorem ipsum</description></hudson.model.ListView>',
+                false
+        )
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+        view.description == 'lorem ipsum'
+    }
+
+    def 'update view ignoring changes'() {
+        setup:
+        jenkinsRule.instance.addView(new ListView('test-view'))
+
+        when:
+        jobManagement.createOrUpdateView(
+                'test-view',
+                '<hudson.model.ListView><description>lorem ipsum</description></hudson.model.ListView>',
+                true
+        )
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+        view.description == null
+    }
+
+    def 'create view with invalid config'() {
+        when:
+        jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView>', false)
+
+        then:
+        jenkinsRule.instance.getView('test-view') == null
+    }
+
+    def 'readFileFromWorkspace with exception'() {
+        setup:
+        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
+        jobManagement = new JenkinsJobManagement(System.out, new EnvVars(), build)
+        String fileName = 'test.txt'
+
+        when:
+        jobManagement.readFileInWorkspace(fileName)
+
+        then:
+        Exception e = thrown(IllegalStateException)
+        e.message.contains(fileName)
     }
 }
