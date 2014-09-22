@@ -76,10 +76,10 @@ job(Map<String, ?> arguments = [:]) {
     lockableResources(String resources, Closure lockableResourcesClosure) // since 1.25
     logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1,
                int artifactNumToKeep = -1)
+    notifications(Closure notificationClosure) // since 1.26
     priority(int value)
     quietPeriod(int seconds = 5)
     throttleConcurrentBuilds(Closure throttleClosure)
-    notification(notificationClosure) // See [[Job Reference]] for notificationClosure syntax. Since 1.24
     authorization {
         permission(String permission)
         permission(String permEnumName, String user)

@@ -1,17 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
 
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
-
 class TopLevelHelper extends AbstractHelper {
+    private final JobManagement jobManagement
 
-    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType, JobManagement jobManagement) {
         super(withXmlActions, jobType)
+        this.jobManagement = jobManagement
     }
 
     def description(String descriptionString) {
@@ -334,7 +335,7 @@ class TopLevelHelper extends AbstractHelper {
     }
 
     /**
-     * Configures the Notification Plugin
+     * Configures the Notification Plugin.
      *
      * <properties>
      *     <com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
@@ -350,9 +351,9 @@ class TopLevelHelper extends AbstractHelper {
      *     </com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
      * </properties>
      */
-    def notification(Closure notificationClosure) {
-        NotificationContext notificationContext = new NotificationContext()
-        executeInContext(notificationClosure, notificationContext)
+    def notifications(Closure notificationClosure) {
+        NotificationContext notificationContext = new NotificationContext(jobManagement)
+        AbstractContextHelper.executeInContext(notificationClosure, notificationContext)
 
         execute {
             it / 'properties' / 'com.tikal.hudson.plugins.notification.HudsonNotificationProperty' {

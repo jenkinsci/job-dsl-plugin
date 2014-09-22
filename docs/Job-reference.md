@@ -265,6 +265,39 @@ job {
 
 (since 1.26)
 
+## Notification Plugin
+
+```groovy
+job {
+    notifications {
+        endpoint(String url, String protocol = 'HTTP', String format = 'JSON') {
+            event(String event)       // defaults to 'all', introduced in Notification Plugin 1.6
+            timeout(int milliseconds) // defaults to 30000, introduced in Notification Plugin 1.6
+        }
+    }
+}
+```
+
+Configures notifications for the build. Requires the
+[Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin).
+
+Possible values for protocol are `'HTTP'`, `'TCP'`, or `'UDP'`. Possible values for format are `'JSON'` or `'XML'`.
+Possible values for event are `'all'`, `'started'`, `'completed'`, or `'finalized'`.
+
+```groovy
+job {
+    notifications {
+        endpoint('http://example.com:8080/monitor')
+        endpoint('10.100.2.3:3434', 'TCP', 'XML') {
+            event('started')
+            timeout(60000)
+        }
+    }
+}
+```
+
+(since 1.26)
+
 ## Build Flow
 
 ```groovy
@@ -303,67 +336,6 @@ job(type: BuildFlow) {
 ```
 
 Since 1.21.
-
-## Notification Plugin
-
-```groovy
-notification(Closure notificationClosure)
-```
-
-Configures notifications for the build. Requires the [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin).
-
-Examples:
-
-One notification endpoint. The protocol defaults to `HTTP`, and the format defaults to `JSON`.
-
-```groovy
-job {
-    ...
-    notification {
-        // Possible values for protocol: HTTP, TCP, or UDP
-        // Possible values for format: JSON or XML
-        endpoint(String url, String protocol = "HTTP", String format = "JSON")
-    }
-    ...
-}
-```
-
-One notification endpoint with an additional closure to configure `event` and `timeout` (introduced in Notification Plugin 1.6)
-
-```groovy
-job {
-    ...
-    notification {
-        // Possible values for protocol: HTTP, TCP, or UDP
-        // Possible values for format: JSON or XML
-        endpoint(String url, String protocol = "HTTP", String format = "JSON") {
-            event(String event = "all") // Use all, started, completed, or finalized. introduced in Notification Plugin 1.6 
-            timeout(int timeout = 30000) // Endpoint call timeout (in ms). introduced in Notification Plugin 1.6
-        }
-    }
-    ...
-}
-```
-
-Multiple notification endpoints.
-
-```groovy
-job {
-    ...
-    notification {
-        // Possible values for protocol: HTTP, TCP, or UDP
-        // Possible values for format: JSON or XML
-        endpoint(String url, String protocol = "HTTP", String format = "JSON")
-        endpoint(String url, String protocol = "HTTP", String format = "JSON") {
-            event(String event = "all") // Use all, started, completed, or finalized. introduced in Notification Plugin 1.6 
-            timeout(int timeout = 30000) // Endpoint call timeout (in ms). introduced in Notification Plugin 1.6
-        }
-    }
-    ...
-}
-```
-
-Since 1.24.
 
 # Maven
 
