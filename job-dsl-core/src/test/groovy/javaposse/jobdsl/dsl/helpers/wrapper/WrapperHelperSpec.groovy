@@ -829,9 +829,7 @@ class WrapperHelperSpec extends Specification {
         context.maskPasswords()
 
         then:
-        context.wrapperNodes?.size() == 1
-
-        def wrapperNode = context.wrapperNodes[0]
-        wrapperNode.name() == 'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
+        context.wrapperNodes.size() == 1
+        context.wrapperNodes[0].name() == 'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
     }
 }

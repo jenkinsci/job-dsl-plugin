@@ -1402,6 +1402,7 @@ job {
 (since 1.26)
 
 ## Mask Passwords
+
 ```groovy
 job {
     wrappers {
