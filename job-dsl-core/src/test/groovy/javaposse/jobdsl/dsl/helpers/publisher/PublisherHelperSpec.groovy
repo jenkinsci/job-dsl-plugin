@@ -167,20 +167,44 @@ class PublisherHelperSpec extends Specification {
         archiveNode.allowEmptyArchive[0].value() == 'true'
     }
 
+    def 'call deprecated junit archive with all args'() {
+        when:
+        context.archiveJunit('include/*', true, true, true)
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            children().size() == 3
+            testResults[0].value() == 'include/*'
+            keepLongStdio[0].value() == true
+            testDataPublishers[0].children().size() == 2
+            testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
+            testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
+        }
+    }
+
     def 'call junit archive with all args'() {
         when:
-        context.archiveJunit('include/*', true, true, true) {
-            publishTestStabilityData()
+        context.archiveJunit('include/*') {
+            retainLongStdout()
+            testDataPublishers {
+                allowClaimingOfFailedTests()
+                publishTestAttachments()
+                publishTestStabilityData()
+            }
         }
 
         then:
-        Node archiveNode = context.publisherNodes[0]
-        archiveNode.name() == 'hudson.tasks.junit.JUnitResultArchiver'
-        archiveNode.testResults[0].value() == 'include/*'
-        archiveNode.keepLongStdio[0].value() == 'true'
-        archiveNode.testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
-        archiveNode.testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
-        archiveNode.testDataPublishers[0].'de.esailors.jenkins.teststability.StabilityTestDataPublisher'[0] != null
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            children().size() == 3
+            testResults[0].value() == 'include/*'
+            keepLongStdio[0].value() == true
+            testDataPublishers[0].children().size() == 3
+            testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
+            testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
+            testDataPublishers[0].'de.esailors.jenkins.teststability.StabilityTestDataPublisher'[0] != null
+        }
     }
 
     def 'call junit archive with minimal args'() {
@@ -190,14 +214,10 @@ class PublisherHelperSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            children().size() == 3
             testResults[0].value() == 'include/*'
-            keepLongStdio[0].value() == 'false'
-            testDataPublishers[0] != null
-            !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
-            !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
-            !testDataPublishers[0].children().any {
-                it.name() == 'de.esailors.jenkins.teststability.StabilityTestDataPublisher'
-            }
+            keepLongStdio[0].value() == false
+            testDataPublishers[0].children().size() == 0
         }
     }
 

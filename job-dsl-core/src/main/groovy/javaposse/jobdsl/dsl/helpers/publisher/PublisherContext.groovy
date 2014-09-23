@@ -173,42 +173,43 @@ class PublisherContext implements Context {
     }
 
     /**
-     * Everything checked:
-     <hudson.tasks.junit.JUnitResultArchiver>
-     <testResults>build/test/*.xml</testResults> // Can be empty
-     <keepLongStdio>true</keepLongStdio>
-     <testDataPublishers> // Empty if no extra publishers
-     <hudson.plugins.claim.ClaimTestDataPublisher/> // Allow claiming of failed tests
-     <hudson.plugins.junitattachments.AttachmentPublisher/> // Publish test attachments
-     <de.esailors.jenkins.teststability.StabilityTestDataPublisher/> // Record test stability
-     </testDataPublishers>
-     </hudson.tasks.junit.JUnitResultArchiver>
+     * <hudson.tasks.junit.JUnitResultArchiver>
+     *     <testResults>build/test/*.xml</testResults>
+     *     <keepLongStdio>true</keepLongStdio>
+     *     <testDataPublishers>
+     *         <hudson.plugins.claim.ClaimTestDataPublisher/>
+     *         <hudson.plugins.junitattachments.AttachmentPublisher/>
+     *         <de.esailors.jenkins.teststability.StabilityTestDataPublisher/>
+     *     </testDataPublishers>
+     * </hudson.tasks.junit.JUnitResultArchiver>
      */
-    def archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false, Closure junitClosure = null) {
-        ArchiveJUnitContext junitContext = new ArchiveJUnitContext()
+    def archiveJunit(String glob, Closure junitClosure = null) {
+        ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         AbstractContextHelper.executeInContext(junitClosure, junitContext)
 
-        def nodeBuilder = new NodeBuilder()
+        publisherNodes << new NodeBuilder().'hudson.tasks.junit.JUnitResultArchiver' {
+            testResults(glob)
+            keepLongStdio(junitContext.retainLongStdout)
+            testDataPublishers(junitContext.testDataPublishersContext.testDataPublishers)
+        }
+    }
 
-        Node archiverNode = nodeBuilder.'hudson.tasks.junit.JUnitResultArchiver' {
-            testResults glob
-            keepLongStdio retainLongStdout ? 'true' : 'false'
+    def archiveJunit(String glob, boolean retainLongStdout, boolean allowClaimingOfFailedTests = false,
+                     boolean publishTestAttachments = false) {
+        jobManagement.logDeprecationWarning()
+        archiveJunit(glob) {
+            if (retainLongStdout) {
+                delegate.retainLongStdout()
+            }
             testDataPublishers {
                 if (allowClaimingOfFailedTests) {
-                    'hudson.plugins.claim.ClaimTestDataPublisher' ''
+                    delegate.allowClaimingOfFailedTests()
                 }
                 if (publishTestAttachments) {
-                    'hudson.plugins.junitattachments.AttachmentPublisher' ''
-                }
-                junitContext.testDataPublishers.each { testDataPublisher ->
-                    "${testDataPublisher}" ''
+                    delegate.publishTestAttachments()
                 }
             }
         }
-
-        publisherNodes << archiverNode
-
     }
 
     /**

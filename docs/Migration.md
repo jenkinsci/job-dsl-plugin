@@ -1,5 +1,36 @@
 ## Migrating to 1.26
 
+### Archive JUnit Report
+
+In version 1.26 the archiveJunit method with boolean arguments has been deprecated and has been replaced by a closure
+variant.
+
+DSL prior to 1.26
+```groovy
+job {
+    publishers {
+        archiveJunit('**/target/surefire-reports/*.xml', true, true, true)
+    }
+}
+```
+
+DSL since 1.26
+```groovy
+job {
+    publishers {
+        archiveJunit('**/target/surefire-reports/*.xml') {
+            retainLongStdout()
+            testDataPublishers {
+                allowClaimingOfFailedTests()
+                publishTestAttachments()
+            }
+        }
+    }
+}
+```
+
+See the [[Job Reference]] for further details.
+
 ### Gerrit Trigger
 
 The usage "short names" in the event closure is deprecated and has been replaced by explicit DSL methods for each event.
