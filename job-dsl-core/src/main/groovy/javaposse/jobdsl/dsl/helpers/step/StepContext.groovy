@@ -11,13 +11,13 @@ import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 
-class AbstractStepContext implements Context {
+class StepContext implements Context {
     private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
 
     List<Node> stepNodes = []
     JobManagement jobManagement
 
-    AbstractStepContext(List<Node> stepNodes = [], JobManagement jobManagement) {
+    StepContext(List<Node> stepNodes = [], JobManagement jobManagement) {
         this.stepNodes = stepNodes
         this.jobManagement = jobManagement
     }
@@ -785,7 +785,7 @@ class AbstractStepContext implements Context {
      * <org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd/>
      */
     def criticalBlock(Closure closure) {
-        AbstractStepContext stepContext = new AbstractStepContext(jobManagement)
+        StepContext stepContext = new StepContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, stepContext)
 
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'()

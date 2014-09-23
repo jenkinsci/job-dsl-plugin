@@ -17,7 +17,7 @@ class StepHelperSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
     JobManagement jobManagement = Mock(JobManagement)
     StepContextHelper helper = new StepContextHelper(mockActions, JobType.Freeform, jobManagement)
-    AbstractStepContext context = new AbstractStepContext(jobManagement)
+    StepContext context = new StepContext(jobManagement)
 
     def 'call shell method'() {
         when:
@@ -920,7 +920,7 @@ class StepHelperSpec extends Specification {
         }
 
         when:
-        def withXmlAction = helper.generateWithXmlAction(new AbstractStepContext([stepNode], jobManagement))
+        def withXmlAction = helper.generateWithXmlAction(new StepContext([stepNode], jobManagement))
         withXmlAction.execute(root)
 
         then:

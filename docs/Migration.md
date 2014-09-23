@@ -44,6 +44,22 @@ job {
 
 See the [[Job Reference]] for further details.
 
+### AbstractStepContext
+
+`javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, use
+`javaposse.jobdsl.dsl.helpers.step.StepContext` instead.
+
+DSL prior to 1.26
+```groovy
+AbstractStepContext.metaClass.myStep = { ... }
+}
+```
+
+DSL since 1.26
+```groovy
+StepContext.metaClass.myStep = { ... }
+```
+
 ## Migrating to 1.24
 
 ### Build Timeout
