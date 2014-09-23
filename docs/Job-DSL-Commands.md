@@ -151,6 +151,7 @@ job(Map<String, ?> arguments = [:]) {
         timestamps()
         toolenv(String... tools)
         xvnc(boolean takeScreenshot = false)
+        maskPasswords()
     }
     steps {
         ant(Closure antClosure = null)

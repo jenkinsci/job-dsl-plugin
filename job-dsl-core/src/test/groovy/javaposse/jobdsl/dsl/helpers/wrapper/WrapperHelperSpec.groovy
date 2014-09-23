@@ -823,4 +823,15 @@ class WrapperHelperSpec extends Specification {
             updateDisplayName[0].value() == true
         }
     }
+
+    def 'call mask passwords'() {
+        when:
+        context.maskPasswords()
+
+        then:
+        context.wrapperNodes?.size() == 1
+
+        def wrapperNode = context.wrapperNodes[0]
+        wrapperNode.name() == 'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
+    }
 }

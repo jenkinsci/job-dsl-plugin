@@ -1401,6 +1401,20 @@ job {
 
 (since 1.26)
 
+## Mask Passwords
+```groovy
+job {
+    wrappers {
+        maskPasswords()
+    }
+}
+```
+
+Masks the passwords that occur in the console output. Requires the 
+[Mask Passwords Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin)
+
+(since 1.26)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
