@@ -630,4 +630,12 @@ class WrapperContext implements Context {
             updateDisplayName(setDisplayName)
         }
     }
+
+    /**
+     * <com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
+     * </com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
+     */
+    def maskPasswords() {
+        wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
+    }
 }

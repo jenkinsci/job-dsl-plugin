@@ -141,6 +141,7 @@ job(Map<String, ?> arguments = [:]) {
         injectPasswords() // since 1.23
         keychains(Closure closure) // since 1.24
         logSizeChecker(Closure closure = null) // since 1.23
+        maskPasswords() // since 1.26
         preBuildCleanup(Closure closure = null) // since 1.22
         release(Closure releaseClosure) // since 1.22
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
