@@ -201,6 +201,7 @@ class PublisherContext implements Context {
                 if (publishTestAttachments) {
                     'hudson.plugins.junitattachments.AttachmentPublisher' ''
                 }
+
                 junitContext.testDataPublishers.each { testDataPublisher ->
                     "${testDataPublisher}" ''
                 }
