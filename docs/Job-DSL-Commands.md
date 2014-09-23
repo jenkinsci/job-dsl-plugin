@@ -217,7 +217,8 @@ job(Map<String, ?> arguments = [:]) {
         archiveJavadoc(Closure javadocClosure) // since 1.19
         archiveJunit(String glob, boolean retainLongStdout = false,
                      boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false)
+                     boolean publishTestAttachments = false,
+                     Closure junitClosure = null)
         archiveXunit(Closure xunitClosure) // since 1.24
         associatedFiles(String files = null) // since 1.20
         buildDescription(String regularExpression, String description = '',
