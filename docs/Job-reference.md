@@ -2270,7 +2270,9 @@ publishers {
 
 ## Archive JUnit
 ```groovy
-archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false, boolean publishTestAttachments = false)
+archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false, boolean publishTestAttachments = false) {
+    publishTestStabilityData()
+}
 ```
 
 Supports archiving JUNit results for each build.
