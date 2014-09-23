@@ -218,7 +218,7 @@ job(Map<String, ?> arguments = [:]) {
         archiveJunit(String glob, boolean retainLongStdout = false,
                      boolean allowClaimingOfFailedTests = false,
                      boolean publishTestAttachments = false,
-                     boolean testStability = false)
+                     Closure junitClosure = null)
         archiveXunit(Closure xunitClosure) // since 1.24
         associatedFiles(String files = null) // since 1.20
         buildDescription(String regularExpression, String description = '',
