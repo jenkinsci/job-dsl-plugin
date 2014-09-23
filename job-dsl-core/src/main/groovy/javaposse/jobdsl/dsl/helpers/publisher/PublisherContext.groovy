@@ -180,11 +180,12 @@ class PublisherContext implements Context {
      <testDataPublishers> // Empty if no extra publishers
      <hudson.plugins.claim.ClaimTestDataPublisher/> // Allow claiming of failed tests
      <hudson.plugins.junitattachments.AttachmentPublisher/> // Publish test attachments
+     <de.esailors.jenkins.teststability.StabilityTestDataPublisher/> // Record test stability
      </testDataPublishers>
      </hudson.tasks.junit.JUnitResultArchiver>
      */
     def archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false) {
+                     boolean publishTestAttachments = false, boolean testStability = false) {
         def nodeBuilder = new NodeBuilder()
 
         Node archiverNode = nodeBuilder.'hudson.tasks.junit.JUnitResultArchiver' {
@@ -196,6 +197,9 @@ class PublisherContext implements Context {
                 }
                 if (publishTestAttachments) {
                     'hudson.plugins.junitattachments.AttachmentPublisher' ''
+                }
+                if (testStability) {
+                    'de.esailors.jenkins.teststability.StabilityTestDataPublisher' ''
                 }
             }
         }
