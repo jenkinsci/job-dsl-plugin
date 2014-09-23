@@ -2309,11 +2309,44 @@ publishers {
 (Since 1.17)
 
 ## Archive JUnit
+
 ```groovy
-archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false, boolean publishTestAttachments = false)
+job {
+    publishers {
+        archiveJunit(String glob, boolean retainLongStdout,
+                     boolean allowClaimingOfFailedTests = false,
+                     boolean publishTestAttachments = false) // deprecated
+        archiveJunit(String glob) { // since 1.26
+            retainLongStdout(boolean retain = true) // options, defaults to false 
+            testDataPublishers {
+                allowClaimingOfFailedTests()
+                publishTestAttachments()
+                publishTestStabilityData()
+            }
+        }
+    }
+}
 ```
 
-Supports archiving JUNit results for each build.
+Supports archiving JUnit results for each build. The
+[Claim Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Claim+plugin) is required for `allowClaimingOfFailedTests`.
+The [JUnit Attachments Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Attachments+Plugin) is required for
+`publishTestAttachments`. The [Test Stability Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Test+stability+plugin)
+is required for `publishTestStabilityData`.
+
+```groovy
+job {
+    publishers {
+        archiveJunit('**/target/surefire-reports/*.xml')
+        archiveJunit('**/minitest-reports/*.xml') {        
+            retainLongStdout()
+            testDataPublishers {
+                publishTestStabilityData()
+            }
+        }
+    }
+}
+```
 
 ## HTML Publisher
 ```groovy

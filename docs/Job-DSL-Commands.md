@@ -215,9 +215,10 @@ job(Map<String, ?> arguments = [:]) {
                          boolean latestOnlyBoolean = false)
         archiveArtifacts(Closure archiveArtifactsClosure) // since 1.20
         archiveJavadoc(Closure javadocClosure) // since 1.19
-        archiveJunit(String glob, boolean retainLongStdout = false,
+        archiveJunit(String glob, boolean retainLongStdout,
                      boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false)
+                     boolean publishTestAttachments = false) // deprecated
+        archiveJunit(String glob, Closure junitClosure = null) // since 1.26
         archiveXunit(Closure xunitClosure) // since 1.24
         associatedFiles(String files = null) // since 1.20
         buildDescription(String regularExpression, String description = '',

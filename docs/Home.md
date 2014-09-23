@@ -17,6 +17,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.26 (unreleased)
+ * Support for [Test Stability Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Test+stability+plugin)
  * Support for [Analysis Collector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Analysis+Collector+Plugin)
  * Support for [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
  * Support for [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
@@ -24,6 +25,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Support for [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
  * Removed unnecessary undocumented methods in Gerrit trigger ([JENKINS-24787](https://issues.jenkins-ci.org/browse/JENKINS-24787))
  * Short names in the Gerrit trigger event closure have been replaced by DSL methods, see [[Migration]]
+ * The `archiveJunit` method with boolean arguments has been deprecated, see [[Migration]]
 * 1.25 (September 01 2014)
  * Dropped support for Java 5, Java 6 or later is required at runtime
  * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
