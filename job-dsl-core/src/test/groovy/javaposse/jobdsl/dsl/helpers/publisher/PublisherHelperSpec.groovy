@@ -169,7 +169,7 @@ class PublisherHelperSpec extends Specification {
 
     def 'call junit archive with all args'() {
         when:
-        context.archiveJunit('include/*', true, true, true)
+        context.archiveJunit('include/*', true, true, true, true)
 
         then:
         Node archiveNode = context.publisherNodes[0]
@@ -178,6 +178,7 @@ class PublisherHelperSpec extends Specification {
         archiveNode.keepLongStdio[0].value() == 'true'
         archiveNode.testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
         archiveNode.testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
+        archiveNode.testDataPublishers[0].'de.esailors.jenkins.teststability.StabilityTestDataPublisher'[0] != null
     }
 
     def 'call junit archive with minimal args'() {
@@ -192,6 +193,7 @@ class PublisherHelperSpec extends Specification {
             testDataPublishers[0] != null
             !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
             !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
+            !testDataPublishers[0].children().any { it.name() == 'de.esailors.jenkins.teststability.StabilityTestDataPublisher' }
         }
     }
 
