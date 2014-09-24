@@ -133,6 +133,7 @@ job(Map<String, ?> arguments = [:]) {
         allocatePorts(Closure closure = null)
         allocatePorts(String[] ports, Closure closure = null)
         buildName(String nameTemplate) // since 1.24
+        buildUserVars() // since 1.26
         colorizeOutput(String colorMap)
         deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
         environmentVariables(Closure envClosure)

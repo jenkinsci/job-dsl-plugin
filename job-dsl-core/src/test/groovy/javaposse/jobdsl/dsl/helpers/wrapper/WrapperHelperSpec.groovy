@@ -832,4 +832,13 @@ class WrapperHelperSpec extends Specification {
         context.wrapperNodes.size() == 1
         context.wrapperNodes[0].name() == 'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
     }
+
+    def 'call build user vars'() {
+        when:
+        context.buildUserVars()
+
+        then:
+        context.wrapperNodes.size() == 1
+        context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.builduser.BuildUser'
+    }
 }
