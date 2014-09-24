@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
+import javaposse.jobdsl.dsl.helpers.step.StepContext
 
 class ReleaseContext implements Context {
     private final JobManagement jobManagement
@@ -24,25 +24,25 @@ class ReleaseContext implements Context {
     }
 
     def preBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext(jobManagement)
+        def stepContext = new StepContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, stepContext)
         preBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postSuccessfulBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext(jobManagement)
+        def stepContext = new StepContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, stepContext)
         postSuccessfulBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext(jobManagement)
+        def stepContext = new StepContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, stepContext)
         postBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postFailedBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext(jobManagement)
+        def stepContext = new StepContext(jobManagement)
         AbstractContextHelper.executeInContext(closure, stepContext)
         postFailedBuildSteps.addAll(stepContext.stepNodes)
     }

@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 import static com.google.common.base.Preconditions.checkArgument
 
-class ConditionalStepsContext extends AbstractStepContext {
+class ConditionalStepsContext extends StepContext {
 
     RunCondition runCondition
     String runnerClass
