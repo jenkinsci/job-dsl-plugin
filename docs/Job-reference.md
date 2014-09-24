@@ -1467,7 +1467,7 @@ job {
 ```
 
 Adds a number of environment variables with information of the current user to the environment. Requires the
-[Build User Vars Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+User+Vars+Plugin)
+[Build User Vars Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+User+Vars+Plugin).
 
 (since 1.26)
 
