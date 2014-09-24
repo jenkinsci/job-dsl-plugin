@@ -1456,6 +1456,21 @@ Masks the passwords that occur in the console output. Requires the
 
 (since 1.26)
 
+## Build User Vars
+
+```groovy
+job {
+    wrappers {
+        buildUserVars()
+    }
+}
+```
+
+Adds a number of environment variables with information of the current user to the environment. Requires the
+[Build User Vars Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+User+Vars+Plugin)
+
+(since 1.26)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.

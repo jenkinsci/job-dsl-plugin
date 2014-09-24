@@ -638,4 +638,12 @@ class WrapperContext implements Context {
     def maskPasswords() {
         wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
     }
+
+    /**
+     * <org.jenkinsci.plugins.builduser.BuildUser>
+     * </org.jenkinsci.plugins.builduser.BuildUser>
+     */
+    def buildUserVars() {
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
+    }
 }
