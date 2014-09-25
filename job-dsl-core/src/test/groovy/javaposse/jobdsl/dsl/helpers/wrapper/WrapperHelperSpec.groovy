@@ -193,11 +193,11 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def strategy = timeoutWrapper.strategy[0]
-        strategy.timeout[0].value() == 15000
+        strategy.timeoutSecondsString[0].value() == 15
         strategy.attribute('class') == Timeout.noActivity.className
         def list = timeoutWrapper.operationList[0]
         list.'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
-        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.14')
     }
 
     def 'likelyStuck timeout configuration working' () {

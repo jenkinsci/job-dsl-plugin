@@ -58,7 +58,7 @@ class TimeoutContext implements Context {
     }
 
     def noActivity(int seconds = 180) {
-        jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
+        jobManagement.requireMinimumPluginVersion('build-timeout', '1.14')
         type = Timeout.noActivity
         this.noActivitySeconds = seconds
     }
