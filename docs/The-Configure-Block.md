@@ -76,6 +76,16 @@ Things to keep in mind:
 * `+` adds siblings, so once we have one node, you can keep adding siblings, but will need an initial peer to add to.
 * Children can be easily accessed if they exist, if they don't exist you have to append them. This means accessing deep
   trees is laborious.
+* Groovy key words (e.g. `switch`), methods each object inherits (e.g. `properties`) and element names
+  containing operators (e.g. `.`) must be put into quotes:
+
+```groovy
+configure {
+    it / 'properties' / 'com.example.Test' {
+        'switch'('on')
+    }
+}
+```
 
 To ease navigation, two key operators have been overridden. Try to use them as much as possible:
 
