@@ -29,6 +29,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Short names in the Gerrit trigger event closure have been replaced by DSL methods, see [[Migration]]
  * The `archiveJunit` method with boolean arguments has been deprecated, see [[Migration]]
  * `javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, see [[Migration]]
+ * Fixed endless recursion when calling `properties` in configure blocks ([JENKINS-22708](https://issues.jenkins-ci.org/browse/JENKINS-22708))
 * 1.25 (September 01 2014)
  * Dropped support for Java 5, Java 6 or later is required at runtime
  * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
