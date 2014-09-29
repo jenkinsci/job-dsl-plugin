@@ -178,7 +178,6 @@ def jobA = job {
 queue jobA
 queue 'JobB'
 '''
-        JobManagement jm = new StringJobManagement()
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
@@ -279,5 +278,24 @@ folder {
         then:
         files.size() == 1
         files[0].name == 'foo'
+    }
+
+    def 'getProperties throws exception'() { // JENKINS-22708
+        setup:
+        String script = '''
+            job {
+                name "Test"
+                configure { root ->
+                    (properties / 'hudson.plugins.disk__usage.DiskUsageProperty').@plugin="disk-usage@0.23"
+                }
+            }
+        '''
+        ScriptRequest request = new ScriptRequest(null, script, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine request, jm
+
+        then:
+        thrown UnsupportedOperationException
     }
 }
