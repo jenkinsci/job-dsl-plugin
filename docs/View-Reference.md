@@ -78,7 +78,7 @@ view(type: BuildPipelineView) {  // since 1.21
     showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
     refreshFrequency(int seconds)
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
-    startsWithParameters(boolean startsWithParameters= true)
+    startsWithParameters(boolean startsWithParameters = true) // since 1.26
 }
 ```
 
@@ -504,11 +504,23 @@ Use this method if you want to show the pipeline definition header in the pipeli
 showPipelineDefinitionHeader()
 ```
 
+### Pipeline Starts With Parameters
+
+```groovy
+startsWithParameters(boolean startsWithParameters = true)
+```
+
+Use this method if you want toggle the "Pipeline starts with parameters" option in the pipeline view configuration.
+Optional, defaults to `false`.
+
+Requires version 1.4.3 of the
+[Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
+
 ```groovy
 startsWithParameters()
 ```
 
-Use this method if you want toggle the "Pipeline starts with parameters" option in the pipeline view configuration.  Defaults to `false`.
+(since 1.26)
 
 ## Sectioned View Options
 

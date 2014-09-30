@@ -368,7 +368,7 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
     showPipelineParameters(boolean showPipelineParameters = true)
     showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
-    startsWithParameters(boolean startsWithParameters= true)
+    startsWithParameters(boolean startsWithParameters = true) // since 1.26
 
     // SectionedView options, since 1.25
     sections {
