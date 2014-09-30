@@ -554,6 +554,7 @@ git {
     localBranch(String branch) // check out to specific local branch
     relativeTargetDir(String relativeTargetDir) // checkout to a sub-directory, optional
     reference(String reference) // path to a reference repository, optional
+    stashBrowser(String url) // url to the stash repository, optional
     configure(Closure configure) // optional configure block, the GitSCM node is passed in
 }
 

@@ -118,4 +118,10 @@ class GitContext implements Context {
     void configure(Closure withXmlClosure) {
         this.withXmlClosure = withXmlClosure
     }
+
+    void stashBrowser(String url) {
+        browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.Stash') {
+            delegate.url(url)
+        }
+    }
 }
