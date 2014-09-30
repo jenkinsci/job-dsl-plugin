@@ -117,9 +117,9 @@ class BuildPipelineView extends View {
      * <startsWithParameters>true</startsWithParameters>
      */
     void startsWithParameters(boolean startsWithParameters= true) {
-      execute {
-        it / methodMissing('startsWithParameters', startsWithParameters)
-      }
+        execute {
+          it / methodMissing('startsWithParameters', startsWithParameters)
+        }
     }
 
     @Override
