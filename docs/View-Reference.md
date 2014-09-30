@@ -78,6 +78,7 @@ view(type: BuildPipelineView) {  // since 1.21
     showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
     refreshFrequency(int seconds)
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
+    startsWithParameters(boolean startsWithParameters= true)
 }
 ```
 
@@ -502,6 +503,12 @@ Use this method if you want to show the pipeline definition header in the pipeli
 ```groovy
 showPipelineDefinitionHeader()
 ```
+
+```groovy
+startsWithParameters()
+```
+
+Use this method if you want toggle the "Pipeline starts with parameters" option in the pipeline view configuration.  Defaults to `false`.
 
 ## Sectioned View Options
 
