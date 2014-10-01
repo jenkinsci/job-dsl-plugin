@@ -2604,6 +2604,35 @@ class PublisherHelperSpec extends Specification {
         }
     }
 
+    def 'call flexible publish and test escaping'() {
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            publisher {
+                wsCleanup()
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.plugins.ws_cleanup.WsCleanup'
+                publisher[0].children().size() > 0
+            }
+        }
+    }
+
     def 'call flexible publish with build step'() {
         when:
         context.flexiblePublish {

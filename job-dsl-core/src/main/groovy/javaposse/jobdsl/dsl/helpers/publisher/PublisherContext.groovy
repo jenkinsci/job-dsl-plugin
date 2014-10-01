@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
+import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
@@ -1244,15 +1245,17 @@ class PublisherContext implements Context {
         def context = new FlexiblePublisherContext(jobManagement)
         AbstractContextHelper.executeInContext(flexiblePublishClosure, context)
 
-        Preconditions.checkArgument(context.action != null, 'no publisher or build step specified')
+        Node action = context.action
+        Preconditions.checkArgument(action != null, 'no publisher or build step specified')
 
         publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
             delegate.publishers {
                 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+
                     condition(class: context.condition.conditionClass) {
                         context.condition.addArgs(delegate)
                     }
-                    publisher(class: context.action.name(), context.action.value())
+                    publisher(class: new XmlFriendlyReplacer().unescapeName(action.name().toString()), action.value())
                     runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                 }
             }
