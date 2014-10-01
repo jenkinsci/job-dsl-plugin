@@ -58,6 +58,7 @@ project(':job-dsl-core') {
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile 'org.jenkins-ci:version-number:1.1'
+        compile 'org.jvnet.hudson:xstream:1.3.1-jenkins-11'
     }
 
     jar {

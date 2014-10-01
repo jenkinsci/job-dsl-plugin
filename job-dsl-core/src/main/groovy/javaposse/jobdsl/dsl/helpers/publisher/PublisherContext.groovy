@@ -1,24 +1,29 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.JobManagement
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
+import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
+import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
 class PublisherContext implements Context {
+    private final JobManagement jobManagement
+
     List<Node> publisherNodes = []
 
     @Delegate
     StaticAnalysisPublisherContext staticAnalysisPublisherHelper
 
     PublisherContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+
         staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes, jobManagement)
     }
 
@@ -1224,6 +1229,47 @@ class PublisherContext implements Context {
             ignoreUnverifiedSSLPeer(false)
             commitSha1(context.commitSha1)
             includeBuildNumberInKey(context.keepRepeatedBuilds)
+        }
+    }
+
+    /**
+     * Configures the FlexiblePublish plugin.
+     *
+     * https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin
+     *
+     * <org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
+     *     <publishers>
+     *         <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+     *             <condition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun"/>
+     *             <publisher class="hudson.tasks.ArtifactArchiver">
+     *                 <artifacts/>
+     *                 <latestOnly>false</latestOnly>
+     *                 <allowEmptyArchive>false</allowEmptyArchive>
+     *                 <onlyIfSuccessful>false</onlyIfSuccessful>
+     *             </publisher>
+     *             <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail"/>
+     *         </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+     *     </publishers>
+     * </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
+     */
+    def flexiblePublish(Closure flexiblePublishClosure) {
+        def context = new FlexiblePublisherContext(jobManagement)
+        AbstractContextHelper.executeInContext(flexiblePublishClosure, context)
+
+        Node action = context.action
+        Preconditions.checkArgument(action != null, 'no publisher or build step specified')
+
+        publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+            delegate.publishers {
+                'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+
+                    condition(class: context.condition.conditionClass) {
+                        context.condition.addArgs(delegate)
+                    }
+                    publisher(class: new XmlFriendlyReplacer().unescapeName(action.name().toString()), action.value())
+                    runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
+                }
+            }
         }
     }
 

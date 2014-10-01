@@ -2727,4 +2727,124 @@ class PublisherHelperSpec extends Specification {
             }
         }
     }
+
+    def 'call flexible publish'() {
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            publisher {
+                mailer('test@test.com')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.tasks.Mailer'
+                publisher[0].recipients[0].value() == 'test@test.com'
+            }
+        }
+    }
+
+    def 'call flexible publish and test escaping'() {
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            publisher {
+                wsCleanup()
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.plugins.ws_cleanup.WsCleanup'
+                publisher[0].children().size() > 0
+            }
+        }
+    }
+
+    def 'call flexible publish with build step'() {
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            step {
+                shell('echo hello')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.tasks.Shell'
+                publisher[0].command[0].value() == 'echo hello'
+            }
+        }
+    }
+
+    def 'call flexible publish without condition'() {
+        when:
+        context.flexiblePublish {
+            step {
+                shell('echo hello')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+                condition[0].children().size() == 0
+                publisher[0].attribute('class') == 'hudson.tasks.Shell'
+                publisher[0].command[0].value() == 'echo hello'
+            }
+        }
+    }
+
+    def 'call flexible publish without action'() {
+        when:
+        context.flexiblePublish {
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }
