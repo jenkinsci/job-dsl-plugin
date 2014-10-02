@@ -52,4 +52,8 @@ dependencies {
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.7@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:ant:1.2@jar' // see JENKINS-17129
+    jenkinsTest 'org.jenkins-ci.main:maven-plugin:1.509.3@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:javadoc:1.1@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:mailer:1.1@jar'
 }
