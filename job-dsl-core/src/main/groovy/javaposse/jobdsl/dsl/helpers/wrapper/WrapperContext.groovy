@@ -295,6 +295,7 @@ class WrapperContext implements Context {
      *     <buildWrappers>
      *         <hudson.plugins.xvnc.Xvnc>
      *             <takeScreenshot>false</takeScreenshot>
+     *             <useXauthority>true</useXauthority>
      *         </hudson.plugins.xvnc.Xvnc>
      *     </buildWrappers>
      * </project>
@@ -302,11 +303,13 @@ class WrapperContext implements Context {
      *
      * Runs build under XVNC.
      * @param takeScreenshotAtEndOfBuild If a screenshot should be taken at the end of the build
+     * @param createXauthorityFilePerBuild If a dedicated Xauthority file per build should be created
      */
-    def xvnc(boolean takeScreenshotAtEndOfBuild = false) {
+    def xvnc(boolean takeScreenshotAtEndOfBuild = false, boolean createXauthorityFilePerBuild = true) {
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.xvnc.Xvnc' {
             takeScreenshot(takeScreenshotAtEndOfBuild)
+            useXauthority(createXauthorityFilePerBuild)
         }
     }
 

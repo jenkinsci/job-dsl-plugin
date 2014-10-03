@@ -1111,7 +1111,7 @@ Renders ANSI escape sequences, including color, to Console Output.
 ```groovy
 job {
     wrappers {
-        xvnc(boolean takeScreenshot = false)
+        xvnc(boolean takeScreenshot = false, boolean useXauthority = true)
     }
 }
 ```

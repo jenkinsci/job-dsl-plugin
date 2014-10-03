@@ -326,8 +326,9 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.takeScreenshot
-        wrapper[0].value() == false
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper.takeScreenshot[0].value() == false
+        wrapper.useXauthority[0].value() == true
     }
 
     def 'xvnc with takeScreenshot arg' () {
@@ -338,8 +339,22 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.takeScreenshot
-        wrapper[0].value() == true
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper.takeScreenshot[0].value() == true
+        wrapper.useXauthority[0].value() == true
+    }
+
+    def 'xvnc without useXauthority arg' () {
+        when:
+        helper.wrappers {
+            xvnc(false, false)
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper.takeScreenshot[0].value() == false
+        wrapper.useXauthority[0].value() == false
     }
 
     def 'toolenv' () {

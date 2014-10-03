@@ -154,7 +154,7 @@ job(Map<String, ?> arguments = [:]) {
         timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) // deprecated
         timestamps()
         toolenv(String... tools)
-        xvnc(boolean takeScreenshot = false)
+        xvnc(boolean takeScreenshot = false, boolean useXauthority = true)
     }
     steps {
         ant(Closure antClosure = null)
