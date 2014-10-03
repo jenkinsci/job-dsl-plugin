@@ -897,6 +897,7 @@ class PublisherHelperSpec extends Specification {
                 boolParam('bParam', false)
                 boolParam('cParam', true)
                 sameNode()
+                nodeLabel('nodeParam', 'node_label')
             }
             trigger('Project2') {
                 currentBuild()
@@ -937,6 +938,11 @@ class PublisherHelperSpec extends Specification {
 
             def nodeNode = configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
             nodeNode != null
+
+            def nodeLabel = configs[0].
+                'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
+            nodeLabel.name[0].value() == 'nodeParam'
+            nodeLabel.nodeLabel[0].value() == 'node_label'
 
             block.isEmpty()
         }

@@ -34,6 +34,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Support for [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
  * Support for [Any Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
  * Support to specify the Stash browser URL for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+ * Partial support for [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin)
  * Increased minimum supported Jenkins core version to 1.509.3
 * 1.25 (September 01 2014)
  * Dropped support for Java 5, Java 6 or later is required at runtime

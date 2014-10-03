@@ -1857,6 +1857,7 @@ job(type: Multijob) {
                 props(Map<String, String> map)
                 disableJob(boolean exposedScm = true) // since 1.25
                 killPhaseCondition(String killPhaseCondition) // since 1.25
+                nodeLabel(String paramName, String nodeLabel) // since 1.26
             }
         }
     }
@@ -1869,6 +1870,9 @@ job in the phase, and hence can be called multiple times. Each call can be furth
 will be sent to it. The parameters are show above and documented in different parts of this page. See below for an
 example of multiple phases strung together. Requires the
 [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin).
+
+The `nodeLabel` parameter type requires the
+[NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
 
 ```
 job(type: Multijob) {
@@ -1893,6 +1897,7 @@ job(type: Multijob) {
                 subversionRevision()
                 gitRevision()
                 prop('prop1', 'value1')
+                nodeLabel('lParam', 'my_nodes')
             }
         }
    }
@@ -2023,7 +2028,7 @@ When a job is checked the following conditions must be validated before the job 
 
 ```groovy
 downstreamParameterized(Closure downstreamClosure) {
-     trigger(String projects, String condition = 'SUCCESS', boolean triggerWithNoParameters = false, Map<String, String> blockingThresholds = [:], Closure downstreamTriggerClosure = null) {
+    trigger(String projects, String condition = 'SUCCESS', boolean triggerWithNoParameters = false, Map<String, String> blockingThresholds = [:], Closure downstreamTriggerClosure = null) {
         currentBuild() // Current build parameters
         propertiesFile(String propFile) // Parameters from properties file
         gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built
@@ -2033,7 +2038,8 @@ downstreamParameterized(Closure downstreamClosure) {
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
         sameNode() //Run the next job on the same node
-     }
+        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection, since 1.26
+    }
 }
 ```
 
@@ -2051,6 +2057,9 @@ In addition to the above (which is common to both the build step and publisher u
 
 These can each be set to any of the allowed build statuses ('SUCCESS', 'UNSTABLE', or 'FAILURE'). The parent build's status will be set to failure (or unstable, if that's configured) if the child build's status is equal to or worse than the configured status, while the buildStepFailure threshold allows you to set the parent build's status but continue to further steps as if it hadn't failed.
 
+The `nodeLabel` parameter type requires the
+[NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
+
 Examples:
 ```groovy
 steps {
@@ -2067,6 +2076,7 @@ steps {
             predefinedProps('key4=value4\nkey5=value5') // Newline separated
             matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
             subversionRevision() // Subversion Revision
+            nodeLabel('label', 'linux') // Limit to node label selection
         }
         trigger('Project2') {
             currentBuild()
@@ -2447,7 +2457,7 @@ Specifies a downstream job. The second arg, thresholdName, can be one of three v
 ## Extended Downstream
 ```groovy
 downstreamParameterized(Closure downstreamClosure) {
-     trigger(String projects, String condition = 'SUCCESS', boolean triggerWithNoParameters = false, Closure downstreamTriggerClosure = null) {
+    trigger(String projects, String condition = 'SUCCESS', boolean triggerWithNoParameters = false, Closure downstreamTriggerClosure = null) {
         currentBuild() // Current build parameters
         propertiesFile(String propFile) // Parameters from properties file
         gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built
@@ -2456,7 +2466,8 @@ downstreamParameterized(Closure downstreamClosure) {
         predefinedProps(String predefinedProps) // Newline separated
         matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
         subversionRevision() // Subversion Revision
-     }
+        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection, since 1.26
+    }
 }
 ```
 
@@ -2465,6 +2476,9 @@ to other projects, multiple triggers can be specified. The projects arg is a com
 possible values: SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED.  The methods inside the downstreamTriggerClosure are optional, though it
 makes the most sense to call at least one.  Each one is relatively self documenting, mapping directly to what is seen in the UI. The predefinedProp and
 predefinedProps methods are used to accumulate properties, meaning that they can be called multiple times to build a superset of properties.
+
+The `nodeLabel` parameter type requires the
+[NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
 
 Examples:
 ```groovy
@@ -2479,6 +2493,7 @@ publishers {
             predefinedProps('key4=value4\nkey5=value5') // Newline separated
             matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
             subversionRevision() // Subversion Revision
+            nodeLabel('label', 'linux') // Limit to node label selection
         }
         trigger('Project2') {
             currentBuild()
@@ -3070,6 +3085,7 @@ job {
                 predefinedProps(String predefinedProps)
                 matrixSubset(String groovyFilter)
                 subversionRevision()
+                nodeLabel(String paramName, String nodeLabel) // since 1.26
             }
         }
     }
@@ -3084,6 +3100,9 @@ The `parameters` closure and the methods inside it are optional, though it makes
 Each one is relatively self documenting, mapping directly to what is seen in the UI. The `predefinedProp` and
 `predefinedProps` methods are used to accumulate properties, meaning that they can be called multiple times to build a
 superset of properties. They are basically equivalent to the ones defined for `downstreamParameterized`.
+
+The `nodeLabel` parameter type requires the
+[NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
 
 Examples:
 
@@ -3712,3 +3731,52 @@ Full usage
 ```groovy
 textParam("myParameterName", "my default textParam value", "my description")
 ```
+
+## Node parameter
+
+```groovy
+job {
+    parameters {
+        nodeParam(String name) {
+            description(String description)
+            defaultNodes(List<String> defaultNodes) // empty by default
+            allowedNodes(List<String> allowedNodes) // defaults to all nodes if omitted
+            trigger(String trigger)                 // see below, defaults to 'multiSelectionDisallowed'
+            eligibility(String eligibility)         // see below, defaults to 'AllNodeEligibility'
+        }
+    }
+}
+```
+
+Define a list of nodes on which the job should be allowed to be executed on. Requires the
+[NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
+
+`trigger` defines in which case a build on the next node should be triggered, must be one of `'allCases'`, `'success'`,
+`'unstable'`, `'allowMultiSelectionForConcurrentBuilds'` or `'multiSelectionDisallowed'`.
+
+`eligibility` defines how selected offline nodes should be handled, must be one of `'AllNodeEligibility'`,
+`'IgnoreOfflineNodeEligibility'` or `'IgnoreTempOfflineNodeEligibility'`.
+
+```groovy
+// allows to select a single node from all nodes available
+job {
+    parameters {
+        nodeParam('TEST_HOST')
+    }
+}
+
+// runs on node1 by default and can be run on node1, node2 or node3 when triggered manually
+job {
+    parameters {
+        nodeParam('TEST_HOST') {
+            description('select test host')
+            defaultNodes(['node1'])
+            allowedNodes(['node1', 'node2', 'node3'])
+            trigger('multiSelectionDisallowed')
+            eligibility('IgnoreOfflineNodeEligibility')
+        }
+    }
+}
+```
+
+(since 1.26)
