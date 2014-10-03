@@ -31,6 +31,33 @@ job {
 
 See the [[Job Reference]] for further details.
 
+### Xvnc
+
+In version 1.26 the xvnc method with one boolean argument has been deprecated and has been replaced by a closure
+variant.
+
+DSL prior to 1.26
+```groovy
+job {
+    wrappers {
+        xvnc(true)
+    }
+}
+```
+
+DSL since 1.26
+```groovy
+job {
+    wrappers {
+        xvnc {
+            takeScreenshot()
+        }
+    }
+}
+```
+
+See the [[Job Reference]] for further details.
+
 ### Gerrit Trigger
 
 The usage "short names" in the event closure is deprecated and has been replaced by explicit DSL methods for each event.

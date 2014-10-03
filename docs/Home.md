@@ -29,6 +29,8 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Removed unnecessary undocumented methods in Gerrit trigger ([JENKINS-24787](https://issues.jenkins-ci.org/browse/JENKINS-24787))
  * Short names in the Gerrit trigger event closure have been replaced by DSL methods, see [[Migration]]
  * The `archiveJunit` method with boolean arguments has been deprecated, see [[Migration]]
+ * The `xvnc` method with boolean arguments has been deprecated, see [[Migration]]
+ * Support to specify the xAuthority file option of the [Xvnc Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xvnc+Plugin)
  * `javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, see [[Migration]]
  * Fixed endless recursion when calling `properties` in configure blocks ([JENKINS-22708](https://issues.jenkins-ci.org/browse/JENKINS-22708))
  * Support for [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)

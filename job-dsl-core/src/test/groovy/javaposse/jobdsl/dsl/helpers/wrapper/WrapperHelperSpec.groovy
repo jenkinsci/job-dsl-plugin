@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -319,6 +320,9 @@ class WrapperHelperSpec extends Specification {
     }
 
     def 'xvnc' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+
         when:
         helper.wrappers {
             xvnc()
@@ -327,11 +331,15 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
-        wrapper.takeScreenshot[0].value() == false
-        wrapper.useXauthority[0].value() == true
+        wrapper[0].children().size() == 2
+        wrapper[0].takeScreenshot[0].value() == false
+        wrapper[0].useXauthority[0].value() == true
     }
 
     def 'xvnc with takeScreenshot arg' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+
         when:
         helper.wrappers {
             xvnc(true)
@@ -340,21 +348,44 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
-        wrapper.takeScreenshot[0].value() == true
-        wrapper.useXauthority[0].value() == true
+        wrapper[0].children().size() == 2
+        wrapper[0].takeScreenshot[0].value() == true
+        wrapper[0].useXauthority[0].value() == true
     }
 
-    def 'xvnc without useXauthority arg' () {
+    def 'xvnc with closure' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+
         when:
         helper.wrappers {
-            xvnc(false, false)
+            xvnc {
+                useXauthority(false)
+            }
         }
         executeHelperActionsOnRootNode()
 
         then:
         def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
-        wrapper.takeScreenshot[0].value() == false
-        wrapper.useXauthority[0].value() == false
+        wrapper[0].children().size() == 2
+        wrapper[0].takeScreenshot[0].value() == false
+        wrapper[0].useXauthority[0].value() == false
+    }
+
+    def 'xvnc with older plugin' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.15')
+
+        when:
+        helper.wrappers {
+            xvnc()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper[0].children().size() == 1
+        wrapper[0].takeScreenshot[0].value() == false
     }
 
     def 'toolenv' () {

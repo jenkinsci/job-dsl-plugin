@@ -1106,19 +1106,37 @@ Renders ANSI escape sequences, including color, to Console Output.
 
 (Since 1.19)
 
-## [XVNC](https://wiki.jenkins-ci.org/display/JENKINS/Xvnc+Plugin)
+## Xvnc
 
 ```groovy
 job {
     wrappers {
-        xvnc(boolean takeScreenshot = false, boolean useXauthority = true)
+        xvnc(boolean takeScreenshot) // deprecated
+        xvnc { // since 1.26
+            takeScreenshot(boolean taskScreenshot = true) // defaults to false
+            useXauthority(boolean useXauthority = true)   // defaults to true
+        }
     }
 }
 ```
 
-This plugin lets you run an Xvnc session during a build. This is handy if your build includes UI testing that needs a display available.
+This plugin lets you run an Xvnc session during a build. This is handy if your build includes UI testing that needs a
+display available. Requires the [Xvnc Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xvnc+Plugin).
 
-(Since 1.19)
+The `useXauthority` option requires version 1.16 or later of the Xvnc Plugin.
+
+```groovy
+job {
+    wrappers {
+        xvnc {
+            takeScreenshot()
+            useXauthority(false)
+        }
+    }
+}
+```
+
+(since 1.19)
 
 ## [Tool Environment](https://wiki.jenkins-ci.org/display/JENKINS/Tool+Environment+Plugin)
 

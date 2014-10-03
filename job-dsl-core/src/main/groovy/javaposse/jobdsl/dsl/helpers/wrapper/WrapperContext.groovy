@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -302,14 +303,23 @@ class WrapperContext implements Context {
      * }
      *
      * Runs build under XVNC.
-     * @param takeScreenshotAtEndOfBuild If a screenshot should be taken at the end of the build
-     * @param createXauthorityFilePerBuild If a dedicated Xauthority file per build should be created
      */
-    def xvnc(boolean takeScreenshotAtEndOfBuild = false, boolean createXauthorityFilePerBuild = true) {
-        def nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'hudson.plugins.xvnc.Xvnc' {
+    def xvnc(Closure xvncClosure = null) {
+        XvncContext xvncContext = new XvncContext(jobManagement)
+        AbstractContextHelper.executeInContext(xvncClosure, xvncContext)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.xvnc.Xvnc' {
+            takeScreenshot(xvncContext.takeScreenshot)
+            if (!jobManagement.getPluginVersion('xvnc')?.isOlderThan(new VersionNumber('1.16'))) {
+                useXauthority(xvncContext.useXauthority)
+            }
+        }
+    }
+
+    def xvnc(boolean takeScreenshotAtEndOfBuild) {
+        jobManagement.logDeprecationWarning()
+        xvnc {
             takeScreenshot(takeScreenshotAtEndOfBuild)
-            useXauthority(createXauthorityFilePerBuild)
         }
     }
 
