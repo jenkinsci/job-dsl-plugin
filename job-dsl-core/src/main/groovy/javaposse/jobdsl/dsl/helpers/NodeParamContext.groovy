@@ -1,57 +1,59 @@
 package javaposse.jobdsl.dsl.helpers
 
 import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Preconditions.checkNotNull
 
 class NodeParamContext implements Context {
-    List<String> pDefaultNodes = []
-    String pEligibility = 'AllNodeEligibility'
-    String pTrigger = 'allCases'
-    String pAllowMultiNodeSelection = 'true'
-    String pTriggerConcurrentBuilds = 'false'
-    final List<String> allowedNodes
+    private static final List<String> ELIGIBILITY = [
+            'AllNodeEligibility', 'IgnoreOfflineNodeEligibility', 'IgnoreTempOfflineNodeEligibility'
+    ]
+    private static final List<String> TRIGGERS = [
+            'success', 'unstable', 'allCases', 'allowMultiSelectionForConcurrentBuilds', 'multiSelectionDisallowed'
+    ]
 
-    NodeParamContext(List<String> allowedNodes) {
-        this.allowedNodes = allowedNodes
-        pDefaultNodes = allowedNodes
+    String description
+    final List<String> allowedNodes = []
+    final List<String> defaultNodes = []
+    String trigger = 'multiSelectionDisallowed'
+    boolean allowMultiNodeSelection = false
+    boolean triggerConcurrentBuilds = false
+    String eligibility = 'AllNodeEligibility'
+
+    void description(String description) {
+        this.description = description
     }
 
-    def defaultSlaves(List<String> nodes) {
-        checkNotNull(nodes)
-        checkArgument(nodes.size() > 0, 'at least one default node must be specified')
-        nodes.each {
-            checkArgument(it in allowedNodes, it + ' not an allowed slave')
-        }
-        pDefaultNodes = nodes
+    void allowedNodes(List<String> nodes) {
+        allowedNodes.addAll(nodes)
     }
 
-    def eligibility(String elig) {
-        checkArgument(elig in ['AllNodeEligibility',
-                               'IgnoreOfflineNodeEligibility',
-                                'IgnoreTempOfflineNodeEligibility'],
-                      'eligibility ' + elig + ' is invalid')
-        pEligibility = elig
+    void defaultNodes(List<String> nodes) {
+        defaultNodes.addAll(nodes)
     }
 
-    def trigger(String trigger) {
-        pTrigger = trigger
+    void trigger(String trigger) {
+        checkArgument(TRIGGERS.contains(trigger), "trigger must be one of ${TRIGGERS.join(', ')}")
+
+        this.trigger = trigger
         switch (trigger) {
-        case 'success':
-        case 'unstable':
-        case 'allCases':
-            pAllowMultiNodeSelection = 'true'
-            pTtriggerConcurrentBuilds = 'false'
-            break
-        case 'allowMultiSelectionForConcurrentBuilds':
-            pAllowMultiNodeSelection = 'true'
-            pTriggerConcurrentBuilds = 'true'
-            break
-        case 'multiSelectionDisallowed':
-            pAllowMultiNodeSelection = 'false'
-            pTriggerConcurrentBuilds = 'false'
-            break
-        default:
-            throw new IllegalArgumentException('trigger ' + trigger + ' is invalid')
+            case 'success':
+            case 'unstable':
+            case 'allCases':
+                allowMultiNodeSelection = true
+                triggerConcurrentBuilds = false
+                break
+            case 'allowMultiSelectionForConcurrentBuilds':
+                allowMultiNodeSelection = true
+                triggerConcurrentBuilds = true
+                break
+            case 'multiSelectionDisallowed':
+                allowMultiNodeSelection = false
+                triggerConcurrentBuilds = false
+                break
         }
+    }
+
+    void eligibility(String eligibility) {
+        checkArgument(ELIGIBILITY.contains(eligibility), "eligibility must be one of ${ELIGIBILITY.join(', ')}")
+        this.eligibility = eligibility
     }
 }

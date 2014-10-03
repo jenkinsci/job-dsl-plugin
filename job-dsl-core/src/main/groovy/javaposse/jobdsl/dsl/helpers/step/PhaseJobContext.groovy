@@ -22,7 +22,6 @@ class PhaseJobContext implements Context {
     Boolean subversionRevision
     Boolean gitRevision
     String nodeLabelParam
-    String nodeLabel
     def props = []
     boolean disableJob = false
     String killPhaseCondition = 'FAILURE'
@@ -95,7 +94,6 @@ class PhaseJobContext implements Context {
     def nodeLabel(String paramName, String nodeLabel)  {
         Preconditions.checkState(!this.nodeLabelParam, "nodeLabel parameter already set with ${this.nodeLabelParam}")
         this.nodeLabelParam = paramName
-        this.nodeLabel = nodeLabel
         paramTrigger.nodeLabel(paramName, nodeLabel)
     }
 

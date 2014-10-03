@@ -103,7 +103,7 @@ class DownstreamTriggerContext implements Context {
 
     boolean hasParameter() {
         usingCurrentBuild || usingGitRevision || usingMatrixSubset || usingPredefined || usingPropertiesFile ||
-                usingSubversionRevision || !boolParams.isEmpty() || sameNode
+                usingSubversionRevision || !boolParams.isEmpty() || sameNode || usingNodeLabel
     }
 
     Node createParametersNode() {
@@ -147,8 +147,8 @@ class DownstreamTriggerContext implements Context {
 
             if (usingNodeLabel) {
                 'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter' {
-                    name nodeLabelParam
-                    nodeLabel nodeLabel
+                    delegate.createNode('name', nodeLabelParam)
+                    delegate.createNode('nodeLabel', nodeLabel)
                 }
             }
 

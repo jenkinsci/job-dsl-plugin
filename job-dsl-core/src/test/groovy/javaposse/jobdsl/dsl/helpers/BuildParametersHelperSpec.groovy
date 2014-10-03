@@ -547,56 +547,57 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'nodeParam base usage'() {
         when:
-        context.nodeParam('myParameterName', ['myNode'])
+        context.nodeParam('myParameterName')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-	def pn = context.buildParameterNodes['myParameterName']
-        pn.name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition'
-        pn.name.text() == 'myParameterName'
-        pn.allowedSlaves.size() == 1
-        pn.allowedSlaves[0].string[0].text() == 'myNode'
-        pn.defaultSlaves.size() == 1
-        pn.defaultSlaves[0].string[0].text() == 'myNode'
-        pn.description.text() == ''
-        pn.triggerIfResult.text() == 'allCases'
-        pn.nodeEligibility.size() == 1
-        pn.nodeEligibility[0].attribute('class') ==
-            'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
-	pn.allowMultiNodeSelection.text() == 'true'
-	pn.triggerConcurrentBuilds.text() == 'false'
-	pn.ignoreOfflineNodes.text() == 'false'
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition'
+            children().size() == 9
+            name[0].value() == 'myParameterName'
+            allowedSlaves[0].children().size() == 0
+            defaultSlaves[0].children().size() == 0
+            description[0].value() == null
+            triggerIfResult[0].value() == 'multiSelectionDisallowed'
+            nodeEligibility[0].attribute('class') ==
+                    'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
+            allowMultiNodeSelection[0].value() == false
+            triggerConcurrentBuilds[0].value() == false
+            ignoreOfflineNodes[0].value() == false
+        }
     }
 
     def 'nodeParam fullest usage'() {
         when:
-        context.nodeParam('myParameterName', ['myNode', 'myNode2'], 'myRunParamDescription') {
-	    defaultSlaves(['myNode'])
-	    trigger 'multiSelectionDisallowed'
-	    eligibility 'IgnoreOfflineNodeEligibility'
-	}
+        context.nodeParam('myParameterName') {
+            description('myRunParamDescription')
+            allowedNodes(['myNode', 'myNode2'])
+            defaultNodes(['myNode'])
+            trigger('multiSelectionDisallowed')
+            eligibility('IgnoreOfflineNodeEligibility')
+        }
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-	def pn = context.buildParameterNodes['myParameterName']
-        pn.name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition'
-        pn.name.text() == 'myParameterName'
-        pn.allowedSlaves.size() == 1
-        pn.allowedSlaves[0].string.size() == 2
-        pn.allowedSlaves[0].string[0].text() == 'myNode'
-        pn.allowedSlaves[0].string[1].text() == 'myNode2'
-        pn.defaultSlaves.size() == 1
-        pn.defaultSlaves[0].string[0].text() == 'myNode'
-        pn.description.text() == 'myRunParamDescription'
-        pn.triggerIfResult.text() == 'multiSelectionDisallowed'
-        pn.nodeEligibility.size() == 1
-        pn.nodeEligibility[0].attribute('class') ==
-            'org.jvnet.jenkins.plugins.nodelabelparameter.node.IgnoreOfflineNodeEligibility'
-	pn.allowMultiNodeSelection.text() == 'false'
-	pn.triggerConcurrentBuilds.text() == 'false'
-	pn.ignoreOfflineNodes.text() == 'false'
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition'
+            children().size() == 9
+            name[0].value() == 'myParameterName'
+            allowedSlaves[0].string.size() == 2
+            allowedSlaves[0].string[0].value() == 'myNode'
+            allowedSlaves[0].string[1].value() == 'myNode2'
+            defaultSlaves[0].string.size() == 1
+            defaultSlaves[0].string[0].value() == 'myNode'
+            description[0].value() == 'myRunParamDescription'
+            triggerIfResult[0].value() == 'multiSelectionDisallowed'
+            nodeEligibility[0].attribute('class') ==
+                 'org.jvnet.jenkins.plugins.nodelabelparameter.node.IgnoreOfflineNodeEligibility'
+            allowMultiNodeSelection[0].value() == false
+            triggerConcurrentBuilds[0].value() == false
+            ignoreOfflineNodes[0].value() == false
+        }
     }
 
     def 'nodeParam name argument cant be null'() {
@@ -609,28 +610,32 @@ class BuildParametersHelperSpec extends Specification {
 
     def 'nodeParam invalid trigger'() {
         when:
-        context.nodeParam('myParamName', ['myNode'], '') {
-	    trigger 'invalid trigger'
-	}
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
-    def 'nodeParam invalid eligibility'() {
-        when:
-        context.nodeParam('myParamName', ['myNode'], '') {
-	    eligibility 'invalid eligibility'
+        context.nodeParam('myParamName') {
+            trigger('invalid trigger')
         }
 
         then:
         thrown(IllegalArgumentException)
     }
 
+    def 'nodeParam no name'() {
+        when:
+        context.nodeParam('')
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.nodeParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
     def 'nodeParam already defined'() {
         when:
         context.booleanParam('one')
-        context.nodeParam('one', ['list'])
+        context.nodeParam('one')
 
         then:
         thrown(IllegalArgumentException)

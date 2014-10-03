@@ -95,13 +95,13 @@ job(Map<String, ?> arguments = [:]) {
                       boolean sortNewestFirst = false, boolean sortZtoA = false,
                       String maxTagsToDisplay = 'all', String defaultValue = null,
                       String description = null)
+        nodeParam(String parameterName, Closure closure = null) // since 1.26
         runParam(String parameterName, String jobToRun, String description = null,
                  String filter = null)
         stringParam(String parameterName, String defaultValue = null,
                     String description = null)
         textParam(String parameterName, String defaultValue = null,
                   String description = null)
-        nodeParam(parameterName, allowedSlaves, description, Closure closure) // See [[Job Reference]] for more detail
     }
     scm {
         baseClearCase(Closure closure) // since 1.24
