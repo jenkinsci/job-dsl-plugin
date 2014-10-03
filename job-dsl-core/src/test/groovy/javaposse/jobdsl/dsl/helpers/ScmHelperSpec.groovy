@@ -654,6 +654,24 @@ class ScmHelperSpec extends Specification {
         context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'feature-branch'
     }
 
+    def 'call git scm with stashBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                stash('http://stash')
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.browser.size() == 1
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.Stash'
+        context.scmNode.browser[0].'url'[0].value() == 'http://stash'
+    }
+
     def 'call git scm with configure appending'() {
         when:
         context.git(GIT_REPO_URL, null) { Node gitNode ->

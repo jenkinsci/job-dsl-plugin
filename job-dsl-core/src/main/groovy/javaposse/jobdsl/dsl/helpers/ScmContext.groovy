@@ -165,8 +165,8 @@ class ScmContext implements Context {
             }
         }
 
-        if (gitContext.browser) {
-            gitNode.children().add(gitContext.browser)
+        if (gitContext.gitBrowserContext.browser) {
+            gitNode.children().add(gitContext.gitBrowserContext.browser)
         }
 
         if (gitContext.mergeOptions) {

@@ -23,7 +23,7 @@ class GitContext implements Context {
     String relativeTargetDir
     String reference
     Closure withXmlClosure
-    Node browser
+    final GitBrowserContext gitBrowserContext = new GitBrowserContext()
     Node mergeOptions
     List<Node> extensions = []
 
@@ -50,7 +50,7 @@ class GitContext implements Context {
         }
 
         if (remoteContext.browser) {
-            this.browser = remoteContext.browser
+            gitBrowserContext.browser = remoteContext.browser
         }
     }
 
@@ -113,6 +113,10 @@ class GitContext implements Context {
 
     void reference(String reference) {
         this.reference = reference
+    }
+
+    void browser(Closure gitBrowserClosure) {
+        executeInContext(gitBrowserClosure, gitBrowserContext)
     }
 
     void configure(Closure withXmlClosure) {
