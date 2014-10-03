@@ -23,7 +23,7 @@ class GitContext implements Context {
     String relativeTargetDir
     String reference
     Closure withXmlClosure
-    Node browser
+    final GitBrowserContext gitBrowserContext = new GitBrowserContext()
     Node mergeOptions
     List<Node> extensions = []
 
@@ -50,7 +50,7 @@ class GitContext implements Context {
         }
 
         if (remoteContext.browser) {
-            this.browser = remoteContext.browser
+            gitBrowserContext.browser = remoteContext.browser
         }
     }
 
@@ -115,13 +115,11 @@ class GitContext implements Context {
         this.reference = reference
     }
 
-    void configure(Closure withXmlClosure) {
-        this.withXmlClosure = withXmlClosure
+    void browser(Closure gitBrowserClosure) {
+        executeInContext(gitBrowserClosure, gitBrowserContext)
     }
 
-    void stashBrowser(String url) {
-        browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.Stash') {
-            delegate.url(url)
-        }
+    void configure(Closure withXmlClosure) {
+        this.withXmlClosure = withXmlClosure
     }
 }

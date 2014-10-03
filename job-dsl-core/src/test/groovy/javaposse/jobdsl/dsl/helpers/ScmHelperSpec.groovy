@@ -660,7 +660,9 @@ class ScmHelperSpec extends Specification {
             remote {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
-            stashBrowser('http://stash')
+            browser {
+                stash('http://stash')
+            }
         }
 
         then:

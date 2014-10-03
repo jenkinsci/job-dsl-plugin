@@ -30,7 +30,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * The `archiveJunit` method with boolean arguments has been deprecated, see [[Migration]]
  * `javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, see [[Migration]]
  * Fixed endless recursion when calling `properties` in configure blocks ([JENKINS-22708](https://issues.jenkins-ci.org/browse/JENKINS-22708))
- * Support to specify the Stash browser url for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin), see [JENKINS-24936](https://issues.jenkins-ci.org/browse/JENKINS-24936)
+ * Support to specify the Stash browser URL for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
 * 1.25 (September 01 2014)
  * Dropped support for Java 5, Java 6 or later is required at runtime
  * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
