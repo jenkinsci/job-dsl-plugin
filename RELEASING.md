@@ -18,5 +18,7 @@ password=IHeartJenkins
 * Update the release notes, add the next version: `* 1.15 (unreleased)`
 * Commit the updated version number: _git commit -am "Bumping to next rev"_
 * Push the two new commit and the tag back to GitHub: _git push --tags origin_
+* Close all resolved issues in [JIRA](https://issues.jenkins-ci.org/browse/JENKINS/component/16720)
+* Open a pull request to update the [Job DSL Playground](https://github.com/sheehan/job-dsl-playground) 
 * Wait up to twelve hours for it show up in the Update Center
 * Follow the @jenkins_release twitter account and retweet the release!
