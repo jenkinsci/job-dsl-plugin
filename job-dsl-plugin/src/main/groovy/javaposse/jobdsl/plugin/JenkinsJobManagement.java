@@ -373,6 +373,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             if (parent instanceof ModifiableTopLevelItemGroup) {
                 ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
                 created = true;
+            } else if (parent == null) {
+            	throw new DslException(format(Messages.CreateOrUpdateConfigFile_UnknownParent(), path));
             } else {
                 LOGGER.log(Level.WARNING, format("Could not create item within %s", parent.getClass()));
             }

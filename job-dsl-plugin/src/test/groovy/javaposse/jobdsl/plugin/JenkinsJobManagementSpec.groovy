@@ -110,6 +110,16 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
+    def 'create config file with nonexisting parent'() {
+        when:
+        jobManagement.createOrUpdateConfig('nonexistingfolder/project',
+            Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+
+        then:
+        DslException e = thrown()
+        e.message == 'Could not create or update config file, unknown parent path in "nonexistingfolder/project"'
+    }
+
     def 'createOrUpdateConfig relative to folder'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
