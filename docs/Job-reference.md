@@ -2292,26 +2292,40 @@ publishers {
 (Since 1.17)
 
 ## Archive Artifacts
-```groovy
-archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false)
-```
-
-Supports archiving artifacts with each build. Simple example:
 
 ```groovy
-publishers {
-    archiveArtifacts 'build/test-output/**/*.html'
+job {
+    publishers {
+        archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false)
+        archiveArtifacts { // since 1.20
+            pattern(String pattern) // can be called multiple since 1.27
+            exclude(String excludePattern)
+            latestOnly(Boolean latestOnly = true) // defaults to false if not called
+            allowEmpty(Boolean allowEmpty = true) // defaults to false if not called
+        }
+    }
 }
 ```
 
-Since 1.20, an alternate form is also acceptable:
+Supports archiving artifacts with each build.
+
+Examples:
 
 ```groovy
-archiveArtifacts {
-    pattern(String pattern)
-    exclude(String excludePattern = '')
-    latestOnly(bool latestOnly = true) // Will be false if function is not called.
-    allowEmpty(bool allowEmpty = true) // Will be false if function is not called. Note: not available with jenkins <= 1.480
+job {
+    publishers {
+        archiveArtifacts('build/test-output/**/*.html')
+    }
+}
+
+job {
+    publishers {
+        archiveArtifacts {
+            pattern('build/test-output/**/*.html')
+            pattern('build/test-output/**/*.xml')
+            latestOnly()
+        }
+    }
 }
 ```
 

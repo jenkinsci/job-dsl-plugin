@@ -132,7 +132,7 @@ class PublisherHelperSpec extends Specification {
         archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes[0].value() == 'exclude/*'
-        archiveNode.latestOnly[0].value() == 'true'
+        archiveNode.latestOnly[0].value() == true
         archiveNode.allowEmptyArchive.isEmpty()
     }
 
@@ -145,7 +145,7 @@ class PublisherHelperSpec extends Specification {
         archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes.isEmpty()
-        archiveNode.latestOnly[0].value() == 'false'
+        archiveNode.latestOnly[0].value() == false
         archiveNode.allowEmptyArchive.isEmpty()
     }
 
@@ -163,8 +163,24 @@ class PublisherHelperSpec extends Specification {
         archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes[0].value() == 'exclude/*'
-        archiveNode.latestOnly[0].value() == 'true'
-        archiveNode.allowEmptyArchive[0].value() == 'true'
+        archiveNode.latestOnly[0].value() == true
+        archiveNode.allowEmptyArchive[0].value() == true
+    }
+
+    def 'call archive artifacts with multiple patterns'() {
+        when:
+        context.archiveArtifacts {
+            pattern 'include1/*'
+            pattern 'include2/*'
+        }
+
+        then:
+        Node archiveNode = context.publisherNodes[0]
+        archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
+        archiveNode.artifacts[0].value() == 'include1/*,include2/*'
+        archiveNode.excludes.isEmpty()
+        archiveNode.latestOnly[0].value() == false
+        archiveNode.allowEmptyArchive.isEmpty()
     }
 
     def 'call deprecated junit archive with all args'() {
