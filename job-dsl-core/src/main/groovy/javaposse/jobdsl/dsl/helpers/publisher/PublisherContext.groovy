@@ -134,39 +134,27 @@ class PublisherContext implements Context {
     }
 
     /**
-     <hudson.tasks.ArtifactArchiver>
-     <artifacts>build/libs/*</artifacts>
-     <excludes>build/libs/bad/*</excludes>
-     <latestOnly>false</latestOnly>
-     <allowEmptyArchive>false</allowEmptyArchive>
-     </hudson.tasks.ArtifactArchiver>
-
-     Note: allowEmpty is not compatible with jenkins <= 1.480
-
-     * @param glob
-     * @param excludeGlob
-     * @param latestOnly
+     * <hudson.tasks.ArtifactArchiver>
+     *     <artifacts>build/libs/*</artifacts>
+     *     <excludes>build/libs/bad/*</excludes>
+     *     <latestOnly>false</latestOnly>
+     *     <allowEmptyArchive>false</allowEmptyArchive>
+     * </hudson.tasks.ArtifactArchiver>
      */
     def archiveArtifacts(Closure artifactsClosure) {
         ArchiveArtifactsContext artifactsContext = new ArchiveArtifactsContext()
         AbstractContextHelper.executeInContext(artifactsClosure, artifactsContext)
 
-        def nodeBuilder = new NodeBuilder()
-
-        Node archiverNode = nodeBuilder.'hudson.tasks.ArtifactArchiver' {
-            artifacts artifactsContext.patternValue
-            latestOnly artifactsContext.latestOnlyValue ? 'true' : 'false'
-
+        publisherNodes << new NodeBuilder().'hudson.tasks.ArtifactArchiver' {
+            artifacts artifactsContext.patterns.join(',')
+            latestOnly artifactsContext.latestOnlyValue
             if (artifactsContext.allowEmptyValue != null) {
-                allowEmptyArchive artifactsContext.allowEmptyValue ? 'true' : 'false'
+                allowEmptyArchive artifactsContext.allowEmptyValue
             }
-
             if (artifactsContext.excludesValue) {
                 excludes artifactsContext.excludesValue
             }
         }
-
-        publisherNodes << archiverNode
     }
 
     def archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false) {
