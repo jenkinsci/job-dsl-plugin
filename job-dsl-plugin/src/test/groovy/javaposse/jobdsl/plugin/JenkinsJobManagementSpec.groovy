@@ -110,6 +110,28 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
+    def 'create job with nonexisting parent'() {
+        when:
+        jobManagement.createOrUpdateConfig(
+                'nonexistingfolder/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true
+        )
+
+        then:
+        DslException e = thrown()
+        e.message == 'Could not create item, unknown parent path in "nonexistingfolder/project"'
+    }
+
+    def 'create view with nonexisting parent'() {
+        when:
+        jobManagement.createOrUpdateView(
+                'nonexistingfolder/view', Resources.toString(getResource('minimal-view.xml'), UTF_8), true
+        )
+
+        then:
+        DslException e = thrown()
+        e.message == 'Could not create view, unknown parent path in "nonexistingfolder/view"'
+    }
+
     def 'createOrUpdateConfig relative to folder'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
