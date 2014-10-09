@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Util;
@@ -14,6 +15,7 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Item;
 import hudson.tasks.Builder;
+import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;
@@ -157,43 +159,48 @@ public class ExecuteDslScripts extends Builder {
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher,
                            final BuildListener listener) throws InterruptedException, IOException {
-        EnvVars env = build.getEnvironment(listener);
-        env.putAll(build.getBuildVariables());
+        try {
+            EnvVars env = build.getEnvironment(listener);
+            env.putAll(build.getBuildVariables());
 
-        // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-        JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy());
+            // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
+            JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy());
 
-        ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
-        Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
-                targets, usingScriptText, scriptText, ignoreExisting, additionalClasspath
-        );
+            ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
+            Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
+                    targets, usingScriptText, scriptText, ignoreExisting, additionalClasspath
+            );
 
-        Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
-        Set<GeneratedView> freshViews = Sets.newLinkedHashSet();
-        Set<GeneratedConfigFile> freshConfigFiles = Sets.newLinkedHashSet();
-        for (ScriptRequest request : scriptRequests) {
-            LOGGER.log(Level.FINE, String.format("Request for %s", request.getLocation()));
+            Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
+            Set<GeneratedView> freshViews = Sets.newLinkedHashSet();
+            Set<GeneratedConfigFile> freshConfigFiles = Sets.newLinkedHashSet();
+            for (ScriptRequest request : scriptRequests) {
+                LOGGER.log(Level.FINE, String.format("Request for %s", request.getLocation()));
 
-            GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
-            freshJobs.addAll(generatedItems.getJobs());
-            freshViews.addAll(generatedItems.getViews());
-            freshConfigFiles.addAll(generatedItems.getConfigFiles());
+                GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
+                freshJobs.addAll(generatedItems.getJobs());
+                freshViews.addAll(generatedItems.getViews());
+                freshConfigFiles.addAll(generatedItems.getConfigFiles());
+            }
+
+            updateTemplates(build, listener, freshJobs);
+            updateGeneratedJobs(build, listener, freshJobs);
+            updateGeneratedViews(build, listener, freshViews);
+            updateGeneratedConfigFiles(build, listener, freshConfigFiles);
+
+            // Save onto Builder, which belongs to a Project.
+            build.addAction(new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
+            build.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
+            build.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
+
+            // Hint that our new jobs might have really shaken things up
+            Jenkins.getInstance().rebuildDependencyGraph();
+
+            return true;
+        } catch (DslException e) {
+            LOGGER.log(Level.FINE, String.format("Exception while processing DSL scripts: %s", e.getMessage()));
+            throw new AbortException(e.getMessage());
         }
-
-        updateTemplates(build, listener, freshJobs);
-        updateGeneratedJobs(build, listener, freshJobs);
-        updateGeneratedViews(build, listener, freshViews);
-        updateGeneratedConfigFiles(build, listener, freshConfigFiles);
-
-        // Save onto Builder, which belongs to a Project.
-        build.addAction(new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
-        build.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
-        build.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
-
-        // Hint that our new jobs might have really shaken things up
-        Jenkins.getInstance().rebuildDependencyGraph();
-
-        return true;
     }
 
 
