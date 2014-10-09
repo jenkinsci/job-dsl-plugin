@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>job-dsl-plugin-root</artifactId>
-    <version>1.24-SNAPSHOT</version>
+    <version>1.27-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>job-dsl-core</module>
