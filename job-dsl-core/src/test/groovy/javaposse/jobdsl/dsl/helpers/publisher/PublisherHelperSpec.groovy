@@ -863,6 +863,50 @@ class PublisherHelperSpec extends Specification {
         entryNode2.keepHierarchy[0].value() == 'true'
     }
 
+    def 'call scp publish with collection of sources'() {
+        when:
+        context.publishScp('javadoc') {
+            entries(['api-sdk/**/*', 'docs/**/*'])
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'be.certipost.hudson.plugin.SCPRepositoryPublisher'
+        publisherNode.siteName[0].value() == 'javadoc'
+        publisherNode.entries[0].children().size() == 2
+        with(publisherNode.entries[0].'be.certipost.hudson.plugin.Entry'[0]) {
+            filePath[0].value() == ''
+            sourceFile[0].value() == 'api-sdk/**/*'
+            keepHierarchy[0].value() == 'false'
+        }
+        with(publisherNode.entries[0].'be.certipost.hudson.plugin.Entry'[1]) {
+            filePath[0].value() == ''
+            sourceFile[0].value() == 'docs/**/*'
+            keepHierarchy[0].value() == 'false'
+        }
+
+        when:
+        context.publishScp('javadoc') {
+            entries(['build/javadocs/**/*', 'build/groovydoc/**/*'], 'javadoc', true)
+        }
+
+        then:
+        Node publisherNode2 = context.publisherNodes[1]
+        publisherNode2.name() == 'be.certipost.hudson.plugin.SCPRepositoryPublisher'
+        publisherNode2.siteName[0].value() == 'javadoc'
+        publisherNode2.entries[0].children().size() == 2
+        with(publisherNode2.entries[0].'be.certipost.hudson.plugin.Entry'[0]) {
+            filePath[0].value() == 'javadoc'
+            sourceFile[0].value() == 'build/javadocs/**/*'
+            keepHierarchy[0].value() == 'true'
+        }
+        with(publisherNode2.entries[0].'be.certipost.hudson.plugin.Entry'[1]) {
+            filePath[0].value() == 'javadoc'
+            sourceFile[0].value() == 'build/groovydoc/**/*'
+            keepHierarchy[0].value() == 'true'
+        }
+    }
+
     def 'call trigger downstream without args'() {
         when:
         context.downstream('THE-JOB')

@@ -451,26 +451,25 @@ class PublisherContext implements Context {
     def validJabberChannelNotificationNames = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
     /**
-     <be.certipost.hudson.plugin.SCPRepositoryPublisher>
-     <siteName>javadoc</siteName>
-     <entries>
-     <be.certipost.hudson.plugin.Entry>
-     <filePath/>
-     <sourceFile>api-sdk/*</sourceFile>
-     <keepHierarchy>true</keepHierarchy>
-     </be.certipost.hudson.plugin.Entry>
-     </entries>
-     </be.certipost.hudson.plugin.SCPRepositoryPublisher>
+     * <be.certipost.hudson.plugin.SCPRepositoryPublisher>
+     *     <siteName>javadoc</siteName>
+     *     <entries>
+     *         <be.certipost.hudson.plugin.Entry>
+     *             <filePath/>
+     *             <sourceFile>api-sdk/*</sourceFile>
+     *             <keepHierarchy>true</keepHierarchy>
+     *         </be.certipost.hudson.plugin.Entry>
+     *     </entries>
+     * </be.certipost.hudson.plugin.SCPRepositoryPublisher>
      */
     def publishScp(String site, Closure scpClosure) {
         ScpContext scpContext = new ScpContext()
         AbstractContextHelper.executeInContext(scpClosure, scpContext)
 
         // Validate values
-        assert !scpContext.entries.isEmpty(), 'Scp publish requires at least one entry'
+        assert !scpContext.entries.empty, 'Scp publish requires at least one entry'
 
-        def nodeBuilder = NodeBuilder.newInstance()
-        def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
+        publisherNodes << NodeBuilder.newInstance().'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
             entries {
                 scpContext.entries.each { ScpContext.ScpEntry entry ->
@@ -482,7 +481,6 @@ class PublisherContext implements Context {
                 }
             }
         }
-        publisherNodes << publishNode
     }
 
     /**

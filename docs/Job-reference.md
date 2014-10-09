@@ -2461,14 +2461,31 @@ publishJabber(String target, String strategyName, String channelNotificationName
 Supports <a href="https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin">Jabber Plugin</a>. A few arguments can be specified in the method call or in the closure.
 
 ## SCP Publisher
+
 ```groovy
-publishScp(String site, Closure scpClosure) {
-    entry(String source, String destination = '', boolean keepHierarchy = false)
+job {
+    publishers {
+        publishScp(String site) {
+            entry(String source, String destination = '', boolean keepHierarchy = false)
+            entries(Iterable<String> sources, String destination = '', boolean keepHierarchy = false) // since 1.27
+        }
+    }
 }
 ```
 
-Supports <a href="https://wiki.jenkins-ci.org/display/JENKINS/SCP+plugin">SCP Plugin</a>. First arg, site, is specified globally by the plugin. Each entry is
-individually specified in the closure block, e.g. entry can be called multiple times.
+The `site` is specified in the global Jenkins configuration. Each entry is individually specified in the closure block,
+e.g. entry can be called multiple times. Requires the
+[SCP Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SCP+plugin).
+
+```groovy
+job {
+    publishers {
+        publishScp('docs.acme.org') {
+            entry('build/docs/**', 'project-a', true)
+        }
+    }
+}
+```
 
 ## CloneWorkspace Publisher
 ```groovy
