@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -216,9 +215,9 @@ public class ExecuteDslScripts extends Builder {
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
         Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
 
-        listener.getLogger().println("Existing Templates: " + Joiner.on(",").join(existingTemplates));
-        listener.getLogger().println("New Templates: " + Joiner.on(",").join(newTemplates));
-        listener.getLogger().println("Unreferenced Templates: " + Joiner.on(",").join(removedTemplates));
+        logItems(listener, "Existing templates", existingTemplates);
+        logItems(listener, "New templates", newTemplates);
+        logItems(listener, "Unreferenced templates", removedTemplates);
 
         // Collect information about the templates we loaded
         final String seedJobName = seedJob.getName();
@@ -275,9 +274,9 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = Sets.difference(generatedJobs, freshJobs);
 
-        listener.getLogger().println("Adding items: " + Joiner.on(",").join(added));
-        listener.getLogger().println("Existing items: " + Joiner.on(",").join(existing));
-        listener.getLogger().println("Removing items: " + Joiner.on(",").join(removed));
+        logItems(listener, "Adding items", added);
+        logItems(listener, "Existing items", existing);
+        logItems(listener, "Removing items", removed);
 
         // Update unreferenced jobs
         for (GeneratedJob removedJob : removed) {
@@ -317,9 +316,9 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
         Set<GeneratedView> removed = Sets.difference(generatedViews, freshViews);
 
-        listener.getLogger().println("Adding views: " + Joiner.on(",").join(added));
-        listener.getLogger().println("Existing views: " + Joiner.on(",").join(existing));
-        listener.getLogger().println("Removing views: " + Joiner.on(",").join(removed));
+        logItems(listener, "Adding views", added);
+        logItems(listener, "Existing views", existing);
+        logItems(listener, "Removing views", removed);
     }
 
     private Set<GeneratedView> extractGeneratedViews(AbstractProject<?, ?> project) {
@@ -338,9 +337,9 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedConfigFile> existing = Sets.intersection(generatedConfigFiles, freshConfigFiles);
         Set<GeneratedConfigFile> removed = Sets.difference(generatedConfigFiles, freshConfigFiles);
 
-        listener.getLogger().println("Adding config files: " + Joiner.on(",").join(added));
-        listener.getLogger().println("Existing config files: " + Joiner.on(",").join(existing));
-        listener.getLogger().println("Removing config files: " + Joiner.on(",").join(removed));
+        logItems(listener, "Adding config files", added);
+        logItems(listener, "Existing config files", existing);
+        logItems(listener, "Removing config files", removed);
     }
 
     private Set<GeneratedConfigFile> extractGeneratedConfigFiles(AbstractProject<?, ?> project) {
@@ -349,6 +348,15 @@ public class ExecuteDslScripts extends Builder {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedConfigFiles();
+        }
+    }
+
+    private static void logItems(BuildListener listener, String message, Collection<?> collection) {
+        if (!collection.isEmpty()) {
+            listener.getLogger().println(message + ":");
+            for (Object item : collection) {
+                listener.getLogger().println("    " + item.toString());
+            }
         }
     }
 
