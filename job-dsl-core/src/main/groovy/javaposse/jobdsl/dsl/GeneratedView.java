@@ -39,8 +39,8 @@ public class GeneratedView implements Comparable {
 
     @Override
     public String toString() {
-        return "GeneratedJob{" +
-                "viewName='" + name + "'" +
+        return "GeneratedView{" +
+                "name='" + name + "'" +
                 "}";
     }
 }
