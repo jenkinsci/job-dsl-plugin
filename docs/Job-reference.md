@@ -964,7 +964,7 @@ Configures the job to prepare a Ruby environment controlled by RVM for the build
 ```groovy
 timeout {
     elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60)
-    noActivity(int seconds = 180)
+    noActivity(int seconds = 180)              // requires version 1.14 or later
     absolute(int minutes = 3)                  // default
     likelyStuck()
     failBuild(boolean fail = true)

@@ -146,7 +146,7 @@ class WrapperContext implements Context {
                     case Timeout.likelyStuck:
                         break
                     case Timeout.noActivity:
-                        delegate.timeout(ctx.noActivitySeconds * 1000)
+                        delegate.timeoutSecondsString(ctx.noActivitySeconds)
                         break
                 }
             }
