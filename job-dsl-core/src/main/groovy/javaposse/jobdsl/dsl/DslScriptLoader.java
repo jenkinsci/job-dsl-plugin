@@ -54,9 +54,11 @@ public class DslScriptLoader {
         try {
             Script script;
             if (scriptRequest.getBody() != null) {
+                jobManagement.getOutputStream().println("Processing provided DSL script");
                 Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody());
                 script = InvokerHelper.createScript(cls, binding);
             } else {
+                jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
                 script = engine.createScript(scriptRequest.getLocation(), binding);
             }
             assert script instanceof JobParent;

@@ -37,8 +37,8 @@ public class GeneratedConfigFile {
     @Override
     public String toString() {
         return "GeneratedConfigFile{" +
-                "id='" + id + "'," +
-                "name='" + name + "'" +
+                "name='" + name + "', " +
+                "id='" + id + "'" +
                 "}";
     }
 }

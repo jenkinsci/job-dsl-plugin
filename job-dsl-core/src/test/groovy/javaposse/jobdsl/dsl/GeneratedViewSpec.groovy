@@ -58,6 +58,6 @@ class GeneratedViewSpec extends Specification {
         GeneratedView view = new GeneratedView('test')
 
         then:
-        view.toString() == "GeneratedJob{viewName='test'}"
+        view.toString() == "GeneratedView{name='test'}"
     }
 }

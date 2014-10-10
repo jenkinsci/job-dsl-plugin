@@ -46,6 +46,6 @@ class GeneratedConfigFileSpec extends Specification {
         GeneratedConfigFile configFile = new GeneratedConfigFile('235421345', 'foo')
 
         then:
-        configFile.toString() == "GeneratedConfigFile{id='235421345',name='foo'}"
+        configFile.toString() == "GeneratedConfigFile{name='foo', id='235421345'}"
     }
 }
