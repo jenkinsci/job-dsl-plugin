@@ -46,12 +46,6 @@ jenkinsPlugin {
     }
 }
 
-artifacts {
-    archives jar
-    archives jarJavadocs
-    archives jarSources
-}
-
 dependencies {
     compile project(':job-dsl-core')
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.2@jar'
