@@ -267,6 +267,20 @@ class JobTest extends Specification {
         job.node.scm[0].wipeOutWorkspace[0].text() == 'true'
     }
 
+    def 'call triggers'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.triggers {
+            scm('2 3 * * * *')
+        }
+
+        then:
+        job.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
+    }
+
     private final minimalXml = '''
 <project>
   <actions/>

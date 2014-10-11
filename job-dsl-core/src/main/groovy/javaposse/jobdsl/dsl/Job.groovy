@@ -12,7 +12,7 @@ import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
-import javaposse.jobdsl.dsl.helpers.triggers.TriggerContextHelper
+import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
 
 /**
@@ -26,7 +26,6 @@ class Job extends Item {
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     @Delegate AuthorizationContextHelper helperAuthorization
-    @Delegate TriggerContextHelper helperTrigger
     @Delegate WrapperContextHelper helperWrapper
     @Delegate StepContextHelper helperStep
     @Delegate PublisherContextHelper helperPublisher
@@ -45,7 +44,6 @@ class Job extends Item {
         // Helpers
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
         helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
-        helperTrigger = new TriggerContextHelper(withXmlActions, type, jobManagement)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperStep = new StepContextHelper(withXmlActions, type, jobManagement)
         helperPublisher = new PublisherContextHelper(withXmlActions, type, jobManagement)
@@ -86,6 +84,17 @@ class Job extends Item {
 
             // Assuming append the only child
             project << context.scmNode
+        }
+    }
+
+    def triggers(Closure closure) {
+        TriggerContext context = new TriggerContext(withXmlActions, type, jobManagement)
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.triggerNodes.each {
+                project / 'triggers' << it
+            }
         }
     }
 
