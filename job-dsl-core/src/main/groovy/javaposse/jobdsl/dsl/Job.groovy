@@ -8,9 +8,9 @@ import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
-import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
+import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
@@ -27,7 +27,6 @@ class Job extends Item {
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     @Delegate AuthorizationContextHelper helperAuthorization
     @Delegate WrapperContextHelper helperWrapper
-    @Delegate StepContextHelper helperStep
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
@@ -44,7 +43,6 @@ class Job extends Item {
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
         helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
-        helperStep = new StepContextHelper(withXmlActions, type, jobManagement)
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type, jobManagement)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
@@ -92,6 +90,19 @@ class Job extends Item {
         withXmlActions << WithXmlAction.create { Node project ->
             context.triggerNodes.each {
                 project / 'triggers' << it
+            }
+        }
+    }
+
+    def steps(Closure closure) {
+        Preconditions.checkState(type != JobType.Maven, 'steps cannot be applied for Maven jobs')
+
+        StepContext context = new StepContext(jobManagement)
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.stepNodes.each {
+                project / 'builders' << it
             }
         }
     }

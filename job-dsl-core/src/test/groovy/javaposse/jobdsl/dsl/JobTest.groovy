@@ -281,6 +281,33 @@ class JobTest extends Specification {
         job.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
     }
 
+    def 'no steps for Maven jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: 'Maven'])
+
+        when:
+        job.steps {
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'call steps'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.steps {
+            shell('ls')
+        }
+
+        then:
+        job.node.builders[0].'hudson.tasks.Shell'[0].command[0].text() == 'ls'
+    }
+
     def 'call publishers'() {
         setup:
         JobManagement jm = Mock(JobManagement)
