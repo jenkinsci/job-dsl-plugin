@@ -34,5 +34,10 @@ abstract class Item {
         xmlOutput.toString()
     }
 
+    Map getProperties() {
+        // see JENKINS-22708
+        throw new UnsupportedOperationException()
+    }
+
     abstract Node getNode()
 }

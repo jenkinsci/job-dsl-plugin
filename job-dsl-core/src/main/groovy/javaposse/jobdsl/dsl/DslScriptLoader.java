@@ -14,7 +14,6 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,10 +40,11 @@ public class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addStaticStars("javaposse.jobdsl.dsl.JobType");
         icz.addStaticStars("javaposse.jobdsl.dsl.ViewType");
+        icz.addStaticStars("javaposse.jobdsl.dsl.ConfigFileType");
         icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
-        GroovyScriptEngine engine = new GroovyScriptEngine(new URL[]{scriptRequest.urlRoot}, cl);
+        GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
 
         engine.setConfig(config);
 
@@ -53,11 +53,13 @@ public class DslScriptLoader {
         JobParent jp;
         try {
             Script script;
-            if (scriptRequest.body != null) {
-                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.body);
+            if (scriptRequest.getBody() != null) {
+                jobManagement.getOutputStream().println("Processing provided DSL script");
+                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody());
                 script = InvokerHelper.createScript(cls, binding);
             } else {
-                script = engine.createScript(scriptRequest.location, binding);
+                jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
+                script = engine.createScript(scriptRequest.getLocation(), binding);
             }
             assert script instanceof JobParent;
 
@@ -90,8 +92,9 @@ public class DslScriptLoader {
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
 
         GeneratedItems generatedItems = new GeneratedItems();
-        generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.ignoreExisting));
-        generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.ignoreExisting));
+        generatedItems.setConfigFiles(extractGeneratedConfigFiles(jp, scriptRequest.getIgnoreExisting()));
+        generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.getIgnoreExisting()));
+        generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.getIgnoreExisting()));
 
         scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
 
@@ -107,9 +110,9 @@ public class DslScriptLoader {
             for (Item job : referencedItems) {
                 String xml = job.getXml();
                 LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
+                jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
                 String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
-                generatedJobs.add(new GeneratedJob(templateName, job.getName(), created));
+                generatedJobs.add(new GeneratedJob(templateName, job.getName()));
             }
         }
         return generatedJobs;
@@ -125,6 +128,16 @@ public class DslScriptLoader {
             generatedViews.add(gv);
         }
         return generatedViews;
+    }
+
+    private static Set<GeneratedConfigFile> extractGeneratedConfigFiles(JobParent jp, boolean ignoreExisting) {
+        Set<GeneratedConfigFile> generatedConfigFiles = Sets.newLinkedHashSet();
+        for (ConfigFile configFile : jp.getReferencedConfigFiles()) {
+            LOGGER.log(Level.FINE, String.format("Saving config file %s", configFile.getName()));
+            String id = jp.getJm().createOrUpdateConfigFile(configFile, ignoreExisting);
+            generatedConfigFiles.add(new GeneratedConfigFile(id, configFile.getName()));
+        }
+        return generatedConfigFiles;
     }
 
     static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {
@@ -168,6 +181,7 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
         icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
+        icz.addImports("javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting");
         config.addCompilationCustomizers(icz);
 
         config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

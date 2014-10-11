@@ -9,11 +9,10 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 
 import java.util.Set;
 
-
 public class GeneratedJobsAction implements Action {
+    AbstractProject<?, ?> project;
 
-    AbstractProject<?,?> project;
-    public GeneratedJobsAction(AbstractProject<?,?> project) {
+    public GeneratedJobsAction(AbstractProject<?, ?> project) {
         this.project = project;
     }
 
@@ -33,7 +32,6 @@ public class GeneratedJobsAction implements Action {
      * Search for all jobs which were created by the child builds
      */
     public Set<GeneratedJob> findLastGeneratedJobs() {
-
         AbstractBuild<?, ?> b;
         for (b = project.getLastBuild(); b != null; b = b.getPreviousBuild()) {
             GeneratedJobsBuildAction ret = b.getAction(GeneratedJobsBuildAction.class);
@@ -49,10 +47,8 @@ public class GeneratedJobsAction implements Action {
      */
     @Deprecated
     public Set<GeneratedJob> findAllGeneratedJobs() {
-
-        AbstractBuild<?, ?> b;
         Set<GeneratedJob> allGeneratedJobs = Sets.newLinkedHashSet();
-        for(AbstractBuild build: project.getBuilds()) {
+        for (AbstractBuild build : project.getBuilds()) {
             GeneratedJobsBuildAction ret = build.getAction(GeneratedJobsBuildAction.class);
             if (ret != null && ret.getModifiedJobs() != null) {
                 allGeneratedJobs.addAll(ret.getModifiedJobs());

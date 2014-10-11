@@ -25,5 +25,9 @@
         <f:entry title="Context to use for relative job names:" field="lookupStrategy">
             <f:select default="JENKINS_ROOT"/>
         </f:entry>
+
+        <f:entry title="Additional classpath" field="additionalClasspath">
+            <f:expandableTextbox/>
+        </f:entry>
     </f:advanced>
 </j:jelly>

@@ -200,6 +200,58 @@ class BuildParametersContext implements Context {
      *     <properties>
      *         <hudson.model.ParametersDefinitionProperty>
      *             <parameterDefinitions>
+     *               <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+     *                   <name></name>
+     *                   <description></description>
+     *                   <allowedSlaves>
+     *                       <string>nodeName</string>
+     *                   </allowedSlaves>
+     *                   <defaultSlaves>
+     *                       <string>nodeName</string>
+     *                   </defaultSlaves>
+     *                   <triggerIfResult>allCases</triggerIfResult>
+     *                   <allowMultiNodeSelection>true</allowMultiNodeSelection>
+     *                   <triggerConcurrentBuilds>false</triggerConcurrentBuilds>
+     *                   <ignoreOfflineNodes>false</ignoreOfflineNodes>
+     *                   <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+     *               </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+     *
+     * @param parameterName
+     * @param allowedNodes
+     * @param description (optional)
+     * @return
+     */
+    def nodeParam(String parameterName, Closure nodeParamClosure = null) {
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+
+        NodeParamContext context = new NodeParamContext()
+        AbstractContextHelper.executeInContext(nodeParamClosure, context)
+
+        buildParameterNodes[parameterName] = NodeBuilder.newInstance().
+                'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition' {
+                    name(parameterName)
+                    description(context.description)
+                    allowedSlaves {
+                        context.allowedNodes.each { string(it) }
+                    }
+                    defaultSlaves {
+                        context.defaultNodes.each { string(it) }
+                    }
+                    triggerIfResult(context.trigger)
+                    allowMultiNodeSelection(context.allowMultiNodeSelection)
+                    triggerConcurrentBuilds(context.triggerConcurrentBuilds)
+                    ignoreOfflineNodes(false)
+                    nodeEligibility(class: "org.jvnet.jenkins.plugins.nodelabelparameter.node.${context.eligibility}")
+                }
+    }
+
+    /**
+     * <project>
+     *     <properties>
+     *         <hudson.model.ParametersDefinitionProperty>
+     *             <parameterDefinitions>
      *                 <hudson.model.StringParameterDefinition>
      *                     <name>stringValue</name>
      *                     <description>the description of the string value</description>

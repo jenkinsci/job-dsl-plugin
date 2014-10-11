@@ -9,7 +9,7 @@ Before you push a new DSL script to jenkins, it's helpful to run it locally and 
 1. DSL_JAR=$(find job-dsl-core -name '*standalone.jar'|tail -1)
 1. java -jar $DSL_JAR sample.dsl.groovy
 
-If you already have the source code checked out then you can ignore step 1. 
+If you already have the source code checked out then you can ignore step 1.
 
 What's going on here is that there's a static main method that can run the DSL, you just have to give it a filename. It'll output all the jobs' XML to the current directory. Likewise, if you use "using" (the templates-like feature) it'll look in the current directory for a file with the name of the job appended with ".xml" at the end of it.
 
@@ -17,13 +17,13 @@ What's going on here is that there's a static main method that can run the DSL, 
 1. Add some job dsl content to a file, say job.dsl
 1. Run the gradle command:  ./gradlew run -Pargs=job.dsl
 
-   Note: the run task loads the file relative to the job-dsl-core directory, so I always just put my test files in there.  
+   Note: the run task loads the file relative to the job-dsl-core directory, so I always just put my test files in there.
    Note2: if your dsl code contains a job named "myJob", the run task will generate myJob.xml.
 
 [The original discussion about this on the Newsgroup](https://groups.google.com/forum/#!msg/job-dsl-plugin/lOYH7bL7AcM/70N1AEW219cJ)
 
 # Access the Jenkins Environment Variables
-To access the Jenkins Environment variables (such as BUILD_NUMBER) from within DSL scripts just wrap them in '${}'. E.g.: 
+To access the Jenkins Environment variables (such as BUILD_NUMBER) from within DSL scripts just wrap them in '${}'. E.g.:
 
 `println " BUILD_NUMBER = ${BUILD_NUMBER}"`
 
@@ -62,7 +62,7 @@ The job you create could be running on a slave, while the plugin runs on the mas
 # Understanding config.xml Generation - Multiple Calls to the Same Command
 Knowing when to overwrite or append to the XML is a fundamental problem with our approach. In the beginning of the project we though to append always, but we quickly learned that it takes a lot more work to intelligently append. We then took the approach to append when possible and easy, otherwise just overwrite.  Since then many users have found themselves just building up jobs from scratch and not worrying about existing values in templates, essentially taking a "we leave you alone if you leave us alone" approach.
 
-I'd be interested in hearing from the community how often templates are used (aka using() syntax) and if the manipulations are additive (adding to exist structures) or constructive (creating new structures).  
+I'd be interested in hearing from the community how often templates are used (aka using() syntax) and if the manipulations are additive (adding to exist structures) or constructive (creating new structures).
 
 Users should also note that we're pretty bad about multiple calls being made in your DSL script to the same command, and we could be better. E.g. calling environmentVariables multiple times would leave the result of the last call as the winner. An alternative to this would be to defer its creation, accumulating the vars as we went. Once again, that takes more work and its something we can add later if needed. We should also document this better. So, if people see one behavior or other, please add it to the docs or bring it to our attention.
 

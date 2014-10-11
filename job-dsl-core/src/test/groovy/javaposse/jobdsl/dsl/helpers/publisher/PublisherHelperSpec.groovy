@@ -132,7 +132,7 @@ class PublisherHelperSpec extends Specification {
         archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes[0].value() == 'exclude/*'
-        archiveNode.latestOnly[0].value() == 'true'
+        archiveNode.latestOnly[0].value() == true
         archiveNode.allowEmptyArchive.isEmpty()
     }
 
@@ -145,7 +145,7 @@ class PublisherHelperSpec extends Specification {
         archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes.isEmpty()
-        archiveNode.latestOnly[0].value() == 'false'
+        archiveNode.latestOnly[0].value() == false
         archiveNode.allowEmptyArchive.isEmpty()
     }
 
@@ -163,21 +163,64 @@ class PublisherHelperSpec extends Specification {
         archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
         archiveNode.artifacts[0].value() == 'include/*'
         archiveNode.excludes[0].value() == 'exclude/*'
-        archiveNode.latestOnly[0].value() == 'true'
-        archiveNode.allowEmptyArchive[0].value() == 'true'
+        archiveNode.latestOnly[0].value() == true
+        archiveNode.allowEmptyArchive[0].value() == true
     }
 
-    def 'call junit archive with all args'() {
+    def 'call archive artifacts with multiple patterns'() {
+        when:
+        context.archiveArtifacts {
+            pattern 'include1/*'
+            pattern 'include2/*'
+        }
+
+        then:
+        Node archiveNode = context.publisherNodes[0]
+        archiveNode.name() == 'hudson.tasks.ArtifactArchiver'
+        archiveNode.artifacts[0].value() == 'include1/*,include2/*'
+        archiveNode.excludes.isEmpty()
+        archiveNode.latestOnly[0].value() == false
+        archiveNode.allowEmptyArchive.isEmpty()
+    }
+
+    def 'call deprecated junit archive with all args'() {
         when:
         context.archiveJunit('include/*', true, true, true)
 
         then:
-        Node archiveNode = context.publisherNodes[0]
-        archiveNode.name() == 'hudson.tasks.junit.JUnitResultArchiver'
-        archiveNode.testResults[0].value() == 'include/*'
-        archiveNode.keepLongStdio[0].value() == 'true'
-        archiveNode.testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
-        archiveNode.testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            children().size() == 3
+            testResults[0].value() == 'include/*'
+            keepLongStdio[0].value() == true
+            testDataPublishers[0].children().size() == 2
+            testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
+            testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
+        }
+    }
+
+    def 'call junit archive with all args'() {
+        when:
+        context.archiveJunit('include/*') {
+            retainLongStdout()
+            testDataPublishers {
+                allowClaimingOfFailedTests()
+                publishTestAttachments()
+                publishTestStabilityData()
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            children().size() == 3
+            testResults[0].value() == 'include/*'
+            keepLongStdio[0].value() == true
+            testDataPublishers[0].children().size() == 3
+            testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
+            testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
+            testDataPublishers[0].'de.esailors.jenkins.teststability.StabilityTestDataPublisher'[0] != null
+        }
     }
 
     def 'call junit archive with minimal args'() {
@@ -187,11 +230,10 @@ class PublisherHelperSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            children().size() == 3
             testResults[0].value() == 'include/*'
-            keepLongStdio[0].value() == 'false'
-            testDataPublishers[0] != null
-            !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.claim.ClaimTestDataPublisher' }
-            !testDataPublishers[0].children().any { it.name() == 'hudson.plugins.junitattachments.AttachmentPublisher' }
+            keepLongStdio[0].value() == false
+            testDataPublishers[0].children().size() == 0
         }
     }
 
@@ -821,6 +863,50 @@ class PublisherHelperSpec extends Specification {
         entryNode2.keepHierarchy[0].value() == 'true'
     }
 
+    def 'call scp publish with collection of sources'() {
+        when:
+        context.publishScp('javadoc') {
+            entries(['api-sdk/**/*', 'docs/**/*'])
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'be.certipost.hudson.plugin.SCPRepositoryPublisher'
+        publisherNode.siteName[0].value() == 'javadoc'
+        publisherNode.entries[0].children().size() == 2
+        with(publisherNode.entries[0].'be.certipost.hudson.plugin.Entry'[0]) {
+            filePath[0].value() == ''
+            sourceFile[0].value() == 'api-sdk/**/*'
+            keepHierarchy[0].value() == 'false'
+        }
+        with(publisherNode.entries[0].'be.certipost.hudson.plugin.Entry'[1]) {
+            filePath[0].value() == ''
+            sourceFile[0].value() == 'docs/**/*'
+            keepHierarchy[0].value() == 'false'
+        }
+
+        when:
+        context.publishScp('javadoc') {
+            entries(['build/javadocs/**/*', 'build/groovydoc/**/*'], 'javadoc', true)
+        }
+
+        then:
+        Node publisherNode2 = context.publisherNodes[1]
+        publisherNode2.name() == 'be.certipost.hudson.plugin.SCPRepositoryPublisher'
+        publisherNode2.siteName[0].value() == 'javadoc'
+        publisherNode2.entries[0].children().size() == 2
+        with(publisherNode2.entries[0].'be.certipost.hudson.plugin.Entry'[0]) {
+            filePath[0].value() == 'javadoc'
+            sourceFile[0].value() == 'build/javadocs/**/*'
+            keepHierarchy[0].value() == 'true'
+        }
+        with(publisherNode2.entries[0].'be.certipost.hudson.plugin.Entry'[1]) {
+            filePath[0].value() == 'javadoc'
+            sourceFile[0].value() == 'build/groovydoc/**/*'
+            keepHierarchy[0].value() == 'true'
+        }
+    }
+
     def 'call trigger downstream without args'() {
         when:
         context.downstream('THE-JOB')
@@ -871,6 +957,7 @@ class PublisherHelperSpec extends Specification {
                 boolParam('bParam', false)
                 boolParam('cParam', true)
                 sameNode()
+                nodeLabel('nodeParam', 'node_label')
             }
             trigger('Project2') {
                 currentBuild()
@@ -911,6 +998,11 @@ class PublisherHelperSpec extends Specification {
 
             def nodeNode = configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
             nodeNode != null
+
+            def nodeLabel = configs[0].
+                'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
+            nodeLabel.name[0].value() == 'nodeParam'
+            nodeLabel.nodeLabel[0].value() == 'node_label'
 
             block.isEmpty()
         }
@@ -2573,5 +2665,252 @@ class PublisherHelperSpec extends Specification {
         rundeckNode.tag[0].value() == ''
         rundeckNode.shouldWaitForRundeckJob[0].value() == false
         rundeckNode.shouldFailTheBuild[0].value() == false
+    }
+
+    def 'call s3 without profile'(String profile) {
+        when:
+        context.s3(profile) {
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        profile << [null, '']
+    }
+
+    def 'call s3 without source or bucket or with invalid region'(String source, String bucket, String region) {
+        when:
+        context.s3('test') {
+            entry(source, bucket, region)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        source | bucket | region
+        null   | 'test' | 'EU_WEST_1'
+        ''     | 'test' | 'EU_WEST_1'
+        'test' | null   | 'EU_WEST_1'
+        'test' | ''     | 'EU_WEST_1'
+        null   | null   | 'EU_WEST_1'
+        ''     | ''     | 'EU_WEST_1'
+        'test' | 'test' | ''
+        'test' | 'test' | null
+    }
+
+    def 'call s3 with invalid storage class'(String storageClass) {
+        when:
+        context.s3('test') {
+            entry('foo', 'bar', 'EU_WEST_1') {
+                delegate.storageClass(storageClass)
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        storageClass << [null, '', 'FOO']
+    }
+
+    def 'call s3 with some options'() {
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar', 'US_EAST_1')
+            metadata('key', 'value')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.s3.S3BucketPublisher'
+            profileName[0].value() == 'profile'
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 1
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                sourceFile[0].value() == 'foo'
+                bucket[0].value() == 'bar'
+                storageClass[0].value() == 'STANDARD'
+                selectedRegion[0].value() == 'US_EAST_1'
+                noUploadOnFailure[0].value() == false
+                uploadFromSlave[0].value() == false
+                managedArtifacts[0].value() == false
+            }
+            userMetadata.size() == 1
+            userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
+            with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                key[0].value() == 'key'
+                value[0].value() == 'value'
+            }
+        }
+    }
+
+    def 'call s3 with more options'() {
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar', 'EU_WEST_1')
+            entry('bar', 'baz', 'US_EAST_1') {
+                storageClass('REDUCED_REDUNDANCY')
+                noUploadOnFailure(true)
+                uploadFromSlave(true)
+                managedArtifacts(true)
+            }
+            metadata('key', 'value')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.s3.S3BucketPublisher'
+            profileName[0].value() == 'profile'
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 2
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                sourceFile[0].value() == 'foo'
+                bucket[0].value() == 'bar'
+                storageClass[0].value() == 'STANDARD'
+                selectedRegion[0].value() == 'EU_WEST_1'
+                noUploadOnFailure[0].value() == false
+                uploadFromSlave[0].value() == false
+                managedArtifacts[0].value() == false
+            }
+            with(entries[0].'hudson.plugins.s3.Entry'[1]) {
+                sourceFile[0].value() == 'bar'
+                bucket[0].value() == 'baz'
+                storageClass[0].value() == 'REDUCED_REDUNDANCY'
+                selectedRegion[0].value() == 'US_EAST_1'
+                noUploadOnFailure[0].value() == true
+                uploadFromSlave[0].value() == true
+                managedArtifacts[0].value() == true
+            }
+            userMetadata.size() == 1
+            userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
+            with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                key[0].value() == 'key'
+                value[0].value() == 'value'
+            }
+        }
+    }
+
+    def 'call flexible publish'() {
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            publisher {
+                mailer('test@test.com')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.tasks.Mailer'
+                publisher[0].recipients[0].value() == 'test@test.com'
+            }
+        }
+    }
+
+    def 'call flexible publish and test escaping'() {
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            publisher {
+                wsCleanup()
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.plugins.ws_cleanup.WsCleanup'
+                publisher[0].children().size() > 0
+            }
+        }
+    }
+
+    def 'call flexible publish with build step'() {
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            step {
+                shell('echo hello')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisher[0].attribute('class') == 'hudson.tasks.Shell'
+                publisher[0].command[0].value() == 'echo hello'
+            }
+        }
+    }
+
+    def 'call flexible publish without condition'() {
+        when:
+        context.flexiblePublish {
+            step {
+                shell('echo hello')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+                condition[0].children().size() == 0
+                publisher[0].attribute('class') == 'hudson.tasks.Shell'
+                publisher[0].command[0].value() == 'echo hello'
+            }
+        }
+    }
+
+    def 'call flexible publish without action'() {
+        when:
+        context.flexiblePublish {
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 }

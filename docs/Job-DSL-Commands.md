@@ -11,7 +11,7 @@ job {
 }
 ```
 
-There are similar methods to create Jenkins views and folders:
+There are similar methods to create Jenkins views, folders and config files:
 
 ```groovy
 view {
@@ -21,10 +21,14 @@ view {
 folder {
     name 'my-folder'
 }
+
+configFile {
+    name 'my-config'
+}
 ```
 
-The name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret names
-relative to the seed job. (since 1.24)
+When defining jobs, views or folders the name is treated as absolute to the Jenkins root by default, but the seed job
+can be configured to interpret names relative to the seed job. (since 1.24)
 
 In the closure provided to `job` there are a few top level methods, like `label` and `chucknorris`. Others are nested
 deeper in blocks which represent their role in Jenkins, e.g. the `publishers` block contains all the publisher actions.
@@ -33,7 +37,7 @@ DSL methods can be cumulative or overriding, meaning that some methods will add 
 and some will replace nodes (e.g. `disabled` will replace any existing disabled nodes). Some methods like `scm` and
 `multiscm` are mutually exclusive. Likewise, when using the `scm` block, only one SCM can be specified.
 
-When a DSL method isn't available, look at the [[Configure Block]] for extending the DSL.
+When a DSL method isn't available, look at [[The Configure Block]] for extending the DSL.
 
 **NOTE: when using these methods, remember that you need to use them in context. I.e. to use the `downstream` method,
 it needs to be enclosed in a `publishers` context.**
@@ -46,7 +50,7 @@ from right to left. Many methods provide options in deeper nested blocks which a
 ```groovy
 job(Map<String, ?> arguments = [:]) {
     name(String name)
-    
+
     // DSL specific methods
     using(String templateName)
     configure(Closure configBlock)
@@ -60,6 +64,7 @@ job(Map<String, ?> arguments = [:]) {
     checkoutRetryCount(int times = 3)
     concurrentBuild(boolean allowConcurrentBuild = true) // since 1.21
     customWorkspace(String workspacePath)
+    deliveryPipelineConfiguration(String stageName, String taskName = null) // since 1.26
     description(String description)
     disabled(boolean shouldDisable = true)
     displayName(String displayName)
@@ -68,8 +73,10 @@ job(Map<String, ?> arguments = [:]) {
     jdk(String jdk)
     keepDependencies(boolean keep = true)
     label(String label)
+    lockableResources(String resources, Closure lockableResourcesClosure) // since 1.25
     logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1,
                int artifactNumToKeep = -1)
+    notifications(Closure notificationClosure) // since 1.26
     priority(int value)
     quietPeriod(int seconds = 5)
     throttleConcurrentBuilds(Closure throttleClosure)
@@ -88,6 +95,7 @@ job(Map<String, ?> arguments = [:]) {
                       boolean sortNewestFirst = false, boolean sortZtoA = false,
                       String maxTagsToDisplay = 'all', String defaultValue = null,
                       String description = null)
+        nodeParam(String parameterName, Closure closure = null) // since 1.26
         runParam(String parameterName, String jobToRun, String description = null,
                  String filter = null)
         stringParam(String parameterName, String defaultValue = null,
@@ -126,13 +134,16 @@ job(Map<String, ?> arguments = [:]) {
         allocatePorts(Closure closure = null)
         allocatePorts(String[] ports, Closure closure = null)
         buildName(String nameTemplate) // since 1.24
+        buildUserVars() // since 1.26
         colorizeOutput(String colorMap)
+        deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
         environmentVariables(Closure envClosure)
         exclusionResources(String... resourceNames) // since 1.24
         exclusionResources(Iterable<String> resourceNames) // since 1.24
         injectPasswords() // since 1.23
         keychains(Closure closure) // since 1.24
         logSizeChecker(Closure closure = null) // since 1.23
+        maskPasswords() // since 1.26
         preBuildCleanup(Closure closure = null) // since 1.22
         release(Closure releaseClosure) // since 1.22
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
@@ -143,7 +154,8 @@ job(Map<String, ?> arguments = [:]) {
         timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) // deprecated
         timestamps()
         toolenv(String... tools)
-        xvnc(boolean takeScreenshot = false)
+        xvnc(boolean takeScreenshot) // deprecated
+        xvnc(Closure xvncClosure = null) // since 1.26
     }
     steps {
         ant(Closure antClosure = null)
@@ -164,7 +176,7 @@ job(Map<String, ?> arguments = [:]) {
         criticalBlock(Closure stepClosure) // since 1.24
         downstreamParameterized(Closure downstreamClosure)
         dsl(Closure dslClosure = null)
-        dsl(String scriptText, String removedJobAction = null, 
+        dsl(String scriptText, String removedJobAction = null,
             boolean ignoreExisting = false)
         dsl(Collection<String> externalScripts, String removedJobAction = null,
             boolean ignoreExisting = false)
@@ -183,7 +195,9 @@ job(Map<String, ?> arguments = [:]) {
         phase(Closure phaseClosure)
         phase(String name, Closure phaseClosure = null)
         phase(String name, String continuationConditionArg, Closure phaseClosure)
-        prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19 
+        prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
+        rake(Closure rakeClosure = null) // since 1.25
+        rake(String tasksArg, Closure rakeClosure = null) // since 1.25
         remoteTrigger(String remoteJenkinsName, String jobName,
                       Closure remoteTriggerClosure) // since 1.22
         sbt(String sbtName = null, String actions = null, String sbtFlags = null,
@@ -191,19 +205,24 @@ job(Map<String, ?> arguments = [:]) {
         shell(String command)
         systemGroovyCommand(String command, Closure systemGroovyClosure = null)
         systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null)
+        vSpherePowerOff(String server, String vm)
+        vSpherePowerOn(String server, String vm)
+        vSphereRevertToSnapshot(String server, String vm, String snapshot)
     }
     publishers {
-        aggregateDownstreamTestResults(String jobs = null, 
+        aggregateDownstreamTestResults(String jobs = null,
                                        boolean includeFailedBuilds = false) // since 1.19
         allowBrokenBuildClaiming()
+        analysisCollector(Closure analysisCollectorClosure = null) // since 1.26
         androidLint(String pattern, Closure staticAnalysisClosure = null)
         archiveArtifacts(String glob, String excludeGlob = null,
                          boolean latestOnlyBoolean = false)
         archiveArtifacts(Closure archiveArtifactsClosure) // since 1.20
         archiveJavadoc(Closure javadocClosure) // since 1.19
-        archiveJunit(String glob, boolean retainLongStdout = false,
+        archiveJunit(String glob, boolean retainLongStdout,
                      boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false)
+                     boolean publishTestAttachments = false) // deprecated
+        archiveJunit(String glob, Closure junitClosure = null) // since 1.26
         archiveXunit(Closure xunitClosure) // since 1.24
         associatedFiles(String files = null) // since 1.20
         buildDescription(String regularExpression, String description = '',
@@ -228,6 +247,7 @@ job(Map<String, ?> arguments = [:]) {
         findbugs(String pattern, boolean isRankActivated = false,
                  Closure staticAnalysisClosure = null)
         fingerprint(String targets, boolean recordBuildArtifacts = false)
+        flexiblePublish(Closure flexiblePublishClosure) // since 1.26
         flowdock(String token, Closure flowdockClosure = null) // since 1.23
         flowdock(String[] tokens, flowdockClosure = null) // since 1.23
         git(Closure gitPublisherClosure) // since 1.22
@@ -247,8 +267,8 @@ job(Map<String, ?> arguments = [:]) {
         publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
                               String criteria, String archiveMethod,
                               Closure cloneWorkspaceClosure)
-        publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob = '', 
-                              String criteria = 'Any', String archiveMethod = 'TAR', 
+        publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob = '',
+                              String criteria = 'Any', String archiveMethod = 'TAR',
                               boolean overrideDefaultExcludes = false,
                               Closure cloneWorkspaceClosure = null)
         publishHtml(Closure htmlReportClosure)
@@ -259,6 +279,7 @@ job(Map<String, ?> arguments = [:]) {
         publishRobotFrameworkReports(Closure closure = null) // since 1.21
         publishScp(String site, Closure scpClosure)
         rundeck(String jobId, Closure rundeckClosure = null) // since 1.24
+        s3(String profile, Closure s3Closure) // since 1.26
         stashNotifier(Closure stashNotifierClosure = null) // since 1.23
         tasks(String pattern, excludePattern = '', high = '', normal = '', low = '',
               ignoreCase = false, Closure staticAnalysisClosure = null)
@@ -284,6 +305,10 @@ job(Map<String, ?> arguments = [:]) {
     runHeadless(boolean shouldRunHeadless)
     preBuildSteps(Closure stepsClosure)
     postBuildSteps(Closure stepsClosure)
+    providedSettings(String mavenSettingsName) // since 1.25
+    wrappers {
+        mavenRelease(Closure mavenReleaseClosure = null) // since 1.25
+    }
 
     // BuildFlow options
     buildFlow(String buildFlowText) // since 1.21
@@ -307,10 +332,10 @@ job(Map<String, ?> arguments = [:]) {
 
 view(Map<String, Object> arguments = [:]) { // since 1.21
     name(String name)
-    
+
     // DSL specific methods
     configure(Closure configBlock)
-    
+
     // common options
     description(String description)
     filterBuildQueue(boolean filterBuildQueue)
@@ -346,22 +371,57 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
     showPipelineParameters(boolean showPipelineParameters = true)
     showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
+    startsWithParameters(boolean startsWithParameters = true) // since 1.26
+
+    // SectionedView options, since 1.25
+    sections {
+        listView(Closure listNiewSectionClosure)
+    }
+
+    // NestedView options, since 1.25
+    views {
+        view(Map<String, Object> arguments = [:], Closure viewClosure)
+    }
+    columns {
+        status()
+        weather()
+    }
+
+    // DeliveryPipelineView options, since 1.26
+    pipelineInstances(int number)
+    showAggregatedPipeline(boolean showAggregatedPipeline = true)
+    columns(int number)
+    sorting(Sorting sorting)
+    updateInterval(int seconds)
+    enableManualTriggers(boolean enable = true)
+    showAvatars(boolean showAvatars = true)
+    showChangeLog(boolean showChangeLog = true)
+    pipelines {
+        component(String name, String initialJob)
+        regex(String regex)
+    }
 }
 
 folder { // since 1.23
     name(String name)
-    
+
     // DSL specific methods
     configure(Closure configBlock)
 
     // common options
     displayName(String displayName)
 }
+
+configFile(Map<String, Object> arguments = [:]) { // since 1.25
+    name(String name)
+    comment(String comment)
+    content(String content)
+}
 ```
 
 The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods
-fail you, you can always generate the XML yourself via the [[Configure Block]]. Sometimes, a DSL
-method will provide a configure block of its own, which will set the a good context to help modify a few fields. 
+fail you, you can always generate the underlying XML yourself via [[The Configure Block]]. Sometimes, a DSL
+method will provide a configure block of its own, which will set the a good context to help modify a few fields.
 This gives native access to the job config XML, which is typically very straight forward to understand.
 
 (Note: The full XML can be found for any job, view or folder by taking the Jenkins URL and appending `/config.xml` to
@@ -406,8 +466,8 @@ view(Map<String, Object> attributes = [:], Closure closure)
 
 The `view` method behaves like the `job` method explained above and will return a _View_ object.
 
-Currently only a `type` attribute with value of `ListView` or `BuildPipelineView` is supported. When no type is
-specified, a list view will be generated.
+Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView` or
+`DeliveryPipelineView` is supported. When no type is specified, a list view will be generated.
 
 ```groovy
 view(type: ListView) {
@@ -454,6 +514,32 @@ folder {
 }
 ```
 
+# Config File
+
+```groovy
+configFile(Map<String, Object> attributes = [:], Closure closure)
+```
+
+The `configFile` method behaves like the `job` method explained above and will return a _ConfigFile_ object.
+
+A config file can have optional attributes. Currently only a `type` attribute with value of `Custom` or `MavenSettings`
+is supported. When no type is specified, a custom config file will be generated.
+
+Config files will be created before jobs to ensure that the file exists before it is referenced.
+
+```groovy
+configFile {
+  name 'my-config'
+  comment 'My important configuration'
+  content '<some-xml/>'
+}
+
+configFile(type: MavenSettings) {
+  name 'central-mirror'
+  content readFileFromWorkspace('maven-settings/central-mirror.xml')
+}
+```
+
 # Queue
 
 ```groovy
@@ -467,19 +553,31 @@ which was generated by the DSL, but it could be.
 # Reading Files from Workspace
 
 ```groovy
-InputStream streamFileFromWorkspace(String filePath) throws IOException
-String readFileFromWorkspace(String filePath) throws IOException
+InputStream streamFileFromWorkspace(String filePath)
+String readFileFromWorkspace(String filePath)
+String readFileFromWorkspace(String jobName, String filePath) // since 1.25
 ```
 
-Anywhere in the script you can read in a file from the current workspace using the above calls. This assumes that you
-checked out some source control as part of the job processing the DSL. This can be useful when populating fields on a
-generated job, e.g.
+With the first two variants, you can read in a file from the current workspace anywhere in the script. This assumes that
+you checked out some source control as part of the job processing the DSL. This can be useful when populating fields on
+a generated job, e.g.
 
 ```groovy
 job {
     steps {
         shell(readFileFromWorkspace('build.sh')
     }
+}
+```
+
+And with the third variant, you can read a file from the workspace of any job. This can be used to set the description
+of a job from a file in the job's workspace. The method will return `null` when the job or the file does not exist or
+the job has no workspace, e.g. when it has not been built yet.
+
+```groovy
+job {
+    name('acme-tests')
+    description(readFileFromWorkspace('acme-tests', 'README.txt'))
 }
 ```
 
@@ -503,7 +601,7 @@ println "Hello ${WordUtils.capitalize('world')}"
 
 # Configure
 
-When an option is not supported by the Job DSL, then a [[Configure Block]] can be used for extending the DSL.
+When an option is not supported by the Job DSL, then [[The Configure Block]] can be used for extending the DSL.
 
 Here is a simple example which adds a EnvInjectPasswordWrapper node:
 
@@ -518,9 +616,9 @@ job {
 }
 ```
 
-See the [[Configure Block]] page for details.
+See [[The Configure Block]] page for details.
 
-# Job Factory
+# DSL Factory
 
 Because the engine is just Groovy, you can call other Groovy classes available in the workspace. When in those methods
 the `job` method is no longer available, so it is recommended to pass in the current context to make this method
@@ -534,8 +632,8 @@ Then the `BuildFramework` class has everything it needs to make `job` calls:
 
 ```groovy
 class BuildFramework {
-    static ant(jobFactory, arg1, arg2) {
-        jobFactory.job {
+    static ant(dslFactory, arg1, arg2) {
+        dslFactory.job {
             name arg1
             steps {
                 ant(arg2)

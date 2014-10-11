@@ -17,8 +17,8 @@ subprojects {
     apply plugin: 'maven' // for publishing
     apply plugin: 'codenarc'
 
-    sourceCompatibility = 1.5
-    targetCompatibility = 1.5
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
 
     dependencies {
         compile 'org.codehaus.groovy:groovy-all:1.8.6'
@@ -68,6 +68,7 @@ project(':job-dsl-core') {
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile 'org.jenkins-ci:version-number:1.1'
+        compile 'org.jvnet.hudson:xstream:1.4.4-jenkins-3'
     }
 
     jar {
@@ -128,7 +129,7 @@ private Map loadCredentialsForJenkinsCommunityRepository() {
 
     Properties props = new Properties()
     dot.withInputStream { i -> props.load(i) }
-    props
+    [userName: props.userName, password: props.password]
 }
 
 task wrapper(type: Wrapper) {

@@ -1,30 +1,27 @@
 package javaposse.jobdsl.plugin;
 
 import com.google.common.collect.Sets;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import hudson.model.AbstractBuild;
 import hudson.model.ItemGroup;
 import hudson.model.Run;
-import hudson.model.RunAction;
 import hudson.model.View;
 import hudson.model.ViewGroup;
-import hudson.util.XStream2;
 import javaposse.jobdsl.dsl.GeneratedView;
+import jenkins.model.RunAction2;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 import static javaposse.jobdsl.plugin.JenkinsJobManagement.getItemNameFromPath;
 
-public class GeneratedViewsBuildAction implements RunAction {
+public class GeneratedViewsBuildAction implements RunAction2 {
     public final Set<GeneratedView> modifiedViews;
 
     private transient AbstractBuild owner;
     private LookupStrategy lookupStrategy = LookupStrategy.JENKINS_ROOT;
 
-    public GeneratedViewsBuildAction(Collection<GeneratedView> modifiedJobs, LookupStrategy lookupStrategy) {
-        this.modifiedViews = Sets.newLinkedHashSet(modifiedJobs);
+    public GeneratedViewsBuildAction(Collection<GeneratedView> modifiedViews, LookupStrategy lookupStrategy) {
+        this.modifiedViews = Sets.newLinkedHashSet(modifiedViews);
         this.lookupStrategy = lookupStrategy;
     }
 
@@ -44,7 +41,8 @@ public class GeneratedViewsBuildAction implements RunAction {
     }
 
     @Override
-    public void onLoad() {
+    public void onLoad(Run<?, ?> run) {
+        onAttached(run);
     }
 
     @Override
@@ -52,10 +50,6 @@ public class GeneratedViewsBuildAction implements RunAction {
         if (run instanceof AbstractBuild) {
             owner = (AbstractBuild) run;
         }
-    }
-
-    @Override
-    public void onBuildComplete() {
     }
 
     public LookupStrategy getLookupStrategy() {
@@ -80,24 +74,5 @@ public class GeneratedViewsBuildAction implements RunAction {
             }
         }
         return allGeneratedViews;
-    }
-
-    // TODO Once we depend on Jenkins version 1.509.3 or higher we can implement the RunAction2 interface to set the AbstractBuild on load, instead of using this Converter.
-    public static class ConverterImpl extends XStream2.PassthruConverter<GeneratedViewsBuildAction> {
-        public ConverterImpl(XStream2 xStream) {
-            super(xStream);
-        }
-
-        @Override
-        protected void callback(GeneratedViewsBuildAction action, UnmarshallingContext context) {
-            Iterator keys = context.keys();
-            while (keys.hasNext()) {
-                Object run = context.get(keys.next());
-                if (run instanceof AbstractBuild) {
-                    action.owner = (AbstractBuild) run;
-                    return;
-                }
-            }
-        }
     }
 }

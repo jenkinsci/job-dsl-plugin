@@ -3,7 +3,7 @@
 This tutorial will walk you through how to create a single job using a DSL script; and then add a few more.
 
 ## 1. Creating the Seed Job
-We use a Free-style Jenkins Job as a place to run the DSL scripts. We call this a "Seed Job". Since it's a normal Job you'll get all the standard benefits of Jenkins: history, logs, emails, etc. We further enhance the Seed Job to show which Jobs got created from the DSL script, in each build and on the Seed Job page. 
+We use a Free-style Jenkins Job as a place to run the DSL scripts. We call this a "Seed Job". Since it's a normal Job you'll get all the standard benefits of Jenkins: history, logs, emails, etc. We further enhance the Seed Job to show which Jobs got created from the DSL script, in each build and on the Seed Job page.
 
 The first step is to create this Job.
 
@@ -54,7 +54,7 @@ job {
 
 ## 3. Run the Seed Job and Generate the new Jobs from the Script
 
-The Seed Job is now all set up and can be run, generating the Job we just scripted. 
+The Seed Job is now all set up and can be run, generating the Job we just scripted.
 
 (Note: As it stands right now, we didn't setup any build triggers to run the job automatically but we could have, using the standard Jenkins UI in Step 2.)
 
@@ -66,7 +66,7 @@ Let's just run it ourselves manually.
 
 * Look at the build result to see a link to the new Job which has been created by the running of your DSL script in the Seed Job. You should see this in the section called "Generated Jobs". (If you don't see it, you probably have Auto-Refresh disabled.  Enable it, or just refresh the page and then you'll see the new job.)
 
-* Follow this link to your new Job. You can run this new script-generated Job manually or wait the 15 minutes for the scm trigger to kick in. 
+* Follow this link to your new Job. You can run this new script-generated Job manually or wait the 15 minutes for the scm trigger to kick in.
 
 (Note: if you have a new Jenkins server, you might be missing the Git plugin or a Maven installation which Jenkins knows about. That could cause this job to fail when run.  If you need to add these, be sure to re-run the Seed Job to make sure the Scripted Job is configured correctly - it won't be if you ran without all the necessary plugins installed in Jenkins.)
 
@@ -78,7 +78,7 @@ To show some more of the power of the DSL Plugin, let's create a bunch more Jobs
 
 * Go back to the 'tutorial-job-dsl-1' Seed Job
 * Click the "Configure" link/button and navigate back down the the "Process Job DSLs" build step.
-* Add the following into the text box, below the script which we added at the beginning. 
+* Add the following into the text box, below the script which we added at the beginning.
 
 (Note: The practicality of this block is questionable, but it could be used to shard your tests into different jobs.)
 
@@ -86,7 +86,7 @@ To show some more of the power of the DSL Plugin, let's create a bunch more Jobs
 def project = 'quidryan/aws-sdk-test'
 def branchApi = new URL("https://api.github.com/repos/${project}/branches")
 def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
-branches.each { 
+branches.each {
     def branchName = it.name
     job {
         name "${project}-${branchName}".replaceAll('/','-')

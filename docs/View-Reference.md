@@ -9,6 +9,7 @@ view(type: ListView) {  // since 1.21
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
 
     // list view options
     statusFilter(StatusFilter filter)
@@ -26,7 +27,6 @@ view(type: ListView) {  // since 1.21
         lastDuration()
         buildButton()
     }
-    configure(Closure configureBlock)
 }
 ```
 
@@ -63,6 +63,7 @@ view(type: BuildPipelineView) {  // since 1.21
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
 
     // build pipeline view options
     displayedBuilds(int displayedBuilds)
@@ -77,7 +78,7 @@ view(type: BuildPipelineView) {  // since 1.21
     showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
     refreshFrequency(int seconds)
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
-    configure(Closure configureBlock)
+    startsWithParameters(boolean startsWithParameters = true) // since 1.26
 }
 ```
 
@@ -94,6 +95,162 @@ view(type: BuildPipelineView) {
     alwaysAllowManualTrigger()
     showPipelineParameters()
     refreshFrequency(60)
+}
+```
+
+## Sectioned View
+
+```groovy
+view(type: SectionedView) {  // since 1.25
+    // common options
+    name(String name)
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // sections view options
+    sections {
+        listView(Closure listViewSectionClosure)
+    }
+}
+```
+
+Create a view that can be divided into sections. Details about the options can be found below. Requires the
+[Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin).
+
+```groovy
+view(type: SectionedView) {
+    name('project-summary')
+    filterBuildQueue()
+    filterExecutors()
+    sections {
+        listView {
+            name('Project A')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+        listView {
+            name('Project B')
+            jobs {
+                regex('project-B-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+    }
+}
+```
+
+## Nested View
+
+```groovy
+view(type: NestedView) {  // since 1.25
+    // common options
+    name(String name)
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // sections view options
+    views {
+        view(Map<String, Object> arguments = [:], Closure viewClosure)
+    }
+    columns {
+        status()
+        weather()
+    }
+}
+```
+
+Create a view that allows grouping views into multiple levels. Details about the options can be found below. Requires
+the [Nested View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Nested+View+Plugin).
+
+```groovy
+view(type: NestedView) {
+    name('project-a')
+    views {
+        view {
+            name('overview')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+        view(type: BuildPipelineView) {
+            name('pipeline')
+            selectedJob('project-a-compile')
+        }
+    }
+}
+```
+
+## Delivery Pipeline View
+
+```groovy
+view(type: DeliveryPipelineView) {  // since 1.26
+    // common options
+    name(String name)
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // delivery pipeline view options
+    pipelineInstances(int number)
+    showAggregatedPipeline(boolean showAggregatedPipeline = true)
+    columns(int number)
+    sorting(Sorting sorting)
+    updateInterval(int seconds)
+    enableManualTriggers(boolean enable = true)
+    showAvatars(boolean showAvatars = true)
+    showChangeLog(boolean showChangeLog = true)
+    pipelines {
+        component(String name, String initialJob)
+        regex(String regex)
+    }
+}
+```
+
+Create a view that renders pipelines based on upstream/downstream jobs. Details about the options can be found below.
+Requires the [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin).
+
+```groovy
+view(type: DeliveryPipelineView) {
+    name('project-a')
+    pipelineInstances(5)
+    showAggregatedPipeline()
+    columns(2)
+    sorting(Sorting.TITLE)
+    updateInterval(60)
+    enableManualTriggers()
+    showAvatars()
+    showChangeLog()
+    pipelines {
+        component('Sub System A', 'compile-a')
+        component('Sub System B', 'compile-b')
+        regex(/compile-subsystem-(.*)/)
+    }
 }
 ```
 
@@ -345,4 +502,274 @@ Use this method if you want to show the pipeline definition header in the pipeli
 
 ```groovy
 showPipelineDefinitionHeader()
+```
+
+### Pipeline Starts With Parameters
+
+```groovy
+startsWithParameters(boolean startsWithParameters = true)
+```
+
+Use this method if you want toggle the "Pipeline starts with parameters" option in the pipeline view configuration.
+Optional, defaults to `false`.
+
+Requires version 1.4.3 of the
+[Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
+
+```groovy
+startsWithParameters()
+```
+
+(since 1.26)
+
+## Sectioned View Options
+
+### List View Section
+
+```groovy
+view(type: SectionedView) {
+    sections {
+        listView {
+            name(String name)               // name of the section
+            width(String width)             // either FULL, HALF, THIRD or TWO_THIRDS
+            alignment(String alignment)     // either CENTER, LEFT or RIGHT
+            jobs(Closure jobClosure)        // see the jobs closure for list views above
+            columns(Closure columnsClosure) // see the columns closure for list views above
+        }
+    }
+}
+```
+
+Creates a section containing a list of jobs. Width defaults to `FULL` and alignment defaults to `CENTER` if not
+specified.
+
+```groovy
+view(type: SectionedView) {
+    sections {
+        listView {
+            name('project-A')
+            width('HALF')
+            alignment('LEFT')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                weather()
+                name()
+                lastSuccess()
+                lastFailure()
+            }
+        }
+    }
+}
+```
+
+## Nested View Options
+
+### Views
+
+```groovy
+view(type: NestedView) {
+    views {
+        view(Map<String, Object> arguments = [:], Closure viewClosure)
+    }
+}
+```
+
+Creates the nested views. The view methods works like the top-level view method.
+
+```groovy
+view(type: NestedView) {
+    views {
+        view {
+            name('overview')
+            jobs {
+                regex('project-A-.*')
+            }
+            columns {
+                status()
+                name()
+            }
+        }
+        view(type: BuildPipelineView) {
+            name('pipeline')
+            selectedJob('project-a-compile')
+        }
+    }
+}
+```
+
+### Columns
+
+```groovy
+view(type: NestedView) {
+    columns {
+        status()
+        weather()
+    }
+}
+```
+
+Adds columns to the view. Only the status and weather column are supported.
+
+## Delivery Pipeline View Options
+
+### Pipeline Instances
+
+```groovy
+view(type: DeliveryPipelineView) {
+    pipelineInstances(int number)
+}
+```
+
+Number of pipelines instances showed for each pipeline. Optional, defaults to 3 if omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    pipelineInstances(5)
+}
+```
+
+### Aggregated Pipeline
+
+```groovy
+view(type: DeliveryPipelineView) {
+    showAggregatedPipeline(boolean showAggregatedPipeline = true)
+}
+```
+
+Show a aggregated view where each stage shows the latest version being executed. Optional, defaults to `false` if
+omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    showAggregatedPipeline()
+}
+```
+
+### Columns
+
+```groovy
+view(type: DeliveryPipelineView) {
+    columns(int number)
+}
+```
+
+Number of columns used for showing pipelines. Optional, defaults to 1 if omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    columns(2)
+}
+```
+
+### Sorting
+
+```groovy
+view(type: DeliveryPipelineView) {
+    sorting(Sorting sorting)
+}
+```
+
+Specifies how to sort the pipeline in the view, only applicable for several pipelines. Possible value are
+`Sorting.NONE`, `Sorting.TITLE` and `Sorting.LAST_ACTIVITY`. Optional, defaults to `Sorting.NONE` if omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    sorting(Sorting.TITLE)
+}
+```
+
+### Avatars
+
+```groovy
+view(type: DeliveryPipelineView) {
+    showAvatars(boolean showAvatars = true)
+}
+```
+
+Show avatar pictures instead of user names. Optional, defaults to `false` if omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    showAvatars()
+}
+```
+
+### Update Interval
+
+```groovy
+view(type: DeliveryPipelineView) {
+    updateInterval(int seconds)
+}
+```
+
+Specifies how often the view will be updated. Optional, defaults to 2 if omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    updateInterval(60)
+}
+```
+
+### Manual Triggers
+
+```groovy
+view(type: DeliveryPipelineView) {
+    enableManualTriggers(boolean enable = true)
+}
+```
+
+Show a button if a task is manual. Optional, defaults to `false` if omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    enableManualTriggers()
+}
+```
+
+### Change Log
+
+```groovy
+view(type: DeliveryPipelineView) {
+    showChangeLog(boolean showChangeLog = true)
+}
+```
+
+Show SCM change log for the first job in the pipeline. Optional, defaults to `false` if omitted.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    showChangeLog()
+}
+```
+
+### Pipelines
+
+```groovy
+view(type: DeliveryPipelineView) {
+    pipelines {
+        component(String name, String initialJob)
+        regex(String regex)
+    }
+}
+```
+
+Defines pipelines by either specifying names and start jobs or by regular expressions. Both variants can be called
+multiple times to add different pipelines to the view.
+
+```groovy
+view(type: DeliveryPipelineView) {
+    pipelines {
+        component('Sub System A', 'compile-a')
+        component('Sub System B', 'compile-b')
+    }
+}
+
+view(type: DeliveryPipelineView) {
+    pipelines {
+        regex(/compile-(.*)/)
+    }
+}
 ```

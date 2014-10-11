@@ -1,12 +1,17 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
 class GerritContext implements Context {
-    GerritEventContext eventContext = new GerritEventContext()
+    GerritEventContext eventContext
     Closure configureClosure
     def projects = []
+
+    GerritContext(JobManagement jobManagement) {
+        this.eventContext = new GerritEventContext(jobManagement)
+    }
 
     Integer startedCodeReview = null
     Integer startedVerified = null
@@ -28,23 +33,9 @@ class GerritContext implements Context {
         startedCodeReview = codeReview
     }
 
-    def buildStarted(Object verified, Object codeReview) {
-        buildStarted(
-                Integer.parseInt(verified.toString()),
-                Integer.parseInt(codeReview.toString())
-        )
-    }
-
     def buildSuccessful(Integer verified, Integer codeReview) {
         successfulVerified = verified
         successfulCodeReview = codeReview
-    }
-
-    def buildSuccessful(Object verified, Object codeReview) {
-        buildSuccessful(
-                Integer.parseInt(verified.toString()),
-                Integer.parseInt(codeReview.toString())
-        )
     }
 
     def buildFailed(Integer verified, Integer codeReview) {
@@ -52,23 +43,9 @@ class GerritContext implements Context {
         failedCodeReview = codeReview
     }
 
-    def buildFailed(Object verified, Object codeReview) {
-        buildFailed(
-                Integer.parseInt(verified.toString()),
-                Integer.parseInt(codeReview.toString())
-        )
-    }
-
     def buildUnstable(Integer verified, Integer codeReview) {
         unstableVerified = verified
         unstableCodeReview = codeReview
-    }
-
-    def buildUnstable(Object verified, Object codeReview) {
-        buildUnstable(
-                Integer.parseInt(verified.toString()),
-                Integer.parseInt(codeReview.toString())
-        )
     }
 
     def buildNotBuilt(Integer verified, Integer codeReview) {
@@ -76,15 +53,7 @@ class GerritContext implements Context {
         notBuiltCodeReview = codeReview
     }
 
-    def buildNotBuilt(Object verified, Object codeReview) {
-        buildNotBuilt(
-                Integer.parseInt(verified.toString()),
-                Integer.parseInt(codeReview.toString())
-        )
-    }
-
     def configure(Closure configureClosure) {
-        // save for later
         this.configureClosure = configureClosure
     }
 

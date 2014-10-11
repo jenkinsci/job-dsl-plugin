@@ -1,5 +1,8 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+
 /**
  * Testing JobManagement which will deal with a single template and single saved job. Useful for testing
  * since it can be prodded with the expected value.
@@ -49,6 +52,12 @@ class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+        validateNameArg(configFile.name)
+        UUID.randomUUID().toString()
+    }
+
+    @Override
     Map<String, String> getParameters() {
         params
     }
@@ -74,6 +83,31 @@ class StringJobManagement extends AbstractJobManagement {
 
     @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
+    }
+
+    @Override
+    String getCredentialsId(String credentialsDescription) {
+        null
+    }
+
+    @Override
+    VersionNumber getPluginVersion(String pluginShortName) {
+        null
+    }
+
+    @Override
+    Integer getVSphereCloudHash(String name) {
+        null
+    }
+
+    @Override
+    String getConfigFileId(ConfigFileType type, String name) {
+        null
+    }
+
+    @Override
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+        null
     }
 }
 

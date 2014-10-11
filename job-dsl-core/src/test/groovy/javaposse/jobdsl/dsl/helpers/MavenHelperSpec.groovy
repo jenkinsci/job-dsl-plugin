@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -9,7 +11,8 @@ import spock.lang.Specification
 class MavenHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    MavenHelper helper = new MavenHelper(mockActions, JobType.Maven)
+    JobManagement jobManagement = Mock(JobManagement)
+    MavenHelper helper = new MavenHelper(mockActions, JobType.Maven, jobManagement)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'can run rootPOM'() {
@@ -31,7 +34,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run rootPOM for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.rootPOM('pom.xml')
@@ -72,7 +75,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run goals for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.goals('package')
@@ -113,7 +116,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run mavenOpts for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.mavenOpts('-Xmx512m')
@@ -151,7 +154,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run perModuleEmail for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.perModuleEmail(false)
@@ -189,7 +192,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run archivingDisabled for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.archivingDisabled(false)
@@ -227,7 +230,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run runHeadless for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.runHeadless(false)
@@ -248,7 +251,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run localRepository for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
@@ -285,7 +288,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run preBuildSteps for freestyle jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.preBuildSteps {
@@ -309,7 +312,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run postBuildSteps for freestyle jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.postBuildSteps {
@@ -341,7 +344,7 @@ class MavenHelperSpec extends Specification {
 
     def 'cannot run mavenInstallation for free style jobs'() {
         setup:
-        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform)
+        MavenHelper helper = new MavenHelper(mockActions, JobType.Freeform, jobManagement)
 
         when:
         helper.mavenInstallation('test')
@@ -358,5 +361,34 @@ class MavenHelperSpec extends Specification {
         then:
         root.mavenName.size() == 1
         root.mavenName[0].value() == 'test'
+    }
+
+    def 'call maven method with unknown provided settings'() {
+        setup:
+        String settingsName = 'lalala'
+
+        when:
+        helper.providedSettings(settingsName)
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(settingsName)
+    }
+
+    def 'call maven method with provided settings'() {
+        setup:
+        String settingsName = 'maven-proxy'
+        String settingsId = '123123415'
+        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
+
+        when:
+        def action = helper.providedSettings(settingsName)
+        action.execute(root)
+
+        then:
+        root.settings.size() == 1
+        root.settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+        root.settings[0].children().size() == 1
+        root.settings[0].settingsConfigId[0].value() == settingsId
     }
 }

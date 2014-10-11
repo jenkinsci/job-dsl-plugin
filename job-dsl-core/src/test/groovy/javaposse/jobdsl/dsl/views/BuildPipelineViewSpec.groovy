@@ -276,6 +276,26 @@ class BuildPipelineViewSpec extends Specification {
         root.showPipelineDefinitionHeader[0].text() == 'true'
     }
 
+    def 'startsWithParameters'() {
+        when:
+        view.startsWithParameters(true)
+
+        then:
+        Node root = view.node
+        root.startsWithParameters.size() == 1
+        root.startsWithParameters[0].text() == 'true'
+    }
+
+    def 'startsWithParameters no arguments'() {
+        when:
+        view.startsWithParameters()
+
+        then:
+        Node root = view.node
+        root.startsWithParameters.size() == 1
+        root.startsWithParameters[0].text() == 'true'
+    }
+
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>
     <filterExecutors>false</filterExecutors>

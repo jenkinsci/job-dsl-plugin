@@ -14,6 +14,8 @@ class DownstreamTriggerContext implements Context {
     String projects
     String condition
     String matrixSubsetFilter
+    String nodeLabelParam
+    String nodeLabel
     Map<String, Boolean> boolParams = [:]
 
     boolean triggerWithNoParameters
@@ -26,6 +28,7 @@ class DownstreamTriggerContext implements Context {
     boolean combineQueuedCommits = false
     boolean usingPredefined = false
     boolean usingMatrixSubset = false
+    boolean usingNodeLabel = false
     boolean sameNode = false
 
     def currentBuild() {
@@ -77,6 +80,12 @@ class DownstreamTriggerContext implements Context {
         this.sameNode = sameNode
     }
 
+    def nodeLabel(String paramName, String nodeLabel) {
+        usingNodeLabel = true
+        this.nodeLabelParam = paramName
+        this.nodeLabel = nodeLabel
+    }
+
     def blockingThresholdsFromMap(Map<String, String> thresholdMap) {
         thresholdMap.each { type, name ->
             blockingThreshold(type, name)
@@ -94,7 +103,7 @@ class DownstreamTriggerContext implements Context {
 
     boolean hasParameter() {
         usingCurrentBuild || usingGitRevision || usingMatrixSubset || usingPredefined || usingPropertiesFile ||
-                usingSubversionRevision || !boolParams.isEmpty() || sameNode
+                usingSubversionRevision || !boolParams.isEmpty() || sameNode || usingNodeLabel
     }
 
     Node createParametersNode() {
@@ -133,6 +142,13 @@ class DownstreamTriggerContext implements Context {
             if (usingSubversionRevision) {
                 'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {
                     delegate.createNode('includeUpstreamParameters', includeUpstreamParameters)
+                }
+            }
+
+            if (usingNodeLabel) {
+                'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter' {
+                    delegate.createNode('name', nodeLabelParam)
+                    delegate.createNode('nodeLabel', nodeLabel)
                 }
             }
 

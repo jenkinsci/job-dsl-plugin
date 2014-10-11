@@ -1,12 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
-import groovy.transform.Canonical
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerContext
 
-@Canonical
 class PhaseJobContext implements Context {
+    private static final List<String> VALID_KILL_CONDITIONS = ['FAILURE', 'NEVER', 'UNSTABLE']
+
+    private final JobManagement jobManagement
+
     String jobName
     boolean currentJobParameters = true
     boolean exposedScm = true
@@ -18,7 +21,17 @@ class PhaseJobContext implements Context {
     String matrixFilter
     Boolean subversionRevision
     Boolean gitRevision
+    String nodeLabelParam
     def props = []
+    boolean disableJob = false
+    String killPhaseCondition = 'FAILURE'
+
+    PhaseJobContext(JobManagement jobManagement, String jobName, boolean currentJobParameters, boolean exposedScm) {
+        this.jobManagement = jobManagement
+        this.jobName = jobName
+        this.currentJobParameters = currentJobParameters
+        this.exposedScm = exposedScm
+    }
 
     void jobName(String jobName) {
         this.jobName = jobName
@@ -78,12 +91,34 @@ class PhaseJobContext implements Context {
         paramTrigger.predefinedProps(map)
     }
 
+    def nodeLabel(String paramName, String nodeLabel)  {
+        Preconditions.checkState(!this.nodeLabelParam, "nodeLabel parameter already set with ${this.nodeLabelParam}")
+        this.nodeLabelParam = paramName
+        paramTrigger.nodeLabel(paramName, nodeLabel)
+    }
+
     def configAsNode() {
         paramTrigger.createParametersNode()
     }
 
     def hasConfig() {
         !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null ||
-                gitRevision != null || !props.isEmpty()
+                gitRevision != null || !props.isEmpty() || nodeLabelParam
+    }
+
+    def disableJob(boolean disableJob = true) {
+        jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.11')
+        this.disableJob = disableJob
+    }
+
+    def killPhaseCondition(String killPhaseCondition) {
+        jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.11')
+
+        Preconditions.checkArgument(
+                VALID_KILL_CONDITIONS.contains(killPhaseCondition),
+                "Kill Phase on Job Result Condition needs to be one of these values: ${VALID_KILL_CONDITIONS.join(',')}"
+        )
+
+        this.killPhaseCondition = killPhaseCondition
     }
 }

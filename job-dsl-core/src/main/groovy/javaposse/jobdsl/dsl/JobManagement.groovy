@@ -40,6 +40,14 @@ interface JobManagement {
             throws NameNotProvidedException, ConfigurationMissingException
 
     /**
+     * Creates or updates the managed config file.
+     * @param configFile the config file to create or update
+     * @param ignoreExisting do not update existing config files
+     * @return the id of the created or updated config file
+     */
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting)
+
+    /**
      * Queue a job to run. Useful for running jobs after they've been created.
      */
     void queueJob(String jobName) throws NameNotProvidedException
@@ -47,6 +55,8 @@ interface JobManagement {
     InputStream streamFileInWorkspace(String filePath) throws IOException
 
     String readFileInWorkspace(String filePath) throws IOException
+
+    String readFileInWorkspace(String jobName, String filePath) throws IOException
 
     /**
      * Stream to write to, for stdout.
@@ -81,6 +91,23 @@ interface JobManagement {
      * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
      */
     VersionNumber getPluginVersion(String pluginShortName)
+
+    /**
+     * Return the hash of the vSphere cloud with the given name.
+     * @param name name of the vSphere cloud
+     * @return hash of the vSphere cloud or <code>null</code> if a cloud with the given name does not exist
+     */
+    Integer getVSphereCloudHash(String name)
+
+    /**
+     * Return the id of the config file with the given type and name.
+     *
+     * @param type type of the config file
+     * @param name name of the config file
+     * @return the config ID of the config file or <code>null</code> if no config file with the given type and name can
+     *         be found
+     */
+    String getConfigFileId(ConfigFileType type, String name)
 
     Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args)
 }

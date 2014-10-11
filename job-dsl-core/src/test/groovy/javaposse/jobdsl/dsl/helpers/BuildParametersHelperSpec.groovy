@@ -545,6 +545,102 @@ class BuildParametersHelperSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    def 'nodeParam base usage'() {
+        when:
+        context.nodeParam('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition'
+            children().size() == 9
+            name[0].value() == 'myParameterName'
+            allowedSlaves[0].children().size() == 0
+            defaultSlaves[0].children().size() == 0
+            description[0].value() == null
+            triggerIfResult[0].value() == 'multiSelectionDisallowed'
+            nodeEligibility[0].attribute('class') ==
+                    'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
+            allowMultiNodeSelection[0].value() == false
+            triggerConcurrentBuilds[0].value() == false
+            ignoreOfflineNodes[0].value() == false
+        }
+    }
+
+    def 'nodeParam fullest usage'() {
+        when:
+        context.nodeParam('myParameterName') {
+            description('myRunParamDescription')
+            allowedNodes(['myNode', 'myNode2'])
+            defaultNodes(['myNode'])
+            trigger('multiSelectionDisallowed')
+            eligibility('IgnoreOfflineNodeEligibility')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition'
+            children().size() == 9
+            name[0].value() == 'myParameterName'
+            allowedSlaves[0].string.size() == 2
+            allowedSlaves[0].string[0].value() == 'myNode'
+            allowedSlaves[0].string[1].value() == 'myNode2'
+            defaultSlaves[0].string.size() == 1
+            defaultSlaves[0].string[0].value() == 'myNode'
+            description[0].value() == 'myRunParamDescription'
+            triggerIfResult[0].value() == 'multiSelectionDisallowed'
+            nodeEligibility[0].attribute('class') ==
+                 'org.jvnet.jenkins.plugins.nodelabelparameter.node.IgnoreOfflineNodeEligibility'
+            allowMultiNodeSelection[0].value() == false
+            triggerConcurrentBuilds[0].value() == false
+            ignoreOfflineNodes[0].value() == false
+        }
+    }
+
+    def 'nodeParam name argument cant be null'() {
+        when:
+        context.nodeParam(null, null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'nodeParam invalid trigger'() {
+        when:
+        context.nodeParam('myParamName') {
+            trigger('invalid trigger')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'nodeParam no name'() {
+        when:
+        context.nodeParam('')
+
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        context.nodeParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'nodeParam already defined'() {
+        when:
+        context.booleanParam('one')
+        context.nodeParam('one')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'multiple mixed Param types is just fine'() {
         when:
         context.booleanParam('myFirstBooleanParameter')

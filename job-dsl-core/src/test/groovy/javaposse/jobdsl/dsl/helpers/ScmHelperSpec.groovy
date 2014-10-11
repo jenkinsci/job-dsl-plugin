@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -213,6 +214,21 @@ class ScmHelperSpec extends Specification {
         context.scmNode != null
         context.scmNode.pruneBranches.size() == 1
         context.scmNode.pruneBranches[0].text() == 'true'
+    }
+
+    def 'call git scm with localBranch'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            localBranch('bugfix')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.localBranch.size() == 1
+        context.scmNode.localBranch[0].text() == 'bugfix'
     }
 
     def 'call git scm with createTag'() {
@@ -434,6 +450,9 @@ class ScmHelperSpec extends Specification {
     }
 
     def 'call git scm with mergeOptions'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -452,6 +471,9 @@ class ScmHelperSpec extends Specification {
     }
 
     def 'call git scm with second mergeOptions'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -471,6 +493,9 @@ class ScmHelperSpec extends Specification {
     }
 
     def 'call git scm with complex mergeOptions'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -490,6 +515,105 @@ class ScmHelperSpec extends Specification {
         context.scmNode.userMergeOptions[0].mergeRemote[0].text() == 'other'
         context.scmNode.userMergeOptions[0].mergeTarget.size() == 1
         context.scmNode.userMergeOptions[0].mergeTarget[0].text() == 'acme-plugin'
+    }
+
+    def 'call git scm with mergeOptions, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            mergeOptions('acme-plugin')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.extensions.size() == 1
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
+        with(context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
+            options.size() == 1
+            options[0].children().size() == 3
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == ''
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == 'acme-plugin'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+        }
+    }
+
+    def 'call git scm with second mergeOptions, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            mergeOptions('testing')
+            mergeOptions('acme-plugin')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.extensions.size() == 1
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 2
+        with(context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
+            options.size() == 1
+            options[0].children().size() == 3
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == ''
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == 'testing'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+        }
+        with(context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[1]) {
+            options.size() == 1
+            options[0].children().size() == 3
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == ''
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == 'acme-plugin'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+        }
+    }
+
+    def 'call git scm with complex mergeOptions, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            remote {
+                name('other')
+                url('https://github.com/daspilker/job-dsl-plugin.git')
+            }
+            mergeOptions('other', 'acme-plugin')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.extensions.size() == 1
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
+        with(context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
+            options.size() == 1
+            options[0].children().size() == 3
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == 'other'
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == 'acme-plugin'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+        }
     }
 
     def 'call git scm with credentials'() {
@@ -528,6 +652,24 @@ class ScmHelperSpec extends Specification {
 
         then:
         context.scmNode.branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'feature-branch'
+    }
+
+    def 'call git scm with stashBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                stash('http://stash')
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.browser.size() == 1
+        context.scmNode.browser[0].attribute('class') == 'hudson.plugins.git.browser.Stash'
+        context.scmNode.browser[0].'url'[0].value() == 'http://stash'
     }
 
     def 'call git scm with configure appending'() {

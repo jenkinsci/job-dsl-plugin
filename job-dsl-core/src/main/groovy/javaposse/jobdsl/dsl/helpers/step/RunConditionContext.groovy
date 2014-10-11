@@ -1,24 +1,27 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.BinaryLogicOperation
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir
+import javaposse.jobdsl.dsl.helpers.step.condition.NeverRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.NotCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.StatusCondition
 
 class RunConditionContext implements Context {
 
     RunCondition condition
 
     def alwaysRun() {
-        this.condition = new SimpleCondition(name: 'AlwaysRun')
+        this.condition = new AlwaysRunCondition()
     }
 
     def neverRun() {
-        this.condition = new SimpleCondition(name: 'NeverRun')
+        this.condition = new NeverRunCondition()
     }
 
     def booleanCondition(String token) {
@@ -50,9 +53,7 @@ class RunConditionContext implements Context {
     }
 
     def status(String worstResult, String bestResult) {
-        this.condition = new SimpleCondition(
-                name: 'Status',
-                args: ['worstResult': worstResult, 'bestResult': bestResult])
+        this.condition = new StatusCondition(worstResult, bestResult)
     }
 
     def shell(String command) {

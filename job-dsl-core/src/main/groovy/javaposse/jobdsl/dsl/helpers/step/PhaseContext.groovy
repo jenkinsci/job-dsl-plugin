@@ -1,15 +1,22 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import groovy.transform.Canonical
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
-@Canonical
 class PhaseContext implements Context {
+    private final JobManagement jobManagement
+
     String phaseName
     String continuationCondition
 
     List<PhaseJobContext> jobsInPhase = []
+
+    PhaseContext(JobManagement jobManagement, String phaseName, String continuationCondition) {
+        this.jobManagement = jobManagement
+        this.phaseName = phaseName
+        this.continuationCondition = continuationCondition
+    }
 
     void phaseName(String phaseName) {
         this.phaseName = phaseName
@@ -28,7 +35,7 @@ class PhaseContext implements Context {
     }
 
     def job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
-        PhaseJobContext phaseJobContext = new PhaseJobContext(jobName, currentJobParameters, exposedScm)
+        PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, jobName, currentJobParameters, exposedScm)
         AbstractContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext

@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.5.0'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.6.0'
     }
 }
 
@@ -15,12 +15,13 @@ apply plugin: 'jpi'
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
 
 jenkinsPlugin {
-    coreVersion = '1.480'
+    coreVersion = '1.509.3'
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
     maskClasses = 'groovy.grape'
     compatibleSinceVersion = '1.20'
+    pluginFirstClassLoader = true
     developers {
         developer {
             id 'quidryan'
@@ -55,9 +56,10 @@ dependencies {
     compile project(':job-dsl-core')
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.2@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
+    optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
+    optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.7@jar'
     jenkinsTest 'org.jenkins-ci.plugins:ant:1.2@jar' // see JENKINS-17129
-    jenkinsTest 'org.jenkins-ci.main:maven-plugin:1.480@jar'
+    jenkinsTest 'org.jenkins-ci.main:maven-plugin:1.509.3@jar'
     jenkinsTest 'org.jenkins-ci.plugins:javadoc:1.1@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:mailer:1.1@jar'
 }
-
-tasks.jpi.manifest.attributes PluginFirstClassLoader: true

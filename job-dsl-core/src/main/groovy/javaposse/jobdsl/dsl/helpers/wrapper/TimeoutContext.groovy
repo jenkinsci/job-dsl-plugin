@@ -8,7 +8,7 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 /** Context to configure timeout */
 class TimeoutContext implements Context {
 
-    WrapperContext.Timeout type
+    Timeout type
     int limit = 3
 
     int percentage = 150
@@ -22,7 +22,7 @@ class TimeoutContext implements Context {
     String description = ''
     private final JobManagement jobManagement
 
-    TimeoutContext(WrapperContext.Timeout type, JobManagement jobManagement) {
+    TimeoutContext(Timeout type, JobManagement jobManagement) {
         this.jobManagement = jobManagement
         this.type = type
     }
@@ -58,6 +58,7 @@ class TimeoutContext implements Context {
     }
 
     def noActivity(int seconds = 180) {
+        jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
         type = Timeout.noActivity
         this.noActivitySeconds = seconds
     }

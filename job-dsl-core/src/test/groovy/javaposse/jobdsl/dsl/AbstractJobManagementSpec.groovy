@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 import javaposse.jobdsl.dsl.helpers.PropertiesContext
 import spock.lang.Specification
 
@@ -38,15 +39,27 @@ class AbstractJobManagementSpec extends Specification {
         buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'
     }
 
-    def 'plugin version is always null'() {
+    def 'reading files from workspace is not supported'() {
         setup:
         AbstractJobManagement jobManagement = new TestJobManagement()
 
         when:
-        VersionNumber version = jobManagement.getPluginVersion('foo')
+        jobManagement.readFileInWorkspace('test.txt')
 
         then:
-        version == null
+        thrown(UnsupportedOperationException)
+
+        when:
+        jobManagement.streamFileInWorkspace('test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        jobManagement.readFileInWorkspace('my-job', 'test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
     }
 
     def 'callExtension'() {
@@ -85,8 +98,38 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
+        String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+            throw new UnsupportedOperationException()
+        }
+
+        @Override
         void requireMinimumPluginVersion(String pluginShortName, String version) {
             throw new UnsupportedOperationException()
+        }
+
+        @Override
+        String getCredentialsId(String credentialsDescription) {
+            null
+        }
+
+        @Override
+        VersionNumber getPluginVersion(String pluginShortName) {
+            null
+        }
+
+        @Override
+        Integer getVSphereCloudHash(String name) {
+            null
+        }
+
+        @Override
+        String getConfigFileId(ConfigFileType type, String name) {
+            null
+        }
+
+        @Override
+        Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+            null
         }
 
         void testMethod() {

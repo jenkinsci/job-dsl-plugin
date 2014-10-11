@@ -1,15 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AbstractHelper
 
 class TopLevelHelper extends AbstractHelper {
+    private final JobManagement jobManagement
 
-    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType) {
+    TopLevelHelper(List<WithXmlAction> withXmlActions, JobType jobType, JobManagement jobManagement) {
         super(withXmlActions, jobType)
+        this.jobManagement = jobManagement
     }
 
     def description(String descriptionString) {
@@ -116,6 +119,34 @@ class TopLevelHelper extends AbstractHelper {
                     throttleContext.categories.each { c ->
                         string c
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * <project>
+     *     <properties>
+     *         <org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
+     *             <resourceNames>lock-resource</resourceNames>
+     *             <resourceNamesVar>NAMES</resourceNamesVar>
+     *             <resourceNumber>0</resourceNumber>
+     *         </org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
+     *     <properties>
+     * </project>
+     */
+    def lockableResources(String resources, Closure lockClosure = null) {
+        LockableResourcesContext lockContext = new LockableResourcesContext()
+        AbstractContextHelper.executeInContext(lockClosure, lockContext)
+
+        execute {
+            it / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
+                resourceNames resources
+                if (lockContext.resourcesVariable) {
+                    resourceNamesVar lockContext.resourcesVariable
+                }
+                if (lockContext.resourceNumber != null) {
+                    resourceNumber lockContext.resourceNumber
                 }
             }
         }
@@ -304,6 +335,34 @@ class TopLevelHelper extends AbstractHelper {
     }
 
     /**
+     * Configures the Notification Plugin.
+     *
+     * <properties>
+     *     <com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
+     *         <endpoints>
+     *             <com.tikal.hudson.plugins.notification.Endpoint>
+     *                 <protocol>HTTP</protocol>
+     *                 <format>JSON</format>
+     *                 <url />
+     *                 <event>all</event>
+     *                 <timeout>30000</timeout>
+     *             </com.tikal.hudson.plugins.notification.Endpoint>
+     *         </endpoints>
+     *     </com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
+     * </properties>
+     */
+    def notifications(Closure notificationClosure) {
+        NotificationContext notificationContext = new NotificationContext(jobManagement)
+        AbstractContextHelper.executeInContext(notificationClosure, notificationContext)
+
+        execute {
+            it / 'properties' / 'com.tikal.hudson.plugins.notification.HudsonNotificationProperty' {
+                endpoints notificationContext.endpoints
+            }
+        }
+    }
+
+    /**
      * <properties>
      *     <hudson.plugins.batch__task.BatchTaskProperty>
      *         <tasks>
@@ -321,6 +380,29 @@ class TopLevelHelper extends AbstractHelper {
             batchTaskProperty / 'tasks' << 'hudson.plugins.batch__task.BatchTask' {
                 delegate.name name
                 delegate.script script
+            }
+        }
+    }
+
+    /**
+     * <properties>
+     *     <se.diabol.jenkins.pipeline.PipelineProperty>
+     *         <taskName>integration-tests</taskName>
+     *         <stageName>qa</stageName>
+     *     </se.diabol.jenkins.pipeline.PipelineProperty>
+     * </properties>
+     */
+    def deliveryPipelineConfiguration(String stageName, String taskName = null) {
+        if (stageName || taskName) {
+            execute {
+                it / 'properties' / 'se.diabol.jenkins.pipeline.PipelineProperty' {
+                    if (taskName) {
+                        delegate.taskName(taskName)
+                    }
+                    if (stageName) {
+                        delegate.stageName(stageName)
+                    }
+                }
             }
         }
     }

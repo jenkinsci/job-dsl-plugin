@@ -113,6 +113,15 @@ class BuildPipelineView extends View {
         }
     }
 
+    /**
+     * <startsWithParameters>true</startsWithParameters>
+     */
+    void startsWithParameters(boolean startsWithParameters = true) {
+        execute {
+            it / methodMissing('startsWithParameters', startsWithParameters)
+        }
+    }
+
     @Override
     protected String getTemplate() {
         '''<?xml version='1.0' encoding='UTF-8'?>

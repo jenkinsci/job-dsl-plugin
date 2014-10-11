@@ -307,6 +307,55 @@ class StaticAnalysisPublisherContext {
         }
     }
 
+    /**
+     * Configures the Analysis Collector Publisher.
+     *
+     * <hudson.plugins.analysis.collector.AnalysisPublisher>
+     *     <healthy/>
+     *     <unHealthy/>
+     *     <thresholdLimit>low</thresholdLimit>
+     *     <pluginName>[ANALYSIS-COLLECTOR]</pluginName>
+     *     <defaultEncoding/>
+     *     <canRunOnFailed>false</canRunOnFailed>
+     *     <useStableBuildAsReference>false</useStableBuildAsReference>
+     *     <useDeltaValues>false</useDeltaValues>
+     *     <thresholds>
+     *         <unstableTotalAll/>
+     *         <unstableTotalHigh/>
+     *         <unstableTotalNormal/>
+     *         <unstableTotalLow/>
+     *         <failedTotalAll/>
+     *         <failedTotalHigh/>
+     *         <failedTotalNormal/>
+     *         <failedTotalLow/>
+     *     </thresholds>
+     *     <shouldDetectModules>false</shouldDetectModules>
+     *     <dontComputeNew>true</dontComputeNew>
+     *     <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+     *     <isCheckStyleDeactivated>false</isCheckStyleDeactivated>
+     *     <isDryDeactivated>true</isDryDeactivated>
+     *     <isFindBugsDeactivated>false</isFindBugsDeactivated>
+     *     <isPmdDeactivated>false</isPmdDeactivated>
+     *     <isOpenTasksDeactivated>true</isOpenTasksDeactivated>
+     *     <isWarningsDeactivated>true</isWarningsDeactivated>
+     * </hudson.plugins.analysis.collector.AnalysisPublisher>
+     */
+    def analysisCollector(Closure analysisCollectorClosure = null) {
+        AnalysisCollectorContext analysisCollectorContext = new AnalysisCollectorContext()
+        AbstractContextHelper.executeInContext(analysisCollectorClosure,  analysisCollectorContext)
+
+        def nodeBuilder = NodeBuilder.newInstance()
+        publisherNodes << nodeBuilder.'hudson.plugins.analysis.collector.AnalysisPublisher' {
+            addStaticAnalysisContext(delegate, analysisCollectorContext)
+            isCheckStyleDeactivated(!analysisCollectorContext.includeCheckstyle)
+            isDryDeactivated(!analysisCollectorContext.includeDry)
+            isFindBugsDeactivated(!analysisCollectorContext.includeFindbugs)
+            isPmdDeactivated(!analysisCollectorContext.includePmd)
+            isOpenTasksDeactivated(!analysisCollectorContext.includeTasks)
+            isWarningsDeactivated(!analysisCollectorContext.includeWarnings)
+        }
+    }
+
     private createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure, String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         AbstractContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)

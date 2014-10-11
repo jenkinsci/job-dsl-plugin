@@ -1,5 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -12,8 +15,9 @@ import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.Ba
 class StepHelperSpec extends Specification {
 
     List<WithXmlAction> mockActions = Mock()
-    StepContextHelper helper = new StepContextHelper(mockActions, JobType.Freeform)
-    StepContext context = new StepContext(JobType.Freeform)
+    JobManagement jobManagement = Mock(JobManagement)
+    StepContextHelper helper = new StepContextHelper(mockActions, JobType.Freeform, jobManagement)
+    StepContext context = new StepContext(jobManagement)
 
     def 'call shell method'() {
         when:
@@ -264,6 +268,47 @@ class StepHelperSpec extends Specification {
         mavenStep.mavenName[0].value() == '(Default)'
     }
 
+    def 'call maven method with unknown provided settings'() {
+        setup:
+        String settingsName = 'lalala'
+
+        when:
+        context.maven {
+            providedSettings(settingsName)
+        }
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(settingsName)
+    }
+
+    def 'call maven method with provided settings'() {
+        setup:
+        String settingsName = 'maven-proxy'
+        String settingsId = '123123415'
+        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
+
+        when:
+        context.maven {
+            providedSettings(settingsName)
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Maven'
+            children().size() == 5
+            targets[0].value() == ''
+            jvmOptions[0].value() == ''
+            usePrivateRepository[0].value() == 'false'
+            mavenName[0].value() == '(Default)'
+            settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+            settings[0].children().size() == 1
+            settings[0].settingsConfigId[0].value() == settingsId
+        }
+    }
+
     def 'call ant methods'() {
         when:
         context.ant()
@@ -298,14 +343,14 @@ class StepHelperSpec extends Specification {
         context.ant('build') {
             target 'test'
             target 'integTest'
-            targets(['publish', 'deploy']) // FIXME: I have no idea why the parens are needed
+            targets(['publish', 'deploy'])
             prop 'test.size', 4
             prop 'logging', 'info'
             props 'test.threads': 10, 'input.status': 'release'
             buildFile 'dir2/build.xml'
             buildFile 'dir1/build.xml'
             javaOpt '-Xmx1g'
-            javaOpts(['-Dprop2=value2', '-Dprop3=value3']) // FIXME: I have no idea why the parens are needed
+            javaOpts(['-Dprop2=value2', '-Dprop3=value3'])
             antInstallation 'Ant 1.6'
             antInstallation 'Ant 1.7'
         }
@@ -681,10 +726,34 @@ class StepHelperSpec extends Specification {
         def phaseNode2 = context.stepNodes[1]
         phaseNode2.phaseName[0].value() == 'Second'
         def jobNode = phaseNode2.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
+        jobNode.children().size() == 4
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == true
         jobNode.exposedSCM[0].value() == true
         jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+    }
+
+    def 'call phases with minimal arguments and plugin version 1.11'() {
+        setup:
+        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.11')
+
+        when:
+        context.phase {
+            phaseName 'Second'
+            job('JobA')
+        }
+
+        then:
+        def phaseNode = context.stepNodes[0]
+        phaseNode.phaseName[0].value() == 'Second'
+        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
+        jobNode.children().size() == 6
+        jobNode.jobName[0].value() == 'JobA'
+        jobNode.currParams[0].value() == true
+        jobNode.exposedSCM[0].value() == true
+        jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        jobNode.disableJob[0].value() == false
+        jobNode.killPhaseOnJobResultCondition[0].value() == 'FAILURE'
     }
 
     def 'call phases with multiple jobs'() {
@@ -723,6 +792,7 @@ class StepHelperSpec extends Specification {
                         prop3: 'value3',
                         prop4: 'value4'
                 ])
+                nodeLabel('nodeParam', 'node_label')
             }
         }
 
@@ -766,6 +836,11 @@ class StepHelperSpec extends Specification {
         propStr.contains('prop2=value2')
         propStr.contains('prop3=value3')
         propStr.contains('prop4=value4')
+
+        def nodeLabel = configsNode.
+            'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
+        nodeLabel.name[0].value() == 'nodeParam'
+        nodeLabel.nodeLabel[0].value() == 'node_label'
     }
 
     def 'call phases with multiple calls'() {
@@ -792,6 +867,45 @@ class StepHelperSpec extends Specification {
         thrown(IllegalStateException)
     }
 
+    def 'call phases with plugin version 1.11 options'() {
+        setup:
+        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.11')
+
+        when:
+        context.phase {
+            phaseName 'Second'
+            job('JobA') {
+                disableJob()
+                killPhaseCondition('UNSTABLE')
+            }
+        }
+
+        then:
+        def phaseNode = context.stepNodes[0]
+        phaseNode.phaseName[0].value() == 'Second'
+        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
+        jobNode.children().size() == 6
+        jobNode.jobName[0].value() == 'JobA'
+        jobNode.currParams[0].value() == true
+        jobNode.exposedSCM[0].value() == true
+        jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        jobNode.disableJob[0].value() == true
+        jobNode.killPhaseOnJobResultCondition[0].value() == 'UNSTABLE'
+    }
+
+    def 'call killPhaseCondition with invalid argument'() {
+        when:
+        context.phase {
+            phaseName 'Second'
+            job('JobA') {
+                killPhaseCondition('UNKNOWN')
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'call step via helper'() {
         when:
         helper.steps {
@@ -812,7 +926,7 @@ class StepHelperSpec extends Specification {
         }
 
         when:
-        def withXmlAction = helper.generateWithXmlAction(new StepContext([stepNode], JobType.Freeform))
+        def withXmlAction = helper.generateWithXmlAction(new StepContext([stepNode], jobManagement))
         withXmlAction.execute(root)
 
         then:
@@ -822,7 +936,7 @@ class StepHelperSpec extends Specification {
     def 'no steps for Maven jobs'() {
         setup:
         List<WithXmlAction> mockActions = Mock()
-        StepContextHelper helper = new StepContextHelper(mockActions, JobType.Maven)
+        StepContextHelper helper = new StepContextHelper(mockActions, JobType.Maven, jobManagement)
 
         when:
         helper.steps {
@@ -1106,6 +1220,7 @@ still-another-dsl.groovy'''
                 predefinedProps('key4=value4\nkey5=value5') // Newline separated
                 matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
                 subversionRevision() // Subversion Revision
+                nodeLabel('nodeParam', 'node_label') // Limit to node label selection
             }
             trigger('Project2') {
                 currentBuild()
@@ -1130,6 +1245,11 @@ still-another-dsl.groovy'''
             configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
                     'label=="${TARGET}"'
             configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
+                name[0].value() == 'nodeParam'
+            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
+                nodeLabel[0].value() == 'node_label'
+
             block.size() == 1
             Node thresholds = block[0]
             thresholds.children().size() == 3
@@ -1191,14 +1311,7 @@ still-another-dsl.groovy'''
         step.condition[0].children().size() == testConditionArgs.values().size()
 
         Node condition = step.condition[0]
-        def condClass
-        if (testCondition == 'booleanCondition') {
-            condClass = 'Boolean'
-        } else {
-            condClass = testCondition.capitalize()
-        }
-
-        condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${condClass}Condition"
+        condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${testConditionClass}"
         if (!testConditionArgs.isEmpty()) {
             testConditionArgs.each { k, v ->
                 condition[k][0].value() == v
@@ -1212,14 +1325,17 @@ still-another-dsl.groovy'''
 
         where:
         testCondition << [
-                'stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time', 'status'
+                'stringsMatch', 'alwaysRun', 'neverRun', 'booleanCondition', 'cause', 'expression', 'time'
         ]
         testConditionArgs << [
                 ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
-                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false],
-                ['worstResult': 'Success', 'bestResult': 'Success']
+                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false]
+        ]
+        testConditionClass << [
+                'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
+                'ExpressionCondition', 'TimeCondition'
         ]
     }
 
@@ -1394,6 +1510,28 @@ still-another-dsl.groovy'''
         condition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
     }
 
+    def 'status condition is added correctly'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                status 'FAILURE', 'SUCCESS'
+            }
+            shell 'echo Test'
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        Node condition = step.condition[0]
+
+        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'
+        condition.children().size() == 2
+
+        condition.worstResult[0].children().size() == 1
+        condition.worstResult[0].ordinal[0].value() == 2
+        condition.bestResult[0].children().size() == 1
+        condition.bestResult[0].ordinal[0].value() == 0
+    }
+
     @Unroll
     def 'Logical Operation #dslOperation is added correctly'(String dslOperation, String operation) {
         when:
@@ -1424,7 +1562,7 @@ still-another-dsl.groovy'''
             file[0].value() == 'someFile'
             baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
         }
-        containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'
+        containers[1].condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
 
         where:
         dslOperation | operation
@@ -1457,8 +1595,8 @@ still-another-dsl.groovy'''
         conditionDsl       | args                         | conditionClass                                                        | argNodes
         'shell'            | ['echo test']                | 'org.jenkins_ci.plugins.run_condition.contributed.ShellCondition'     | [command: 'echo test']
         'batch'            | ['xcopy * ..\\']             | 'org.jenkins_ci.plugins.run_condition.contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
-        'alwaysRun'        | []                           | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRunCondition'        | [:]
-        'neverRun'         | []                           | 'org.jenkins_ci.plugins.run_condition.core.NeverRunCondition'         | [:]
+        'alwaysRun'        | []                           | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
+        'neverRun'         | []                           | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
         'booleanCondition' | ['someToken']                | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
         'cause'            | ['userCause', true]          | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
                                                                                                                                      exclusiveCondition: 'true']
@@ -1470,8 +1608,26 @@ still-another-dsl.groovy'''
         'time'             | ['earliest', 'latest', true] | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliest    : 'earliest',
                                                                                                                                      latest      : 'latest',
                                                                                                                                      useBuildTime: 'true']
-        'status'           | ['FAILED', 'STABLE']         | 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'           | [worstResult: 'FAILED',
-                                                                                                                                     bestResult : 'STABLE']
+    }
+
+    @Unroll
+    def 'Status Condition with invalid arguments'(String worstResult, String bestResult) {
+        when:
+        context.conditionalSteps {
+            condition {
+                status(worstResult, bestResult)
+            }
+            shell('echo something outside')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        worstResult | bestResult
+        'FOO'       | 'SUCCESS'
+        'FAILURE'   | 'BAR'
+        'SUCCESS'   | 'ABORTED'
     }
 
     @Unroll
@@ -1616,5 +1772,190 @@ still-another-dsl.groovy'''
         context.stepNodes[0].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'
         context.stepNodes[1].name() == 'hudson.tasks.Shell'
         context.stepNodes[2].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'
+    }
+
+    def 'call rake method'() {
+        when:
+        context.rake()
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == '(Default)'
+        rakeStep.rakeFile[0].value() == ''
+        rakeStep.rakeLibDir[0].value() == ''
+        rakeStep.rakeWorkingDir[0].value() == ''
+        rakeStep.tasks[0].value() == ''
+        rakeStep.silent[0].value() == false
+        rakeStep.bundleExec[0].value() == false
+    }
+
+    def 'call rake method with tasks as argument'() {
+        when:
+        context.rake('test') {
+            file '/tmp/Rakefile'
+            installation 'ruby-2.0.0-p481'
+            libDir './rakelib'
+            workingDir '/opt/application'
+            bundleExec true
+            silent true
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == 'ruby-2.0.0-p481'
+        rakeStep.rakeFile[0].value() == '/tmp/Rakefile'
+        rakeStep.rakeLibDir[0].value() == './rakelib'
+        rakeStep.rakeWorkingDir[0].value() == '/opt/application'
+        rakeStep.tasks[0].value() == 'test'
+        rakeStep.silent[0].value() == true
+        rakeStep.bundleExec[0].value() == true
+    }
+
+    def 'call rake method with tasks in closure'() {
+        when:
+        context.rake {
+            task('first')
+            task('second')
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == '(Default)'
+        rakeStep.rakeFile[0].value() == ''
+        rakeStep.rakeLibDir[0].value() == ''
+        rakeStep.rakeWorkingDir[0].value() == ''
+        rakeStep.tasks[0].value() == 'first second'
+        rakeStep.silent[0].value() == false
+        rakeStep.bundleExec[0].value() == false
+    }
+
+    def 'call rake method with task as argument and tasks in closure'() {
+        when:
+        context.rake('first') {
+            task('second')
+            task('third')
+            tasks(['fourth', 'fifth'])
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == '(Default)'
+        rakeStep.rakeFile[0].value() == ''
+        rakeStep.rakeLibDir[0].value() == ''
+        rakeStep.rakeWorkingDir[0].value() == ''
+        rakeStep.tasks[0].value() == 'first second third fourth fifth'
+        rakeStep.silent[0].value() == false
+        rakeStep.bundleExec[0].value() == false
+    }
+
+    def 'call rake method with default arguments in closure'() {
+        when:
+        context.rake {
+            task('first')
+            silent()
+            bundleExec()
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def rakeStep = context.stepNodes[0]
+        rakeStep.name() == 'hudson.plugins.rake.Rake'
+        rakeStep.children().size() == 7
+        rakeStep.rakeInstallation[0].value() == '(Default)'
+        rakeStep.rakeFile[0].value() == ''
+        rakeStep.rakeLibDir[0].value() == ''
+        rakeStep.rakeWorkingDir[0].value() == ''
+        rakeStep.tasks[0].value() == 'first'
+        rakeStep.silent[0].value() == true
+        rakeStep.bundleExec[0].value() == true
+    }
+
+    def 'vSphere power off'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
+        when:
+        context.vSpherePowerOff('vsphere.acme.org', 'foo')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 3
+            buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.PowerOff'
+            buildStep[0].children().size() == 3
+            buildStep[0].vm[0].value() == 'foo'
+            buildStep[0].evenIfSuspended[0].value() == false
+            buildStep[0].shutdownGracefully[0].value() == false
+            serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
+        }
+    }
+
+    def 'vSphere power on'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
+        when:
+        context.vSpherePowerOn('vsphere.acme.org', 'foo')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 3
+            buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.PowerOn'
+            buildStep[0].children().size() == 2
+            buildStep[0].vm[0].value() == 'foo'
+            buildStep[0].timeoutInSeconds[0].value() == 180
+            serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
+        }
+    }
+
+    def 'vSphere revert to snapshot'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
+        when:
+        context.vSphereRevertToSnapshot('vsphere.acme.org', 'foo', 'clean')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 3
+            buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.RevertToSnapshot'
+            buildStep[0].children().size() == 2
+            buildStep[0].vm[0].value() == 'foo'
+            buildStep[0].snapshotName[0].value() == 'clean'
+            serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
+        }
+    }
+
+    def 'vSphere server not found'() {
+        when:
+        context.vSpherePowerOff('vsphere.acme.org', 'foo')
+
+        then:
+        thrown(NullPointerException)
     }
 }

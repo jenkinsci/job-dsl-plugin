@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -15,11 +16,6 @@ class WrapperContext implements Context {
     WrapperContext(JobType jobType, JobManagement jobManagement) {
         this.jobManagement = jobManagement
         this.type = jobType
-    }
-
-    WrapperContext(List<Node> wrapperNodes, JobType jobType, JobManagement jobManagement) {
-        this(jobType, jobManagement)
-        this.wrapperNodes = wrapperNodes
     }
 
     def timestamps() {
@@ -125,13 +121,15 @@ class WrapperContext implements Context {
             jobManagement.logDeprecationWarning()
             try {
                 timeoutType = Timeout.valueOf(type)
-            } catch (IllegalArgumentException iae) {
+            } catch (IllegalArgumentException ignore) {
                 throw new IllegalArgumentException("Timeout type was ${type} but must be one of: ${Timeout.values()}")
             }
         }
 
         TimeoutContext ctx = new TimeoutContext(timeoutType, jobManagement)
         AbstractContextHelper.executeInContext(timeoutClosure, ctx)
+
+        Preconditions.checkArgument(ctx.type != null, 'Timeout type must be selected!')
 
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
@@ -148,10 +146,8 @@ class WrapperContext implements Context {
                     case Timeout.likelyStuck:
                         break
                     case Timeout.noActivity:
-                        delegate.timeout(ctx.noActivitySeconds)
+                        delegate.timeout(ctx.noActivitySeconds * 1000)
                         break
-                    default:
-                        Preconditions.checkArgument(false, 'Timeout type must be selected!')
                 }
             }
             operationList {
@@ -300,17 +296,29 @@ class WrapperContext implements Context {
      *     <buildWrappers>
      *         <hudson.plugins.xvnc.Xvnc>
      *             <takeScreenshot>false</takeScreenshot>
+     *             <useXauthority>true</useXauthority>
      *         </hudson.plugins.xvnc.Xvnc>
      *     </buildWrappers>
      * </project>
      * }
      *
      * Runs build under XVNC.
-     * @param takeScreenshotAtEndOfBuild If a screenshot should be taken at the end of the build
      */
-    def xvnc(boolean takeScreenshotAtEndOfBuild = false) {
-        def nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'hudson.plugins.xvnc.Xvnc' {
+    def xvnc(Closure xvncClosure = null) {
+        XvncContext xvncContext = new XvncContext(jobManagement)
+        AbstractContextHelper.executeInContext(xvncClosure, xvncContext)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.xvnc.Xvnc' {
+            takeScreenshot(xvncContext.takeScreenshot)
+            if (!jobManagement.getPluginVersion('xvnc')?.isOlderThan(new VersionNumber('1.16'))) {
+                useXauthority(xvncContext.useXauthority)
+            }
+        }
+    }
+
+    def xvnc(boolean takeScreenshotAtEndOfBuild) {
+        jobManagement.logDeprecationWarning()
+        xvnc {
             takeScreenshot(takeScreenshotAtEndOfBuild)
         }
     }
@@ -430,7 +438,7 @@ class WrapperContext implements Context {
      * @param releaseClosure attributes and steps used by the plugin
      */
     def release(Closure releaseClosure) {
-        ReleaseContext releaseContext = new ReleaseContext()
+        ReleaseContext releaseContext = new ReleaseContext(jobManagement)
         AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
@@ -481,7 +489,7 @@ class WrapperContext implements Context {
             patterns(context.patternNodes)
             deleteDirs(context.deleteDirectories)
             cleanupParameter(context.cleanupParameter ?: '')
-            deleteCommand(context.deleteCommand ?: '')
+            externalDelete(context.deleteCommand ?: '')
         }
     }
 
@@ -580,5 +588,75 @@ class WrapperContext implements Context {
                 }
             }
         }
+    }
+
+    /**
+     * <p>Configures a release using the m2release plugin.</p>
+     * <p>By default the following values are applied. If an instance of a
+     * closure is provided, the values from the closure will take effect.</p>
+     * <pre>
+     * {@code
+     * <buildWrappers>
+     *     <org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
+     *         <scmUserEnvVar></scmUserEnvVar>
+     *         <scmPasswordEnvVar></scmPasswordEnvVar>
+     *         <releaseEnvVar>IS_M2RELEASEBUILD</releaseEnvVar>
+     *         <releaseGoals>-Dresume=false release:prepare release:perform</releaseGoals>
+     *         <dryRunGoals>-Dresume=false -DdryRun=true release:prepare</dryRunGoals>
+     *         <selectCustomScmCommentPrefix>false</selectCustomScmCommentPrefix>
+     *         <selectAppendHudsonUsername>false</selectAppendHudsonUsername>
+     *         <selectScmCredentials>false</selectScmCredentials>
+     *         <numberOfReleaseBuildsToKeep>1</numberOfReleaseBuildsToKeep>
+     *     </org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper>
+     * </buildWrappers>
+     *}
+     * </pre>
+     */
+    def mavenRelease(Closure releaseClosure = null) {
+        Preconditions.checkState type == JobType.Maven, 'mavenRelease can only be applied for Maven jobs'
+
+        MavenReleaseContext context = new MavenReleaseContext()
+        AbstractContextHelper.executeInContext(releaseClosure, context)
+
+        wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper' {
+            scmUserEnvVar context.scmUserEnvVar
+            scmPasswordEnvVar context.scmPasswordEnvVar
+            releaseEnvVar context.releaseEnvVar
+            releaseGoals context.releaseGoals
+            dryRunGoals context.dryRunGoals
+            selectCustomScmCommentPrefix context.selectCustomScmCommentPrefix
+            selectAppendHudsonUsername context.selectAppendJenkinsUsername
+            selectScmCredentials context.selectScmCredentials
+            numberOfReleaseBuildsToKeep context.numberOfReleaseBuildsToKeep
+        }
+    }
+
+    /**
+     * <se.diabol.jenkins.pipeline.PipelineVersionContributor>
+     *     <versionTemplate>1.0.${BUILD_NUMBER}</versionTemplate>
+     *     <updateDisplayName>true</updateDisplayName>
+     * </se.diabol.jenkins.pipeline.PipelineVersionContributor>
+     */
+    def deliveryPipelineVersion(String template, boolean setDisplayName = false) {
+        wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
+            versionTemplate(template)
+            updateDisplayName(setDisplayName)
+        }
+    }
+
+    /**
+     * <com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
+     * </com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
+     */
+    def maskPasswords() {
+        wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
+    }
+
+    /**
+     * <org.jenkinsci.plugins.builduser.BuildUser>
+     * </org.jenkinsci.plugins.builduser.BuildUser>
+     */
+    def buildUserVars() {
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
 }

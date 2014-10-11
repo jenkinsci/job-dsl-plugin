@@ -153,14 +153,20 @@ class ScmContext implements Context {
             if (gitContext.reference) {
                 reference gitContext.reference
             }
+            if (gitContext.localBranch) {
+                localBranch gitContext.localBranch
+            }
             skipTag !gitContext.createTag
             if (gitContext.shallowClone) {
                 useShallowClone gitContext.shallowClone
             }
+            if (gitContext.extensions) {
+                extensions gitContext.extensions
+            }
         }
 
-        if (gitContext.browser) {
-            gitNode.children().add(gitContext.browser)
+        if (gitContext.gitBrowserContext.browser) {
+            gitNode.children().add(gitContext.gitBrowserContext.browser)
         }
 
         if (gitContext.mergeOptions) {

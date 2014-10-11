@@ -5,9 +5,15 @@ import com.google.common.io.Resources
 import hudson.EnvVars
 import hudson.model.AbstractBuild
 import hudson.model.Failure
+import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
+import hudson.model.ListView
+import hudson.model.View
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFile
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
+import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.helpers.PropertiesContext
 import javaposse.jobdsl.plugin.api.ContextExtensionPoint
@@ -21,6 +27,9 @@ import static com.google.common.io.Resources.getResource
 import static hudson.model.Result.UNSTABLE
 
 class JenkinsJobManagementSpec extends Specification {
+    private static final String FILE_NAME = 'test.txt'
+    private static final String JOB_NAME = 'test-job'
+
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
@@ -104,6 +113,28 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
+    def 'create job with nonexisting parent'() {
+        when:
+        jobManagement.createOrUpdateConfig(
+                'nonexistingfolder/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true
+        )
+
+        then:
+        DslException e = thrown()
+        e.message == 'Could not create item, unknown parent path in "nonexistingfolder/project"'
+    }
+
+    def 'create view with nonexisting parent'() {
+        when:
+        jobManagement.createOrUpdateView(
+                'nonexistingfolder/view', Resources.toString(getResource('minimal-view.xml'), UTF_8), true
+        )
+
+        then:
+        DslException e = thrown()
+        e.message == 'Could not create view, unknown parent path in "nonexistingfolder/view"'
+    }
+
     def 'createOrUpdateConfig relative to folder'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
@@ -150,6 +181,166 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         version == null
+    }
+
+    def 'get vSphere cloud hash without vSphere cloud plugin'() {
+        when:
+        Integer hash = jobManagement.getVSphereCloudHash('test')
+
+        then:
+        hash == null
+    }
+
+    def 'read file from any workspace, job does not exist'() {
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == null
+        buffer.toString().contains(FILE_NAME)
+        buffer.toString().contains(JOB_NAME)
+    }
+
+    def 'read file from any workspace, no build, no workspace'() {
+        setup:
+        jenkinsRule.createFreeStyleProject(JOB_NAME)
+
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == null
+        buffer.toString().contains(FILE_NAME)
+        buffer.toString().contains(JOB_NAME)
+    }
+
+    def 'read file from any workspace, file does not exist'() {
+        setup:
+        jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject(JOB_NAME))
+
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == null
+        buffer.toString().contains(FILE_NAME)
+        buffer.toString().contains(JOB_NAME)
+    }
+
+    def 'read file from any workspace, file exists'() {
+        setup:
+        FreeStyleBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject(JOB_NAME))
+        build.workspace.child(FILE_NAME).write('hello', 'UTF-8')
+
+        when:
+        String result = jobManagement.readFileInWorkspace(JOB_NAME, FILE_NAME)
+
+        then:
+        result == 'hello'
+    }
+
+    def 'get config file id without config files provider plugin'() {
+        when:
+        String id = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, 'test')
+
+        then:
+        id == null
+    }
+
+    def 'create config file without config files provider plugin'() {
+        setup:
+        ConfigFile configFile = Mock(ConfigFile)
+        configFile.name >> 'foo'
+
+        when:
+        jobManagement.createOrUpdateConfigFile(configFile, false)
+
+        then:
+        thrown(DslException)
+    }
+
+    def 'create config file without name'() {
+        setup:
+        ConfigFile configFile = Mock(ConfigFile)
+
+        when:
+        jobManagement.createOrUpdateConfigFile(configFile, false)
+
+        then:
+        thrown(NameNotProvidedException)
+    }
+
+    def 'getCredentialsId without Credentials Plugin'() {
+        when:
+        String id = jobManagement.getCredentialsId('test')
+
+        then:
+        id == null
+    }
+
+    def 'create view'() {
+        when:
+        jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+    }
+
+    def 'update view'() {
+        setup:
+        jenkinsRule.instance.addView(new ListView('test-view'))
+
+        when:
+        jobManagement.createOrUpdateView(
+                'test-view',
+                '<hudson.model.ListView><description>lorem ipsum</description></hudson.model.ListView>',
+                false
+        )
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+        view.description == 'lorem ipsum'
+    }
+
+    def 'update view ignoring changes'() {
+        setup:
+        jenkinsRule.instance.addView(new ListView('test-view'))
+
+        when:
+        jobManagement.createOrUpdateView(
+                'test-view',
+                '<hudson.model.ListView><description>lorem ipsum</description></hudson.model.ListView>',
+                true
+        )
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+        view.description == null
+    }
+
+    def 'create view with invalid config'() {
+        when:
+        jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView>', false)
+
+        then:
+        jenkinsRule.instance.getView('test-view') == null
+    }
+
+    def 'readFileFromWorkspace with exception'() {
+        setup:
+        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
+        jobManagement = new JenkinsJobManagement(System.out, new EnvVars(), build)
+        String fileName = 'test.txt'
+
+        when:
+        jobManagement.readFileInWorkspace(fileName)
+
+        then:
+        Exception e = thrown(IllegalStateException)
+        e.message.contains(fileName)
     }
 
     def 'callExtension not found'() {

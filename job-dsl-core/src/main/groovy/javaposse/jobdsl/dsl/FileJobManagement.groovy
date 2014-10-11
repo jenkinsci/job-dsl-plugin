@@ -1,5 +1,8 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+
 class FileJobManagement extends AbstractJobManagement {
     /**
      * Root of where to look for job config files
@@ -9,7 +12,7 @@ class FileJobManagement extends AbstractJobManagement {
     /**
      * Extension to append to job name when looking at the filesystem
      */
-    String ext
+    String ext = '.xml'
 
     /**
      * map to store job parameters from System properties and
@@ -17,10 +20,8 @@ class FileJobManagement extends AbstractJobManagement {
      */
     protected Map params = [:]
 
-    FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
-        super(out)
+    FileJobManagement(File root) {
         this.root = root
-        this.ext = ext ?: '.xml'
     }
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
@@ -37,7 +38,7 @@ class FileJobManagement extends AbstractJobManagement {
 
         try {
             new File(root, jobName + ext).text
-        } catch (IOException ioex) {
+        } catch (IOException ignored) {
             throw new JobConfigurationNotFoundException(jobName)
         }
     }
@@ -58,6 +59,11 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
     Map<String, String> getParameters() {
         params
     }
@@ -75,5 +81,29 @@ class FileJobManagement extends AbstractJobManagement {
     @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
     }
-}
 
+    @Override
+    String getCredentialsId(String credentialsDescription) {
+        null
+    }
+
+    @Override
+    VersionNumber getPluginVersion(String pluginShortName) {
+        null
+    }
+
+    @Override
+    Integer getVSphereCloudHash(String name) {
+        null
+    }
+
+    @Override
+    String getConfigFileId(ConfigFileType type, String name) {
+        null
+    }
+
+    @Override
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+        null
+    }
+}

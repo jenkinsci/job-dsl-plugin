@@ -1,21 +1,29 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.JobManagement
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
+import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
+import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
+
+import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Strings.isNullOrEmpty
 
 class PublisherContext implements Context {
+    private final JobManagement jobManagement
+
     List<Node> publisherNodes = []
 
     @Delegate
     StaticAnalysisPublisherContext staticAnalysisPublisherHelper
 
     PublisherContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+
         staticAnalysisPublisherHelper = new StaticAnalysisPublisherContext(publisherNodes, jobManagement)
     }
 
@@ -126,39 +134,27 @@ class PublisherContext implements Context {
     }
 
     /**
-     <hudson.tasks.ArtifactArchiver>
-     <artifacts>build/libs/*</artifacts>
-     <excludes>build/libs/bad/*</excludes>
-     <latestOnly>false</latestOnly>
-     <allowEmptyArchive>false</allowEmptyArchive>
-     </hudson.tasks.ArtifactArchiver>
-
-     Note: allowEmpty is not compatible with jenkins <= 1.480
-
-     * @param glob
-     * @param excludeGlob
-     * @param latestOnly
+     * <hudson.tasks.ArtifactArchiver>
+     *     <artifacts>build/libs/*</artifacts>
+     *     <excludes>build/libs/bad/*</excludes>
+     *     <latestOnly>false</latestOnly>
+     *     <allowEmptyArchive>false</allowEmptyArchive>
+     * </hudson.tasks.ArtifactArchiver>
      */
     def archiveArtifacts(Closure artifactsClosure) {
         ArchiveArtifactsContext artifactsContext = new ArchiveArtifactsContext()
         AbstractContextHelper.executeInContext(artifactsClosure, artifactsContext)
 
-        def nodeBuilder = new NodeBuilder()
-
-        Node archiverNode = nodeBuilder.'hudson.tasks.ArtifactArchiver' {
-            artifacts artifactsContext.patternValue
-            latestOnly artifactsContext.latestOnlyValue ? 'true' : 'false'
-
+        publisherNodes << new NodeBuilder().'hudson.tasks.ArtifactArchiver' {
+            artifacts artifactsContext.patterns.join(',')
+            latestOnly artifactsContext.latestOnlyValue
             if (artifactsContext.allowEmptyValue != null) {
-                allowEmptyArchive artifactsContext.allowEmptyValue ? 'true' : 'false'
+                allowEmptyArchive artifactsContext.allowEmptyValue
             }
-
             if (artifactsContext.excludesValue) {
                 excludes artifactsContext.excludesValue
             }
         }
-
-        publisherNodes << archiverNode
     }
 
     def archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false) {
@@ -170,35 +166,43 @@ class PublisherContext implements Context {
     }
 
     /**
-     * Everything checked:
-     <hudson.tasks.junit.JUnitResultArchiver>
-     <testResults>build/test/*.xml</testResults> // Can be empty
-     <keepLongStdio>true</keepLongStdio>
-     <testDataPublishers> // Empty if no extra publishers
-     <hudson.plugins.claim.ClaimTestDataPublisher/> // Allow claiming of failed tests
-     <hudson.plugins.junitattachments.AttachmentPublisher/> // Publish test attachments
-     </testDataPublishers>
-     </hudson.tasks.junit.JUnitResultArchiver>
+     * <hudson.tasks.junit.JUnitResultArchiver>
+     *     <testResults>build/test/*.xml</testResults>
+     *     <keepLongStdio>true</keepLongStdio>
+     *     <testDataPublishers>
+     *         <hudson.plugins.claim.ClaimTestDataPublisher/>
+     *         <hudson.plugins.junitattachments.AttachmentPublisher/>
+     *         <de.esailors.jenkins.teststability.StabilityTestDataPublisher/>
+     *     </testDataPublishers>
+     * </hudson.tasks.junit.JUnitResultArchiver>
      */
-    def archiveJunit(String glob, boolean retainLongStdout = false, boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false) {
-        def nodeBuilder = new NodeBuilder()
+    def archiveJunit(String glob, Closure junitClosure = null) {
+        ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
+        AbstractContextHelper.executeInContext(junitClosure, junitContext)
 
-        Node archiverNode = nodeBuilder.'hudson.tasks.junit.JUnitResultArchiver' {
-            testResults glob
-            keepLongStdio retainLongStdout ? 'true' : 'false'
+        publisherNodes << new NodeBuilder().'hudson.tasks.junit.JUnitResultArchiver' {
+            testResults(glob)
+            keepLongStdio(junitContext.retainLongStdout)
+            testDataPublishers(junitContext.testDataPublishersContext.testDataPublishers)
+        }
+    }
+
+    def archiveJunit(String glob, boolean retainLongStdout, boolean allowClaimingOfFailedTests = false,
+                     boolean publishTestAttachments = false) {
+        jobManagement.logDeprecationWarning()
+        archiveJunit(glob) {
+            if (retainLongStdout) {
+                delegate.retainLongStdout()
+            }
             testDataPublishers {
                 if (allowClaimingOfFailedTests) {
-                    'hudson.plugins.claim.ClaimTestDataPublisher' ''
+                    delegate.allowClaimingOfFailedTests()
                 }
                 if (publishTestAttachments) {
-                    'hudson.plugins.junitattachments.AttachmentPublisher' ''
+                    delegate.publishTestAttachments()
                 }
             }
         }
-
-        publisherNodes << archiverNode
-
     }
 
     /**
@@ -447,26 +451,25 @@ class PublisherContext implements Context {
     def validJabberChannelNotificationNames = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
     /**
-     <be.certipost.hudson.plugin.SCPRepositoryPublisher>
-     <siteName>javadoc</siteName>
-     <entries>
-     <be.certipost.hudson.plugin.Entry>
-     <filePath/>
-     <sourceFile>api-sdk/*</sourceFile>
-     <keepHierarchy>true</keepHierarchy>
-     </be.certipost.hudson.plugin.Entry>
-     </entries>
-     </be.certipost.hudson.plugin.SCPRepositoryPublisher>
+     * <be.certipost.hudson.plugin.SCPRepositoryPublisher>
+     *     <siteName>javadoc</siteName>
+     *     <entries>
+     *         <be.certipost.hudson.plugin.Entry>
+     *             <filePath/>
+     *             <sourceFile>api-sdk/*</sourceFile>
+     *             <keepHierarchy>true</keepHierarchy>
+     *         </be.certipost.hudson.plugin.Entry>
+     *     </entries>
+     * </be.certipost.hudson.plugin.SCPRepositoryPublisher>
      */
     def publishScp(String site, Closure scpClosure) {
         ScpContext scpContext = new ScpContext()
         AbstractContextHelper.executeInContext(scpClosure, scpContext)
 
         // Validate values
-        assert !scpContext.entries.isEmpty(), 'Scp publish requires at least one entry'
+        assert !scpContext.entries.empty, 'Scp publish requires at least one entry'
 
-        def nodeBuilder = NodeBuilder.newInstance()
-        def publishNode = nodeBuilder.'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
+        publisherNodes << NodeBuilder.newInstance().'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
             entries {
                 scpContext.entries.each { ScpContext.ScpEntry entry ->
@@ -478,7 +481,6 @@ class PublisherContext implements Context {
                 }
             }
         }
-        publisherNodes << publishNode
     }
 
     /**
@@ -1217,6 +1219,47 @@ class PublisherContext implements Context {
     }
 
     /**
+     * Configures the FlexiblePublish plugin.
+     *
+     * https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin
+     *
+     * <org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
+     *     <publishers>
+     *         <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+     *             <condition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun"/>
+     *             <publisher class="hudson.tasks.ArtifactArchiver">
+     *                 <artifacts/>
+     *                 <latestOnly>false</latestOnly>
+     *                 <allowEmptyArchive>false</allowEmptyArchive>
+     *                 <onlyIfSuccessful>false</onlyIfSuccessful>
+     *             </publisher>
+     *             <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail"/>
+     *         </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+     *     </publishers>
+     * </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
+     */
+    def flexiblePublish(Closure flexiblePublishClosure) {
+        def context = new FlexiblePublisherContext(jobManagement)
+        AbstractContextHelper.executeInContext(flexiblePublishClosure, context)
+
+        Node action = context.action
+        Preconditions.checkArgument(action != null, 'no publisher or build step specified')
+
+        publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+            delegate.publishers {
+                'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+
+                    condition(class: context.condition.conditionClass) {
+                        context.condition.addArgs(delegate)
+                    }
+                    publisher(class: new XmlFriendlyReplacer().unescapeName(action.name().toString()), action.value())
+                    runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
+                }
+            }
+        }
+    }
+
+    /**
      *
      * Configures the Maven Deployment Linker plugin.
      *
@@ -1304,6 +1347,41 @@ class PublisherContext implements Context {
             tag rundeckContext.tag
             shouldWaitForRundeckJob rundeckContext.shouldWaitForRundeckJob
             shouldFailTheBuild rundeckContext.shouldFailTheBuild
+        }
+    }
+
+    /**
+     * <publishers>
+     *     <hudson.plugins.s3.S3BucketPublisher>
+     *         <profileName>profile</profileName>
+     *         <entries>
+     *             <hudson.plugins.s3.Entry>
+     *                 <bucket>b</bucket>
+     *                 <sourceFile>a</sourceFile>
+     *                 <noUploadOnFailure>true</noUploadOnFailure>
+     *                 <uploadFromSlave>true</uploadFromSlave>
+     *                 <managedArtifacts>true</managedArtifacts>
+     *             </hudson.plugins.s3.Entry>
+     *         </entries>
+     *         <userMetadata>
+     *             <hudson.plugins.s3.MetadataPair>
+     *                 <key>foo</key>
+     *                 <value>bar</value>
+     *             </hudson.plugins.s3.MetadataPair>
+     *         </userMetadata>
+     *     </hudson.plugins.s3.S3BucketPublisher>
+     * </publisher>
+     */
+    def s3(String profile, Closure s3PublisherClosure) {
+        checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
+
+        S3BucketPublisherContext context = new S3BucketPublisherContext()
+        AbstractContextHelper.executeInContext(s3PublisherClosure, context)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.s3.S3BucketPublisher' {
+            profileName(profile)
+            entries(context.entries)
+            userMetadata(context.metadata)
         }
     }
 }

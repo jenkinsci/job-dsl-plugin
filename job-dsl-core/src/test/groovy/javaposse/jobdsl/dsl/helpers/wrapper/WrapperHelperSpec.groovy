@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -87,6 +88,17 @@ class WrapperHelperSpec extends Specification {
 
         then:
         mockActions.size() == 1
+    }
+
+    def 'can not run timeout with empty closure'() {
+        when:
+        helper.wrappers {
+            timeout {
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'timeout constructs xml'() {
@@ -182,10 +194,11 @@ class WrapperHelperSpec extends Specification {
 
         then:
         def strategy = timeoutWrapper.strategy[0]
-        strategy.timeout[0].value() == 15
+        strategy.timeout[0].value() == 15000
         strategy.attribute('class') == Timeout.noActivity.className
         def list = timeoutWrapper.operationList[0]
         list.'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
     }
 
     def 'likelyStuck timeout configuration working' () {
@@ -307,6 +320,9 @@ class WrapperHelperSpec extends Specification {
     }
 
     def 'xvnc' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+
         when:
         helper.wrappers {
             xvnc()
@@ -314,11 +330,16 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.takeScreenshot
-        wrapper[0].value() == false
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper[0].children().size() == 2
+        wrapper[0].takeScreenshot[0].value() == false
+        wrapper[0].useXauthority[0].value() == true
     }
 
     def 'xvnc with takeScreenshot arg' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+
         when:
         helper.wrappers {
             xvnc(true)
@@ -326,8 +347,45 @@ class WrapperHelperSpec extends Specification {
         executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'.takeScreenshot
-        wrapper[0].value() == true
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper[0].children().size() == 2
+        wrapper[0].takeScreenshot[0].value() == true
+        wrapper[0].useXauthority[0].value() == true
+    }
+
+    def 'xvnc with closure' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+
+        when:
+        helper.wrappers {
+            xvnc {
+                useXauthority(false)
+            }
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper[0].children().size() == 2
+        wrapper[0].takeScreenshot[0].value() == false
+        wrapper[0].useXauthority[0].value() == false
+    }
+
+    def 'xvnc with older plugin' () {
+        setup:
+        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.15')
+
+        when:
+        helper.wrappers {
+            xvnc()
+        }
+        executeHelperActionsOnRootNode()
+
+        then:
+        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
+        wrapper[0].children().size() == 1
+        wrapper[0].takeScreenshot[0].value() == false
     }
 
     def 'toolenv' () {
@@ -474,7 +532,7 @@ class WrapperHelperSpec extends Specification {
             patterns[0].value() == []
             deleteDirs[0].value() == false
             cleanupParameter[0].value() == ''
-            deleteCommand[0].value() == ''
+            externalDelete[0].value() == ''
         }
     }
 
@@ -505,7 +563,7 @@ class WrapperHelperSpec extends Specification {
             patterns[0].'hudson.plugins.ws__cleanup.Pattern'[1].type[0].value() == 'EXCLUDE'
             deleteDirs[0].value() == true
             cleanupParameter[0].value() == 'TEST'
-            deleteCommand[0].value() == 'test'
+            externalDelete[0].value() == 'test'
         }
     }
 
@@ -724,5 +782,109 @@ class WrapperHelperSpec extends Specification {
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[1].name[0].value() == 'second'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[2].name[0].value() == 'third'
         }
+    }
+
+    def 'configure m2release plugin with least args'() {
+        when:
+        context = new WrapperContext(JobType.Maven, mockJobManagement)
+        context.mavenRelease()
+
+        then:
+        context.wrapperNodes.size() == 1
+        def m2releaseNode = context.wrapperNodes[0]
+
+        m2releaseNode.scmUserEnvVar[0].value() == ''
+        m2releaseNode.scmPasswordEnvVar[0].value() == ''
+        m2releaseNode.releaseEnvVar[0].value() == 'IS_M2RELEASEBUILD'
+        m2releaseNode.releaseGoals[0].value() == '-Dresume=false release:prepare release:perform'
+        m2releaseNode.dryRunGoals[0].value() == '-Dresume=false -DdryRun=true release:prepare'
+        m2releaseNode.selectCustomScmCommentPrefix[0].value() == false
+        m2releaseNode.selectAppendHudsonUsername[0].value() == false
+        m2releaseNode.selectScmCredentials[0].value() == false
+        m2releaseNode.numberOfReleaseBuildsToKeep[0].value() == 1
+    }
+
+    def 'configure m2release plugin with all args'() {
+        when:
+        context = new WrapperContext(JobType.Maven, mockJobManagement)
+        context.mavenRelease {
+            scmUserEnvVar 'MY_USER_ENV'
+            scmPasswordEnvVar 'MY_PASSWORD_ENV'
+            releaseEnvVar 'RELEASE_ENV'
+            releaseGoals 'release:prepare release:perform'
+            dryRunGoals '-DdryRun=true release:prepare'
+            selectCustomScmCommentPrefix()
+            selectAppendJenkinsUsername()
+            selectScmCredentials()
+            numberOfReleaseBuildsToKeep 10
+        }
+
+        then:
+        context.wrapperNodes.size() == 1
+        def m2releaseNode = context.wrapperNodes[0]
+
+        m2releaseNode.scmUserEnvVar[0].value() == 'MY_USER_ENV'
+        m2releaseNode.scmPasswordEnvVar[0].value() == 'MY_PASSWORD_ENV'
+        m2releaseNode.releaseEnvVar[0].value() == 'RELEASE_ENV'
+        m2releaseNode.releaseGoals[0].value() == 'release:prepare release:perform'
+        m2releaseNode.dryRunGoals[0].value() == '-DdryRun=true release:prepare'
+        m2releaseNode.selectCustomScmCommentPrefix[0].value() == true
+        m2releaseNode.selectAppendHudsonUsername[0].value() == true
+        m2releaseNode.selectScmCredentials[0].value() == true
+        m2releaseNode.numberOfReleaseBuildsToKeep[0].value() == 10
+    }
+
+    def 'configure m2release plugin with FreeForm job should fail'() {
+        when:
+        context.mavenRelease()
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def 'set delivery pipeline version'() {
+        when:
+        context.deliveryPipelineVersion('1.0.${BUILD_NUMBER}')
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'se.diabol.jenkins.pipeline.PipelineVersionContributor'
+            children().size() == 2
+            versionTemplate[0].value() == '1.0.${BUILD_NUMBER}'
+            updateDisplayName[0].value() == false
+        }
+    }
+
+    def 'set delivery pipeline version and display name'() {
+        when:
+        context.deliveryPipelineVersion('1.0.${BUILD_NUMBER}', true)
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'se.diabol.jenkins.pipeline.PipelineVersionContributor'
+            children().size() == 2
+            versionTemplate[0].value() == '1.0.${BUILD_NUMBER}'
+            updateDisplayName[0].value() == true
+        }
+    }
+
+    def 'call mask passwords'() {
+        when:
+        context.maskPasswords()
+
+        then:
+        context.wrapperNodes.size() == 1
+        context.wrapperNodes[0].name() == 'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
+    }
+
+    def 'call build user vars'() {
+        when:
+        context.buildUserVars()
+
+        then:
+        context.wrapperNodes.size() == 1
+        context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.builduser.BuildUser'
     }
 }
