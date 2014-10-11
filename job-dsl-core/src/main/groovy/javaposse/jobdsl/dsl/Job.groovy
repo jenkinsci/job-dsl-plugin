@@ -7,7 +7,6 @@ import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MatrixHelper
-import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
@@ -27,7 +26,6 @@ class Job extends Item {
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     @Delegate WrapperContextHelper helperWrapper
-    @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
     @Delegate BuildFlowHelper helperBuildFlow
@@ -40,7 +38,6 @@ class Job extends Item {
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
 
         // Helpers
-        helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type, jobManagement)
@@ -118,6 +115,28 @@ class Job extends Item {
 
             // Assuming append the only child
             project << context.scmNode
+        }
+    }
+
+    def multiscm(Closure closure) {
+        ScmContext context = new ScmContext(true, withXmlActions, jobManagement)
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            def scm = project / scm
+            if (scm) {
+                // There can only be only one SCM, so remove if there
+                project.remove(scm)
+            }
+
+            def multiscmNode = new NodeBuilder().scm(class: 'org.jenkinsci.plugins.multiplescms.MultiSCM')
+            def scmsNode = multiscmNode / scms
+            context.scmNodes.each {
+                scmsNode << it
+            }
+
+            // Assuming append the only child
+            project << multiscmNode
         }
     }
 

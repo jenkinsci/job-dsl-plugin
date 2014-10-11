@@ -304,6 +304,22 @@ class JobTest extends Specification {
         job.node.scm[0].wipeOutWorkspace[0].text() == 'true'
     }
 
+    def 'duplicate scm calls allowed with multiscm'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.multiscm {
+            git('git://github.com/jenkinsci/jenkins.git')
+            git('git://github.com/jenkinsci/job-dsl-plugin.git')
+        }
+
+        then:
+        noExceptionThrown()
+        job.node.scm[0].scms[0].scm.size() == 2
+    }
+
     def 'call triggers'() {
         setup:
         JobManagement jm = Mock(JobManagement)
