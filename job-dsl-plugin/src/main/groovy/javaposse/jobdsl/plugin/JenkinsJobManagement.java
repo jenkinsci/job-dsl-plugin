@@ -220,7 +220,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         return plugin == null ? null : plugin.getWrapper().getVersionNumber();
     }
-
+    
     @Override
     public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
@@ -242,12 +242,16 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             ContextExtensionPoint extensionPoint = candidate.getKey();
             Method method = candidate.getValue();
             Object result = method.invoke(extensionPoint, args);
-            String xml = XSTREAM.toXML(result);
             LOGGER.fine(
                     "Call to extension " + extensionPoint.getClass().getName() + "." + name + " with arguments " +
-                            Arrays.toString(args) + " produced " + xml
+                            Arrays.toString(args) + " produced " + result.toString()
             );
-            return new XmlParser().parseText(xml);
+            try {
+				return (Node) new XmlParser().parseText(result.toString());
+			} catch (Exception e) {
+	            throw new ExtensionPointException("toString() of the result cannot be transformed into a groovy Node object, "
+	            		+ "resultString = \n" + result.toString(), e);
+			}
         } catch (Exception e) {
             throw new ExtensionPointException("Error calling extension", e);
         }
