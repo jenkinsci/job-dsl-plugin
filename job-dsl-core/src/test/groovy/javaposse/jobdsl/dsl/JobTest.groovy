@@ -13,59 +13,37 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobTest extends Specification {
     private final resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private Job job = new Job(jobManagement)
 
     def setup() {
         XMLUnit.setIgnoreWhitespace(true)
     }
 
-    def 'construct a job manually (not from a DSL script)'() {
-        setup:
-        JobManagement jm = Mock()
-
-        when:
-        new Job(jm)
-
-        then:
-        notThrown(Exception)
-    }
-
     def 'set name on a manually constructed job'() {
-        setup:
-        JobManagement jm = Mock()
-
         when:
-        def job = new Job(jm)
-        job.name = 'NAME'
+        job.name('NAME')
 
         then:
         job.name == 'NAME'
     }
 
     def 'load an empty template from a manually constructed job'() {
-        setup:
-        JobManagement jm = Mock()
-        Job job = new Job(jm)
-
         when:
         job.using('TMPL')
         job.xml
 
         then:
-        1 * jm.getConfig('TMPL') >> minimalXml
+        1 * jobManagement.getConfig('TMPL') >> minimalXml
     }
 
     def 'load an empty template from a manually constructed job and generate xml from it'() {
-        setup:
-        JobManagement jm = Mock()
-        //jm.getConfig("TMPL") >> minimalXml
-        Job job = new Job(jm)
-
         when:
         job.using('TMPL')
         def xml = job.xml
 
         then:
-        _ * jm.getConfig('TMPL') >> minimalXml
+        _ * jobManagement.getConfig('TMPL') >> minimalXml
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + minimalXml, xml
     }
 
@@ -116,9 +94,6 @@ class JobTest extends Specification {
     }
 
     def 'create withXml blocks'() {
-        setup:
-        Job job = new Job(null)
-
         when:
         job.configure { Node node ->
             // Not going to actually execute this
@@ -130,14 +105,6 @@ class JobTest extends Specification {
 
         then:
         !job.withXmlActions.empty
-    }
-
-    class JobParentConcrete extends JobParent {
-
-        @Override
-        Object run() {
-            null // Used in tests
-        }
     }
 
     def 'update Node using withXml'() {
@@ -193,8 +160,7 @@ class JobTest extends Specification {
 
     def 'construct simple Maven job and generate xml from it'() {
         setup:
-        JobManagement jm = Mock()
-        Job job = new Job(jm, [type: 'maven'])
+        job.type = JobType.Maven
 
         when:
         def xml = job.xml
@@ -204,37 +170,31 @@ class JobTest extends Specification {
     }
 
     def 'free-style job extends Maven template and fails to generate xml'() {
-        setup:
-        JobManagement jm = Mock()
-        Job job = new Job(jm)
-
         when:
         job.using('TMPL')
         job.xml
 
         then:
-        1 * jm.getConfig('TMPL') >> mavenXml
+        1 * jobManagement.getConfig('TMPL') >> mavenXml
         thrown(JobTypeMismatchException)
     }
 
     def 'Maven job extends free-style template and fails to generate xml'() {
         setup:
-        JobManagement jm = Mock()
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.using('TMPL')
         job.xml
 
         then:
-        1 * jm.getConfig('TMPL') >> minimalXml
+        1 * jobManagement.getConfig('TMPL') >> minimalXml
         thrown(JobTypeMismatchException)
     }
 
     def 'construct simple Build Flow job and generate xml from it'() {
         setup:
-        JobManagement jm = Mock()
-        Job job = new Job(jm, [type: 'buildFlow'])
+        job.type = JobType.BuildFlow
 
         when:
         def xml = job.xml
@@ -245,8 +205,7 @@ class JobTest extends Specification {
 
     def 'construct simple Matrix job and generate xml from it'() {
         setup:
-        JobManagement jm = Mock()
-        Job job = new Job(jm, [type: 'Matrix'])
+        job.type = JobType.Matrix
 
         when:
         def xml = job.xml
@@ -256,10 +215,6 @@ class JobTest extends Specification {
     }
 
     def 'call authorization'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.authorization {
             permission('hudson.model.Item.Configure:jill')
@@ -274,10 +229,6 @@ class JobTest extends Specification {
     }
 
     def 'call permission'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.permission('hudson.model.Item.Configure:jill')
         job.permission(Permissions.ItemRead, 'jack')
@@ -292,10 +243,6 @@ class JobTest extends Specification {
     }
 
     def 'call parameters via helper'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.parameters {
             booleanParam('myBooleanParam', true)
@@ -310,10 +257,6 @@ class JobTest extends Specification {
     }
 
     def 'call scm'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.scm {
             git {
@@ -326,10 +269,6 @@ class JobTest extends Specification {
     }
 
     def 'duplicate scm calls allowed with multiscm'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.multiscm {
             git('git://github.com/jenkinsci/jenkins.git')
@@ -342,10 +281,6 @@ class JobTest extends Specification {
     }
 
     def 'call wrappers'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.wrappers {
             maskPasswords()
@@ -357,10 +292,6 @@ class JobTest extends Specification {
     }
 
     def 'call triggers'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.triggers {
             scm('2 3 * * * *')
@@ -372,8 +303,7 @@ class JobTest extends Specification {
 
     def 'no steps for Maven jobs'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: 'Maven'])
+        job.type = JobType.Maven
 
         when:
         job.steps {
@@ -384,10 +314,6 @@ class JobTest extends Specification {
     }
 
     def 'call steps'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.steps {
             shell('ls')
@@ -398,10 +324,6 @@ class JobTest extends Specification {
     }
 
     def 'call publishers'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.publishers {
             chucknorris()
@@ -412,10 +334,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot create Build Flow for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.buildFlow('build block')
 
@@ -425,8 +343,7 @@ class JobTest extends Specification {
 
     def 'buildFlow constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.BuildFlow])
+        job.type = JobType.BuildFlow
 
         when:
         job.buildFlow('build Flow Block')
@@ -437,10 +354,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run combinationFilter for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.combinationFilter('LABEL1 == "TEST"')
 
@@ -450,8 +363,7 @@ class JobTest extends Specification {
 
     def 'combinationFilter constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Matrix])
+        job.type = JobType.Matrix
 
         when:
         job.combinationFilter('LABEL1 == "TEST"')
@@ -462,10 +374,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot set runSequentially for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.runSequentially()
 
@@ -475,8 +383,7 @@ class JobTest extends Specification {
 
     def 'runSequentially constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Matrix])
+        job.type = JobType.Matrix
 
         when:
         job.runSequentially(false)
@@ -487,10 +394,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot set touchStoneFilter for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.touchStoneFilter('LABEL1 == "TEST"', true)
 
@@ -500,8 +403,7 @@ class JobTest extends Specification {
 
     def 'touchStoneFilter constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Matrix])
+        job.type = JobType.Matrix
 
         when:
         job.touchStoneFilter('LABEL1 == "TEST"', true)
@@ -533,10 +435,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run axis for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.axes {
             label('LABEL1', 'a', 'b', 'c')
@@ -548,8 +446,7 @@ class JobTest extends Specification {
 
     def 'can set axis'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Matrix])
+        job.type = JobType.Matrix
 
         when:
         job.axes {
@@ -564,8 +461,7 @@ class JobTest extends Specification {
 
     def 'axes configure block constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Matrix])
+        job.type = JobType.Matrix
 
         when:
         job.axes {
@@ -581,10 +477,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run rootPOM for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.rootPOM('pom.xml')
 
@@ -594,8 +486,7 @@ class JobTest extends Specification {
 
     def 'rootPOM constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.rootPOM('my_module/pom.xml')
@@ -606,10 +497,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run goals for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.goals('package')
 
@@ -619,8 +506,7 @@ class JobTest extends Specification {
 
     def 'goals constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.goals('clean')
@@ -632,10 +518,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run mavenOpts for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.mavenOpts('-Xmx512m')
 
@@ -645,8 +527,7 @@ class JobTest extends Specification {
 
     def 'mavenOpts constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.mavenOpts('-Xms256m')
@@ -658,10 +539,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run perModuleEmail for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.perModuleEmail(false)
 
@@ -671,8 +548,7 @@ class JobTest extends Specification {
 
     def 'perModuleEmail constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.perModuleEmail(false)
@@ -683,10 +559,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run archivingDisabled for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.archivingDisabled(false)
 
@@ -696,8 +568,7 @@ class JobTest extends Specification {
 
     def 'archivingDisabled constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.archivingDisabled(true)
@@ -708,10 +579,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run runHeadless for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.runHeadless(false)
 
@@ -721,8 +588,7 @@ class JobTest extends Specification {
 
     def 'runHeadless constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.runHeadless(true)
@@ -733,10 +599,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run localRepository for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
 
@@ -746,8 +608,7 @@ class JobTest extends Specification {
 
     def 'cannot run localRepository with null argument'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.localRepository(null)
@@ -758,8 +619,7 @@ class JobTest extends Specification {
 
     def 'localRepository constructs xml for LocalToExecutor'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
@@ -770,8 +630,7 @@ class JobTest extends Specification {
 
     def 'localRepository constructs xml for LocalToWorkspace'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.localRepository(MavenContext.LocalRepositoryLocation.LocalToWorkspace)
@@ -781,10 +640,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run preBuildSteps for freestyle jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.preBuildSteps {
         }
@@ -795,8 +650,7 @@ class JobTest extends Specification {
 
     def 'can add preBuildSteps'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.preBuildSteps {
@@ -809,10 +663,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run postBuildSteps for freestyle jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.postBuildSteps {
         }
@@ -823,8 +673,7 @@ class JobTest extends Specification {
 
     def 'can add postBuildSteps'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.postBuildSteps {
@@ -837,10 +686,6 @@ class JobTest extends Specification {
     }
 
     def 'cannot run mavenInstallation for free style jobs'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.mavenInstallation('test')
 
@@ -850,8 +695,7 @@ class JobTest extends Specification {
 
     def 'mavenInstallation constructs xml'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
 
         when:
         job.mavenInstallation('test')
@@ -863,8 +707,7 @@ class JobTest extends Specification {
 
     def 'call maven method with unknown provided settings'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
         String settingsName = 'lalala'
 
         when:
@@ -877,11 +720,10 @@ class JobTest extends Specification {
 
     def 'call maven method with provided settings'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm, [type: JobType.Maven])
+        job.type = JobType.Maven
         String settingsName = 'maven-proxy'
         String settingsId = '123123415'
-        jm.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
+        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
 
         when:
         job.providedSettings(settingsName)
@@ -894,10 +736,6 @@ class JobTest extends Specification {
     }
 
     def 'add description'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.description('Description')
 
@@ -914,10 +752,6 @@ class JobTest extends Specification {
     }
 
     def 'environments work with map arg'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.environmentVariables([
                 key1: 'val1',
@@ -930,10 +764,6 @@ class JobTest extends Specification {
     }
 
     def 'environments work with context'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.environmentVariables {
             envs([key1: 'val1', key2: 'val2'])
@@ -947,10 +777,6 @@ class JobTest extends Specification {
     }
 
     def 'environments work with combination'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.environmentVariables([key4: 'val4']) {
             env 'key3', 'val3'
@@ -962,10 +788,6 @@ class JobTest extends Specification {
     }
 
     def 'environment from groovy script'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.environmentVariables {
             groovy '[foo: "bar"]'
@@ -976,10 +798,6 @@ class JobTest extends Specification {
     }
 
     def 'environment from map and groovy script'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.environmentVariables {
             envs([key1: 'val1', key2: 'val2'])
@@ -996,10 +814,6 @@ class JobTest extends Specification {
 
     @Unroll
     def 'environment from #method'(content, method, xmlElement) {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.environmentVariables {
             "$method"(content)
@@ -1018,10 +832,6 @@ class JobTest extends Specification {
 
     @Unroll
     def 'environment sets #method to #content'(method, content, xmlElement) {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.environmentVariables {
             "${method}"(content)
@@ -1039,10 +849,6 @@ class JobTest extends Specification {
     }
 
     def 'throttle concurrents enabled as project alone'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.throttleConcurrentBuilds {
             maxPerNode 1
@@ -1060,10 +866,6 @@ class JobTest extends Specification {
     }
 
     def 'throttle concurrents disabled'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.throttleConcurrentBuilds {
             throttleDisabled()
@@ -1075,10 +877,6 @@ class JobTest extends Specification {
     }
 
     def 'throttle concurrents enabled as part of categories'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.throttleConcurrentBuilds {
             maxPerNode 1
@@ -1098,10 +896,6 @@ class JobTest extends Specification {
     }
 
     def 'disable defaults to true'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.disabled()
 
@@ -1118,10 +912,6 @@ class JobTest extends Specification {
     }
 
     def 'label constructs xml'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.label('FullTools')
 
@@ -1131,10 +921,6 @@ class JobTest extends Specification {
     }
 
     def 'without label leaves canRoam as true'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.label()
 
@@ -1144,10 +930,6 @@ class JobTest extends Specification {
     }
 
     def 'lockable resources simple'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.lockableResources('lock-resource')
 
@@ -1162,10 +944,6 @@ class JobTest extends Specification {
     }
 
     def 'lockable resources with all parameters'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.lockableResources('res0 res1 res2') {
             resourcesVariable('RESOURCES')
@@ -1185,10 +963,6 @@ class JobTest extends Specification {
     }
 
     def 'log rotate xml'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.logRotator(14, 50)
 
@@ -1198,10 +972,6 @@ class JobTest extends Specification {
     }
 
     def 'build blocker xml'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.blockOn('MyProject')
 
@@ -1213,10 +983,6 @@ class JobTest extends Specification {
     }
 
     def 'can run jdk'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.jdk('JDK1.6.0_32')
 
@@ -1225,10 +991,6 @@ class JobTest extends Specification {
     }
 
     def 'can run jdk twice'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.jdk('JDK1.6.0_16')
 
@@ -1244,10 +1006,6 @@ class JobTest extends Specification {
     }
 
     def 'priority constructs xml'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.priority(99)
 
@@ -1256,10 +1014,6 @@ class JobTest extends Specification {
     }
 
     def 'add a quiet period'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.quietPeriod()
 
@@ -1274,10 +1028,6 @@ class JobTest extends Specification {
     }
 
     def 'add SCM retry count' () {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.checkoutRetryCount()
 
@@ -1292,10 +1042,6 @@ class JobTest extends Specification {
     }
 
     def 'add display name' () {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.displayName('FooBar')
 
@@ -1304,10 +1050,6 @@ class JobTest extends Specification {
     }
 
     def 'add custom workspace' () {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.customWorkspace('/var/lib/jenkins/foobar')
 
@@ -1316,10 +1058,6 @@ class JobTest extends Specification {
     }
 
     def 'add block for up and downstream projects' () {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.blockOnUpstreamProjects()
 
@@ -1334,10 +1072,6 @@ class JobTest extends Specification {
     }
 
     def 'set keep Dependencies'(keep) {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.keepDependencies(keep)
 
@@ -1350,10 +1084,6 @@ class JobTest extends Specification {
     }
 
     def 'set concurrentBuild with value'(allowConcurrentBuild) {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.concurrentBuild(allowConcurrentBuild)
 
@@ -1366,10 +1096,6 @@ class JobTest extends Specification {
     }
 
     def 'set concurrentBuild default'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.concurrentBuild()
 
@@ -1378,10 +1104,6 @@ class JobTest extends Specification {
     }
 
     def 'add batch task'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.batchTask('Hello World', 'echo Hello World')
 
@@ -1398,10 +1120,6 @@ class JobTest extends Specification {
     }
 
     def 'add two batch tasks'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.batchTask('Hello World', 'echo Hello World')
         job.batchTask('foo', 'echo bar')
@@ -1422,10 +1140,6 @@ class JobTest extends Specification {
     }
 
     def 'delivery pipeline configuration with stage and task names'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.deliveryPipelineConfiguration('qa', 'integration-tests')
 
@@ -1440,10 +1154,6 @@ class JobTest extends Specification {
     }
 
     def 'delivery pipeline configuration with stage name'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.deliveryPipelineConfiguration('qa')
 
@@ -1457,10 +1167,6 @@ class JobTest extends Specification {
     }
 
     def 'delivery pipeline configuration with task name'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.deliveryPipelineConfiguration(null, 'integration-tests')
 
@@ -1474,10 +1180,6 @@ class JobTest extends Specification {
     }
 
     def 'set notification with default properties'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.notifications {
             endpoint('http://endpoint.com')
@@ -1494,10 +1196,6 @@ class JobTest extends Specification {
     }
 
     def 'set notification with all required properties'() {
-        setup:
-        JobManagement jm = Mock(JobManagement)
-        Job job = new Job(jm)
-
         when:
         job.notifications {
             endpoint('http://endpoint.com', 'TCP', 'XML')
@@ -1515,9 +1213,7 @@ class JobTest extends Specification {
 
     def 'set notification with invalid parameters'(String url, String protocol, String format, String event) {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
-        Job job = new Job(jm)
+        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
 
         when:
         job.notifications {
@@ -1546,9 +1242,7 @@ class JobTest extends Specification {
 
     def 'set notification with default properties and using a closure'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
-        Job job = new Job(jm)
+        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
 
         when:
         job.notifications {
@@ -1572,9 +1266,7 @@ class JobTest extends Specification {
 
     def 'set notification with all required properties and using a closure'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
-        Job job = new Job(jm)
+        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
 
         when:
         job.notifications {
@@ -1598,9 +1290,7 @@ class JobTest extends Specification {
 
     def 'set notification with multiple endpoints'() {
         setup:
-        JobManagement jm = Mock(JobManagement)
-        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
-        Job job = new Job(jm)
+        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
 
         when:
         job.notifications {
