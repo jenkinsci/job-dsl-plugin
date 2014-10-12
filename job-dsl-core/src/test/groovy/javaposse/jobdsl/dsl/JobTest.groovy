@@ -288,6 +288,24 @@ class JobTest extends Specification {
         permissions[2].text() == 'hudson.model.Run.Update:joe'
     }
 
+    def 'call parameters via helper'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.parameters {
+            booleanParam('myBooleanParam', true)
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.model.ParametersDefinitionProperty'[0].parameterDefinitions[0]) {
+            children()[0].name() == 'hudson.model.BooleanParameterDefinition'
+            children()[0].name.text() == 'myBooleanParam'
+            children()[0].defaultValue.text() == 'true'
+        }
+    }
+
     def 'call scm'() {
         setup:
         JobManagement jm = Mock(JobManagement)

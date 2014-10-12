@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
-import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
+import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.Permissions
@@ -26,7 +26,6 @@ class Job extends Item {
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
-    @Delegate BuildParametersContextHelper helperBuildParameters
     @Delegate MatrixHelper helperMatrix
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
@@ -37,7 +36,6 @@ class Job extends Item {
         // Helpers
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type, jobManagement)
-        helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
         helperMatrix = new MatrixHelper(withXmlActions, type)
     }
 
@@ -94,6 +92,18 @@ class Job extends Item {
 
         authorization {
             delegate.permission(permissionEnumName, user)
+        }
+    }
+
+    def parameters(Closure closure) {
+        BuildParametersContext context = new BuildParametersContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            def node = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions'
+            context.buildParameterNodes.values().each {
+                node << it
+            }
         }
     }
 
