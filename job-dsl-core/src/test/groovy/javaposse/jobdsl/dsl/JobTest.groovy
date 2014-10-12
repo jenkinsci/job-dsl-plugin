@@ -390,6 +390,31 @@ class JobTest extends Specification {
         job.node.publishers[0].'hudson.plugins.chucknorris.CordellWalkerRecorder'[0].factGenerator[0].text() == ''
     }
 
+    def 'cannot create Build Flow for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.buildFlow('build block')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'buildFlow constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.BuildFlow])
+
+        when:
+        job.buildFlow('build Flow Block')
+
+        then:
+        job.node.dsl.size() == 1
+        job.node.dsl[0].value() == 'build Flow Block'
+    }
+
     private final minimalXml = '''
 <project>
   <actions/>

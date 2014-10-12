@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
-import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
@@ -27,7 +26,6 @@ class Job extends Item {
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
-    @Delegate BuildFlowHelper helperBuildFlow
     @Delegate BuildParametersContextHelper helperBuildParameters
     @Delegate MatrixHelper helperMatrix
 
@@ -39,7 +37,6 @@ class Job extends Item {
         // Helpers
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type, jobManagement)
-        helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
         helperMatrix = new MatrixHelper(withXmlActions, type)
     }
@@ -181,6 +178,14 @@ class Job extends Item {
             context.publisherNodes.each {
                 project / 'publishers' << it
             }
+        }
+    }
+
+    def buildFlow(String buildFlowText) {
+        Preconditions.checkState(type == JobType.BuildFlow, 'Build Flow text can only be applied to Build Flow jobs.')
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / dsl(buildFlowText)
         }
     }
 
