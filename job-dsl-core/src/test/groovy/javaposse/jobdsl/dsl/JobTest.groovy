@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.Permissions
+import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
@@ -575,6 +576,319 @@ class JobTest extends Specification {
         job.node.axes.size() == 1
         job.node.axes[0].children().size() == 1
         job.node.axes[0].children()[0].name() == 'FooAxis'
+    }
+
+    def 'cannot run rootPOM for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.rootPOM('pom.xml')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'rootPOM constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.rootPOM('my_module/pom.xml')
+
+        then:
+        job.node.rootPOM.size() == 1
+        job.node.rootPOM[0].value() == 'my_module/pom.xml'
+    }
+
+    def 'cannot run goals for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.goals('package')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'goals constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.goals('clean')
+        job.goals('verify')
+
+        then:
+        job.node.goals.size() == 1
+        job.node.goals[0].value() == 'clean verify'
+    }
+
+    def 'cannot run mavenOpts for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.mavenOpts('-Xmx512m')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'mavenOpts constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.mavenOpts('-Xms256m')
+        job.mavenOpts('-Xmx512m')
+
+        then:
+        job.node.mavenOpts.size() == 1
+        job.node.mavenOpts[0].value() == '-Xms256m -Xmx512m'
+    }
+
+    def 'cannot run perModuleEmail for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.perModuleEmail(false)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'perModuleEmail constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.perModuleEmail(false)
+
+        then:
+        job.node.perModuleEmail.size() == 1
+        job.node.perModuleEmail[0].value() == false
+    }
+
+    def 'cannot run archivingDisabled for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.archivingDisabled(false)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'archivingDisabled constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.archivingDisabled(true)
+
+        then:
+        job.node.archivingDisabled.size() == 1
+        job.node.archivingDisabled[0].value() == true
+    }
+
+    def 'cannot run runHeadless for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.runHeadless(false)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'runHeadless constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.runHeadless(true)
+
+        then:
+        job.node.runHeadless.size() == 1
+        job.node.runHeadless[0].value() == true
+    }
+
+    def 'cannot run localRepository for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'cannot run localRepository with null argument'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.localRepository(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'localRepository constructs xml for LocalToExecutor'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
+
+        then:
+        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'
+    }
+
+    def 'localRepository constructs xml for LocalToWorkspace'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToWorkspace)
+
+        then:
+        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
+    }
+
+    def 'cannot run preBuildSteps for freestyle jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.preBuildSteps {
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'can add preBuildSteps'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.preBuildSteps {
+            shell('ls')
+        }
+
+        then:
+        job.node.prebuilders[0].children()[0].name() == 'hudson.tasks.Shell'
+        job.node.prebuilders[0].children()[0].command[0].value() == 'ls'
+    }
+
+    def 'cannot run postBuildSteps for freestyle jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.postBuildSteps {
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'can add postBuildSteps'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.postBuildSteps {
+            shell('ls')
+        }
+
+        then:
+        job.node.postbuilders[0].children()[0].name() == 'hudson.tasks.Shell'
+        job.node.postbuilders[0].children()[0].command[0].value() == 'ls'
+    }
+
+    def 'cannot run mavenInstallation for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.mavenInstallation('test')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'mavenInstallation constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+
+        when:
+        job.mavenInstallation('test')
+
+        then:
+        job.node.mavenName.size() == 1
+        job.node.mavenName[0].value() == 'test'
+    }
+
+    def 'call maven method with unknown provided settings'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+        String settingsName = 'lalala'
+
+        when:
+        job.providedSettings(settingsName)
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(settingsName)
+    }
+
+    def 'call maven method with provided settings'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Maven])
+        String settingsName = 'maven-proxy'
+        String settingsId = '123123415'
+        jm.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
+
+        when:
+        job.providedSettings(settingsName)
+
+        then:
+        job.node.settings.size() == 1
+        job.node.settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+        job.node.settings[0].children().size() == 1
+        job.node.settings[0].settingsConfigId[0].value() == settingsId
     }
 
     private final minimalXml = '''
