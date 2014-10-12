@@ -7,7 +7,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 /**
  * Attempt to execute the sample page in README.md
  */
-class DslSampleTest extends Specification {
+class DslSampleSpec extends Specification {
 
     def 'load sample dsl'() {
         setup:

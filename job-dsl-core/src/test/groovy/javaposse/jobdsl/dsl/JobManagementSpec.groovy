@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
-class JobManagementTest extends Specification {
+class JobManagementSpec extends Specification {
     def 'get non-existent config'() {
         setup:
         JobManagement jm = new FileJobManagement(new File('src/test/resources'))

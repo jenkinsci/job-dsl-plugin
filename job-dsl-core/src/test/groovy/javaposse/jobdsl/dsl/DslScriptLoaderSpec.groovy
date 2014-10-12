@@ -4,7 +4,7 @@ import com.google.common.collect.Iterables
 import spock.lang.Ignore
 import spock.lang.Specification
 
-class DslScriptLoaderTest extends Specification {
+class DslScriptLoaderSpec extends Specification {
     private final resourcesDir = getClass().getResource('/simple.dsl')
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream()
     private final PrintStream ps = new PrintStream(baos)
