@@ -2,12 +2,13 @@ package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
-import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
+import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
+import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -25,7 +26,6 @@ class Job extends Item {
     JobType type = null // Required
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
-    @Delegate AuthorizationContextHelper helperAuthorization
     @Delegate WrapperContextHelper helperWrapper
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
@@ -40,7 +40,6 @@ class Job extends Item {
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
 
         // Helpers
-        helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
         helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
@@ -65,6 +64,45 @@ class Job extends Item {
     def name(Closure nameClosure) {
         jobManagement.logDeprecationWarning()
         name(nameClosure.call().toString())
+    }
+
+    def authorization(Closure closure) {
+        AuthorizationContext context = new AuthorizationContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            def authorizationMatrixProperty = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
+            context.permissions.each { String perm ->
+                authorizationMatrixProperty.appendNode('permission', perm)
+            }
+        }
+    }
+
+    @Deprecated
+    def permission(String permission) {
+        jobManagement.logDeprecationWarning()
+
+        authorization {
+            delegate.permission(permission)
+        }
+    }
+
+    @Deprecated
+    def permission(Permissions permission, String user) {
+        jobManagement.logDeprecationWarning()
+
+        authorization {
+            delegate.permission(permission, user)
+        }
+    }
+
+    @Deprecated
+    def permission(String permissionEnumName, String user) {
+        jobManagement.logDeprecationWarning()
+
+        authorization {
+            delegate.permission(permissionEnumName, user)
+        }
     }
 
     def scm(Closure closure) {

@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.helpers.Permissions
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
@@ -249,6 +250,42 @@ class JobTest extends Specification {
 
         then:
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + matrixJobXml, xml
+    }
+
+    def 'call authorization'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.authorization {
+            permission('hudson.model.Item.Configure:jill')
+            permission('hudson.model.Item.Configure:jack')
+        }
+
+        then:
+        NodeList permissions = job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
+        permissions.size() == 2
+        permissions[0].text() == 'hudson.model.Item.Configure:jill'
+        permissions[1].text() == 'hudson.model.Item.Configure:jack'
+    }
+
+    def 'call permission'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.permission('hudson.model.Item.Configure:jill')
+        job.permission(Permissions.ItemRead, 'jack')
+        job.permission('RunUpdate', 'joe')
+
+        then:
+        NodeList permissions = job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
+        permissions.size() == 3
+        permissions[0].text() == 'hudson.model.Item.Configure:jill'
+        permissions[1].text() == 'hudson.model.Item.Read:jack'
+        permissions[2].text() == 'hudson.model.Run.Update:joe'
     }
 
     def 'call scm'() {
