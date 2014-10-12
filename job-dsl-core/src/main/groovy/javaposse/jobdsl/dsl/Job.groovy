@@ -3,9 +3,9 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
+import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.MavenHelper
-import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
@@ -26,7 +26,6 @@ class Job extends Item {
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
-    @Delegate MatrixHelper helperMatrix
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement
@@ -36,7 +35,6 @@ class Job extends Item {
         // Helpers
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type, jobManagement)
-        helperMatrix = new MatrixHelper(withXmlActions, type)
     }
 
     /**
@@ -196,6 +194,73 @@ class Job extends Item {
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / dsl(buildFlowText)
+        }
+    }
+
+    def axes(Closure closure) {
+        Preconditions.checkState(type == JobType.Matrix, 'axes can only be applied for Matrix jobs')
+
+        AxisContext context = new AxisContext()
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node axesNode = project / 'axes'
+            context.axisNodes.each {
+                axesNode  << it
+            }
+            context.configureBlocks.each {
+                new WithXmlAction(it).execute(axesNode)
+            }
+        }
+    }
+
+    /**
+     * <combinationFilter>axis_label=='a'||axis_label=='b'</combinationFilter>
+     */
+    def combinationFilter(String filterExpression) {
+        Preconditions.checkState(type == JobType.Matrix, 'combinationFilter can only be applied for Matrix jobs')
+
+        execute {
+            def node = methodMissing('combinationFilter', filterExpression)
+            it / node
+        }
+    }
+
+    /**
+     * <executionStrategy>
+     *     <runSequentially>false</runSequentially>
+     * </executionStrategy>
+     */
+    def runSequentially(boolean sequentially = true) {
+        Preconditions.checkState(type == JobType.Matrix, 'runSequentially can only be applied for Matrix jobs')
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            def node = methodMissing('runSequentially', sequentially)
+            project / 'executionStrategy' / node
+        }
+    }
+
+    /**
+     * <executionStrategy>
+     *     <touchStoneCombinationFilter>axis_label=='a'||axis_label=='b'</touchStoneCombinationFilter>
+     *     <touchStoneResultCondition>
+     *         <name>UNSTABLE</name>
+     *         <ordinal>1</ordinal>
+     *         <color>YELLOW</color>
+     *         <completeBuild>true</completeBuild>
+     *     </touchStoneResultCondition>
+     * </executionStrategy>
+     */
+    def touchStoneFilter(String filter, boolean continueOnUnstable = false) {
+        Preconditions.checkState(type == JobType.Matrix, 'touchStoneFilter can only be applied for Matrix jobs')
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'executionStrategy' / 'touchStoneCombinationFilter'(filter)
+            project / 'executionStrategy' / 'touchStoneResultCondition' {
+                name continueOnUnstable ? 'UNSTABLE' : 'STABLE'
+                color continueOnUnstable ? 'YELLOW' : 'BLUE'
+                ordinal continueOnUnstable ? 1 : 0
+            }
         }
     }
 

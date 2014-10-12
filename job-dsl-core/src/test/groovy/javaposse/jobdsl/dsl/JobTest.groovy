@@ -433,6 +433,150 @@ class JobTest extends Specification {
         job.node.dsl[0].value() == 'build Flow Block'
     }
 
+    def 'cannot run combinationFilter for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.combinationFilter('LABEL1 == "TEST"')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'combinationFilter constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Matrix])
+
+        when:
+        job.combinationFilter('LABEL1 == "TEST"')
+
+        then:
+        job.node.combinationFilter.size() == 1
+        job.node.combinationFilter[0].value() == 'LABEL1 == "TEST"'
+    }
+
+    def 'cannot set runSequentially for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.runSequentially()
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'runSequentially constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Matrix])
+
+        when:
+        job.runSequentially(false)
+
+        then:
+        job.node.executionStrategy.runSequentially.size() == 1
+        job.node.executionStrategy.runSequentially[0].value() == false
+    }
+
+    def 'cannot set touchStoneFilter for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.touchStoneFilter('LABEL1 == "TEST"', true)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'touchStoneFilter constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Matrix])
+
+        when:
+        job.touchStoneFilter('LABEL1 == "TEST"', true)
+
+        then:
+        with(job.node.executionStrategy) {
+            touchStoneCombinationFilter.size() == 1
+            touchStoneCombinationFilter[0].value() == 'LABEL1 == "TEST"'
+            touchStoneResultCondition.size() == 1
+            touchStoneResultCondition[0].children().size() == 3
+            touchStoneResultCondition[0].name[0].value() == 'UNSTABLE'
+            touchStoneResultCondition[0].color[0].value() == 'YELLOW'
+            touchStoneResultCondition[0].ordinal[0].value() == 1
+        }
+
+        when:
+        job.touchStoneFilter('LABEL1 == "TEST"', false)
+
+        then:
+        with(job.node.executionStrategy) {
+            touchStoneCombinationFilter.size() == 1
+            touchStoneCombinationFilter[0].value() == 'LABEL1 == "TEST"'
+            touchStoneResultCondition.size() == 1
+            touchStoneResultCondition[0].children().size() == 3
+            touchStoneResultCondition[0].name[0].value() == 'STABLE'
+            touchStoneResultCondition[0].color[0].value() == 'BLUE'
+            touchStoneResultCondition[0].ordinal[0].value() == 0
+        }
+    }
+
+    def 'cannot run axis for free style jobs'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.axes {
+            label('LABEL1', 'a', 'b', 'c')
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'can set axis'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Matrix])
+
+        when:
+        job.axes {
+            label('LABEL1', 'a', 'b', 'c')
+        }
+
+        then:
+        job.node.axes.size() == 1
+        job.node.axes[0].children().size() == 1
+        job.node.axes[0].children()[0].name() == 'hudson.matrix.LabelAxis'
+    }
+
+    def 'axes configure block constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm, [type: JobType.Matrix])
+
+        when:
+        job.axes {
+            configure { axes ->
+                axes << 'FooAxis'()
+            }
+        }
+
+        then:
+        job.node.axes.size() == 1
+        job.node.axes[0].children().size() == 1
+        job.node.axes[0].children()[0].name() == 'FooAxis'
+    }
+
     private final minimalXml = '''
 <project>
   <actions/>
