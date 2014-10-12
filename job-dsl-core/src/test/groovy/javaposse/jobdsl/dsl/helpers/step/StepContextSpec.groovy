@@ -9,7 +9,7 @@ import spock.lang.Unroll
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
-class StepHelperSpec extends Specification {
+class StepContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     StepContext context = new StepContext(jobManagement)
 

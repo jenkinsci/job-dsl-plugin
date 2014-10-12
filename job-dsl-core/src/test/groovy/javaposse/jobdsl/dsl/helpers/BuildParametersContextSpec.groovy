@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import spock.lang.Specification
 
-class BuildParametersHelperSpec extends Specification {
+class BuildParametersContextSpec extends Specification {
     BuildParametersContext context = new BuildParametersContext()
 
     def 'base booleanParam usage'() {

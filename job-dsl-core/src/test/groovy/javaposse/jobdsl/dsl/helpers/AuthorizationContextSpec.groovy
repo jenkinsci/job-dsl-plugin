@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import spock.lang.Specification
 
-class AuthorizationHelperSpec extends Specification {
+class AuthorizationContextSpec extends Specification {
     AuthorizationContext context = new AuthorizationContext()
 
     def 'call permission methods'() {

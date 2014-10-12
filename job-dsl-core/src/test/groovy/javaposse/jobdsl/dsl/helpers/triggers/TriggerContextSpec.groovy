@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
-class TriggerHelperSpec extends Specification {
+class TriggerContextSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
     JobManagement mockJobManagement = Mock(JobManagement)
     TriggerContext context = new TriggerContext(mockActions, JobType.Freeform, mockJobManagement)

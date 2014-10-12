@@ -6,7 +6,7 @@ import spock.lang.Specification
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
 
-class PublisherHelperSpec extends Specification {
+class PublisherContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     PublisherContext context = new PublisherContext(jobManagement)
 
