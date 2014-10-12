@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
 
 class NotificationContext implements Context {
     private static final List<String> PROTOCOLS = ['UDP', 'TCP', 'HTTP']

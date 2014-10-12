@@ -5,8 +5,8 @@ import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 class WrapperContext implements Context {
     List<Node> wrapperNodes = []
@@ -127,7 +127,7 @@ class WrapperContext implements Context {
         }
 
         TimeoutContext ctx = new TimeoutContext(timeoutType, jobManagement)
-        AbstractContextHelper.executeInContext(timeoutClosure, ctx)
+        ContextHelper.executeInContext(timeoutClosure, ctx)
 
         Preconditions.checkArgument(ctx.type != null, 'Timeout type must be selected!')
 
@@ -203,7 +203,7 @@ class WrapperContext implements Context {
      */
     def allocatePorts(String[] portsArg, Closure closure = null) {
         PortsContext portContext = new PortsContext()
-        AbstractContextHelper.executeInContext(closure, portContext)
+        ContextHelper.executeInContext(closure, portContext)
 
         def nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'org.jvnet.hudson.plugins.port__allocator.PortAllocator' {
@@ -305,7 +305,7 @@ class WrapperContext implements Context {
      */
     def xvnc(Closure xvncClosure = null) {
         XvncContext xvncContext = new XvncContext(jobManagement)
-        AbstractContextHelper.executeInContext(xvncClosure, xvncContext)
+        ContextHelper.executeInContext(xvncClosure, xvncContext)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.xvnc.Xvnc' {
             takeScreenshot(xvncContext.takeScreenshot)
@@ -368,7 +368,7 @@ class WrapperContext implements Context {
      */
     def environmentVariables(Closure envClosure) {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
-        AbstractContextHelper.executeInContext(envClosure, envContext)
+        ContextHelper.executeInContext(envClosure, envContext)
 
         def envNode = new NodeBuilder().'EnvInjectBuildWrapper' {
             envContext.addInfoToBuilder(delegate)
@@ -438,7 +438,7 @@ class WrapperContext implements Context {
      */
     def release(Closure releaseClosure) {
         ReleaseContext releaseContext = new ReleaseContext(jobManagement)
-        AbstractContextHelper.executeInContext(releaseClosure, releaseContext)
+        ContextHelper.executeInContext(releaseClosure, releaseContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
 
@@ -482,7 +482,7 @@ class WrapperContext implements Context {
      */
     def preBuildCleanup(Closure closure = null) {
         PreBuildCleanupContext context = new PreBuildCleanupContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.ws__cleanup.PreBuildCleanup' {
             patterns(context.patternNodes)
@@ -508,7 +508,7 @@ class WrapperContext implements Context {
      */
     def logSizeChecker(Closure closure = null) {
         LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper' {
             setOwn(context.maxSize > 0)
@@ -555,7 +555,7 @@ class WrapperContext implements Context {
      */
     def keychains(Closure keychainsClosure) {
         KeychainsContext keychainsContext = new KeychainsContext()
-        AbstractContextHelper.executeInContext(keychainsClosure, keychainsContext)
+        ContextHelper.executeInContext(keychainsClosure, keychainsContext)
 
         wrapperNodes << new NodeBuilder().'com.sic.plugins.kpp.KPPKeychainsBuildWrapper' {
             keychainCertificatePairs keychainsContext.keychains
@@ -615,7 +615,7 @@ class WrapperContext implements Context {
         Preconditions.checkState type == JobType.Maven, 'mavenRelease can only be applied for Maven jobs'
 
         MavenReleaseContext context = new MavenReleaseContext()
-        AbstractContextHelper.executeInContext(releaseClosure, context)
+        ContextHelper.executeInContext(releaseClosure, context)
 
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.m2release.M2ReleaseBuildWrapper' {
             scmUserEnvVar context.scmUserEnvVar

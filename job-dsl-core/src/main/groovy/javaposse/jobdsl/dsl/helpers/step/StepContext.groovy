@@ -4,8 +4,8 @@ import hudson.util.VersionNumber
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
 import static com.google.common.base.Strings.isNullOrEmpty
@@ -119,7 +119,7 @@ class StepContext implements Context {
      */
     def dsl(Closure configure = null) {
         DslContext context = new DslContext()
-        AbstractContextHelper.executeInContext(configure, context)
+        ContextHelper.executeInContext(configure, context)
         buildDslNode(context)
     }
 
@@ -184,7 +184,7 @@ class StepContext implements Context {
 
     def ant(String targetsArg, String buildFileArg, String antInstallation, Closure antClosure = null) {
         AntContext antContext = new AntContext()
-        AbstractContextHelper.executeInContext(antClosure, antContext)
+        ContextHelper.executeInContext(antClosure, antContext)
 
         def targetList = []
 
@@ -275,7 +275,7 @@ class StepContext implements Context {
 
     protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
         def groovyContext = new GroovyContext()
-        AbstractContextHelper.executeInContext(groovyClosure, groovyContext)
+        ContextHelper.executeInContext(groovyClosure, groovyContext)
 
         def groovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.Groovy' {
             groovyName groovyInstallation ?: groovyContext.groovyInstallation ?: '(Default)'
@@ -318,7 +318,7 @@ class StepContext implements Context {
 
     protected systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
         def systemGroovyContext = new SystemGroovyContext()
-        AbstractContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
+        ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
         def systemGroovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.SystemGroovy' {
             bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
@@ -340,7 +340,7 @@ class StepContext implements Context {
      */
     def maven(Closure closure) {
         MavenContext mavenContext = new MavenContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, mavenContext)
+        ContextHelper.executeInContext(closure, mavenContext)
 
         Node mavenNode = new NodeBuilder().'hudson.tasks.Maven' {
             targets mavenContext.goals.join(' ')
@@ -403,7 +403,7 @@ class StepContext implements Context {
         GrailsContext grailsContext = new GrailsContext(
             useWrapper: useWrapperArg
         )
-        AbstractContextHelper.executeInContext(grailsClosure, grailsContext)
+        ContextHelper.executeInContext(grailsClosure, grailsContext)
 
         def nodeBuilder = new NodeBuilder()
         def grailsNode = nodeBuilder.'com.g2one.hudson.grails.GrailsBuilder' {
@@ -492,7 +492,7 @@ class StepContext implements Context {
     def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                       boolean optionalAllowed, Closure copyArtifactClosure) {
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
-        AbstractContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
+        ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
         if (!copyArtifactContext.selectedSelector) {
             throw new IllegalArgumentException('A selector has to be select in the closure argument')
@@ -563,7 +563,7 @@ class StepContext implements Context {
 
     def phase(String name, String continuationConditionArg, Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationConditionArg)
-        AbstractContextHelper.executeInContext(phaseClosure, phaseContext)
+        ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         Preconditions.checkArgument(phaseContext.phaseName as Boolean, 'A phase needs a name')
         Preconditions.checkArgument(
@@ -663,7 +663,7 @@ class StepContext implements Context {
      */
     def downstreamParameterized(Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext()
-        AbstractContextHelper.executeInContext(downstreamClosure, downstreamContext)
+        ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         def stepNode = downstreamContext.createDownstreamNode(true)
         stepNodes << stepNode
@@ -683,7 +683,7 @@ class StepContext implements Context {
      */
     def conditionalSteps(Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)
-        AbstractContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
+        ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
         if (conditionalStepsContext.stepNodes.size() > 1) {
             stepNodes << conditionalStepsContext.createMultiStepNode()
@@ -702,7 +702,7 @@ class StepContext implements Context {
      */
     def environmentVariables(Closure envClosure) {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
-        AbstractContextHelper.executeInContext(envClosure, envContext)
+        ContextHelper.executeInContext(envClosure, envContext)
 
         def envNode = new NodeBuilder().'EnvInjectBuilder' {
             envContext.addInfoToBuilder(delegate)
@@ -743,7 +743,7 @@ class StepContext implements Context {
         Preconditions.checkArgument(!isNullOrEmpty(jobName), 'jobName must be specified')
 
         ParameterizedRemoteTriggerContext context = new ParameterizedRemoteTriggerContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         List<String> jobParameters = context.parameters.collect { String key, String value -> "$key=$value" }
 
@@ -786,7 +786,7 @@ class StepContext implements Context {
      */
     def criticalBlock(Closure closure) {
         StepContext stepContext = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, stepContext)
+        ContextHelper.executeInContext(closure, stepContext)
 
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'()
         stepNodes.addAll(stepContext.stepNodes)
@@ -815,7 +815,7 @@ class StepContext implements Context {
             rakeContext.task(tasksArg)
         }
 
-        AbstractContextHelper.executeInContext(rakeClosure, rakeContext)
+        ContextHelper.executeInContext(rakeClosure, rakeContext)
 
         stepNodes << new NodeBuilder().'hudson.plugins.rake.Rake' {
             rakeInstallation rakeContext.installation

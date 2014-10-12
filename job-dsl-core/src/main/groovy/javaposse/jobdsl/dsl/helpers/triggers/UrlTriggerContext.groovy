@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 /**
  * Top level context for configuring the URL trigger functionality.
@@ -36,7 +36,7 @@ class UrlTriggerContext implements Context {
     /** adds a monitored URL to the trigger. */
     def url(String url, Closure entryClosure = null) {
         UrlTriggerEntryContext entryContext = new UrlTriggerEntryContext(url)
-        AbstractContextHelper.executeInContext(entryClosure, entryContext)
+        ContextHelper.executeInContext(entryClosure, entryContext)
         entries << entryContext
     }
 

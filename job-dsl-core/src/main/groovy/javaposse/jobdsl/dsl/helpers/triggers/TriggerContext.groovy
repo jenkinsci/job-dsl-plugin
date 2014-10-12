@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
@@ -28,7 +28,7 @@ class TriggerContext implements Context {
      */
     def urlTrigger(String crontab = null, Closure contextClosure) {
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
-        AbstractContextHelper.executeInContext(contextClosure, urlTriggerContext)
+        ContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
         def urlTriggerNode = new NodeBuilder().'org.jenkinsci.plugins.urltrigger.URLTrigger' {
             spec urlTriggerContext.crontab
@@ -137,7 +137,7 @@ class TriggerContext implements Context {
      */
     def pullRequest(Closure contextClosure) {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
-        AbstractContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
+        ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
         triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
@@ -194,7 +194,7 @@ class TriggerContext implements Context {
     def gerrit(Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
         GerritContext gerritContext = new GerritContext(jobManagement)
-        AbstractContextHelper.executeInContext(contextClosure, gerritContext)
+        ContextHelper.executeInContext(contextClosure, gerritContext)
 
         def nodeBuilder = new NodeBuilder()
         def gerritNode = nodeBuilder.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger' {

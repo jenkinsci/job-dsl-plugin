@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -34,7 +34,7 @@ class GitPublisherContext implements Context {
         checkArgument(!isNullOrEmpty(name), 'name must be specified')
 
         TagToPushContext context = new TagToPushContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         tags << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-TagToPush' {
             targetRepoName(targetRepo)

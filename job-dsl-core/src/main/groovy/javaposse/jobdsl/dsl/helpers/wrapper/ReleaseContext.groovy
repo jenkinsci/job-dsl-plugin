@@ -1,9 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 
 class ReleaseContext implements Context {
@@ -25,25 +25,25 @@ class ReleaseContext implements Context {
 
     def preBuildSteps(Closure closure) {
         def stepContext = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, stepContext)
+        ContextHelper.executeInContext(closure, stepContext)
         preBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postSuccessfulBuildSteps(Closure closure) {
         def stepContext = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, stepContext)
+        ContextHelper.executeInContext(closure, stepContext)
         postSuccessfulBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postBuildSteps(Closure closure) {
         def stepContext = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, stepContext)
+        ContextHelper.executeInContext(closure, stepContext)
         postBuildSteps.addAll(stepContext.stepNodes)
     }
 
     def postFailedBuildSteps(Closure closure) {
         def stepContext = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, stepContext)
+        ContextHelper.executeInContext(closure, stepContext)
         postFailedBuildSteps.addAll(stepContext.stepNodes)
     }
 
@@ -65,7 +65,7 @@ class ReleaseContext implements Context {
 
     def parameters(Closure parametersClosure) {
         BuildParametersContext parametersContext = new BuildParametersContext()
-        AbstractContextHelper.executeInContext(parametersClosure, parametersContext)
+        ContextHelper.executeInContext(parametersClosure, parametersContext)
         params.addAll(parametersContext.buildParameterNodes.values())
     }
 }

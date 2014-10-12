@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
@@ -102,7 +102,7 @@ class Job extends Item {
         if (vars) {
             envContext.envs(vars)
         }
-        AbstractContextHelper.executeInContext(envClosure, envContext)
+        ContextHelper.executeInContext(envClosure, envContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'EnvInjectJobProperty' {
@@ -132,7 +132,7 @@ class Job extends Item {
      */
     def throttleConcurrentBuilds(Closure throttleClosure) {
         ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
-        AbstractContextHelper.executeInContext(throttleClosure, throttleContext)
+        ContextHelper.executeInContext(throttleClosure, throttleContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'hudson.plugins.throttleconcurrents.ThrottleJobProperty' {
@@ -166,7 +166,7 @@ class Job extends Item {
      */
     def lockableResources(String resources, Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()
-        AbstractContextHelper.executeInContext(lockClosure, lockContext)
+        ContextHelper.executeInContext(lockClosure, lockContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
@@ -378,7 +378,7 @@ class Job extends Item {
      */
     def notifications(Closure notificationClosure) {
         NotificationContext notificationContext = new NotificationContext(jobManagement)
-        AbstractContextHelper.executeInContext(notificationClosure, notificationContext)
+        ContextHelper.executeInContext(notificationClosure, notificationContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'com.tikal.hudson.plugins.notification.HudsonNotificationProperty' {
@@ -434,7 +434,7 @@ class Job extends Item {
 
     def authorization(Closure closure) {
         AuthorizationContext context = new AuthorizationContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             def authorizationMatrixProperty = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
@@ -473,7 +473,7 @@ class Job extends Item {
 
     def parameters(Closure closure) {
         BuildParametersContext context = new BuildParametersContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             def node = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions'
@@ -485,7 +485,7 @@ class Job extends Item {
 
     def scm(Closure closure) {
         ScmContext context = new ScmContext(false, withXmlActions, jobManagement)
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             def scm = project / scm
@@ -501,7 +501,7 @@ class Job extends Item {
 
     def multiscm(Closure closure) {
         ScmContext context = new ScmContext(true, withXmlActions, jobManagement)
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             def scm = project / scm
@@ -523,7 +523,7 @@ class Job extends Item {
 
     def triggers(Closure closure) {
         TriggerContext context = new TriggerContext(withXmlActions, type, jobManagement)
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             context.triggerNodes.each {
@@ -534,7 +534,7 @@ class Job extends Item {
 
     def wrappers(Closure closure) {
         WrapperContext context = new WrapperContext(type, jobManagement)
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             context.wrapperNodes.each {
@@ -547,7 +547,7 @@ class Job extends Item {
         Preconditions.checkState(type != JobType.Maven, 'steps cannot be applied for Maven jobs')
 
         StepContext context = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             context.stepNodes.each {
@@ -558,7 +558,7 @@ class Job extends Item {
 
     def publishers(Closure closure) {
         PublisherContext context = new PublisherContext(jobManagement)
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             context.publisherNodes.each {
@@ -579,7 +579,7 @@ class Job extends Item {
         Preconditions.checkState(type == JobType.Matrix, 'axes can only be applied for Matrix jobs')
 
         AxisContext context = new AxisContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             Node axesNode = project / 'axes'
@@ -747,7 +747,7 @@ class Job extends Item {
         Preconditions.checkState(type == JobType.Maven, 'prebuildSteps can only be applied for Maven jobs')
 
         StepContext preBuildContext = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(preBuildClosure, preBuildContext)
+        ContextHelper.executeInContext(preBuildClosure, preBuildContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
             preBuildContext.stepNodes.each {
@@ -760,7 +760,7 @@ class Job extends Item {
         Preconditions.checkState(type == JobType.Maven, 'postBuildSteps can only be applied for Maven jobs')
 
         StepContext postBuildContext = new StepContext(jobManagement)
-        AbstractContextHelper.executeInContext(postBuildClosure, postBuildContext)
+        ContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
             postBuildContext.stepNodes.each {
