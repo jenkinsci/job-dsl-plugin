@@ -10,7 +10,10 @@ import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
-import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
+import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
+import javaposse.jobdsl.dsl.helpers.toplevel.LockableResourcesContext
+import javaposse.jobdsl.dsl.helpers.toplevel.NotificationContext
+import javaposse.jobdsl.dsl.helpers.toplevel.ThrottleConcurrentBuildsContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 
@@ -26,16 +29,10 @@ class Job extends Item {
     String templateName = null // Optional
     JobType type = null // Required
 
-    // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
-    @Delegate TopLevelHelper helperTopLevel
-
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement
         def typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
-
-        // Helpers
-        helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
     }
 
     /**
@@ -53,6 +50,386 @@ class Job extends Item {
     def name(Closure nameClosure) {
         jobManagement.logDeprecationWarning()
         name(nameClosure.call().toString())
+    }
+
+    def description(String descriptionString) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('description', descriptionString)
+            project / node
+        }
+    }
+
+    /**
+     * "Restrict where this project can be run"
+     * <assignedNode>FullTools&amp;&amp;RPM&amp;&amp;DC</assignedNode>
+     * @param labelExpression Label of node to use, if null is passed in, the label is cleared out and it can roam
+     * @return
+     */
+    def label(String labelExpression = null) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            if (labelExpression) {
+                project / assignedNode(labelExpression)
+                project / canRoam(false) // If canRoam is true, the label will not be used
+            } else {
+                project / assignedNode('')
+                project / canRoam(true)
+            }
+        }
+    }
+
+    /**
+     * Add environment variables to the build.
+     *
+     * <project>
+     *   <properties>
+     *     <EnvInjectJobProperty>
+     *       <info>
+     *         <propertiesContent>TEST=foo BAR=123</propertiesContent>
+     *         <loadFilesFromMaster>false</loadFilesFromMaster>
+     *       </info>
+     *       <on>true</on>
+     *       <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+     *       <keepBuildVariables>true</keepBuildVariables>
+     *       <contributors/>
+     *     </EnvInjectJobProperty>
+     */
+    def environmentVariables(Closure envClosure) {
+        environmentVariables(null, envClosure)
+    }
+
+    def environmentVariables(Map<Object, Object> vars, Closure envClosure = null) {
+        EnvironmentVariableContext envContext = new EnvironmentVariableContext()
+        if (vars) {
+            envContext.envs(vars)
+        }
+        AbstractContextHelper.executeInContext(envClosure, envContext)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'EnvInjectJobProperty' {
+                envContext.addInfoToBuilder(delegate)
+                on(true)
+                keepJenkinsSystemVariables(envContext.keepSystemVariables)
+                keepBuildVariables(envContext.keepBuildVariables)
+                contributors()
+            }
+        }
+    }
+
+    /**
+     * <project>
+     *     <properties>
+     *         <hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *             <maxConcurrentPerNode>0</maxConcurrentPerNode>
+     *             <maxConcurrentTotal>0</maxConcurrentTotal>
+     *             <categories>
+     *                 <string>CDH5-repo-update</string>
+     *             </categories>
+     *             <throttleEnabled>true</throttleEnabled>
+     *             <throttleOption>category</throttleOption>
+     *         </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+     *     <properties>
+     * </project>
+     */
+    def throttleConcurrentBuilds(Closure throttleClosure) {
+        ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
+        AbstractContextHelper.executeInContext(throttleClosure, throttleContext)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'hudson.plugins.throttleconcurrents.ThrottleJobProperty' {
+                maxConcurrentPerNode throttleContext.maxConcurrentPerNode
+                maxConcurrentTotal throttleContext.maxConcurrentTotal
+                throttleEnabled throttleContext.throttleDisabled ? 'false' : 'true'
+                if (throttleContext.categories.isEmpty()) {
+                    throttleOption 'project'
+                } else {
+                    throttleOption 'category'
+                }
+                categories {
+                    throttleContext.categories.each { c ->
+                        string c
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * <project>
+     *     <properties>
+     *         <org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
+     *             <resourceNames>lock-resource</resourceNames>
+     *             <resourceNamesVar>NAMES</resourceNamesVar>
+     *             <resourceNumber>0</resourceNumber>
+     *         </org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
+     *     <properties>
+     * </project>
+     */
+    def lockableResources(String resources, Closure lockClosure = null) {
+        LockableResourcesContext lockContext = new LockableResourcesContext()
+        AbstractContextHelper.executeInContext(lockClosure, lockContext)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
+                resourceNames resources
+                if (lockContext.resourcesVariable) {
+                    resourceNamesVar lockContext.resourcesVariable
+                }
+                if (lockContext.resourceNumber != null) {
+                    resourceNumber lockContext.resourceNumber
+                }
+            }
+        }
+    }
+
+    /**
+     * <disabled>true</disabled>
+     */
+    def disabled(boolean shouldDisable = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('disabled', shouldDisable)
+            project / node
+        }
+    }
+
+    /**
+     * <logRotator>
+     *     <daysToKeep>14</daysToKeep>
+     *     <numToKeep>50</numToKeep>
+     *     <artifactDaysToKeep>5</artifactDaysToKeep>
+     *     <artifactNumToKeep>20</artifactNumToKeep>
+     * </logRotator>
+     */
+    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1,
+                   int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / logRotator {
+                daysToKeep daysToKeepInt
+                numToKeep numToKeepInt
+                artifactDaysToKeep artifactDaysToKeepInt
+                artifactNumToKeep artifactNumToKeepInt
+            }
+        }
+    }
+
+    /**
+     * Block build if certain jobs are running
+     * <properties>
+     *     <hudson.plugins.buildblocker.BuildBlockerProperty>
+     *         <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
+     *         <blockingJobs>JobA</blockingJobs>
+     *     </hudson.plugins.buildblocker.BuildBlockerProperty>
+     * </properties>
+     */
+    def blockOn(Iterable<String> projectNames) {
+        blockOn(projectNames.join('\n'))
+    }
+
+    /**
+     * Block build if certain jobs are running.
+     * @param projectName Can be regular expressions. Newline delimited.
+     * @return
+     */
+    def blockOn(String projectName) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
+                useBuildBlocker 'true'
+                blockingJobs projectName
+            }
+        }
+    }
+
+    /**
+     * Name of the JDK installation to use for this job.
+     * @param jdkArg name of the JDK installation to use for this job.
+     */
+    def jdk(String jdkArg) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('jdk', jdkArg)
+            project / node
+        }
+    }
+
+    /**
+     * Priority of this job. Requires the
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
+     * Default value is 100.
+     *
+     * <properties>
+     *     <hudson.queueSorter.PrioritySorterJobProperty plugin="PrioritySorter@1.3">
+     *         <priority>100</priority>
+     *     </hudson.queueSorter.PrioritySorterJobProperty>
+     * </properties>
+     */
+    def priority(int value) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = new Node(project / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
+            node.appendNode('priority', value)
+        }
+    }
+
+    /**
+     * Adds a quiet period to the project.
+     *
+     * @param seconds number of seconds to wait
+     */
+    def quietPeriod(int seconds = 5) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('quietPeriod', seconds)
+            project / node
+        }
+    }
+
+    /**
+     * Sets the number of times the SCM checkout is retried on errors.
+     *
+     * @param times number of attempts
+     */
+    def checkoutRetryCount(int times = 3) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('scmCheckoutRetryCount', times)
+            project / node
+        }
+    }
+
+    /**
+     * Sets a display name for the project.
+     *
+     * @param displayName name to display
+     */
+    def displayName(String displayName) {
+        Preconditions.checkNotNull(displayName, 'Display name must not be null.')
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('displayName', displayName)
+            project / node
+        }
+    }
+
+    /**
+     * Configures a custom workspace for the project.
+     *
+     * @param workspacePath workspace path to use
+     */
+    def customWorkspace(String workspacePath) {
+        Preconditions.checkNotNull(workspacePath, 'Workspace path must not be null')
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('customWorkspace', workspacePath)
+            project / node
+        }
+    }
+
+    /**
+     * Configures the job to block when upstream projects are building.
+     */
+    def blockOnUpstreamProjects() {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / blockBuildWhenUpstreamBuilding(true)
+        }
+    }
+
+    /**
+     * Configures the job to block when downstream projects are building.
+     */
+    def blockOnDownstreamProjects() {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / blockBuildWhenDownstreamBuilding(true)
+        }
+    }
+
+    /**
+     * Configures the keep Dependencies Flag which can be set in the Fingerprinting action
+     *
+     * <keepDependencies>true</keepDependencies>
+     */
+    def keepDependencies(boolean keep = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('keepDependencies', keep)
+            project / node
+        }
+    }
+
+    /**
+     * Configures the 'Execute concurrent builds if necessary' flag
+     *
+     * <concurrentBuild>true</concurrentBuild>
+     */
+    def concurrentBuild(boolean allowConcurrentBuild = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('concurrentBuild', allowConcurrentBuild)
+            project / node
+        }
+    }
+
+    /**
+     * Configures the Notification Plugin.
+     *
+     * <properties>
+     *     <com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
+     *         <endpoints>
+     *             <com.tikal.hudson.plugins.notification.Endpoint>
+     *                 <protocol>HTTP</protocol>
+     *                 <format>JSON</format>
+     *                 <url />
+     *                 <event>all</event>
+     *                 <timeout>30000</timeout>
+     *             </com.tikal.hudson.plugins.notification.Endpoint>
+     *         </endpoints>
+     *     </com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
+     * </properties>
+     */
+    def notifications(Closure notificationClosure) {
+        NotificationContext notificationContext = new NotificationContext(jobManagement)
+        AbstractContextHelper.executeInContext(notificationClosure, notificationContext)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'com.tikal.hudson.plugins.notification.HudsonNotificationProperty' {
+                endpoints notificationContext.endpoints
+            }
+        }
+    }
+
+    /**
+     * <properties>
+     *     <hudson.plugins.batch__task.BatchTaskProperty>
+     *         <tasks>
+     *             <hudson.plugins.batch__task.BatchTask>
+     *                 <name>Hello World</name>
+     *                 <script>echo Hello World</script>
+     *             </hudson.plugins.batch__task.BatchTask>
+     *         </tasks>
+     *     </hudson.plugins.batch__task.BatchTaskProperty>
+     * </properties>
+     */
+    def batchTask(String name, String script) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            def batchTaskProperty = project / 'properties' / 'hudson.plugins.batch__task.BatchTaskProperty'
+            batchTaskProperty / 'tasks' << 'hudson.plugins.batch__task.BatchTask' {
+                delegate.name name
+                delegate.script script
+            }
+        }
+    }
+
+    /**
+     * <properties>
+     *     <se.diabol.jenkins.pipeline.PipelineProperty>
+     *         <taskName>integration-tests</taskName>
+     *         <stageName>qa</stageName>
+     *     </se.diabol.jenkins.pipeline.PipelineProperty>
+     * </properties>
+     */
+    def deliveryPipelineConfiguration(String stageName, String taskName = null) {
+        if (stageName || taskName) {
+            withXmlActions << WithXmlAction.create { Node project ->
+                project / 'properties' / 'se.diabol.jenkins.pipeline.PipelineProperty' {
+                    if (taskName) {
+                        delegate.taskName(taskName)
+                    }
+                    if (stageName) {
+                        delegate.stageName(stageName)
+                    }
+                }
+            }
+        }
     }
 
     def authorization(Closure closure) {

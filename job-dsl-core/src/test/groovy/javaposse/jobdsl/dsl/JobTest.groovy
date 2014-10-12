@@ -1,9 +1,11 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -110,7 +112,7 @@ class JobTest extends Specification {
         def projectLabelled = job.node
 
         then:
-        projectLabelled.canRoam[0].value() == 'false'
+        projectLabelled.canRoam[0].value() == false
     }
 
     def 'create withXml blocks'() {
@@ -889,6 +891,741 @@ class JobTest extends Specification {
         job.node.settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
         job.node.settings[0].children().size() == 1
         job.node.settings[0].settingsConfigId[0].value() == settingsId
+    }
+
+    def 'add description'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.description('Description')
+
+        then:
+        job.node.description[0].value() == 'Description'
+
+        when:
+        job.description('Description2')
+
+        then:
+        job.node.description.size() == 1
+        job.node.description[0].value() == 'Description2'
+
+    }
+
+    def 'environments work with map arg'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.environmentVariables([
+                key1: 'val1',
+                key2: 'val2'
+        ])
+
+        then:
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
+    }
+
+    def 'environments work with context'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.environmentVariables {
+            envs([key1: 'val1', key2: 'val2'])
+            env 'key3', 'val3'
+        }
+
+        then:
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
+    }
+
+    def 'environments work with combination'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.environmentVariables([key4: 'val4']) {
+            env 'key3', 'val3'
+        }
+
+        then:
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key4=val4')
+    }
+
+    def 'environment from groovy script'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.environmentVariables {
+            groovy '[foo: "bar"]'
+        }
+
+        then:
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+    }
+
+    def 'environment from map and groovy script'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.environmentVariables {
+            envs([key1: 'val1', key2: 'val2'])
+            env 'key3', 'val3'
+            groovy '[foo: "bar"]'
+        }
+
+        then:
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+    }
+
+    @Unroll
+    def 'environment from #method'(content, method, xmlElement) {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.environmentVariables {
+            "$method"(content)
+        }
+
+        then:
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0]."$xmlElement"[0].value() == content
+
+        where:
+        content          || method               || xmlElement
+        'some.properties' | 'propertiesFile'      | 'propertiesFilePath'
+        '/some/path'      | 'scriptFile'          | 'scriptFilePath'
+        'echo "Yeah"'     | 'script'              | 'scriptContent'
+        true              | 'loadFilesFromMaster' | 'loadFilesFromMaster'
+    }
+
+    @Unroll
+    def 'environment sets #method to #content'(method, content, xmlElement) {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.environmentVariables {
+            "${method}"(content)
+        }
+
+        then:
+        job.node.properties[0].'EnvInjectJobProperty'[0]."${xmlElement}"[0].value() == content
+
+        where:
+        method               || content || xmlElement
+        'keepSystemVariables' | true     | 'keepJenkinsSystemVariables'
+        'keepSystemVariables' | false    | 'keepJenkinsSystemVariables'
+        'keepBuildVariables'  | true     | 'keepBuildVariables'
+        'keepBuildVariables'  | false    | 'keepBuildVariables'
+    }
+
+    def 'throttle concurrents enabled as project alone'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.throttleConcurrentBuilds {
+            maxPerNode 1
+            maxTotal 2
+        }
+
+        then:
+        def throttleNode = job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+
+        throttleNode.maxConcurrentPerNode[0].value() == 1
+        throttleNode.maxConcurrentTotal[0].value() == 2
+        throttleNode.throttleEnabled[0].value() == 'true'
+        throttleNode.throttleOption[0].value() == 'project'
+        throttleNode.categories[0].children().size() == 0
+    }
+
+    def 'throttle concurrents disabled'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.throttleConcurrentBuilds {
+            throttleDisabled()
+        }
+
+        then:
+        def throttleNode = job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+        throttleNode.throttleEnabled[0].value() == 'false'
+    }
+
+    def 'throttle concurrents enabled as part of categories'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.throttleConcurrentBuilds {
+            maxPerNode 1
+            maxTotal 2
+            categories(['cat-1', 'cat-2'])
+        }
+
+        then:
+        def throttleNode = job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
+        throttleNode.maxConcurrentPerNode[0].value() == 1
+        throttleNode.maxConcurrentTotal[0].value() == 2
+        throttleNode.throttleEnabled[0].value() == 'true'
+        throttleNode.throttleOption[0].value() == 'category'
+        throttleNode.categories[0].children().size() == 2
+        throttleNode.categories[0].string[0].value() == 'cat-1'
+        throttleNode.categories[0].string[1].value() == 'cat-2'
+    }
+
+    def 'disable defaults to true'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.disabled()
+
+        then:
+        job.node.disabled.size() == 1
+        job.node.disabled[0].value() == true
+
+        when:
+        job.disabled(false)
+
+        then:
+        job.node.disabled.size() == 1
+        job.node.disabled[0].value() == false
+    }
+
+    def 'label constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.label('FullTools')
+
+        then:
+        job.node.assignedNode[0].value() == 'FullTools'
+        job.node.canRoam[0].value() == false
+    }
+
+    def 'without label leaves canRoam as true'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.label()
+
+        then:
+        job.node.assignedNode[0].value() == ''
+        job.node.canRoam[0].value() == true
+    }
+
+    def 'lockable resources simple'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.lockableResources('lock-resource')
+
+        then:
+        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 1
+            resourceNames.size() == 1
+            resourceNamesVar.size() == 0
+            resourceNumber.size() == 0
+            resourceNames[0].value() == 'lock-resource'
+        }
+    }
+
+    def 'lockable resources with all parameters'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.lockableResources('res0 res1 res2') {
+            resourcesVariable('RESOURCES')
+            resourceNumber(1)
+        }
+
+        then:
+        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 3
+            resourceNames.size() == 1
+            resourceNamesVar.size() == 1
+            resourceNumber.size() == 1
+            resourceNames[0].value() == 'res0 res1 res2'
+            resourceNamesVar[0].value() == 'RESOURCES'
+            resourceNumber[0].value() == 1
+        }
+    }
+
+    def 'log rotate xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.logRotator(14, 50)
+
+        then:
+        job.node.logRotator[0].daysToKeep[0].value() == 14
+        job.node.logRotator[0].numToKeep[0].value() == 50
+    }
+
+    def 'build blocker xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.blockOn('MyProject')
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
+            useBuildBlocker[0].value() == 'true'
+            blockingJobs[0].value() == 'MyProject'
+        }
+    }
+
+    def 'can run jdk'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.jdk('JDK1.6.0_32')
+
+        then:
+        job.node.jdk[0].value() == 'JDK1.6.0_32'
+    }
+
+    def 'can run jdk twice'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.jdk('JDK1.6.0_16')
+
+        then:
+        job.node.jdk[0].value() == 'JDK1.6.0_16'
+
+        when:
+        job.jdk('JDK1.6.0_17')
+
+        then:
+        job.node.jdk.size() == 1
+        job.node.jdk[0].value() == 'JDK1.6.0_17'
+    }
+
+    def 'priority constructs xml'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.priority(99)
+
+        then:
+        job.node.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
+    }
+
+    def 'add a quiet period'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.quietPeriod()
+
+        then:
+        job.node.quietPeriod[0].value() == 5
+
+        when:
+        job.quietPeriod(10)
+
+        then:
+        job.node.quietPeriod[0].value() == 10
+    }
+
+    def 'add SCM retry count' () {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.checkoutRetryCount()
+
+        then:
+        job.node.scmCheckoutRetryCount[0].value() == 3
+
+        when:
+        job.checkoutRetryCount(6)
+
+        then:
+        job.node.scmCheckoutRetryCount[0].value() == 6
+    }
+
+    def 'add display name' () {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.displayName('FooBar')
+
+        then:
+        job.node.displayName[0].value() == 'FooBar'
+    }
+
+    def 'add custom workspace' () {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.customWorkspace('/var/lib/jenkins/foobar')
+
+        then:
+        job.node.customWorkspace[0].value() == '/var/lib/jenkins/foobar'
+    }
+
+    def 'add block for up and downstream projects' () {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.blockOnUpstreamProjects()
+
+        then:
+        job.node.blockBuildWhenUpstreamBuilding[0].value() == true
+
+        when:
+        job.blockOnDownstreamProjects()
+
+        then:
+        job.node.blockBuildWhenDownstreamBuilding[0].value() == true
+    }
+
+    def 'set keep Dependencies'(keep) {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.keepDependencies(keep)
+
+        then:
+        job.node.keepDependencies.size() == 1
+        job.node.keepDependencies[0].value() == keep
+
+        where:
+        keep << [true, false]
+    }
+
+    def 'set concurrentBuild with value'(allowConcurrentBuild) {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.concurrentBuild(allowConcurrentBuild)
+
+        then:
+        job.node.concurrentBuild.size() == 1
+        job.node.concurrentBuild[0].value() == allowConcurrentBuild ? 'true' : 'false'
+
+        where:
+        allowConcurrentBuild << [true, false]
+    }
+
+    def 'set concurrentBuild default'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.concurrentBuild()
+
+        then:
+        job.node.concurrentBuild[0].value() == true
+    }
+
+    def 'add batch task'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.batchTask('Hello World', 'echo Hello World')
+
+        then:
+        job.node.'properties'.size() == 1
+        job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'.size() == 1
+        with(job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'[0]) {
+            tasks.size() == 1
+            tasks[0].'hudson.plugins.batch__task.BatchTask'.size() == 1
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].children().size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'name'[0].value() == 'Hello World'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'script'[0].value() == 'echo Hello World'
+        }
+    }
+
+    def 'add two batch tasks'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.batchTask('Hello World', 'echo Hello World')
+        job.batchTask('foo', 'echo bar')
+
+        then:
+        job.node.'properties'.size() == 1
+        job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'.size() == 1
+        with(job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'[0]) {
+            tasks.size() == 1
+            tasks[0].'hudson.plugins.batch__task.BatchTask'.size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].children().size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'name'[0].value() == 'Hello World'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'script'[0].value() == 'echo Hello World'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].children().size() == 2
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'name'[0].value() == 'foo'
+            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'script'[0].value() == 'echo bar'
+        }
+    }
+
+    def 'delivery pipeline configuration with stage and task names'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.deliveryPipelineConfiguration('qa', 'integration-tests')
+
+        then:
+        job.node.'properties'.size() == 1
+        job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
+        with(job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
+            children().size() == 2
+            taskName[0].value() == 'integration-tests'
+            stageName[0].value() == 'qa'
+        }
+    }
+
+    def 'delivery pipeline configuration with stage name'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.deliveryPipelineConfiguration('qa')
+
+        then:
+        job.node.'properties'.size() == 1
+        job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
+        with(job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
+            children().size() == 1
+            stageName[0].value() == 'qa'
+        }
+    }
+
+    def 'delivery pipeline configuration with task name'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.deliveryPipelineConfiguration(null, 'integration-tests')
+
+        then:
+        job.node.'properties'.size() == 1
+        job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
+        with(job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
+            children().size() == 1
+            taskName[0].value() == 'integration-tests'
+        }
+    }
+
+    def 'set notification with default properties'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.notifications {
+            endpoint('http://endpoint.com')
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 3
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+        }
+    }
+
+    def 'set notification with all required properties'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.notifications {
+            endpoint('http://endpoint.com', 'TCP', 'XML')
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 3
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'TCP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'XML'
+        }
+    }
+
+    def 'set notification with invalid parameters'(String url, String protocol, String format, String event) {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
+        Job job = new Job(jm)
+
+        when:
+        job.notifications {
+            endpoint(url, protocol, format) {
+                delegate.event(event)
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        url        | protocol | format  | event
+        'foo:2300' | 'TCP'    | 'what?' | 'all'
+        'foo:2300' | 'TCP'    | ''      | 'all'
+        'foo:2300' | 'TCP'    | null    | 'all'
+        'foo:2300' | 'test'   | 'JSON'  | 'all'
+        'foo:2300' | ''       | 'JSON'  | 'all'
+        'foo:2300' | null     | 'JSON'  | 'all'
+        ''         | 'TCP'    | 'JSON'  | 'all'
+        null       | 'TCP'    | 'JSON'  | 'all'
+        'foo:2300' | 'TCP'    | 'JSON'  | 'acme'
+        'foo:2300' | 'TCP'    | 'JSON'  | ''
+        'foo:2300' | 'TCP'    | 'JSON'  | null
+    }
+
+    def 'set notification with default properties and using a closure'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
+        Job job = new Job(jm)
+
+        when:
+        job.notifications {
+            endpoint('http://endpoint.com') {
+                event('started')
+                timeout(10000)
+            }
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 5
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'started'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
+        }
+    }
+
+    def 'set notification with all required properties and using a closure'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
+        Job job = new Job(jm)
+
+        when:
+        job.notifications {
+            endpoint('http://endpoint.com', 'TCP', 'XML') {
+                event('started')
+                timeout(10000)
+            }
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 5
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'TCP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'XML'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'started'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
+        }
+    }
+
+    def 'set notification with multiple endpoints'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        jm.getPluginVersion('notification') >> new VersionNumber('1.6')
+        Job job = new Job(jm)
+
+        when:
+        job.notifications {
+            endpoint('http://endpoint1.com')
+            endpoint('http://endpoint2.com')
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 2
+
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 5
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint1.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].children().size() == 5
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].url[0].text() == 'http://endpoint2.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].format[0].text() == 'JSON'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].event[0].text() == 'all'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].timeout[0].value() == 30000
+        }
     }
 
     private final minimalXml = '''
