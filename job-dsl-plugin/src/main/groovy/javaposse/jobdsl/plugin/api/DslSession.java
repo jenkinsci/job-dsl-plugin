@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DslSession {
-    private static final ThreadLocal<DslSession> CURRENT_SESSION = new ThreadLocal<DslSession>();
+    private static final ThreadLocal<DslSession> CURRENT_SESSION = new ThreadLocal<DslSession>() {
+        protected DslSession initialValue() {
+            return new DslSession();
+        }
+    };
 
     private final Map<String, Object> data = new HashMap<String, Object>();
 
@@ -16,10 +20,6 @@ public class DslSession {
         data.put(key, value);
     }
 
-    public static void setCurrentSession(DslSession dslSession) {
-        CURRENT_SESSION.set(dslSession);
-    }
-
     public static DslSession getCurrentSession() {
         DslSession dslSession = CURRENT_SESSION.get();
         if (dslSession == null) {
@@ -28,7 +28,4 @@ public class DslSession {
         return dslSession;
     }
 
-    public static void clearCurrentSession() {
-        CURRENT_SESSION.remove();
-    }
 }
