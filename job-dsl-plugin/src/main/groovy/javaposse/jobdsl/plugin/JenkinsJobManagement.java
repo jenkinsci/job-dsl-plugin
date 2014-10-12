@@ -354,37 +354,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return null;
     }
 
-    public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
-        Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
-        if (candidates.isEmpty()) {
-            LOGGER.fine(
-                    "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
-            );
-            return null;
-        } else if (candidates.size() > 1) {
-            throw new ExtensionPointException(
-                    "Found multiple extensions which provide method " + name + " with arguments " +
-                            Arrays.toString(args) + ": " +
-                            Arrays.toString(ClassUtils.toClass(candidates.keySet().toArray()))
-            );
-        }
-
-        try {
-            Map.Entry<ContextExtensionPoint, Method> candidate = candidates.entrySet().iterator().next();
-            ContextExtensionPoint extensionPoint = candidate.getKey();
-            Method method = candidate.getValue();
-            Object result = method.invoke(extensionPoint, args);
-            String xml = XSTREAM.toXML(result);
-            LOGGER.fine(
-                    "Call to extension " + extensionPoint.getClass().getName() + "." + name + " with arguments " +
-                            Arrays.toString(args) + " produced " + xml
-            );
-            return new XmlParser().parseText(xml);
-        } catch (Exception e) {
-            throw new ExtensionPointException("Error calling extension", e);
-        }
-    }
-
     private void markBuildAsUnstable(String message) {
         getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
         build.setResult(UNSTABLE);
