@@ -320,6 +320,21 @@ class JobTest extends Specification {
         job.node.scm[0].scms[0].scm.size() == 2
     }
 
+    def 'call wrappers'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.wrappers {
+            maskPasswords()
+        }
+
+        then:
+        job.node.buildWrappers[0].children()[0].name() ==
+                'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
+    }
+
     def 'call triggers'() {
         setup:
         JobManagement jm = Mock(JobManagement)

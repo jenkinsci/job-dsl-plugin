@@ -13,7 +13,7 @@ import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
-import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
+import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 
 /**
  * DSL element representing a Jenkins job.
@@ -25,7 +25,6 @@ class Job extends Item {
     JobType type = null // Required
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
-    @Delegate WrapperContextHelper helperWrapper
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
     @Delegate BuildFlowHelper helperBuildFlow
@@ -38,7 +37,6 @@ class Job extends Item {
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
 
         // Helpers
-        helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type, jobManagement)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
@@ -147,6 +145,17 @@ class Job extends Item {
         withXmlActions << WithXmlAction.create { Node project ->
             context.triggerNodes.each {
                 project / 'triggers' << it
+            }
+        }
+    }
+
+    def wrappers(Closure closure) {
+        WrapperContext context = new WrapperContext(type, jobManagement)
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.wrapperNodes.each {
+                project / 'buildWrappers' << it
             }
         }
     }
