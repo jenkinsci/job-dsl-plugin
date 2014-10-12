@@ -281,6 +281,20 @@ class JobTest extends Specification {
         job.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
     }
 
+    def 'call publishers'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.publishers {
+            chucknorris()
+        }
+
+        then:
+        job.node.publishers[0].'hudson.plugins.chucknorris.CordellWalkerRecorder'[0].factGenerator[0].text() == ''
+    }
+
     private final minimalXml = '''
 <project>
   <actions/>

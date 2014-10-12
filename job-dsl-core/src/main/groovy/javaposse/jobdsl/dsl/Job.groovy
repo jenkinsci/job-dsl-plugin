@@ -8,9 +8,9 @@ import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
-import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
 import javaposse.jobdsl.dsl.helpers.ScmContext
+import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
@@ -28,7 +28,6 @@ class Job extends Item {
     @Delegate AuthorizationContextHelper helperAuthorization
     @Delegate WrapperContextHelper helperWrapper
     @Delegate StepContextHelper helperStep
-    @Delegate PublisherContextHelper helperPublisher
     @Delegate MultiScmContextHelper helperMultiscm
     @Delegate TopLevelHelper helperTopLevel
     @Delegate MavenHelper helperMaven
@@ -46,7 +45,6 @@ class Job extends Item {
         helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
         helperStep = new StepContextHelper(withXmlActions, type, jobManagement)
-        helperPublisher = new PublisherContextHelper(withXmlActions, type, jobManagement)
         helperTopLevel = new TopLevelHelper(withXmlActions, type, jobManagement)
         helperMaven = new MavenHelper(withXmlActions, type, jobManagement)
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
@@ -94,6 +92,17 @@ class Job extends Item {
         withXmlActions << WithXmlAction.create { Node project ->
             context.triggerNodes.each {
                 project / 'triggers' << it
+            }
+        }
+    }
+
+    def publishers(Closure closure) {
+        PublisherContext context = new PublisherContext(jobManagement)
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.publisherNodes.each {
+                project / 'publishers' << it
             }
         }
     }

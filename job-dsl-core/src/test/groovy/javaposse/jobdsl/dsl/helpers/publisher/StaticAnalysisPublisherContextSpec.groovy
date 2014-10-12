@@ -1,15 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class StaticAnalysisPublisherContextSpec extends Specification {
-    List<WithXmlAction> mockActions = Mock(List)
     JobManagement jobManagement = Mock(JobManagement)
-    PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform, jobManagement)
     PublisherContext context = new PublisherContext(jobManagement)
 
     @Unroll

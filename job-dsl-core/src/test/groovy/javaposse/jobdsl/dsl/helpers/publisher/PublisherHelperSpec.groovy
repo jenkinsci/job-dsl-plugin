@@ -1,18 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
 
 class PublisherHelperSpec extends Specification {
-
-    List<WithXmlAction> mockActions = Mock()
     JobManagement jobManagement = Mock(JobManagement)
-    PublisherContextHelper helper = new PublisherContextHelper(mockActions, JobType.Freeform, jobManagement)
     PublisherContext context = new PublisherContext(jobManagement)
 
     def 'empty call extended email method'() {
@@ -1119,26 +1114,6 @@ class PublisherHelperSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
-    }
-
-    def 'call step via helper'() {
-        when:
-        helper.publishers {
-            extendedEmail()
-        }
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'can run cordell walker'() {
-        when:
-        helper.publishers {
-            chucknorris()
-        }
-
-        then:
-        1 * mockActions.add(_)
     }
 
     def 'cordell walker constructs xml'() {
