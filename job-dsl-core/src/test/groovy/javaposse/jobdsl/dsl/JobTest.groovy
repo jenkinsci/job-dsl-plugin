@@ -251,6 +251,22 @@ class JobTest extends Specification {
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + matrixJobXml, xml
     }
 
+    def 'call scm'() {
+        setup:
+        JobManagement jm = Mock(JobManagement)
+        Job job = new Job(jm)
+
+        when:
+        job.scm {
+            git {
+                wipeOutWorkspace()
+            }
+        }
+
+        then:
+        job.node.scm[0].wipeOutWorkspace[0].text() == 'true'
+    }
+
     private final minimalXml = '''
 <project>
   <actions/>

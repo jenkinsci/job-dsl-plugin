@@ -2,19 +2,14 @@ package javaposse.jobdsl.dsl.helpers
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
 class ScmHelperSpec extends Specification {
-
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
     private static final String HG_REPO_URL = 'http://selenic.com/repo/hello'
 
-    List<WithXmlAction> mockActions = Mock()
     JobManagement mockJobManagement = Mock(JobManagement)
-    ScmContextHelper helper = new ScmContextHelper(mockActions, JobType.Freeform, mockJobManagement)
     ScmContext context = new ScmContext(false, [], mockJobManagement)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
@@ -963,32 +958,6 @@ class ScmHelperSpec extends Specification {
         context.scmNode.alwaysForceSync[0].value() == 'false'
         context.scmNode.projectPath.size() == 1
         context.scmNode.projectPath[0].value().contains('//depot')
-    }
-
-    def 'call scm via helper'() {
-        when:
-        helper.scm {
-            git(GIT_REPO_URL)
-        }
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'execute withXml Action'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
-        def nodeBuilder = new NodeBuilder()
-
-        Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.git.GitSCM') {
-            wipeOutWorkspace 'true'
-        }
-
-        when:
-        def withXmlAction = helper.generateWithXmlAction(new ScmContext(scmNode))
-        withXmlAction.execute(root)
-
-        then:
-        root.scm[0].wipeOutWorkspace[0].text() == 'true'
     }
 
     def 'call cloneWorkspace'(parentJob, criteria) {

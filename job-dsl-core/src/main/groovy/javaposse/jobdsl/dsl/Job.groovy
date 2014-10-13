@@ -1,15 +1,16 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
 import javaposse.jobdsl.dsl.helpers.MavenHelper
 import javaposse.jobdsl.dsl.helpers.BuildFlowHelper
 import javaposse.jobdsl.dsl.helpers.MatrixHelper
 import javaposse.jobdsl.dsl.helpers.MultiScmContextHelper
-import javaposse.jobdsl.dsl.helpers.ScmContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContextHelper
 import javaposse.jobdsl.dsl.helpers.step.StepContextHelper
+import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.toplevel.TopLevelHelper
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContextHelper
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
@@ -25,7 +26,6 @@ class Job extends Item {
 
     // The idea here is that we'll let the helpers define their own methods, without polluting this class too much
     @Delegate AuthorizationContextHelper helperAuthorization
-    @Delegate ScmContextHelper helperScm
     @Delegate TriggerContextHelper helperTrigger
     @Delegate WrapperContextHelper helperWrapper
     @Delegate StepContextHelper helperStep
@@ -44,7 +44,6 @@ class Job extends Item {
 
         // Helpers
         helperAuthorization = new AuthorizationContextHelper(withXmlActions, type)
-        helperScm = new ScmContextHelper(withXmlActions, type, jobManagement)
         helperMultiscm = new MultiScmContextHelper(withXmlActions, type, jobManagement)
         helperTrigger = new TriggerContextHelper(withXmlActions, type, jobManagement)
         helperWrapper = new WrapperContextHelper(withXmlActions, type, jobManagement)
@@ -72,6 +71,22 @@ class Job extends Item {
     def name(Closure nameClosure) {
         jobManagement.logDeprecationWarning()
         name(nameClosure.call().toString())
+    }
+
+    def scm(Closure closure) {
+        ScmContext context = new ScmContext(false, withXmlActions, jobManagement)
+        AbstractContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            def scm = project / scm
+            if (scm) {
+                // There can only be only one SCM, so remove if there
+                project.remove(scm)
+            }
+
+            // Assuming append the only child
+            project << context.scmNode
+        }
     }
 
     Node getNode() {
