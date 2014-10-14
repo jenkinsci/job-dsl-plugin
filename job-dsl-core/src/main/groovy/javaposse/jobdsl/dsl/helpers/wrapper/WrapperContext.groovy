@@ -282,10 +282,9 @@ class WrapperContext implements Context {
      * Converts ANSI escape codes to colors.
      * @param colorMap name of colormap to use (eg: xterm)
      */
-    def colorizeOutput(String colorMap) {
-        def nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'hudson.plugins.ansicolor.AnsiColorBuildWrapper' {
-            colorMapName(colorMap ?: 'xterm')
+    def colorizeOutput(String colorMap = 'xterm') {
+        wrapperNodes << new NodeBuilder().'hudson.plugins.ansicolor.AnsiColorBuildWrapper' {
+            colorMapName(colorMap)
         }
     }
 

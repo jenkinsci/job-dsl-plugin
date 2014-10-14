@@ -135,7 +135,7 @@ job(Map<String, ?> arguments = [:]) {
         allocatePorts(String[] ports, Closure closure = null)
         buildName(String nameTemplate) // since 1.24
         buildUserVars() // since 1.26
-        colorizeOutput(String colorMap)
+        colorizeOutput(String colorMap = 'xterm')
         deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
         environmentVariables(Closure envClosure)
         exclusionResources(String... resourceNames) // since 1.24

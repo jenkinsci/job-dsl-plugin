@@ -1092,17 +1092,26 @@ Adds timestamps to the console log.
 
 (Since 1.19)
 
-## [AnsiColor](https://wiki.jenkins-ci.org/display/JENKINS/AnsiColor+Plugin)
+## AnsiColor
 
 ```groovy
 job {
     wrappers {
-        colorizeOutput('xterm') // when no parameter is given it will fall back to 'xterm'
+        colorizeOutput(String colorMap = 'xterm')
     }
 }
 ```
 
-Renders ANSI escape sequences, including color, to Console Output.
+Renders ANSI escape sequences, including color, to console output. Requires the
+[AnsiColor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/AnsiColor+Plugin).
+
+```groovy
+job {
+    wrappers {
+        colorizeOutput()
+    }
+}
+```
 
 (Since 1.19)
 

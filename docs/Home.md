@@ -20,6 +20,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Improved build step console output
  * added `entries` method in `publishScp` closure to add multiple entries
  * `pattern` method in `archiveArtifacts` closure can be called multiple times to collect patterns
+ * Added a no parameter variant of `colorizeOutput` to match documentation.
 * 1.26 (October 04 2014)
  * Support for "Pipeline starts with parameters" for [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
  * Support for [Build User Vars Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+User+Vars+Plugin)
