@@ -710,7 +710,7 @@ class StepHelperSpec extends Specification {
 
     def 'call resolveArtifact with minimal arguments' () {
         when:
-        context.resolveArtifact() {
+        context.resolveArtifact {
             targetDirectory 'target'
 
             artifact {
@@ -736,7 +736,8 @@ class StepHelperSpec extends Specification {
         repositoryConnectorNode.snapshotChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
         repositoryConnectorNode.releaseChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
 
-        def artifactNode = repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[0]
+        def artifactNode =
+                repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[0]
 
         artifactNode.groupId[0].value() == 'de.test.me'
         artifactNode.artifactId[0].value() == 'myTestArtifact'
@@ -747,7 +748,7 @@ class StepHelperSpec extends Specification {
 
     def 'call resolveArtifact with all arguments and two artifacts' () {
         when:
-        context.resolveArtifact() {
+        context.resolveArtifact {
             failOnError()
             enableRepoLogging()
 
@@ -789,7 +790,8 @@ class StepHelperSpec extends Specification {
         repositoryConnectorNode.snapshotChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
         repositoryConnectorNode.releaseChecksumPolicy[0].value() == RepositoryConnectorChecksumPolicy.WARN.toString()
 
-        def artifactNode = repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[0]
+        def artifactNode =
+                repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[0]
 
         artifactNode.groupId[0].value() == 'org.slf4j'
         artifactNode.artifactId[0].value() == 'slf4j-api'
@@ -798,7 +800,8 @@ class StepHelperSpec extends Specification {
         artifactNode.extension[0].value() == 'jar'
         artifactNode.targetFileName[0].value() == 'slf4j-api-1.7.6-TEST.jar'
 
-        def artifactNodeTwo = repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[1]
+        def artifactNodeTwo =
+                repositoryConnectorNode.artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[1]
 
         artifactNodeTwo.groupId[0].value() == 'ch.qos.logback'
         artifactNodeTwo.artifactId[0].value() == 'logback-classic'

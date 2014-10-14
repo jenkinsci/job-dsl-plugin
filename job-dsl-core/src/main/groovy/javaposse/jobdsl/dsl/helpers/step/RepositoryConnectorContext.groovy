@@ -5,18 +5,20 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 /**
  * <p>DSL Support for the repository-connector plugin.</p>
- * <p><a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a></p>
+ * <p>
+ *     <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
+ * </p>
  */
 class RepositoryConnectorContext implements Context {
 
     /**
      * <p>Enumeration of available artifact checksum policies.</p>
      */
-    public static enum RepositoryConnectorChecksumPolicy {
+    static enum RepositoryConnectorChecksumPolicy {
 
-        WARN("warn"),
+        WARN('warn'),
 
-        FAIL("fail")
+        FAIL('fail')
 
         private final String stringRepresentation
 
@@ -25,8 +27,8 @@ class RepositoryConnectorContext implements Context {
         }
 
         @Override
-        public String toString() {
-            return this.stringRepresentation
+        String toString() {
+            this.stringRepresentation
         }
 
     }
@@ -34,13 +36,13 @@ class RepositoryConnectorContext implements Context {
     /**
      * <p>Enumeration of available repository update policies.</p>
      */
-    public static enum RepositoryConnectorUpdatePolicy {
+    static enum RepositoryConnectorUpdatePolicy {
 
-        DAILY("daily"),
+        DAILY('daily'),
 
-        NEVER("never"),
+        NEVER('never'),
 
-        ALWAYS("always")
+        ALWAYS('always')
 
         private final String stringRepresentation
 
@@ -49,8 +51,8 @@ class RepositoryConnectorContext implements Context {
         }
 
         @Override
-        public String toString() {
-            return this.stringRepresentation
+        String toString() {
+            this.stringRepresentation
         }
     }
 
@@ -156,7 +158,8 @@ class RepositoryConnectorContext implements Context {
      *     </artifacts>
      *}
      * </pre>
-     * @see <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
+     * @see
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
      */
     def artifact(Closure artifactClosure) {
         RepositoryConnectorArtifactContext context = new RepositoryConnectorArtifactContext()

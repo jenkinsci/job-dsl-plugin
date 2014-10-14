@@ -4,7 +4,9 @@ import javaposse.jobdsl.dsl.helpers.Context
 
 /**
  * <p>DSL Support for the repository-connector plugin's artifacts subsection.</p>
- * <p><a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a></p>
+ * <p>
+ *     <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
+ * </p>
  */
 class RepositoryConnectorArtifactContext implements Context {
 

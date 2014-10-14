@@ -536,7 +536,9 @@ class StepContext implements Context {
     }
 
     /**
-     * <p>Configures the resolution of one or more artifacts from an repository using the repository-connector plugin.</p>
+     * <p>
+     *     Configures the resolution of one or more artifacts from an repository using the repository-connector plugin.
+     * </p>
      * <pre>
      * {@code
      * <org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver>
@@ -564,7 +566,8 @@ class StepContext implements Context {
      * </org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver>
      * }
      * </pre>
-     * @see <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
+     * @see
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
      */
     def resolveArtifact(Closure repositoryConnectorContext) {
 
