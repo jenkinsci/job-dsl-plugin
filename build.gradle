@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.rholder:gradle-one-jar:1.0.3'
-        classpath 'org.ajoberstar:gradle-git:0.6.5'
+        classpath 'org.ajoberstar:gradle-git:0.9.0'
     }
 }
 
@@ -139,6 +139,7 @@ task wrapper(type: Wrapper) {
 apply plugin: 'github-pages'
 
 githubPages {
+    commitMessage = "updated wiki for $version"
     repoUri = 'git@github.com:jenkinsci/job-dsl-plugin.wiki.git'
     targetBranch = 'master'
     workingPath = "$buildDir/wiki"
@@ -146,8 +147,3 @@ githubPages {
         from 'docs'
     }
 }
-
-commitGhPages.message = "updated wiki for $version"
-
-// note: deleting pages is currently not supported
-task publishDocs(dependsOn: publishGhPages)

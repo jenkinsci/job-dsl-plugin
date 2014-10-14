@@ -12,7 +12,7 @@ userName=yourUsername
 password=IHeartJenkins
 ```
 * Deploy: _./gradlew uploadArchives_
-* Publish the docs: _./gradlew publishDocs_
+* Publish the docs: _./gradlew publishGhPages_
 * Tag the source as it is: _git tag -a job-dsl-1.14 -m "Staging 1.14"_
 * Increment the version in gradle.properties and append "-SNAPSHOT": _echo "version=1.15-SNAPSHOT">gradle.properties_
 * Update the release notes, add the next version: `* 1.15 (unreleased)`
