@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer
 import javaposse.jobdsl.dsl.JobManagement
-// import groovy.xml.XmlUtil
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context

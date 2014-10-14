@@ -11,42 +11,43 @@ class WeblogicDeployerPolicyContext implements Context {
     /**
      * <p>Enumeration of available deployment policies.</p>
      */
-    public static enum WeblogicDeploymentPolicies {
+    static enum WeblogicDeploymentPolicies {
 
         /**
          * Legacy code started this job.  No cause information is available
          */
-        LEGACY_CODE("hudson.model.Cause\\\\\$LegacyCodeCause"),
+        LEGACY_CODE('hudson.model.Cause\\\\\$LegacyCodeCause'),
 
         /**
          * Started by user
          */
-        USER("hudson.model.Cause\\\\\$UserCause"),
+        USER('hudson.model.Cause\\\\\$UserCause'),
 
         /**
          * Started by user
          */
-        USER_ID("hudson.model.Cause\\\\\$UserIdCause"),
+        USER_ID('hudson.model.Cause\\\\\$UserIdCause'),
 
         /**
          * Started by remote host
          */
-        REMOTE_HOST("hudson.model.Cause\\\\\$RemoteCause"),
+        REMOTE_HOST('hudson.model.Cause\\\\\$RemoteCause'),
 
         /**
          * Built after other projects are built or whenever a SNAPSHOT dependency is built
          */
-        UPSTREAM("hudson.model.Cause\\\\\$UpstreamCause"),
+        UPSTREAM('hudson.model.Cause\\\\\$UpstreamCause'),
 
         /**
          * Started by deployment timer
          */
-        DEPLOYMENT_TRIGGER("org.jenkinsci.plugins.deploy.weblogic.trigger.DeploymentTrigger\\\\\$DeploymentTriggerCause"),
+        DEPLOYMENT_TRIGGER(
+                'org.jenkinsci.plugins.deploy.weblogic.trigger.DeploymentTrigger\\\\\$DeploymentTriggerCause'),
 
         /**
          * Started by an SCM change
          */
-        SCM_CHANGE("hudson.triggers.SCMTrigger\\\\\$SCMTriggerCause"),
+        SCM_CHANGE('hudson.triggers.SCMTrigger\\\\\$SCMTriggerCause'),
 
         private final String stringRepresentation
 
@@ -55,8 +56,8 @@ class WeblogicDeployerPolicyContext implements Context {
         }
 
         @Override
-        public String toString() {
-            return this.stringRepresentation
+        String toString() {
+            this.stringRepresentation
         }
     }
 

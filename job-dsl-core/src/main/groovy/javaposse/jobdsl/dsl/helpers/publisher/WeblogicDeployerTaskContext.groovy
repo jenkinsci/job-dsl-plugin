@@ -1,6 +1,6 @@
-package javaposse.jobdsl.dsl.helpers.publisher;
+package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context;
+import javaposse.jobdsl.dsl.helpers.Context
 
 import static javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes
 

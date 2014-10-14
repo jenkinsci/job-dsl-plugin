@@ -2930,7 +2930,7 @@ class PublisherHelperSpec extends Specification {
 
     def 'publish one deployment to WebLogic with all required args'() {
         when:
-        context.deployToWeblogic() {
+        context.deployToWeblogic {
 
             task {
                 weblogicEnvironmentTargetedName 'test_environment'
@@ -2979,7 +2979,7 @@ class PublisherHelperSpec extends Specification {
 
     def 'publish one deployment to WebLogic with all args'() {
         when:
-        context.deployToWeblogic() {
+        context.deployToWeblogic {
             mustExitOnFailure()
             forceStopOnFirstFailure()
             deployingOnlyWhenUpdates()
@@ -3018,9 +3018,10 @@ class PublisherHelperSpec extends Specification {
         context.publisherNodes[0].isDeployingOnlyWhenUpdates[0].value() == true
         context.publisherNodes[0].deployedProjectsDependencies[0].value() == 'abc,def'
 
-        context.publisherNodes[0].selectedDeploymentStrategyIds[0].children().size() == 2
-        context.publisherNodes[0].selectedDeploymentStrategyIds[0].string[0].value() == WeblogicDeploymentPolicies.SCM_CHANGE.toString()
-        context.publisherNodes[0].selectedDeploymentStrategyIds[0].string[1].value() == WeblogicDeploymentPolicies.USER.toString()
+        def selectedDeploymentStrategyId = context.publisherNodes[0].selectedDeploymentStrategyIds[0]
+        selectedDeploymentStrategyId.children().size() == 2
+        selectedDeploymentStrategyId.string[0].value() == WeblogicDeploymentPolicies.SCM_CHANGE.toString()
+        selectedDeploymentStrategyId.string[1].value() == WeblogicDeploymentPolicies.USER.toString()
 
         context.publisherNodes[0].tasks.size() == 1
         def task = context.publisherNodes[0].tasks[0].'org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask'
@@ -3046,7 +3047,7 @@ class PublisherHelperSpec extends Specification {
 
     def 'publish to WebLogic without task definition'() {
         when:
-        context.deployToWeblogic() {
+        context.deployToWeblogic {
             mustExitOnFailure()
             forceStopOnFirstFailure()
             deployingOnlyWhenUpdates()
@@ -3066,7 +3067,7 @@ class PublisherHelperSpec extends Specification {
 
     def 'publish two deployment to WebLogic with all args'() {
         when:
-        context.deployToWeblogic() {
+        context.deployToWeblogic {
             mustExitOnFailure()
             forceStopOnFirstFailure()
             deployingOnlyWhenUpdates()

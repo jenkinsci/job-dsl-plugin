@@ -13,15 +13,15 @@ class WeblogicDeployerContext implements Context {
     /**
      * <p>Enumeration of available deployment stage modes.</p>
      */
-    public static enum WeblogicDeploymentStageModes {
+    static enum WeblogicDeploymentStageModes {
 
-        BY_DEFAULT("bydefault"),
+        BY_DEFAULT('bydefault'),
 
-        STAGE("stage"),
+        STAGE('stage'),
 
-        NO_STAGE("nostage"),
+        NO_STAGE('nostage'),
 
-        EXTERNAL_STAGE("external_stage")
+        EXTERNAL_STAGE('external_stage')
 
         private final String stringRepresentation
 
@@ -30,8 +30,8 @@ class WeblogicDeployerContext implements Context {
         }
 
         @Override
-        public String toString() {
-            return this.stringRepresentation
+        String toString() {
+            this.stringRepresentation
         }
     }
 
@@ -85,7 +85,7 @@ class WeblogicDeployerContext implements Context {
 
         def nodeBuilder = NodeBuilder.newInstance()
 
-        context.deploymentPolicies.each() {
+        context.deploymentPolicies.each {
             policy -> deploymentPoliciesIdsNodes << nodeBuilder.createNode('string', policy)
         }
     }
