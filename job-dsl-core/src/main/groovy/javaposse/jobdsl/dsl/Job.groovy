@@ -68,7 +68,9 @@ class Job extends Item {
         this.templateName = templateName
     }
 
+    @Deprecated
     def name(Closure nameClosure) {
+        jobManagement.logDeprecationWarning()
         name(nameClosure.call().toString())
     }
 

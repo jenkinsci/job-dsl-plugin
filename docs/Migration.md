@@ -1,3 +1,26 @@
+## Migrating to 1.27
+
+### Job Name
+
+The `name` method variant with a closure parameter in the `job` closure is deprecated, use the string argument variant
+instead.
+
+DSL prior to 1.27
+```groovy
+job {
+    name {
+        'foo'
+    }
+}
+```
+
+DSL since 1.27
+```groovy
+job {
+    name('foo')
+}
+```
+
 ## Migrating to 1.26
 
 ### Archive JUnit Report
