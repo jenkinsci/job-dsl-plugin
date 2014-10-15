@@ -182,6 +182,8 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
         icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
         icz.addImports("javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.step.RepositoryConnectorContext.RepositoryConnectorChecksumPolicy");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.step.RepositoryConnectorContext.RepositoryConnectorUpdatePolicy");
         config.addCompilationCustomizers(icz);
 
         config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

@@ -536,6 +536,64 @@ class StepContext implements Context {
     }
 
     /**
+     * <p>
+     *     Configures the resolution of one or more artifacts from an repository using the repository-connector plugin.
+     * </p>
+     * <pre>
+     * {@code
+     * <org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver>
+     *     <targetDirectory>target</targetDirectory>
+     *
+     *     <failOnError>false</failOnError>
+     *     <enableRepoLogging>false</enableRepoLogging>
+     *
+     *     <snapshotUpdatePolicy>daily</snapshotUpdatePolicy>
+     *     <releaseUpdatePolicy>daily</releaseUpdatePolicy>
+     *
+     *     <snapshotChecksumPolicy>warn</snapshotChecksumPolicy>
+     *     <releaseChecksumPolicy>warn</releaseChecksumPolicy>
+     *
+     *     <artifacts>
+     *       <org.jvnet.hudson.plugins.repositoryconnector.Artifact>
+     *         <groupId>de.test.me</groupId>
+     *         <artifactId>myTestArtifact</artifactId>
+     *         <classifier/>
+     *         <version>RELEASE</version>
+     *         <extension>war</extension>
+     *         <targetFileName>myTestArtifact.war</targetFileName>
+     *       </org.jvnet.hudson.plugins.repositoryconnector.Artifact>
+     *     </artifacts>
+     * </org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver>
+     * }
+     * </pre>
+     * @see
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
+     */
+    def resolveArtifact(Closure repositoryConnectorContext) {
+
+        RepositoryConnectorContext context = new RepositoryConnectorContext()
+        AbstractContextHelper.executeInContext(repositoryConnectorContext, context)
+
+        def nodeBuilder = NodeBuilder.newInstance()
+
+        Node artifactResolverNode = nodeBuilder.'org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver' {
+            targetDirectory context.targetDirectory
+
+            failOnError context.failOnError
+            enableRepoLogging context.enableRepoLogging
+
+            snapshotUpdatePolicy context.snapshotUpdatePolicy.toString()
+            releaseUpdatePolicy context.releaseUpdatePolicy.toString()
+            snapshotChecksumPolicy context.snapshotChecksumPolicy.toString()
+            releaseChecksumPolicy context.releaseChecksumPolicy.toString()
+
+            artifacts context.artifactNodes
+        }
+
+        stepNodes << artifactResolverNode
+    }
+
+    /**
      * phaseName will have to be provided in the closure
      *
      * <com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
