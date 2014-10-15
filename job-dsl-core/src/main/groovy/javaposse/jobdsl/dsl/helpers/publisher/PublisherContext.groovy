@@ -1384,4 +1384,74 @@ class PublisherContext implements Context {
             userMetadata(context.metadata)
         }
     }
+
+    /**
+     * <p>Configures a Weblogic deployment using the weblogic-deployer-plugin</p>
+     * <p>By default the following values are applied. If an instance of a
+     * closure is provided, the values from the closure will take effect.</p>
+     *
+     * <pre>
+     * {@code
+     * <org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin>
+     *     <mustExitOnFailure>false</mustExitOnFailure>
+     *     <forceStopOnFirstFailure>false</forceStopOnFirstFailure>
+     *     <selectedDeploymentStrategyIds/>
+     *     <isDeployingOnlyWhenUpdates>false</isDeployingOnlyWhenUpdates>
+     *     <deployedProjectsDependencies></deployedProjectsDependencies>
+     *     <tasks>
+     *         <org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
+     *             <id>qGVVG2aOeF</id>
+     *             <taskName>Deploy myApp</taskName>
+     *
+     *             <weblogicEnvironmentTargetedName>environment name</weblogicEnvironmentTargetedName>
+     *             <deploymentName>application name</deploymentName>
+     *             <deploymentTargets>myManagedServer, AdminServer</deploymentTargets>
+     *             <isLibrary>false</isLibrary>
+     *             <builtResourceRegexToDeploy>myApp\.ear</builtResourceRegexToDeploy>
+     *             <baseResourcesGeneratedDirectory></baseResourcesGeneratedDirectory>
+     *
+     *             <jdk>
+     *               <!-- When leaving these tags empty, the default JDK should be used.
+     *                    Otherwise name and home must be set. -->
+     *               <name>JDK 7u51</name>
+     *               <home></home>
+     *               <properties/>
+     *             </jdk>
+     *
+     *             <stageMode>stage</stageMode>
+     *             <commandLine></commandLine>
+     *             <deploymentPlan></deploymentPlan>
+     *         </org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
+     *         <org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
+     *           ...
+     *         </org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
+     *     </tasks>
+     * </org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin>
+     *}
+     * </pre>
+     *
+     * @see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
+     */
+    def deployToWeblogic(Closure weblogicClosure) {
+
+        WeblogicDeployerContext context = new WeblogicDeployerContext()
+        AbstractContextHelper.executeInContext(weblogicClosure, context)
+
+        def nodeBuilder = NodeBuilder.newInstance()
+        Node weblogicDeployerNode = nodeBuilder.'org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin' {
+
+            mustExitOnFailure context.mustExitOnFailure
+            forceStopOnFirstFailure context.forceStopOnFirstFailure
+            isDeployingOnlyWhenUpdates context.deployingOnlyWhenUpdates
+            deployedProjectsDependencies context.deployedProjectsDependencies
+
+            selectedDeploymentStrategyIds context.deploymentPoliciesIdsNodes
+
+            if (context.taskNodes) {
+                tasks context.taskNodes
+            }
+        }
+
+        publisherNodes << weblogicDeployerNode
+    }
 }
