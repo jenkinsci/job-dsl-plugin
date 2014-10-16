@@ -47,7 +47,7 @@ class StepContextSpec extends Specification {
         def gradleStep = context.stepNodes[0]
         gradleStep.name() == 'hudson.plugins.gradle.Gradle'
         gradleStep.tasks[0].value() == 'build'
-        gradleStep.useWrapper[0].value() == 'true'
+        gradleStep.useWrapper[0].value() == true
 
         when:
         context.gradle('build', '-I init.gradle', false)
@@ -56,7 +56,85 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 2
         def gradleStep2 = context.stepNodes[1]
         gradleStep2.switches[0].value() == '-I init.gradle'
-        gradleStep2.useWrapper[0].value() == 'false'
+        gradleStep2.useWrapper[0].value() == false
+
+        when:
+        context.gradle('build', '-I init.gradle', false) {
+            it / 'node1' << 'value1'
+        }
+
+        then:
+        context.stepNodes.size() == 3
+        def gradleStep3 = context.stepNodes[2]
+        gradleStep3.node1[0].value() == 'value1'
+    }
+
+    def 'call gradle methods with defaults'() {
+        when:
+        context.gradle()
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            tasks[0].value() == ''
+            switches[0].value() == ''
+            useWrapper[0].value() == true
+            description[0].value() == ''
+            rootBuildScriptDir[0].value() == ''
+            buildFile[0].value() == ''
+            gradleName[0].value() == '(Default)'
+            fromRootBuildScriptDir[0].value() == true
+            makeExecutable[0].value() == false
+        }
+
+        when:
+        context.gradle {
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        with(context.stepNodes[1]) {
+            tasks[0].value() == ''
+            switches[0].value() == ''
+            useWrapper[0].value() == true
+            description[0].value() == ''
+            rootBuildScriptDir[0].value() == ''
+            buildFile[0].value() == ''
+            gradleName[0].value() == '(Default)'
+            fromRootBuildScriptDir[0].value() == true
+            makeExecutable[0].value() == false
+        }
+    }
+
+    def 'call gradle methods with context'() {
+        when:
+        context.gradle {
+            tasks 'clean'
+            tasks 'build'
+            switches '--info'
+            switches '--stacktrace'
+            useWrapper false
+            description 'desc'
+            rootBuildScriptDir 'rbsd'
+            buildFile 'bf'
+            gradleName 'gn'
+            fromRootBuildScriptDir true
+            makeExecutable true
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            tasks[0].value() == 'clean build'
+            switches[0].value() == '--info --stacktrace'
+            useWrapper[0].value() == false
+            description[0].value() == 'desc'
+            rootBuildScriptDir[0].value() == 'rbsd'
+            buildFile[0].value() == 'bf'
+            gradleName[0].value() == 'gn'
+            fromRootBuildScriptDir[0].value() == true
+            makeExecutable[0].value() == true
+        }
     }
 
     def 'call grails methods'() {

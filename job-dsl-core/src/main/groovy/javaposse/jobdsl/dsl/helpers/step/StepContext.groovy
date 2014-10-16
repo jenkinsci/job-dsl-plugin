@@ -49,32 +49,53 @@ class StepContext implements Context {
     /**
      * <hudson.plugins.gradle.Gradle>
      *     <description/>
-     *     <switches>-Dtiming-multiple=5 -P${Status}=true -I ${WORKSPACE}/netflix-oss.gradle ${Option}</switches>
-     *     <tasks>clean${Task}</tasks>
+     *     <switches/>
+     *     <tasks/>
      *     <rootBuildScriptDir/>
      *     <buildFile/>
-     *     <useWrapper>true</useWrapper>
-     *     <wrapperScript/>
+     *     <gradleName>(Default)</gradleName>
+     *     <useWrapper>false</useWrapper>
+     *     <makeExecutable>false</makeExecutable>
+     *     <fromRootBuildScriptDir>true</fromRootBuildScriptDir>
      * </hudson.plugins.gradle.Gradle>
      */
-    def gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg = true,
-               Closure configure = null) {
-        def nodeBuilder = new NodeBuilder()
-        def gradleNode = nodeBuilder.'hudson.plugins.gradle.Gradle' {
-            description ''
-            switches switchesArg ?: ''
-            tasks tasksArg ?: ''
-            rootBuildScriptDir ''
-            buildFile ''
-            useWrapper useWrapperArg == null ? 'true' : useWrapperArg.toString()
-            wrapperScript ''
+    def gradle(Closure gradleClosure) {
+        GradleContext gradleContext = new GradleContext()
+        ContextHelper.executeInContext(gradleClosure, gradleContext)
+
+        Node gradleNode = new NodeBuilder().'hudson.plugins.gradle.Gradle' {
+            description gradleContext.description
+            switches gradleContext.switches.join(' ')
+            tasks gradleContext.tasks.join(' ')
+            rootBuildScriptDir gradleContext.rootBuildScriptDir
+            buildFile gradleContext.buildFile
+            gradleName gradleContext.gradleName
+            useWrapper gradleContext.useWrapper
+            makeExecutable gradleContext.makeExecutable
+            fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
         }
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
+
+        if (gradleContext.configureBlock) {
+            WithXmlAction action = new WithXmlAction(gradleContext.configureBlock)
             action.execute(gradleNode)
         }
+
         stepNodes << gradleNode
+    }
+
+    def gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
+        gradle {
+            if (tasks != null) {
+                delegate.tasks(tasks)
+            }
+            if (switches != null) {
+                delegate.switches(switches)
+            }
+            if (useWrapper != null) {
+                delegate.useWrapper(useWrapper)
+            }
+            delegate.configure(configure)
+        }
     }
 
     /**

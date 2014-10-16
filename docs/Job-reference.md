@@ -1527,11 +1527,43 @@ batchFile(String commandStr)
 Supports running a Windows batch file as a build step.
 
 ## Gradle
+
 ```groovy
-gradle(String tasksArg = null, String switchesArg = null, Boolean useWrapperArg = true, Closure configure = null)
+job {
+    steps {
+        gradle(String tasksArg = null, String switchesArg = null,
+               Boolean useWrapperArg = true, Closure configure = null)
+        gradle { // since 1.27
+            tasks(String tasks)                                           // can be called multiple times
+            switches(String switches)                                     // can be called multiple times
+            useWrapper(boolean useWrapper = true)                         // defaults to true
+            description(String description)
+            rootBuildScriptDir(String rootBuildScriptDir)
+            buildFile(String buildFile)
+            fromRootBuildScriptDir(boolean fromRootBuildScriptDir = true) // defaults to true
+            gradleName(String gradleName)                                 // defaults to '(Default)'
+            makeExecutable(boolean makeExecutable = true)                 // defaults to false
+            configure(Closure configureBlock)
+        }
+    }
+}
 ```
 
-Runs Gradle, defaulting to the Gradle Wrapper. Configure block is handed a hudson.plugins.gradle.Gradle node.
+Runs Gradle, defaulting to the Gradle Wrapper. A `hudson.plugins.gradle.Gradle` node is passed into the configure block.
+Requires the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin).
+
+```groovy
+job {
+    steps {
+        gradle('check')
+        gradle {
+            tasks('clean')
+            tasks('check')
+            switches('--info')
+        }
+    }
+}
+```
 
 ## Maven
 ```groovy
