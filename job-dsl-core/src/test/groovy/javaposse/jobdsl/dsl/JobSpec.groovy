@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
-class JobTest extends Specification {
+class JobSpec extends Specification {
     private final resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
     private final JobManagement jobManagement = Mock(JobManagement)
     private Job job = new Job(jobManagement)
