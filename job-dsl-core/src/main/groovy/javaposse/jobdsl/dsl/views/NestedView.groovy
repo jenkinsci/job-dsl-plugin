@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.View
 
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
 
 class NestedView extends View {
     void views(Closure viewsClosure) {

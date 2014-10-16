@@ -227,7 +227,7 @@ class BuildParametersContext implements Context {
         checkArgument(parameterName.length() > 0)
 
         NodeParamContext context = new NodeParamContext()
-        AbstractContextHelper.executeInContext(nodeParamClosure, context)
+        ContextHelper.executeInContext(nodeParamClosure, context)
 
         buildParameterNodes[parameterName] = NodeBuilder.newInstance().
                 'org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition' {

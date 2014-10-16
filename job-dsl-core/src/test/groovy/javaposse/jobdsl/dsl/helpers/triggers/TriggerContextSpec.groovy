@@ -3,14 +3,11 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
-class TriggerHelperSpec extends Specification {
-
+class TriggerContextSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
     JobManagement mockJobManagement = Mock(JobManagement)
-    TriggerContextHelper helper = new TriggerContextHelper(mockActions, JobType.Freeform, mockJobManagement)
     TriggerContext context = new TriggerContext(mockActions, JobType.Freeform, mockJobManagement)
 
     def 'call github trigger methods'() {
@@ -289,16 +286,6 @@ class TriggerHelperSpec extends Specification {
         timerTrigger.spec[0].value() == '*/5 * * * *'
     }
 
-    def 'call trigger via helper'() {
-        when:
-        helper.triggers {
-            cron('0 12 * * * *')
-        }
-
-        then:
-        1 * mockActions.add(_)
-    }
-
     def 'call pull request trigger with no args'() {
         when:
         context.pullRequest()
@@ -541,19 +528,6 @@ class TriggerHelperSpec extends Specification {
             gerritBuildStartedCodeReviewValue.size() == 1
             gerritBuildStartedCodeReviewValue[0].value() == 55
         }
-    }
-
-    def 'execute withXml Action'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
-        TriggerContext triggerContext = new TriggerContext([], JobType.Freeform, mockJobManagement)
-        triggerContext.scm('2 3 * * * *')
-
-        when:
-        def withXmlAction = helper.generateWithXmlAction(triggerContext)
-        withXmlAction.execute(root)
-
-        then:
-        root.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
     }
 
     def 'call snapshotDependencies for free-style job fails'() {

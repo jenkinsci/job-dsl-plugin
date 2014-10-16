@@ -9,7 +9,7 @@ import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static ContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
 class ScmContext implements Context {

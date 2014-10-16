@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -21,7 +21,7 @@ class S3BucketPublisherContext implements Context {
         checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")
 
         S3EntryContext context = new S3EntryContext()
-        AbstractContextHelper.executeInContext(closure, context)
+        ContextHelper.executeInContext(closure, context)
 
         this.entries << NodeBuilder.newInstance().'hudson.plugins.s3.Entry' {
             sourceFile(source)

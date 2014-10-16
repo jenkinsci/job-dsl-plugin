@@ -3,18 +3,13 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
-class WrapperHelperSpec extends Specification {
-    List<WithXmlAction> mockActions = []
-    JobManagement mockJobManagement = Mock()
-    WrapperContextHelper helper = new WrapperContextHelper(mockActions, JobType.Freeform, mockJobManagement)
+class WrapperContextSpec extends Specification {
+    JobManagement mockJobManagement = Mock(JobManagement)
     WrapperContext context = new WrapperContext(JobType.Freeform, mockJobManagement)
-    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
     def 'call timestamps method'() {
         when:
@@ -29,72 +24,38 @@ class WrapperHelperSpec extends Specification {
 
     def 'run on same node' () {
         when:
-        helper.wrappers {
-            runOnSameNodeAs('testJob')
-        }
-        executeHelperActionsOnRootNode()
+        context.runOnSameNodeAs('testJob')
 
         then:
-        def wrapper = root.buildWrappers[0].'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
+        def wrapper = context.wrapperNodes[0]
+        wrapper.name() == 'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
         wrapper.job[0].value() == 'testJob'
         wrapper.shareWorkspace[0].value() == false
     }
 
     def 'run on same node and use same workspace' () {
         when:
-        helper.wrappers {
-            runOnSameNodeAs('testJob', true)
-        }
-        executeHelperActionsOnRootNode()
+        context.runOnSameNodeAs('testJob', true)
 
         then:
-        def wrapper = root.buildWrappers[0].'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
+        def wrapper = context.wrapperNodes[0]
+        wrapper.name() == 'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
         wrapper.job[0].value() == 'testJob'
         wrapper.shareWorkspace[0].value() == true
     }
 
-    private executeHelperActionsOnRootNode() {
-        helper.withXmlActions.each { WithXmlAction withXmlClosure ->
-            withXmlClosure.execute(root)
-        }
-    }
-
     def 'add rvm-controlled ruby version'() {
         when:
-        helper.wrappers {
-            rvm('ruby-1.9.3')
-        }
-        executeHelperActionsOnRootNode()
+        context.rvm('ruby-1.9.3')
 
         then:
-        root.buildWrappers[0].'ruby-proxy-object'[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
-    }
-
-    def 'rvm exception on empty param'() {
-        when:
-        helper.wrappers {
-            rvm()
-        }
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
-    def 'can run timeout'() {
-        when:
-        helper.wrappers {
-            timeout(15)
-        }
-
-        then:
-        mockActions.size() == 1
+        context.wrapperNodes[0].name() == 'ruby-proxy-object'
+        context.wrapperNodes[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
     }
 
     def 'can not run timeout with empty closure'() {
         when:
-        helper.wrappers {
-            timeout {
-            }
+        context.timeout {
         }
 
         then:
@@ -103,12 +64,10 @@ class WrapperHelperSpec extends Specification {
 
     def 'timeout constructs xml'() {
         when:
-        helper.wrappers {
-            timeout(15)
-        }
-        executeHelperActionsOnRootNode()
+        context.timeout(15)
 
         then:
+        timeoutWrapper.name() == 'hudson.plugins.build__timeout.BuildTimeoutWrapper'
         def strategy = timeoutWrapper.strategy[0]
         strategy.attribute('class') == 'hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy'
         strategy.timeoutMinutes[0].value() == 15
@@ -122,10 +81,7 @@ class WrapperHelperSpec extends Specification {
 
     def 'timeout failBuild parameter works'() {
         when:
-        helper.wrappers {
-            timeout(15, false)
-        }
-        executeHelperActionsOnRootNode()
+        context.timeout(15, false)
 
         then:
         timeoutHasNoOperation()
@@ -137,10 +93,7 @@ class WrapperHelperSpec extends Specification {
 
     def 'default timeout works' () {
         when:
-        helper.wrappers {
-            timeout()
-        }
-        executeHelperActionsOnRootNode()
+        context.timeout()
 
         then:
         timeoutWrapper.strategy[0].timeoutMinutes[0].value() == 3
@@ -149,12 +102,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'absolute timeout configuration working' () {
         when:
-        helper.wrappers {
-            timeout {
-                absolute(5)
-            }
+        context.timeout {
+            absolute(5)
         }
-        executeHelperActionsOnRootNode()
 
         then:
         timeoutWrapper.strategy[0].timeoutMinutes[0].value() == 5
@@ -162,17 +112,14 @@ class WrapperHelperSpec extends Specification {
     }
 
     private getTimeoutWrapper() {
-        root.buildWrappers[0].'hudson.plugins.build__timeout.BuildTimeoutWrapper'
+        context.wrapperNodes[0]
     }
 
     def 'elastic timeout configuration working' () {
         when:
-        helper.wrappers {
-            timeout {
-                elastic(200, 3, 15)
-            }
+        context.timeout {
+            elastic(200, 3, 15)
         }
-        executeHelperActionsOnRootNode()
 
         then:
         def strategy = timeoutWrapper.strategy[0]
@@ -184,13 +131,10 @@ class WrapperHelperSpec extends Specification {
 
     def 'NoActivity configuration working with set description' () {
         when:
-        helper.wrappers {
-            timeout {
-                noActivity(15)
-                writeDescription('desc')
-            }
+        context.timeout {
+            noActivity(15)
+            writeDescription('desc')
         }
-        executeHelperActionsOnRootNode()
 
         then:
         def strategy = timeoutWrapper.strategy[0]
@@ -203,12 +147,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'likelyStuck timeout configuration working' () {
         when:
-        helper.wrappers {
-            timeout {
-                likelyStuck()
-            }
+        context.timeout {
+            likelyStuck()
         }
-        executeHelperActionsOnRootNode()
 
         then:
         def strategy = timeoutWrapper.strategy[0]
@@ -219,31 +160,27 @@ class WrapperHelperSpec extends Specification {
 
     def 'port allocator string list'() {
         when:
-        helper.wrappers {
-            allocatePorts 'HTTP', '8080'
-        }
-        executeHelperActionsOnRootNode()
+        context.allocatePorts 'HTTP', '8080'
 
         then:
-        def ports = root.buildWrappers.'org.jvnet.hudson.plugins.port__allocator.PortAllocator'.ports
+        context.wrapperNodes[0].name() == 'org.jvnet.hudson.plugins.port__allocator.PortAllocator'
+        def ports = context.wrapperNodes[0].ports
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
     }
 
     def 'port allocator closure'() {
         when:
-        helper.wrappers {
-            allocatePorts {
-                port 'HTTP'
-                port '8080'
-                glassfish '1234', 'user', 'password'
-                tomcat '1234', 'password'
-            }
+        context.allocatePorts {
+            port 'HTTP'
+            port '8080'
+            glassfish '1234', 'user', 'password'
+            tomcat '1234', 'password'
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        def ports = root.buildWrappers[0].'org.jvnet.hudson.plugins.port__allocator.PortAllocator'[0].ports
+        context.wrapperNodes[0].name() == 'org.jvnet.hudson.plugins.port__allocator.PortAllocator'
+        def ports = context.wrapperNodes[0].ports
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
 
@@ -259,9 +196,7 @@ class WrapperHelperSpec extends Specification {
 
     def 'sshAgent without credentials' () {
         when:
-        helper.wrappers {
-            sshAgent(null)
-        }
+        context.sshAgent(null)
 
         then:
         thrown(NullPointerException)
@@ -272,9 +207,7 @@ class WrapperHelperSpec extends Specification {
         mockJobManagement.getCredentialsId('foo') >> null
 
         when:
-        helper.wrappers {
-            sshAgent('foo')
-        }
+        context.sshAgent('foo')
 
         then:
         thrown(NullPointerException)
@@ -285,38 +218,29 @@ class WrapperHelperSpec extends Specification {
         mockJobManagement.getCredentialsId('acme') >> '4711'
 
         when:
-        helper.wrappers {
-            sshAgent('acme')
-        }
-        executeHelperActionsOnRootNode()
+        context.sshAgent('acme')
 
         then:
-        def wrapper = root.buildWrappers[0].'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
-        wrapper.user[0].value() == '4711'
+        context.wrapperNodes[0].name() == 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
+        context.wrapperNodes[0].user[0].value() == '4711'
     }
 
     def 'ansiColor with map' () {
         when:
-        helper.wrappers {
-            colorizeOutput('foo')
-        }
-        executeHelperActionsOnRootNode()
+        context.colorizeOutput('foo')
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.ansicolor.AnsiColorBuildWrapper'.'colorMapName'
-        wrapper[0].value() == 'foo'
+        context.wrapperNodes[0].name() == 'hudson.plugins.ansicolor.AnsiColorBuildWrapper'
+        context.wrapperNodes[0].'colorMapName'[0].value() == 'foo'
     }
 
     def 'ansiColor without map should fall back to default xterm' () {
         when:
-        helper.wrappers {
-            colorizeOutput()
-        }
-        executeHelperActionsOnRootNode()
+        context.colorizeOutput()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.ansicolor.AnsiColorBuildWrapper'.'colorMapName'
-        wrapper[0].value() == 'xterm'
+        context.wrapperNodes[0].name() == 'hudson.plugins.ansicolor.AnsiColorBuildWrapper'
+        context.wrapperNodes[0].'colorMapName'[0].value() == 'xterm'
     }
 
     def 'xvnc' () {
@@ -324,16 +248,14 @@ class WrapperHelperSpec extends Specification {
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
 
         when:
-        helper.wrappers {
-            xvnc()
-        }
-        executeHelperActionsOnRootNode()
+        context.xvnc()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
-        wrapper[0].children().size() == 2
-        wrapper[0].takeScreenshot[0].value() == false
-        wrapper[0].useXauthority[0].value() == true
+        context.wrapperNodes[0].name() == 'hudson.plugins.xvnc.Xvnc'
+        def wrapper = context.wrapperNodes[0]
+        wrapper.children().size() == 2
+        wrapper.takeScreenshot[0].value() == false
+        wrapper.useXauthority[0].value() == true
     }
 
     def 'xvnc with takeScreenshot arg' () {
@@ -341,16 +263,14 @@ class WrapperHelperSpec extends Specification {
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
 
         when:
-        helper.wrappers {
-            xvnc(true)
-        }
-        executeHelperActionsOnRootNode()
+        context.xvnc(true)
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
-        wrapper[0].children().size() == 2
-        wrapper[0].takeScreenshot[0].value() == true
-        wrapper[0].useXauthority[0].value() == true
+        context.wrapperNodes[0].name() == 'hudson.plugins.xvnc.Xvnc'
+        def wrapper = context.wrapperNodes[0]
+        wrapper.children().size() == 2
+        wrapper.takeScreenshot[0].value() == true
+        wrapper.useXauthority[0].value() == true
     }
 
     def 'xvnc with closure' () {
@@ -358,18 +278,16 @@ class WrapperHelperSpec extends Specification {
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
 
         when:
-        helper.wrappers {
-            xvnc {
-                useXauthority(false)
-            }
+        context.xvnc {
+            useXauthority(false)
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
-        wrapper[0].children().size() == 2
-        wrapper[0].takeScreenshot[0].value() == false
-        wrapper[0].useXauthority[0].value() == false
+        context.wrapperNodes[0].name() == 'hudson.plugins.xvnc.Xvnc'
+        def wrapper = context.wrapperNodes[0]
+        wrapper.children().size() == 2
+        wrapper.takeScreenshot[0].value() == false
+        wrapper.useXauthority[0].value() == false
     }
 
     def 'xvnc with older plugin' () {
@@ -377,27 +295,22 @@ class WrapperHelperSpec extends Specification {
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.15')
 
         when:
-        helper.wrappers {
-            xvnc()
-        }
-        executeHelperActionsOnRootNode()
+        context.xvnc()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.xvnc.Xvnc'
-        wrapper[0].children().size() == 1
-        wrapper[0].takeScreenshot[0].value() == false
+        context.wrapperNodes[0].name() == 'hudson.plugins.xvnc.Xvnc'
+        def wrapper = context.wrapperNodes[0]
+        wrapper.children().size() == 1
+        wrapper.takeScreenshot[0].value() == false
     }
 
     def 'toolenv' () {
         when:
-        helper.wrappers {
-            toolenv('Ant 1.8.2', 'Maven 3')
-        }
-        executeHelperActionsOnRootNode()
+        context.toolenv('Ant 1.8.2', 'Maven 3')
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.toolenv.ToolEnvBuildWrapper'.'vars'
-        wrapper[0].value() == 'ANT_1_8_2_HOME,MAVEN_3_HOME'
+        context.wrapperNodes[0].name() == 'hudson.plugins.toolenv.ToolEnvBuildWrapper'
+        context.wrapperNodes[0].'vars'[0].value() == 'ANT_1_8_2_HOME,MAVEN_3_HOME'
     }
 
     def 'environmentVariables are added'() {
@@ -424,20 +337,18 @@ class WrapperHelperSpec extends Specification {
 
     def 'release plugin simple' () {
         when:
-        helper.wrappers {
-            release {
-                parameters {
-                    textParam('p1', 'p1', 'd1')
-                }
-                preBuildSteps {
-                    shell('echo hello;')
-                }
+        context.release {
+            parameters {
+                textParam('p1', 'p1', 'd1')
+            }
+            preBuildSteps {
+                shell('echo hello;')
             }
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        def wrapper = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
+        context.wrapperNodes[0].name() == 'hudson.plugins.release.ReleaseWrapper'
+        def wrapper = context.wrapperNodes[0]
         wrapper.'parameterDefinitions'.'hudson.model.TextParameterDefinition'[0].value()[0].value() == 'p1'
         wrapper.'preBuildSteps'[0].value()[0].name() == 'hudson.tasks.Shell'
         wrapper.'preBuildSteps'[0].value()[0].value()[0].name() == 'command'
@@ -446,39 +357,37 @@ class WrapperHelperSpec extends Specification {
 
     def 'release plugin extended' () {
         when:
-        helper.wrappers {
-            release {
-                releaseVersionTemplate('templatename')
-                doNotKeepLog(true)
-                overrideBuildParameters(false)
-                parameters {
-                    booleanParam('myBooleanParam', true)
-                    booleanParam('my2ndBooleanParam', true)
-                }
-                postSuccessfulBuildSteps {
-                    shell('echo postsuccess;')
-                    shell('echo hello world;')
-                }
-                postBuildSteps {
-                    shell('echo post;')
-                }
-                postFailedBuildSteps {
-                    shell('echo postfailed;')
-                }
+        context.release {
+            releaseVersionTemplate('templatename')
+            doNotKeepLog(true)
+            overrideBuildParameters(false)
+            parameters {
+                booleanParam('myBooleanParam', true)
+                booleanParam('my2ndBooleanParam', true)
+            }
+            postSuccessfulBuildSteps {
+                shell('echo postsuccess;')
+                shell('echo hello world;')
+            }
+            postBuildSteps {
+                shell('echo post;')
+            }
+            postFailedBuildSteps {
+                shell('echo postfailed;')
             }
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'
-        params[0].value()[0].name() == 'releaseVersionTemplate'
-        params[0].value()[0].value() == 'templatename'
-        params[0].value()[1].name() == 'doNotKeepLog'
-        params[0].value()[1].value() == true
-        params[0].value()[2].name() == 'overrideBuildParameters'
-        params[0].value()[2].value() == false
+        context.wrapperNodes[0].name() == 'hudson.plugins.release.ReleaseWrapper'
+        def params = context.wrapperNodes[0]
+        params.value()[0].name() == 'releaseVersionTemplate'
+        params.value()[0].value() == 'templatename'
+        params.value()[1].name() == 'doNotKeepLog'
+        params.value()[1].value() == true
+        params.value()[2].name() == 'overrideBuildParameters'
+        params.value()[2].value() == false
 
-        def stepsPostSuccess = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postSuccessfulBuildSteps'
+        def stepsPostSuccess = context.wrapperNodes[0].'postSuccessfulBuildSteps'
         stepsPostSuccess[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPostSuccess[0].value()[0].value()[0].name() == 'command'
         stepsPostSuccess[0].value()[0].value()[0].value() == 'echo postsuccess;'
@@ -486,12 +395,12 @@ class WrapperHelperSpec extends Specification {
         stepsPostSuccess[0].value()[1].value()[0].name() == 'command'
         stepsPostSuccess[0].value()[1].value()[0].value() == 'echo hello world;'
 
-        def stepsPost = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postBuildSteps'
+        def stepsPost = context.wrapperNodes[0].'postBuildSteps'
         stepsPost[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPost[0].value()[0].value()[0].name() == 'command'
         stepsPost[0].value()[0].value()[0].value() == 'echo post;'
 
-        def stepsPostFailed = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'postFailedBuildSteps'
+        def stepsPostFailed = context.wrapperNodes[0].'postFailedBuildSteps'
         stepsPostFailed[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPostFailed[0].value()[0].value()[0].name() == 'command'
         stepsPostFailed[0].value()[0].value()[0].value() == 'echo postfailed;'
@@ -499,34 +408,28 @@ class WrapperHelperSpec extends Specification {
 
     def 'release plugin configure' () {
         when:
-        helper.wrappers {
-            release {
-                configure { project ->
-                    def node = project / 'testCommand'
-                    node << {
-                        custom('value')
-                    }
+        context.release {
+            configure { project ->
+                def node = project / 'testCommand'
+                node << {
+                    custom('value')
                 }
             }
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        def params = root.buildWrappers[0].'hudson.plugins.release.ReleaseWrapper'.'testCommand'
+        context.wrapperNodes[0].name() == 'hudson.plugins.release.ReleaseWrapper'
+        def params = context.wrapperNodes[0].'testCommand'
         params[0].value()[0].name() == 'custom'
         params[0].value()[0].value() == 'value'
     }
 
     def 'call preBuildCleanup with minimal options' () {
         when:
-        helper.wrappers {
-            preBuildCleanup()
-        }
-        executeHelperActionsOnRootNode()
+        context.preBuildCleanup()
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
             children().size() == 4
             patterns[0].value() == []
@@ -538,20 +441,16 @@ class WrapperHelperSpec extends Specification {
 
     def 'call preBuildCleanup with all options' () {
         when:
-        helper.wrappers {
-            preBuildCleanup {
-                includePattern('**/test/**')
-                excludePattern('*.test')
-                deleteDirectories()
-                cleanupParameter('TEST')
-                deleteCommand('test')
-            }
+        context.preBuildCleanup {
+            includePattern('**/test/**')
+            excludePattern('*.test')
+            deleteDirectories()
+            cleanupParameter('TEST')
+            deleteCommand('test')
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.ws__cleanup.PreBuildCleanup'
             children().size() == 4
             patterns[0].children().size() == 2
@@ -569,15 +468,10 @@ class WrapperHelperSpec extends Specification {
 
     def 'logSizeChecker with default configuration'() {
         when:
-        helper.wrappers {
-            logSizeChecker()
-        }
-
-        executeHelperActionsOnRootNode()
+        context.logSizeChecker()
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
             setOwn[0].value() == false
             maxLogSize[0].value() == 0
@@ -587,18 +481,13 @@ class WrapperHelperSpec extends Specification {
 
     def 'logSizeChecker with configuration for all parameters'() {
         when:
-        helper.wrappers {
-            logSizeChecker {
-                maxSize(10)
-                failBuild(true)
-            }
+        context.logSizeChecker {
+            maxSize(10)
+            failBuild(true)
         }
 
-        executeHelperActionsOnRootNode()
-
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
             setOwn[0].value() == true
             maxLogSize[0].value() == 10
@@ -608,18 +497,13 @@ class WrapperHelperSpec extends Specification {
 
     def 'logSizeChecker with configuration for all parameters using defaults for boolean parameter'() {
         when:
-        helper.wrappers {
-            logSizeChecker {
-                maxSize(10)
-                failBuild()
-            }
+        context.logSizeChecker {
+            maxSize(10)
+            failBuild()
         }
 
-        executeHelperActionsOnRootNode()
-
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper'
             setOwn[0].value() == true
             maxLogSize[0].value() == 10
@@ -629,13 +513,9 @@ class WrapperHelperSpec extends Specification {
 
     def 'logSizeChecker with invalid maxSize'() {
         when:
-        helper.wrappers {
-            logSizeChecker {
-                maxSize(-1)
-            }
+        context.logSizeChecker {
+            maxSize(-1)
         }
-
-        executeHelperActionsOnRootNode()
 
         then:
         thrown(IllegalArgumentException)
@@ -643,14 +523,10 @@ class WrapperHelperSpec extends Specification {
 
     def 'call injectPasswords'() {
         when:
-        helper.wrappers {
-            injectPasswords()
-        }
-        executeHelperActionsOnRootNode()
+        context.injectPasswords()
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'EnvInjectPasswordWrapper'
             children().size() == 2
             children()[0].name() == 'injectGlobalPasswords'
@@ -660,21 +536,16 @@ class WrapperHelperSpec extends Specification {
 
     def 'call buildName' () {
         when:
-        helper.wrappers {
-            buildName('#${BUILD_NUMBER} && <test>')
-        }
-        executeHelperActionsOnRootNode()
+        context.buildName('#${BUILD_NUMBER} && <test>')
 
         then:
-        def wrapper = root.buildWrappers[0].'org.jenkinsci.plugins.buildnamesetter.BuildNameSetter'
-        wrapper.template[0].value() == '#${BUILD_NUMBER} && <test>'
+        context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.buildnamesetter.BuildNameSetter'
+        context.wrapperNodes[0].template[0].value() == '#${BUILD_NUMBER} && <test>'
     }
 
     def 'call buildName with null parameter' () {
         when:
-        helper.wrappers {
-            buildName(null)
-        }
+        context.buildName(null)
 
         then:
         thrown(NullPointerException)
@@ -682,15 +553,11 @@ class WrapperHelperSpec extends Specification {
 
     def 'call codeSigning with no args'() {
         when:
-        helper.wrappers {
-            keychains {
-            }
+        context.keychains {
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'com.sic.plugins.kpp.KPPKeychainsBuildWrapper'
             keychainCertificatePairs[0].children().size() == 0
             deleteKeychainsAfterBuild[0].value() == false
@@ -700,16 +567,12 @@ class WrapperHelperSpec extends Specification {
 
     def 'call codeSigning with minimal args'() {
         when:
-        helper.wrappers {
-            keychains {
-                keychain('some_keychain', 'some_identity')
-            }
+        context.keychains {
+            keychain('some_keychain', 'some_identity')
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'com.sic.plugins.kpp.KPPKeychainsBuildWrapper'
             def certPair = keychainCertificatePairs[0].'com.sic.plugins.kpp.model.KPPKeychainCertificatePair'[0]
             certPair.keychain[0].value() == 'some_keychain'
@@ -722,19 +585,15 @@ class WrapperHelperSpec extends Specification {
 
     def 'call codeSigning with all args'() {
         when:
-        helper.wrappers {
-            keychains {
-                keychain('some_keychain', 'some_identity', 'some_prefix')
-                keychain('some_keychain_again', 'some_identity_again', 'some_prefix_again')
-                delete()
-                overwrite()
-            }
+        context.keychains {
+            keychain('some_keychain', 'some_identity', 'some_prefix')
+            keychain('some_keychain_again', 'some_identity_again', 'some_prefix_again')
+            delete()
+            overwrite()
         }
-        executeHelperActionsOnRootNode()
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'com.sic.plugins.kpp.KPPKeychainsBuildWrapper'
 
             def certPair0 = keychainCertificatePairs[0].'com.sic.plugins.kpp.model.KPPKeychainCertificatePair'[0]
@@ -754,14 +613,10 @@ class WrapperHelperSpec extends Specification {
 
     def 'call exclusion with single arg'() {
         when:
-        helper.wrappers {
-            exclusionResources('first')
-        }
-        executeHelperActionsOnRootNode()
+        context.exclusionResources('first')
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
         }
@@ -769,14 +624,10 @@ class WrapperHelperSpec extends Specification {
 
     def 'call exclusion with multiple args'() {
         when:
-        helper.wrappers {
-            exclusionResources(['first', 'second', 'third'])
-        }
-        executeHelperActionsOnRootNode()
+        context.exclusionResources(['first', 'second', 'third'])
 
         then:
-        root.buildWrappers[0].children().size() == 1
-        with(root.buildWrappers[0].children()[0]) {
+        with(context.wrapperNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[1].name[0].value() == 'second'

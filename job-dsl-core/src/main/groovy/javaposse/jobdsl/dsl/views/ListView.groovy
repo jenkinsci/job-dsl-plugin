@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.View
 
 import static com.google.common.base.Preconditions.checkNotNull
 import static java.lang.String.CASE_INSENSITIVE_ORDER
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
 
 class ListView extends View {
     private final Set<String> jobNames = []

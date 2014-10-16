@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl.views
 import javaposse.jobdsl.dsl.helpers.Context
 
 import static com.google.common.base.Preconditions.checkArgument
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
 
 class ListViewSectionContext implements Context {
     private static final List<String> VALID_WIDTHS = ['FULL', 'HALF', 'THIRD', 'TWO_THIRDS']

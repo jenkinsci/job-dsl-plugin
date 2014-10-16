@@ -19,6 +19,8 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 * 1.27 (unreleased)
  * Improved build step console output
  * added `entries` method in `publishScp` closure to add multiple entries
+ * The context helper classes have been removed
+ * Top-level `permission` methods are deprecated, see [[Migration]]
  * `pattern` method in `archiveArtifacts` closure can be called multiple times to collect patterns
  * Added a no parameter variant of `colorizeOutput` to match documentation.
  * The `name` method with a closure parameter in the `job` closure is deprecated, see [[Migration]]

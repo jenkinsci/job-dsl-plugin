@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
 class GerritContext implements Context {
@@ -58,7 +58,7 @@ class GerritContext implements Context {
     }
 
     def events(Closure eventClosure) {
-        AbstractContextHelper.executeInContext(eventClosure, eventContext)
+        ContextHelper.executeInContext(eventClosure, eventContext)
     }
 
     def project(String projectName, List<String> branches) {

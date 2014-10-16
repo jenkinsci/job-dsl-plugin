@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.Context
 
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
 
 class GitContext implements Context {
     private final List<WithXmlAction> withXmlActions

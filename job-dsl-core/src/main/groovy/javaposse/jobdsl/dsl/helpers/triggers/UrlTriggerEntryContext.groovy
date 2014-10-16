@@ -1,9 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
-
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection
 
 /** Configuration container for a monitored URL.*/
@@ -118,7 +117,7 @@ class UrlTriggerEntryContext implements Context {
         }
 
         UrlTriggerInspectionContext inspection = new UrlTriggerInspectionContext(itype)
-        AbstractContextHelper.executeInContext(inspectionClosure, inspection)
+        ContextHelper.executeInContext(inspectionClosure, inspection)
 
         inspections << inspection
 

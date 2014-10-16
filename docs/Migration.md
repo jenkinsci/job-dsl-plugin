@@ -19,6 +19,30 @@ DSL since 1.27
 job {
     name('foo')
 }
+
+### Permissions
+
+In version 1.27 undocumented `permission` methods in the `job` context have been deprecated. Use the `authorization`
+context instead.
+
+DSL prior to 1.27
+```groovy
+job {
+    permission('hudson.model.Item.Configure:jill')
+    permission(Permissions.ItemRead, 'jack')
+    permission('RunUpdate', 'joe')
+}
+```
+
+DSL since 1.27
+```groovy
+job {
+    authorization {
+        permission('hudson.model.Item.Configure:jill')
+        permission(Permissions.ItemRead, 'jack')
+        permission('RunUpdate', 'joe')
+    }
+}
 ```
 
 ## Migrating to 1.26

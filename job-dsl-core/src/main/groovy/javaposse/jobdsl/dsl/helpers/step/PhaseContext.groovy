@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
 class PhaseContext implements Context {
@@ -36,7 +36,7 @@ class PhaseContext implements Context {
 
     def job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
         PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, jobName, currentJobParameters, exposedScm)
-        AbstractContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
+        ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext
 

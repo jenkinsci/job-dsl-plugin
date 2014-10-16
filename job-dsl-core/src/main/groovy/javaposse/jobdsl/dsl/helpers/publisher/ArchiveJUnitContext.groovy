@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 class ArchiveJUnitContext implements Context {
     final TestDataPublishersContext testDataPublishersContext
@@ -17,6 +17,6 @@ class ArchiveJUnitContext implements Context {
     }
 
     void testDataPublishers(Closure testDataPublishersClosure) {
-        AbstractContextHelper.executeInContext(testDataPublishersClosure, testDataPublishersContext)
+        ContextHelper.executeInContext(testDataPublishersClosure, testDataPublishersContext)
     }
 }

@@ -3,20 +3,14 @@ package javaposse.jobdsl.dsl.helpers.step
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.WithXmlActionSpec
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
-class StepHelperSpec extends Specification {
-
-    List<WithXmlAction> mockActions = Mock()
+class StepContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    StepContextHelper helper = new StepContextHelper(mockActions, JobType.Freeform, jobManagement)
     StepContext context = new StepContext(jobManagement)
 
     def 'call shell method'() {
@@ -904,46 +898,6 @@ class StepHelperSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
-    }
-
-    def 'call step via helper'() {
-        when:
-        helper.steps {
-            shell('ls')
-            gradle('build')
-        }
-
-        then:
-        1 * mockActions.add(_)
-    }
-
-    def 'execute withXml Action'() {
-        Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
-        def nodeBuilder = new NodeBuilder()
-
-        Node stepNode = nodeBuilder.'hudson.tasks.Shell' {
-            command 'ls'
-        }
-
-        when:
-        def withXmlAction = helper.generateWithXmlAction(new StepContext([stepNode], jobManagement))
-        withXmlAction.execute(root)
-
-        then:
-        root.builders[0].'hudson.tasks.Shell'[0].command[0].text() == 'ls'
-    }
-
-    def 'no steps for Maven jobs'() {
-        setup:
-        List<WithXmlAction> mockActions = Mock()
-        StepContextHelper helper = new StepContextHelper(mockActions, JobType.Maven, jobManagement)
-
-        when:
-        helper.steps {
-        }
-
-        then:
-        thrown(IllegalStateException)
     }
 
     def 'call sbt method minimal'() {

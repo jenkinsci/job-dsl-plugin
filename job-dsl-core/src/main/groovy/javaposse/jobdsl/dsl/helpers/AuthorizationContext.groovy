@@ -4,18 +4,7 @@ package javaposse.jobdsl.dsl.helpers
  * Builds up perms in a closure. So that it be used to build a withXml block
  */
 class AuthorizationContext implements Context {
-    List<String> perms = []
-
-    AuthorizationContext() {
-    }
-
-    AuthorizationContext(List<String> perms) {
-        this.perms = perms
-    }
-
-    private addAuthorization(String perm) {
-        perms << perm
-    }
+    List<String> permissions = []
 
     def permissionAll(String user) {
         Permissions.values().each {
@@ -23,15 +12,15 @@ class AuthorizationContext implements Context {
         }
     }
 
-    def permission(String perm) {
-        addAuthorization(perm)
+    def permission(String permission) {
+        permissions << permission
     }
 
-    def permission(Permissions perm, String user) {
-        addAuthorization("${perm.longForm}:${user}")
+    def permission(Permissions permission, String user) {
+        permissions << "${permission.longForm}:${user}"
     }
 
-    def permission(String permEnumName, String user) {
-        permission(Permissions.valueOf(Permissions, permEnumName), user)
+    def permission(String permissionEnumName, String user) {
+        permission(Permissions.valueOf(permissionEnumName), user)
     }
 }

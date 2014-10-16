@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.common
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
 class DownstreamContext implements Context {
@@ -30,7 +30,7 @@ class DownstreamContext implements Context {
         downstreamTriggerContext.triggerWithNoParameters = triggerWithNoParameters
         downstreamTriggerContext.blockingThresholdsFromMap(blockingThresholds)
 
-        AbstractContextHelper.executeInContext(downstreamTriggerClosure, downstreamTriggerContext)
+        ContextHelper.executeInContext(downstreamTriggerClosure, downstreamTriggerContext)
 
         // Validate this trigger
         assert validDownstreamConditionNames.contains(downstreamTriggerContext.condition),

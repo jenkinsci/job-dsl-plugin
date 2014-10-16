@@ -186,11 +186,16 @@ job {
 (Since 1.25)
 
 ## Security
+
 ```groovy
-permission(String)
-permission(String permEnumName, String user)
-permission(Permissions perm, String user)
-permissionAll(String user)
+job {
+    authorization {
+        permission(String)
+        permission(String permEnumName, String user)
+        permission(Permissions perm, String user)
+        permissionAll(String user)
+    }
+}
 ```
 
 Creates permission records. The first form adds a specific permission, e.g. 'hudson.model.Item.Workspace:authenticated', as seen in the config.xml. The second form simply breaks apart the permission from the user name, to make scripting easier. The third uses a helper Enum called [Permissions] (https://github.com/jenkinsci/job-dsl-plugin/blob/master/job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/helpers/Permissions.groovy) to hide some of the names of permissions. It is available by importing javaposse.jobdsl.dsl.helpers.Permissions. By using the enum you get some basic type checking. A flaw with this system is that Jenkins plugins can create their own permissions, and the job-dsl plugin doesn't necessarily know about them. The last form will take everything in the Permissions enum and gives them to the user, this method also suffers from the problem that not all permissions from every plugin are included.
@@ -199,22 +204,24 @@ The permissions as of the latest version can be found in [the Permissions enum](
 
 ```groovy
 // Gives permission for the special authenticated group to see the workspace of the job
-authorization {
-    permission('hudson.model.Item.Workspace:authenticated')
+job {
+    authorization {
+        permission('hudson.model.Item.Workspace:authenticated')
+    }
 }
-```
 
-```groovy
 // Gives discover permission for the special anonymous user
-authorization {
-    permission(Permissions.ItemDiscover, 'anonymous')
+job {
+    authorization {
+        permission(Permissions.ItemDiscover, 'anonymous')
+    }
 }
-```
 
-```groovy
 // Gives all permissions found in the Permissions enum to the special authenticated group
-authorization {
-    permissionAll('authenticated')
+job {
+    authorization {
+        permissionAll('authenticated')
+    }
 }
 ```
 

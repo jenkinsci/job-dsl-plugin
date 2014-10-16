@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 class ArchiveXUnitContext implements Context {
     ArchiveXUnitThresholdContext failedThresholdsContext = new ArchiveXUnitThresholdContext()
@@ -11,11 +11,11 @@ class ArchiveXUnitContext implements Context {
     List<ArchiveXUnitResultFileContext> resultFiles = []
 
     void failedThresholds(Closure thresholdsClosure) {
-        AbstractContextHelper.executeInContext(thresholdsClosure, failedThresholdsContext)
+        ContextHelper.executeInContext(thresholdsClosure, failedThresholdsContext)
     }
 
     void skippedThresholds(Closure thresholdsClosure) {
-        AbstractContextHelper.executeInContext(thresholdsClosure, skippedThresholdsContext)
+        ContextHelper.executeInContext(thresholdsClosure, skippedThresholdsContext)
     }
 
     void thresholdMode(ThresholdMode thresholdMode) {
@@ -96,14 +96,14 @@ class ArchiveXUnitContext implements Context {
 
     void customTool(Closure resultFileClosure) {
         ArchiveXUnitResultFileContext resultFileContext = new ArchiveXUnitCustomToolContext()
-        AbstractContextHelper.executeInContext(resultFileClosure, resultFileContext)
+        ContextHelper.executeInContext(resultFileClosure, resultFileContext)
 
         resultFiles << resultFileContext
     }
 
     private void addResultFile(String type, Closure resultFileClosure) {
         ArchiveXUnitResultFileContext resultFileContext = new ArchiveXUnitResultFileContext(type)
-        AbstractContextHelper.executeInContext(resultFileClosure, resultFileContext)
+        ContextHelper.executeInContext(resultFileClosure, resultFileContext)
 
         resultFiles << resultFileContext
     }
