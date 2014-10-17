@@ -183,6 +183,7 @@ job(Map<String, ?> arguments = [:]) {
         environmentVariables(Closure envClosure)
         gradle(String tasks = null, String switches = null, Boolean useWrapperArg = true,
                Closure configure = null)
+        gradle(Closure gradleClosure) // since 1.27
         grails(Closure grailsClosure)
         grails(String targets, Closure grailsClosure)
         grails(String targets, boolean useWrapperArg = false, Closure grailsClosure)

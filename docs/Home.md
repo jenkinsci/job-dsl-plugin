@@ -17,6 +17,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.27 (unreleased)
+ * Added more support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) 
  * Improved build step console output
  * added `entries` method in `publishScp` closure to add multiple entries
  * The context helper classes have been removed
