@@ -3244,6 +3244,7 @@ job {
         git {
             pushOnlyIfSuccess(boolean pushOnlyIfSuccess = true)
             pushMerge(boolean pushMerge = true)
+            forcePush(boolean forcePush = true)
             tag(String targetRepoName, String tagName) {
                 message(String message)
                 create(boolean create = true)

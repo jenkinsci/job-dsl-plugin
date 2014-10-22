@@ -1063,6 +1063,7 @@ class PublisherContext implements Context {
      *         <configVersion>2</configVersion>
      *         <pushMerge>false</pushMerge>
      *         <pushOnlyIfSuccess>true</pushOnlyIfSuccess>
+     *         <forcePush>false</forcePush>
      *         <tagsToPush>
      *             <hudson.plugins.git.GitPublisher_-TagToPush>
      *                 <targetRepoName>origin</targetRepoName>
@@ -1089,6 +1090,7 @@ class PublisherContext implements Context {
             configVersion(2)
             pushMerge(context.pushMerge)
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
+            forcePush(context.forcePush)
             tagsToPush(context.tags)
             branchesToPush(context.branches)
         }

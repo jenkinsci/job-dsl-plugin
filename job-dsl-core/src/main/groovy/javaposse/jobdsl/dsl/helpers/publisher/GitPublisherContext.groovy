@@ -9,6 +9,7 @@ import static com.google.common.base.Strings.isNullOrEmpty
 class GitPublisherContext implements Context {
     boolean pushOnlyIfSuccess
     boolean pushMerge
+    boolean forcePush
     List<Node> tags = []
     List<Node> branches = []
 
@@ -18,6 +19,10 @@ class GitPublisherContext implements Context {
 
     void pushMerge(boolean pushMerge = true) {
         this.pushMerge = pushMerge
+    }
+
+    void forcePush(boolean forcePush = true) {
+        this.forcePush = forcePush
     }
 
     /**
