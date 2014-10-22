@@ -37,7 +37,7 @@ class SectionsContext implements Context {
         sectionNodes << new NodeBuilder().'hudson.plugins.sectioned__view.ListViewSection' {
             jobNames {
                 comparator(class: 'hudson.util.CaseInsensitiveComparator')
-                for (String job : context.jobsContext.jobNames.sort(CASE_INSENSITIVE_ORDER)) {
+                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) {
                     string(job)
                 }
             }
