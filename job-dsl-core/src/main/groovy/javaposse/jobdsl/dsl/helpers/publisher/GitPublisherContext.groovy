@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
 
@@ -7,10 +8,16 @@ import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
 class GitPublisherContext implements Context {
+    private final JobManagement jobManagement
     boolean pushOnlyIfSuccess
     boolean pushMerge
+    boolean forcePush
     List<Node> tags = []
     List<Node> branches = []
+
+    GitPublisherContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
 
     void pushOnlyIfSuccess(boolean pushOnlyIfSuccess = true) {
         this.pushOnlyIfSuccess = pushOnlyIfSuccess
@@ -18,6 +25,11 @@ class GitPublisherContext implements Context {
 
     void pushMerge(boolean pushMerge = true) {
         this.pushMerge = pushMerge
+    }
+
+    void forcePush(boolean forcePush = true) {
+        jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        this.forcePush = forcePush
     }
 
     /**

@@ -3244,6 +3244,7 @@ job {
         git {
             pushOnlyIfSuccess(boolean pushOnlyIfSuccess = true)
             pushMerge(boolean pushMerge = true)
+            forcePush(boolean forcePush = true) // since 1.27
             tag(String targetRepoName, String tagName) {
                 message(String message)
                 create(boolean create = true)
@@ -3256,6 +3257,7 @@ job {
 ```
 
 Push tags or branches to a Git repository. Requires the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin).
+The `forcePush` option requires version 2.2.6 or later of the Git Plugin.
 
 Examples:
 
