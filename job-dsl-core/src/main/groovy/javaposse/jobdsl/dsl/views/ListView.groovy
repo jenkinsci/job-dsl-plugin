@@ -30,7 +30,7 @@ class ListView extends View {
         execute {
             it / 'jobNames' {
                 comparator(class: 'hudson.util.CaseInsensitiveComparator')
-                for (String job : this.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) {
+                for (String job : this.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
                     string(job)
                 }
             }
