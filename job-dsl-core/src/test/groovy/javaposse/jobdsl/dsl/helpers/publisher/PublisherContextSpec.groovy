@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
@@ -1978,10 +1979,28 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.git.GitPublisher'
+        context.publisherNodes[0].children().size() == 6
         context.publisherNodes[0].configVersion[0].value() == 2
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         context.publisherNodes[0].forcePush[0].value() == false
+    }
+
+    def 'call git with minimal options pre 2.2.6'() {
+        setup:
+        jobManagement.getPluginVersion('git') >> new VersionNumber('2.2.5')
+
+        when:
+        context.git {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.git.GitPublisher'
+        context.publisherNodes[0].children().size() == 5
+        context.publisherNodes[0].configVersion[0].value() == 2
+        context.publisherNodes[0].pushMerge[0].value() == false
+        context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
     }
 
     def 'call git with all options'() {

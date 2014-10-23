@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.Context
@@ -1083,14 +1084,16 @@ class PublisherContext implements Context {
      * </publishers>
      */
     def git(Closure gitPublisherClosure) {
-        GitPublisherContext context = new GitPublisherContext()
+        GitPublisherContext context = new GitPublisherContext(jobManagement)
         ContextHelper.executeInContext(gitPublisherClosure, context)
 
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher' {
             configVersion(2)
             pushMerge(context.pushMerge)
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
-            forcePush(context.forcePush)
+            if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.2.6'))) {
+                forcePush(context.forcePush)
+            }
             tagsToPush(context.tags)
             branchesToPush(context.branches)
         }
