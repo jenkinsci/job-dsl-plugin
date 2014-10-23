@@ -8,6 +8,8 @@ ruleset {
     ruleset('rulesets/convention.xml') {
         // this rule does not necessarily lead to better code
         exclude 'IfStatementCouldBeTernary'
+        // we don't care for now
+        exclude 'NoDef'
     }
 
     ruleset('rulesets/design.xml') {
@@ -15,6 +17,8 @@ ruleset {
         exclude 'AbstractClassWithoutAbstractMethod'
         // we don't care
         exclude 'BuilderMethodWithSideEffects'
+        // we don't care
+        exclude 'Instanceof'
     }
 
     // the DRY rules do not necessarily lead to better code
