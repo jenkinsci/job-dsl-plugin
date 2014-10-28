@@ -658,4 +658,15 @@ class WrapperContext implements Context {
     def buildUserVars() {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
+
+    /**
+     * <org.jenkinsci.plugins.golang.GolangBuildWrapper plugin="golang@1.1">
+     *     <goVersion>Go 1.3.3</goVersion>
+     * </org.jenkinsci.plugins.golang.GolangBuildWrapper>
+     */
+    def golang(String version) {
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.golang.GolangBuildWrapper' {
+            goVersion(version)
+        }
+    }
 }

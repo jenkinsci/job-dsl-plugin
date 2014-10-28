@@ -1488,7 +1488,7 @@ job {
 }
 ```
 
-Masks the passwords that occur in the console output. Requires the 
+Masks the passwords that occur in the console output. Requires the
 [Mask Passwords Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin)
 
 (since 1.26)
@@ -1507,6 +1507,21 @@ Adds a number of environment variables with information of the current user to t
 [Build User Vars Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+User+Vars+Plugin).
 
 (since 1.26)
+
+## Golang
+
+```groovy
+job {
+    wrappers {
+        golang(String version)
+    }
+}
+```
+
+Adds a wrapper for a golang environment. Requires the
+[Golang Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin).
+
+(since 1.27)
 
 # Build Steps
 
@@ -2440,7 +2455,7 @@ job {
                      boolean allowClaimingOfFailedTests = false,
                      boolean publishTestAttachments = false) // deprecated
         archiveJunit(String glob) { // since 1.26
-            retainLongStdout(boolean retain = true) // options, defaults to false 
+            retainLongStdout(boolean retain = true) // options, defaults to false
             testDataPublishers {
                 allowClaimingOfFailedTests()
                 publishTestAttachments()
@@ -2461,7 +2476,7 @@ is required for `publishTestStabilityData`.
 job {
     publishers {
         archiveJunit('**/target/surefire-reports/*.xml')
-        archiveJunit('**/minitest-reports/*.xml') {        
+        archiveJunit('**/minitest-reports/*.xml') {
             retainLongStdout()
             testDataPublishers {
                 publishTestStabilityData()
