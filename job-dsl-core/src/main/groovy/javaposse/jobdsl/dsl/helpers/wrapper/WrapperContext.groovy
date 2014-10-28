@@ -658,4 +658,15 @@ class WrapperContext implements Context {
     def buildUserVars() {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
+
+    /**
+     * <jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper plugin="nodejs@0.2.1">
+     *     <nodeJSInstallationName>NodeJS 0.10.26</nodeJSInstallationName>
+     * </jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper>
+     */
+    def nodejs(String installation) {
+        wrapperNodes << new NodeBuilder().'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper' {
+            nodeJSInstallationName(installation)
+        }
+    }
 }

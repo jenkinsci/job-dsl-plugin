@@ -738,4 +738,18 @@ class WrapperContextSpec extends Specification {
         context.wrapperNodes.size() == 1
         context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.builduser.BuildUser'
     }
+
+    def 'call nodejs'() {
+        when:
+        context.nodejs('NodeJS 0.10.26')
+
+        then:
+        context.wrapperNodes?.size() == 1
+
+        with(context.wrapperNodes[0]) {
+            name() == 'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper'
+            children().size() == 1
+            nodeJSInstallationName[0].value() == 'NodeJS 0.10.26'
+        }
+    }
 }

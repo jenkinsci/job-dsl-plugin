@@ -144,6 +144,7 @@ job(Map<String, ?> arguments = [:]) {
         keychains(Closure closure) // since 1.24
         logSizeChecker(Closure closure = null) // since 1.23
         maskPasswords() // since 1.26
+        nodejs(String installation) // since 1.27
         preBuildCleanup(Closure closure = null) // since 1.22
         release(Closure releaseClosure) // since 1.22
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
