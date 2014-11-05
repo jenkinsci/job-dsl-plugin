@@ -1528,6 +1528,8 @@ job {
 }
 ```
 
+(since 1.27)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
