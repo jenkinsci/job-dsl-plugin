@@ -745,7 +745,6 @@ class WrapperContextSpec extends Specification {
 
         then:
         context.wrapperNodes?.size() == 1
-
         with(context.wrapperNodes[0]) {
             name() == 'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper'
             children().size() == 1

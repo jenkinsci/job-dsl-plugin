@@ -660,7 +660,7 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper plugin="nodejs@0.2.1">
+     * <jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper>
      *     <nodeJSInstallationName>NodeJS 0.10.26</nodeJSInstallationName>
      * </jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper>
      */
