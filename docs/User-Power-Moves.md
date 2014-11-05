@@ -52,7 +52,13 @@ Some of the available variables are as follows:
 * TMPDIR
 * USER
 
-[Original  discussion on the newsgroup](https://groups.google.com/d/msg/job-dsl-plugin/ArgUBsLgumo/v77k5G6fllkJ)
+[Original discussion on the newsgroup](https://groups.google.com/d/msg/job-dsl-plugin/ArgUBsLgumo/v77k5G6fllkJ)
+
+# Access DSL build parameters
+If the DSL job itself is parameterized, you can access the param values within DSL groovy using the syntax:
+`binding.variables.BUILD_NUMBER`
+
+[Original discussion on the newsgroup](https://groups.google.com/d/msg/job-dsl-plugin/ArgUBsLgumo/49ZD9-pyuIcJ)
 
 # Reading Files from your Job Workspace
 The job you create could be running on a slave, while the plugin runs on the master. Which means you shouldn't directly reference files on filesystem, since we're in a distributed system. The good news is that we added a method to help with this. See the docs for "Reading Files from Workspace" on https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
