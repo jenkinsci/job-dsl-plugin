@@ -54,6 +54,11 @@ Some of the available variables are as follows:
 
 [Original  discussion on the newsgroup](https://groups.google.com/d/msg/job-dsl-plugin/ArgUBsLgumo/v77k5G6fllkJ)
 
+# Parameterized Seed Job
+
+Build parameters are exposed as environment variables in Jenkins. A seed job build parameter named `FOO` is available as
+`FOO` variable in the DSL scripts. See the section about environment variables above.
+
 # Reading Files from your Job Workspace
 The job you create could be running on a slave, while the plugin runs on the master. Which means you shouldn't directly reference files on filesystem, since we're in a distributed system. The good news is that we added a method to help with this. See the docs for "Reading Files from Workspace" on https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
 
