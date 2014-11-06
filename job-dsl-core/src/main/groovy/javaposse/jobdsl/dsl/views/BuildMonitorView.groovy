@@ -42,8 +42,4 @@ class BuildMonitorView extends View {
     <order class="com.smartcodeltd.jenkinsci.plugins.buildmonitor.order.ByName"/>
 </com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView>'''
     }
-
-    static enum StatusFilter {
-        ALL, ENABLED, DISABLED
-    }
 }
