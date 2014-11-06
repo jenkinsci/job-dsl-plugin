@@ -773,3 +773,19 @@ view(type: DeliveryPipelineView) {
     }
 }
 ```
+
+## Build Monitor View
+
+Defines a view to use with the famous [Build Monitor View plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Monitor+Plugin).
+
+### Example
+
+```groovy
+view(type: BuildMonitorView) {
+    name('build-monitor-dashboard')
+    jobNames {
+        string('job1')
+        string('job2')
+    }
+}
+```
