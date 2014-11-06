@@ -18,6 +18,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 ## Release Notes
 * 1.27 (unreleased)
  * Added support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
+ * Added support for the [Golang Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin)
  * Added more support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
  * Added `forcePush` option for Git Publisher
  * Improved build step console output

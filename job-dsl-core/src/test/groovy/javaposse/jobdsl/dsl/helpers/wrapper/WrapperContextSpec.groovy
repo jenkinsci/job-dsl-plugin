@@ -751,4 +751,16 @@ class WrapperContextSpec extends Specification {
             nodeJSInstallationName[0].value() == 'NodeJS 0.10.26'
         }
     }
+
+    def 'call golang'() {
+        when:
+        context.golang('Go 1.3.3')
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.golang.GolangBuildWrapper'
+            goVersion[0].value() == 'Go 1.3.3'
+        }
+    }
 }

@@ -1530,6 +1530,29 @@ job {
 
 (since 1.27)
 
+## Golang
+
+```groovy
+job {
+    wrappers {
+        golang(String version)
+    }
+}
+```
+
+Adds a wrapper for a golang environment. Requires the
+[Golang Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin).
+
+```groovy
+job {
+    wrappers {
+        golang('Go 1.3.3')
+    }
+}
+```
+
+(since 1.27)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.

@@ -140,6 +140,7 @@ job(Map<String, ?> arguments = [:]) {
         environmentVariables(Closure envClosure)
         exclusionResources(String... resourceNames) // since 1.24
         exclusionResources(Iterable<String> resourceNames) // since 1.24
+        golang(String version) // since 1.27
         injectPasswords() // since 1.23
         keychains(Closure closure) // since 1.24
         logSizeChecker(Closure closure = null) // since 1.23
