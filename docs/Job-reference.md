@@ -1521,6 +1521,14 @@ job {
 Adds a wrapper for a golang environment. Requires the
 [Golang Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin).
 
+```groovy
+job {
+    wrappers {
+        golang('Go 1.3.3')
+    }
+}
+```
+
 (since 1.27)
 
 # Build Steps

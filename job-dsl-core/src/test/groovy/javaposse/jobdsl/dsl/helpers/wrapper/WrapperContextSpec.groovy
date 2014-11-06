@@ -744,7 +744,7 @@ class WrapperContextSpec extends Specification {
         context.golang('Go 1.3.3')
 
         then:
-        context.wrapperNodes?.size() == 1
+        context.wrapperNodes.size() == 1
         with(context.wrapperNodes[0]) {
             name() == 'org.jenkinsci.plugins.golang.GolangBuildWrapper'
             goVersion[0].value() == 'Go 1.3.3'

@@ -660,7 +660,7 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <org.jenkinsci.plugins.golang.GolangBuildWrapper plugin="golang@1.1">
+     * <org.jenkinsci.plugins.golang.GolangBuildWrapper>
      *     <goVersion>Go 1.3.3</goVersion>
      * </org.jenkinsci.plugins.golang.GolangBuildWrapper>
      */
