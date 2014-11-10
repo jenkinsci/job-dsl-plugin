@@ -1363,7 +1363,9 @@ still-another-dsl.groovy'''
                 ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
-                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false]
+                ['earliestHours': 'earliest-hours', 'earliestMinutes': 'earliest-minutes',
+                 'latestHours': 'latest-hours', 'latestMinutes': 'latest-minutes',
+                 'useBuildTime': false]
         ]
         testConditionClass << [
                 'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
@@ -1637,8 +1639,13 @@ still-another-dsl.groovy'''
                                                                                                                                      ignoreCase: 'true']
         'expression'       | ['exp', 'lab']               | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
                                                                                                                                      label     : 'lab']
-        'time'             | ['earliest', 'latest', true] | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliest    : 'earliest',
-                                                                                                                                     latest      : 'latest',
+        'time'             | ['earliestHours', 
+                              'earliestMinutes',
+                              'latestHours',
+                              'latestMinutes', true]      | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliestHours   : 'earliestHours',
+                                                                                                                                     earliestMinutes : 'earliestMinutes',
+                                                                                                                                     latestHours     : 'latestHours',
+                                                                                                                                     latestMinutes   : 'latestMinutes',
                                                                                                                                      useBuildTime: 'true']
     }
 
