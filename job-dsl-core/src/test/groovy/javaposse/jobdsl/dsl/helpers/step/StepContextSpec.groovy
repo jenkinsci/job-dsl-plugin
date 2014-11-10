@@ -1639,7 +1639,7 @@ still-another-dsl.groovy'''
                                                                                                                                      ignoreCase: 'true']
         'expression'       | ['exp', 'lab']               | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
                                                                                                                                      label     : 'lab']
-        'time'             | ['earliestHours', 
+        'time'             | ['earliestHours',
                               'earliestMinutes',
                               'latestHours',
                               'latestMinutes', true]      | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliestHours   : 'earliestHours',
