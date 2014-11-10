@@ -46,14 +46,14 @@ class RunConditionContext implements Context {
                 args: ['expression': expression, 'label': label])
     }
 
-    def time(String earliestHours, String earliestMinutes, 
+    def time(String earliestHours, String earliestMinutes,
 			 String latestHours, String latestMinutes,
 			 boolean useBuildTime) {
-		
+
         this.condition = new SimpleCondition(
                 name: 'Time',
-                args: ['earliestHours': earliestHours, 'earliestMinutes': earliestMinutes, 
-					   'latestHours': latestHours, 'latestMinutes': latestMinutes, 
+                args: ['earliestHours': earliestHours, 'earliestMinutes': earliestMinutes,
+					   'latestHours': latestHours, 'latestMinutes': latestMinutes,
 					   'useBuildTime': useBuildTime ? 'true' : 'false'])
     }
 
