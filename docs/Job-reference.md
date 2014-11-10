@@ -561,6 +561,7 @@ git {
     localBranch(String branch) // check out to specific local branch
     relativeTargetDir(String relativeTargetDir) // checkout to a sub-directory, optional
     reference(String reference) // path to a reference repository, optional
+    cloneOptions(shallowClone = false, String referencePath, Integer timeoutMinutes) // since 1.28
     browser { // since 1.26
         stash(String url) // URL to the Stash repository, optional
     }
@@ -581,7 +582,8 @@ The Git plugin has a lot of configurable options, which are currently not all su
 
 Version 2.0 or later of the Git Plugin is required to use Jenkins managed credentials for Git authentication. The arguments for the credentials method is the description field or the UUID generated from Jenkins | Manage Jenkins | Manage Credentials. The easiest way to find this value, is to navigate Jenkins | Credentials | Global credentials | (Key Name). Then look at the description in parenthesis or using the UUID in the URL.
 
-When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch.
+When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch. 
+`cloneOptions` is only available when using Git Plugin version 2.0 or later, and when used `reference` and `shallowClone` are ignored.
 
 Examples:
 
@@ -1168,6 +1170,38 @@ Downloads the specified tools, if needed, and puts the path to each of them in t
 
 (since 1.21)
 
+## Config Files
+
+```groovy
+job {
+    wrappers {
+        configFiles {
+            file(String fileName) {                   // can be called multiple times
+                targetLocation(String targetLocation) // optional
+                variable(String variable)             // optional
+            }
+        }
+    }
+}
+```
+
+Makes an existing custom config file available to builds. Requires
+the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
+
+```groovy
+job {
+    wrappers {
+        configFiles {
+            file('myCustomConfigFile') {
+                variable('CONFIG_FILE')
+            }
+        }
+    }
+}
+```
+
+(since 1.28)
+
 ## Environment Variables
 ```groovy
 job {
@@ -1195,7 +1229,7 @@ job {
             releaseVersionTemplate(String template)
             doNotKeepLog(boolean keep = true)
             overrideBuildParameters(boolean override = true)
-            parameterDefinitions(Closure parameters)
+            parameters(Closure parameters)
             preBuildSteps(Closure steps)
             postSuccessfulBuildSteps(Closure steps)
             postBuildSteps(Closure steps)
@@ -1207,7 +1241,7 @@ job {
 
 Configure a release inside a Jenkins job. Requires the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin).
 
-For details of defining parameters (parameterDefinitions) see [Reference of Parameters](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-parameters)
+For details of defining parameters (parameter) see [Reference of Parameters](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-parameters)
 
 For details of defining steps (preBuildSteps, postSuccessfulBuildSteps, postBuildSteps, postFailedBuildSteps) see [Reference of Build Steps](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-build-steps)
 
@@ -1220,7 +1254,7 @@ job {
         release {
             doNotKeepLog()
             overrideBuildParameters()
-            parameterDefinitions {
+            parameters {
                 booleanParam('param', false, 'some boolean build parameter')
             }
             preBuildSteps {
@@ -1552,6 +1586,72 @@ job {
 ```
 
 (since 1.27)
+
+## rbenv
+
+```groovy
+job {
+    wrappers {
+        rbenv(String rubyVersion) {
+            ignoreLocalVersion(boolean ignore = true) // defaults to false
+            gems(String... gems)
+            root(String root)                         // defaults to '$HOME/.rbenv'
+            rbenvRepository(String repository)        // defaults to 'https://github.com/sstephenson/rbenv.git'
+            rbenvRevision(String revision)            // defaults to 'master'
+            rubyBuildRepository(String repository)    // defaults to 'https://github.com/sstephenson/ruby-build.git'
+            rubyBuildRevision(String revision)        // defaults to 'master'
+        }
+    }
+}
+```
+
+Adds the ability to specify the rbenv wrapper to be used during job execution. You can specify the ruby version to used
+(or installed if it is not already) and which gems you would like available during the job execution. Requires the
+[rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin).
+
+```groovy
+job {
+    wrappers {
+        rbenv('2.1.2') {
+            ignoreLocalVersion()
+            gems('bundler', 'rake')
+        }
+    }
+}
+```
+
+(since 1.27)
+
+## Credentials Binding
+
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file(String variable, String credentials)
+            string(String variable, String credentials)
+            usernamePassword(String variable, String credentials)
+            zipFile(String variable, String credentials)
+        }
+    }
+}
+```
+
+Bindings environment variables to credentials. Requires the
+[Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin).
+
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file('KEYSTORE', 'keystore.jks')
+            usernamePassword('PASSWORD', 'keystore password')
+        }
+    }
+}
+```
+
+(since 1.28)
 
 # Build Steps
 
@@ -1947,6 +2047,40 @@ Injects environment variables into the build. Requires the [EnvInject plugin](ht
 
 (Since 1.21)
 
+## HTTP Request
+
+```groovy
+job {
+    steps {
+        httpRequest(String url) {
+            httpMode(String mode)
+            authentication(String authentication)
+            returnCodeBuildRelevant(boolean returnCodeBuildRelevant = true)
+            logResponseBody(boolean logResponseBody = true)
+        }
+    }
+}
+```
+
+Adds a step which performs a HTTP request. `httpMode` must be either `GET`, `POST`, `PUT` or `DELETE`. `authentication`
+is configured in the global Jenkins settings. Requires the
+[HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin).
+
+```groovy
+job {
+    steps {
+        httpRequest('http://www.example.com') {
+            httpMode('POST')
+            authentication('Credentials')
+            returnCodeBuildRelevant()
+            logResponseBody()
+        }
+    }
+}
+```
+
+(since 1.28)
+
 # Multijob Phase
 
 ```
@@ -2210,7 +2344,8 @@ conditionalSteps {
         stringsMatch(String arg1, String arg2, boolean ignoreCase) // Run if the two strings match
         cause(String buildCause, boolean exclusiveCondition) // Run if the build cause matches the given string
         expression(String expression, String label) // Run if the regular expression matches the label
-        time(String earliest, String latest, boolean useBuildTime) // Run if the current (or build) time is between the given dates.
+        time(int earliestHour, int earliestMinute, int latestHour, int latestMinute,
+             boolean useBuildTime) // Run if the current (or build) time is between the given dates.
         status(String worstResult, String bestResult) // Run if worstResult <= (current build status) <= bestResult
         shell(String command) // Run if shell script succeeds (Since 1.23)
         batch(String command) // Run if batch script succeeds (Since 1.23)
@@ -2247,7 +2382,7 @@ steps {
 steps {
     conditionalSteps {
         condition {
-            time("9:00", "13:00", false)
+            time(9, 0, 13, 0, false)
         }
         runner("Unstable")
         shell("echo 'a first step')

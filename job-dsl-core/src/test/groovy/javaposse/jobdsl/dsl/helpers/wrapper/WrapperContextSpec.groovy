@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import spock.lang.Specification
@@ -42,6 +43,74 @@ class WrapperContextSpec extends Specification {
         wrapper.name() == 'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
         wrapper.job[0].value() == 'testJob'
         wrapper.shareWorkspace[0].value() == true
+    }
+
+    def 'add rbenv-controlled ruby version'() {
+        when:
+        context.rbenv('2.1.2')
+
+        then:
+        context.wrapperNodes[0].name() == 'ruby-proxy-object'
+        def rootObject = context.wrapperNodes[0].'ruby-object'[0]
+        rootObject.'@pluginid' == 'rbenv'
+        rootObject.'@ruby-class' == 'Jenkins::Tasks::BuildWrapperProxy'
+        rootObject.'pluginid'[0].value() == 'rbenv'
+        rootObject.'pluginid'[0].'@ruby-class' == 'String'
+        rootObject.'pluginid'[0].'@pluginid' == 'rbenv'
+        rootObject.object[0].'@ruby-class' == 'RbenvWrapper'
+        rootObject.object[0].'@pluginid' == 'rbenv'
+        with(rootObject.object[0]) {
+            version[0].value() == '2.1.2'
+            version[0].'@pluginid' == 'rbenv'
+            version[0].'@ruby-class' == 'String'
+            ignore__local__version[0].value() == false
+            ignore__local__version[0].'@pluginid' == 'rbenv'
+            ignore__local__version[0].'@ruby-class' == 'String'
+            gem__list[0].value() == ''
+            gem__list[0].'@pluginid' == 'rbenv'
+            gem__list[0].'@ruby-class' == 'String'
+            rbenv__root[0].value() == '$HOME/.rbenv'
+            rbenv__root[0].'@pluginid' == 'rbenv'
+            rbenv__root[0].'@ruby-class' == 'String'
+            rbenv__repository[0].value() == 'https://github.com/sstephenson/rbenv.git'
+            rbenv__repository[0].'@pluginid' == 'rbenv'
+            rbenv__repository[0].'@ruby-class' == 'String'
+            rbenv__revision[0].value() == 'master'
+            rbenv__revision[0].'@pluginid' == 'rbenv'
+            rbenv__revision[0].'@ruby-class' == 'String'
+            ruby__build__repository[0].value() == 'https://github.com/sstephenson/ruby-build.git'
+            ruby__build__repository[0].'@pluginid' == 'rbenv'
+            ruby__build__repository[0].'@ruby-class' == 'String'
+            ruby__build__revision[0].value() == 'master'
+            ruby__build__revision[0].'@pluginid' == 'rbenv'
+            ruby__build__revision[0].'@ruby-class' == 'String'
+        }
+    }
+
+    def 'add rbenv-controlled override defaults'() {
+        when:
+        context.rbenv('2.1.2') {
+            ignoreLocalVersion(true)
+            gems('bundler', 'rake')
+            root('foo')
+            rbenvRepository('barfoo')
+            rbenvRevision('2.0')
+            rubyBuildRepository('foobar')
+            rubyBuildRevision('1.0')
+        }
+
+        then:
+        context.wrapperNodes[0].name() == 'ruby-proxy-object'
+        with(context.wrapperNodes[0].'ruby-object'[0].object[0]) {
+            version[0].value() == '2.1.2'
+            ignore__local__version[0].value() == true
+            gem__list[0].value() == 'bundler,rake'
+            rbenv__root[0].value() == 'foo'
+            rbenv__repository[0].value() == 'barfoo'
+            rbenv__revision[0].value() == '2.0'
+            ruby__build__repository[0].value() == 'foobar'
+            ruby__build__revision[0].value() == '1.0'
+        }
     }
 
     def 'add rvm-controlled ruby version'() {
@@ -611,6 +680,110 @@ class WrapperContextSpec extends Specification {
         }
     }
 
+    def 'call configFile closure'() {
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        String configTarget = 'myTargetLocation'
+        String configVariable = '$CONFIG_FILE_LOCATION'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
+
+        when:
+        context.configFiles {
+            file(configName) {
+                targetLocation configTarget
+                variable configVariable
+            }
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == configTarget
+                variable[0].value() == configVariable
+            }
+        }
+    }
+
+    def 'call configFile'() {
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
+
+        when:
+        context.configFiles {
+            file(configName)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+        }
+    }
+
+    def 'call configFile with two files'() {
+        setup:
+        String configName1 = 'myCustomConfig'
+        String configId1 = 'CustomConfig1417476679249'
+        String configName2 = 'myOtherConfig'
+        String configId2 = 'CustomConfig1417476679250'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName1) >> configId1
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName2) >> configId2
+
+        when:
+        context.configFiles {
+            file(configName1)
+            file(configName2)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 2
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId1
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[1]) {
+                children().size() == 3
+                fileId[0].value() == configId2
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+        }
+    }
+
+    def 'call configFile with unknown fileName'() {
+        setup:
+        String configName = 'lala'
+
+        when:
+        context.configFiles {
+            file(configName)
+        }
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(configName)
+    }
+
     def 'call exclusion with single arg'() {
         when:
         context.exclusionResources('first')
@@ -761,6 +934,50 @@ class WrapperContextSpec extends Specification {
         with(context.wrapperNodes[0]) {
             name() == 'org.jenkinsci.plugins.golang.GolangBuildWrapper'
             goVersion[0].value() == 'Go 1.3.3'
+        }
+    }
+
+    def 'call credentials binding'() {
+        setup:
+        mockJobManagement.getCredentialsId('foo') >> 'bar'
+        mockJobManagement.getCredentialsId('bar') >> 'baz'
+        mockJobManagement.getCredentialsId('baz') >> 'foo'
+        mockJobManagement.getCredentialsId('foobar') >> 'foobarbaz'
+
+        when:
+        context.credentialsBinding {
+            file('A', 'foo')
+            string('B', 'bar')
+            usernamePassword('C', 'baz')
+            zipFile('D', 'foobar')
+        }
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper'
+            children().size() == 1
+            bindings[0].children().size() == 4
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'A'
+                credentialsId[0].value() == 'bar'
+            }
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'B'
+                credentialsId[0].value() == 'baz'
+            }
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'C'
+                credentialsId[0].value() == 'foo'
+            }
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'D'
+                credentialsId[0].value() == 'foobarbaz'
+            }
         }
     }
 }

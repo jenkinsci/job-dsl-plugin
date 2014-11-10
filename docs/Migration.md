@@ -1,3 +1,37 @@
+## Migrating to 1.28
+
+### DSL Method Return Values
+
+Prior to version 1.28 most DSL methods had an undocumented return value. Since 1.28 DSL methods do not return a value
+except for the methods defined in `javaposse.jobdsl.dsl.DslFactory`.
+
+### Git Clone Options
+
+The `reference` and `shallowClone` methods in the `git` closure are deprecated, use the cloneOptions(boolean shallowClone = false, String referencePath, Integer timeoutMinutes) method instead.
+
+DSL prior to 1.28
+```groovy
+job {
+    scm {
+        git {
+            shallowClone(true)
+            reference('/foo/bar')
+        }
+    }
+}
+```
+
+DSL since 1.28
+```groovy
+job {
+    scm {
+        git {
+            cloneOptions(true, '/foo/bar', 20)
+        }
+    }
+}
+```
+
 ## Migrating to 1.27
 
 ### Job Name

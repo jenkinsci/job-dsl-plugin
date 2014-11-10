@@ -26,11 +26,11 @@ class TriggerContext implements Context {
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
      */
-    def urlTrigger(String crontab = null, Closure contextClosure) {
+    void urlTrigger(String crontab = null, Closure contextClosure) {
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
         ContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
-        def urlTriggerNode = new NodeBuilder().'org.jenkinsci.plugins.urltrigger.URLTrigger' {
+        Node urlTriggerNode = new NodeBuilder().'org.jenkinsci.plugins.urltrigger.URLTrigger' {
             spec urlTriggerContext.crontab
             if (urlTriggerContext.label) {
                 labelRestriction true
@@ -86,7 +86,7 @@ class TriggerContext implements Context {
         triggerNodes << urlTriggerNode
     }
 
-    def cron(String cronString) {
+    void cron(String cronString) {
         Preconditions.checkNotNull(cronString)
         triggerNodes << new NodeBuilder().'hudson.triggers.TimerTrigger' {
             spec cronString
@@ -98,7 +98,7 @@ class TriggerContext implements Context {
      *     <spec>10 * * * *</spec>
      * </hudson.triggers.SCMTrigger>
      */
-    def scm(String cronString) {
+    void scm(String cronString) {
         Preconditions.checkNotNull(cronString)
         triggerNodes << new NodeBuilder().'hudson.triggers.SCMTrigger' {
             spec cronString
@@ -112,7 +112,7 @@ class TriggerContext implements Context {
      *     <spec/>
      * </com.cloudbees.jenkins.GitHubPushTrigger>
      */
-    def githubPush() {
+    void githubPush() {
         triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
             spec ''
         }
@@ -135,7 +135,7 @@ class TriggerContext implements Context {
      *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
-    def pullRequest(Closure contextClosure) {
+    void pullRequest(Closure contextClosure) {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
@@ -191,13 +191,13 @@ class TriggerContext implements Context {
      *                      RefUpdated
      * @return
      */
-    def gerrit(Closure contextClosure = null) {
+    void gerrit(Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
         GerritContext gerritContext = new GerritContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, gerritContext)
 
-        def nodeBuilder = new NodeBuilder()
-        def gerritNode = nodeBuilder.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger' {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        Node gerritNode = nodeBuilder.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger' {
             spec ''
             if (gerritContext.projects) {
                 gerritProjects {
@@ -286,7 +286,7 @@ class TriggerContext implements Context {
      * project. Defaults to <code>false</code>.
      * @param checkSnapshotDependencies set to <code>true</code> to check snapshot dependencies
      */
-    def snapshotDependencies(boolean checkSnapshotDependencies) {
+    void snapshotDependencies(boolean checkSnapshotDependencies) {
         Preconditions.checkState jobType == JobType.Maven, 'snapshotDependencies can only be applied for Maven jobs'
         withXmlActions << WithXmlAction.create {
             it.children().removeAll { it instanceof Node && it.name() == 'ignoreUpstremChanges' }

@@ -13,19 +13,19 @@ class ViolationsContext implements Context {
     Integer perFileDisplayLimit = null
     String sourceEncoding = null
 
-    def sourcePathPattern(String sourcePathPattern) {
+    void sourcePathPattern(String sourcePathPattern) {
         this.sourcePathPattern = sourcePathPattern
     }
 
-    def fauxProjectPath(String fauxProjectPath) {
+    void fauxProjectPath(String fauxProjectPath) {
         this.fauxProjectPath = fauxProjectPath
     }
 
-    def perFileDisplayLimit(Integer perFileDisplayLimit) {
+    void perFileDisplayLimit(Integer perFileDisplayLimit) {
         this.perFileDisplayLimit = perFileDisplayLimit
     }
 
-    def sourceEncoding(String sourceEncoding) {
+    void sourceEncoding(String sourceEncoding) {
         this.sourceEncoding = sourceEncoding
     }
 
@@ -41,7 +41,7 @@ class ViolationsContext implements Context {
         entries[key] = createEntry(min, max, unstable, pattern)
     }
 
-    def methodMissing(String key, args) {
+    void methodMissing(String key, args) {
 
         if (!validTypes.contains(key)) {
             throw new IllegalArgumentException("${key} is not a known type for the Violations plugin")

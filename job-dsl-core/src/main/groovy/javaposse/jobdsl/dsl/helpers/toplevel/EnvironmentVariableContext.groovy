@@ -7,19 +7,19 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     boolean keepSystemVariables = true
     boolean keepBuildVariables = true
 
-    def groovy(String script) {
+    void groovy(String script) {
         groovyScript = script
     }
 
-    def loadFilesFromMaster(boolean loadFilesFromMaster) {
+    void loadFilesFromMaster(boolean loadFilesFromMaster) {
         this.loadFilesFromMaster = loadFilesFromMaster
     }
 
-    def keepSystemVariables(boolean keepSystemVariables) {
+    void keepSystemVariables(boolean keepSystemVariables) {
         this.keepSystemVariables = keepSystemVariables
     }
 
-    def keepBuildVariables(boolean keepBuildVariables) {
+    void keepBuildVariables(boolean keepBuildVariables) {
         this.keepBuildVariables = keepBuildVariables
     }
 

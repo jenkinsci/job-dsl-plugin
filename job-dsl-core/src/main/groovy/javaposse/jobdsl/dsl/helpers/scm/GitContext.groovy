@@ -71,6 +71,33 @@ class GitContext implements Context {
         }
     }
 
+    void cloneOptions(boolean shallowClone = false, String referencePath, Integer timeoutMinutes) {
+        if (jobManagement.getPluginVersion('git-plugin')?.isOlderThan(new VersionNumber('2.0.0'))) {
+            this.shallowClone(shallowClone)
+            reference(referencePath)
+        } else {
+            Node cloneNode = NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.CloneOption' {
+                shallow(shallowClone)
+                timeout(timeoutMinutes ?: '')
+            }
+            // to circumvent conflict with the reference method
+            if (referencePath) {
+                cloneNode.appendNode('reference', referencePath)
+            }
+            extensions << cloneNode
+        }
+    }
+
+    // deprecated
+    void shallowClone(boolean shallowClone = true) {
+        this.shallowClone = shallowClone
+    }
+
+    // deprecated
+    void reference(String reference) {
+        this.reference = reference
+    }
+
     void branch(String branch) {
         this.branches.add(branch)
     }
@@ -95,10 +122,6 @@ class GitContext implements Context {
         this.remotePoll = remotePoll
     }
 
-    void shallowClone(boolean shallowClone = true) {
-        this.shallowClone = shallowClone
-    }
-
     void pruneBranches(boolean pruneBranches = true) {
         this.pruneBranches = pruneBranches
     }
@@ -109,10 +132,6 @@ class GitContext implements Context {
 
     void relativeTargetDir(String relativeTargetDir) {
         this.relativeTargetDir = relativeTargetDir
-    }
-
-    void reference(String reference) {
-        this.reference = reference
     }
 
     void browser(Closure gitBrowserClosure) {

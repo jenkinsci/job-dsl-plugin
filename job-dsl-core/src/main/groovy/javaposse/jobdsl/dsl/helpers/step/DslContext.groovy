@@ -13,30 +13,30 @@ class DslContext implements Context {
 
     String scriptText = ''
     DslContext.RemovedJobAction removedJobAction = DslContext.RemovedJobAction.IGNORE
-    def externalScripts = []
-    def ignoreExisting = false
+    List<String> externalScripts = []
+    boolean ignoreExisting = false
 
-    def text(String text) {
+    void text(String text) {
         this.scriptText = Preconditions.checkNotNull(text)
     }
 
-    def useScriptText() {
+    boolean useScriptText() {
         scriptText.length() > 0
     }
 
-    def external(String... dslScripts) {
+    void external(String... dslScripts) {
         externalScripts.addAll(dslScripts)
     }
 
-    def getTargets() {
+    String getTargets() {
         externalScripts.join('\n')
     }
 
-    def ignoreExisting(boolean ignore = true) {
+    void ignoreExisting(boolean ignore = true) {
         this.ignoreExisting = ignore
     }
 
-    def removeAction(String action) {
+    void removeAction(String action) {
         try {
             this.removedJobAction = DslContext.RemovedJobAction.valueOf(action)
         } catch (IllegalArgumentException iae) {

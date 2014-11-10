@@ -14,11 +14,11 @@ class AxisContext implements Context {
      *     </values>
      * </hudson.matrix.TextAxis>
      */
-    def text(String axisName, String... axisValues) {
+    void text(String axisName, String... axisValues) {
         text(axisName, axisValues.toList())
     }
 
-    def text(String axisName, Iterable<String> axisValues) {
+    void text(String axisName, Iterable<String> axisValues) {
         simpleAxis('Text', axisName, axisValues)
     }
 
@@ -32,11 +32,11 @@ class AxisContext implements Context {
      *     </values>
      * </hudson.matrix.LabelAxis>
      */
-    def label(String axisName, String... axisValues) {
+    void label(String axisName, String... axisValues) {
         label(axisName, axisValues.toList())
     }
 
-    def label(String axisName, Iterable<String> axisValues) {
+    void label(String axisName, Iterable<String> axisValues) {
         simpleAxis('Label', axisName, axisValues)
     }
 
@@ -49,11 +49,11 @@ class AxisContext implements Context {
      *     </values>
      * </hudson.matrix.LabelExpAxis>
      */
-    def labelExpression(String axisName, String... axisValues) {
+    void labelExpression(String axisName, String... axisValues) {
         labelExpression(axisName, axisValues.toList())
     }
 
-    def labelExpression(String axisName, Iterable<String> axisValues) {
+    void labelExpression(String axisName, Iterable<String> axisValues) {
         simpleAxis('LabelExp', axisName, axisValues)
     }
 
@@ -66,20 +66,20 @@ class AxisContext implements Context {
      *     </values>
      * </hudson.matrix.JDKAxis>
      */
-    def jdk(String... axisValues) {
+    void jdk(String... axisValues) {
         jdk(axisValues.toList())
     }
 
-    def jdk(Iterable<String> axisValues) {
+    void jdk(Iterable<String> axisValues) {
         simpleAxis('JDK', 'jdk', axisValues)
     }
 
-    def configure(Closure closure) {
+    void configure(Closure closure) {
         configureBlocks << closure
     }
 
     private simpleAxis(String axisType, String axisName, Iterable<String> axisValues) {
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
         axisNodes << nodeBuilder."hudson.matrix.${axisType}Axis" {
             name axisName

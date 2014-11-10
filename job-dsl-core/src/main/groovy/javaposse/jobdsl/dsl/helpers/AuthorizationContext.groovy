@@ -6,21 +6,21 @@ package javaposse.jobdsl.dsl.helpers
 class AuthorizationContext implements Context {
     List<String> permissions = []
 
-    def permissionAll(String user) {
+    void permissionAll(String user) {
         Permissions.values().each {
             permission(it, user)
         }
     }
 
-    def permission(String permission) {
+    void permission(String permission) {
         permissions << permission
     }
 
-    def permission(Permissions permission, String user) {
+    void permission(Permissions permission, String user) {
         permissions << "${permission.longForm}:${user}"
     }
 
-    def permission(String permissionEnumName, String user) {
+    void permission(String permissionEnumName, String user) {
         permission(Permissions.valueOf(permissionEnumName), user)
     }
 }

@@ -14,11 +14,11 @@ class GrailsContext implements Context {
     boolean nonInteractive = true
     boolean useWrapper = false
 
-    def target(String target) {
+    void target(String target) {
         targets << target
     }
 
-    def targets(Iterable<String> addlTargets) {
+    void targets(Iterable<String> addlTargets) {
         addlTargets.each {
             target(it)
         }
@@ -28,31 +28,31 @@ class GrailsContext implements Context {
         targets.join(' ')
     }
 
-    def name(String name) {
+    void name(String name) {
         this.name = name
     }
 
-    def grailsWorkDir(String grailsWorkDir) {
+    void grailsWorkDir(String grailsWorkDir) {
         this.grailsWorkDir = grailsWorkDir
     }
 
-    def projectWorkDir(String projectWorkDir) {
+    void projectWorkDir(String projectWorkDir) {
         this.projectWorkDir = projectWorkDir
     }
 
-    def projectBaseDir(String projectBaseDir) {
+    void projectBaseDir(String projectBaseDir) {
         this.projectBaseDir = projectBaseDir
     }
 
-    def serverPort(String serverPort) {
+    void serverPort(String serverPort) {
         this.serverPort = serverPort
     }
 
-    def prop(String key, String value) {
+    void prop(String key, String value) {
         props[key] = value
     }
 
-    def props(Map<String, String> map) {
+    void props(Map<String, String> map) {
         props += map
     }
 
@@ -60,15 +60,15 @@ class GrailsContext implements Context {
         props.collect { k, v -> "$k=$v" }.join('\n')
     }
 
-    def forceUpgrade(boolean forceUpgrade) {
+    void forceUpgrade(boolean forceUpgrade) {
         this.forceUpgrade = forceUpgrade
     }
 
-    def nonInteractive(boolean nonInteractive) {
+    void nonInteractive(boolean nonInteractive) {
         this.nonInteractive = nonInteractive
     }
 
-    def useWrapper(boolean useWrapper) {
+    void useWrapper(boolean useWrapper) {
         this.useWrapper = useWrapper
     }
 

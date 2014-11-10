@@ -5,17 +5,17 @@ import javaposse.jobdsl.dsl.helpers.Context
 import static com.google.common.base.Preconditions.checkArgument
 
 class EmailContext implements Context {
-    def emailTriggerNames = ['PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement',
+    Set<String> emailTriggerNames = ['PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement',
             'Failure', 'Regression', 'Aborted', 'NotBuilt', 'FirstFailure', 'Unstable']
-    def emailTriggers = []
+    List<EmailTrigger> emailTriggers = []
 
     // Not sure why a map syntax wouldn't call method below, so creating this one
-    def trigger(Map args) {
+    void trigger(Map args) {
         trigger(args.triggerName, args.subject, args.body, args.recipientList, args.sendToDevelopers,
                 args.sendToRequester, args.includeCulprits, args.sendToRecipientList)
     }
 
-    def trigger(String triggerName, String subject = null, String body = null, String recipientList = null,
+    void trigger(String triggerName, String subject = null, String body = null, String recipientList = null,
                 Boolean sendToDevelopers = null, Boolean sendToRequester = null, Boolean includeCulprits = null,
                 Boolean sendToRecipientList = null) {
         checkArgument(emailTriggerNames.contains(triggerName), "Possible values: ${emailTriggerNames.join(',')}")
@@ -26,7 +26,7 @@ class EmailContext implements Context {
 
     Closure configureClosure
 
-    def configure(Closure configureClosure) {
+    void configure(Closure configureClosure) {
         // save for later
         this.configureClosure = configureClosure
     }

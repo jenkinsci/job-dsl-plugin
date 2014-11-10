@@ -135,7 +135,9 @@ job(Map<String, ?> arguments = [:]) {
         allocatePorts(String[] ports, Closure closure = null)
         buildName(String nameTemplate) // since 1.24
         buildUserVars() // since 1.26
+        credentialsBinding(Closure closure) // since 1.28
         colorizeOutput(String colorMap = 'xterm')
+        configFiles(Closure closure) // since 1.28
         deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
         environmentVariables(Closure envClosure)
         exclusionResources(String... resourceNames) // since 1.24
@@ -147,6 +149,7 @@ job(Map<String, ?> arguments = [:]) {
         maskPasswords() // since 1.26
         nodejs(String installation) // since 1.27
         preBuildCleanup(Closure closure = null) // since 1.22
+        rbenv(String rubyVersion, Closure rbenvClosure = null) // since 1.27
         release(Closure releaseClosure) // since 1.22
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
         rvm(String rubySpecification)
@@ -193,6 +196,7 @@ job(Map<String, ?> arguments = [:]) {
         groovyCommand(String command, String groovyName, Closure groovyClosure = null)
         groovyScriptFile(String fileName, Closure groovyClosure = null)
         groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null)
+        httpRequest(String url, Closure closure = null) // since 1.28
         maven(Closure mavenClosure) // since 1.20
         maven(String target = null, String pom = null, Closure configure = null)
         phase(Closure phaseClosure)
@@ -403,6 +407,14 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
         component(String name, String initialJob)
         regex(String regex)
     }
+
+    // BuildMonitorView options, since 1.28
+    jobs {
+        name(String jobName)
+        names(String... jobNames)
+        regex(String regex)
+    }
+    statusFilter(StatusFilter filter)
 }
 
 folder { // since 1.23
@@ -469,8 +481,8 @@ view(Map<String, Object> attributes = [:], Closure closure)
 
 The `view` method behaves like the `job` method explained above and will return a _View_ object.
 
-Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView` or
-`DeliveryPipelineView` is supported. When no type is specified, a list view will be generated.
+Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView`,
+`DeliveryPipelineView` or `BuildMonitorView` is supported. When no type is specified, a list view will be generated.
 
 ```groovy
 view(type: ListView) {
