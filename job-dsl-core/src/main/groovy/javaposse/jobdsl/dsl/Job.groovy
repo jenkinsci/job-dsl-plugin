@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import java.util.UUID
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AuthorizationContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContextHelper
@@ -19,6 +20,7 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContextHelper
  * DSL element representing a Jenkins job.
  */
 class Job extends Item {
+    UUID id = UUID.randomUUID()
     JobManagement jobManagement
 
     String templateName = null // Optional
@@ -57,7 +59,11 @@ class Job extends Item {
         helperBuildFlow = new BuildFlowHelper(withXmlActions, type)
         helperBuildParameters = new BuildParametersContextHelper(withXmlActions, type)
         helperMatrix = new MatrixHelper(withXmlActions, type)
-        helperProperties = new PropertiesContextHelper(withXmlActions, type, jobManagement)
+        helperProperties = new PropertiesContextHelper(withXmlActions, type, jobManagement, this)
+        
+        withXmlActions << new WithXmlAction() { ->
+            'id' id
+        }
     }
 
     /**
@@ -73,6 +79,10 @@ class Job extends Item {
 
     def name(Closure nameClosure) {
         name(nameClosure.call().toString())
+    }
+    
+    def getIdAsString() {
+        id.toString()
     }
 
     Node getNode() {
@@ -134,6 +144,7 @@ class Job extends Item {
 
     def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <project>
+  <id/>
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -153,6 +164,7 @@ class Job extends Item {
 
     def emptyBuildFlowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <com.cloudbees.plugins.flow.BuildFlow>
+  <id/>
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -174,6 +186,7 @@ class Job extends Item {
 
     def emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <maven2-moduleset>
+  <id/>
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -201,6 +214,7 @@ class Job extends Item {
 
     def emptyMultijobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <com.tikal.jenkins.plugins.multijob.MultiJobProject plugin="jenkins-multijob-plugin@1.8">
+  <id/>
   <actions/>
   <description/>
   <keepDependencies>false</keepDependencies>
@@ -220,6 +234,7 @@ class Job extends Item {
 
     def emptyMatrixJobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <matrix-project>
+  <id/>
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties/>

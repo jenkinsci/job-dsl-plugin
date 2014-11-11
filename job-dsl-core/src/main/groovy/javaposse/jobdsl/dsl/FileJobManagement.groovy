@@ -103,7 +103,7 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+    Node callExtension(Job job, String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         null
     }
 }

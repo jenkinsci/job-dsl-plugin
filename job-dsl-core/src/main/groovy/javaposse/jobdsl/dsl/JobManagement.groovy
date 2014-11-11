@@ -109,5 +109,5 @@ interface JobManagement {
      */
     String getConfigFileId(ConfigFileType type, String name)
 
-    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args)
+    Node callExtension(Job job, String name, Class<? extends ExtensibleContext> contextType, Object... args)
 }
