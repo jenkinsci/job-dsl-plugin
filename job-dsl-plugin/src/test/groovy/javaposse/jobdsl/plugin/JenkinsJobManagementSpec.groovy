@@ -116,7 +116,7 @@ class JenkinsJobManagementSpec extends Specification {
     def 'create job with nonexisting parent'() {
         when:
         jobManagement.createOrUpdateConfig(
-                'nonexistingfolder/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true
+                null, 'nonexistingfolder/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true
         )
 
         then:
@@ -145,7 +145,7 @@ class JenkinsJobManagementSpec extends Specification {
         )
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+        jobManagement.createOrUpdateConfig(null, 'project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/folder/project') != null
@@ -345,7 +345,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension not found'() {
         when:
-        Node result = jobManagement.callExtension('foo', PropertiesContext)
+        Node result = jobManagement.callExtension(null, 'foo', PropertiesContext)
 
         then:
         result == null
@@ -353,7 +353,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension with no args'() {
         when:
-        Node result = jobManagement.callExtension('test', PropertiesContext)
+        Node result = jobManagement.callExtension(null, 'test', PropertiesContext)
 
         then:
         isXmlIdentical('extension.xml', result)
@@ -361,7 +361,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension defined twice'() {
         when:
-        jobManagement.callExtension('twice', PropertiesContext)
+        jobManagement.callExtension(null, 'twice', PropertiesContext)
 
         then:
         Exception e = thrown(ExtensionPointException)
@@ -371,7 +371,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension with object result'() {
         when:
-        Node result = jobManagement.callExtension('testComplexObject', PropertiesContext, 'foo', 42, true)
+        Node result = jobManagement.callExtension(null, 'testComplexObject', PropertiesContext, 'foo', 42, true)
 
         then:
         isXmlIdentical('extension.xml', result)
@@ -386,7 +386,7 @@ class JenkinsJobManagementSpec extends Specification {
         }
 
         when:
-        Node result = jobManagement.callExtension('withNestedContext', PropertiesContext, closure)
+        Node result = jobManagement.callExtension(null, 'withNestedContext', PropertiesContext, closure)
 
         then:
         isXmlIdentical('extension.xml', result)
@@ -394,13 +394,13 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'extension is being notified'() {
         when:
-        jobManagement.createOrUpdateConfig('test-123', loadResource('config.xml'), true)
+        jobManagement.createOrUpdateConfig(null, 'test-123', loadResource('config.xml'), true)
 
         then:
         ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemCreated('test-123')
 
         when:
-        jobManagement.createOrUpdateConfig('test-123', loadResource('config2.xml'), false)
+        jobManagement.createOrUpdateConfig(null, 'test-123', loadResource('config2.xml'), false)
 
         then:
         ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemUpdated('test-123')

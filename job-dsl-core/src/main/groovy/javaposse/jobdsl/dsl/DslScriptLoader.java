@@ -110,7 +110,8 @@ public class DslScriptLoader {
             for (Item job : referencedItems) {
                 String xml = job.getXml();
                 LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
+                String jobId = job instanceof Job ? ((Job) job).getId().toString() : null;
+                jp.getJm().createOrUpdateConfig(jobId, job.getName(), xml, ignoreExisting);
                 String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
                 generatedJobs.add(new GeneratedJob(templateName, job.getName()));
             }

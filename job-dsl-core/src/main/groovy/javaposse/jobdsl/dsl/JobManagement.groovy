@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
-
 import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 /**
@@ -19,13 +18,14 @@ interface JobManagement {
 
     /**
      * Creates or updates the job config for the named Jenkins job with the config provided.
+     * @param jobId the unique if of the job to create or update
      * @param jobName the name of the new / updated job
      * @param config the new / updated job config
      * @param ignoreExisting do not update existing jobs
      * @throws NameNotProvidedException if the jobName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
      */
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+    boolean createOrUpdateConfig(String jobId, String jobName, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException
 
     /**
@@ -109,5 +109,5 @@ interface JobManagement {
      */
     String getConfigFileId(ConfigFileType type, String name)
 
-    Node callExtension(Job job, String name, Class<? extends ExtensibleContext> contextType, Object... args)
+    Node callExtension(String jobId, String name, Class<? extends ExtensibleContext> contextType, Object... args)
 }

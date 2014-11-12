@@ -14,7 +14,7 @@ abstract class AbstractExtensibleContext implements ExtensibleContext {
 
     def methodMissing(String name, args) {
         Class<? extends ExtensibleContext> contextType = this.class as Class<? extends ExtensibleContext>
-        Node node = jobManagement.callExtension(job, name, contextType, args)
+        Node node = jobManagement.callExtension(job.getId().toString(), name, contextType, args)
         if (node == null) {
             throw new MissingMethodException(name, contextType, args)
         }

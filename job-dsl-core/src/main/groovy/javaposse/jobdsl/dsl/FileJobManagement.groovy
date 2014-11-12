@@ -43,7 +43,7 @@ class FileJobManagement extends AbstractJobManagement {
         }
     }
 
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+    boolean createOrUpdateConfig(String jobId, String jobName, String config, boolean ignoreExisting)
         throws NameNotProvidedException, ConfigurationMissingException {
         validateUpdateArgs(jobName, config)
 
@@ -103,7 +103,7 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    Node callExtension(Job job, String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+    Node callExtension(String jobId, String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         null
     }
 }

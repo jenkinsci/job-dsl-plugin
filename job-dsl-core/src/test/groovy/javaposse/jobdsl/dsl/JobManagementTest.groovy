@@ -33,7 +33,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig(null, minimalXml, false)
+        jm.createOrUpdateConfig(null, null, minimalXml, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -45,7 +45,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig('', minimalXml, false)
+        jm.createOrUpdateConfig(null, '', minimalXml, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -57,7 +57,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig('NEW-JOB-NAME', null, false)
+        jm.createOrUpdateConfig(null, 'NEW-JOB-NAME', null, false)
 
         then:
         thrown(ConfigurationMissingException)
@@ -69,7 +69,7 @@ class JobManagementTest extends Specification {
         JobManagement jm = new StringJobManagement()
 
         when:
-        jm.createOrUpdateConfig('NEW-JOB-NAME', '', false)
+        jm.createOrUpdateConfig(null, 'NEW-JOB-NAME', '', false)
 
         then:
         thrown(ConfigurationMissingException)

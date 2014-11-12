@@ -67,7 +67,7 @@ class AbstractJobManagementSpec extends Specification {
         AbstractJobManagement jobManagement = new TestJobManagement()
 
         when:
-        Node node = jobManagement.callExtension('foo', PropertiesContext)
+        Node node = jobManagement.callExtension(null, 'foo', PropertiesContext)
 
         then:
         node == null
@@ -88,7 +88,7 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
-        boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) {
+        boolean createOrUpdateConfig(String jobId, String jobName, String config, boolean ignoreExisting) {
             throw new UnsupportedOperationException()
         }
 
@@ -128,7 +128,7 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
-        Node callExtension(Job job, String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+        Node callExtension(String jobId, String name, Class<? extends ExtensibleContext> contextType, Object... args) {
             null
         }
 

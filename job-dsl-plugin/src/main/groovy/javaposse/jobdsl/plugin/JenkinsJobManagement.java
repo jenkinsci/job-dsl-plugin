@@ -124,7 +124,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public boolean createOrUpdateConfig(String path, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String jobId, String path, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 
         LOGGER.log(Level.INFO, format("createOrUpdateConfig for %s", path));
@@ -137,9 +137,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Jenkins.checkGoodName(jobName);
 
         if (item == null) {
-            created = createNewItem(path, config);
+            created = createNewItem(jobId, path, config);
         } else if (!ignoreExisting) {
-            created = updateExistingItem(item, config);
+            created = updateExistingItem(jobId, item, config);
         }
         return created;
     }
@@ -167,7 +167,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                     view.updateByXml(new StreamSource(inputStream));
                 }
             } else if (parent == null) {
-                throw new DslException(format("", path));
+                throw new DslException(format(Messages.CreateView_UnknownParent(), path));
             } else {
                 LOGGER.log(Level.WARNING, format("Could not create view within %s", parent.getClass()));
             }
@@ -186,13 +186,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Jenkins jenkins = Jenkins.getInstance();
 
         if (jenkins.getPlugin("config-file-provider") == null) {
-            throw new DslException("");
+            throw new DslException(Messages.CreateOrUpdateConfigFile_PluginNotInstalled());
         }
 
         ConfigProvider configProvider = findConfigProvider(configFile.getType());
         if (configProvider == null) {
             throw new DslException(
-                    format("", configFile.getClass())
+                    format(Messages.CreateOrUpdateConfigFile_ConfigProviderNotFound(), configFile.getClass())
             );
         }
 
@@ -206,7 +206,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         config = createNewConfig(config, configFile);
         if (config == null) {
             throw new DslException(
-                    format("", configFile.getClass())
+                    format(Messages.CreateOrUpdateConfigFile_UnknownConfigFileType(), configFile.getClass())
             );
         }
 
@@ -267,13 +267,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                 try {
                     return locateValidFileInWorkspace(workspace, relLocation).readToString();
                 } catch (IllegalStateException e) {
-                    logWarning("", relLocation, jobName);
+                    logWarning(Messages.ReadFileFromWorkspace_JobFileNotFound(), relLocation, jobName);
                 }
             } else {
-                logWarning("", relLocation, jobName);
+                logWarning(Messages.ReadFileFromWorkspace_WorkspaceNotFound(), relLocation, jobName);
             }
         } else {
-            logWarning("", relLocation, jobName);
+            logWarning(Messages.ReadFileFromWorkspace_JobNotFound(), relLocation, jobName);
         }
         return null;
     }
@@ -322,7 +322,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return null;
     }
 
-    public Node callExtension(Job job, String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+    public Node callExtension(String jobId, String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
         if (candidates.isEmpty()) {
             LOGGER.fine(
@@ -341,7 +341,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             Map.Entry<ContextExtensionPoint, Method> candidate = candidates.entrySet().iterator().next();
             ContextExtensionPoint extensionPoint = candidate.getKey();
             Method method = candidate.getValue();
+            
+            setCurrentSession(getSession(jobId));
             Object result = method.invoke(extensionPoint, args);
+            clearCurrentSession();
+            
             String xml = XSTREAM.toXML(result);
             LOGGER.fine(
                     "Call to extension " + extensionPoint.getClass().getName() + "." + name + " with arguments " +
@@ -385,7 +389,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    private boolean updateExistingItem(AbstractItem item, String config) {
+    private boolean updateExistingItem(String jobId, AbstractItem item, String config) {
         boolean created;
 
         // Leverage XMLUnit to perform diffs
@@ -407,7 +411,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             item.updateByXml(streamSource);
 
-            setCurrentSession(getSession(item.getFullName()));
+            setCurrentSession(getSession(jobId));
             for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
                 extensionPoint.notifyItemUpdated(item);
             }
@@ -421,7 +425,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    private boolean createNewItem(String path, String config) {
+    private boolean createNewItem(String jobId, String path, String config) {
         LOGGER.log(Level.FINE, format("Creating item as %s", config));
         boolean created = false;
 
@@ -433,7 +437,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             if (parent instanceof ModifiableTopLevelItemGroup) {
                 Item item = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
 
-                setCurrentSession(getSession(path));
+                setCurrentSession(getSession(jobId));
                 for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
                     extensionPoint.notifyItemCreated(item);
                 }
@@ -441,7 +445,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
                 created = true;
             } else if (parent == null) {
-                throw new DslException(format("", path));
+                throw new DslException(format(Messages.CreateItem_UnknownParent(), path));
             } else {
                 LOGGER.log(Level.WARNING, format("Could not create item within %s", parent.getClass()));
             }

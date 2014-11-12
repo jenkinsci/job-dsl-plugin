@@ -133,8 +133,8 @@ class JobTest extends Specification {
         setup:
         Node node = new Node(null, 'fooNode')
         JobManagement jm = Mock(JobManagement)
-        jm.callExtension('foo', PropertiesContext, 'bar') >> node
         Job job = new Job(jm)
+        jm.callExtension(job.getId().toString(), 'foo', PropertiesContext, 'bar') >> node
 
         when:
         job.properties {
