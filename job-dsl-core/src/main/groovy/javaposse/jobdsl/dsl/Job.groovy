@@ -76,7 +76,7 @@ class Job extends Item {
     def name(Closure nameClosure) {
         name(nameClosure.call().toString())
     }
-    
+
     Node getNode() {
         Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
 
