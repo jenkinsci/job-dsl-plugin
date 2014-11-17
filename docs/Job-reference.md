@@ -3876,6 +3876,7 @@ Full usage
 textParam("myParameterName", "my default textParam value", "my description")
 ```
 
+<<<<<<< HEAD
 ## Node parameter
 
 ```groovy
@@ -3924,3 +3925,15 @@ job {
 ```
 
 (since 1.26)
+
+## RBENV Wrapper
+
+```groovy
+wrappers {
+    rbenv("2.1.2", ["bundler", "rake"], null)
+}
+```
+
+Adds the ability to specify the rbenv wrapper to be used during job execution. You can specify the ruby version to used (or installed if it is not already) and which gems you would like available during the job execution. Requires the [RBENV Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin).
+
+(since 1.27)
