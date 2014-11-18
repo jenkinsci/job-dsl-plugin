@@ -1363,7 +1363,9 @@ still-another-dsl.groovy'''
                 ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
-                ['earliest': 'earliest-time', 'latest': 'latest-time', 'useBuildTime': false]
+                ['earliestHours': 9, 'earliestMinutes': 10,
+                 'latestHours': 14, 'latestMinutes': 45,
+                 'useBuildTime': false]
         ]
         testConditionClass << [
                 'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
@@ -1624,22 +1626,24 @@ still-another-dsl.groovy'''
         }
 
         where:
-        conditionDsl       | args                         | conditionClass                                                        | argNodes
-        'shell'            | ['echo test']                | 'org.jenkins_ci.plugins.run_condition.contributed.ShellCondition'     | [command: 'echo test']
-        'batch'            | ['xcopy * ..\\']             | 'org.jenkins_ci.plugins.run_condition.contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
-        'alwaysRun'        | []                           | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
-        'neverRun'         | []                           | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
-        'booleanCondition' | ['someToken']                | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
-        'cause'            | ['userCause', true]          | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
-                                                                                                                                     exclusiveCondition: 'true']
-        'stringsMatch'     | ['some1', 'some2', true]     | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
-                                                                                                                                     arg2      : 'some2',
-                                                                                                                                     ignoreCase: 'true']
-        'expression'       | ['exp', 'lab']               | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
-                                                                                                                                     label     : 'lab']
-        'time'             | ['earliest', 'latest', true] | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliest    : 'earliest',
-                                                                                                                                     latest      : 'latest',
-                                                                                                                                     useBuildTime: 'true']
+        conditionDsl       | args                     | conditionClass                                                        | argNodes
+        'shell'            | ['echo test']            | 'org.jenkins_ci.plugins.run_condition.contributed.ShellCondition'     | [command: 'echo test']
+        'batch'            | ['xcopy * ..\\']         | 'org.jenkins_ci.plugins.run_condition.contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
+        'alwaysRun'        | []                       | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
+        'neverRun'         | []                       | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
+        'booleanCondition' | ['someToken']            | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
+        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
+                                                                                                                                 exclusiveCondition: 'true']
+        'stringsMatch'     | ['some1', 'some2', true] | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
+                                                                                                                                 arg2      : 'some2',
+                                                                                                                                 ignoreCase: 'true']
+        'expression'       | ['exp', 'lab']           | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
+                                                                                                                                 label     : 'lab']
+        'time'             | [5, 30, 15, 25, true]    | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliestHours  : 5,
+                                                                                                                                 earliestMinutes: 30,
+                                                                                                                                 latestHours    : 15,
+                                                                                                                                 latestMinutes  : 25,
+                                                                                                                                 useBuildTime   : true]
     }
 
     @Unroll
