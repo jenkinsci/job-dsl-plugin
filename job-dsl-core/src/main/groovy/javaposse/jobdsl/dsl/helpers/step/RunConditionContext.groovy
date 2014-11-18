@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.BinaryLogicOperation
@@ -13,7 +14,6 @@ import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.StatusCondition
 
 class RunConditionContext implements Context {
-
     RunCondition condition
 
     def alwaysRun() {
@@ -46,10 +46,17 @@ class RunConditionContext implements Context {
                 args: ['expression': expression, 'label': label])
     }
 
-    def time(String earliest, String latest, boolean useBuildTime) {
+    def time(int earliestHours, int earliestMinutes, int latestHours, int latestMinutes, boolean useBuildTime) {
+        Preconditions.checkArgument((0..23).contains(earliestHours), 'earliestHours must be between 0 and 23')
+        Preconditions.checkArgument((0..59).contains(earliestMinutes), 'earliestMinutes must be between 0 and 59')
+        Preconditions.checkArgument((0..23).contains(latestHours), 'latestHours must be between 0 and 23')
+        Preconditions.checkArgument((0..59).contains(latestMinutes), 'latestMinutes must be between 0 and 59')
+
         this.condition = new SimpleCondition(
                 name: 'Time',
-                args: ['earliest': earliest, 'latest': latest, 'useBuildTime': useBuildTime ? 'true' : 'false'])
+                args: ['earliestHours': earliestHours, 'earliestMinutes': earliestMinutes,
+                       'latestHours': latestHours, 'latestMinutes': latestMinutes,
+                       'useBuildTime': useBuildTime])
     }
 
     def status(String worstResult, String bestResult) {

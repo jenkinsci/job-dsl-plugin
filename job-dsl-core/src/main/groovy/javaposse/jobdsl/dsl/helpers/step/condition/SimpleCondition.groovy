@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl.helpers.step.condition
 class SimpleCondition implements RunCondition {
     String name
     String subPackage = 'core'
-    Map<String, String> args = [:]
+    Map<String, Object> args = [:]
 
     @Override
     String getConditionClass() {

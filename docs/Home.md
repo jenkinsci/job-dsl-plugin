@@ -28,6 +28,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * `pattern` method in `archiveArtifacts` closure can be called multiple times to collect patterns
  * Added a no parameter variant of `colorizeOutput` to match documentation.
  * The `name` method with a closure parameter in the `job` closure is deprecated, see [[Migration]]
+ * Fixed time condition for [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
 * 1.26 (October 04 2014)
  * Support for "Pipeline starts with parameters" for [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
  * Support for [Build User Vars Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+User+Vars+Plugin)

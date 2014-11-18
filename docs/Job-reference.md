@@ -2210,7 +2210,8 @@ conditionalSteps {
         stringsMatch(String arg1, String arg2, boolean ignoreCase) // Run if the two strings match
         cause(String buildCause, boolean exclusiveCondition) // Run if the build cause matches the given string
         expression(String expression, String label) // Run if the regular expression matches the label
-        time(String earliest, String latest, boolean useBuildTime) // Run if the current (or build) time is between the given dates.
+        time(int earliestHour, int earliestMinute, int latestHour, int latestMinute,
+             boolean useBuildTime) // Run if the current (or build) time is between the given dates.
         status(String worstResult, String bestResult) // Run if worstResult <= (current build status) <= bestResult
         shell(String command) // Run if shell script succeeds (Since 1.23)
         batch(String command) // Run if batch script succeeds (Since 1.23)
@@ -2247,7 +2248,7 @@ steps {
 steps {
     conditionalSteps {
         condition {
-            time("9:00", "13:00", false)
+            time(9, 0, 13, 0, false)
         }
         runner("Unstable")
         shell("echo 'a first step')
