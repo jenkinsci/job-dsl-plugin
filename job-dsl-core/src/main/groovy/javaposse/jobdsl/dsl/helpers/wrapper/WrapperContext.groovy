@@ -46,29 +46,27 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <buildWrappers>
-     *     <ruby-proxy-object>
-     *         <ruby-object ruby-class="Jenkins::Tasks::BuildWrapperProxy" pluginid="rbenv">
-     *             <pluginid pluginid="rbenv" ruby-class="String">rbenv</pluginid>
-     *             <object ruby-class="RbenvWrapper" pluginid="rbenv">
-     *                 <rbenv__root pluginid="rbenv" ruby-class="String">$HOME/.rbenv</rbenv__root>
-     *                 <ruby__build__repository pluginid="rbenv" ruby-class="String">https://github.com/sstephenson/>
-     *                 <rbenv__revision pluginid="rbenv" ruby-class="String">master</rbenv__revision>
-     *                 <rbenv__repository pluginid="rbenv" ruby-class="String">https://github.com/
-     *                 <ruby__build__revision pluginid="rbenv" ruby-class="String">master</ruby__build__revision>
-     *                 <gem__list pluginid="rbenv" ruby-class="String">bundler,rake</gem__list>
-     *                 <version pluginid="rbenv" ruby-class="String">1.9.3-p484</version>
-     *                 <ignore__local__version ruby-class="FalseClass" pluginid="rbenv"/>
-     *             </object>
-     *         </ruby-object>
-     *     </ruby-proxy-object>
-     * </buildWrappers>
+     * <ruby-proxy-object>
+     *     <ruby-object ruby-class="Jenkins::Tasks::BuildWrapperProxy" pluginid="rbenv">
+     *         <pluginid pluginid="rbenv" ruby-class="String">rbenv</pluginid>
+     *         <object ruby-class="RbenvWrapper" pluginid="rbenv">
+     *             <version pluginid="rbenv" ruby-class="String">1.9.3-p484</version>
+     *             <ignore__local__version ruby-class="String" pluginid="rbenv">false</ignore__local__version>
+     *             <gem__list pluginid="rbenv" ruby-class="String">bundler,rake</gem__list>
+     *             <rbenv__root pluginid="rbenv" ruby-class="String">$HOME/.rbenv</rbenv__root>
+     *             <rbenv__repository pluginid="rbenv" ruby-class="String">
+     *                 https://github.com/sstephenson/rbenv.git
+     *             </rbenv__repository>
+     *             <rbenv__revision pluginid="rbenv" ruby-class="String">master</rbenv__revision>
+     *             <ruby__build__repository pluginid="rbenv" ruby-class="String">
+     *                 https://github.com/sstephenson/ruby-build.git
+     *             </ruby__build__repository>
+     *             <ruby__build__revision pluginid="rbenv" ruby-class="String">master</ruby__build__revision>
+     *         </object>
+     *     </ruby-object>
+     * </ruby-proxy-object>
      */
-    def rbenv(String rubyVersion, Closure rbenvClosure) {
-        rbenv(rubyVersion, [], rbenvClosure)
-    }
-
-    def rbenv(String rubyVersion, List gems = [], Closure rbenvClosure = null) {
+    def rbenv(String rubyVersion, Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
 
@@ -77,14 +75,15 @@ class WrapperContext implements Context {
                 pluginid('rbenv', [pluginid: 'rbenv', 'ruby-class': 'String'])
                 object('ruby-class': 'RbenvWrapper', pluginid: 'rbenv') {
                     version(rubyVersion, [pluginid: 'rbenv', 'ruby-class': 'String'])
-                    rbenv_root(rbenvContext.root, [pluginid: 'rbenv', 'ruby-class': 'String'])
-                    ruby__build__repository(rbenvContext.rubyBuildRepository,
-                            [pluginid: 'rbenv', 'ruby-class': 'String'])
-                    ruby__build__revision(rbenvContext.rubyBuildRevision, [pluginid: 'rbenv', 'ruby-class': 'String'])
+                    ignore__local__version(rbenvContext.ignoreLocalVersion, [pluginid: 'rbenv', 'ruby-class': 'String'])
+                    gem__list(rbenvContext.gems.join(','), [pluginid: 'rbenv', 'ruby-class': 'String'])
+                    rbenv__root(rbenvContext.root, [pluginid: 'rbenv', 'ruby-class': 'String'])
                     rbenv__repository(rbenvContext.rbenvRepository, [pluginid: 'rbenv', 'ruby-class': 'String'])
                     rbenv__revision(rbenvContext.rbenvRevision, [pluginid: 'rbenv', 'ruby-class': 'String'])
-                    gem__list(gems.join(','), [pluginid: 'rbenv', 'ruby-class': 'String'])
-                    ignore__local__version([pluginid: 'rbenv', 'ruby-class': rbenvContext.ignoreLocalVersion])
+                    ruby__build__repository(
+                            rbenvContext.rubyBuildRepository, [pluginid: 'rbenv', 'ruby-class': 'String']
+                    )
+                    ruby__build__revision(rbenvContext.rubyBuildRevision, [pluginid: 'rbenv', 'ruby-class': 'String'])
                 }
             }
         }

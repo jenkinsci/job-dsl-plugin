@@ -147,10 +147,10 @@ job(Map<String, ?> arguments = [:]) {
         maskPasswords() // since 1.26
         nodejs(String installation) // since 1.27
         preBuildCleanup(Closure closure = null) // since 1.22
+        rbenv(String rubyVersion, Closure rbenvClosure = null) // since 1.27
         release(Closure releaseClosure) // since 1.22
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
         rvm(String rubySpecification)
-        rbenv(String rubyVersion StringList gems, Closure rbenvClosure)
         sshAgent(String credentials)
         timeout(Closure timeoutClosure)
         timeout(String type = 'absolute', Closure timeoutClosure = null) // deprecated

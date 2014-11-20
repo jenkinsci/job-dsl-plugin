@@ -51,79 +51,64 @@ class WrapperContextSpec extends Specification {
         then:
         context.wrapperNodes[0].name() == 'ruby-proxy-object'
         def rootObject = context.wrapperNodes[0].'ruby-object'[0]
-        rootObject.'@ruby-class' == 'Jenkins::Tasks::BuildWrapperProxy'
         rootObject.'@pluginid' == 'rbenv'
+        rootObject.'@ruby-class' == 'Jenkins::Tasks::BuildWrapperProxy'
+        rootObject.'pluginid'[0].value() == 'rbenv'
         rootObject.'pluginid'[0].'@ruby-class' == 'String'
         rootObject.'pluginid'[0].'@pluginid' == 'rbenv'
-
+        rootObject.object[0].'@ruby-class' == 'RbenvWrapper'
+        rootObject.object[0].'@pluginid' == 'rbenv'
         with(rootObject.object[0]) {
             version[0].value() == '2.1.2'
             version[0].'@pluginid' == 'rbenv'
             version[0].'@ruby-class' == 'String'
-
+            ignore__local__version[0].value() == false
+            ignore__local__version[0].'@pluginid' == 'rbenv'
+            ignore__local__version[0].'@ruby-class' == 'String'
             gem__list[0].value() == ''
             gem__list[0].'@pluginid' == 'rbenv'
             gem__list[0].'@ruby-class' == 'String'
-
-            rbenv_root[0].value() == '$HOME/.rbenv'
-            rbenv_root[0].'@pluginid' == 'rbenv'
-            rbenv_root[0].'@ruby-class' == 'String'
-
-            ruby__build__repository[0].value() == 'https://github.com/sstephenson/ruby-build.git'
-            ruby__build__repository[0].'@pluginid' == 'rbenv'
-            ruby__build__repository[0].'@ruby-class' == 'String'
-
-            rbenv__revision[0].value() == 'master'
-            rbenv__revision[0].'@pluginid' == 'rbenv'
-            rbenv__revision[0].'@ruby-class' == 'String'
-
+            rbenv__root[0].value() == '$HOME/.rbenv'
+            rbenv__root[0].'@pluginid' == 'rbenv'
+            rbenv__root[0].'@ruby-class' == 'String'
             rbenv__repository[0].value() == 'https://github.com/sstephenson/rbenv.git'
             rbenv__repository[0].'@pluginid' == 'rbenv'
             rbenv__repository[0].'@ruby-class' == 'String'
-
+            rbenv__revision[0].value() == 'master'
+            rbenv__revision[0].'@pluginid' == 'rbenv'
+            rbenv__revision[0].'@ruby-class' == 'String'
+            ruby__build__repository[0].value() == 'https://github.com/sstephenson/ruby-build.git'
+            ruby__build__repository[0].'@pluginid' == 'rbenv'
+            ruby__build__repository[0].'@ruby-class' == 'String'
             ruby__build__revision[0].value() == 'master'
             ruby__build__revision[0].'@pluginid' == 'rbenv'
             ruby__build__revision[0].'@ruby-class' == 'String'
-
-            ignore__local__version[0].'@ruby-class' == 'FalseClass'
-            ignore__local__version[0].'@pluginid' == 'rbenv'
         }
     }
 
     def 'add rbenv-controlled override defaults'() {
         when:
         context.rbenv('2.1.2') {
+            ignoreLocalVersion(true)
+            gems('bundler', 'rake')
             root('foo')
+            rbenvRepository('barfoo')
+            rbenvRevision('2.0')
             rubyBuildRepository('foobar')
             rubyBuildRevision('1.0')
-            rbenvRevision('2.0')
-            rbenvRepository('barfoo')
-            ignoreLocalVersion(true)
         }
 
         then:
         context.wrapperNodes[0].name() == 'ruby-proxy-object'
         with(context.wrapperNodes[0].'ruby-object'[0].object[0]) {
             version[0].value() == '2.1.2'
-            gem__list[0].value() == ''
-            rbenv_root[0].value() == 'foo'
-            ruby__build__repository[0].value() == 'foobar'
-            rbenv__revision[0].value() == '2.0'
-            rbenv__repository[0].value() == 'barfoo'
-            ruby__build__revision[0].value() == '1.0'
-            ignore__local__version[0].'@ruby-class' == 'TrueClass'
-        }
-    }
-
-    def 'add rbenv-controlled ruby version and gems'() {
-        when:
-        context.rbenv('2.1.2', ['bundler', 'rake'])
-
-        then:
-        context.wrapperNodes[0].name() == 'ruby-proxy-object'
-        with(context.wrapperNodes[0].'ruby-object'[0].object[0]) {
-            version[0].value() == '2.1.2'
+            ignore__local__version[0].value() == true
             gem__list[0].value() == 'bundler,rake'
+            rbenv__root[0].value() == 'foo'
+            rbenv__repository[0].value() == 'barfoo'
+            rbenv__revision[0].value() == '2.0'
+            ruby__build__repository[0].value() == 'foobar'
+            ruby__build__revision[0].value() == '1.0'
         }
     }
 

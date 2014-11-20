@@ -1553,6 +1553,41 @@ job {
 
 (since 1.27)
 
+## rbenv
+
+```groovy
+job {
+    wrappers {
+        rbenv(String rubyVersion) {
+            ignoreLocalVersion(boolean ignore = true) // defaults to false
+            gems(String... gems)
+            root(String root)                         // defaults to '$HOME/.rbenv'
+            rbenvRepository(String repository)        // defaults to 'https://github.com/sstephenson/rbenv.git'
+            rbenvRevision(String revision)            // defaults to 'master'
+            rubyBuildRepository(String repository)    // defaults to 'https://github.com/sstephenson/ruby-build.git'
+            rubyBuildRevision(String revision)        // defaults to 'master'
+        }
+    }
+}
+```
+
+Adds the ability to specify the rbenv wrapper to be used during job execution. You can specify the ruby version to used
+(or installed if it is not already) and which gems you would like available during the job execution. Requires the
+[rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin).
+
+```groovy
+job {
+    wrappers {
+        rbenv('2.1.2') {
+            ignoreLocalVersion()
+            gems('bundler', 'rake')
+        }
+    }
+}
+```
+
+(since 1.27)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
@@ -3876,7 +3911,6 @@ Full usage
 textParam("myParameterName", "my default textParam value", "my description")
 ```
 
-<<<<<<< HEAD
 ## Node parameter
 
 ```groovy
@@ -3925,15 +3959,3 @@ job {
 ```
 
 (since 1.26)
-
-## RBENV Wrapper
-
-```groovy
-wrappers {
-    rbenv("2.1.2", ["bundler", "rake"], null)
-}
-```
-
-Adds the ability to specify the rbenv wrapper to be used during job execution. You can specify the ruby version to used (or installed if it is not already) and which gems you would like available during the job execution. Requires the [RBENV Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin).
-
-(since 1.27)

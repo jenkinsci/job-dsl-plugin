@@ -3,34 +3,39 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import  javaposse.jobdsl.dsl.helpers.Context
 
 class RbenvContext implements Context {
+    boolean ignoreLocalVersion = false
+    List<String> gems = []
     String root = '$HOME/.rbenv'
+    String rbenvRepository = 'https://github.com/sstephenson/rbenv.git'
+    String rbenvRevision = 'master'
     String rubyBuildRepository = 'https://github.com/sstephenson/ruby-build.git'
     String rubyBuildRevision = 'master'
-    String rbenvRevision = 'master'
-    String rbenvRepository = 'https://github.com/sstephenson/rbenv.git'
-    String ignoreLocalVersion = 'FalseClass'
+
+    def ignoreLocalVersion(boolean ignore = true) {
+        this.ignoreLocalVersion = ignore
+    }
+
+    def gems(String... gems) {
+        this.gems.addAll(gems)
+    }
 
     def root(String root) {
         this.root = root
     }
 
-    def rubyBuildRepository(String repo) {
-        this.rubyBuildRepository = repo
+    def rbenvRepository(String repository) {
+        this.rbenvRepository = repository
     }
 
-    def rubyBuildRevision(String rev) {
-        this.rubyBuildRevision = rev
+    def rbenvRevision(String revision) {
+        this.rbenvRevision = revision
     }
 
-    def rbenvRevision(String rev) {
-        this.rbenvRevision = rev
+    def rubyBuildRepository(String repository) {
+        this.rubyBuildRepository = repository
     }
 
-    def rbenvRepository(String repo) {
-        this.rbenvRepository = repo
-    }
-
-    def ignoreLocalVersion(boolean ignore) {
-        this.ignoreLocalVersion = ignore.toString().capitalize() + 'Class'
+    def rubyBuildRevision(String revision) {
+        this.rubyBuildRevision = revision
     }
 }
