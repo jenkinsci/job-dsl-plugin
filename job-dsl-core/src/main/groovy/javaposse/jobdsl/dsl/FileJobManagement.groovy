@@ -18,6 +18,20 @@ class FileJobManagement extends AbstractJobManagement {
      * Environment variables.
      */
     protected Map params = [:]
+    private final RenameHelper renameHelper = new RenameHelper() {
+        @Override
+        Set<String> allJobNames() {
+            root.listFiles()*.name
+        }
+
+        @Override
+        void renameJob(String from, String to) throws IOException {
+            boolean renamed = new File(root, from).renameTo(new File(root, to))
+            if (!renamed) {
+                throw new IOException("Could not rename Job file ${from} to ${to}")
+            }
+        }
+    }
 
     FileJobManagement(File root) {
         this.root = root
@@ -60,6 +74,11 @@ class FileJobManagement extends AbstractJobManagement {
     @Override
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         throw new UnsupportedOperationException()
+    }
+
+    @Override
+    void renameJobMatching(String previousNames, String destination) throws IOException {
+        renameHelper.renameJobMatching(previousNames, destination)
     }
 
     @Override

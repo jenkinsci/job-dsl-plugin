@@ -57,7 +57,7 @@ jpi {
 dependencies {
     compile project(':job-dsl-core')
     forceInclude "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.2@jar'
+    optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.7@jar'

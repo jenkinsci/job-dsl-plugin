@@ -101,7 +101,7 @@ public class DslScriptLoader {
         return generatedItems;
     }
 
-    private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) {
+    private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) throws IOException {
         // Iterate jobs which were setup, save them, and convert to a serializable form
         Set<GeneratedJob> generatedJobs = Sets.newLinkedHashSet();
         if (jp != null) {
@@ -110,6 +110,12 @@ public class DslScriptLoader {
             for (Item job : referencedItems) {
                 String xml = job.getXml();
                 LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
+                if (job instanceof Job) {
+                    Job realJob = (Job) job;
+                    if (realJob.getPreviousNamesRegex() != null) {
+                        jp.getJm().renameJobMatching(realJob.getPreviousNamesRegex(), realJob.getName());
+                    }
+                }
                 jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
                 String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
                 generatedJobs.add(new GeneratedJob(templateName, job.getName()));
