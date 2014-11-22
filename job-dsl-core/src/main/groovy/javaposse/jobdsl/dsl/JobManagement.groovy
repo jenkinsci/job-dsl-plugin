@@ -46,6 +46,19 @@ interface JobManagement {
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting)
 
     /**
+     * Renames a Job with name matching previousNames to the destination name.
+     * Does not support Jobs which are not directly below the seed job.
+     *
+     * If destination matches the currently found job name, then nothing happens.
+     *
+     * @param previousNames a regular Expression how the job was called earlier
+     * @param destination the new name of the job
+     * @throws IOException if renaming failed
+     * @throws IllegalArgumentException if there are multiple jobs matching the previousNames
+     */
+    void renameJobMatching(String previousNames, String destination) throws IOException
+
+    /**
      * Queue a job to run. Useful for running jobs after they've been created.
      */
     void queueJob(String jobName) throws NameNotProvidedException

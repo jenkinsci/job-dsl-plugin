@@ -18,6 +18,7 @@ import hudson.model.BuildableItem;
 import hudson.model.Cause;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.View;
 import hudson.model.ViewGroup;
@@ -31,6 +32,7 @@ import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
+import javaposse.jobdsl.dsl.RenameHelper;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
@@ -49,6 +51,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -71,6 +74,25 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private final EnvVars envVars;
     private final AbstractBuild<?, ?> build;
     private final LookupStrategy lookupStrategy;
+    private final RenameHelper renameHelper = new RenameHelper() {
+        @Override
+        public Set<String> allJobNames() {
+            @SuppressWarnings("unchecked")
+            Collection<Item> items = lookupStrategy.getContext(build.getProject()).getItems();
+            Set<String> itemNames = new HashSet<String>();
+            for (Item item : items) {
+                itemNames.add(item.getFullName());
+            }
+
+            return itemNames;
+        }
+
+        @Override
+        public void renameJob(String from, String to) throws IOException {
+            Job<?, ?> job = lookupStrategy.getItem(build.getProject(), from, Job.class);
+            job.renameTo(to);
+        }
+    };
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build,
                                 LookupStrategy lookupStrategy) {
@@ -396,6 +418,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
+    }
+
+    @Override
+    public void renameJobMatching(String previousNames, String destination) throws IOException {
+        renameHelper.renameJobMatching(previousNames, destination);
     }
 
     public static class ExtractTemplate implements Function<GeneratedJob, String> {

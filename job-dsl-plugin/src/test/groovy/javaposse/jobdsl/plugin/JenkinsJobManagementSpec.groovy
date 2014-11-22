@@ -119,6 +119,18 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Could not create view, unknown parent path in "nonexistingfolder/view"'
     }
 
+    def 'rename job'() {
+        setup:
+        jenkinsRule.createFreeStyleProject('oldName')
+
+        when:
+        jobManagement.renameJobMatching('oldName', 'newName')
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('newName') != null
+        jenkinsRule.jenkins.getItemByFullName('oldName') == null
+    }
+
     def 'createOrUpdateConfig relative to folder'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
