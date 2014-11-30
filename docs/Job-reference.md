@@ -1588,6 +1588,26 @@ job {
 
 (since 1.27)
 
+## Credentials Binding
+
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file(String variable, String credentialId)
+            string(String variable, String credentialId)
+            usernamePassword(String variable, String credentialId)
+            zipFile(String variable, String credentialId)
+        }
+    }
+}
+```
+
+Bindings environment variables to credentials. Requires the
+[Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin).
+
+(since 1.27)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
