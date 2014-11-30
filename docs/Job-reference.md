@@ -2050,7 +2050,7 @@ Injects environment variables into the build. Requires the [EnvInject plugin](ht
 ```groovy
 job {
     steps {
-        httpRequest( {
+        httpRequest(String url = null) {
             url(String url)
             httpMode(String mode)
             authentication(String authentication)
@@ -2067,8 +2067,7 @@ Adds a step which performs a HTTP request. Requires the
 ```groovy
 job {
     steps {
-        httpRequest( {
-            url('http://www.example.com')
+        httpRequest 'http://www.example.com' {
             httpMode('POST')
             authentication('Credentials')
             returnCodeBuildRelevant(true)
