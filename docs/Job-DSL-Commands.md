@@ -196,6 +196,7 @@ job(Map<String, ?> arguments = [:]) {
         groovyCommand(String command, String groovyName, Closure groovyClosure = null)
         groovyScriptFile(String fileName, Closure groovyClosure = null)
         groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null)
+        httpRequest(Closure closure) // since 1.27
         maven(Closure mavenClosure) // since 1.20
         maven(String target = null, String pom = null, Closure configure = null)
         phase(Closure phaseClosure)
