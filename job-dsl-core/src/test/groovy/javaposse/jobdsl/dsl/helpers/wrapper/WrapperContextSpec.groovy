@@ -831,4 +831,46 @@ class WrapperContextSpec extends Specification {
             goVersion[0].value() == 'Go 1.3.3'
         }
     }
+
+    def 'call credentials binding'() {
+        setup:
+        mockJobManagement.getCredentialsId('foo') >> 'bar'
+        mockJobManagement.getCredentialsId('bar') >> 'baz'
+        mockJobManagement.getCredentialsId('baz') >> 'foo'
+        mockJobManagement.getCredentialsId('foobar') >> 'foobarbaz'
+
+        when:
+        context.credentialsBinding {
+            file('A', 'foo')
+            string('B', 'bar')
+            usernamePassword('C', 'baz')
+            zipFile('D', 'foobar')
+        }
+
+        then:
+        context.wrapperNodes?.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper'
+
+            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding'[0]) {
+                variable[0].value() == 'A'
+                credentialsId[0].value() == 'bar'
+            }
+
+            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding'[0]) {
+                variable[0].value() == 'B'
+                credentialsId[0].value() == 'baz'
+            }
+
+            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding'[0]) {
+                variable[0].value() == 'C'
+                credentialsId[0].value() == 'foo'
+            }
+
+            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding'[0]) {
+                variable[0].value() == 'D'
+                credentialsId[0].value() == 'foobarbaz'
+            }
+        }
+    }
 }
