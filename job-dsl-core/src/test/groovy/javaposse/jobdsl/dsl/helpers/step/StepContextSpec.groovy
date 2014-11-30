@@ -1997,8 +1997,7 @@ still-another-dsl.groovy'''
 
     def 'call http request'() {
         when:
-        context.httpRequest {
-            url 'http://www.example.com'
+        context.httpRequest 'http://www.example.com', {
             httpMode 'GET'
             authentication 'bob'
             returnCodeBuildRelevant true

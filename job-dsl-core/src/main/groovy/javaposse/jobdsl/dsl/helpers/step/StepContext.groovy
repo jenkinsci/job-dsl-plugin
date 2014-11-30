@@ -923,8 +923,9 @@ class StepContext implements Context {
      *     <logResponseBody>false</logResponseBody>
      * </jenkins.plugins.http__request.HttpRequest>
      */
-    def httpRequest(Closure closure) {
+    def httpRequest(String requestUrl = null, Closure closure) {
         HttpRequestContext context = new HttpRequestContext()
+        context.url = requestUrl
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'jenkins.plugins.http__request.HttpRequest' {
