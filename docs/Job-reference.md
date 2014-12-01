@@ -1982,6 +1982,41 @@ Injects environment variables into the build. Requires the [EnvInject plugin](ht
 
 (Since 1.21)
 
+## HTTP Request
+
+```groovy
+job {
+    steps {
+        httpRequest(String url = null) {
+            url(String url)
+            httpMode(String mode)
+            authentication(String authentication)
+            returnCodeBuildRelevant(boolean returnCodeBuildRelevant)
+            logResponseBody(boolean logResponseBody)
+        }
+    }
+}
+```
+
+Adds a step which performs a HTTP request. Requires the
+[HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin).
+
+```groovy
+job {
+    steps {
+        httpRequest 'http://www.example.com' {
+            httpMode('POST')
+            authentication('Credentials')
+            returnCodeBuildRelevant(true)
+            logResponseBody(true)
+        }
+    }
+}
+```
+
+(since 1.27)
+
+
 # Multijob Phase
 
 ```

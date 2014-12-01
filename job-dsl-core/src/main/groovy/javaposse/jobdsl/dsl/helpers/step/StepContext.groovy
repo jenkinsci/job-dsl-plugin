@@ -913,4 +913,39 @@ class StepContext implements Context {
             serverHash hash
         }
     }
+
+    /**
+     * <jenkins.plugins.http__request.HttpRequest plugin="http_request@1.8.5">
+     *     <url>https://rtfm.freelancer.com</url>
+     *     <httpMode>POST</httpMode>
+     *     <authentication>RTFM</authentication>
+     *     <returnCodeBuildRelevant>true</returnCodeBuildRelevant>
+     *     <logResponseBody>false</logResponseBody>
+     * </jenkins.plugins.http__request.HttpRequest>
+     */
+    def httpRequest(String requestUrl = null, Closure closure) {
+        HttpRequestContext context = new HttpRequestContext()
+        context.url = requestUrl
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'jenkins.plugins.http__request.HttpRequest' {
+            url(context.url)
+
+            if (context.httpMode != null) {
+                httpMode(context.httpMode)
+            }
+
+            if (context.authentication != null) {
+                authentication(context.authentication)
+            }
+
+            if (context.returnCodeBuildRelevant != null) {
+                returnCodeBuildRelevant(context.returnCodeBuildRelevant)
+            }
+
+            if (context.logResponseBody != null) {
+                logResponseBody(context.logResponseBody)
+            }
+        }
+    }
 }
