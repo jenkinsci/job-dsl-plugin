@@ -136,6 +136,7 @@ job(Map<String, ?> arguments = [:]) {
         buildName(String nameTemplate) // since 1.24
         buildUserVars() // since 1.26
         colorizeOutput(String colorMap = 'xterm')
+        configFile(Closure closure)
         deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
         environmentVariables(Closure envClosure)
         exclusionResources(String... resourceNames) // since 1.24

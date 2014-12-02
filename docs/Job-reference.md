@@ -1168,6 +1168,22 @@ Downloads the specified tools, if needed, and puts the path to each of them in t
 
 (since 1.21)
 
+## [Config Files](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+
+Makes an existing custom config file available to builds.
+
+```groovy
+job {
+    wrappers {
+        configFile {
+            fileName 'myCustomConfigFile'
+        }
+    }
+}
+```
+
+The configFile closure takes three arguments - fileName is mandatory, targetLocation and variable are optional. Requires that Jenkins has the config file provider plugin installed.
+
 ## Environment Variables
 ```groovy
 job {

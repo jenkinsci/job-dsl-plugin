@@ -609,6 +609,33 @@ class WrapperContext implements Context {
     }
 
     /**
+     * <org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper>
+     *     <managedFiles>
+     *         <org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
+     *             <fileId></fileId>
+     *             <targetLocation></targetLocation>
+     *             <variable></variable>
+     *         </org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
+     *     </managedFiles>
+     * </org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper>
+     */
+    def configFile(Closure configFileClosure) {
+
+        ConfigFileContext configFileContext = new ConfigFileContext(jobManagement)
+        ContextHelper.executeInContext(configFileClosure, configFileContext)
+
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper' {
+            managedFiles {
+                'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile' {
+                    fileId configFileContext.fileId
+                    targetLocation configFileContext.targetLocation
+                    variable configFileContext.variable
+                }
+            }
+        }
+    }
+
+    /**
      * <org.jvnet.hudson.plugins.exclusion.IdAllocator>
      *     <ids>
      *         <org.jvnet.hudson.plugins.exclusion.DefaultIdType>
