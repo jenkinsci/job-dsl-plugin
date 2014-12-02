@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import spock.lang.Specification
@@ -677,6 +678,46 @@ class WrapperContextSpec extends Specification {
             deleteKeychainsAfterBuild[0].value() == true
             overwriteExistingKeychains[0].value() == true
         }
+    }
+
+    def 'call custom configFile closure' () {
+
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        String configTarget = 'myTargetLocation'
+        String configVariable = '$CONFIG_FILE_LOCATION'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
+
+        when:
+        context.configFile {
+            fileName configName
+            targetLocation configTarget
+            variable configVariable
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            def customConfigFile = managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]
+            customConfigFile.fileId[0].value() == configId
+            customConfigFile.targetLocation[0].value() == configTarget
+            customConfigFile.variable[0].value() == configVariable
+        }
+
+    }
+    def 'call custom configFile closure with unknown fileName'() {
+        setup:
+        String configName = 'lala'
+
+        when:
+        context.configFile {
+            fileName configName
+        }
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(configName)
     }
 
     def 'call exclusion with single arg'() {
