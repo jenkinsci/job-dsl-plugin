@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
+import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 
@@ -464,5 +465,42 @@ class ScmContext implements Context {
             refreshConfigSpecCommand('')
             useTimeRule(false)
         }
+    }
+
+     /**
+     *   <scm class="com.ibm.team.build.internal.hjplugin.RTCScm">
+     *       <overrideGlobal>false</overrideGlobal>
+     *       <buildTool/>
+     *       <serverURI>https://jazzqual.rsint.net/ccm</serverURI>
+     *       <timeout/>
+     *       <credentialsId>/>
+     *       <buildType>buildDefinition</buildType>
+     *       <buildWorkspace/>
+     *       <buildDefinition/>
+     *       <avoidUsingToolkit>false</avoidUsingToolkit>
+     *   </scm>
+     *
+     * See https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin
+     */
+    def rtc(Closure closure = null) {
+        validateMulti()
+
+        RTCContext context = new RTCContext()
+        executeInContext(closure, context)
+
+        scmNodes << NodeBuilder.newInstance().scm(class: 'com.ibm.team.build.internal.hjplugin.RTCScm') {
+            overrideGlobal(context.overrideGlobal)
+            buildTool(context.buildTool)
+            serverURI(context.serverURI)
+            timeout(context.timeout)
+            userId('')
+            password('')
+            passwordFile('')
+            credentialsId(context.credentialsId)
+            buildType(context.buildType)
+            buildWorkspace(context.buildWorkspace)
+            buildDefinition(context.buildDefinition)
+            avoidUsingToolkit(false)
+       }
     }
 }
