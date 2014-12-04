@@ -1239,6 +1239,205 @@ still-another-dsl.groovy'''
         prerequisiteStep.warningOnly[0].value() == true
     }
 
+    def 'call publishOverSsh without server'() {
+        when:
+        context.publishOverSsh(null)
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call publishOverSsh without transferSet'() {
+        when:
+        context.publishOverSsh {
+            server('server-name') {
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call publishOverSsh with minimal configuration and check the default values'() {
+        when:
+        context.publishOverSsh {
+            server('server-name') {
+                transferSet('file', 'command')
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin'
+            with(delegate.delegate[0]) {
+
+                consolePrefix[0].value() == 'SSH: '
+                with(delegate.delegate[0]) {
+                    with(publishers[0]) {
+                        children().size() == 1
+                        with (delegate.'jenkins.plugins.publish__over__ssh.BapSshPublisher'[0]) {
+                            configName[0].value() == 'server-name'
+                            verbose[0].value() == false
+                            with(transfers[0]) {
+                                children().size() == 1
+                                with (delegate.'jenkins.plugins.publish__over__ssh.BapSshTransfer'[0]) {
+                                    remoteDirectory[0].value() == ''
+                                    sourceFiles[0].value() == 'file'
+                                    excludes[0].value() == ''
+                                    removePrefix[0].value() == ''
+                                    remoteDirectorySDF[0].value() == false
+                                    flatten[0].value() == false
+                                    cleanRemote[0].value() == false
+                                    noDefaultExcludes[0].value() == false
+                                    makeEmptyDirs[0].value() == false
+                                    patternSeparator[0].value() == '[, ]+'
+                                    execCommand[0].value() == 'command'
+                                    execTimeout[0].value() == 120000
+                                    usePty[0].value() == false
+                                }
+                            }
+                            useWorkspaceInPromotion[0].value() == false
+                            usePromotionTimestamp[0].value() == false
+                        }
+                    }
+                    continueOnError[0].value() == false
+                    failOnError[0].value() == false
+                    alwaysPublishFromMaster[0].value() == false
+                    hostConfigurationAccess[0].@class == 'jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin'
+                    hostConfigurationAccess[0].@reference == '../..'
+                }
+            }
+        }
+    }
+
+    def 'call publishOverSsh with complex configuration'() {
+        when:
+        context.publishOverSsh {
+            server('my-server-01') {
+                verbose()
+                credentialsWithPathToKey('user01', 'path01')
+                retry(10, 10000)
+                label('server-01')
+                transferSet('files', 'command') {
+                    removePrefix('prefix')
+                    remoteDirectory('directory')
+                    excludeFiles('exclude files')
+                    patternSeparator('[| ]+')
+                    noDefaultExcludes(true)
+                    makeEmptyDirs()
+                    flattenFiles()
+                    remoteDirIsDateFormat()
+                    execTimeout(11111)
+                    execInPty()
+                }
+                transferSet('files2', 'commands2')
+            }
+            server('my-server-02') {
+                verbose(true)
+                credentialsWithKey('user2', 'key')
+                retry(20, 20000)
+                label('server-02')
+                transferSet('files3', 'commands3')
+            }
+            continueOnError()
+            failOnError()
+            alwaysPublishFromMaster()
+            parameterizedPublishing('PARAMETER')
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin'
+            with(delegate.delegate[0]) {
+
+                consolePrefix[0].value() == 'SSH: '
+                with(delegate.delegate[0]) {
+                    with(publishers[0]) {
+                        children().size() == 2
+                        with(delegate.'jenkins.plugins.publish__over__ssh.BapSshPublisher'[0]) {
+                            configName[0].value() == 'my-server-01'
+                            verbose[0].value() == true
+                            with(transfers[0]) {
+                                children().size() == 2
+                                with(delegate.'jenkins.plugins.publish__over__ssh.BapSshTransfer'[0]) {
+                                    remoteDirectory[0].value() == 'directory'
+                                    sourceFiles[0].value() == 'files'
+                                    excludes[0].value() == 'exclude files'
+                                    removePrefix[0].value() == 'prefix'
+                                    remoteDirectorySDF[0].value() == true
+                                    flatten[0].value() == true
+                                    cleanRemote[0].value() == false
+                                    noDefaultExcludes[0].value() == true
+                                    makeEmptyDirs[0].value() == true
+                                    patternSeparator[0].value() == '[| ]+'
+                                    execCommand[0].value() == 'command'
+                                    execTimeout[0].value() == 11111
+                                    usePty[0].value() == true
+                                }
+                                with(delegate.'jenkins.plugins.publish__over__ssh.BapSshTransfer'[1]) {
+                                    sourceFiles[0].value() == 'files2'
+                                    execCommand[0].value() == 'commands2'
+                                }
+                            }
+                            with(retry[0]) {
+                                delegate.@class == 'jenkins.plugins.publish_over_ssh.BapSshRetry'
+                                retries[0].value() == 10
+                                retryDelay[0].value() == 10000
+                            }
+                            with(label[0]) {
+                                delegate.@class == 'jenkins.plugins.publish_over_ssh.BapSshPublisherLabel'
+                                label[0].value() == 'server-01'
+                            }
+                            with(credentials[0]) {
+                                delegate.@class == 'jenkins.plugins.publish_over_ssh.BapSshCredentials'
+                                secretPassphrase[0].value() == ''
+                                key[0].value() == ''
+                                keyPath[0].value() == 'path01'
+                                username[0].value() == 'user01'
+                            }
+                        }
+                        with(delegate.'jenkins.plugins.publish__over__ssh.BapSshPublisher'[1]) {
+                            configName[0].value() == 'my-server-02'
+                            verbose[0].value() == true
+                            with(transfers[0]) {
+                                children().size() == 1
+                                with(delegate.'jenkins.plugins.publish__over__ssh.BapSshTransfer'[0]) {
+                                    sourceFiles[0].value() == 'files3'
+                                    execCommand[0].value() == 'commands3'
+                                }
+                            }
+                            with(retry[0]) {
+                                delegate.@class == 'jenkins.plugins.publish_over_ssh.BapSshRetry'
+                                retries[0].value() == 20
+                                retryDelay[0].value() == 20000
+                            }
+                            with(label[0]) {
+                                delegate.@class == 'jenkins.plugins.publish_over_ssh.BapSshPublisherLabel'
+                                label[0].value() == 'server-02'
+                            }
+                            with(credentials[0]) {
+                                delegate.@class == 'jenkins.plugins.publish_over_ssh.BapSshCredentials'
+                                secretPassphrase[0].value() == ''
+                                key[0].value() == 'key'
+                                keyPath[0].value() == ''
+                                username[0].value() == 'user2'
+                            }
+                        }
+                    }
+                    continueOnError[0].value() == true
+                    failOnError[0].value() == true
+                    alwaysPublishFromMaster[0].value() == true
+                    hostConfigurationAccess[0].@class == 'jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin'
+                    hostConfigurationAccess[0].@reference == '../..'
+                    with(paramPublish[0]) {
+                        delegate.@class == 'jenkins.plugins.publish_over_ssh.BapSshParamPublish'
+                        parameterName[0].value() == 'PARAMETER'
+                    }
+                }
+            }
+        }
+    }
+
     def 'call downstream build step with all args'() {
         when:
         context.downstreamParameterized {
