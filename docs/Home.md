@@ -16,6 +16,7 @@ organize a SCM repository for Job DSL scripts.
 And finally, if you want to get more involved, [here's how...](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)
 
 ## Release Notes
+* 1.28 (unreleased)
 * 1.27 (December 05 2014)
  * Added support for the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin)
  * Added support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
