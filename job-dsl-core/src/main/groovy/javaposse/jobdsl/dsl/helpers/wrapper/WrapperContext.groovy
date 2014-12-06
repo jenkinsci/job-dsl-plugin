@@ -724,4 +724,60 @@ class WrapperContext implements Context {
             goVersion(version)
         }
     }
+
+    /**
+     * <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
+     *     <bindings>
+     *         <org.jenkinsci.plugins.credentialsbinding.impl.FileBinding>
+     *             <variable>FOO</variable>
+     *             <credentialsId>b1f273ef-4219-4fa0-9489-53dc08df58ef</credentialsId>
+     *         </org.jenkinsci.plugins.credentialsbinding.impl.FileBinding>
+     *         <org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
+     *             <variable>BAR</variable>
+     *             <credentialsId>b1f273ef-4219-4fa0-9489-53dc08df58ef</credentialsId>
+     *         </org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
+     *         <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
+     *             <variable>BAZ</variable>
+     *             <credentialsId>7725107c-5110-45dc-84b4-2482b75022f1</credentialsId>
+     *         </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
+     *         <org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding>
+     *             <variable>ZIP</variable>
+     *             <credentialsId>b1f273ef-4219-4fa0-9489-53dc08df58ef</credentialsId>
+     *         </org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding>
+     *     </bindings>
+     * </org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
+     */
+    def credentialsBinding(Closure closure) {
+        CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper' {
+            'bindings' {
+                context.file.each { key, value ->
+                    'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding' {
+                        variable(key)
+                        credentialsId(value)
+                    }
+                }
+                context.string.each { key, value ->
+                    'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding' {
+                        variable(key)
+                        credentialsId(value)
+                    }
+                }
+                context.usernamePassword.each { key, value ->
+                    'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding' {
+                        variable(key)
+                        credentialsId(value)
+                    }
+                }
+                context.zipFile.each { key, value ->
+                    'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding' {
+                        variable(key)
+                        credentialsId(value)
+                    }
+                }
+            }
+        }
+    }
 }

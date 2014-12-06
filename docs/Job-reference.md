@@ -1588,6 +1588,37 @@ job {
 
 (since 1.27)
 
+## Credentials Binding
+
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file(String variable, String credentials)
+            string(String variable, String credentials)
+            usernamePassword(String variable, String credentials)
+            zipFile(String variable, String credentials)
+        }
+    }
+}
+```
+
+Bindings environment variables to credentials. Requires the
+[Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin).
+
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file('KEYSTORE', 'keystore.jks')
+            usernamePassword('PASSWORD', 'keystore password')
+        }
+    }
+}
+```
+
+(since 1.28)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
