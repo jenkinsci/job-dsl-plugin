@@ -848,26 +848,28 @@ class WrapperContextSpec extends Specification {
         }
 
         then:
-        context.wrapperNodes?.size() == 1
+        context.wrapperNodes.size() == 1
         with(context.wrapperNodes[0]) {
             name() == 'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper'
-
-            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding'[0]) {
+            children().size() == 1
+            bindings[0].children().size() == 4
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding'[0]) {
+                children().size() == 2
                 variable[0].value() == 'A'
                 credentialsId[0].value() == 'bar'
             }
-
-            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding'[0]) {
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding'[0]) {
+                children().size() == 2
                 variable[0].value() == 'B'
                 credentialsId[0].value() == 'baz'
             }
-
-            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding'[0]) {
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding'[0]) {
+                children().size() == 2
                 variable[0].value() == 'C'
                 credentialsId[0].value() == 'foo'
             }
-
-            with(bindings.'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding'[0]) {
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding'[0]) {
+                children().size() == 2
                 variable[0].value() == 'D'
                 credentialsId[0].value() == 'foobarbaz'
             }

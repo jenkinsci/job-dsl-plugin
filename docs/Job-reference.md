@@ -1594,10 +1594,10 @@ job {
 job {
     wrappers {
         credentialsBinding {
-            file(String variable, String credentialId)
-            string(String variable, String credentialId)
-            usernamePassword(String variable, String credentialId)
-            zipFile(String variable, String credentialId)
+            file(String variable, String credentials)
+            string(String variable, String credentials)
+            usernamePassword(String variable, String credentials)
+            zipFile(String variable, String credentials)
         }
     }
 }
@@ -1606,7 +1606,18 @@ job {
 Bindings environment variables to credentials. Requires the
 [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin).
 
-(since 1.27)
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file('KEYSTORE', 'keystore.jks')
+            usernamePassword('PASSWORD', 'keystore password')
+        }
+    }
+}
+```
+
+(since 1.28)
 
 # Build Steps
 

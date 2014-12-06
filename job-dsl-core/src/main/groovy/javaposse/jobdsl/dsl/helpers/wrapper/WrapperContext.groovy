@@ -726,7 +726,7 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@1.2">
+     * <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
      *     <bindings>
      *         <org.jenkinsci.plugins.credentialsbinding.impl.FileBinding>
      *             <variable>FOO</variable>
@@ -734,7 +734,7 @@ class WrapperContext implements Context {
      *         </org.jenkinsci.plugins.credentialsbinding.impl.FileBinding>
      *         <org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
      *             <variable>BAR</variable>
-     *             <credentialsId>${BAR}</credentialsId>
+     *             <credentialsId>b1f273ef-4219-4fa0-9489-53dc08df58ef</credentialsId>
      *         </org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
      *         <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
      *             <variable>BAZ</variable>
@@ -759,21 +759,18 @@ class WrapperContext implements Context {
                         credentialsId(value)
                     }
                 }
-
                 context.string.each { key, value ->
                     'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding' {
                         variable(key)
                         credentialsId(value)
                     }
                 }
-
                 context.usernamePassword.each { key, value ->
                     'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding' {
                         variable(key)
                         credentialsId(value)
                     }
                 }
-
                 context.zipFile.each { key, value ->
                     'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding' {
                         variable(key)
@@ -783,5 +780,4 @@ class WrapperContext implements Context {
             }
         }
     }
-
 }
