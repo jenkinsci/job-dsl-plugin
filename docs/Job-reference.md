@@ -1195,7 +1195,7 @@ job {
             releaseVersionTemplate(String template)
             doNotKeepLog(boolean keep = true)
             overrideBuildParameters(boolean override = true)
-            parameterDefinitions(Closure parameters)
+            parameters(Closure parameters)
             preBuildSteps(Closure steps)
             postSuccessfulBuildSteps(Closure steps)
             postBuildSteps(Closure steps)
@@ -1207,7 +1207,7 @@ job {
 
 Configure a release inside a Jenkins job. Requires the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin).
 
-For details of defining parameters (parameterDefinitions) see [Reference of Parameters](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-parameters)
+For details of defining parameters (parameter) see [Reference of Parameters](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-parameters)
 
 For details of defining steps (preBuildSteps, postSuccessfulBuildSteps, postBuildSteps, postFailedBuildSteps) see [Reference of Build Steps](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-build-steps)
 
@@ -1220,7 +1220,7 @@ job {
         release {
             doNotKeepLog()
             overrideBuildParameters()
-            parameterDefinitions {
+            parameters {
                 booleanParam('param', false, 'some boolean build parameter')
             }
             preBuildSteps {
