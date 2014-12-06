@@ -17,6 +17,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.28 (unreleased)
+ * Fixed documentation for the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin) ([JENKINS-25945](https://issues.jenkins-ci.org/browse/JENKINS-25945))
 * 1.27 (December 05 2014)
  * Added support for the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin)
  * Added support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
