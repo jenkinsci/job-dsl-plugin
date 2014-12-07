@@ -1168,6 +1168,38 @@ Downloads the specified tools, if needed, and puts the path to each of them in t
 
 (since 1.21)
 
+## Config Files
+
+```groovy
+job {
+    wrappers {
+        configFiles {
+            file(String fileName) {                   // can be called multiple times
+                targetLocation(String targetLocation) // optional
+                variable(String variable)             // optional
+            }
+        }
+    }
+}
+```
+
+Makes an existing custom config file available to builds. Requires
+the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
+
+```groovy
+job {
+    wrappers {
+        configFiles {
+            file('myCustomConfigFile') {
+                variable('CONFIG_FILE')
+            }
+        }
+    }
+}
+```
+
+(since 1.28)
+
 ## Environment Variables
 ```groovy
 job {

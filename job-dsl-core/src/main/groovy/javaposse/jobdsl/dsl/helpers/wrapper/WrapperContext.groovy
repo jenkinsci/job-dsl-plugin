@@ -609,6 +609,39 @@ class WrapperContext implements Context {
     }
 
     /**
+     * <org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper>
+     *     <managedFiles>
+     *         <org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
+     *             <fileId>CustomConfig1417476679249</fileId>
+     *             <targetLocation>/tmp/test.txt</targetLocation>
+     *             <variable>FILE</variable>
+     *         </org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
+     *         <org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
+     *             <fileId>CustomConfig1417476679250</fileId>
+     *             <targetLocation>/tmp/other.txt</targetLocation>
+     *             <variable>OTHER</variable>
+     *         </org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
+     *     </managedFiles>
+     * </org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper>
+     */
+    def configFiles(Closure configFilesClosure) {
+        ConfigFilesContext configFilesContext = new ConfigFilesContext(jobManagement)
+        ContextHelper.executeInContext(configFilesClosure, configFilesContext)
+
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper' {
+            managedFiles {
+                configFilesContext.configFiles.each { ConfigFileContext configFileContext ->
+                    'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile' {
+                        fileId configFileContext.configFileId
+                        targetLocation configFileContext.targetLocation ?: ''
+                        variable configFileContext.variable ?: ''
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * <org.jvnet.hudson.plugins.exclusion.IdAllocator>
      *     <ids>
      *         <org.jvnet.hudson.plugins.exclusion.DefaultIdType>

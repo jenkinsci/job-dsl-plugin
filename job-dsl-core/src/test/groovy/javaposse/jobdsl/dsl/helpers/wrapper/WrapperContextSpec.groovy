@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import spock.lang.Specification
@@ -677,6 +678,110 @@ class WrapperContextSpec extends Specification {
             deleteKeychainsAfterBuild[0].value() == true
             overwriteExistingKeychains[0].value() == true
         }
+    }
+
+    def 'call configFile closure'() {
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        String configTarget = 'myTargetLocation'
+        String configVariable = '$CONFIG_FILE_LOCATION'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
+
+        when:
+        context.configFiles {
+            file(configName) {
+                targetLocation configTarget
+                variable configVariable
+            }
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == configTarget
+                variable[0].value() == configVariable
+            }
+        }
+    }
+
+    def 'call configFile'() {
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
+
+        when:
+        context.configFiles {
+            file(configName)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+        }
+    }
+
+    def 'call configFile with two files'() {
+        setup:
+        String configName1 = 'myCustomConfig'
+        String configId1 = 'CustomConfig1417476679249'
+        String configName2 = 'myOtherConfig'
+        String configId2 = 'CustomConfig1417476679250'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName1) >> configId1
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName2) >> configId2
+
+        when:
+        context.configFiles {
+            file(configName1)
+            file(configName2)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 2
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId1
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[1]) {
+                children().size() == 3
+                fileId[0].value() == configId2
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+        }
+    }
+
+    def 'call configFile with unknown fileName'() {
+        setup:
+        String configName = 'lala'
+
+        when:
+        context.configFiles {
+            file(configName)
+        }
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(configName)
     }
 
     def 'call exclusion with single arg'() {
