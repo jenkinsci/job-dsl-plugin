@@ -1995,24 +1995,67 @@ still-another-dsl.groovy'''
         thrown(NullPointerException)
     }
 
-    def 'call http request'() {
+    def 'call http request with minimal options'() {
         when:
-        context.httpRequest 'http://www.example.com', {
-            httpMode 'GET'
-            authentication 'bob'
-            returnCodeBuildRelevant true
-            logResponseBody true
+        context.httpRequest('http://www.example.com')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'jenkins.plugins.http__request.HttpRequest'
+            children().size() == 1
+            url[0].value() == 'http://www.example.com'
+        }
+    }
+
+    def 'call http request with all options'() {
+        when:
+        context.httpRequest('http://www.example.com') {
+            httpMode('GET')
+            authentication('bob')
+            returnCodeBuildRelevant()
+            logResponseBody()
         }
 
         then:
-        context.stepNodes?.size() == 1
+        context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'jenkins.plugins.http__request.HttpRequest'
+            children().size() == 5
             url[0].value() == 'http://www.example.com'
             httpMode[0].value() == 'GET'
             authentication[0].value() == 'bob'
             returnCodeBuildRelevant[0].value() == true
             logResponseBody[0].value() == true
         }
+    }
+
+    def 'call http request with invalid HTTP mode'() {
+        when:
+        context.httpRequest('http://www.example.com') {
+            httpMode('WHAT')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call http request with valid HTTP mode'(String mode) {
+        when:
+        context.httpRequest('http://www.example.com') {
+            httpMode(mode)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'jenkins.plugins.http__request.HttpRequest'
+            children().size() == 2
+            url[0].value() == 'http://www.example.com'
+            httpMode[0].value() == mode
+        }
+
+        where:
+        mode << ['GET', 'POST', 'PUT', 'DELETE']
     }
 }
