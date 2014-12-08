@@ -407,6 +407,14 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
         component(String name, String initialJob)
         regex(String regex)
     }
+
+    // BuildMonitorView options, since 1.28
+    jobs {
+        name(String jobName)
+        names(String... jobNames)
+        regex(String regex)
+    }
+    statusFilter(StatusFilter filter)
 }
 
 folder { // since 1.23
@@ -473,8 +481,8 @@ view(Map<String, Object> attributes = [:], Closure closure)
 
 The `view` method behaves like the `job` method explained above and will return a _View_ object.
 
-Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView` or
-`DeliveryPipelineView` is supported. When no type is specified, a list view will be generated.
+Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView`,
+`DeliveryPipelineView` or `BuildMonitorView` is supported. When no type is specified, a list view will be generated.
 
 ```groovy
 view(type: ListView) {
