@@ -12,11 +12,11 @@ class ConfigFileContext implements Context {
         this.configFileId = configFileId
     }
 
-    def targetLocation(String targetLocation) {
+    void targetLocation(String targetLocation) {
         this.targetLocation = targetLocation
     }
 
-    def variable(String variable) {
+    void variable(String variable) {
         this.variable = variable
     }
 }

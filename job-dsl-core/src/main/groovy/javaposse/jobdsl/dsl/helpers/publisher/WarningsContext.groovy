@@ -5,15 +5,15 @@ class WarningsContext extends StaticAnalysisContext {
     String includePattern = ''
     String excludePattern = ''
 
-    def resolveRelativePaths(boolean resolveRelativePaths = true) {
+    void resolveRelativePaths(boolean resolveRelativePaths = true) {
         this.doNotResolveRelativePaths = ! resolveRelativePaths
     }
 
-    def includePattern(String includePattern) {
+    void includePattern(String includePattern) {
         this.includePattern = includePattern
     }
 
-    def excludePattern(String excludePattern) {
+    void excludePattern(String excludePattern) {
         this.excludePattern = excludePattern
     }
 }

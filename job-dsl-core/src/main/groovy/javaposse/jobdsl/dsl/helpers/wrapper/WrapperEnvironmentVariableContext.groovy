@@ -7,11 +7,11 @@ class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
     String scriptFilePath = ''
     boolean loadFilesFromMaster = false
 
-    def script(String script) {
+    void script(String script) {
         this.script = script
     }
 
-    def scriptFile(String scriptFilePath) {
+    void scriptFile(String scriptFilePath) {
         this.scriptFilePath = scriptFilePath
     }
 

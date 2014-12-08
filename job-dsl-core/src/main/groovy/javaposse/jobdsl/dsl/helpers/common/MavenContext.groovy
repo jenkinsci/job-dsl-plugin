@@ -7,19 +7,19 @@ interface MavenContext extends Context {
      * Specifies the path to the root POM.
      * @param rootPOM path to the root POM
      */
-    def rootPOM(String rootPOM)
+    void rootPOM(String rootPOM)
 
     /**
      * Specifies the goals to execute.
      * @param goals the goals to execute
      */
-    def goals(String goals)
+    void goals(String goals)
 
     /**
      * Specifies the JVM options needed when launching Maven as an external process.
      * @param mavenOpts JVM options needed when launching Maven
      */
-    def mavenOpts(String mavenOpts)
+    void mavenOpts(String mavenOpts)
 
     /**
      * <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
@@ -27,19 +27,19 @@ interface MavenContext extends Context {
      * Set to use isolated local Maven repositories.
      * @param location the local repository to use for isolation
      */
-    def localRepository(LocalRepositoryLocation location)
+    void localRepository(LocalRepositoryLocation location)
 
     /**
      * Specifies the Maven installation for executing this step or job
      * @param name name of the Maven installation to use
      */
-    def mavenInstallation(String name)
+    void mavenInstallation(String name)
 
     /**
      * Specifies the managed Maven settings to be used.
      * @param settings name of the managed Maven settings
      */
-    def providedSettings(String settings)
+    void providedSettings(String settings)
 
     enum LocalRepositoryLocation {
         LocalToExecutor('hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'),

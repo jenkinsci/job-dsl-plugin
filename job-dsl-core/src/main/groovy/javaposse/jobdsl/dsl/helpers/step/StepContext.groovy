@@ -27,8 +27,8 @@ class StepContext implements Context {
      *     <command>echo Hello</command>
      * </hudson.tasks.Shell>
      */
-    def shell(String commandStr) {
-        def nodeBuilder = new NodeBuilder()
+    void shell(String commandStr) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
         stepNodes << nodeBuilder.'hudson.tasks.Shell' {
             'command' commandStr
         }
@@ -39,8 +39,8 @@ class StepContext implements Context {
      *     <command>echo Hello from Windows</command>
      * </hudson.tasks.BatchFile>
      */
-    def batchFile(String commandStr) {
-        def nodeBuilder = new NodeBuilder()
+    void batchFile(String commandStr) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
         stepNodes << nodeBuilder.'hudson.tasks.BatchFile' {
             'command' commandStr
         }
@@ -59,7 +59,7 @@ class StepContext implements Context {
      *     <fromRootBuildScriptDir>true</fromRootBuildScriptDir>
      * </hudson.plugins.gradle.Gradle>
      */
-    def gradle(Closure gradleClosure) {
+    void gradle(Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
@@ -83,7 +83,7 @@ class StepContext implements Context {
         stepNodes << gradleNode
     }
 
-    def gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
+    void gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
         gradle {
             if (tasks != null) {
                 delegate.tasks(tasks)
@@ -107,12 +107,12 @@ class StepContext implements Context {
      *     <subdirPath></subdirPath>
      * </org.jvnet.hudson.plugins.SbtPluginBuilder>
      */
-    def sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null,
+    void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null,
             String subdirPathArg=null, Closure configure = null) {
 
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
-        def sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
+        Node sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
             name Preconditions.checkNotNull(sbtNameArg, 'Please provide the name of the SBT to use' as Object)
             jvmFlags jvmFlagsArg ?: ''
             sbtFlags sbtFlagsArg ?: ''
@@ -138,13 +138,13 @@ class StepContext implements Context {
      *     <removedJobAction>IGNORE</removedJobAction>
      * </javaposse.jobdsl.plugin.ExecuteDslScripts>
      */
-    def dsl(Closure configure = null) {
+    void dsl(Closure configure = null) {
         DslContext context = new DslContext()
         ContextHelper.executeInContext(configure, context)
         buildDslNode(context)
     }
 
-    def dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
+    void dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
         DslContext ctx = new DslContext()
         ctx.text(scriptText)
         if (removedJobAction) {
@@ -154,7 +154,7 @@ class StepContext implements Context {
         buildDslNode(ctx)
     }
 
-    def dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
+    void dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
         DslContext ctx = new DslContext()
         ctx.external(externalScripts.toArray(new String[0]))
         if (removedJobAction) {
@@ -166,8 +166,8 @@ class StepContext implements Context {
     }
 
     protected void buildDslNode(context) {
-        def nodeBuilder = new NodeBuilder()
-        def dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        Node dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
             targets context.targets
             usingScriptText context.useScriptText()
             scriptText context.scriptText
@@ -191,36 +191,36 @@ class StepContext implements Context {
      *     </properties>
      * </hudson.tasks.Ant>
      */
-    def ant(Closure antClosure = null) {
+    void ant(Closure antClosure = null) {
         ant(null, null, null, antClosure)
     }
 
-    def ant(String targetsStr, Closure antClosure = null) {
+    void ant(String targetsStr, Closure antClosure = null) {
         ant(targetsStr, null, null, antClosure)
     }
 
-    def ant(String targetsStr, String buildFileStr, Closure antClosure = null) {
+    void ant(String targetsStr, String buildFileStr, Closure antClosure = null) {
         ant(targetsStr, buildFileStr, null, antClosure)
     }
 
-    def ant(String targetsArg, String buildFileArg, String antInstallation, Closure antClosure = null) {
+    void ant(String targetsArg, String buildFileArg, String antInstallation, Closure antClosure = null) {
         AntContext antContext = new AntContext()
         ContextHelper.executeInContext(antClosure, antContext)
 
-        def targetList = []
+        List<String> targetList = []
 
         if (targetsArg) {
             targetList.addAll targetsArg.contains('\n') ? targetsArg.split('\n') : targetsArg.split(' ')
         }
         targetList.addAll antContext.targets
 
-        def antOptsList = antContext.antOpts
+        List<String> antOptsList = antContext.antOpts
 
-        def propertiesList = []
+        List<String> propertiesList = []
         propertiesList += antContext.props
 
-        def nodeBuilder = NodeBuilder.newInstance()
-        def antNode = nodeBuilder.'hudson.tasks.Ant' {
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+        Node antNode = nodeBuilder.'hudson.tasks.Ant' {
             targets targetList.join(' ')
 
             antName antInstallation ?: antContext.antName ?: '(Default)'
@@ -254,11 +254,11 @@ class StepContext implements Context {
      *     <classPath/>
      * </hudson.plugins.groovy.Groovy>
      */
-    def groovyCommand(String command, Closure groovyClosure = null) {
+    void groovyCommand(String command, Closure groovyClosure = null) {
         groovy(command, true, null, groovyClosure)
     }
 
-    def groovyCommand(String command, String groovyName, Closure groovyClosure = null) {
+    void groovyCommand(String command, String groovyName, Closure groovyClosure = null) {
         groovy(command, true, groovyName, groovyClosure)
     }
 
@@ -275,16 +275,16 @@ class StepContext implements Context {
      *     <classPath/>
      * </hudson.plugins.groovy.Groovy>
      */
-    def groovyScriptFile(String fileName, Closure groovyClosure = null) {
+    void groovyScriptFile(String fileName, Closure groovyClosure = null) {
         groovy(fileName, false, null, groovyClosure)
     }
 
-    def groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null) {
+    void groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null) {
         groovy(fileName, false, groovyName, groovyClosure)
     }
 
     protected groovyScriptSource(String commandOrFileName, boolean isCommand) {
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
         nodeBuilder.scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
             if (isCommand) {
                 command commandOrFileName
@@ -295,10 +295,10 @@ class StepContext implements Context {
     }
 
     protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
-        def groovyContext = new GroovyContext()
+        GroovyContext groovyContext = new GroovyContext()
         ContextHelper.executeInContext(groovyClosure, groovyContext)
 
-        def groovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.Groovy' {
+        Node groovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.Groovy' {
             groovyName groovyInstallation ?: groovyContext.groovyInstallation ?: '(Default)'
             parameters groovyContext.groovyParams.join('\n')
             scriptParameters groovyContext.scriptParams.join('\n')
@@ -320,7 +320,7 @@ class StepContext implements Context {
      *     <classpath/>
      * </hudson.plugins.groovy.SystemGroovy>
      */
-    def systemGroovyCommand(String command, Closure systemGroovyClosure = null) {
+    void systemGroovyCommand(String command, Closure systemGroovyClosure = null) {
         systemGroovy(command, true, systemGroovyClosure)
     }
 
@@ -333,15 +333,15 @@ class StepContext implements Context {
      *     <classpath/>
      * </hudson.plugins.groovy.SystemGroovy>
      */
-    def systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
+    void systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
 
     protected systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
-        def systemGroovyContext = new SystemGroovyContext()
+        SystemGroovyContext systemGroovyContext = new SystemGroovyContext()
         ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
-        def systemGroovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.SystemGroovy' {
+        Node systemGroovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.SystemGroovy' {
             bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
             classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
         }
@@ -359,7 +359,7 @@ class StepContext implements Context {
      *     <usePrivateRepository>false</usePrivateRepository>
      * </hudson.tasks.Maven>
      */
-    def maven(Closure closure) {
+    void maven(Closure closure) {
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
 
@@ -390,7 +390,7 @@ class StepContext implements Context {
         stepNodes << mavenNode
     }
 
-    def maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
+    void maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
         maven {
             delegate.goals(targetsArg)
             delegate.rootPOM(pomArg)
@@ -412,22 +412,22 @@ class StepContext implements Context {
      *     <useWrapper>false</useWrapper>
      * </com.g2one.hudson.grails.GrailsBuilder>
      */
-    def grails(Closure grailsClosure) {
+    void grails(Closure grailsClosure) {
         grails null, false, grailsClosure
     }
 
-    def grails(String targetsArg, Closure grailsClosure) {
+    void grails(String targetsArg, Closure grailsClosure) {
         grails targetsArg, false, grailsClosure
     }
 
-    def grails(String targetsArg = null, boolean useWrapperArg = false, Closure grailsClosure = null) {
+    void grails(String targetsArg = null, boolean useWrapperArg = false, Closure grailsClosure = null) {
         GrailsContext grailsContext = new GrailsContext(
             useWrapper: useWrapperArg
         )
         ContextHelper.executeInContext(grailsClosure, grailsContext)
 
-        def nodeBuilder = new NodeBuilder()
-        def grailsNode = nodeBuilder.'com.g2one.hudson.grails.GrailsBuilder' {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        Node grailsNode = nodeBuilder.'com.g2one.hudson.grails.GrailsBuilder' {
             targets targetsArg ?: grailsContext.targetsString
             name grailsContext.name
             grailsWorkDir grailsContext.grailsWorkDir
@@ -497,20 +497,20 @@ class StepContext implements Context {
      *     </selector>
      * </hudson.plugins.copyartifact.CopyArtifact>
      */
-    def copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure) {
+    void copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
     }
 
-    def copyArtifacts(String jobName, String includeGlob, String targetPath, Closure copyArtifactClosure) {
+    void copyArtifacts(String jobName, String includeGlob, String targetPath, Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
     }
 
-    def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
+    void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                       Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
-    def copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
+    void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                       boolean optionalAllowed, Closure copyArtifactClosure) {
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
@@ -519,8 +519,8 @@ class StepContext implements Context {
             throw new IllegalArgumentException('A selector has to be select in the closure argument')
         }
 
-        def nodeBuilder = NodeBuilder.newInstance()
-        def copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+        Node copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
             projectName jobName // Older name for field
             project jobName // Newer name for field
             filter includeGlob
@@ -574,15 +574,15 @@ class StepContext implements Context {
      *   <continuationCondition>COMPLETED</continuationCondition>
      * </com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
      */
-    def phase(Closure phaseContext) {
+    void phase(Closure phaseContext) {
         phase(null, 'SUCCESSFUL', phaseContext)
     }
 
-    def phase(String phaseName, Closure phaseContext = null) {
+    void phase(String phaseName, Closure phaseContext = null) {
         phase(phaseName, 'SUCCESSFUL', phaseContext)
     }
 
-    def phase(String name, String continuationConditionArg, Closure phaseClosure) {
+    void phase(String name, String continuationConditionArg, Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationConditionArg)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
@@ -624,9 +624,9 @@ class StepContext implements Context {
      *     <warningOnly>false</warningOnly>
      * </dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder>
      */
-    def prerequisite(String projectList = '', boolean warningOnlyBool = false) {
-        def nodeBuilder = new NodeBuilder()
-        def preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
+    void prerequisite(String projectList = '', boolean warningOnlyBool = false) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        Node preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
              // Important that there are no spaces for comma delimited values, plugin doesn't trim, so we will
             projects(projectList.tokenize(',')*.trim().join(','))
             warningOnly(warningOnlyBool)
@@ -682,11 +682,11 @@ class StepContext implements Context {
      *     </configs>
      * </hudson.plugins.parameterizedtrigger.TriggerBuilder>
      */
-    def downstreamParameterized(Closure downstreamClosure) {
+    void downstreamParameterized(Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext()
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
-        def stepNode = downstreamContext.createDownstreamNode(true)
+        Node stepNode = downstreamContext.createDownstreamNode(true)
         stepNodes << stepNode
     }
 
@@ -702,7 +702,7 @@ class StepContext implements Context {
      *     <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail"/>
      * </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
      */
-    def conditionalSteps(Closure conditionalStepsClosure) {
+    void conditionalSteps(Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)
         ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
@@ -721,11 +721,11 @@ class StepContext implements Context {
      *     </info>
      * </EnvInjectBuilder>
      */
-    def environmentVariables(Closure envClosure) {
+    void environmentVariables(Closure envClosure) {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
 
-        def envNode = new NodeBuilder().'EnvInjectBuilder' {
+        Node envNode = new NodeBuilder().'EnvInjectBuilder' {
             envContext.addInfoToBuilder(delegate)
         }
 
@@ -759,7 +759,7 @@ class StepContext implements Context {
      *     <queryString/>
      * </org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
      */
-    def remoteTrigger(String remoteJenkins, String jobName, Closure closure = null) {
+    void remoteTrigger(String remoteJenkins, String jobName, Closure closure = null) {
         Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), 'remoteJenkins must be specified')
         Preconditions.checkArgument(!isNullOrEmpty(jobName), 'jobName must be specified')
 
@@ -805,7 +805,7 @@ class StepContext implements Context {
      * ...
      * <org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd/>
      */
-    def criticalBlock(Closure closure) {
+    void criticalBlock(Closure closure) {
         StepContext stepContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(closure, stepContext)
 
@@ -825,11 +825,11 @@ class StepContext implements Context {
      *     <bundleExec>false</bundleExec>
      * </hudson.plugins.rake.Rake>
      */
-    def rake(Closure rakeClosure = null) {
+    void rake(Closure rakeClosure = null) {
         rake(null, rakeClosure)
     }
 
-    def rake(String tasksArg, Closure rakeClosure = null) {
+    void rake(String tasksArg, Closure rakeClosure = null) {
         RakeContext rakeContext = new RakeContext()
 
         if (tasksArg) {
@@ -860,7 +860,7 @@ class StepContext implements Context {
      *     <serverHash>320615527</serverHash>
      * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
      */
-    def vSpherePowerOff(String server, String vm) {
+    void vSpherePowerOff(String server, String vm) {
         vSphereBuildStep(server, 'PowerOff') {
             delegate.vm vm
             evenIfSuspended false
@@ -878,7 +878,7 @@ class StepContext implements Context {
      *     <serverHash>320615527</serverHash>
      * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
      */
-    def vSpherePowerOn(String server, String vm) {
+    void vSpherePowerOn(String server, String vm) {
         vSphereBuildStep(server, 'PowerOn') {
             delegate.vm vm
             timeoutInSeconds 180
@@ -895,7 +895,7 @@ class StepContext implements Context {
      *     <serverHash>320615527</serverHash>
      * </org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer>
      */
-    def vSphereRevertToSnapshot(String server, String vm, String snapshot) {
+    void vSphereRevertToSnapshot(String server, String vm, String snapshot) {
         vSphereBuildStep(server, 'RevertToSnapshot') {
             delegate.vm vm
             snapshotName snapshot
@@ -923,7 +923,7 @@ class StepContext implements Context {
      *     <logResponseBody>false</logResponseBody>
      * </jenkins.plugins.http__request.HttpRequest>
      */
-    def httpRequest(String requestUrl, Closure closure = null) {
+    void httpRequest(String requestUrl, Closure closure = null) {
         HttpRequestContext context = new HttpRequestContext()
         ContextHelper.executeInContext(closure, context)
 

@@ -26,20 +26,18 @@ class PhaseContext implements Context {
         this.continuationCondition = continuationCondition
     }
 
-    def job(String jobName, Closure phaseJobClosure = null) {
+    void job(String jobName, Closure phaseJobClosure = null) {
         job(jobName, true, true, phaseJobClosure)
     }
 
-    def job(String jobName, boolean currentJobParameters, Closure phaseJobClosure = null) {
+    void job(String jobName, boolean currentJobParameters, Closure phaseJobClosure = null) {
         job(jobName, currentJobParameters, true, phaseJobClosure)
     }
 
-    def job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
+    void job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
         PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, jobName, currentJobParameters, exposedScm)
         ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext
-
-        phaseJobContext
     }
 }

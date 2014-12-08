@@ -5,9 +5,9 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.helpers.Context
 
 class PostBuildTaskContext implements Context {
-    def tasks = []
+    List<PostBuildTask> tasks = []
 
-    def task(String logText, String script, boolean escalate = false, boolean runIfSuccessful = false) {
+    void task(String logText, String script, boolean escalate = false, boolean runIfSuccessful = false) {
         Preconditions.checkArgument(logText != null && logText.length() > 0, 'Log Text to match is required!')
         Preconditions.checkArgument(script != null && script.length() > 0, 'Script to run is required!')
 

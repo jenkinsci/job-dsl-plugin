@@ -14,8 +14,8 @@ class NodeEnhancement {
 
     Node div(Node orphan) {
         LOGGER.fine("Looking for child node ${orphan}")
-        def childName = orphan.name()
-        def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
+        String childName = orphan.name()
+        List children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
             child instanceof Node && child.name() == childName &&
                     child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
         }
@@ -44,7 +44,7 @@ class NodeEnhancement {
     Node div(String childName) { // a.div(b)
         LOGGER.fine("Looking for childName ${childName} ${LOGGER.level}")
 
-        def children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
+        List children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
             child instanceof Node && child.name() == childName
         }
         if (children.size() == 0) {

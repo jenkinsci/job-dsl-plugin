@@ -9,20 +9,20 @@ class DownstreamContext implements Context {
 
     private final List<DownstreamTriggerContext> triggers = []
 
-    def trigger(String projects, Closure downstreamTriggerClosure = null) {
+    void trigger(String projects, Closure downstreamTriggerClosure = null) {
         trigger(projects, null, downstreamTriggerClosure)
     }
 
-    def trigger(String projects, String condition, Closure downstreamTriggerClosure = null) {
+    void trigger(String projects, String condition, Closure downstreamTriggerClosure = null) {
         trigger(projects, condition, false, downstreamTriggerClosure)
     }
 
-    def trigger(String projects, String condition, boolean triggerWithNoParameters,
+    void trigger(String projects, String condition, boolean triggerWithNoParameters,
                 Closure downstreamTriggerClosure = null) {
         trigger(projects, condition, triggerWithNoParameters, [:], downstreamTriggerClosure)
     }
 
-    def trigger(String projects, String condition, boolean triggerWithNoParameters,
+    void trigger(String projects, String condition, boolean triggerWithNoParameters,
                 Map<String, String> blockingThresholds, Closure downstreamTriggerClosure = null) {
         DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext()
         downstreamTriggerContext.projects = projects
@@ -40,9 +40,9 @@ class DownstreamContext implements Context {
     }
 
     Node createDownstreamNode(boolean isStep = false) {
-        def nodeBuilder = NodeBuilder.newInstance()
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
 
-        def nodeName
+        String nodeName
 
         if (isStep) {
             nodeName = 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
@@ -50,10 +50,10 @@ class DownstreamContext implements Context {
             nodeName = 'hudson.plugins.parameterizedtrigger.BuildTrigger'
         }
 
-        def downstreamNode = nodeBuilder."${nodeName}" {
+        Node downstreamNode = nodeBuilder."${nodeName}" {
             configs {
                 triggers.each { DownstreamTriggerContext trigger ->
-                    def configName
+                    String configName
 
                     if (isStep) {
                         configName = 'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'
@@ -89,7 +89,7 @@ class DownstreamContext implements Context {
         downstreamNode
     }
 
-    def validDownstreamConditionNames = [
+    Set<String> validDownstreamConditionNames = [
             'SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED', 'ALWAYS'
     ]
 }
