@@ -31,7 +31,7 @@ class Job extends Item {
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement
-        def typeArg = arguments['type'] ?: JobType.Freeform
+        Object typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
     }
 
