@@ -17,6 +17,8 @@ ruleset {
         exclude 'ExplicitCallToEqualsMethod'
         // Spock encourages to violate this rule
         exclude 'MethodName'
+        // that's OK for test code
+        exclude 'NoDef'
         // Fields annotated with @org.junit.Rule violate this rule
         exclude 'NonFinalPublicField'
         // Fields annotated with @org.junit.Rule violate this rule

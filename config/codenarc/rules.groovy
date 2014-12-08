@@ -8,8 +8,6 @@ ruleset {
     ruleset('rulesets/convention.xml') {
         // this rule does not necessarily lead to better code
         exclude 'IfStatementCouldBeTernary'
-        // we don't care for now
-        exclude 'NoDef'
     }
 
     ruleset('rulesets/design.xml') {
