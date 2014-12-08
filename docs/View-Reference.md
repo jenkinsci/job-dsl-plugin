@@ -254,6 +254,42 @@ view(type: DeliveryPipelineView) {
 }
 ```
 
+## Build Monitor View
+
+```groovy
+view(type: BuildMonitorView) {  // since 1.28
+    // common options
+    name(String name)
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // build monitor view options
+    statusFilter(StatusFilter filter)
+    jobs {
+        name(String jobName)
+        names(String... jobNames)
+        regex(String regex)
+    }
+}
+```
+
+Create a view that provides a highly visible view of the status of selected Jenkins jobs. Details
+about the options can be found below. Similar to jobs, the view DSL can be extended using a
+[[configure block|The Configure Block]].
+
+```groovy
+view(type: BuildMonitorView) {
+    name('project-A')
+    description('All jobs for project A')
+    jobs {
+        name('release-projectA')
+        regex('project-A-.+')
+    }
+}
+```
+
 ## Common View Options
 
 ### Name
@@ -774,18 +810,12 @@ view(type: DeliveryPipelineView) {
 }
 ```
 
-## Build Monitor View
+## Build Monitor View Options
 
-Defines a view to use with the famous [Build Monitor View plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Monitor+Plugin).
+### Status Filter
 
-### Example
+See [Status Filter](#status-filter) in the [List View Options](#list-view-options) above.
 
-```groovy
-view(type: BuildMonitorView) {
-    name('build-monitor-dashboard')
-    jobNames {
-        string('job1')
-        string('job2')
-    }
-}
-```
+### Jobs
+
+See [Jobs](#jobs) in the [List View Options](#list-view-options) above.
