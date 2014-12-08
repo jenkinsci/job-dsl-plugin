@@ -1697,6 +1697,7 @@ class PublisherContext implements Context {
         }
     }
 
+    @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
             healthy(context.healthy)
@@ -1719,10 +1720,12 @@ class PublisherContext implements Context {
         }
     }
 
+    @SuppressWarnings('NoDef')
     private static addStaticAnalysisPattern(def nodeBuilder, String pattern) {
         nodeBuilder.pattern(pattern)
     }
 
+    @SuppressWarnings('NoDef')
     private static addStaticAnalysisContextAndPattern(def nodeBuilder, StaticAnalysisContext context, String pattern) {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)

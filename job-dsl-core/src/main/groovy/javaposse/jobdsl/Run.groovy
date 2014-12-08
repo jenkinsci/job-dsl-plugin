@@ -15,6 +15,7 @@ import java.util.logging.Logger
 class Run {
     private static final Logger LOG = Logger.getLogger(Run.name)
 
+    @SuppressWarnings('NoDef')
     static void main(String[] args) throws Exception {
         if (args.length == 0) {
             LOG.severe('Script name is required')
