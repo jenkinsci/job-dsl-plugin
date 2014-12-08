@@ -5,8 +5,9 @@ import javaposse.jobdsl.dsl.helpers.Context
 import static com.google.common.base.Preconditions.checkArgument
 
 class EmailContext implements Context {
-    def emailTriggerNames = ['PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement',
-            'Failure', 'Regression', 'Aborted', 'NotBuilt', 'FirstFailure', 'Unstable']
+    def emailTriggerNames = ['Always', 'PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement',
+            'Failure', 'Regression', 'Aborted', 'NotBuilt', 'FirstFailure', 'SecondFailure', 'Unstable',
+            'FirstUnstable', 'FixedUnhealthy', 'StatusChanged']
     def emailTriggers = []
 
     // Not sure why a map syntax wouldn't call method below, so creating this one
