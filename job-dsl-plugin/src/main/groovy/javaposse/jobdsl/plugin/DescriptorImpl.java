@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import hudson.Extension;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.util.ListBoxModel;
@@ -51,9 +50,9 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         }
         return items;
     }
-    
+
     @Override
     public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-		return true;
-	}
+        return true;
+    }
 }
