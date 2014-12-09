@@ -40,7 +40,7 @@ class UrlTriggerInspectionContext implements Context {
     }
 
     Inspection type
-    def expressions = []
+    List<String> expressions = []
 
     UrlTriggerInspectionContext(Inspection type) {
         this.type = Preconditions.checkNotNull(type, 'Inspection type must not be null!')
@@ -50,7 +50,7 @@ class UrlTriggerInspectionContext implements Context {
      * Adds a JSON/XPATH path expression to the inspection.
      * @param path expression to add
      */
-    def path(String path) {
+    void path(String path) {
         String p = Preconditions.checkNotNull(path, 'Path must not be null')
         Preconditions.checkArgument(!p.empty, 'Path given must not be empty')
         expressions << p
@@ -63,8 +63,8 @@ class UrlTriggerInspectionContext implements Context {
      *
      * @param exp regular expression to add
      */
-    def regexp(String exp) {
-        def expr = Preconditions.checkNotNull(exp, 'Regular expression must not be null')
+    void regexp(String exp) {
+        String expr = Preconditions.checkNotNull(exp, 'Regular expression must not be null')
         Preconditions.checkArgument(!expr.empty, 'Regular expressions must not be empty')
         try {
             Pattern.compile(expr)

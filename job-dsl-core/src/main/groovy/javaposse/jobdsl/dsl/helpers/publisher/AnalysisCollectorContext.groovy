@@ -8,27 +8,27 @@ class AnalysisCollectorContext extends StaticAnalysisContext {
     boolean includeTasks = false
     boolean includeWarnings = false
 
-    def checkstyle(boolean includeCheckstyle = true) {
+    void checkstyle(boolean includeCheckstyle = true) {
         this.includeCheckstyle = includeCheckstyle
     }
 
-    def dry(boolean includeDry = true) {
+    void dry(boolean includeDry = true) {
         this.includeDry = includeDry
     }
 
-    def findbugs(boolean includeFindbugs = true) {
+    void findbugs(boolean includeFindbugs = true) {
         this.includeFindbugs = includeFindbugs
     }
 
-    def pmd(boolean includePmd = true) {
+    void pmd(boolean includePmd = true) {
         this.includePmd = includePmd
     }
 
-    def tasks(boolean includeTasks = true) {
+    void tasks(boolean includeTasks = true) {
         this.includeTasks = includeTasks
     }
 
-    def warnings(boolean includeWarnings = true) {
+    void warnings(boolean includeWarnings = true) {
         this.includeWarnings = includeWarnings
     }
 }

@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.helpers.Context
 import static com.google.common.base.Preconditions.checkArgument
 
 class HtmlReportContext implements Context {
-    def targets = []
+    List<HtmlPublisherTarget> targets = []
 
-    def report(String reportDir, String reportName = null, String reportFiles = null, Boolean keepAll = null) {
+    void report(String reportDir, String reportName = null, String reportFiles = null, Boolean keepAll = null) {
         checkArgument(reportDir != null && reportDir.length() > 0, 'Report directory for html publisher is required')
 
         targets << new HtmlPublisherTarget(
@@ -19,7 +19,7 @@ class HtmlReportContext implements Context {
                 wrapperName: 'htmlpublisher-wrapper.html')
     }
 
-    def report(Map args) {
+    void report(Map args) {
         report(args.reportDir, args.reportName, args.reportFiles, args.keepAll)
     }
 

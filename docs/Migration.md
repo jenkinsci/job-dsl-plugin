@@ -1,3 +1,10 @@
+## Migrating to 1.28
+
+### DSL Method Return Values
+
+Prior to version 1.28 most DSL methods had an undocumented return value. Since 1.28 DSL methods do not return a value
+except for the methods defined in `javaposse.jobdsl.dsl.DslFactory`.
+
 ## Migrating to 1.27
 
 ### Job Name

@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.helpers.ContextHelper
 class BuildPipelineContext implements Context {
     List<Node> parameterNodes = []
 
-    def parameters(Closure closure) {
+    void parameters(Closure closure) {
         DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext()
         ContextHelper.executeInContext(closure, downstreamTriggerContext)
         parameterNodes.addAll(downstreamTriggerContext.createParametersNode().children())

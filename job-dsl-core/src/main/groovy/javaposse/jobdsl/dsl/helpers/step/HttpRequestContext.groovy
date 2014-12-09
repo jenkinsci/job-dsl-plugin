@@ -12,20 +12,20 @@ class HttpRequestContext implements Context {
     Boolean returnCodeBuildRelevant
     Boolean logResponseBody
 
-    def httpMode(String httpMode) {
+    void httpMode(String httpMode) {
         checkArgument(VALID_MODES.contains(httpMode), "HTTP mode must be one of ${VALID_MODES.join(', ')}")
         this.httpMode = httpMode
     }
 
-    def authentication(String authentication) {
+    void authentication(String authentication) {
         this.authentication = authentication
     }
 
-    def returnCodeBuildRelevant(boolean returnCodeBuildRelevant = true) {
+    void returnCodeBuildRelevant(boolean returnCodeBuildRelevant = true) {
         this.returnCodeBuildRelevant = returnCodeBuildRelevant
     }
 
-    def logResponseBody(boolean logResponseBody = true) {
+    void logResponseBody(boolean logResponseBody = true) {
         this.logResponseBody = logResponseBody
     }
 }

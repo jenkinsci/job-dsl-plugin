@@ -15,7 +15,7 @@ class ConfigFilesContext implements Context {
         this.jobManagement = jobManagement
     }
 
-    def file(String fileName, Closure configFileClosure = null) {
+    void file(String fileName, Closure configFileClosure = null) {
         String configFileId = jobManagement.getConfigFileId(ConfigFileType.Custom, fileName)
         Preconditions.checkNotNull(configFileId, "Custom config file with name '${fileName}' not found")
 

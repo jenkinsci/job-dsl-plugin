@@ -19,7 +19,7 @@ class CoberturaContext implements Context {
     enum TargetType {
         METHOD, LINE, CONDITIONAL, PACKAGES, FILES, CLASSES
     }
-    def targets = [
+    Map<String, CoberturaTarget> targets = [
         'METHOD': new CoberturaTarget(
             targetType: TargetType.METHOD,
             healthyTarget: 8000000,

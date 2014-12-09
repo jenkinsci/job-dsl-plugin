@@ -5,32 +5,32 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.helpers.Context
 
 class IrcContext implements Context {
-    def channels = []
+    List<IrcPublisherChannel> channels = []
 
-    def strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
+    List<String> strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
 
-    def notificationMessages = ['Default',  'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
+    List<String> notificationMessages = ['Default',  'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
-    def strategy
+    String strategy
 
-    def notificationMessage
+    String notificationMessage
 
-    def notifyOnBuildStarts = false
+    boolean notifyOnBuildStarts = false
 
-    def notifyScmCommitters = false
+    boolean notifyScmCommitters = false
 
-    def notifyScmCulprits = false
+    boolean notifyScmCulprits = false
 
-    def notifyUpstreamCommitters = false
+    boolean notifyUpstreamCommitters = false
 
-    def notifyScmFixers = false
+    boolean notifyScmFixers = false
 
     IrcContext() {
         strategy = strategies[0]
         notificationMessage = notificationMessages[0]
     }
 
-    def channel(String name, String password = '', boolean notificationOnly = false) {
+    void channel(String name, String password = '', boolean notificationOnly = false) {
         Preconditions.checkArgument(name != null && name.length() > 0, 'Channel name for irc channel is required!')
 
         channels << new IrcPublisherChannel(
@@ -40,11 +40,11 @@ class IrcContext implements Context {
         )
     }
 
-    def channel(Map args) {
+    void channel(Map args) {
         channel(args.name, args.password, args.notificationOnly)
     }
 
-    def strategy(String strategy) {
+    void strategy(String strategy) {
         Preconditions.checkArgument(
             strategies.contains(strategy), "Possible values: ${strategies.join(',')}"
         )
@@ -52,7 +52,7 @@ class IrcContext implements Context {
         this.strategy = strategy
     }
 
-    def notificationMessage(String notificationMessage) {
+    void notificationMessage(String notificationMessage) {
         Preconditions.checkArgument(
             notificationMessages.contains(notificationMessage),
             "Possible values: ${notificationMessages.join(',')}"
@@ -61,19 +61,19 @@ class IrcContext implements Context {
         this.notificationMessage = notificationMessage
     }
 
-    def notifyScmCommitters(boolean value = true) {
+    void notifyScmCommitters(boolean value = true) {
         notifyScmCommitters = value
     }
 
-    def notifyScmCulprits(boolean value = true) {
+    void notifyScmCulprits(boolean value = true) {
         notifyScmCulprits = value
     }
 
-    def notifyUpstreamCommitters(boolean value = true) {
+    void notifyUpstreamCommitters(boolean value = true) {
         notifyUpstreamCommitters = value
     }
 
-    def notifyScmFixers(boolean value = true) {
+    void notifyScmFixers(boolean value = true) {
         notifyScmFixers = value
     }
 

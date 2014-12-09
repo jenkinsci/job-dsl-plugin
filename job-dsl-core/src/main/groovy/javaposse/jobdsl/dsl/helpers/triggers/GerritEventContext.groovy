@@ -11,35 +11,35 @@ class GerritEventContext implements Context {
         this.jobManagement = jobManagement
     }
 
-    def changeAbandoned() {
+    void changeAbandoned() {
         eventShortNames << 'ChangeAbandoned'
     }
 
-    def changeMerged() {
+    void changeMerged() {
         eventShortNames << 'ChangeMerged'
     }
 
-    def changeRestored() {
+    void changeRestored() {
         eventShortNames << 'ChangeRestored'
     }
 
-    def commentAdded() {
+    void commentAdded() {
         eventShortNames << 'CommentAdded'
     }
 
-    def draftPublished() {
+    void draftPublished() {
         eventShortNames << 'DraftPublished'
     }
 
-    def patchsetCreated() {
+    void patchsetCreated() {
         eventShortNames << 'PatchsetCreated'
     }
 
-    def refUpdated() {
+    void refUpdated() {
         eventShortNames << 'RefUpdated'
     }
 
-    def propertyMissing(String shortName) {
+    void propertyMissing(String shortName) {
         jobManagement.logDeprecationWarning()
         eventShortNames << shortName
     }

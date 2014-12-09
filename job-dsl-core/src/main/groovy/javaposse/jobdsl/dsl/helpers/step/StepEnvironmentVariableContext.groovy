@@ -3,24 +3,24 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.helpers.Context
 
 class StepEnvironmentVariableContext implements Context {
-    def props = []
+    List<String> props = []
     String propertiesFilePath = ''
 
-    def env(Object key, Object value) {
+    void env(Object key, Object value) {
         props << "${key}=${value}"
     }
 
-    def envs(Map<Object, Object> map) {
+    void envs(Map<Object, Object> map) {
         map.entrySet().each {
             env(it.key, it.value)
         }
     }
 
-    def propertiesFile(String propertiesFilePath) {
+    void propertiesFile(String propertiesFilePath) {
         this.propertiesFilePath = propertiesFilePath
     }
 
-    def addInfoToBuilder(builder) {
+    void addInfoToBuilder(builder) {
         builder.info {
             addInfoContentToBuilder(builder)
         }
