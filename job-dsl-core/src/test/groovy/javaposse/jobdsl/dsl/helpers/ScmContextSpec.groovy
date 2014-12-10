@@ -181,6 +181,54 @@ class ScmContextSpec extends Specification {
         context.scmNode.useShallowClone[0].text() == 'true'
     }
 
+    def 'call git scm with cloneOptions, plugin version 1.9.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('1.9.3')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            cloneOptions(true, '/foo/bar', 20)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.extensions.size() == 0
+
+        context.scmNode.useShallowClone.size() == 1
+        context.scmNode.useShallowClone[0].text() == 'true'
+
+        context.scmNode.reference.size() == 1
+        context.scmNode.reference[0].text() == '/foo/bar'
+    }
+
+    def 'call git scm with cloneOptions, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            cloneOptions(true, '/foo/bar', 20)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.extensions.size() == 1
+
+        context.scmNode.useShallowClone.size() == 0
+        context.scmNode.reference.size() == 0
+
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'.size() == 1
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'.shallow.text() == 'true'
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'.timeout.text() == '20'
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'.reference.text() == '/foo/bar'
+    }
+
     def 'call git scm with pruneBranches'() {
         when:
         context.git {
