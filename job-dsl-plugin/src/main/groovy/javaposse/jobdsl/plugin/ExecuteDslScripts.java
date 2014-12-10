@@ -268,6 +268,8 @@ public class ExecuteDslScripts extends Builder {
 
     private void updateGeneratedJobs(final AbstractBuild<?, ?> build, BuildListener listener,
                                      Set<GeneratedJob> freshJobs) throws IOException {
+        AbstractProject<?, ?> seedJob = build.getProject();
+
         // Update Project
         Set<GeneratedJob> generatedJobs = extractGeneratedJobs(build.getProject());
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
@@ -280,7 +282,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for (GeneratedJob removedJob : removed) {
-            Item removedItem = getLookupStrategy().getItem(build.getProject(), removedJob.getJobName(), Item.class);
+            Item removedItem = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
@@ -298,6 +300,18 @@ public class ExecuteDslScripts extends Builder {
                     }
                 }
             }
+        }
+
+        // Add job dsl information to the generated job
+        for (GeneratedJob generatedJob : generatedJobs) {
+
+            AbstractProject<?, ?> job = getLookupStrategy().getItem(
+                    seedJob, generatedJob.getJobName(), AbstractProject.class);
+            AbstractProject<?, ?> templateJob = generatedJob.getTemplateName() != null ? getLookupStrategy().getItem(
+                    seedJob, generatedJob.getTemplateName(), AbstractProject.class) : null;
+
+            job.removeProperty(GeneratedJobJobProperty.class);
+            job.addProperty(new GeneratedJobJobProperty(templateJob, seedJob));
         }
     }
 

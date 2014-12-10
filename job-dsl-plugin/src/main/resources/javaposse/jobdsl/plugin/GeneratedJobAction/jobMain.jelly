@@ -1,0 +1,12 @@
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
+    <table style="margin-top: 1em; margin-left:1em;">
+        <t:summary icon="folder.png">
+            Seed job:
+            <a href="${h.getRelativeLinkTo(it.seedJob)}" class="model-link tl-tr">${it.seedJob.name}</a><br />
+            <j:if test="${it.templateJob != null}">
+                Template job:
+                <a href="${h.getRelativeLinkTo(it.templateJob)}" class="model-link tl-tr">${it.templateJob.name}</a>
+            </j:if>
+        </t:summary>
+    </table>
+</j:jelly>
