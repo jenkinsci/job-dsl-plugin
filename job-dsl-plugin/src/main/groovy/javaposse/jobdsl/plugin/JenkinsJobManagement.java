@@ -109,7 +109,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return xml;
     }
 
-    @Override
     public boolean createOrUpdateConfig(String path, JobConfig config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 

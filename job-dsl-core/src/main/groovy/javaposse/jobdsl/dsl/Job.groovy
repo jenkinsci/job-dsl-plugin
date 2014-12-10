@@ -1,13 +1,15 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
-import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper
+import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContext
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
+import javaposse.jobdsl.dsl.helpers.promotions.PromotionsContextHelper
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
@@ -29,15 +31,13 @@ class Job extends Item {
     String templateName = null // Optional
     JobType type = null // Required
 
-    @Delegate PromotionsContextHelper helperPromotions
+    List<AdditionalXmlConfig> additionalConfigs = []
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         super(ItemType.JOB)
         this.jobManagement = jobManagement
         Object typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
-
-        helperPromotions = new PromotionsContextHelper(super.withXmlActions, additionalConfigs, type)
     }
 
     /**
@@ -117,6 +117,23 @@ class Job extends Item {
                 keepBuildVariables(envContext.keepBuildVariables)
                 contributors()
             }
+        }
+    }
+
+    void promotions(Closure closure) {
+        PromotionsContext context = new PromotionsContext()
+        ContextHelper.executeInContext(closure, context)
+
+        // Add promotions actions for each promotion in the context
+        PromotionsContextHelper.generateAdditionalXmlConfigs(context).each {
+            additionalConfigs << it
+        }
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node promotions = project / 'properties' /
+                    'hudson.plugins.promoted__builds.JobPropertyImpl' (plugin: 'promoted-builds@2.15') /
+                    'activeProcessNames'
+            context.promotionNodes.values().each { promotions << it }
         }
     }
 

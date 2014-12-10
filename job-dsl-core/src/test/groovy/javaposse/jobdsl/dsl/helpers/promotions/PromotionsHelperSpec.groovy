@@ -1,15 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
-import javaposse.jobdsl.dsl.Item
-import javaposse.jobdsl.dsl.JobType
-import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
 class PromotionsHelperSpec extends Specification {
 
-    List<WithXmlAction> mockActions = Mock()
-    List<Item> mockAdditionalConfigs = []
-    PromotionsContextHelper helper = new PromotionsContextHelper(mockActions, mockAdditionalConfigs, JobType.Freeform)
     PromotionsContext context = new PromotionsContext()
 
     def 'base promotion usage'() {
@@ -121,11 +115,11 @@ class PromotionsHelperSpec extends Specification {
          }
     }
 
-    def 'call promotions via helper'() {
-        when:
-        helper.promotions { promotion('myPromotionName', null) }
-
-        then:
-        1 * mockActions.add(_)
-    }
+//    def 'call promotions via helper'() {
+//        when:
+//        job.promotions { promotion('myPromotionName', null) }
+//
+//        then:
+//        1 * mockActions.add(_)
+//    }
 }

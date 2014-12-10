@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 class PromotionContext implements Context {
     private final JobManagement jobManagement
@@ -19,25 +19,25 @@ class PromotionContext implements Context {
         this.jobManagement = jobManagement
     }
 
-    def icon(String icon) {
+    void icon(String icon) {
         this.icon = icon
     }
 
-    def restrict(String restrict) {
+    void restrict(String restrict) {
         this.restrict = restrict
     }
 
-    def conditions(Closure conditionClosure) {
+    List<ConditionsContext> conditions(Closure conditionClosure) {
         // delegate to ConditionsContext
         ConditionsContext conditionContext = new ConditionsContext()
-        AbstractContextHelper.executeInContext(conditionClosure, conditionContext)
+        ContextHelper.executeInContext(conditionClosure, conditionContext)
         conditions << conditionContext
     }
 
-    def actions(Closure actionsClosure) {
+    List<Node> actions(Closure actionsClosure) {
         // delegate to ConditionsContext
         PromotionStepContext actionsContext = new PromotionStepContext(this.jobManagement)
-        AbstractContextHelper.executeInContext(actionsClosure, actionsContext)
+        ContextHelper.executeInContext(actionsClosure, actionsContext)
         actionsContext.stepNodes.each { actions << it }
     }
 }

@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 class ConditionsContext implements Context {
 
@@ -33,14 +33,14 @@ class ConditionsContext implements Context {
     boolean isUpstreamPromotion = false
     String promotionNames = null
 
-    def selfPromotion(Boolean evenIfUnstable) {
+    void selfPromotion(Boolean evenIfUnstable) {
         isSelfPromotion = true
         if (evenIfUnstable) {
             this.evenIfUnstable = evenIfUnstable
         }
     }
 
-    def parameterizedSelfPromotion(Boolean evenIfUnstable, String parameterName, String parameterValue) {
+    void parameterizedSelfPromotion(Boolean evenIfUnstable, String parameterName, String parameterValue) {
         parameterizedSelfPromotion = true
         if (evenIfUnstable) {
             this.parameterizedSelfPromotion = evenIfUnstable
@@ -49,24 +49,24 @@ class ConditionsContext implements Context {
         this.parameterValue = parameterValue
     }
 
-    def manual(String users, Closure parametersClosure = null) {
+    void manual(String users, Closure parametersClosure = null) {
         isManual = true
         this.users = users
         parameters(parametersClosure)
     }
 
-    def releaseBuild() {
+    void releaseBuild() {
         isReleaseBuild = true
     }
 
-    def parameters(Closure parametersClosure) {
+    void parameters(Closure parametersClosure) {
         // delegate to main BuildParametersContext
         BuildParametersContext parametersContext = new BuildParametersContext()
-        AbstractContextHelper.executeInContext(parametersClosure, parametersContext)
+        ContextHelper.executeInContext(parametersClosure, parametersContext)
         parametersContext.buildParameterNodes.values().each { params << it }
     }
 
-    def downstream(Boolean evenIfUnstable, String jobs) {
+    void downstream(Boolean evenIfUnstable, String jobs) {
         isDownstreamPass = true
         if (evenIfUnstable) {
             this.evenIfUnstableDownstream = evenIfUnstable
@@ -74,13 +74,13 @@ class ConditionsContext implements Context {
         this.jobs = jobs
     }
 
-    def upstream(String promotionNames) {
+    void upstream(String promotionNames) {
         isUpstreamPromotion = true
         this.promotionNames = promotionNames
     }
 
-    def createConditionNode() {
-        def nodeBuilder = NodeBuilder.newInstance()
+    Node createConditionNode() {
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
         nodeBuilder.'configs' {
             if (isSelfPromotion) {
                 'hudson.plugins.promoted__builds.conditions.SelfPromotionCondition' {
@@ -116,5 +116,4 @@ class ConditionsContext implements Context {
             }
         }
     }
-
 }

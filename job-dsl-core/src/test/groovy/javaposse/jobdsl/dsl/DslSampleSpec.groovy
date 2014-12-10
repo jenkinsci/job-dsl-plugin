@@ -73,7 +73,7 @@ class DslSampleSpec extends Specification {
         firstJob != null
     }
 
-    private final sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    private final String sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description>Description</description>
@@ -154,7 +154,7 @@ class DslSampleSpec extends Specification {
 </project>
 '''
 
-    private final sampleMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    private final String sampleMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -207,7 +207,7 @@ class DslSampleSpec extends Specification {
 </maven2-moduleset>
 '''
 
-    private final sampleVarDsl = '''
+    private final String sampleVarDsl = '''
 job {
     name "PROJ-${REPO}"
     scm {
@@ -221,7 +221,7 @@ job {
     }
 }
 '''
-    private final samplePromotionsDsl = '''
+    private final String samplePromotionsDsl = '''
 job(type:'Maven') {
     name('promos')
     promotions {
@@ -242,7 +242,7 @@ job(type:'Maven') {
 }
 '''
 
-    private final sampleDsl = '''
+    private final String sampleDsl = '''
 def gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
 
 job {
@@ -333,7 +333,7 @@ job(type: Maven) {
 }
 '''
 
-    private final mavenXml = '''
+    private final String mavenXml = '''
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -386,7 +386,7 @@ job(type: Maven) {
 </maven2-moduleset>
 '''
 
-    private final mavenXmlWithTemplate = '''
+    private final String mavenXmlWithTemplate = '''
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -439,7 +439,7 @@ job(type: Maven) {
     </scm>
 </maven2-moduleset>
 '''
-    private final promotionJobXml = '''
+    private final String promotionJobXml = '''
 <maven2-moduleset>
     <actions></actions>
     <description></description>
@@ -473,7 +473,7 @@ job(type: Maven) {
 </maven2-moduleset>
 '''
 
-    private final promotionXml = '''
+    private final String promotionXml = '''
 <hudson.plugins.promoted__builds.PromotionProcess plugin='promoted-builds@2.15'>
     <actions></actions>
     <keepDependencies>false</keepDependencies>

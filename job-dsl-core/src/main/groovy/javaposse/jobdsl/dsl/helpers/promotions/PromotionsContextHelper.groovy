@@ -1,41 +1,42 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
-import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig
 import javaposse.jobdsl.dsl.additional.Promotion
-import javaposse.jobdsl.dsl.helpers.AbstractAdditionalContextHelper
+import javaposse.jobdsl.dsl.helpers.Context
 
-class PromotionsContextHelper extends AbstractAdditionalContextHelper<PromotionsContext> {
+class PromotionsContextHelper {
 
-    PromotionsContextHelper(List<WithXmlAction> withXmlActions, List<AdditionalXmlConfig> additionalConfigs,
-                            JobType jobType) {
-        super(withXmlActions, additionalConfigs, jobType)
+    private PromotionsContextHelper() {
     }
 
-    def promotions(Closure closure) {
-        execute(closure, new PromotionsContext())
-    }
-
-    @Override
-    Closure generateWithXmlClosure(PromotionsContext context) {
+    Closure generateWithXmlClosure(Context context) {
         return { Node project ->
-            def promotions = project / 'properties' /
+            void promotions = project / 'properties' /
                     'hudson.plugins.promoted__builds.JobPropertyImpl' (plugin: 'promoted-builds@2.15') /
                     'activeProcessNames'
             context.promotionNodes.values().each { promotions << it }
         }
     }
 
-    @Override
-    Map<String, Closure> generateAdditionalWithXmlClosures(PromotionsContext context) {
+    static List<AdditionalXmlConfig> generateAdditionalXmlConfigs(Context context) {
+        // Closure to be run later, in this context we're given the root node with the WithXmlAction magic
+        Map<String, Closure> withXmlClosures = generateAdditionalWithXmlClosures(context)
+        List<AdditionalXmlConfig> xmlConfigs = []
+        withXmlClosures.each { name, closure ->
+            xmlConfigs << createXmlConfig(name, closure)
+        }
+        xmlConfigs
+    }
+
+    private static Map<String, Closure> generateAdditionalWithXmlClosures(Context context) {
         // special XML closure generator for the promotions config.xml
         Map<String, Closure> closures = [:]
         context.subPromotionNodes.keySet().each { k ->
             closures.put(k) { Node project ->
-                def promotion = project
+                Node promotion = project
                 context.subPromotionNodes.get(k).children().each {
-                    def name = it.name()
+                    String name = it.name()
                     appendOrReplaceNode(promotion, name, it)
                 }
             }
@@ -43,17 +44,15 @@ class PromotionsContextHelper extends AbstractAdditionalContextHelper<Promotions
         closures
     }
 
-    @Override
-    AdditionalXmlConfig createXmlConfig(String name, Closure closure) {
+    private static AdditionalXmlConfig createXmlConfig(String name, Closure closure) {
         AdditionalXmlConfig xmlConfig = new Promotion(name)
         xmlConfig.withXmlActions << new WithXmlAction(closure)
         xmlConfig
     }
 
-    private void appendOrReplaceNode(Node node, String name, Node replace) {
+    private static boolean appendOrReplaceNode(Node node, String name, Node replace) {
         node.children().removeAll { it instanceof Node && it.name() == name }
         node.append replace
     }
-
 }
 

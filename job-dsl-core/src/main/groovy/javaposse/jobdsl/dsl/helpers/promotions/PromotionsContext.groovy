@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
 import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 class PromotionsContext implements Context {
 
@@ -34,7 +34,7 @@ class PromotionsContext implements Context {
      * @param promotionName
      * @return
      */
-    def promotion(String promotionName, Closure promotionClosure = null) {
+    boolean promotion(String promotionName, Closure promotionClosure = null) {
         Preconditions.checkArgument(!promotionNodes.containsKey(promotionName),
                                     'promotion $promotionName already defined')
         Preconditions.checkNotNull(promotionName, 'promotionName cannot be null')
@@ -43,7 +43,7 @@ class PromotionsContext implements Context {
         promotionNodes[promotionName] = promotionNode
 
         PromotionContext promotionContext = new PromotionContext()
-        AbstractContextHelper.executeInContext(promotionClosure, promotionContext)
+        ContextHelper.executeInContext(promotionClosure, promotionContext)
 
         subPromotionNodes[promotionName] = new NodeBuilder().'project' {
             // Conditions to proof before promotion
@@ -65,7 +65,7 @@ class PromotionsContext implements Context {
         }
 
         // Actions for promotions ... BuildSteps
-        def steps = new NodeBuilder().'buildSteps'()
+        Node steps = new NodeBuilder().'buildSteps'()
         if (promotionContext.actions) {
             promotionContext.actions.each { steps.append(it) }
         }

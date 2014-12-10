@@ -14,7 +14,7 @@ class Promotion extends AdditionalXmlConfig {
         new XmlParser().parse(new StringReader(emptyPromotionTemplate))
     }
 
-    def emptyPromotionTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    private final String emptyPromotionTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.15">
   <actions/>
   <keepDependencies>false</keepDependencies>
