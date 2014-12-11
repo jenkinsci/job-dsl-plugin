@@ -446,7 +446,6 @@ class StepContext implements Context {
     /**
      * Upstream build that triggered this job
      * <hudson.plugins.copyartifact.CopyArtifact>
-     *     <projectName>jryan-odin-test</projectName>
      *     <filter>*ivy-locked.xml</filter>
      *     <target>target/</target>
      *     <selector class="hudson.plugins.copyartifact.TriggeredBuildSelector"/>
@@ -521,8 +520,7 @@ class StepContext implements Context {
 
         NodeBuilder nodeBuilder = NodeBuilder.newInstance()
         Node copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
-            projectName jobName // Older name for field
-            project jobName // Newer name for field
+            project jobName
             filter includeGlob
             target targetPath ?: ''
 
