@@ -13,6 +13,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Item;
+import hudson.model.Job;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
@@ -303,15 +304,15 @@ public class ExecuteDslScripts extends Builder {
         }
 
         // Add job dsl information to the generated job
-        for (GeneratedJob generatedJob : generatedJobs) {
-
-            AbstractProject<?, ?> job = getLookupStrategy().getItem(
-                    seedJob, generatedJob.getJobName(), AbstractProject.class);
-            AbstractProject<?, ?> templateJob = generatedJob.getTemplateName() != null ? getLookupStrategy().getItem(
-                    seedJob, generatedJob.getTemplateName(), AbstractProject.class) : null;
-
-            job.removeProperty(GeneratedJobJobProperty.class);
-            job.addProperty(new GeneratedJobJobProperty(templateJob, seedJob));
+        for (GeneratedJob generatedJob : Sets.union(added, existing)) {
+            Job<?, ?> job = getLookupStrategy().getItem(
+                    seedJob, generatedJob.getJobName(), Job.class);
+            Job<?, ?> templateJob = generatedJob.getTemplateName() != null ? getLookupStrategy().getItem(
+                    seedJob, generatedJob.getTemplateName(), Job.class) : null;
+            if (job != null) { // generatedJob could be non Job item e.g. Folder
+                job.removeProperty(GeneratedJobJobProperty.class);
+                job.addProperty(new GeneratedJobJobProperty(templateJob, seedJob));
+            }
         }
     }
 
