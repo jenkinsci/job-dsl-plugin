@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
@@ -127,6 +128,18 @@ class ScmContext implements Context {
 
         NodeBuilder nodeBuilder = new NodeBuilder()
 
+        if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
+            if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
+                gitContext.extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.CloneOption' {
+                    shallow gitContext.shallowClone
+                    reference gitContext.reference
+                    if (gitContext.cloneTimeout) {
+                        timeout gitContext.cloneTimeout
+                    }
+                }
+            }
+        }
+
         Node gitNode = nodeBuilder.scm(class: 'hudson.plugins.git.GitSCM') {
             userRemoteConfigs(gitContext.remoteConfigs)
             branches {
@@ -150,18 +163,21 @@ class ScmContext implements Context {
             if (gitContext.relativeTargetDir) {
                 relativeTargetDir gitContext.relativeTargetDir
             }
-            if (gitContext.reference) {
-                reference gitContext.reference
-            }
             if (gitContext.localBranch) {
                 localBranch gitContext.localBranch
             }
             skipTag !gitContext.createTag
-            if (gitContext.shallowClone) {
-                useShallowClone gitContext.shallowClone
-            }
-            if (gitContext.extensions) {
-                extensions gitContext.extensions
+            if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
+                if (gitContext.reference) {
+                    reference gitContext.reference
+                }
+                if (gitContext.shallowClone) {
+                    useShallowClone gitContext.shallowClone
+                }
+            } else {
+                if (gitContext.extensions) {
+                    extensions gitContext.extensions
+                }
             }
         }
 
