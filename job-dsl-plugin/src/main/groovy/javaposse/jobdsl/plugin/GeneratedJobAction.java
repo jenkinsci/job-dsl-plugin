@@ -1,17 +1,17 @@
 package javaposse.jobdsl.plugin;
 
+import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Job;
 
 /**
  * @author ceilfors
  */
 public class GeneratedJobAction implements Action {
 
-    Job<?, ?> templateJob;
-    Job<?, ?> seedJob;
+    AbstractProject<?, ?> templateJob;
+    AbstractProject<?, ?> seedJob;
 
-    public GeneratedJobAction(Job<?, ?> templateJob, Job<?, ?> seedJob) {
+    public GeneratedJobAction(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
         this.templateJob = templateJob;
         this.seedJob = seedJob;
     }
@@ -31,11 +31,11 @@ public class GeneratedJobAction implements Action {
         return "generatedJob";
     }
 
-    public Job<?, ?> getTemplateJob() {
+    public AbstractProject<?, ?> getTemplateJob() {
         return templateJob;
     }
 
-    public Job<?, ?> getSeedJob() {
+    public AbstractProject<?, ?> getSeedJob() {
         return seedJob;
     }
 }

@@ -13,7 +13,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Item;
-import hudson.model.Job;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
@@ -284,7 +283,10 @@ public class ExecuteDslScripts extends Builder {
         // Update unreferenced jobs
         for (GeneratedJob removedJob : removed) {
             Item removedItem = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), Item.class);
-            if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
+            if (removedItem != null) {
+                if (removedItem instanceof AbstractProject) {
+                    ((AbstractProject) removedItem).removeProperty(GeneratedJobJobProperty.class);
+                }
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
                         removedItem.delete();
@@ -295,7 +297,7 @@ public class ExecuteDslScripts extends Builder {
                             ((AbstractProject) removedItem).disable();
                         }
                     }
-                } else {
+                } else if (removedJobAction == RemovedJobAction.DISABLE) {
                     if (removedItem instanceof AbstractProject) {
                         ((AbstractProject) removedItem).disable();
                     }
@@ -305,13 +307,16 @@ public class ExecuteDslScripts extends Builder {
 
         // Add job dsl information to the generated job
         for (GeneratedJob generatedJob : Sets.union(added, existing)) {
-            Job<?, ?> job = getLookupStrategy().getItem(
-                    seedJob, generatedJob.getJobName(), Job.class);
-            Job<?, ?> templateJob = generatedJob.getTemplateName() != null ? getLookupStrategy().getItem(
-                    seedJob, generatedJob.getTemplateName(), Job.class) : null;
-            if (job != null) { // generatedJob could be non Job item e.g. Folder
-                job.removeProperty(GeneratedJobJobProperty.class);
-                job.addProperty(new GeneratedJobJobProperty(templateJob, seedJob));
+            Item item = getLookupStrategy().getItem(
+                    seedJob, generatedJob.getJobName(), Item.class);
+            if (item instanceof AbstractProject) {
+                AbstractProject<?, ?> project = (AbstractProject) item;
+                AbstractProject<?, ?> templateProject = generatedJob.getTemplateName() != null ?
+                        getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), AbstractProject.class) :
+                        null;
+
+                project.removeProperty(GeneratedJobJobProperty.class);
+                project.addProperty(new GeneratedJobJobProperty(templateProject, seedJob));
             }
         }
     }

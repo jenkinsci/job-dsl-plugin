@@ -1,8 +1,8 @@
 package javaposse.jobdsl.plugin;
 
 import hudson.Extension;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -13,19 +13,19 @@ import java.util.Collections;
 /**
  * @author ceilfors
  */
-public class GeneratedJobJobProperty extends JobProperty<Job<?, ?>> {
+public class GeneratedJobJobProperty extends JobProperty<AbstractProject<?, ?>> {
 
-    Job<?, ?> templateJob;
-    Job<?, ?> seedJob;
+    AbstractProject<?, ?> templateJob;
+    AbstractProject<?, ?> seedJob;
 
     @DataBoundConstructor
-    public GeneratedJobJobProperty(Job<?, ?> templateJob, Job<?, ?> seedJob) {
+    public GeneratedJobJobProperty(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
         this.templateJob = templateJob;
         this.seedJob = seedJob;
     }
 
     @Override
-    public Collection<? extends Action> getJobActions(Job<?, ?> job) {
+    public Collection<? extends Action> getJobActions(AbstractProject<?, ?> project) {
         return Collections.singletonList(new GeneratedJobAction(templateJob, seedJob));
     }
 
