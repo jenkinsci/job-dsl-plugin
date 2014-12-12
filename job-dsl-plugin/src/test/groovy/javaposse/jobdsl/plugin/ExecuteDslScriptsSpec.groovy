@@ -1,6 +1,7 @@
 package javaposse.jobdsl.plugin
 
 import com.cloudbees.hudson.plugins.folder.Folder
+import com.google.common.collect.Iterables
 import com.google.common.collect.Lists
 import hudson.FilePath
 import hudson.maven.MavenModuleSet
@@ -23,6 +24,7 @@ import spock.lang.Specification
 
 import static hudson.model.Result.SUCCESS
 import static javaposse.jobdsl.plugin.RemovedJobAction.DELETE
+import static javaposse.jobdsl.plugin.RemovedJobAction.DISABLE
 import static javaposse.jobdsl.plugin.RemovedJobAction.IGNORE
 import static org.junit.Assert.assertTrue
 
@@ -323,6 +325,88 @@ class ExecuteDslScriptsSpec extends Specification {
 
         build.result == SUCCESS
         build
+    }
+
+    def "JobProperty is added to created jobs"() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+
+        when:
+        FreeStyleBuild build = runBuild(job, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        then:
+        build.result == SUCCESS
+        def testJob = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
+        def actions = testJob.getProperty(GeneratedJobJobProperty).getJobActions(testJob)
+        actions.size() == 1
+        def action = Iterables.get(actions, 0) as GeneratedJobAction
+        action.templateJob.name == 'template'
+        action.seedJob.name == 'seed'
+    }
+
+    def "JobProperty is added to updated jobs"() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+
+        when:
+        jenkinsRule.createFreeStyleProject('test-job')
+
+        then:
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(GeneratedJobJobProperty) == null
+
+        when:
+        def build1 = runBuild(job, new ExecuteDslScripts('job {\n name("test-job")\n}'))
+
+        then:
+        build1.result == SUCCESS
+        def testJob1 = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
+        def actions1 = testJob1.getProperty(GeneratedJobJobProperty).getJobActions(testJob1)
+        def action1 = Iterables.get(actions1, 0) as GeneratedJobAction
+        action1.templateJob == null
+        action1.seedJob.name == 'seed'
+
+        when:
+        def build2 = runBuild(job, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        then:
+        build2.result == SUCCESS
+        def testJob2 = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
+        def actions2 = testJob2.getProperty(GeneratedJobJobProperty).getJobActions(testJob2)
+        def action2 = Iterables.get(actions2, 0) as GeneratedJobAction
+        action2.templateJob.name == 'template'
+        action2.seedJob.name == 'seed'
+    }
+
+    def "JobProperty is removed from ignored jobs"() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(job, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        when:
+        runBuild(job, new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, '// do nothing'), false, IGNORE
+        ))
+
+        then:
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(GeneratedJobJobProperty) == null
+    }
+
+    def "JobProperty is removed from disabled jobs"() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(job, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        when:
+        runBuild(job, new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, '// do nothing'), false, DISABLE
+        ))
+
+        then:
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(GeneratedJobJobProperty) == null
     }
 
     def createJobInFolder() {
