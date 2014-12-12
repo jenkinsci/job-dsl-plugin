@@ -327,7 +327,7 @@ class ExecuteDslScriptsSpec extends Specification {
         build
     }
 
-    def "JobProperty is added to created jobs"() {
+    def "SeedJobProperty is added to created jobs"() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
@@ -338,14 +338,14 @@ class ExecuteDslScriptsSpec extends Specification {
         then:
         build.result == SUCCESS
         def testJob = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
-        def actions = testJob.getProperty(GeneratedJobJobProperty).getJobActions(testJob)
+        def actions = testJob.getProperty(SeedJobProperty).getJobActions(testJob)
         actions.size() == 1
-        def action = Iterables.get(actions, 0) as GeneratedJobAction
+        def action = Iterables.get(actions, 0) as SeedJobAction
         action.templateJob.name == 'template'
         action.seedJob.name == 'seed'
     }
 
-    def "JobProperty is added to updated jobs"() {
+    def "SeedJobProperty is added to updated jobs"() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
@@ -354,7 +354,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.createFreeStyleProject('test-job')
 
         then:
-        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(GeneratedJobJobProperty) == null
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(SeedJobProperty) == null
 
         when:
         def build1 = runBuild(job, new ExecuteDslScripts('job {\n name("test-job")\n}'))
@@ -362,8 +362,8 @@ class ExecuteDslScriptsSpec extends Specification {
         then:
         build1.result == SUCCESS
         def testJob1 = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
-        def actions1 = testJob1.getProperty(GeneratedJobJobProperty).getJobActions(testJob1)
-        def action1 = Iterables.get(actions1, 0) as GeneratedJobAction
+        def actions1 = testJob1.getProperty(SeedJobProperty).getJobActions(testJob1)
+        def action1 = Iterables.get(actions1, 0) as SeedJobAction
         action1.templateJob == null
         action1.seedJob.name == 'seed'
 
@@ -373,13 +373,13 @@ class ExecuteDslScriptsSpec extends Specification {
         then:
         build2.result == SUCCESS
         def testJob2 = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
-        def actions2 = testJob2.getProperty(GeneratedJobJobProperty).getJobActions(testJob2)
-        def action2 = Iterables.get(actions2, 0) as GeneratedJobAction
+        def actions2 = testJob2.getProperty(SeedJobProperty).getJobActions(testJob2)
+        def action2 = Iterables.get(actions2, 0) as SeedJobAction
         action2.templateJob.name == 'template'
         action2.seedJob.name == 'seed'
     }
 
-    def "JobProperty is removed from ignored jobs"() {
+    def "SeedJobProperty is removed from ignored jobs"() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
@@ -391,10 +391,10 @@ class ExecuteDslScriptsSpec extends Specification {
         ))
 
         then:
-        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(GeneratedJobJobProperty) == null
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(SeedJobProperty) == null
     }
 
-    def "JobProperty is removed from disabled jobs"() {
+    def "SeedJobProperty is removed from disabled jobs"() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
@@ -406,7 +406,7 @@ class ExecuteDslScriptsSpec extends Specification {
         ))
 
         then:
-        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(GeneratedJobJobProperty) == null
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getProperty(SeedJobProperty) == null
     }
 
     def createJobInFolder() {

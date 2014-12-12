@@ -10,23 +10,20 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author ceilfors
- */
-public class GeneratedJobJobProperty extends JobProperty<AbstractProject<?, ?>> {
+public class SeedJobProperty extends JobProperty<AbstractProject<?, ?>> {
 
     AbstractProject<?, ?> templateJob;
     AbstractProject<?, ?> seedJob;
 
     @DataBoundConstructor
-    public GeneratedJobJobProperty(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
+    public SeedJobProperty(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
         this.templateJob = templateJob;
         this.seedJob = seedJob;
     }
 
     @Override
     public Collection<? extends Action> getJobActions(AbstractProject<?, ?> project) {
-        return Collections.singletonList(new GeneratedJobAction(templateJob, seedJob));
+        return Collections.singletonList(new SeedJobAction(templateJob, seedJob));
     }
 
     @Extension

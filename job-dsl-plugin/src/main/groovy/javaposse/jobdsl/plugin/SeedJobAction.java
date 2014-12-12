@@ -3,15 +3,12 @@ package javaposse.jobdsl.plugin;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 
-/**
- * @author ceilfors
- */
-public class GeneratedJobAction implements Action {
+public class SeedJobAction implements Action {
 
     AbstractProject<?, ?> templateJob;
     AbstractProject<?, ?> seedJob;
 
-    public GeneratedJobAction(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
+    public SeedJobAction(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
         this.templateJob = templateJob;
         this.seedJob = seedJob;
     }
@@ -23,12 +20,12 @@ public class GeneratedJobAction implements Action {
 
     @Override
     public String getDisplayName() {
-        return "Generated job:";
+        return "Seed job:";
     }
 
     @Override
     public String getUrlName() {
-        return "generatedJob";
+        return "seedJob";
     }
 
     public AbstractProject<?, ?> getTemplateJob() {

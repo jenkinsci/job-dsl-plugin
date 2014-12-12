@@ -285,7 +285,7 @@ public class ExecuteDslScripts extends Builder {
             Item removedItem = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), Item.class);
             if (removedItem != null) {
                 if (removedItem instanceof AbstractProject) {
-                    ((AbstractProject) removedItem).removeProperty(GeneratedJobJobProperty.class);
+                    ((AbstractProject) removedItem).removeProperty(SeedJobProperty.class);
                 }
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
@@ -315,8 +315,8 @@ public class ExecuteDslScripts extends Builder {
                         getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), AbstractProject.class) :
                         null;
 
-                project.removeProperty(GeneratedJobJobProperty.class);
-                project.addProperty(new GeneratedJobJobProperty(templateProject, seedJob));
+                project.removeProperty(SeedJobProperty.class);
+                project.addProperty(new SeedJobProperty(templateProject, seedJob));
             }
         }
     }
