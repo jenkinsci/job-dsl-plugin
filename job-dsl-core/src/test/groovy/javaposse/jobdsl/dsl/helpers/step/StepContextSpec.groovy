@@ -663,6 +663,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
         context.stepNodes.size() == 1
         def copyEmptyNode = context.stepNodes[0]
         copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
@@ -683,6 +684,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
         context.stepNodes.size() == 1
         def copyEmptyNode = context.stepNodes[0]
         copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'

@@ -446,7 +446,6 @@ class StepContext implements Context {
     /**
      * Upstream build that triggered this job
      * <hudson.plugins.copyartifact.CopyArtifact>
-     *     <projectName>jryan-odin-test</projectName>
      *     <filter>*ivy-locked.xml</filter>
      *     <target>target/</target>
      *     <selector class="hudson.plugins.copyartifact.TriggeredBuildSelector"/>
@@ -512,6 +511,8 @@ class StepContext implements Context {
 
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                       boolean optionalAllowed, Closure copyArtifactClosure) {
+        jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
@@ -521,8 +522,7 @@ class StepContext implements Context {
 
         NodeBuilder nodeBuilder = NodeBuilder.newInstance()
         Node copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
-            projectName jobName // Older name for field
-            project jobName // Newer name for field
+            project jobName
             filter includeGlob
             target targetPath ?: ''
 

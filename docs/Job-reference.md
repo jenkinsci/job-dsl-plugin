@@ -1923,7 +1923,7 @@ copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolea
 }
 ```
 
-Supports the Copy Artifact plugin. As per the plugin, the input glob is for files in the workspace. The methods in the closure are considered the selectors, of which only one can be used.
+Supports the version 1.26 or later of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin). As per the plugin, the input glob is for files in the workspace. The methods in the closure are considered the selectors, of which only one can be used.
 
 ## Groovy
 ```groovy
