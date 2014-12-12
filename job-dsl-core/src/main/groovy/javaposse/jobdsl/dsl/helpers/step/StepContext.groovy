@@ -511,6 +511,8 @@ class StepContext implements Context {
 
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                       boolean optionalAllowed, Closure copyArtifactClosure) {
+        jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
