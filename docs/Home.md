@@ -17,6 +17,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.28 (unreleased)
+ * Show seed job and template job info in the generated jobs
  * Added support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
  * Added support for the [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin)
  * Added support for the [Build Monitor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Monitor+Plugin)
