@@ -2653,7 +2653,8 @@ job {
 ## HTML Publisher
 ```groovy
 publishHtml {
-    report(String reportDir, String reportName = null, String reportFiles = 'index.html', Boolean keepAll = false)
+    report(String reportDir, String reportName = null, String reportFiles = 'index.html', Boolean keepAll = false
+          Boolean allowMissing)
     report(Map args) // same names as the method above
 }
 
@@ -2667,7 +2668,7 @@ publishers {
     publishHtml {
         report('build/test-output/*', 'Test Output')
         report 'build/coverage/*', 'Coverage Report', 'coverage.html' // Without parens
-        report reportName: 'Gradle Tests', reportDir: 'test/*', keepAll: true // Map synxtax
+        report reportName: 'Gradle Tests', reportDir: 'test/*', keepAll: true, allowMissing: false // Map synxtax
     }
 }
 ```

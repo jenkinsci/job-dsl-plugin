@@ -343,6 +343,7 @@ class PublisherContext implements Context {
      <reportDir>build/reports/tests/</reportDir>
      <reportFiles>index.html</reportFiles>
      <keepAll>false</keepAll>
+     <allowMissing>false</allowMissing>
      <wrapperName>htmlpublisher-wrapper.html</wrapperName>
      </htmlpublisher.HtmlPublisherTarget>
      </reportTargets>
@@ -363,6 +364,7 @@ class PublisherContext implements Context {
                         reportDir target.reportDir
                         reportFiles target.reportFiles
                         keepAll target.keepAll
+                        allowMissing target.allowMissing
                         wrapperName target.wrapperName
                     }
                 }

@@ -8,7 +8,8 @@ import static com.google.common.base.Preconditions.checkArgument
 class HtmlReportContext implements Context {
     List<HtmlPublisherTarget> targets = []
 
-    void report(String reportDir, String reportName = null, String reportFiles = null, Boolean keepAll = null) {
+    void report(String reportDir, String reportName = null, String reportFiles = null, Boolean keepAll = null,
+               Boolean allowMissing = null) {
         checkArgument(reportDir != null && reportDir.length() > 0, 'Report directory for html publisher is required')
 
         targets << new HtmlPublisherTarget(
@@ -16,11 +17,12 @@ class HtmlReportContext implements Context {
                 reportDir: reportDir ?: '',
                 reportFiles: reportFiles ?: 'index.html',
                 keepAll: keepAll ? 'true' : 'false',
+                allowMissing: allowMissing ? 'true' : 'false',
                 wrapperName: 'htmlpublisher-wrapper.html')
     }
 
     void report(Map args) {
-        report(args.reportDir, args.reportName, args.reportFiles, args.keepAll)
+        report(args.reportDir, args.reportName, args.reportFiles, args.keepAll, args.allowMissing)
     }
 
     @Canonical
@@ -29,6 +31,7 @@ class HtmlReportContext implements Context {
         String reportDir
         String reportFiles
         String keepAll
+        String allowMissing
         String wrapperName // Not sure what this is for
     }
 }

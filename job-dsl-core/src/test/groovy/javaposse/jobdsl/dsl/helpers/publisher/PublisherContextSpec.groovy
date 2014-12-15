@@ -609,13 +609,15 @@ class PublisherContextSpec extends Specification {
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'index.html'
         target.keepAll[0].value() == 'false'
+        target.allowMissing[0].value() == 'false'
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
     }
 
     def 'calling html publisher with a few args'() {
         when:
         context.publishHtml {
-            report reportName: 'Report Name', reportDir: 'build/*', reportFiles: 'content.html', keepAll: true
+            report reportName: 'Report Name', reportDir: 'build/*', reportFiles: 'content.html', keepAll: true,
+                   allowMissing: true
         }
 
         then:
@@ -627,6 +629,7 @@ class PublisherContextSpec extends Specification {
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'content.html'
         target.keepAll[0].value() == 'true'
+        target.allowMissing[0].value() == 'true'
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
     }
 
@@ -645,6 +648,7 @@ class PublisherContextSpec extends Specification {
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'index.html'
         target.keepAll[0].value() == 'false'
+        target.allowMissing[0].value() == 'false'
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
     }
 
