@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 
 class ArchiveXUnitContext implements Context {
     ArchiveXUnitThresholdContext failedThresholdsContext = new ArchiveXUnitThresholdContext()
@@ -10,11 +11,11 @@ class ArchiveXUnitContext implements Context {
     int timeMargin = 3000
     List<ArchiveXUnitResultFileContext> resultFiles = []
 
-    void failedThresholds(Closure thresholdsClosure) {
+    void failedThresholds(@DslContext(ArchiveXUnitThresholdContext) Closure thresholdsClosure) {
         ContextHelper.executeInContext(thresholdsClosure, failedThresholdsContext)
     }
 
-    void skippedThresholds(Closure thresholdsClosure) {
+    void skippedThresholds(@DslContext(ArchiveXUnitThresholdContext) Closure thresholdsClosure) {
         ContextHelper.executeInContext(thresholdsClosure, skippedThresholdsContext)
     }
 
@@ -26,75 +27,75 @@ class ArchiveXUnitContext implements Context {
         this.timeMargin = timeMargin
     }
 
-    void aUnit(Closure resultFileClosure) {
+    void aUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('AUnitJunitHudsonTestType', resultFileClosure)
     }
 
-    void boostTest(Closure resultFileClosure) {
+    void boostTest(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('BoostTestJunitHudsonTestType', resultFileClosure)
     }
 
-    void cTest(Closure resultFileClosure) {
+    void cTest(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('CTestType', resultFileClosure)
     }
 
-    void check(Closure resultFileClosure) {
+    void check(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('CheckType', resultFileClosure)
     }
 
-    void cppTest(Closure resultFileClosure) {
+    void cppTest(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('CppTestJunitHudsonTestType', resultFileClosure)
     }
 
-    void cppUnit(Closure resultFileClosure) {
+    void cppUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('CppUnitJunitHudsonTestType', resultFileClosure)
     }
 
-    void embUnit(Closure resultFileClosure) {
+    void embUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('EmbUnitType', resultFileClosure)
     }
 
-    void fpcUnit(Closure resultFileClosure) {
+    void fpcUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('FPCUnitJunitHudsonTestType', resultFileClosure)
     }
 
-    void googleTest(Closure resultFileClosure) {
+    void googleTest(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('GoogleTestType', resultFileClosure)
     }
 
-    void jUnit(Closure resultFileClosure) {
+    void jUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('JUnitType', resultFileClosure)
     }
 
-    void msTest(Closure resultFileClosure) {
+    void msTest(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('MSTestJunitHudsonTestType', resultFileClosure)
     }
 
-    void mbUnit(Closure resultFileClosure) {
+    void mbUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('MbUnitType', resultFileClosure)
     }
 
-    void nUnit(Closure resultFileClosure) {
+    void nUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('NUnitJunitHudsonTestType', resultFileClosure)
     }
 
-    void phpUnit(Closure resultFileClosure) {
+    void phpUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('PHPUnitJunitHudsonTestType', resultFileClosure)
     }
 
-    void qTestLib(Closure resultFileClosure) {
+    void qTestLib(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('QTestLibType', resultFileClosure)
     }
 
-    void unitTest(Closure resultFileClosure) {
+    void unitTest(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('UnitTestJunitHudsonTestType', resultFileClosure)
     }
 
-    void valgrind(Closure resultFileClosure) {
+    void valgrind(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('ValgrindJunitHudsonTestType', resultFileClosure)
     }
 
-    void customTool(Closure resultFileClosure) {
+    void customTool(@DslContext(ArchiveXUnitCustomToolContext) Closure resultFileClosure) {
         ArchiveXUnitResultFileContext resultFileContext = new ArchiveXUnitCustomToolContext()
         ContextHelper.executeInContext(resultFileClosure, resultFileContext)
 

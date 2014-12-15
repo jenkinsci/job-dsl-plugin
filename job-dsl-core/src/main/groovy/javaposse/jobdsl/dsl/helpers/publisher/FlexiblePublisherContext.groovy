@@ -2,7 +2,9 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.step.RunConditionContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
@@ -18,11 +20,11 @@ class FlexiblePublisherContext implements Context {
         this.jobManagement = jobManagement
     }
 
-    void condition(Closure closure) {
+    void condition(@DslContext(RunConditionContext) Closure closure) {
         condition = RunConditionFactory.of(closure)
     }
 
-    void step(Closure closure) {
+    void step(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(closure, stepContext)
         if (stepContext.stepNodes.size() > 0) {
@@ -30,7 +32,7 @@ class FlexiblePublisherContext implements Context {
         }
     }
 
-    void publisher(Closure closure) {
+    void publisher(@DslContext(PublisherContext) Closure closure) {
         PublisherContext publisherContext = new PublisherContext(jobManagement)
         ContextHelper.executeInContext(closure, publisherContext)
         if (publisherContext.publisherNodes.size() > 0) {

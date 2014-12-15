@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.toplevel
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -23,7 +24,8 @@ class NotificationContext implements Context {
         endpoint(url, protocol, format, null)
     }
 
-    void endpoint(String url, String protocol = 'HTTP', String format = 'JSON', Closure notificationEndpointClosure) {
+    void endpoint(String url, String protocol = 'HTTP', String format = 'JSON',
+                  @DslContext(NotificationEndpointContext) Closure notificationEndpointClosure) {
         checkArgument(!isNullOrEmpty(url), 'url must be specified')
         checkArgument(PROTOCOLS.contains(protocol), "protocol must be one of ${PROTOCOLS.join(', ')}")
         checkArgument(FORMATS.contains(format), "format must be one of ${FORMATS.join(', ')}")

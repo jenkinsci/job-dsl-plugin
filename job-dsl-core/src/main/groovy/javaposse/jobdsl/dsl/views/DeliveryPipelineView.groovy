@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -53,7 +54,7 @@ class DeliveryPipelineView extends View {
         }
     }
 
-    void pipelines(Closure pipelinesClosure) {
+    void pipelines(@DslContext(DeliveryPipelinesContext) Closure pipelinesClosure) {
         DeliveryPipelinesContext context = new DeliveryPipelinesContext()
         executeInContext(pipelinesClosure, context)
 

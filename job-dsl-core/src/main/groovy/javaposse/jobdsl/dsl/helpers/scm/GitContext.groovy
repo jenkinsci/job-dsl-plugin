@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.scm
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 
@@ -33,7 +34,7 @@ class GitContext implements Context {
         this.withXmlActions = withXmlActions
     }
 
-    void remote(Closure remoteClosure) {
+    void remote(@DslContext(RemoteContext) Closure remoteClosure) {
         RemoteContext remoteContext = new RemoteContext(withXmlActions)
         executeInContext(remoteClosure, remoteContext)
 
@@ -121,7 +122,7 @@ class GitContext implements Context {
         this.cloneTimeout = cloneTimeout
     }
 
-    void browser(Closure gitBrowserClosure) {
+    void browser(@DslContext(GitBrowserContext) Closure gitBrowserClosure) {
         executeInContext(gitBrowserClosure, gitBrowserContext)
     }
 
