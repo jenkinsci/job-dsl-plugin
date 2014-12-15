@@ -1,9 +1,9 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER
-import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class SectionsContext implements Context {
     List<Node> sectionNodes = []

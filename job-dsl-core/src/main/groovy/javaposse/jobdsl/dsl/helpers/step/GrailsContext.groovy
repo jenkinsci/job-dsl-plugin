@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class GrailsContext implements Context {
     List<String> targets = []

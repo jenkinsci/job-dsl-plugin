@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
 
-class ConfigFile {
+class ConfigFile implements Context {
     final ConfigFileType type
     String name
     String comment = ''

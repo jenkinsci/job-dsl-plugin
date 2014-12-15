@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class ThrottleConcurrentBuildsContext implements Context {
     boolean throttleDisabled = false

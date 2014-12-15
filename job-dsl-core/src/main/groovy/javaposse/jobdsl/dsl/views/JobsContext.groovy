@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static com.google.common.base.Preconditions.checkNotNull
 

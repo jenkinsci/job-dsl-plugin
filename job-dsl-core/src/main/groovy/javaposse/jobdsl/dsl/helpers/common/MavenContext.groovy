@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.common
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 interface MavenContext extends Context {
     /**

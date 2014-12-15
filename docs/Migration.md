@@ -5,6 +5,11 @@
 Prior to version 1.28 most DSL methods had an undocumented return value. Since 1.28 DSL methods do not return a value
 except for the methods defined in `javaposse.jobdsl.dsl.DslFactory`.
 
+### Context and ContextHelper
+
+The `Context` interface and the `ContextHelper` class have been moved from package `javaposse.jobdsl.dsl.helpers` to
+package `javaposse.jobdsl.dsl`.
+
 ## Migrating to 1.27
 
 ### Job Name

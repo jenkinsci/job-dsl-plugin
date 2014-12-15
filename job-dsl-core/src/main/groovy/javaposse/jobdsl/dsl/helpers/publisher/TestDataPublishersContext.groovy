@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.Context
 
 class TestDataPublishersContext implements Context {
     private final JobManagement jobManagement
