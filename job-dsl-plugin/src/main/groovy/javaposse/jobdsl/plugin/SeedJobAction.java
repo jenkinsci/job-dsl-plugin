@@ -2,15 +2,16 @@ package javaposse.jobdsl.plugin;
 
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import jenkins.model.Jenkins;
 
 public class SeedJobAction implements Action {
 
-    AbstractProject<?, ?> templateJob;
-    AbstractProject<?, ?> seedJob;
+    String templateJobName;
+    String seedJobName;
 
-    public SeedJobAction(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
-        this.templateJob = templateJob;
-        this.seedJob = seedJob;
+    public SeedJobAction(String seedJobName, String templateJobName) {
+        this.seedJobName = seedJobName;
+        this.templateJobName = templateJobName;
     }
 
     @Override
@@ -29,10 +30,11 @@ public class SeedJobAction implements Action {
     }
 
     public AbstractProject<?, ?> getTemplateJob() {
-        return templateJob;
+        return templateJobName == null ? null :
+                Jenkins.getInstance().getItemByFullName(templateJobName, AbstractProject.class);
     }
 
     public AbstractProject<?, ?> getSeedJob() {
-        return seedJob;
+        return Jenkins.getInstance().getItemByFullName(seedJobName, AbstractProject.class);
     }
 }

@@ -12,18 +12,18 @@ import java.util.Collections;
 
 public class SeedJobProperty extends JobProperty<AbstractProject<?, ?>> {
 
-    AbstractProject<?, ?> templateJob;
-    AbstractProject<?, ?> seedJob;
+    String templateJobName;
+    String seedJobName;
 
     @DataBoundConstructor
-    public SeedJobProperty(AbstractProject<?, ?> templateJob, AbstractProject<?, ?> seedJob) {
-        this.templateJob = templateJob;
-        this.seedJob = seedJob;
+    public SeedJobProperty(String seedJobName, String templateJobName) {
+        this.seedJobName = seedJobName;
+        this.templateJobName = templateJobName;
     }
 
     @Override
     public Collection<? extends Action> getJobActions(AbstractProject<?, ?> project) {
-        return Collections.singletonList(new SeedJobAction(templateJob, seedJob));
+        return Collections.singletonList(new SeedJobAction(seedJobName, templateJobName));
     }
 
     @Extension

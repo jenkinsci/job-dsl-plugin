@@ -311,12 +311,8 @@ public class ExecuteDslScripts extends Builder {
                     seedJob, generatedJob.getJobName(), Item.class);
             if (item instanceof AbstractProject) {
                 AbstractProject<?, ?> project = (AbstractProject) item;
-                AbstractProject<?, ?> templateProject = generatedJob.getTemplateName() != null ?
-                        getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), AbstractProject.class) :
-                        null;
-
                 project.removeProperty(SeedJobProperty.class);
-                project.addProperty(new SeedJobProperty(templateProject, seedJob));
+                project.addProperty(new SeedJobProperty(seedJob.getName(), generatedJob.getTemplateName()));
             }
         }
     }
