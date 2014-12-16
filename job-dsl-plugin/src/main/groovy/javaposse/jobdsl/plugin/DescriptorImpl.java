@@ -1,18 +1,22 @@
 package javaposse.jobdsl.plugin;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import hudson.Extension;
 import hudson.model.AbstractProject;
-import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import jenkins.YesNoMaybe;
+
+import java.util.Map;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
     private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed
+    private Map<String, GeneratedJobSeedReference> generatedJobMap;
 
     public DescriptorImpl() {
         super(ExecuteDslScripts.class);
@@ -29,6 +33,14 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         }
 
         return templateJobMap;
+    }
+
+    public Map<String, GeneratedJobSeedReference> getGeneratedJobMap() {
+        if (generatedJobMap == null) {
+            generatedJobMap = Maps.newHashMap();
+        }
+
+        return generatedJobMap;
     }
 
     public void setTemplateJobMap(Multimap<String, SeedReference> templateJobMap) {

@@ -27,6 +27,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -271,7 +272,7 @@ public class ExecuteDslScripts extends Builder {
         AbstractProject<?, ?> seedJob = build.getProject();
 
         // Update Project
-        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(build.getProject());
+        Set<GeneratedJob> generatedJobs = extractGeneratedJobs(seedJob);
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = Sets.difference(generatedJobs, freshJobs);
@@ -283,10 +284,7 @@ public class ExecuteDslScripts extends Builder {
         // Update unreferenced jobs
         for (GeneratedJob removedJob : removed) {
             Item removedItem = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), Item.class);
-            if (removedItem != null) {
-                if (removedItem instanceof AbstractProject) {
-                    ((AbstractProject) removedItem).removeProperty(SeedJobProperty.class);
-                }
+            if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     try {
                         removedItem.delete();
@@ -297,7 +295,7 @@ public class ExecuteDslScripts extends Builder {
                             ((AbstractProject) removedItem).disable();
                         }
                     }
-                } else if (removedJobAction == RemovedJobAction.DISABLE) {
+                } else {
                     if (removedItem instanceof AbstractProject) {
                         ((AbstractProject) removedItem).disable();
                     }
@@ -305,16 +303,48 @@ public class ExecuteDslScripts extends Builder {
             }
         }
 
-        // Add job dsl information to the generated job
-        for (GeneratedJob generatedJob : Sets.union(added, existing)) {
-            Item item = getLookupStrategy().getItem(
-                    seedJob, generatedJob.getJobName(), Item.class);
-            if (item instanceof AbstractProject) {
-                AbstractProject<?, ?> project = (AbstractProject) item;
-                project.removeProperty(SeedJobProperty.class);
-                project.addProperty(new SeedJobProperty(seedJob.getName(), generatedJob.getTemplateName()));
+        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        boolean descriptorMutated = false;
+
+        // Clean up generated job map
+        Map<String, GeneratedJobSeedReference> generatedJobMap = descriptor.getGeneratedJobMap();
+        for (GeneratedJob removedJob : removed) {
+            AbstractProject project = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), AbstractProject.class);
+            if (project != null) {
+                generatedJobMap.remove(project.getFullName());
+                descriptorMutated = true;
+                project.save();
             }
         }
+
+        // Update seed reference
+        for (GeneratedJob generatedJob : Sets.union(added, existing)) {
+            String generatedJobName = generatedJob.getJobName();
+            AbstractProject project = getLookupStrategy().getItem(seedJob, generatedJob.getJobName(),
+                    AbstractProject.class);
+            if (project != null) {
+                final String digest = Util.getDigestOf(new FileInputStream(project.getConfigFile().getFile()));
+                GeneratedJobSeedReference newRef = new GeneratedJobSeedReference(project.getFullName(),
+                        seedJob.getFullName(), digest);
+                if (generatedJob.getTemplateName() != null) {
+                    Item template = getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), Item.class);
+                    newRef.setTemplateJobName(template.getFullName());
+                }
+
+                GeneratedJobSeedReference oldRef = generatedJobMap.get(generatedJobName);
+
+                if (!newRef.equals(oldRef)) {
+                    generatedJobMap.put(project.getFullName(), newRef);
+                    descriptorMutated = true;
+                    project.save();
+                }
+            }
+        }
+
+        if (descriptorMutated) {
+            descriptor.save();
+        }
+
     }
 
     private Set<GeneratedJob> extractGeneratedJobs(AbstractProject project) {
