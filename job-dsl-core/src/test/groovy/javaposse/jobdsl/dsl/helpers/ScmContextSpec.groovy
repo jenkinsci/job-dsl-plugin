@@ -700,6 +700,48 @@ class ScmContextSpec extends Specification {
         }
     }
 
+    def 'call git scm with complex buildStrategy, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+                refspec 'master'
+            }
+            wipeWorkspace()
+            strategy {
+                gerritTrigger()
+                inverse()
+                ancestry(5, "sha1")
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.extensions.size() == 1
+        context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.BuildChooserSetting'.size() == 3
+        with(context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.BuildChooserSetting'[0]) {
+            buildChooser.size() == 1
+            buildChooser[0].attribute('class') == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser'
+            buildChooser[0].separator.size() == 1
+            buildChooser[0].separator[0].text() == "#"
+        }
+        with(context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.BuildChooserSetting'[1]) {
+            buildChooser.size() == 1
+            buildChooser[0].attribute('class') == 'hudson.plugins.git.util.InverseBuildChooser'
+        }
+        with(context.scmNode.extensions[0].'hudson.plugins.git.extensions.impl.BuildChooserSetting'[2]) {
+            buildChooser.size() == 1
+            buildChooser[0].attribute('class') == 'hudson.plugins.git.util.AncestryBuildChooser'
+            buildChooser[0].maximumAgeInDays.size() == 1
+            buildChooser[0].maximumAgeInDays[0].text() == '5'
+            buildChooser[0].ancestorCommitSha1.size() == 1
+            buildChooser[0].ancestorCommitSha1[0].text() == 'sha1'
+        }
+    }
+
     def 'call git scm with credentials'() {
         setup:
         mockJobManagement.getCredentialsId('ci-user') >> '0815'
