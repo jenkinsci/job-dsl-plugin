@@ -2474,30 +2474,49 @@ See [Exclusion Resources](#exclusion-resources).
 Block to contain list of publishers.
 
 ## Extended Email Plugin
-```groovy
-extendedEmail(String recipients = null, String subjectTemplate = null, String contentTemplate = null, Closure emailClosure = null)
-```
-
-Supports the Extended Email plugin. DSL methods works like the gerrit plugin, providing its own block to help set it up. The emailClosure is primarily used to specify the triggers, which is optional. Its definition:
 
 ```groovy
-extendedEmail {
-    trigger(String triggerName, String subject = null, String body = null, String recipientList = null,
-            Boolean sendToDevelopers = null, Boolean sendToRequester = null, includeCulprits = null, Boolean sendToRecipientList = null)
-    trigger(Map args)
-    configure(Closure configureClosure) // Handed hudson.plugins.emailext.ExtendedEmailPublisher
+job {
+    publishers {
+        extendedEmail(String recipients = null, String subjectTemplate = null,
+                      String contentTemplate = null) {
+            trigger(String triggerName, String subject = null, String body = null,
+                    String recipientList = null, Boolean sendToDevelopers = null,
+                    Boolean sendToRequester = null, includeCulprits = null,
+                    Boolean sendToRecipientList = null)
+            trigger(Map args)
+            configure(Closure configureClosure)
+        }
+    }
 }
 ```
 
-The first trigger method allow complete control of the email going out, and maps directly to what is seen in the config.xml of a job. The triggerName needs to be one of these values: 'PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement', 'Failure', 'Regression', 'Aborted', 'NotBuilt', 'FirstFailure', 'Unstable'. Those names come from classes prefix with 'hudson.plugins.emailext.plugins.trigger.' and appended with Trigger. The second form of trigger, uses the names from the first, but can be called with a Map syntax, so that values can be left out more easily. To help explain it, here an example from the unite tests:
+Supports the [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin). The closure is primarily
+used to specify the triggers, which is optional.
+
+The first trigger method allow complete control of the email going out, and maps directly to what is seen in the
+config.xml of a job. The second form of trigger, uses the names from the first, but can be called with a Map syntax, so
+that values can be left out more easily.
+
+The `triggerName` needs to be one of these values: `PreBuild`, `StillUnstable`, `Fixed`, `Success`, `StillFailing`,
+`Improvement`, `Failure`, `Regression`, `Aborted`, `NotBuilt`, `FirstFailure`, `Unstable`, `Always`, `SecondFailure`,
+`FirstUnstable`, `FixedUnhealthy` or `StatusChanged`. Older versions of the Email-ext plugin do not support all
+triggers. The DSL supports the `Always`, `SecondFailure`, `FirstUnstable`, `FixedUnhealthy` and `StatusChanged` triggers
+since version 1.28.
+
+A `hudson.plugins.emailext.ExtendedEmailPublisher` node is handed into the configure block.
 
 ```groovy
-extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
-    trigger('PreBuild')
-    trigger(triggerName: 'StillUnstable', subject: 'Subject', body:'Body', recipientList:'RecipientList',
-            sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
-    configure { node ->
-        node / contentType << 'html'
+job {
+    publishers {
+        extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
+            trigger('PreBuild')
+            trigger(triggerName: 'StillUnstable', subject: 'Subject', body:'Body', recipientList: 'RecipientList',
+                    sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
+            configure { node ->
+                node / contentType << 'html'
+            }
+        }
     }
 }
 ```
