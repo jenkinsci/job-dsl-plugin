@@ -12,8 +12,8 @@ class EmailContext implements Context {
 
     ]
     List<EmailTrigger> emailTriggers = []
+    Closure configureClosure
 
-    // Not sure why a map syntax wouldn't call method below, so creating this one
     void trigger(Map args) {
         trigger(args.triggerName, args.subject, args.body, args.recipientList, args.sendToDevelopers,
                 args.sendToRequester, args.includeCulprits, args.sendToRecipientList)
@@ -28,14 +28,20 @@ class EmailContext implements Context {
                 includeCulprits, sendToRecipientList)
     }
 
-    Closure configureClosure
-
     void configure(Closure configureClosure) {
-        // save for later
         this.configureClosure = configureClosure
     }
 
     static class EmailTrigger {
+        String triggerShortName
+        String recipientList
+        String subject
+        String body
+        boolean sendToDevelopers
+        boolean sendToRequester
+        boolean includeCulprits
+        boolean sendToRecipientList
+
         EmailTrigger(String triggerShortName, String recipientList = null, String subject = null, String body = null,
                      Boolean sendToDevelopers = null, Boolean sendToRequester = null,
                      Boolean includeCulprits = null, Boolean sendToRecipientList = null) {
@@ -49,9 +55,5 @@ class EmailContext implements Context {
             this.includeCulprits = (includeCulprits == null) ? false : includeCulprits
             this.sendToRecipientList = (sendToRecipientList == null) ? true : sendToRecipientList
         }
-
-        String triggerShortName, recipientList, subject, body
-        boolean sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList
-
     }
 }

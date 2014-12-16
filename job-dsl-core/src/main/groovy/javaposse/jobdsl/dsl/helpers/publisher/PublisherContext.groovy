@@ -24,38 +24,37 @@ class PublisherContext implements Context {
     }
 
     /**
-     <hudson.plugins.emailext.ExtendedEmailPublisher>
-     <recipientList>billing@company.com</recipientList>
-     <configuredTriggers>
-     <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-     <email>
-     <recipientList/>
-     <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-     <body>$PROJECT_DEFAULT_CONTENT</body>
-     <sendToDevelopers>false</sendToDevelopers>
-     <sendToRequester>false</sendToRequester>
-     <includeCulprits>false</includeCulprits>
-     <sendToRecipientList>true</sendToRecipientList>
-     </email>
-     </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-     <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-     <email>
-     <recipientList/>
-     <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-     <body>$PROJECT_DEFAULT_CONTENT</body>
-     <sendToDevelopers>false</sendToDevelopers>
-     <sendToRequester>false</sendToRequester>
-     <includeCulprits>false</includeCulprits>
-     <sendToRecipientList>true</sendToRecipientList>
-     </email>
-     </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-     </configuredTriggers>
-     <contentType>default</contentType>
-     <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
-     <defaultContent>$DEFAULT_CONTENT</defaultContent>
-     <attachmentsPattern/>
-     </hudson.plugins.emailext.ExtendedEmailPublisher>
-     * @return
+     * <hudson.plugins.emailext.ExtendedEmailPublisher>
+     *     <recipientList>billing@company.com</recipientList>
+     *     <configuredTriggers>
+     *         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+     *             <email>
+     *                 <recipientList/>
+     *                 <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+     *                 <body>$PROJECT_DEFAULT_CONTENT</body>
+     *                 <sendToDevelopers>false</sendToDevelopers>
+     *                 <sendToRequester>false</sendToRequester>
+     *                 <includeCulprits>false</includeCulprits>
+     *                 <sendToRecipientList>true</sendToRecipientList>
+     *             </email>
+     *         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+     *         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+     *             <email>
+     *                 <recipientList/>
+     *                 <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+     *                 <body>$PROJECT_DEFAULT_CONTENT</body>
+     *                 <sendToDevelopers>false</sendToDevelopers>
+     *                 <sendToRequester>false</sendToRequester>
+     *                 <includeCulprits>false</includeCulprits>
+     *                 <sendToRecipientList>true</sendToRecipientList>
+     *             </email>
+     *         </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+     *     </configuredTriggers>
+     *     <contentType>default</contentType>
+     *     <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+     *     <defaultContent>$DEFAULT_CONTENT</defaultContent>
+     *     <attachmentsPattern/>
+     * </hudson.plugins.emailext.ExtendedEmailPublisher>
      */
     void extendedEmail(String recipients = null, Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)

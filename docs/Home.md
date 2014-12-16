@@ -22,6 +22,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added support for the [Build Monitor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Monitor+Plugin)
  * Enhanced support for the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
  * Added clone timeout option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+ * Support more trigger for [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin)
  * Fixed documentation for the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin) ([JENKINS-25945](https://issues.jenkins-ci.org/browse/JENKINS-25945))
  * Fixed `copyArtifacts` build step for matrix jobs, minimum supported version of [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) raised to 1.26
  * Allow the Job DSL build step to be used as conditional build step ([JENKINS-25961](https://issues.jenkins-ci.org/browse/JENKINS-25961))
