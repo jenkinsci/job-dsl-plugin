@@ -566,6 +566,11 @@ git {
         stash(String url) // URL to the Stash repository, optional
     }
     configure(Closure configure) // optional configure block, the GitSCM node is passed in
+    strategy { // since 1.28
+        inverse()
+        ancestry(int maxAge /* days */, String commit)
+        gerritTrigger()
+    }
 }
 
 git(String url, String branch = null, Closure configure = null)

@@ -34,6 +34,8 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * The non-closure variants of the `report` methods in the `publishHtml` context are deprecated, see [[Migration]]
  * Set return type for most DSL methods to void, see [[Migration]]
  * Moved `Context` and `ContextHelper` to package `javaposse.jobdsl.dsl`, see [[Migration]]
+ * Added strategy option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+ * Added strategy build chooser for the [Gerrit Trigger](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
 * 1.27 (December 05 2014)
  * Added support for the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin)
  * Added support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
