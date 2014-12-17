@@ -747,10 +747,8 @@ baseClearCase {
 
 ```groovy
 rtc {
-    buildType(String buildType)
     buildDefinition(String buildDefinition)
     buildWorkspace(String buildWorkspace)
-    overrideGlobal(Boolean overrideGlobal)
     credentialsId(String credentialsId)
     buildTool(String buildTool)
     serverURI(String serverURI)
@@ -764,11 +762,10 @@ Example defining a build definition:
 
 ```groovy
 rtc {
-    buildType('buildDefinition')
     buildDefinition('buildDefinitionInRTC')
 ```
 
-(since 1.27)
+(since 1.28)
 
 # Triggers
 

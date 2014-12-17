@@ -15,38 +15,48 @@ class RTCContext implements Context {
     String credentialsId = ''
     boolean overrideGlobal = false
     int timeout = 0
-	String buildTool = ''
-	String serverURI = ''
-
-    void buildType(String buildType) {
-        this.buildType = buildType
-    }
+    String buildTool = ''
+    String serverURI = ''
 
     void buildDefinition(String buildDefinition) {
         this.buildDefinition = buildDefinition
+        if (buildDefinition != '') {
+            buildType = 'buildDefinition'
+        }
     }
 
     void buildWorkspace(String buildWorkspace) {
         this.buildWorkspace = buildWorkspace
-    }
-
-    void overrideGlobal(boolean overrideGlobal) {
-        this.overrideGlobal = overrideGlobal
+        if (buildWorkspace != '' && this.buildDefinition == '') {
+            buildType = 'buildWorkspace'
+        }
     }
 
     void credentialsId(String credentialsId) {
         this.credentialsId = credentialsId
+        if (credentialsId != '') {
+            this.overrideGlobal = true
+        }
     }
 
     void buildTool(String buildTool) {
         this.buildTool = buildTool
+        if (buildTool != '') {
+            this.overrideGlobal = true
+        }
     }
 
     void serverURI(String serverURI) {
         this.serverURI = serverURI
+        if (serverURI != '') {
+            this.overrideGlobal = true
+        }
     }
 
     void timeout(int timeout) {
         this.timeout = timeout
+        if (timeout != 0) {
+            this.overrideGlobal = true
+        }
     }
 }

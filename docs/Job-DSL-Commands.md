@@ -117,7 +117,7 @@ job(Map<String, ?> arguments = [:]) {
         p4(String viewspec, Closure configure = null)
         p4(String viewspec, String user, Closure configure = null)
         p4(String viewspec, String user, String password, Closure configure = null)
-        rtc(Closure closure) // since 1.27
+        rtc(Closure closure) // since 1.28
         svn(String svnUrl, Closure configure = null)
         svn(String svnUrl, String localDir, Closure configure = null)
     }

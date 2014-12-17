@@ -1086,10 +1086,8 @@ class ScmContextSpec extends Specification {
     def 'call rtc with all configuration parameters'() {
         when:
         context.rtc {
-            buildType('buildWorkspace')
             buildDefinition('buildDEF')
             buildWorkspace('buildWS')
-            overrideGlobal(true)
             credentialsId('absd_credential')
             buildTool('4.0.7')
             serverURI('https//uri.com/ccm')
@@ -1108,9 +1106,34 @@ class ScmContextSpec extends Specification {
             password[0].value() == ''
             passwordFile[0].value() == ''
             credentialsId[0].value() == 'absd_credential'
-            buildType[0].value() == 'buildWorkspace'
+            buildType[0].value() == 'buildDefinition'
             buildWorkspace[0].value() == 'buildWS'
             buildDefinition[0].value() == 'buildDEF'
+            avoidUsingToolkit[0].value() == false
+        }
+    }
+
+    def 'call rtc with all workspace only parameters'() {
+        when:
+        context.rtc {
+            buildWorkspace('buildWS')
+        }
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            attributes()['class'] == 'com.ibm.team.build.internal.hjplugin.RTCScm'
+            overrideGlobal[0].value() == false
+            buildTool[0].value() == ''
+            serverURI[0].value() == ''
+            timeout[0].value() == 0
+            userId[0].value() == ''
+            password[0].value() == ''
+            passwordFile[0].value() == ''
+            credentialsId[0].value() == ''
+            buildType[0].value() == 'buildWorkspace'
+            buildWorkspace[0].value() == 'buildWS'
+            buildDefinition[0].value() == ''
             avoidUsingToolkit[0].value() == false
         }
     }
