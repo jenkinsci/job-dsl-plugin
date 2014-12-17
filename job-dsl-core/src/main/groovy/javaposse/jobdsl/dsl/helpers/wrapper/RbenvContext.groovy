@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import  javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class RbenvContext implements Context {
     boolean ignoreLocalVersion = false

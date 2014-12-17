@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import groovy.transform.Canonical
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class ViolationsContext implements Context {
     static validTypes = ['checkstyle', 'codenarc', 'cpd', 'cpplint', 'csslint', 'findbugs', 'fxcop', 'gendarme',

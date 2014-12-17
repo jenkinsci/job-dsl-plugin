@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.ContextHelper
-import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
 class TriggerContext implements Context {

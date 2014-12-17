@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import groovy.transform.Canonical
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 @Canonical
 class PortsContext implements Context {

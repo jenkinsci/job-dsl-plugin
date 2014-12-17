@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import com.google.common.base.Preconditions
+import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
 import static com.google.common.base.Strings.isNullOrEmpty

@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.Context
+
 /**
  * Builds up perms in a closure. So that it be used to build a withXml block
  */

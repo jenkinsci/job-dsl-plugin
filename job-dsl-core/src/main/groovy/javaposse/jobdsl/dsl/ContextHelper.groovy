@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl
 
 /**
  * Helper class for building nested DSL structures.

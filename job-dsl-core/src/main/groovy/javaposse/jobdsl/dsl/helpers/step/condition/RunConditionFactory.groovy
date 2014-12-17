@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step.condition
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.ContextHelper
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.helpers.step.RunConditionContext
 
 class RunConditionFactory {

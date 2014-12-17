@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext

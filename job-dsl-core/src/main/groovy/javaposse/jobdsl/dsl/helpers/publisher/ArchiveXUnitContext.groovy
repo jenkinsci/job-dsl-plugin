@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.ContextHelper
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 
 class ArchiveXUnitContext implements Context {
     ArchiveXUnitThresholdContext failedThresholdsContext = new ArchiveXUnitThresholdContext()

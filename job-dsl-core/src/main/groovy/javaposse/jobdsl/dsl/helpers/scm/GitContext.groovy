@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.Context
 
-import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class GitContext implements Context {
     private final List<WithXmlAction> withXmlActions
