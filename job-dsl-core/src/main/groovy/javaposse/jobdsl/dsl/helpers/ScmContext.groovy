@@ -482,7 +482,7 @@ class ScmContext implements Context {
      *
      * See https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin
      */
-    def rtc(Closure closure = null) {
+    void rtc(Closure closure = null) {
         validateMulti()
 
         RTCContext context = new RTCContext()
