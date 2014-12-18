@@ -104,7 +104,7 @@ to generate might have a conflict with other (possibly undocumented and internal
 can use the closure's `delegate` variable.
 
 Below is an example of a configure block that is trying to generate `<label>my-label</label>`.
-The label element is conflicting with the [label](Job-reference#label) DSL method.
+The label element is conflicting with the [label](Job-reference.md#label) DSL method.
 
 ```groovy
 job {
