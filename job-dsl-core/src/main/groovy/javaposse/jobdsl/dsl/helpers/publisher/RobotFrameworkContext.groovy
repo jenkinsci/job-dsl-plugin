@@ -1,24 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import groovy.transform.Canonical;
-
-import com.google.common.base.Preconditions;
-
-import javaposse.jobdsl.dsl.helpers.Context
+import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.Context
 
 /**
- * A Job DSL context for Robot Framework. Specifically, 
- * take a look at 
+ * A Job DSL context for Robot Framework. Specifically,
+ * take a look at
  * https://github.com/jenkinsci/robot-plugin/blob/master/src/main/java/hudson/plugins/robot/RobotPublisher.java
- * 
- * @author Behrooz Nobakht
  */
 class RobotFrameworkContext implements Context {
 
-    static String DEFAULT_OUTPUT_PATH = "target/robotframework-reports"
-    static String DEFAULT_REPORT_FILE_NAME = "report.html"
-    static String DEFAULT_OUTPUT_FILE_NAME = "output.xml"
-    static String DEFAULT_LOG_FILE_NAME = "log.html"
+    static final String DEFAULT_OUTPUT_PATH = 'target/robotframework-reports'
+    static final String DEFAULT_REPORT_FILE_NAME = 'report.html'
+    static final String DEFAULT_OUTPUT_FILE_NAME = 'output.xml'
+    static final String DEFAULT_LOG_FILE_NAME = 'log.html'
 
     double passThreshold = 100.0
     double unstableThreshold = 0.0
@@ -29,13 +24,13 @@ class RobotFrameworkContext implements Context {
     String outputFileName = DEFAULT_OUTPUT_FILE_NAME
 
     void passThreshold(double passThreshold) {
-        Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0, 
+        Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0,
             'passThreshold should be a floating point in range (0, 100)')
         this.passThreshold = passThreshold
     }
 
     void unstableThreshold(double unstableThreshold) {
-        Preconditions.checkArgument(unstableThreshold >= 0.0 && unstableThreshold <= 100.0, 
+        Preconditions.checkArgument(unstableThreshold >= 0.0 && unstableThreshold <= 100.0,
             'unstableThreshold should be a floating point in range (0, 100)')
         this.unstableThreshold = unstableThreshold
     }

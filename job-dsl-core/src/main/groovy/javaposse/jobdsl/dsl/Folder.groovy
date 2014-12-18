@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 /**
  * DSL element representing a Jenkins folder.
  */
-public class Folder extends Item {
+class Folder extends Item {
     void displayName(String displayNameArg) {
         execute {
             it / methodMissing('displayName', displayNameArg)
@@ -19,7 +19,7 @@ public class Folder extends Item {
     Node getNode() {
         Node root = new XmlParser().parse(new StringReader(TEMPLATE))
         withXmlActions.each { it.execute(root) }
-        return root
+        root
     }
 
     protected void execute(Closure rootClosure) {

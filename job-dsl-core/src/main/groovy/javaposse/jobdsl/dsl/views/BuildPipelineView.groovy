@@ -89,7 +89,7 @@ class BuildPipelineView extends View {
      */
     void showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true) {
         execute {
-            it / methodMissing('showPipelineParametersInHeaders' ,showPipelineParametersInHeaders)
+            it / methodMissing('showPipelineParametersInHeaders', showPipelineParametersInHeaders)
         }
     }
 
@@ -113,9 +113,18 @@ class BuildPipelineView extends View {
         }
     }
 
+    /**
+     * <startsWithParameters>true</startsWithParameters>
+     */
+    void startsWithParameters(boolean startsWithParameters = true) {
+        execute {
+            it / methodMissing('startsWithParameters', startsWithParameters)
+        }
+    }
+
     @Override
     protected String getTemplate() {
-        return '''<?xml version='1.0' encoding='UTF-8'?>
+        '''<?xml version='1.0' encoding='UTF-8'?>
 <au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>

@@ -1,48 +1,47 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-
 class GroovyContext extends AbstractGroovyContext {
-    def groovyParams = []
-    def scriptParams = []
-    def props = []
-    def javaOpts = []
-    def groovyInstallation = null
+    List<String> groovyParams = []
+    List<String> scriptParams = []
+    List<String> props = []
+    List<String> javaOpts = []
+    String groovyInstallation = null
 
-    def groovyParam(String param) {
+    void groovyParam(String param) {
         groovyParams << param
     }
 
-    def groovyParams(Iterable<String> params) {
+    void groovyParams(Iterable<String> params) {
         params.each { groovyParam(it) }
     }
 
-    def scriptParam(String param) {
+    void scriptParam(String param) {
         scriptParams << param
     }
 
-    def scriptParams(Iterable<String> params) {
+    void scriptParams(Iterable<String> params) {
         params.each { scriptParam(it) }
     }
 
-    def prop(String key, String value) {
+    void prop(String key, String value) {
         props << "${key}=${value}"
     }
 
-    def props(Map<String, String> map) {
+    void props(Map<String, String> map) {
         map.entrySet().each {
             prop(it.key, it.value)
         }
     }
 
-    def javaOpt(String opt) {
+    void javaOpt(String opt) {
         javaOpts << opt
     }
 
-    def javaOpts(Iterable<String> opts) {
+    void javaOpts(Iterable<String> opts) {
         opts.each { javaOpt(it) }
     }
 
-    def groovyInstallation(String groovyInstallationName) {
+    void groovyInstallation(String groovyInstallationName) {
         groovyInstallation = groovyInstallationName
     }
 }

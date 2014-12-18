@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <properties/>
+    <scm class="hudson.scm.NullSCM"/>
+    <disabled>false</disabled>
+    <triggers/>
+    <builders/>
+    <publishers/>
+    <buildWrappers/>
+</project>

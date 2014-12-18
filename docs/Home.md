@@ -10,10 +10,91 @@ If you want to get fancy you'll want to read up on the _configure_ block which g
 
 There is a great load of information on [the forum](https://groups.google.com/forum/#!forum/job-dsl-plugin), but some stuff is also making its way into a [[FAQ|Frequently Asked Questions]].
 
+Have a look at the [Jenkins Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example) to see how to
+organize a SCM repository for Job DSL scripts.
+
 And finally, if you want to get more involved, [here's how...](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)
 
 ## Release Notes
-* 1.24 (unreleased)
+* 1.28 (unreleased)
+ * Added support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
+ * Added support for the [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin)
+ * Added support for the [Build Monitor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Monitor+Plugin)
+ * Enhanced support for the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+ * Added clone timeout option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+ * Support more trigger for [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin)
+ * Fixed documentation for the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin) ([JENKINS-25945](https://issues.jenkins-ci.org/browse/JENKINS-25945))
+ * Fixed `copyArtifacts` build step for matrix jobs, minimum supported version of [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) raised to 1.26
+ * Allow the Job DSL build step to be used as conditional build step ([JENKINS-25961](https://issues.jenkins-ci.org/browse/JENKINS-25961))
+ * Set return type for most DSL methods to void, see [[Migration]]
+ * Moved `Context` and `ContextHelper` to package `javaposse.jobdsl.dsl`, see [[Migration]]
+* 1.27 (December 05 2014)
+ * Added support for the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin)
+ * Added support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
+ * Added support for the [Golang Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin)
+ * Added more support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
+ * Added `forcePush` option for Git Publisher
+ * Improved build step console output
+ * added `entries` method in `publishScp` closure to add multiple entries
+ * The context helper classes have been removed
+ * Top-level `permission` methods are deprecated, see [[Migration]]
+ * `pattern` method in `archiveArtifacts` closure can be called multiple times to collect patterns
+ * Added a no parameter variant of `colorizeOutput` to match documentation.
+ * The `name` method with a closure parameter in the `job` closure is deprecated, see [[Migration]]
+ * Fixed time condition for [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
+* 1.26 (October 04 2014)
+ * Support for "Pipeline starts with parameters" for [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
+ * Support for [Build User Vars Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+User+Vars+Plugin)
+ * Support for [Test Stability Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Test+stability+plugin)
+ * Support for [Mask Passwords Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin)
+ * Support for [Analysis Collector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Analysis+Collector+Plugin)
+ * Support for [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
+ * Support for [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
+ * Allow to merge more than one branch with Git SCM
+ * Support for [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
+ * Removed unnecessary undocumented methods in Gerrit trigger ([JENKINS-24787](https://issues.jenkins-ci.org/browse/JENKINS-24787))
+ * Short names in the Gerrit trigger event closure have been replaced by DSL methods, see [[Migration]]
+ * The `archiveJunit` method with boolean arguments has been deprecated, see [[Migration]]
+ * The `xvnc` method with boolean arguments has been deprecated, see [[Migration]]
+ * Support to specify the xAuthority file option of the [Xvnc Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xvnc+Plugin)
+ * `javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, see [[Migration]]
+ * Fixed endless recursion when calling `properties` in configure blocks ([JENKINS-22708](https://issues.jenkins-ci.org/browse/JENKINS-22708))
+ * Support for [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
+ * Support for [Any Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
+ * Support to specify the Stash browser URL for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+ * Partial support for [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin)
+ * Increased minimum supported Jenkins core version to 1.509.3
+* 1.25 (September 01 2014)
+ * Dropped support for Java 5, Java 6 or later is required at runtime
+ * Support for [Rake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rake+plugin)
+ * Support for [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
+ * Support for [vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin)
+ * Support for [Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin)
+ * Support for [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin)
+ * Support for [Nested View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Nested+View+Plugin)
+ * Support for [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+ * Support more options of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+ * Added option to add classpath entries for Job DSL runs
+ * Added localBranch option for Git SCM
+ * Added method to read a file from any job's workspace
+ * Fixed workspace cleanup external delete command ([JENKINS-24231](https://issues.jenkins-ci.org/browse/JENKINS-24231))
+ * Fixed Build Timeout Plugin no activity timeout ([JENKINS-24258](https://issues.jenkins-ci.org/browse/JENKINS-24258))
+ * Fixed alwaysRun and neverRun conditions ([JENKINS-24510](https://issues.jenkins-ci.org/browse/JENKINS-24510))
+* 1.24 (July 05 2014)
+ * Support for [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
+ * Support for [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+ * Support for [ClearCase Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin)
+ * Support for [Keychains and Provisioning Profiles Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Keychains+and+Provisioning+Profiles+Plugin)
+ * Support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
+ * Support for [Batch Task Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Batch+Task+Plugin)
+ * Support for [Matrix Projects](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project)
+ * Extend support for [Build Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
+ * Added option for treating job names relative to the seed job
+ * Added pruneBranches option for Git SCM
+ * Fixed ClassCastException when removing folder ([JENKINS-23289](https://issues.jenkins-ci.org/browse/JENKINS-23289))
+ * Fixed GerritContext not honoring default settings ([JENKINS-23318](https://issues.jenkins-ci.org/browse/JENKINS-23318))
+ * Moved PerforcePasswordEncryptor to javaposse.jobdsl.dsl.helpers.scm package
+ * Support for [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin)
 * 1.23 (May 23 2014)
  * Added support for injecting globally defined passwords ([EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin))
  * Added file name to exception message when reading missing workspace files ([JENKINS-23006](https://issues.jenkins-ci.org/browse/JENKINS-23006))
@@ -77,7 +158,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * [JENKINS-20284](https://issues.jenkins-ci.org/browse/JENKINS-20284)
  * [Text Finder](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin)
 * 1.17
- * Static Analysis Plugins (PMD, Checkstyle, Findbugs, DRY, Tasks, CCM, Lint, OWASP Dependency Check, Compiler warnings, 
+ * Static Analysis Plugins (PMD, Checkstyle, Findbugs, DRY, Tasks, CCM, Lint, OWASP Dependency Check, Compiler warnings,
  * Description Setter Plugin
  * Keep Dependencies and Fingerprinting
  * Mailer

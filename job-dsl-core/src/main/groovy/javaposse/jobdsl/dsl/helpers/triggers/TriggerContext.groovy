@@ -1,47 +1,36 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
-import javaposse.jobdsl.dsl.helpers.Context
-
+import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
 class TriggerContext implements Context {
-    List<WithXmlAction> withXmlActions
-    JobType jobType
-    List<Node> triggerNodes
+    private final List<WithXmlAction> withXmlActions
+    private final JobType jobType
+    private final JobManagement jobManagement
+    final List<Node> triggerNodes = []
 
-    TriggerContext(List<WithXmlAction> withXmlActions = [], JobType jobType = JobType.Freeform, List<Node> triggerNodes = []) {
+    TriggerContext(List<WithXmlAction> withXmlActions, JobType jobType, JobManagement jobManagement) {
         this.withXmlActions = withXmlActions
         this.jobType = jobType
-        this.triggerNodes = triggerNodes
+        this.jobManagement = jobManagement
     }
 
     /**
-     * Adds DSL  for adding and configuring the URL trigger plugin to a job.
-     *
-     * Uses a default cron execution schedule "H/5 * * * *", every 5 minutes with some jitter to prevent load spikes.
-     *
-     * @param contextClosure closure for configuring the context
-     */
-    def urlTrigger(Closure contextClosure) {
-        urlTrigger(null, contextClosure)
-    }
-
-    /**
-     * Adds DSL  for adding and configuring the URL trigger plugin to a job.
+     * Adds DSL for adding and configuring the URL trigger plugin to a job.
      *
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
      */
-    def urlTrigger(String crontab, Closure contextClosure) {
-
+    void urlTrigger(String crontab = null, Closure contextClosure) {
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
-        AbstractContextHelper.executeInContext(contextClosure, urlTriggerContext)
+        ContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
-        def nodeBuilder = new NodeBuilder()
-        def urlTriggerNode = nodeBuilder.'org.jenkinsci.plugins.urltrigger.URLTrigger' {
+        Node urlTriggerNode = new NodeBuilder().'org.jenkinsci.plugins.urltrigger.URLTrigger' {
             spec urlTriggerContext.crontab
             if (urlTriggerContext.label) {
                 labelRestriction true
@@ -97,7 +86,7 @@ class TriggerContext implements Context {
         triggerNodes << urlTriggerNode
     }
 
-    def cron(String cronString) {
+    void cron(String cronString) {
         Preconditions.checkNotNull(cronString)
         triggerNodes << new NodeBuilder().'hudson.triggers.TimerTrigger' {
             spec cronString
@@ -105,13 +94,11 @@ class TriggerContext implements Context {
     }
 
     /**
-     <triggers class="vector">
-     <hudson.triggers.SCMTrigger>
-     <spec>10 * * * *</spec>
-     </hudson.triggers.SCMTrigger>
-     </triggers>
+     * <hudson.triggers.SCMTrigger>
+     *     <spec>10 * * * *</spec>
+     * </hudson.triggers.SCMTrigger>
      */
-    def scm(String cronString) {
+    void scm(String cronString) {
         Preconditions.checkNotNull(cronString)
         triggerNodes << new NodeBuilder().'hudson.triggers.SCMTrigger' {
             spec cronString
@@ -119,9 +106,13 @@ class TriggerContext implements Context {
     }
 
     /**
-     * Trigger that runs jobs on push notifications from Github/Github enterprise
+     * Trigger that runs jobs on push notifications from Github/Github enterprise.
+     *
+     * <com.cloudbees.jenkins.GitHubPushTrigger>
+     *     <spec/>
+     * </com.cloudbees.jenkins.GitHubPushTrigger>
      */
-    def githubPush() {
+    void githubPush() {
         triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
             spec ''
         }
@@ -136,6 +127,7 @@ class TriggerContext implements Context {
      *      <whitelist></whitelist>
      *      <orgslist></orgslist>
      *      <cron></cron>
+     *      <spec></spec>
      *      <triggerPhrase></triggerPhrase>
      *      <onlyTriggerPhrase>false</onlyTriggerPhrase>
      *      <useGitHubHooks>true</useGitHubHooks>
@@ -143,14 +135,11 @@ class TriggerContext implements Context {
      *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
-    def pullRequest(Closure contextClosure) {
-
+    void pullRequest(Closure contextClosure) {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
-        AbstractContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
+        ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
-        def nodeBuilder = NodeBuilder.newInstance()
-
-        def pullRequestNode = nodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
@@ -162,64 +151,62 @@ class TriggerContext implements Context {
             permitAll pullRequestBuilderContext.permitAll
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
         }
-
-        triggerNodes << pullRequestNode
     }
 
     /**
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
-     <spec></spec>
-     <gerritProjects>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
-     <compareType>PLAIN</compareType>
-     <pattern>test-project</pattern>
-     <branches>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
-     <compareType>ANT</compareType>
-     <pattern>**</pattern>
-     </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
-     </branches>
-     </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
-     </gerritProjects>
-     <silentMode>false</silentMode>
-     <escapeQuotes>true</escapeQuotes>
-     <buildStartMessage></buildStartMessage>
-     <buildFailureMessage></buildFailureMessage>
-     <buildSuccessfulMessage></buildSuccessfulMessage>
-     <buildUnstableMessage></buildUnstableMessage>
-     <buildNotBuiltMessage></buildNotBuiltMessage>
-     <buildUnsuccessfulFilepath></buildUnsuccessfulFilepath>
-     <customUrl></customUrl>
-     <triggerOnEvents>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginChangeMergedEvent/>
-     <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginPatchsetCreatedEvent/>
-     </triggerOnEvents>
-     <dynamicTriggerConfiguration>false</dynamicTriggerConfiguration>
-     <triggerConfigURL></triggerConfigURL>
-     <triggerInformationAction/>
-     </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
+     * <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
+     *     <spec></spec>
+     *     <gerritProjects>
+     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
+     *             <compareType>PLAIN</compareType>
+     *             <pattern>test-project</pattern>
+     *             <branches>
+     *                 <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
+     *                    <compareType>ANT</compareType>
+     *                    <pattern>**</pattern>
+     *                 </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
+     *             </branches>
+     *         </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
+     *     </gerritProjects>
+     *     <silentMode>false</silentMode>
+     *     <escapeQuotes>true</escapeQuotes>
+     *     <buildStartMessage></buildStartMessage>
+     *     <buildFailureMessage></buildFailureMessage>
+     *     <buildSuccessfulMessage></buildSuccessfulMessage>
+     *     <buildUnstableMessage></buildUnstableMessage>
+     *     <buildNotBuiltMessage></buildNotBuiltMessage>
+     *     <buildUnsuccessfulFilepath></buildUnsuccessfulFilepath>
+     *     <customUrl></customUrl>
+     *     <triggerOnEvents>
+     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginChangeMergedEvent/>
+     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginPatchsetCreatedEvent/>
+     *     </triggerOnEvents>
+     *     <dynamicTriggerConfiguration>false</dynamicTriggerConfiguration>
+     *     <triggerConfigURL></triggerConfigURL>
+     *     <triggerInformationAction/>
+     * </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
      *
-     *
-     * @param triggerEvents Can be ommited and the plugin will user PatchsetCreated and DraftPublished by default. Provide in
-     *                      show name format: ChangeMerged, CommentAdded, DraftPublished, PatchsetCreated, RefUpdated
+     * @param triggerEvents Can be ommited and the plugin will user PatchsetCreated and DraftPublished by default.
+     *                      Provide in show name format: ChangeMerged, CommentAdded, DraftPublished, PatchsetCreated,
+     *                      RefUpdated
      * @return
      */
-    def gerrit(Closure contextClosure = null) {
+    void gerrit(Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
-        GerritContext gerritContext = new GerritContext()
-        AbstractContextHelper.executeInContext(contextClosure, gerritContext)
+        GerritContext gerritContext = new GerritContext(jobManagement)
+        ContextHelper.executeInContext(contextClosure, gerritContext)
 
-        def nodeBuilder = new NodeBuilder()
-        def gerritNode = nodeBuilder.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger' {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        Node gerritNode = nodeBuilder.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger' {
             spec ''
             if (gerritContext.projects) {
                 gerritProjects {
-                    gerritContext.projects.each { GerritContext.GerritSpec project, List<GerritContext.GerritSpec> brancheSpecs ->
+                    gerritContext.projects.each { GerritSpec project, List<GerritSpec> brancheSpecs ->
                         'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject' {
                             compareType project.type
                             pattern project.pattern
                             branches {
-                                brancheSpecs.each { GerritContext.GerritSpec branch ->
+                                brancheSpecs.each { GerritSpec branch ->
                                     'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch' {
                                         compareType branch.type
                                         pattern branch.pattern
@@ -241,21 +228,43 @@ class TriggerContext implements Context {
             customUrl ''
             if (gerritContext.eventContext.eventShortNames) {
                 triggerOnEvents {
-                    gerritContext.eventContext.eventShortNames.each { eventShortName ->
-                        "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${eventShortName}Event" ''
+                    gerritContext.eventContext.eventShortNames.each {
+                        "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${it}Event" ''
                     }
                 }
             }
-            gerritBuildStartedVerifiedValue Integer.toString(gerritContext.startedVerified)
-            gerritBuildStartedCodeReviewValue Integer.toString(gerritContext.startedCodeReview)
-            gerritBuildSuccessfulVerifiedValue Integer.toString(gerritContext.successfulVerified)
-            gerritBuildSuccessfulCodeReviewValue Integer.toString(gerritContext.successfulCodeReview)
-            gerritBuildFailedVerifiedValue Integer.toString(gerritContext.failedVerified)
-            gerritBuildFailedCodeReviewValue Integer.toString(gerritContext.failedCodeReview)
-            gerritBuildUnstableVerifiedValue Integer.toString(gerritContext.unstableVerified)
-            gerritBuildUnstableCodeReviewValue Integer.toString(gerritContext.unstableCodeReview)
-            gerritBuildNotBuiltVerifiedValue Integer.toString(gerritContext.notBuiltVerified)
-            gerritBuildNotBuiltCodeReviewValue Integer.toString(gerritContext.notBuiltCodeReview)
+            gerritContext.with {
+                if (startedVerified != null) {
+                    gerritBuildStartedVerifiedValue startedVerified
+                }
+                if (startedCodeReview != null) {
+                    gerritBuildStartedCodeReviewValue startedCodeReview
+                }
+                if (successfulVerified != null) {
+                    gerritBuildSuccessfulVerifiedValue successfulVerified
+                }
+                if (successfulCodeReview != null) {
+                    gerritBuildSuccessfulCodeReviewValue successfulCodeReview
+                }
+                if (failedVerified != null) {
+                    gerritBuildFailedVerifiedValue failedVerified
+                }
+                if (failedCodeReview != null) {
+                    gerritBuildFailedCodeReviewValue failedCodeReview
+                }
+                if (unstableVerified != null) {
+                    gerritBuildUnstableVerifiedValue unstableVerified
+                }
+                if (unstableCodeReview != null) {
+                    gerritBuildUnstableCodeReviewValue unstableCodeReview
+                }
+                if (notBuiltVerified != null) {
+                    gerritBuildNotBuiltVerifiedValue notBuiltVerified
+                }
+                if (notBuiltCodeReview != null) {
+                    gerritBuildNotBuiltCodeReviewValue notBuiltCodeReview
+                }
+            }
             dynamicTriggerConfiguration false
             triggerConfigURL ''
             triggerInformationAction ''
@@ -268,7 +277,6 @@ class TriggerContext implements Context {
         }
 
         triggerNodes << gerritNode
-
     }
 
     /**
@@ -278,11 +286,11 @@ class TriggerContext implements Context {
      * project. Defaults to <code>false</code>.
      * @param checkSnapshotDependencies set to <code>true</code> to check snapshot dependencies
      */
-    def snapshotDependencies(boolean checkSnapshotDependencies) {
-        Preconditions.checkState jobType == JobType.Maven, "snapshotDependencies can only be applied for Maven jobs"
-        withXmlActions << new WithXmlAction({
-            it.children().removeAll { it instanceof Node && it.name() == "ignoreUpstremChanges" }
-            it.appendNode "ignoreUpstremChanges", !checkSnapshotDependencies
-        })
+    void snapshotDependencies(boolean checkSnapshotDependencies) {
+        Preconditions.checkState jobType == JobType.Maven, 'snapshotDependencies can only be applied for Maven jobs'
+        withXmlActions << WithXmlAction.create {
+            it.children().removeAll { it instanceof Node && it.name() == 'ignoreUpstremChanges' }
+            it.appendNode 'ignoreUpstremChanges', !checkSnapshotDependencies
+        }
     }
 }

@@ -1,16 +1,23 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.JobManagement
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
 class GitPublisherContext implements Context {
+    private final JobManagement jobManagement
     boolean pushOnlyIfSuccess
     boolean pushMerge
+    boolean forcePush
     List<Node> tags = []
     List<Node> branches = []
+
+    GitPublisherContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
 
     void pushOnlyIfSuccess(boolean pushOnlyIfSuccess = true) {
         this.pushOnlyIfSuccess = pushOnlyIfSuccess
@@ -20,22 +27,27 @@ class GitPublisherContext implements Context {
         this.pushMerge = pushMerge
     }
 
+    void forcePush(boolean forcePush = true) {
+        jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        this.forcePush = forcePush
+    }
+
     /**
      * <hudson.plugins.git.GitPublisher_-TagToPush>
      *     <targetRepoName>origin</targetRepoName>
      *     <tagName>foo-$PIPELINE_VERSION</tagName>
-     *     <tagMessage>Release $PIPELINE_VERSION</tagMessage> 
+     *     <tagMessage>Release $PIPELINE_VERSION</tagMessage>
      *     <createTag>true</createTag>
      *     <updateTag>false</updateTag>
      * </hudson.plugins.git.GitPublisher_-TagToPush>
      */
     void tag(String targetRepo, String name, Closure closure = null) {
-        checkArgument(!isNullOrEmpty(targetRepo), "targetRepo must be specified")
-        checkArgument(!isNullOrEmpty(name), "name must be specified")
+        checkArgument(!isNullOrEmpty(targetRepo), 'targetRepo must be specified')
+        checkArgument(!isNullOrEmpty(name), 'name must be specified')
 
         TagToPushContext context = new TagToPushContext()
-        AbstractContextHelper.executeInContext(closure, context)
-        
+        ContextHelper.executeInContext(closure, context)
+
         tags << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-TagToPush' {
             targetRepoName(targetRepo)
             tagName(name)
@@ -52,8 +64,8 @@ class GitPublisherContext implements Context {
      * </hudson.plugins.git.GitPublisher_-BranchToPush>
      */
     void branch(String targetRepo, String name) {
-        checkArgument(!isNullOrEmpty(targetRepo), "targetRepo must be specified")
-        checkArgument(!isNullOrEmpty(name), "name must be specified")
+        checkArgument(!isNullOrEmpty(targetRepo), 'targetRepo must be specified')
+        checkArgument(!isNullOrEmpty(name), 'name must be specified')
 
         branches << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-BranchToPush' {
             targetRepoName(targetRepo)

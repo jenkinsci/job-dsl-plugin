@@ -3,32 +3,28 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
-import javaposse.jobdsl.dsl.views.BuildPipelineView
-import javaposse.jobdsl.dsl.views.ListView
 
 import java.util.logging.Level
 import java.util.logging.Logger
 
-public abstract class JobParent extends Script {
-    private static final Logger LOGGER = Logger.getLogger(JobParent.getName());
-    private static final Map<ViewType, Class<? extends View>> VIEW_TYPE_MAPPING = [
-            (null): ListView.class,
-            (ViewType.ListView): ListView.class,
-            (ViewType.BuildPipelineView): BuildPipelineView.class,
-    ]
+abstract class JobParent extends Script implements DslFactory {
+    private static final Logger LOGGER = Logger.getLogger(JobParent.name)
 
-    JobManagement jm;
+    JobManagement jm
     Set<Item> referencedJobs
     Set<View> referencedViews
+    Set<ConfigFile> referencedConfigFiles
     List<String> queueToBuild
 
-    public JobParent() {
+    protected JobParent() {
         referencedJobs = Sets.newLinkedHashSet()
         referencedViews = Sets.newLinkedHashSet()
+        referencedConfigFiles = Sets.newLinkedHashSet()
         queueToBuild = Lists.newArrayList()
     }
 
-    public Job job(Map<String, Object> arguments=[:], Closure closure) {
+    @Override
+    Job job(Map<String, Object> arguments=[:], Closure closure) {
         LOGGER.log(Level.FINE, "Got closure and have ${jm}")
         Job job = new Job(jm, arguments)
 
@@ -39,52 +35,65 @@ public abstract class JobParent extends Script {
         referencedJobs << job
 
         // This job can have .configure { } called on
-        return job
+        job
     }
 
-    public View view(Map<String, Object> arguments=[:], Closure closure) {
-        Class<? extends View> viewClass = VIEW_TYPE_MAPPING[arguments['type'] as ViewType]
-        View view = viewClass.newInstance()
+    @Override
+    View view(Map<String, Object> arguments=[:], Closure closure) {
+        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
+        View view = viewType.viewClass.newInstance()
         view.with(closure)
         referencedViews << view
 
         // This view can have .configure { } called on
-        return view
+        view
     }
 
-    public Folder folder(Closure closure) {
+    @Override
+    Folder folder(Closure closure) {
         Folder folder = new Folder()
         folder.with(closure)
         referencedJobs << folder
-        return folder
+        folder
     }
 
-    /**
-     * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
-     * @param jobName
-     * @return
-     */
-    public queue(String jobName) {
+    @Override
+    ConfigFile configFile(Map<String, Object> arguments=[:], Closure closure) {
+        ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
+        ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType)
+        configFile.with(closure)
+        referencedConfigFiles << configFile
+
+        configFile
+    }
+
+    @Override
+    void queue(String jobName) {
         queueToBuild << jobName
     }
 
-    /**
-     * Schedule a job to be run later.
-     * @param jobName
-     * @return
-     */
-    public queue(Job job) {
+    @Override
+    void queue(Job job) {
         Preconditions.checkArgument(job.name as Boolean)
         queueToBuild << job.name
     }
 
-    public InputStream streamFileFromWorkspace(String filePath) throws IOException {
+    @Override
+    InputStream streamFileFromWorkspace(String filePath) {
         Preconditions.checkArgument(filePath as Boolean)
-        return jm.streamFileInWorkspace(filePath);
+        jm.streamFileInWorkspace(filePath)
     }
 
-    public String readFileFromWorkspace(String filePath) throws IOException {
+    @Override
+    String readFileFromWorkspace(String filePath) {
         Preconditions.checkArgument(filePath as Boolean)
-        return jm.readFileInWorkspace(filePath);
+        jm.readFileInWorkspace(filePath)
+    }
+
+    @Override
+    String readFileFromWorkspace(String jobName, String filePath) {
+        Preconditions.checkArgument(jobName as Boolean)
+        Preconditions.checkArgument(filePath as Boolean)
+        jm.readFileInWorkspace(jobName, filePath)
     }
 }

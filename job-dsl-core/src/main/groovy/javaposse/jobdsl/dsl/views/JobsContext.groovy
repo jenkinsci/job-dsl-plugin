@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static com.google.common.base.Preconditions.checkNotNull
 
@@ -9,7 +9,7 @@ class JobsContext implements Context {
     String regex
 
     void name(String jobName) {
-        checkNotNull(jobName, "jobName must not be null")
+        checkNotNull(jobName, 'jobName must not be null')
 
         this.jobNames.add(jobName)
     }

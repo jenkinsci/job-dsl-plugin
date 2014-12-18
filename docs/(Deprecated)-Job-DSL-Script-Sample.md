@@ -24,7 +24,7 @@ job {
                 permission { 'hudson.model.Item.Configure:jryan' } ++
 
                 // Replace all existing permissions since we assume everything is an update
-                permission { hudson.model.Run.Delete:jryan } 
+                permission { hudson.model.Run.Delete:jryan }
             }
         }
 
@@ -69,7 +69,7 @@ def configureGit(project, url, branch) {
 
                 // Using equals to set node text
                 refspec = '+refs/heads/*:refs/remotes/origin/*'
-                
+
                 // Variable to method, making sure delegates work
                 url { url }
             }
@@ -80,7 +80,7 @@ def configureGit(project, url, branch) {
            }
         }
 
-        recursiveSubmodules { false } 
+        recursiveSubmodules { false }
      }
    }
 }

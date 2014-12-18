@@ -8,7 +8,7 @@ use(company.Convention) { // Using Groovy's Category
     job {
        name "Standard job for repo 3"
        myCompanyScm("repo3") // Method comes from Convention.myCompanyScm
-    }  
+    }
 }
 ```
 

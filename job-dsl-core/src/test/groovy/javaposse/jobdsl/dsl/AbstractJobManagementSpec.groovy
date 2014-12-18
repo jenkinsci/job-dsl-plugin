@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
 import spock.lang.Specification
 
 import static org.codehaus.groovy.runtime.InvokerHelper.createScript
@@ -10,9 +11,9 @@ class AbstractJobManagementSpec extends Specification {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream()
         AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
 
-        GroovyClassLoader classLoader = new GroovyClassLoader();
-        Class scriptClass = classLoader.parseClass(this.class.getResourceAsStream('/deprecation.groovy').text);
-        Script script = createScript(scriptClass, new Binding([jm: jobManagement]));
+        GroovyClassLoader classLoader = new GroovyClassLoader()
+        Class scriptClass = classLoader.parseClass(this.class.getResourceAsStream('/deprecation.groovy').text)
+        Script script = createScript(scriptClass, new Binding([jm: jobManagement]))
 
         when:
         script.run()
@@ -26,18 +27,45 @@ class AbstractJobManagementSpec extends Specification {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream()
         AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
 
-        URL[] roots = [this.class.getResource("/deprecation.groovy")]
+        URL[] roots = [this.class.getResource('/deprecation.groovy')]
         GroovyScriptEngine groovyScriptEngine = new GroovyScriptEngine(roots)
 
         when:
-        groovyScriptEngine.run('deprecation.groovy', new Binding([jm: jobManagement]));
+        groovyScriptEngine.run('deprecation.groovy', new Binding([jm: jobManagement]))
 
         then:
         buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'
     }
 
+    def 'reading files from workspace is not supported'() {
+        setup:
+        AbstractJobManagement jobManagement = new TestJobManagement()
+
+        when:
+        jobManagement.readFileInWorkspace('test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        jobManagement.streamFileInWorkspace('test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        jobManagement.readFileInWorkspace('my-job', 'test.txt')
+
+        then:
+        thrown(UnsupportedOperationException)
+    }
+
     static class TestJobManagement extends AbstractJobManagement {
-        protected TestJobManagement(PrintStream out) {
+        TestJobManagement() {
+            super()
+        }
+
+        TestJobManagement(PrintStream out) {
             super(out)
         }
 
@@ -57,8 +85,33 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
+        String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+            throw new UnsupportedOperationException()
+        }
+
+        @Override
         void requireMinimumPluginVersion(String pluginShortName, String version) {
             throw new UnsupportedOperationException()
+        }
+
+        @Override
+        String getCredentialsId(String credentialsDescription) {
+            null
+        }
+
+        @Override
+        VersionNumber getPluginVersion(String pluginShortName) {
+            null
+        }
+
+        @Override
+        Integer getVSphereCloudHash(String name) {
+            null
+        }
+
+        @Override
+        String getConfigFileId(ConfigFileType type, String name) {
+            null
         }
 
         void testMethod() {

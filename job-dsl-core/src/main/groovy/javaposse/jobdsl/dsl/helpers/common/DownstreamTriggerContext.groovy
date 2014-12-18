@@ -1,19 +1,21 @@
 package javaposse.jobdsl.dsl.helpers.common
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static DownstreamContext.THRESHOLD_COLOR_MAP
 
 class DownstreamTriggerContext implements Context {
-    def blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
+    Set<String> blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
 
-    def blockingThresholds = []
+    List<BlockingThreshold> blockingThresholds = []
     List<String> predefinedProps = []
     String propFile
     String projects
     String condition
     String matrixSubsetFilter
+    String nodeLabelParam
+    String nodeLabel
     Map<String, Boolean> boolParams = [:]
 
     boolean triggerWithNoParameters
@@ -26,64 +28,71 @@ class DownstreamTriggerContext implements Context {
     boolean combineQueuedCommits = false
     boolean usingPredefined = false
     boolean usingMatrixSubset = false
+    boolean usingNodeLabel = false
     boolean sameNode = false
 
-    def currentBuild() {
+    void currentBuild() {
         usingCurrentBuild = true
     }
 
-    def propertiesFile(String propFile, boolean failTriggerOnMissing = false) {
+    void propertiesFile(String propFile, boolean failTriggerOnMissing = false) {
         usingPropertiesFile = true
         this.failTriggerOnMissing = failTriggerOnMissing
         this.propFile = propFile
     }
 
-    def gitRevision(boolean combineQueuedCommits = false) {
+    void gitRevision(boolean combineQueuedCommits = false) {
         usingGitRevision = true
         this.combineQueuedCommits = combineQueuedCommits
     }
 
-    def predefinedProp(String key, String value) {
+    void predefinedProp(String key, String value) {
         usingPredefined = true
         this.predefinedProps << "${key}=${value}"
     }
 
-    def predefinedProps(Map<String, String> predefinedPropsMap) {
+    void predefinedProps(Map<String, String> predefinedPropsMap) {
         usingPredefined = true
-        def props = predefinedPropsMap.collect { "${it.key}=${it.value}" }
+        List<String> props = predefinedPropsMap.collect { "${it.key}=${it.value}" }
         this.predefinedProps.addAll(props)
     }
 
-    def predefinedProps(String predefinedProps) { // Newline separated
+    void predefinedProps(String predefinedProps) { // Newline separated
         usingPredefined = true
         this.predefinedProps.addAll(predefinedProps.split('\n'))
     }
 
-    def matrixSubset(String groovyFilter) {
+    void matrixSubset(String groovyFilter) {
         usingMatrixSubset = true
         matrixSubsetFilter = groovyFilter
     }
 
-    def subversionRevision(boolean includeUpstreamParameters = false) {
+    void subversionRevision(boolean includeUpstreamParameters = false) {
         this.includeUpstreamParameters = includeUpstreamParameters
         usingSubversionRevision = true
     }
 
-    def boolParam(String paramName, boolean defaultValue = false) {
+    void boolParam(String paramName, boolean defaultValue = false) {
         boolParams[paramName] = defaultValue
     }
 
-    def sameNode(boolean sameNode = true) {
+    void sameNode(boolean sameNode = true) {
         this.sameNode = sameNode
     }
 
-    def blockingThresholdsFromMap(Map<String, String> thresholdMap) {
+    void nodeLabel(String paramName, String nodeLabel) {
+        usingNodeLabel = true
+        this.nodeLabelParam = paramName
+        this.nodeLabel = nodeLabel
+    }
+
+    void blockingThresholdsFromMap(Map<String, String> thresholdMap) {
         thresholdMap.each { type, name ->
             blockingThreshold(type, name)
         }
     }
 
-    def blockingThreshold(String thresholdType, String thresholdName) {
+    void blockingThreshold(String thresholdType, String thresholdName) {
         Preconditions.checkArgument(blockingThresholdTypes.contains(thresholdType),
                 "thresholdType must be one of these values: ${blockingThresholdTypes}")
         Preconditions.checkArgument(THRESHOLD_COLOR_MAP.containsKey(thresholdName),
@@ -93,15 +102,14 @@ class DownstreamTriggerContext implements Context {
     }
 
     boolean hasParameter() {
-        return (usingCurrentBuild || usingGitRevision || usingMatrixSubset
-                || usingPredefined || usingPropertiesFile || usingSubversionRevision
-                || !boolParams.isEmpty() || sameNode)
+        usingCurrentBuild || usingGitRevision || usingMatrixSubset || usingPredefined || usingPropertiesFile ||
+                usingSubversionRevision || !boolParams.isEmpty() || sameNode || usingNodeLabel
     }
 
     Node createParametersNode() {
-        def nodeBuilder = NodeBuilder.newInstance()
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
 
-        return nodeBuilder.'configs' {
+        nodeBuilder.'configs' {
             if (usingCurrentBuild) {
                 'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'()
             }
@@ -109,13 +117,13 @@ class DownstreamTriggerContext implements Context {
             if (usingPropertiesFile) {
                 'hudson.plugins.parameterizedtrigger.FileBuildParameters' {
                     delegate.createNode('propertiesFile', propFile)
-                    delegate.createNode('failTriggerOnMissing', failTriggerOnMissing?'true':'false')
+                    delegate.createNode('failTriggerOnMissing', failTriggerOnMissing)
                 }
             }
 
             if (usingGitRevision) {
                 'hudson.plugins.git.GitRevisionBuildParameters' {
-                    'combineQueuedCommits' combineQueuedCommits ? 'true' : 'false'
+                    'combineQueuedCommits' combineQueuedCommits
                 }
             }
 
@@ -133,7 +141,14 @@ class DownstreamTriggerContext implements Context {
 
             if (usingSubversionRevision) {
                 'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters' {
-                    delegate.createNode('includeUpstreamParameters', includeUpstreamParameters?'true':'false')
+                    delegate.createNode('includeUpstreamParameters', includeUpstreamParameters)
+                }
+            }
+
+            if (usingNodeLabel) {
+                'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter' {
+                    delegate.createNode('name', nodeLabelParam)
+                    delegate.createNode('nodeLabel', nodeLabel)
                 }
             }
 
@@ -145,8 +160,8 @@ class DownstreamTriggerContext implements Context {
                 'hudson.plugins.parameterizedtrigger.BooleanParameters'  {
                     configs {
                         boolParams.each { k, v ->
-                            def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
-                                value(v?'true':'false')
+                            Node boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
+                                value(v)
                             }
                             boolConfigNode.appendNode('name', k)
                         }

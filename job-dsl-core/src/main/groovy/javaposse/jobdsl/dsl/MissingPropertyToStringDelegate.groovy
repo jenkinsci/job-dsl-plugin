@@ -6,7 +6,7 @@ import java.util.logging.Logger
  * Works like NodeBuilder, but in the context of a parent node. Used as the delegate for WithXmlAction closure.
  */
 class MissingPropertyToStringDelegate {
-    private static final Logger LOGGER = Logger.getLogger(MissingPropertyToStringDelegate.getName())
+    private static final Logger LOGGER = Logger.getLogger(MissingPropertyToStringDelegate.name)
     Node root
 
     MissingPropertyToStringDelegate(Node root) {
@@ -15,13 +15,13 @@ class MissingPropertyToStringDelegate {
     /**
      * Make string for div() to do lookup
      */
-    def propertyMissing(String propertyName) {
+    String propertyMissing(String propertyName) {
         LOGGER.fine("Missing ${propertyName}")
-        return propertyName
+        propertyName
     }
 
     String toXml(Node n) {
-        def writer = new StringWriter()
+        StringWriter writer = new StringWriter()
         new XmlNodePrinter(new PrintWriter(writer)).print(n)
         writer.toString()
     }
@@ -35,9 +35,9 @@ class MissingPropertyToStringDelegate {
                 it.resolveStrategy = Closure.DELEGATE_FIRST
             }
         }
-        NodeBuilder b = new NodeBuilder();
-        Node newNode = (Node) b.invokeMethod(methodName, args);
+        NodeBuilder b = new NodeBuilder()
+        Node newNode = (Node) b.invokeMethod(methodName, args)
         LOGGER.fine("Missing ${methodName} created ${toXml(newNode)}")
-        return newNode
+        newNode
     }
 }

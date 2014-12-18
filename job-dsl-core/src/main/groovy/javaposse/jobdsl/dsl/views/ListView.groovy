@@ -4,13 +4,13 @@ import javaposse.jobdsl.dsl.View
 
 import static com.google.common.base.Preconditions.checkNotNull
 import static java.lang.String.CASE_INSENSITIVE_ORDER
-import static javaposse.jobdsl.dsl.helpers.AbstractContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class ListView extends View {
-    private Set<String> jobNames = []
+    private final JobsContext jobsContext = new JobsContext()
 
     void statusFilter(StatusFilter filter) {
-        checkNotNull(filter, "filter must not be null")
+        checkNotNull(filter, 'filter must not be null')
 
         execute {
             if (filter == StatusFilter.ALL) {
@@ -22,20 +22,20 @@ class ListView extends View {
     }
 
     void jobs(Closure jobsClosure) {
-        JobsContext context = new JobsContext()
-        executeInContext(jobsClosure, context)
+        executeInContext(jobsClosure, jobsContext)
 
-        this.jobNames.addAll(context.jobNames)
+        List<String> jobs = jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER) // see GROOVY-6900
+        String regex = jobsContext.regex
 
         execute {
             it / 'jobNames' {
                 comparator(class: 'hudson.util.CaseInsensitiveComparator')
-                for (String job : this.jobNames.sort(CASE_INSENSITIVE_ORDER)) {
+                for (String job : jobs) {
                     string(job)
                 }
             }
-            if (context.regex) {
-                it / includeRegex(context.regex)
+            if (regex) {
+                it / includeRegex(regex)
             }
         }
     }
@@ -53,7 +53,7 @@ class ListView extends View {
 
     @Override
     protected String getTemplate() {
-        return '''<?xml version='1.0' encoding='UTF-8'?>
+        '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>

@@ -1,10 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class JavadocContext implements Context {
-    String javadocDir = ""
-    boolean keepAll;
+    String javadocDir = ''
+    boolean keepAll
 
     void javadocDir(String javadocDir) {
         this.javadocDir = javadocDir

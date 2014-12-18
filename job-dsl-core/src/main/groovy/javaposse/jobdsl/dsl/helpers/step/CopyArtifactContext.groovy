@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.helpers.Context
-
+import javaposse.jobdsl.dsl.Context
 
 class CopyArtifactContext implements Context {
     String selectedSelector
@@ -13,7 +12,7 @@ class CopyArtifactContext implements Context {
 
     private void ensureFirst() {
         if (selectedSelector != null) {
-            throw new IllegalStateException("Only one selector can be chosen")
+            throw new IllegalStateException('Only one selector can be chosen')
         }
     }
     /**
@@ -21,7 +20,7 @@ class CopyArtifactContext implements Context {
      * @arg fallback Use "Last successful build" as fallback
      * @return
      */
-    def upstreamBuild(boolean fallback = false) {
+    void upstreamBuild(boolean fallback = false) {
         ensureFirst()
         this.fallback = fallback
         selectedSelector = 'TriggeredBuild'
@@ -31,7 +30,7 @@ class CopyArtifactContext implements Context {
      * Latest successful build
      * @return
      */
-    def latestSuccessful(boolean stable = false) {
+    void latestSuccessful(boolean stable = false) {
         ensureFirst()
         this.stable = stable
         selectedSelector = 'StatusBuild'
@@ -40,7 +39,7 @@ class CopyArtifactContext implements Context {
      * Latest saved build (marked "keep forever")
      * @return
      */
-    def latestSaved() {
+    void latestSaved() {
         ensureFirst()
         selectedSelector = 'SavedBuild'
     }
@@ -49,7 +48,7 @@ class CopyArtifactContext implements Context {
      * @param linkName Values like lastBuild, lastStableBuild
      * @return
      */
-    def permalink(String linkName) {
+    void permalink(String linkName) {
         ensureFirst()
         selectedSelector = 'PermalinkBuild'
         permalinkName = linkName
@@ -60,12 +59,12 @@ class CopyArtifactContext implements Context {
      * @param buildNumber
      * @return
      */
-    def buildNumber(int buildNumber) {
+    void buildNumber(int buildNumber) {
         this.buildNumber(Integer.toString(buildNumber))
 
     }
 
-    def buildNumber(String buildNumber) {
+    void buildNumber(String buildNumber) {
         ensureFirst()
         selectedSelector = 'SpecificBuild'
         this.buildNumber = buildNumber
@@ -75,7 +74,7 @@ class CopyArtifactContext implements Context {
      * Copy from WORKSPACE of latest completed build
      * @return
      */
-    def workspace() {
+    void workspace() {
         ensureFirst()
         selectedSelector = 'Workspace'
     }
@@ -85,7 +84,7 @@ class CopyArtifactContext implements Context {
      * @param parameterName
      * @return
      */
-    def buildParameter(String parameterName) {
+    void buildParameter(String parameterName) {
         ensureFirst()
         selectedSelector = 'ParameterizedBuild'
         this.parameterName = parameterName

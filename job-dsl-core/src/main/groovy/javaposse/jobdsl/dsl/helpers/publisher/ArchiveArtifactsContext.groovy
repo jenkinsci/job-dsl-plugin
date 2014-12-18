@@ -1,19 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class ArchiveArtifactsContext implements Context {
-    String patternValue = ''
+    final List<String> patterns = []
     String excludesValue = null
     Boolean latestOnlyValue = false
-
-    // default null for compatibility with jenkins <= 1.480
-    // when not specified, the relevant child node *will not* be generated
-    // The behavior is the same when false or absent.
     Boolean allowEmptyValue = null
 
     void pattern(String glob) {
-        patternValue = glob
+        patterns << glob
     }
 
     void exclude(String glob) {
@@ -25,7 +21,6 @@ class ArchiveArtifactsContext implements Context {
     }
 
     void allowEmpty(Boolean val = true) {
-        // N.B. not compatible with jenkins <= 1.480
         allowEmptyValue = val
     }
 }

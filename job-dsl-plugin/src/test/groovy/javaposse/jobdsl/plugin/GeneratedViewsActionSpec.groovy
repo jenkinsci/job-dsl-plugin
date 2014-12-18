@@ -21,7 +21,7 @@ class GeneratedViewsActionSpec extends Specification {
         then:
         action.iconFileName == null
         action.displayName == null
-        action.urlName == "generatedViews"
+        action.urlName == 'generatedViews'
     }
 
     def 'findLastGeneratedViews no build'() {
@@ -35,7 +35,7 @@ class GeneratedViewsActionSpec extends Specification {
     def 'findLastGeneratedViews no build action'() {
         setup:
         build1.getAction(GeneratedViewsBuildAction) >> null
-        project.getLastBuild() >> build1
+        project.lastBuild >> build1
 
         when:
         Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
@@ -46,9 +46,9 @@ class GeneratedViewsActionSpec extends Specification {
 
     def 'findLastGeneratedViews from last build'() {
         setup:
-        buildAction.getModifiedViews() >> modifiedViews
+        buildAction.modifiedViews >> modifiedViews
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
-        project.getLastBuild() >> build1
+        project.lastBuild >> build1
 
         when:
         Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
@@ -60,11 +60,11 @@ class GeneratedViewsActionSpec extends Specification {
 
     def 'findLastGeneratedViews from last but one build'() {
         setup:
-        buildAction.getModifiedViews() >> modifiedViews
+        buildAction.modifiedViews >> modifiedViews
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
         build2.getAction(GeneratedViewsBuildAction) >> null
-        build2.getPreviousBuild() >> build1
-        project.getLastBuild() >> build2
+        build2.previousBuild >> build1
+        project.lastBuild >> build2
 
         when:
         Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
@@ -76,7 +76,7 @@ class GeneratedViewsActionSpec extends Specification {
 
     def 'findAllGeneratedViews no builds'() {
         setup:
-        project.getBuilds() >> fromRuns([])
+        project.builds >> fromRuns([])
 
         when:
         Set<GeneratedView> views = new GeneratedViewsAction(project).findAllGeneratedViews()
@@ -89,7 +89,7 @@ class GeneratedViewsActionSpec extends Specification {
     def 'findAllGeneratedViews no build action'() {
         setup:
         build1.getAction(GeneratedViewsBuildAction) >> null
-        project.getBuilds() >> fromRuns([build1])
+        project.builds >> fromRuns([build1])
 
         when:
         Set<GeneratedView> views = new GeneratedViewsAction(project).findAllGeneratedViews()
@@ -101,10 +101,10 @@ class GeneratedViewsActionSpec extends Specification {
 
     def 'findAllGeneratedViews'() {
         setup:
-        buildAction.getModifiedViews() >> modifiedViews
+        buildAction.modifiedViews >> modifiedViews
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
         build2.getAction(GeneratedViewsBuildAction) >> buildAction
-        project.getBuilds() >> fromRuns([build1, build2])
+        project.builds >> fromRuns([build1, build2])
 
         when:
         Set<GeneratedView> views = new GeneratedViewsAction(project).findAllGeneratedViews()

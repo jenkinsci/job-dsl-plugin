@@ -1,47 +1,37 @@
 package javaposse.jobdsl.dsl.helpers.step
-import com.google.common.base.Preconditions
+
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
-class ConditionalStepsContext extends AbstractStepContext {
+import static com.google.common.base.Preconditions.checkArgument
+
+class ConditionalStepsContext extends StepContext {
 
     RunCondition runCondition
     String runnerClass
 
-    ConditionalStepsContext() {
-        super()
+    ConditionalStepsContext(JobManagement jobManagement) {
+        super(jobManagement)
     }
 
-    ConditionalStepsContext(String runnerName, Closure conditionClosure) {
-        this(runnerName, [], conditionClosure)
-    }
-
-    ConditionalStepsContext(String runnerName, List<Node> stepNodes, Closure conditionClosure) {
-        super(stepNodes)
-        Preconditions.checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid evaluation runner.")
-
-        condition(conditionClosure)
-
-        this.runnerClass = EvaluationRunners.find(runnerName)
-    }
-
-    def condition(Closure conditionClosure) {
+    void condition(Closure conditionClosure) {
         this.runCondition = RunConditionFactory.of(conditionClosure)
     }
 
-    def runner(String runnerName) {
-        Preconditions.checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")
+    void runner(String runnerName) {
+        checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")
         runnerClass = EvaluationRunners.find(runnerName).longForm
     }
 
-    def runner(EvaluationRunners runner) {
+    void runner(EvaluationRunners runner) {
         runnerClass = runner.longForm
     }
 
-    protected def createSingleStepNode() {
-        def nodeBuilder = new NodeBuilder()
+    protected Node createSingleStepNode() {
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
-        return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
+        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
             delegate.condition(class: runCondition.conditionClass) {
                 runCondition.addArgs(delegate)
             }
@@ -54,10 +44,10 @@ class ConditionalStepsContext extends AbstractStepContext {
         }
     }
 
-    protected def createMultiStepNode() {
-        def nodeBuilder = new NodeBuilder()
+    protected Node createMultiStepNode() {
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
-        return nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
+        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
             runCondition(class: runCondition.conditionClass) {
                 runCondition.addArgs(delegate)
             }
@@ -66,7 +56,7 @@ class ConditionalStepsContext extends AbstractStepContext {
         }
     }
 
-    public static enum EvaluationRunners {
+    static enum EvaluationRunners {
         Fail('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'),
         Unstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Unstable'),
         RunUnstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$RunUnstable'),
@@ -79,7 +69,7 @@ class ConditionalStepsContext extends AbstractStepContext {
             this.longForm = longForm
         }
 
-        public static find(String enumName) {
+        static find(String enumName) {
             values().find { it.name().toLowerCase() == enumName.toLowerCase() }
         }
 

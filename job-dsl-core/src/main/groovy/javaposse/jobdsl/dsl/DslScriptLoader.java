@@ -14,7 +14,6 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,10 +40,11 @@ public class DslScriptLoader {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addStaticStars("javaposse.jobdsl.dsl.JobType");
         icz.addStaticStars("javaposse.jobdsl.dsl.ViewType");
+        icz.addStaticStars("javaposse.jobdsl.dsl.ConfigFileType");
         icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
-        GroovyScriptEngine engine = new GroovyScriptEngine(new URL[] { scriptRequest.urlRoot } , cl);
+        GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
 
         engine.setConfig(config);
 
@@ -53,11 +53,13 @@ public class DslScriptLoader {
         JobParent jp;
         try {
             Script script;
-            if (scriptRequest.body != null) {
-                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.body);
+            if (scriptRequest.getBody() != null) {
+                jobManagement.getOutputStream().println("Processing provided DSL script");
+                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody());
                 script = InvokerHelper.createScript(cls, binding);
             } else {
-                script = engine.createScript(scriptRequest.location, binding);
+                jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
+                script = engine.createScript(scriptRequest.getLocation(), binding);
             }
             assert script instanceof JobParent;
 
@@ -68,7 +70,7 @@ public class DslScriptLoader {
 
             script.run();
         } catch (Exception e) { // ResourceException or ScriptException
-            if(e instanceof RuntimeException) {
+            if (e instanceof RuntimeException) {
                 throw ((RuntimeException) e);
             } else {
                 throw new IOException("Unable to run script", e);
@@ -79,13 +81,9 @@ public class DslScriptLoader {
 
     /**
      * For testing a string directly.
-     * @param scriptBody
-     * @param jobManagement
-     * @return
-     * @throws IOException
      */
     static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURI().toURL() );
+        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File(".").toURI().toURL());
         return runDslEngine(scriptRequest, jobManagement);
     }
 
@@ -94,8 +92,9 @@ public class DslScriptLoader {
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
 
         GeneratedItems generatedItems = new GeneratedItems();
-        generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.ignoreExisting));
-        generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.ignoreExisting));
+        generatedItems.setConfigFiles(extractGeneratedConfigFiles(jp, scriptRequest.getIgnoreExisting()));
+        generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.getIgnoreExisting()));
+        generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.getIgnoreExisting()));
 
         scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
 
@@ -109,19 +108,11 @@ public class DslScriptLoader {
             List<Item> referencedItems = Lists.newArrayList(jp.getReferencedJobs()); // As List
             Collections.sort(referencedItems, ITEM_COMPARATOR);
             for (Item job : referencedItems) {
-                try {
-                    String xml = job.getXml();
-                    LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                    boolean created = jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
-                    String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
-                    generatedJobs.add(new GeneratedJob(templateName, job.getName(), created));
-                } catch( Exception e) {  // org.xml.sax.SAXException, java.io.IOException
-                    if (e instanceof RuntimeException) {
-                        throw ((RuntimeException) e);
-                    } else {
-                        throw new RuntimeException(e);
-                    }
-                }
+                String xml = job.getXml();
+                LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
+                jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
+                String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
+                generatedJobs.add(new GeneratedJob(templateName, job.getName()));
             }
         }
         return generatedJobs;
@@ -139,28 +130,39 @@ public class DslScriptLoader {
         return generatedViews;
     }
 
+    private static Set<GeneratedConfigFile> extractGeneratedConfigFiles(JobParent jp, boolean ignoreExisting) {
+        Set<GeneratedConfigFile> generatedConfigFiles = Sets.newLinkedHashSet();
+        for (ConfigFile configFile : jp.getReferencedConfigFiles()) {
+            LOGGER.log(Level.FINE, String.format("Saving config file %s", configFile.getName()));
+            String id = jp.getJm().createOrUpdateConfigFile(configFile, ignoreExisting);
+            generatedConfigFiles.add(new GeneratedConfigFile(id, configFile.getName()));
+        }
+        return generatedConfigFiles;
+    }
+
     static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {
         Map<String, Throwable> exceptions = Maps.newHashMap();
-        for(String jobName: jobNames) {
+        for (String jobName : jobNames) {
             try {
                 jobManagement.queueJob(jobName);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 exceptions.put(jobName, e);
             }
         }
-        if(!exceptions.isEmpty()) {
+        if (!exceptions.isEmpty()) {
             LOGGER.warning("Trouble schedule some jobs");
-            for(Map.Entry<String, Throwable> entry: exceptions.entrySet()) {
+            for (Map.Entry<String, Throwable> entry : exceptions.entrySet()) {
                 LOGGER.throwing("DslScriptLoader", entry.getKey(), entry.getValue());
             }
         }
     }
+
     private static Binding createBinding(JobManagement jobManagement) {
         Binding binding = new Binding();
-        binding.setVariable("out", jobManagement.getOutputStream() ); // Works for println, but not System.out
+        binding.setVariable("out", jobManagement.getOutputStream()); // Works for println, but not System.out
 
         Map<String, String> params = jobManagement.getParameters();
-        for(Map.Entry<String,String> entry: params.entrySet()) {
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             LOGGER.fine(String.format("Binding %s to %s", entry.getKey(), entry.getValue()));
             binding.setVariable(entry.getKey(), entry.getValue());
         }
@@ -174,17 +176,18 @@ public class DslScriptLoader {
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports(
-                "javaposse.jobdsl.dsl.helpers.Permissions",
-                "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior",
-                "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
-                "javaposse.jobdsl.dsl.views.ListView.StatusFilter",
-                "javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle",
-                "javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy"
+            "javaposse.jobdsl.dsl.helpers.Permissions",
+            "javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode",
+            "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior",
+            "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
+            "javaposse.jobdsl.dsl.views.ListView.StatusFilter",
+            "javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle",
+            "javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting",
+            "javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy"
         );
         config.addCompilationCustomizers(icz);
 
-        config.setOutput( new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
+        config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
         return config;
     }
-
 }

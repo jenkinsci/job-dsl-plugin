@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-abstract class Item {
+abstract class Item implements Context {
     String name
 
     List<WithXmlAction> withXmlActions = []
@@ -12,7 +12,7 @@ abstract class Item {
     /**
      * Provide raw config.xml for direct manipulation.
      */
-    def configure(Closure withXmlClosure) {
+    void configure(Closure withXmlClosure) {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )
     }
 
@@ -23,15 +23,20 @@ abstract class Item {
      */
     String getXml() {
         Writer xmlOutput = new StringWriter()
-        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
+        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), '    ')
         xmlNodePrinter.with {
             preserveWhitespace = true
             expandEmptyElements = true
             quote = "'" // Use single quote for attributes
         }
-        xmlNodePrinter.print(getNode())
+        xmlNodePrinter.print(node)
 
-        return xmlOutput.toString()
+        xmlOutput.toString()
+    }
+
+    Map getProperties() {
+        // see JENKINS-22708
+        throw new UnsupportedOperationException()
     }
 
     abstract Node getNode()

@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Maps
+import hudson.util.VersionNumber
 
 class FileJobManagement extends AbstractJobManagement {
     /**
@@ -11,69 +11,93 @@ class FileJobManagement extends AbstractJobManagement {
     /**
      * Extension to append to job name when looking at the filesystem
      */
-    String ext
+    String ext = '.xml'
 
     /**
      * map to store job parameters from System properties and
      * Environment variables.
      */
-    protected Map params =  Maps.newHashMap();
+    protected Map params = [:]
 
-    public FileJobManagement(File root, String ext = null, PrintStream out = System.out) {
-        super(out)
+    FileJobManagement(File root) {
         this.root = root
-        this.ext = ext?:".xml"
     }
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
 
-        if (jobName.isEmpty()) return '''
+        if (jobName.isEmpty()) {
+            return '''
 <project>
   <actions/>
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties/>
 </project>'''
+        }
 
         try {
-            new File(root, jobName + ext).getText()
-        } catch (IOException ioex) {
+            new File(root, jobName + ext).text
+        } catch (IOException ignored) {
             throw new JobConfigurationNotFoundException(jobName)
         }
     }
 
     boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
         throws NameNotProvidedException, ConfigurationMissingException {
-        validateUpdateArgs(jobName, config);
+        validateUpdateArgs(jobName, config)
 
         new File(jobName + ext).write(config)
-        return true
+        true
     }
 
     @Override
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
-        validateUpdateArgs(viewName, config);
+        validateUpdateArgs(viewName, config)
 
         new File(viewName + ext).write(config)
     }
 
     @Override
-    public Map<String, String> getParameters() {
-        return params;
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+        throw new UnsupportedOperationException()
     }
 
     @Override
-    public InputStream streamFileInWorkspace(String filePath) {
-        return new FileInputStream(new File(root, filePath));
+    Map<String, String> getParameters() {
+        params
     }
 
     @Override
-    public String readFileInWorkspace(String filePath) {
+    InputStream streamFileInWorkspace(String filePath) {
+        new FileInputStream(new File(root, filePath))
+    }
+
+    @Override
+    String readFileInWorkspace(String filePath) {
         new File(root, filePath).text
     }
 
     @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
     }
-}
 
+    @Override
+    String getCredentialsId(String credentialsDescription) {
+        null
+    }
+
+    @Override
+    VersionNumber getPluginVersion(String pluginShortName) {
+        null
+    }
+
+    @Override
+    Integer getVSphereCloudHash(String name) {
+        null
+    }
+
+    @Override
+    String getConfigFileId(ConfigFileType type, String name) {
+        null
+    }
+}

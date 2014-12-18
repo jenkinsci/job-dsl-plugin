@@ -1,3 +1,9 @@
+**WARNING 1:** Using mixin classes causes memory-leaks. See
+[JENKINS-23762](https://issues.jenkins-ci.org/browse/JENKINS-23762) for details.
+
+**WARNING 2:** Using monkey-patching causes race conditions when concurrent seed jobs use different monkey patches for
+the same class.
+
 If you want to introduce custom DSL commands, you can monkey-patch **Context classes from your scripts. For example:
 ```groovy
 import javaposse.jobdsl.dsl.helpers.*
@@ -12,7 +18,7 @@ ScmContext.metaClass.our_p4 = { String mapping ->
 }
 
 // Then you can use the new DSL command(s) just as any other:
-job {  
+job {
     // ....
     scm {
         our_p4("//p4path/... //workspace/...")

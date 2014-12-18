@@ -1,41 +1,25 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
-import groovy.xml.MarkupBuilder
+import hudson.util.VersionNumber
 
 /**
  * Testing JobManagement which will deal with a single template and single saved job. Useful for testing
  * since it can be prodded with the expected value.
- * @author jryan
  */
-public class StringJobManagement extends AbstractJobManagement {
-    /**
-     * XML to return by default
-     */
-    String defaultXml = null
+class StringJobManagement extends AbstractJobManagement {
+    Map<String, String> availableConfigs = [:]
+    Map<String, String> savedConfigs = [:]
+    Map<String, String> savedViews = [:]
+    Map<String, String> availableFiles = [:]
 
-    Map<String,String> availableConfigs = [:]
-    Map<String,String> savedConfigs = [:]
-    Map<String,String> availableFiles = [:]
-
-    Map<String,String> params = [:]
+    Map<String, String> params = [:]
     List<String> jobScheduled = []
 
-    public StringJobManagement(PrintStream out) {
+    StringJobManagement(PrintStream out) {
         super(out)
     }
 
-    public StringJobManagement(String defaultXml) {
-        this.defaultXml = defaultXml
-    }
-
-    public StringJobManagement() {
-    }
-
-    public StringJobManagement(Closure closure) {
-        StringWriter writer = new StringWriter()
-        def build = new MarkupBuilder(writer)
-        closure.delegate = build
-        defaultXml = writer.toString()
+    StringJobManagement() {
     }
 
     void addConfig(String jobName, String xml) {
@@ -45,29 +29,36 @@ public class StringJobManagement extends AbstractJobManagement {
     String getConfig(String jobName) {
         if (availableConfigs.containsKey(jobName)) {
             return availableConfigs[jobName]
-        } else if (defaultXml!=null) {
-            return defaultXml
         } else {
             throw new JobConfigurationNotFoundException("No config found for ${jobName}")
         }
     }
 
     @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException, ConfigurationMissingException {
-        validateUpdateArgs(jobName, config);
+    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+            throws NameNotProvidedException, ConfigurationMissingException {
+        validateUpdateArgs(jobName, config)
 
         savedConfigs[jobName] = config
-        return false
+        false
     }
 
     @Override
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
-        throw new UnsupportedOperationException()
+        validateUpdateArgs(viewName, config)
+
+        savedViews[viewName] = config
+    }
+
+    @Override
+    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
+        validateNameArg(configFile.name)
+        UUID.randomUUID().toString()
     }
 
     @Override
     Map<String, String> getParameters() {
-        return params
+        params
     }
 
     @Override
@@ -76,25 +67,41 @@ public class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public InputStream streamFileInWorkspace(String filePath) {
-        String body = availableFiles.get(filePath)
-        if (body==null) {
-            throw new FileNotFoundException(filePath);
-        }
-        return new InputStreamReader(new StringReader(body));
+    InputStream streamFileInWorkspace(String filePath) {
+        new ByteArrayInputStream(readFileInWorkspace(filePath).bytes)
     }
 
     @Override
-    public String readFileInWorkspace(String filePath) {
-        String body = availableFiles.get(filePath)
-        if (body==null) {
-            throw new FileNotFoundException(filePath);
+    String readFileInWorkspace(String filePath) {
+        String body = availableFiles[filePath]
+        if (body == null) {
+            throw new FileNotFoundException(filePath)
         }
-        return body
+        body
     }
 
     @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
+    }
+
+    @Override
+    String getCredentialsId(String credentialsDescription) {
+        null
+    }
+
+    @Override
+    VersionNumber getPluginVersion(String pluginShortName) {
+        null
+    }
+
+    @Override
+    Integer getVSphereCloudHash(String name) {
+        null
+    }
+
+    @Override
+    String getConfigFileId(ConfigFileType type, String name) {
+        null
     }
 }
 

@@ -23,7 +23,7 @@ class FileExistsCondition extends SimpleCondition {
         ARTIFACTS_DIR('ArtifactsDir'),
         WORKSPACE('Workspace')
 
-        public final String baseDirClass
+        final String baseDirClass
 
         BaseDir(String baseDirType) {
             this.baseDirClass = "org.jenkins_ci.plugins.run_condition.common.BaseDirectory\$${baseDirType}"

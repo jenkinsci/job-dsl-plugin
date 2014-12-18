@@ -1,35 +1,92 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.helpers.Context
-
+import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
 /** Context to configure timeout */
 class TimeoutContext implements Context {
 
-    WrapperContext.Timeout type
-    def limit = 3
-    def failBuild = false
-    def writeDescription = false
-    def percentage = 0
+    Timeout type
+    int limit = 3
 
-    TimeoutContext(WrapperContext.Timeout type) {
+    int percentage = 150
+    int numberOfBuilds = 3
+    int minutesDefault = 60
+
+    int noActivitySeconds = 180
+
+    boolean failBuild = false
+    boolean writeDescription = false
+    String description = ''
+    private final JobManagement jobManagement
+
+    TimeoutContext(Timeout type, JobManagement jobManagement) {
+        this.jobManagement = jobManagement
         this.type = type
     }
 
-    def limit(int limit) {
-        this.limit = limit
+    /**
+     * @deprecated for backwards compatibility
+     */
+    @Deprecated
+    void limit(int limit) {
+        Preconditions.checkArgument([Timeout.elastic, Timeout.absolute].contains(type))
+        jobManagement.logDeprecationWarning()
+        if (type == Timeout.absolute) {
+            this.limit = limit
+        } else if (type == Timeout.elastic) {
+            this.minutesDefault = limit
+        }
     }
 
-    def failBuild(boolean fail) {
-        this.failBuild = fail
-    }
-
-    def writeDescription(boolean writeDesc) {
-        this.writeDescription = writeDesc
-    }
-
-    def percentage(int percentage) {
+    /**
+     * @deprecated for backwards compatibility
+     */
+    @Deprecated
+    void percentage(int percentage) {
+        jobManagement.logDeprecationWarning()
         this.percentage = percentage
     }
 
+    void elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60) {
+        type = Timeout.elastic
+        this.percentage = percentage
+        this.numberOfBuilds = numberOfBuilds
+        this.minutesDefault = minutesDefault
+    }
+
+    void noActivity(int seconds = 180) {
+        jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
+        type = Timeout.noActivity
+        this.noActivitySeconds = seconds
+    }
+
+    void absolute(int minutes = 3) {
+        type = Timeout.absolute
+        this.limit = minutes
+    }
+
+    void likelyStuck() {
+        type = Timeout.likelyStuck
+    }
+
+    void failBuild(boolean fail = true) {
+        this.failBuild = fail
+    }
+
+    /**
+     * @deprecated for backwards compatibility
+     */
+    @Deprecated
+    void writeDescription(boolean writeDesc = true) {
+        jobManagement.logDeprecationWarning()
+        this.writeDescription = writeDesc
+    }
+
+    void writeDescription(String description) {
+        this.description = description
+        this.writeDescription = true
+    }
 }

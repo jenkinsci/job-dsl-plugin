@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.Context
 
-import javaposse.jobdsl.dsl.helpers.Context
+import static com.google.common.base.Preconditions.checkArgument
 
 class EmmaContext implements Context {
 
@@ -83,7 +83,7 @@ class EmmaContext implements Context {
     }
 
     private void checkRange(String type, IntRange range) {
-        Preconditions.checkArgument((0..100).contains(range.getFrom()), "Invalid ${type} threshold minimum, percentage (0-100) expected")
-        Preconditions.checkArgument((0..100).contains(range.getTo()), "Invalid ${type} threshold maximum, percentage (0-100) expected")
+        checkArgument((0..100).contains(range.from), "Invalid ${type} threshold minimum, percentage (0-100) expected")
+        checkArgument((0..100).contains(range.to), "Invalid ${type} threshold maximum, percentage (0-100) expected")
     }
 }

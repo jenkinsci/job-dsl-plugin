@@ -25,7 +25,7 @@ class FolderSpec extends Specification {
         folder.displayName('foo')
 
         then:
-        Node root = folder.getNode()
+        Node root = folder.node
         root.displayName.size() == 1
         root.displayName[0].text() == 'foo'
     }
@@ -35,7 +35,7 @@ class FolderSpec extends Specification {
         folder.description('test folder')
 
         then:
-        Node root = folder.getNode()
+        Node root = folder.node
         root.description.size() == 1
         root.description[0].text() == 'test folder'
     }
@@ -47,7 +47,7 @@ class FolderSpec extends Specification {
         }
 
         then:
-        Node root = folder.getNode()
+        Node root = folder.node
         root.foo.size() == 1
         root.foo[0].text() == 'bar'
     }
@@ -58,7 +58,7 @@ class FolderSpec extends Specification {
         folder.description('la la la')
 
         when:
-        String xml = folder.getXml()
+        String xml = folder.xml
 
         then:
         compareXML(XML, xml).similar()

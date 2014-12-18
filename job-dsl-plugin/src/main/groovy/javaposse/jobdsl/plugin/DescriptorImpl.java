@@ -3,13 +3,14 @@ package javaposse.jobdsl.plugin;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import hudson.Extension;
-import hudson.model.Descriptor;
+import hudson.model.AbstractProject;
 import hudson.tasks.Builder;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.util.ListBoxModel;
 import jenkins.YesNoMaybe;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
-public class DescriptorImpl extends Descriptor<Builder> {
+public class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
     private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed
 
@@ -40,5 +41,18 @@ public class DescriptorImpl extends Descriptor<Builder> {
             items.add(action.getDisplayName(), action.name());
         }
         return items;
+    }
+
+    public ListBoxModel doFillLookupStrategyItems() {
+        ListBoxModel items = new ListBoxModel();
+        for (LookupStrategy item : LookupStrategy.values()) {
+            items.add(item.getDisplayName(), item.name());
+        }
+        return items;
+    }
+
+    @Override
+    public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+        return true;
     }
 }

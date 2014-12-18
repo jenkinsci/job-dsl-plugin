@@ -1,11 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.step.AbstractStepContext
+import javaposse.jobdsl.dsl.helpers.step.StepContext
 
 class ReleaseContext implements Context {
+    private final JobManagement jobManagement
+
     String releaseVersionTemplate
     boolean doNotKeepLog
     boolean overrideBuildParameters
@@ -16,49 +19,53 @@ class ReleaseContext implements Context {
     List<Node> postFailedBuildSteps = []
     Closure configureBlock
 
-    def preBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext()
-        AbstractContextHelper.executeInContext(closure, stepContext)
+    ReleaseContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
+
+    void preBuildSteps(Closure closure) {
+        StepContext stepContext = new StepContext(jobManagement)
+        ContextHelper.executeInContext(closure, stepContext)
         preBuildSteps.addAll(stepContext.stepNodes)
     }
 
-    def postSuccessfulBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext()
-        AbstractContextHelper.executeInContext(closure, stepContext)
+    void postSuccessfulBuildSteps(Closure closure) {
+        StepContext stepContext = new StepContext(jobManagement)
+        ContextHelper.executeInContext(closure, stepContext)
         postSuccessfulBuildSteps.addAll(stepContext.stepNodes)
     }
 
-    def postBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext()
-        AbstractContextHelper.executeInContext(closure, stepContext)
+    void postBuildSteps(Closure closure) {
+        StepContext stepContext = new StepContext(jobManagement)
+        ContextHelper.executeInContext(closure, stepContext)
         postBuildSteps.addAll(stepContext.stepNodes)
     }
 
-    def postFailedBuildSteps(Closure closure) {
-        def stepContext = new AbstractStepContext()
-        AbstractContextHelper.executeInContext(closure, stepContext)
+    void postFailedBuildSteps(Closure closure) {
+        StepContext stepContext = new StepContext(jobManagement)
+        ContextHelper.executeInContext(closure, stepContext)
         postFailedBuildSteps.addAll(stepContext.stepNodes)
     }
 
-    def releaseVersionTemplate(String releaseVersionTemplate) {
+    void releaseVersionTemplate(String releaseVersionTemplate) {
         this.releaseVersionTemplate = releaseVersionTemplate
     }
 
-    def doNotKeepLog(boolean doNotKeepLog = true) {
+    void doNotKeepLog(boolean doNotKeepLog = true) {
         this.doNotKeepLog = doNotKeepLog
     }
 
-    def overrideBuildParameters(boolean overrideBuildParameters = true) {
+    void overrideBuildParameters(boolean overrideBuildParameters = true) {
         this.overrideBuildParameters = overrideBuildParameters
     }
 
-    def configure(Closure closure) {
+    void configure(Closure closure) {
         this.configureBlock = closure
     }
 
-    def parameters(Closure parametersClosure) {
+    void parameters(Closure parametersClosure) {
         BuildParametersContext parametersContext = new BuildParametersContext()
-        AbstractContextHelper.executeInContext(parametersClosure, parametersContext)
+        ContextHelper.executeInContext(parametersClosure, parametersContext)
         params.addAll(parametersContext.buildParameterNodes.values())
     }
 }

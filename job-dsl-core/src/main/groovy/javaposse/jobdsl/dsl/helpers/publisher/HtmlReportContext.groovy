@@ -1,16 +1,16 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import groovy.transform.Canonical
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
+
+import static com.google.common.base.Preconditions.checkArgument
 
 class HtmlReportContext implements Context {
-    def targets = []
+    List<HtmlPublisherTarget> targets = []
 
-    def report(String reportDir, String reportName = null, String reportFiles = null, Boolean keepAll = null) {
+    void report(String reportDir, String reportName = null, String reportFiles = null, Boolean keepAll = null) {
+        checkArgument(reportDir != null && reportDir.length() > 0, 'Report directory for html publisher is required')
 
-        if (!reportDir) {
-            throw new RuntimeException("Report directory for html publisher is required")
-        }
         targets << new HtmlPublisherTarget(
                 reportName: reportName ?: '',
                 reportDir: reportDir ?: '',
@@ -19,7 +19,7 @@ class HtmlReportContext implements Context {
                 wrapperName: 'htmlpublisher-wrapper.html')
     }
 
-    def report(Map args) {
+    void report(Map args) {
         report(args.reportDir, args.reportName, args.reportFiles, args.keepAll)
     }
 

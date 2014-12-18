@@ -8,12 +8,12 @@ class GeneratedViewsBuildActionSpec extends Specification {
 
     def 'interface methods'() {
         when:
-        GeneratedViewsBuildAction action = new GeneratedViewsBuildAction(modifiedViews)
+        GeneratedViewsBuildAction action = new GeneratedViewsBuildAction(modifiedViews, LookupStrategy.JENKINS_ROOT)
 
         then:
         action.iconFileName == null
-        action.displayName == "Generated Views"
-        action.urlName == "generatedViews"
+        action.displayName == 'Generated Views'
+        action.urlName == 'generatedViews'
         action.modifiedViews != null
         action.modifiedViews.size() == modifiedViews.size()
         action.modifiedViews.containsAll(modifiedViews)

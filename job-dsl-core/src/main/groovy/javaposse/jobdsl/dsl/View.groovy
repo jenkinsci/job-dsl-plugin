@@ -3,8 +3,8 @@ package javaposse.jobdsl.dsl
 /**
  * DSL element representing a Jenkins view.
  */
-public abstract class View {
-    private List<WithXmlAction> withXmlActions = []
+abstract class View implements Context {
+    private final List<WithXmlAction> withXmlActions = []
 
     String name
 
@@ -41,19 +41,19 @@ public abstract class View {
      */
     String getXml() {
         Writer xmlOutput = new StringWriter()
-        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), "    ")
+        XmlNodePrinter xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlOutput), '    ')
         xmlNodePrinter.with {
             preserveWhitespace = true
             expandEmptyElements = true
             quote = "'" // Use single quote for attributes
         }
-        xmlNodePrinter.print(getNode())
+        xmlNodePrinter.print(node)
 
-        return xmlOutput.toString()
+        xmlOutput.toString()
     }
 
     Node getNode() {
-        Node root = new XmlParser().parse(new StringReader(getTemplate()))
+        Node root = new XmlParser().parse(new StringReader(template))
 
         withXmlActions.each { it.execute(root) }
         root
@@ -63,5 +63,5 @@ public abstract class View {
         withXmlActions << new WithXmlAction(rootClosure)
     }
 
-    protected abstract String getTemplate();
+    protected abstract String getTemplate()
 }

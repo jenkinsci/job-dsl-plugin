@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class StaticAnalysisContext implements Context {
 
@@ -20,47 +20,47 @@ class StaticAnalysisContext implements Context {
     boolean doNotResolveRelativePaths = true
     Map thresholdMap = [:]
 
-    def healthLimits(Integer healthy, Integer unHealthy) {
+    void healthLimits(Integer healthy, Integer unHealthy) {
         this.healthy = healthy
         this.unHealthy = unHealthy
     }
 
-    def canRunOnFailed(canRunOnFailed = true) {
+    void canRunOnFailed(canRunOnFailed = true) {
         this.canRunOnFailed = canRunOnFailed
     }
 
-    def thresholdLimit(String limit) {
-        assert THRESHOLD_LIMITS.contains(limit), "thresholdLimit must be one of these values: ${THRESHOLD_LIMITS.join(',')}"
+    void thresholdLimit(String limit) {
+        assert THRESHOLD_LIMITS.contains(limit),
+                "thresholdLimit must be one of these values: ${THRESHOLD_LIMITS.join(',')}"
         this.thresholdLimit = limit
     }
 
-    def defaultEncoding(String encoding) {
+    void defaultEncoding(String encoding) {
         this.defaultEncoding = encoding
     }
 
-    def useStableBuildAsReference(boolean useStableBuildAsReference = true) {
+    void useStableBuildAsReference(boolean useStableBuildAsReference = true) {
         this.useStableBuildAsReference = useStableBuildAsReference
     }
 
-    def useDeltaValues(boolean useDeltaValues = true) {
+    void useDeltaValues(boolean useDeltaValues = true) {
         this.useDeltaValues = useDeltaValues
     }
 
-    def shouldDetectModules(boolean shouldDetectModules = true) {
+    void shouldDetectModules(boolean shouldDetectModules = true) {
         this.shouldDetectModules = shouldDetectModules
     }
 
-    def computeNew(computeNew) {
+    void computeNew(computeNew) {
         this.dontComputeNew = !computeNew
     }
 
-
-    def thresholds(Map thresholdMap) {
+    void thresholds(Map thresholdMap) {
         assert ALLOWED_THRESHOLDS.containsAll(thresholdMap.keySet()),
                 "Only the thresholds ${ALLOWED_THRESHOLDS.join(',')} are allowed. You used ${thresholdMap}."
         assert ALLOWED_THRESHOLD_TYPES.containsAll(thresholdMap.values()*.keySet().flatten()),
                 "Threshold only can use the types ${ALLOWED_THRESHOLD_TYPES.join(',')}. You used ${thresholdMap}."
         this.thresholdMap = thresholdMap
-        this.dontComputeNew = ! thresholdMap.keySet().find { it.contains('New')}
+        this.dontComputeNew = !thresholdMap.keySet().find { it.contains('New') }
     }
 }

@@ -1,15 +1,22 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import groovy.transform.Canonical
-import javaposse.jobdsl.dsl.helpers.AbstractContextHelper
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.JobManagement
 
-@Canonical
 class PhaseContext implements Context {
+    private final JobManagement jobManagement
+
     String phaseName
     String continuationCondition
 
     List<PhaseJobContext> jobsInPhase = []
+
+    PhaseContext(JobManagement jobManagement, String phaseName, String continuationCondition) {
+        this.jobManagement = jobManagement
+        this.phaseName = phaseName
+        this.continuationCondition = continuationCondition
+    }
 
     void phaseName(String phaseName) {
         this.phaseName = phaseName
@@ -19,20 +26,18 @@ class PhaseContext implements Context {
         this.continuationCondition = continuationCondition
     }
 
-    def job(String jobName, Closure phaseJobClosure = null) {
+    void job(String jobName, Closure phaseJobClosure = null) {
         job(jobName, true, true, phaseJobClosure)
     }
 
-    def job(String jobName, boolean currentJobParameters, Closure phaseJobClosure = null) {
+    void job(String jobName, boolean currentJobParameters, Closure phaseJobClosure = null) {
         job(jobName, currentJobParameters, true, phaseJobClosure)
     }
 
-    def job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
-        PhaseJobContext phaseJobContext = new PhaseJobContext(jobName, currentJobParameters, exposedScm)
-        AbstractContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
+    void job(String jobName, boolean currentJobParameters, boolean exposedScm, Closure phaseJobClosure = null) {
+        PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, jobName, currentJobParameters, exposedScm)
+        ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext
-
-        return phaseJobContext
     }
 }

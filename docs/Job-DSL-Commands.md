@@ -1,267 +1,452 @@
-### Please see the [[Job Reference]] page for the full details of the _job_ component and the [[View Reference]] page for details about the _view_ methods.
-
-# Job Factory
-The DSL execution engine exposes only one method, called 'job'. This 'job' method implies the creation of a Jenkins job and the closure to this method then further exposed some methods where things get interesting. See the later sections to learn the specific available methods available, for when a DSL helper method isn't available, look to the [configure block](The Configure Block). Below is the simplest job possible:
-
-```groovy
-job {
-    name 'Simplest Job Possible'
-}
-```
-
-Because the engine is just Groovy, you can call other Groovy classes available in the workspace. When in those methods the 'job' method is no longer available, so it is recommended to pass in the current context to make this method available to other context. For example, when making utility methods, you would call them like this:
-
-```groovy
-BuildFramework.ant(this, arg1, arg2)
-```
-
-Then the BuildFramework class has enough to make 'job' calls, it would look like this:
-
-```groovy
-public class BuildFramework {
-    public void static ant(jobFactory, arg1, arg2) {
-        jobFactory.job {
-            name arg1
-            steps {
-                ant(arg2)
-            }
-        }
-    }
-}
-```
-
-TBD, Current this method is hard-coded to free-form and maven projects. It wouldn't be too hard to make it implement multi-job and ivy projects. File a bug if you'd find this useful.
+**NOTE: See the [[Job Reference]] and [[View Reference]] pages for details about all options.**
 
 # DSL Methods
 
-This is the formal documentation of the available DSL methods. In the Closure provided to job there are a few top level methods, like label and chucknorris. Others are nested deeper in blocks which represent their role in Jenkins, e.g. the publishers block contains all the publisher steps. The one caveat is that scm and multiscm are mutually exclusive. Likewise, when using the scm block, only one scm can be specified.
-
-Further sections will define in detail how they work, in a Java-like syntax. If an argument is followed with an equals, this means it's a default value. DSL Methods can be cumulative or overriding, meaning that some methods will add nodes (e.g. publishers and steps) and some will replace nodes (e.g. disabled() will replace any existing disabled tags).
-
-**NOTE: when using these commands, remember that you need to use them in context.  I.e. to use the "downstream" command, it needs to be enclosed in a "publisher" command block.**
-
-Here's a high level overview of what's available:
+The DSL execution engine exposes a method, called `job`. This `job` method implies the creation of a Jenkins job
+and the closure to this method can be used to define the job's settings. The only mandatory option is `name`.
 
 ```groovy
-job(attributes) {
-    name(nameStr)
-    displayName(displayName)
-    using(templateNameStr)
-    description(descStr)
-    label(labelStr)
-    quietPeriod(seconds)
-    customWorkspace(workspacePath)
-    disabled(shouldDisable)
-    blockOn(projectNames)
-    blockOnUpstreamProjects()
-    blockOnDownstreamProjects()
-    logRotator(daysToKeepInt, numToKeepInt, artifactDaysToKeepInt, artifactNumToKeepInt)
-    concurrentBuild(allowConcurrentBuild) // since 1.21
-    jdk(jdkStr)
-    keepDependencies(keep)
-    rootPOM(rootPOMStr)
-    goals(goalsStr)
-    mavenOpts(mavenOptsStr)
-    mavenInstallation(name) // since 1.20
-    localRepository(location)
-    perModuleEmail(shouldSendEmailPerModule)
-    archivingDisabled(shouldDisableArchiving)
-    runHeadless(shouldRunHeadless)
-    preBuildSteps(mavenPreBuildStepsClosure)
-    postBuildSteps(mavenPostBuildStepsClosure)
-    environmentVariables(vars)
-    environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
-    priority(value)
-    throttleConcurrentBuilds(throttleClosure)
-    buildFlow(buildFlowText) // Since 1.21, can only be used on 'BuildFlow' job types. See [[Job Reference]].
-    authorization {
-        permission(permissionStr) // e.g. hudson.model.Item.Workspace:authenticated
-        permission(String permEnumName, String user)
-        permission(Permission perm, String user)
-        permissionAll(securityGroup)
-    }
-    scm {
-        hg(url, branch) {}
-        git(url, branch) {}
-        github(ownerAndProject, branch, protocol, host) {}
-        svn(svnUrl, localDir) {}
-        p4(viewspec, user, password) {}
-        cloneWorkspace(parentProject, criteriaArg) 
-    }
-    multiscm {
-        hg(url, branch) {}
-        git(url, branch) {}
-        github(ownerAndProject, branch, protocol, host) {}
-        svn(svnUrl) {}
-        p4(viewspec, user, password) {}
-    }
-    checkoutRetryCount(times)
-    triggers {
-        cron(cronString)
-        scm(cronString)
-        githubPush()
-        gerrit(gerritClosure) // See [[Job Reference]] for gerritClosure syntax
-        pullRequest(pullRequestClosure) // since 1.22 See [[Job Reference]] for pullRequestClosure syntax
-        urlTrigger([cronString,] urlTriggerClosure) // See [[Job Reference]] for closure syntax 
-        snapshotDependencies(checkSnapshotDependencies)
-    }
-    wrappers { // This block exists since 1.19. Before that the methods were on top level
-        runOnSameNodeAs(jobName, useSameWorkspace)
-        rvm(rubySpecification)
-        timeout(timeoutInMinutes, shouldFailBuild)
-        timeout(type) {} //see Job Reference for closure details
-        allocatePorts(ports){}
-        sshagent(credentials)
-        timestamps()
-        colorizeOutput()
-        xvnc(takeScreenshot = false)
-        toolenv(String.. tools)
-        environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
-        release(closure) // since 1.22, see [[Job Reference]] for details
-        preBuildCleanup(closure) // since 1.22
-        logSizeChecker(closure) // since 1.23, see [Job Reference]] for details
-        injectPasswords() // since 1.23
-    }
-    steps {
-        shell(String commandStr)
-        batchFile(String commandStr)
-        gradle(tasksArg, switchesArg, useWrapperArg) {}
-        maven(targetsArg, pomArg) {}
-        maven {} // since 1.20, see [[JobReference]]
-        sbt(sbtNameArg, actionsArg, sbtFlagsArg, jvmFlagsArg, subdirPathArg) {} // See [[Job Reference]] for details
-        ant(targetsArg, buildFileArg, antInstallation, antClosure) // See [[Job Reference]] for antClosure syntax
-        copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, optionalAllowed, copyArtifactClosure) // See [[Job Reference]] for copyArtifactClosure syntax
-        groovyCommand(commandStr, groovyClosure) // See [[Job Reference]] for groovyClosure syntax
-        groovyScriptFile(fileName, groovyClosure)  // See [[Job Reference]] for groovyClosure syntax
-        systemGroovyCommand(commandStr, systemGroovyClosure) // See [[Job Reference]] for systemGroovyClosure syntax
-        systemGroovyScriptFile(fileName, systemGroovyClosure) // See [[Job Reference]] for systemGroovyClosure syntax
-        phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phaseClosure = null) // See [[Job Reference]] for phaseClosure syntax
-        dsl(dslClosure) // See [[Job Reference]] for dslClosure syntax
-        dsl(scriptText, removedJobAction, ignoreExisting)
-        dsl(externalScripts, removedJobAction, ignoreExisting)
-        grails(grailsClosure) // See [[Job Reference]] for grailsClosure syntax
-        grails(targetsArg, grailsClosure)
-        grails(targetsArg, useWrapperArg, grailsClosure)
-        prerequisite(projectList, warningOnlyBool) // Since 1.19
-        downstreamParameterized(downstreamClosure) // See [[Job Reference]] for downstreamClosure syntax
-        conditionalSteps(conditionalClosure) // See [[Job Reference]] for conditionalClosure syntax
-        environmentVariables(closure) // See [[Job Reference]] for details of EnvironmentVariablesContext
-        remoteTrigger(remoteJenkinsName, jobName, remoteTriggerClosure) // Since 1.22
-    }
-    publishers {
-        extendedEmail(recipients, subjectTemplate, contentTemplate ) {}
-        mailer(recipients, dontNotifyEveryUnstableBuild, sendToIndividuals)
-        archiveArtifacts(glob, excludeGlob, latestOnlyBoolean)
-        archiveArtifacts(archiveArtifactsClosure) // Since 1.20, // See [[Job Reference]] for archiveArtifactsClosure syntax
-        archiveJunit(glob, retainLongStdout, allowClaimingOfFailedTests, publishTestAttachments)
-        publishHtml {
-            report(reportDir, reportName, reportFiles, keepAll)
-        }
-        publishJabber(target, strategyName, channelNotificationName, jabberClosure) // See [[Job Reference]] for jabberClosure syntax
-        publishScp(site, scpClosure) // See [[Job Reference]] for scpClosure syntax
-        publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, overrideDefaultExcludes, cloneWorkspaceClosure) // See [[Job Reference]] for cloneWorkspaceClosure
-        downstream(projectName, thresholdName)
-        downstreamParameterized(downstreamClosure) // See [[Job Reference]] for downstreamClosure syntax
-        violations(perFileDisplayLimit, violationsClosure) // See [[Job Reference]] for violationsClosure syntax
-        chucknorris() // Really important
-        irc(ircClosure) // See [[Job Reference]] for ircClosure syntax
-        cobertura(coberturaReportFilePattern, coberturaClosure) // See [[Job Reference]] for coberturaClosure syntax
-        allowBrokenBuildClaiming()
-        jacocoCodeCoverage(jacocoClosure) // See [[Job Reference]] for jacococClosure syntax
-        fingerprint(targets, recordBuildArtifacts) // See [[Job Reference]], too
-        buildDescription(regularExpression, description, regularExpressionForFailed, descriptionForFailed, multiConfigurationBuild)
-        findbugs(pattern, isRankActivated = false, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        pmd(pattern, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        checkstyle(pattern, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        dry(pattern, highThreshold = 50, normalThreshold = 25, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        tasks(pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        ccm(pattern, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        androidLint(pattern, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        dependencyCheck(pattern, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax
-        warnings(consoleParsers, parserConfigurations = [:], warningsClosure = null) // See [[Job Reference]] for how to fill the parameters
-        textFinder(regularExpression, fileSet = '', alsoCheckConsoleOutput = false, succeedIfFound = false, unstableIfFound = false) // since 1.19
-        postBuildTask(closure)  // See [[Job Reference]] for closure syntax, since 1.19
-        aggregateDownstreamTestResults(jobs = null, includeFailedBuilds = false) // since 1.19
-        groovyPostBuild(script, behavior = Behavior.DoNothing) // since 1.19, See [[Job Reference]] for details of Behavior enum
-        archiveJavadoc(javadocClosure) // See [[Job Reference]] for closure syntax, since 1.19
-        emma(coverageFile, closure) // See [[Job Reference]] for closure syntax, since 1.20
-        jshint(pattern, staticAnalysisClosure = null) // See [[Job Reference]] for staticAnalysisClosure syntax, since 1.20
-        associatedFiles(String files = null) // since 1.20
-        publishRobotFrameworkReports(Closure closure = null) // Since 1.21. See [[Job Reference]] for the closure syntax
-        buildPipelineTrigger(downstreamProjectNames, Closure closure) // since 1.21. Closure support since 1.23
-        githubCommitNotifier() // since 1.21
-        git(gitPublisherClosure) // since 1.22
-        flowdock(String token, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
-        flowdock(String[] tokens, flowdockClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
-        stashNotifier(stashNotifierClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
-        mavenDeploymentLinker(String regex) // since 1.23
-        wsCleanup(wsCleanupClosure = null) // since 1.23. See [[Job Reference]] for the closure syntax
-    }
-    parameters {
-        booleanParam(parameterName, defaultValue, description)
-        listTagsParam(parameterName, scmUrl, tagFilterRegex, sortNewestFirst, sortZtoA, maxTagsToDisplay, defaultValue, description)
-        choiceParam(parameterName, options, description)
-        fileParam(fileLocation, description)
-        runParam(parameterName, jobToRun, description, filter)
-        stringParam(parameterName, defaultValue, description)
-        textParam(parameterName, defaultValue, description)
-    }
+job {
+    name 'my-job'
+}
+```
+
+There are similar methods to create Jenkins views, folders and config files:
+
+```groovy
+view {
+    name 'my-view'
 }
 
-view(attributes) {  // since 1.21, see [[View Reference]]
-    name(nameStr)
-    description(descriptionStr)
-    filterBuildQueue(filterBuildQueueBool)
-    filterExecutors(filterExecutorsBool)
-    configure(configBlock)
+folder {
+    name 'my-folder'
+}
+
+configFile {
+    name 'my-config'
+}
+```
+
+When defining jobs, views or folders the name is treated as absolute to the Jenkins root by default, but the seed job
+can be configured to interpret names relative to the seed job. (since 1.24)
+
+In the closure provided to `job` there are a few top level methods, like `label` and `chucknorris`. Others are nested
+deeper in blocks which represent their role in Jenkins, e.g. the `publishers` block contains all the publisher actions.
+
+DSL methods can be cumulative or overriding, meaning that some methods will add nodes (e.g. `publishers` and `steps`)
+and some will replace nodes (e.g. `disabled` will replace any existing disabled nodes). Some methods like `scm` and
+`multiscm` are mutually exclusive. Likewise, when using the `scm` block, only one SCM can be specified.
+
+When a DSL method isn't available, look at [[The Configure Block]] for extending the DSL.
+
+**NOTE: when using these methods, remember that you need to use them in context. I.e. to use the `downstream` method,
+it needs to be enclosed in a `publishers` context.**
+
+The following high level overview shows what's available in a Groovy-like syntax. If an argument is followed by an
+equals sign, this means it's a default value that is used when the argument is left out. Arguments can only be omitted
+from right to left. Many methods provide options in deeper nested blocks which are not shown in this overview. See the
+[[Job Reference]] and [[View Reference]] pages for details.
+
+```groovy
+job(Map<String, ?> arguments = [:]) {
+    name(String name)
+
+    // DSL specific methods
+    using(String templateName)
+    configure(Closure configBlock)
+
+    // common options
+    batchTask(String name, String script)
+    blockOn(String projectNames)
+    blockOn(Iterable<String> projectNames)
+    blockOnDownstreamProjects()
+    blockOnUpstreamProjects()
+    checkoutRetryCount(int times = 3)
+    concurrentBuild(boolean allowConcurrentBuild = true) // since 1.21
+    customWorkspace(String workspacePath)
+    deliveryPipelineConfiguration(String stageName, String taskName = null) // since 1.26
+    description(String description)
+    disabled(boolean shouldDisable = true)
+    displayName(String displayName)
+    environmentVariables(Map<Object, Object> vars, Closure envClosure = null)
+    environmentVariables(Closure envClosure)
+    jdk(String jdk)
+    keepDependencies(boolean keep = true)
+    label(String label)
+    lockableResources(String resources, Closure lockableResourcesClosure) // since 1.25
+    logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1,
+               int artifactNumToKeep = -1)
+    notifications(Closure notificationClosure) // since 1.26
+    priority(int value)
+    quietPeriod(int seconds = 5)
+    throttleConcurrentBuilds(Closure throttleClosure)
+    authorization {
+        permission(String permission)
+        permission(String permEnumName, String user)
+        permission(Permissions perm, String user)
+        permissionAll(String user)
+    }
+    parameters {
+        booleanParam(String parameterName, boolean defaultValue = false,
+                     String description = null)
+        choiceParam(String parameterName, List<String> options, String description = null)
+        fileParam(String fileLocation, String description = null)
+        listTagsParam(String parameterName, String scmUrl, String tagFilterRegex,
+                      boolean sortNewestFirst = false, boolean sortZtoA = false,
+                      String maxTagsToDisplay = 'all', String defaultValue = null,
+                      String description = null)
+        nodeParam(String parameterName, Closure closure = null) // since 1.26
+        runParam(String parameterName, String jobToRun, String description = null,
+                 String filter = null)
+        stringParam(String parameterName, String defaultValue = null,
+                    String description = null)
+        textParam(String parameterName, String defaultValue = null,
+                  String description = null)
+    }
+    scm {
+        baseClearCase(Closure closure) // since 1.24
+        cloneWorkspace(String parentProject, String criteriaArg)
+        git(Closure gitClosure)
+        git(String url, Closure configure = null)
+        git(String url, String branch, Closure configure = null)
+        github(String ownerAndProject, String branch = null, String protocol = 'https',
+               Closure configure)
+        github(String ownerAndProject, String branch = null, String protocol = 'https',
+               String host = 'github.com', Closure configure = null)
+        hg(String url, String branch = null, Closure configure = null)
+        p4(String viewspec, Closure configure = null)
+        p4(String viewspec, String user, Closure configure = null)
+        p4(String viewspec, String user, String password, Closure configure = null)
+        svn(String svnUrl, Closure configure = null)
+        svn(String svnUrl, String localDir, Closure configure = null)
+    }
+    multiscm(Closure scmClosure)
+    triggers {
+        cron(String cron)
+        gerrit(Closure gerritClosure = null)
+        githubPush()
+        pullRequest(Closure pullRequestClosure) // since 1.22
+        scm(String cron)
+        snapshotDependencies(boolean checkSnapshotDependencies)
+        urlTrigger(String cronString = null, Closure urlTriggerClosure)
+    }
+    wrappers { // since 1.19, before that the methods were on top level
+        allocatePorts(Closure closure = null)
+        allocatePorts(String[] ports, Closure closure = null)
+        buildName(String nameTemplate) // since 1.24
+        buildUserVars() // since 1.26
+        credentialsBinding(Closure closure) // since 1.28
+        colorizeOutput(String colorMap = 'xterm')
+        configFiles(Closure closure) // since 1.28
+        deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
+        environmentVariables(Closure envClosure)
+        exclusionResources(String... resourceNames) // since 1.24
+        exclusionResources(Iterable<String> resourceNames) // since 1.24
+        golang(String version) // since 1.27
+        injectPasswords() // since 1.23
+        keychains(Closure closure) // since 1.24
+        logSizeChecker(Closure closure = null) // since 1.23
+        maskPasswords() // since 1.26
+        nodejs(String installation) // since 1.27
+        preBuildCleanup(Closure closure = null) // since 1.22
+        rbenv(String rubyVersion, Closure rbenvClosure = null) // since 1.27
+        release(Closure releaseClosure) // since 1.22
+        runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
+        rvm(String rubySpecification)
+        sshAgent(String credentials)
+        timeout(Closure timeoutClosure)
+        timeout(String type = 'absolute', Closure timeoutClosure = null) // deprecated
+        timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) // deprecated
+        timestamps()
+        toolenv(String... tools)
+        xvnc(boolean takeScreenshot) // deprecated
+        xvnc(Closure xvncClosure = null) // since 1.26
+    }
+    steps {
+        ant(Closure antClosure = null)
+        ant(String targets, Closure antClosure = null)
+        ant(String targets, String buildFile, Closure antClosure = null)
+        ant(String targets, String buildFile, String antInstallation,
+            Closure antClosure = null)
+        batchFile(String command)
+        conditionalSteps(Closure conditionalClosure)
+        copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure)
+        copyArtifacts(String jobName, String includeGlob, String targetPath,
+                      Closure copyArtifactClosure)
+        copyArtifacts(String jobName, String includeGlob, String targetPath = '',
+                      boolean flattenFiles, Closure copyArtifactClosure)
+        copyArtifacts(String jobName, String includeGlob, String targetPath = '',
+                      boolean flattenFiles, boolean optionalAllowed,
+                      Closure copyArtifactClosure)
+        criticalBlock(Closure stepClosure) // since 1.24
+        downstreamParameterized(Closure downstreamClosure)
+        dsl(Closure dslClosure = null)
+        dsl(String scriptText, String removedJobAction = null,
+            boolean ignoreExisting = false)
+        dsl(Collection<String> externalScripts, String removedJobAction = null,
+            boolean ignoreExisting = false)
+        environmentVariables(Closure envClosure)
+        gradle(String tasks = null, String switches = null, Boolean useWrapperArg = true,
+               Closure configure = null)
+        gradle(Closure gradleClosure) // since 1.27
+        grails(Closure grailsClosure)
+        grails(String targets, Closure grailsClosure)
+        grails(String targets, boolean useWrapperArg = false, Closure grailsClosure)
+        groovyCommand(String command, Closure groovyClosure = null)
+        groovyCommand(String command, String groovyName, Closure groovyClosure = null)
+        groovyScriptFile(String fileName, Closure groovyClosure = null)
+        groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null)
+        httpRequest(String url, Closure closure = null) // since 1.28
+        maven(Closure mavenClosure) // since 1.20
+        maven(String target = null, String pom = null, Closure configure = null)
+        phase(Closure phaseClosure)
+        phase(String name, Closure phaseClosure = null)
+        phase(String name, String continuationConditionArg, Closure phaseClosure)
+        prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
+        rake(Closure rakeClosure = null) // since 1.25
+        rake(String tasksArg, Closure rakeClosure = null) // since 1.25
+        remoteTrigger(String remoteJenkinsName, String jobName,
+                      Closure remoteTriggerClosure) // since 1.22
+        sbt(String sbtName = null, String actions = null, String sbtFlags = null,
+            String jvmFlags = null, String subdirPath = null, Closure configure = null)
+        shell(String command)
+        systemGroovyCommand(String command, Closure systemGroovyClosure = null)
+        systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null)
+        vSpherePowerOff(String server, String vm)
+        vSpherePowerOn(String server, String vm)
+        vSphereRevertToSnapshot(String server, String vm, String snapshot)
+    }
+    publishers {
+        aggregateDownstreamTestResults(String jobs = null,
+                                       boolean includeFailedBuilds = false) // since 1.19
+        allowBrokenBuildClaiming()
+        analysisCollector(Closure analysisCollectorClosure = null) // since 1.26
+        androidLint(String pattern, Closure staticAnalysisClosure = null)
+        archiveArtifacts(String glob, String excludeGlob = null,
+                         boolean latestOnlyBoolean = false)
+        archiveArtifacts(Closure archiveArtifactsClosure) // since 1.20
+        archiveJavadoc(Closure javadocClosure) // since 1.19
+        archiveJunit(String glob, boolean retainLongStdout,
+                     boolean allowClaimingOfFailedTests = false,
+                     boolean publishTestAttachments = false) // deprecated
+        archiveJunit(String glob, Closure junitClosure = null) // since 1.26
+        archiveXunit(Closure xunitClosure) // since 1.24
+        associatedFiles(String files = null) // since 1.20
+        buildDescription(String regularExpression, String description = '',
+                         String regularExpressionForFailed = '',
+                         String descriptionForFailed = '',
+                         boolean multiConfigurationBuild = false)
+        ccm(String pattern, Closure staticAnalysisClosure = null)
+        checkstyle(String pattern, Closure staticAnalysisClosure = null)
+        chucknorris()
+        cobertura(String coberturaReportFilePattern, Closure coberturaClosure = null)
+        dependencyCheck(String pattern, Closure staticAnalysisClosure = null)
+        downstream(String projectName, String thresholdName = 'SUCCESS')
+        downstreamParameterized(Closure downstreamClosure)
+        dry(String pattern, highThreshold = 50, normalThreshold = 25,
+            Closure staticAnalysisClosure = null)
+        emma(String coverageFile = '', Closure closure) // since 1.20
+        extendedEmail(String recipients = null, Closure emailClosure = null)
+        extendedEmail(String recipients, String subjectTemplate,
+                      Closure emailClosure = null)
+        extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
+                      Closure emailClosure = null)
+        findbugs(String pattern, boolean isRankActivated = false,
+                 Closure staticAnalysisClosure = null)
+        fingerprint(String targets, boolean recordBuildArtifacts = false)
+        flexiblePublish(Closure flexiblePublishClosure) // since 1.26
+        flowdock(String token, Closure flowdockClosure = null) // since 1.23
+        flowdock(String[] tokens, flowdockClosure = null) // since 1.23
+        git(Closure gitPublisherClosure) // since 1.22
+        githubCommitNotifier() // since 1.21
+        groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) // since 1.19
+        irc(Closure ircClosure)
+        jacocoCodeCoverage(Closure jacocoClosure)
+        jshint(String pattern, Closure staticAnalysisClosure = null)
+        mailer(String recipients, Boolean dontNotifyEveryUnstableBuild = false,
+               Boolean sendToIndividuals = false)
+        mavenDeploymentLinker(String regex) // since 1.23
+        pmd(String pattern, Closure staticAnalysisClosure = null)
+        postBuildTask(Closure closure) // since 1.19
+        publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure)
+        publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
+                              Closure cloneWorkspaceClosure)
+        publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
+                              String criteria, String archiveMethod,
+                              Closure cloneWorkspaceClosure)
+        publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob = '',
+                              String criteria = 'Any', String archiveMethod = 'TAR',
+                              boolean overrideDefaultExcludes = false,
+                              Closure cloneWorkspaceClosure = null)
+        publishHtml(Closure htmlReportClosure)
+        publishJabber(String target, Closure jabberClosure = null)
+        publishJabber(String target, String strategyName, Closure jabberClosure = null)
+        publishJabber(String target, String strategyName, String channelNotificationName,
+                      Closure jabberClosure = null)
+        publishRobotFrameworkReports(Closure closure = null) // since 1.21
+        publishScp(String site, Closure scpClosure)
+        rundeck(String jobId, Closure rundeckClosure = null) // since 1.24
+        s3(String profile, Closure s3Closure) // since 1.26
+        stashNotifier(Closure stashNotifierClosure = null) // since 1.23
+        tasks(String pattern, excludePattern = '', high = '', normal = '', low = '',
+              ignoreCase = false, Closure staticAnalysisClosure = null)
+        textFinder(String regularExpression, String fileSet = '',
+                   boolean alsoCheckConsoleOutput = false,
+                   boolean succeedIfFound = false,
+                   boolean unstableIfFound = false) // since 1.19
+        violations(Closure violationsClosure = null)
+        violations(int perFileDisplayLimit, Closure violationsClosure = null)
+        warnings(List consoleParsers, Map parserConfigurations = [:],
+                 Closure warningsClosure = null)
+        wsCleanup(Closure wsCleanupClosure = null) // since 1.23
+    }
+
+    // Maven options
+    rootPOM(String rootPOM)
+    goals(String goals)
+    mavenOpts(String mavenOpts)
+    mavenInstallation(String name) // since 1.20
+    localRepository(LocalRepositoryLocation location)
+    perModuleEmail(boolean shouldSendEmailPerModule)
+    archivingDisabled(boolean shouldDisableArchiving)
+    runHeadless(boolean shouldRunHeadless)
+    preBuildSteps(Closure stepsClosure)
+    postBuildSteps(Closure stepsClosure)
+    providedSettings(String mavenSettingsName) // since 1.25
+    wrappers {
+        mavenRelease(Closure mavenReleaseClosure = null) // since 1.25
+    }
+
+    // BuildFlow options
+    buildFlow(String buildFlowText) // since 1.21
+
+    // Matrix options, since 1.24
+    axes {
+        text(String name, String... values)
+        text(String name, Iterable<String> values)
+        label(String name, String... labels)
+        label(String name, Iterable<String> labels)
+        labelExpression(String name, String... expressions)
+        labelExpression(String name, Iterable<String> expressions)
+        jdk(String... jdks)
+        jdk(Iterable<String> jdks)
+        configure(Closure configBlock)
+    }
+    runSequentially(boolean runSequentially = true)
+    touchStoneFilter(String expression, boolean continueOnFailure = false)
+    combinationFilter(String expression)
+}
+
+view(Map<String, Object> arguments = [:]) { // since 1.21
+    name(String name)
+
+    // DSL specific methods
+    configure(Closure configBlock)
+
+    // common options
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue)
+    filterExecutors(boolean filterExecutors)
 
     // ListView options
-    statusFilter(filter)
+    columns {
+        buildButton()
+        lastBuildConsole() // since 1.23
+        lastDuration()
+        lastFailure()
+        lastSuccess()
+        name()
+        status()
+        weather()
+    }
     jobs {
-        name(jobName)
-        names(jobNames)
-        regex(regex)
+        name(String jobName)
+        names(String... jobNames)
+        regex(String regex)
+    }
+    statusFilter(StatusFilter filter)
+
+    // BuildPipelineView options
+    alwaysAllowManualTrigger(boolean alwaysAllowManualTrigger = true)
+    consoleOutputLinkStyle(OutputStyle consoleOutputLinkStyle)
+    customCssUrl(String cssUrl)
+    displayedBuilds(int noOfDisplayedBuilds)
+    refreshFrequency(int seconds)
+    selectedJob(String rootJob)
+    title(String pipelineTitle)
+    triggerOnlyLatestJob(boolean triggerOnlyLatestJob = true)
+    showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
+    showPipelineParameters(boolean showPipelineParameters = true)
+    showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true)
+    startsWithParameters(boolean startsWithParameters = true) // since 1.26
+
+    // SectionedView options, since 1.25
+    sections {
+        listView(Closure listNiewSectionClosure)
+    }
+
+    // NestedView options, since 1.25
+    views {
+        view(Map<String, Object> arguments = [:], Closure viewClosure)
     }
     columns {
         status()
         weather()
-        name()
-        lastSuccess()
-        lastFailure()
-        lastDuration()
-        buildButton()
-        lastBuildConsole() // since 1.23
     }
 
-    // BuildPipelineView options
-    displayedBuilds(noOfDisplayedBuilds)
-    title(pipelineTitle)
-    selectedJob(rootJob)
-    // consoleOutputLinkStyle and cssUrl require 1.4.2 of the Build Pipeline Plugin
-    consoleOutputLinkStyle(consoleOutputLinkStyle)
-    customCssUrl(cssUrl)
-    triggerOnlyLatestJob(triggerOnlyLatestJobBool)
-    alwaysAllowManualTrigger(alwaysAllowManualTriggerBool)
-    showPipelineParameters(showPipelineParametersBool)
-    showPipelineParametersInHeaders(showPipelineParametersInHeadersBool)
-    refreshFrequency(seconds)
-    showPipelineDefinitionHeader(showPipelineDefinitionHeaderBool)
+    // DeliveryPipelineView options, since 1.26
+    pipelineInstances(int number)
+    showAggregatedPipeline(boolean showAggregatedPipeline = true)
+    columns(int number)
+    sorting(Sorting sorting)
+    updateInterval(int seconds)
+    enableManualTriggers(boolean enable = true)
+    showAvatars(boolean showAvatars = true)
+    showChangeLog(boolean showChangeLog = true)
+    pipelines {
+        component(String name, String initialJob)
+        regex(String regex)
+    }
+
+    // BuildMonitorView options, since 1.28
+    jobs {
+        name(String jobName)
+        names(String... jobNames)
+        regex(String regex)
+    }
+    statusFilter(StatusFilter filter)
 }
 
 folder { // since 1.23
-    name(nameStr)
-    displayName(displayNameStr)
-    configure(configBlock)
+    name(String name)
+
+    // DSL specific methods
+    configure(Closure configBlock)
+
+    // common options
+    displayName(String displayName)
+}
+
+configFile(Map<String, Object> arguments = [:]) { // since 1.25
+    name(String name)
+    comment(String comment)
+    content(String content)
 }
 ```
 
-The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods fail you, you can always generate the XML yourself via the [configure block](The Configure Block). Sometimes, a DSL method will provide a configure block of its own, which will set the a good context to help modify a few fields.  This gives native access to the Job config XML, which is typically very straight forward to understand.
+The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods
+fail you, you can always generate the underlying XML yourself via [[The Configure Block]]. Sometimes, a DSL
+method will provide a configure block of its own, which will set the a good context to help modify a few fields.
+This gives native access to the job config XML, which is typically very straight forward to understand.
 
-(Note: The full XML can be found for any job by taking the Jenkins URL and appending "/config.xml" to it. We find that creating a job the way you like it, then viewing the XML is the best way to learn what fields you need.)
+(Note: The full XML can be found for any job, view or folder by taking the Jenkins URL and appending `/config.xml` to
+it. We find that creating a job the way you like it, then viewing the XML is the best way to learn what fields you
+need.)
 
 # Job
+
 ```groovy
-job(Map<String, Object> attributes=[:], Closure closure)
+job(Map<String, Object> attributes = [:], Closure closure)
 ```
 
 The above method will return a _Job_ object that can be re-used and passed around. E.g.
@@ -275,7 +460,10 @@ myJob.with {
 }
 ```
 
-A job can have optional attributes. Currently only a 'type' attribute with value of 'Freeform', 'Maven', 'Multijob', or 'BuildFlow' is supported. When no type attribute is specified, a free-style job will be generated. Some methods will only be available in some job types, e.g. phase is meant only in Multijob. Each dsl method should document where they are relevant.
+A job can have optional attributes. Currently only a `type` attribute with value of `Freeform`, `Maven`, `Multijob`,
+`BuildFlow` or `MatrixJob` is supported. When no type is specified, a free-style job will be generated. Some methods
+will only be available in some job types, e.g. `phase` can only be used in Multijob. Each DSL method documents where
+they are relevant.
 
 ```groovy
 job(type: Maven) {
@@ -283,16 +471,18 @@ job(type: Maven) {
 }
 ```
 
-Please see the [[Job Reference]] page for details to the _job_ component.
+Please see the [[Job Reference]] page for details.
 
 # View
+
 ```groovy
-view(Map<String, Object> attributes=[:], Closure closure)
+view(Map<String, Object> attributes = [:], Closure closure)
 ```
 
-The view method behaves like the job method explained above and will return a _View_ object.
+The `view` method behaves like the `job` method explained above and will return a _View_ object.
 
-Currently only a 'type' attribute with value of 'ListView' is supported. When no type attribute is specified, a list view will be generated.
+Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView`,
+`DeliveryPipelineView` or `BuildMonitorView` is supported. When no type is specified, a list view will be generated.
 
 ```groovy
 view(type: ListView) {
@@ -303,11 +493,12 @@ view(type: ListView) {
 Please see the [[View Reference]] page for details.
 
 # Folder
+
 ```groovy
 folder(Closure closure)
 ```
 
-The folder method behaves like the job method explained above and will return a _Folder_ object.
+The `folder` method behaves like the `job` method explained above and will return a _Folder_ object.
 
 Folders will be created before jobs and views to ensure that a folder exists before entries are created.
 
@@ -338,6 +529,32 @@ folder {
 }
 ```
 
+# Config File
+
+```groovy
+configFile(Map<String, Object> attributes = [:], Closure closure)
+```
+
+The `configFile` method behaves like the `job` method explained above and will return a _ConfigFile_ object.
+
+A config file can have optional attributes. Currently only a `type` attribute with value of `Custom` or `MavenSettings`
+is supported. When no type is specified, a custom config file will be generated.
+
+Config files will be created before jobs to ensure that the file exists before it is referenced.
+
+```groovy
+configFile {
+  name 'my-config'
+  comment 'My important configuration'
+  content '<some-xml/>'
+}
+
+configFile(type: MavenSettings) {
+  name 'central-mirror'
+  content readFileFromWorkspace('maven-settings/central-mirror.xml')
+}
+```
+
 # Queue
 
 ```groovy
@@ -345,16 +562,20 @@ queue(String jobName)
 queue(Job job)
 ```
 
-This provide the ability to schedule a Job to be executable after the DSL runs. The given name doesn't have to be a job which was generated by the DSL, but it could be.
+This provide the ability to schedule a job to be executable after the DSL runs. The given name doesn't have to be a job
+which was generated by the DSL, but it could be.
 
 # Reading Files from Workspace
-Requires version >1.15.
+
 ```groovy
-InputStream streamFileFromWorkspace(String filePath) throws IOException;
-String readFileFromWorkspace(String filePath) throws IOException;
+InputStream streamFileFromWorkspace(String filePath)
+String readFileFromWorkspace(String filePath)
+String readFileFromWorkspace(String jobName, String filePath) // since 1.25
 ```
 
-Anywhere in the script you can read in a file from the current workspace using the above calls. This assumes that you checked out some source control as part of the job processing the DSL. This can be useful when populated fields on a generated job, e.g.
+With the first two variants, you can read in a file from the current workspace anywhere in the script. This assumes that
+you checked out some source control as part of the job processing the DSL. This can be useful when populating fields on
+a generated job, e.g.
 
 ```groovy
 job {
@@ -364,62 +585,75 @@ job {
 }
 ```
 
-# Grab
-
-Groovy provides the ability to "grab" dependencies and use them right away, this is called Grape (http://groovy.codehaus.org/Grape). The Job-DSL supports this feature, as long as it's provided at the top of the script. Not only can the @Grab annotation be used, it can be used with @GrabResolver to pull dependencies from custom defined repositories. This means that you can write a set of conventions  specific to your Enterprise, jar them up, distribute them via a repository, then grab them via @Grab. Here is an example of pulling in a utility library.
+And with the third variant, you can read a file from the workspace of any job. This can be used to set the description
+of a job from a file in the job's workspace. The method will return `null` when the job or the file does not exist or
+the job has no workspace, e.g. when it has not been built yet.
 
 ```groovy
-@Grab(group='commons-lang', module='commons-lang', version='2.4')
-import org.apache.commons.lang.WordUtils
-println "Hello ${WordUtils.capitalize('world')}"
-```
-
-#  Configure
-_This is primarily defined in the [[configure block]] page. This is a short overview._
-
-A lot of property directory on a project are best accessed directly with the configure block and via a DSL command.
-Here are some simple examples:
-```
-configure {
-    description 'My Description'
-    jdk = 'JDK 6'
-    disabled false
-    labels 'MASTER' // Need way to disable too
+job {
+    name('acme-tests')
+    description(readFileFromWorkspace('acme-tests', 'README.txt'))
 }
 ```
 
-## To Be Implemented
+(since 1.15)
 
-These are the ones in pipeline, and will be implemented sooner than later. If you're looking on working on one, claim it.
+# Grab
 
-* Publish - xUnit
-* Publish - Cobertura, Analysis
+Groovy provides the ability to "grab" dependencies and use them right away, this is called
+[Grape](http://groovy.codehaus.org/Grape). The Job DSL supports this feature, as long as it's provided at the top of the
+script. Not only can the `@Grab` annotation be used, it can be used with `@GrabResolver` to pull dependencies from
+custom defined repositories. This means that you can write a set of conventions specific to your organization, jar them
+up, distribute them via a repository, then grab them via `@Grab`. Here is an example of pulling in a utility library.
 
-@kmarquardsen:
-* wrappers - ArtifactoryGenericConfigurator
-* Publish - PerformancePublisher
+```groovy
+@Grab(group='commons-lang', module='commons-lang', version='2.4')
 
-@wolfs:
-* Publish - Checkstyle, FindBugs, PMD, CCM, OWASP Dependency Analysis, Compiler Warnings, Android Lint, DRY, Task Scanner
+import org.apache.commons.lang.WordUtils
 
-@daspilker:
-* Config File Provider Plugin
+println "Hello ${WordUtils.capitalize('world')}"
+```
 
-@andrewharmellaw:
-* Build parameters - password (https://issues.jenkins-ci.org/browse/JENKINS-18141)
+# Configure
 
-bealeaj12414
-* update the defaults and provide convenience methods for setting status values of the gerrit trigger
+When an option is not supported by the Job DSL, then [[The Configure Block]] can be used for extending the DSL.
 
-@sgtcoolguy
-* Publish - Emma
+Here is a simple example which adds a EnvInjectPasswordWrapper node:
 
-## To Be Designed
-* Publish - DeployPublisher
-* Build - Python
-* Report - MavenMailer
-* Publish - BuildTrigger
-* Publish - SVNTagPublisher
-* Publish - RedeployPublisher
-* Extend SCM (SVN and others?) to handle multiple Module Locations
-* Publish - JoinTrigger
+```groovy
+job {
+    ...
+    configure { project ->
+        project / buildWrappers / EnvInjectPasswordWrapper {
+            injectGlobalPasswords(true)
+        }
+    }
+}
+```
+
+See [[The Configure Block]] page for details.
+
+# DSL Factory
+
+Because the engine is just Groovy, you can call other Groovy classes available in the workspace. When in those methods
+the `job` method is no longer available, so it is recommended to pass in the current context to make this method
+available to another context. For example, when making utility methods, you would call them like this:
+
+```groovy
+BuildFramework.ant(this, arg1, arg2)
+```
+
+Then the `BuildFramework` class has everything it needs to make `job` calls:
+
+```groovy
+class BuildFramework {
+    static ant(dslFactory, arg1, arg2) {
+        dslFactory.job {
+            name arg1
+            steps {
+                ant(arg2)
+            }
+        }
+    }
+}
+```

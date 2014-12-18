@@ -9,7 +9,7 @@ class UrlTriggerEntryContextSpec extends Specification {
 
     def 'missing URL causes NullPointerException' () {
         when:
-        UrlTriggerEntryContext ctx = new UrlTriggerEntryContext(null)
+        new UrlTriggerEntryContext(null)
 
         then:
         thrown(NullPointerException)
@@ -17,7 +17,7 @@ class UrlTriggerEntryContextSpec extends Specification {
 
     def 'empty URL causes IllegalArgumentException' () {
         when:
-        UrlTriggerEntryContext ctx = new UrlTriggerEntryContext("")
+        new UrlTriggerEntryContext('')
 
         then:
         thrown(IllegalArgumentException)

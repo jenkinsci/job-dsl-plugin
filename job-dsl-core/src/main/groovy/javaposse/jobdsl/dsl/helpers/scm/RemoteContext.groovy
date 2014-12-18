@@ -1,10 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.Context
 
 class RemoteContext implements Context {
-    private List<WithXmlAction> withXmlActions
+    private final List<WithXmlAction> withXmlActions
 
     String name
     String url
@@ -32,7 +32,7 @@ class RemoteContext implements Context {
         this.refspec = refspec
     }
 
-    void github(String ownerAndProject, String protocol = "https", String host = "github.com") {
+    void github(String ownerAndProject, String protocol = 'https', String host = 'github.com') {
         switch (protocol) {
             case 'https':
                 url = "https://${host}/${ownerAndProject}.git"
@@ -50,10 +50,10 @@ class RemoteContext implements Context {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GithubWeb') {
             delegate.url(webUrl)
         }
-        withXmlActions << new WithXmlAction({
+        withXmlActions << WithXmlAction.create {
             it / 'properties' / 'com.coravy.hudson.plugins.github.GithubProjectProperty' {
                 projectUrl webUrl
             }
-        })
+        }
     }
 }
