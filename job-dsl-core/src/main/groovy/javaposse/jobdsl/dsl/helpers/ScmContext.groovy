@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
@@ -9,9 +10,9 @@ import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.SvnContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 
-import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
+import static com.google.common.base.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
@@ -280,10 +281,10 @@ class ScmContext implements Context {
             delegate.configure configure
         }
     }
-    
-    def svn(Closure svnClosure) {
+
+    void svn(Closure svnClosure) {
         validateMulti()
-        
+
         SvnContext svnContext = new SvnContext()
         executeInContext(svnClosure, svnContext)
 
@@ -301,10 +302,10 @@ class ScmContext implements Context {
                 }
             }
             workspaceUpdater(class: svnContext.checkoutStrategy.className)
-            excludedRegions svnContext.excludedRegions.join("\n")
-            includedRegions svnContext.includedRegions.join("\n")
-            excludedUsers svnContext.excludedUsers.join("\n")
-            excludedCommitMessages svnContext.excludedCommitMsgs.join("\n")
+            excludedRegions svnContext.excludedRegions.join('\n')
+            includedRegions svnContext.includedRegions.join('\n')
+            excludedUsers svnContext.excludedUsers.join('\n')
+            excludedCommitMessages svnContext.excludedCommitMsgs.join('\n')
             excludedRevprop svnContext.excludedRevProp
         }
 

@@ -1,19 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.XMLUnit
 
-import spock.lang.Specification;
-import groovy.util.Node;
-import groovy.xml.XmlUtil;
+import spock.lang.Specification
+//import groovy.util.Node
+import groovy.xml.XmlUtil
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
-public class SvnContextSpec extends Specification {
+class SvnContextSpec extends Specification {
 
     JobManagement mockJobManagement = Mock(JobManagement)
     ScmContext context = new ScmContext(false, [], mockJobManagement)
-    
+
     static void assertXmlEqual(String expectedXml, Node node) {
         XMLUnit.setIgnoreWhitespace true
         assertXMLEqual(expectedXml, XmlUtil.serialize(node))
@@ -24,19 +24,27 @@ public class SvnContextSpec extends Specification {
         assert scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
         assert scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() > 0
     }
-        
+
+    def 'test'() {
+        when:
+        context.svn('testUrl')
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+    }
+
     def 'call svn with no locations'() {
         when: 'svn is called without specifying any locations'
-        context.svn {}
-        
+        context.svn { }
+
         then: 'an IllegalStateException should be thrown'
         thrown(IllegalStateException)
     }
-    
+
     def 'call svn with one location'() {
         when: 'svn is called with a single location'
         context.svn {
-            location("url", "dir")
+            location('url', 'dir')
         }
 
         then: 'the svn node should contain that single location'
@@ -45,25 +53,25 @@ public class SvnContextSpec extends Specification {
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
     }
-    
+
     def 'call svn with multiple locations'() {
         when: 'svn is called with multiple locations'
         context.svn {
-            location("url1", "dir1")
-            location("url2", "dir2")
+            location('url1', 'dir1')
+            location('url2', 'dir2')
             location('url3', 'dir3')
         }
 
         then: 'the svn node should contain those locations'
         isValidSvnScmNode(context.scmNode)
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 3
-        
+
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url1'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir1'
-        
+
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].remote[0].value() == 'url2'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].local[0].value() == 'dir2'
-        
+
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].remote[0].value() == 'url3'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].local[0].value() == 'dir3'
     }
@@ -151,7 +159,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded regions'
         context.svn {
             location 'url'
-            excludedRegions 'exreg1','exreg2'
+            excludedRegions 'exreg1', 'exreg2'
         }
 
         then: 'the excludedRegions node should contain the specified regions separated by a newline'
@@ -163,7 +171,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded region and a list of excluded regions'
         context.svn {
             location 'url'
-            excludedRegions 'exreg1','exreg2'
+            excludedRegions 'exreg1', 'exreg2'
             excludedRegion 'exreg3'
         }
 
@@ -212,7 +220,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of included regions'
         context.svn {
             location 'url'
-            includedRegions 'increg1','increg2'
+            includedRegions 'increg1', 'increg2'
         }
 
         then: 'the includedRegions node should contain the specified regions separated by a newline'
@@ -224,7 +232,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an included region and a list of included regions'
         context.svn {
             location 'url'
-            includedRegions 'increg1','increg2'
+            includedRegions 'increg1', 'increg2'
             includedRegion 'increg3'
         }
 
@@ -273,7 +281,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded users'
         context.svn {
             location 'url'
-            excludedUsers 'user1','user2'
+            excludedUsers 'user1', 'user2'
         }
 
         then: 'the excludedUsers node should contain the specified users separated by a newline'
@@ -285,7 +293,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded user and a list of excluded users'
         context.svn {
             location 'url'
-            excludedUsers 'user1','user2'
+            excludedUsers 'user1', 'user2'
             excludedUser 'user3'
         }
 
@@ -334,7 +342,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with a list of excluded commit messages'
         context.svn {
             location 'url'
-            excludedCommitMsgs 'commit1','commit2'
+            excludedCommitMsgs 'commit1', 'commit2'
         }
 
         then: 'the excludedCommitMessages node should contain the specified commits separated by a newline'
@@ -346,7 +354,7 @@ public class SvnContextSpec extends Specification {
         when: 'svn is called with an excluded commit message and a list of excluded commit messages'
         context.svn {
             location 'url'
-            excludedCommitMsgs 'commit1','commit2'
+            excludedCommitMsgs 'commit1', 'commit2'
             excludedCommitMsg 'commit3'
         }
 
@@ -403,34 +411,37 @@ public class SvnContextSpec extends Specification {
         thrown(IllegalStateException)
     }
 
-    def getBrowserTestData() {
+    def browserTestData() {
         [
                 [
-                        {location 'url'; browserCollabnetSvn 'http://url/'},
+                        { location 'url'; browserCollabnetSvn 'http://url/' },
                         '<browser class="hudson.scm.browsers.CollabNetSVN"><url>http://url/</url></browser>'
                 ],
                 [
-                        {location 'url'; browserFishEye 'http://url/', 'rootModule'},
-                        '<browser class="hudson.scm.browsers.FishEyeSVN"><url>http://url/</url><rootModule>rootModule</rootModule></browser>'
+                        { location 'url'; browserFishEye 'http://url/', 'rootModule' },
+                        '<browser class="hudson.scm.browsers.FishEyeSVN"><url>http://url/</url>' +
+                                '<rootModule>rootModule</rootModule></browser>'
                 ],
                 [
-                        {location 'url'; browserSvnWeb 'http://url/'},
+                        { location 'url'; browserSvnWeb 'http://url/' },
                         '<browser class="hudson.scm.browsers.SVNWeb"><url>http://url/</url></browser>'
                 ],
                 [
-                        {location 'url'; browserSventon 'http://url/', 'repoInstance'},
-                        '<browser class="hudson.scm.browsers.Sventon"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>'
+                        { location 'url'; browserSventon 'http://url/', 'repoInstance' },
+                        '<browser class="hudson.scm.browsers.Sventon"><url>http://url/</url>' +
+                                '<repositoryInstance>repoInstance</repositoryInstance></browser>'
                 ],
                 [
-                        {location 'url'; browserSventon2 'http://url/', 'repoInstance'},
-                        '<browser class="hudson.scm.browsers.Sventon2"><url>http://url/</url><repositoryInstance>repoInstance</repositoryInstance></browser>'
+                        { location 'url'; browserSventon2 'http://url/', 'repoInstance' },
+                        '<browser class="hudson.scm.browsers.Sventon2"><url>http://url/</url>' +
+                                '<repositoryInstance>repoInstance</repositoryInstance></browser>'
                 ],
                 [
-                        {location 'url'; browserViewSvn 'http://url/'},
+                        { location 'url'; browserViewSvn 'http://url/' },
                         '<browser class="hudson.scm.browsers.ViewSVN"><url>http://url/</url></browser>'
                 ],
                 [
-                        {location 'url'; browserWebSvn 'http://url/'},
+                        { location 'url'; browserWebSvn 'http://url/' },
                         '<browser class="hudson.scm.browsers.WebSVN"><url>http://url/</url></browser>'
                 ]
         ]
@@ -445,7 +456,7 @@ public class SvnContextSpec extends Specification {
         assertXmlEqual(xmlResult, context.scmNode.browser[0])
 
         where:
-        [svnClosure, xmlResult] << getBrowserTestData()
+        [svnClosure, xmlResult] << browserTestData()
 
     }
 
@@ -457,7 +468,8 @@ public class SvnContextSpec extends Specification {
 
         then:
         isValidSvnScmNode(context.scmNode)
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'http://svn.apache.org/repos/asf/xml/crimson/trunk/'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() ==
+                'http://svn.apache.org/repos/asf/xml/crimson/trunk/'
         context.scmNode.excludedRegions.size() == 1
         context.scmNode.excludedRegions[0].value() == '/trunk/.*'
     }

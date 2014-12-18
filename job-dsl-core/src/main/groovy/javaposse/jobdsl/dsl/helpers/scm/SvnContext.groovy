@@ -1,21 +1,21 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class SvnContext implements Context {
-    def static class Location {
+    static class Location {
         String url = null
         String local = '.'
     }
 
-    def locations = []
-    def checkoutStrategy = SvnCheckoutStrategy.Update
-    def excludedRegions = []
-    def includedRegions = []
-    def excludedUsers = []
-    def excludedCommitMsgs = []
-    def excludedRevProp = ''
+    List<Location> locations = []
+    SvnCheckoutStrategy checkoutStrategy = SvnCheckoutStrategy.Update
+    List<String> excludedRegions = []
+    List<String> includedRegions = []
+    List<String> excludedUsers = []
+    List<String> excludedCommitMsgs = []
+    String excludedRevProp = ''
     Closure browserXmlClosure = null
     Closure configureXmlClosure = null
 
@@ -29,18 +29,18 @@ class SvnContext implements Context {
      * @param svnUrl What to checkout from SVN.
      * @param localDir Destination directory relative to workspace. If not specified, defaults to '.'.
      */
-    def location(String svnUrl, String localDir = '.') {
-        locations << new Location(url:svnUrl, local:localDir)
+    void location(String svnUrl, String localDir = '.') {
+        locations << new Location(url: svnUrl, local: localDir)
     }
 
     /**
      * The checkout strategy that should be used.  This is a global setting for all
      * locations.
      * If no checkout strategy is configured, the default is SvnCheckoutStrategy.Update.
-     * @param strategy Strategy to use. 
+     * @param strategy Strategy to use.
      * @see {@link SvnCheckoutStrategy}
      */
-    def checkoutStrategy(SvnCheckoutStrategy strategy) {
+    void checkoutStrategy(SvnCheckoutStrategy strategy) {
         checkoutStrategy = strategy
     }
 
@@ -52,7 +52,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param pattern RegEx
      */
-    def excludedRegion(String pattern) {
+    void excludedRegion(String pattern) {
         excludedRegions << pattern
     }
 
@@ -64,7 +64,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param patterns RegEx
      */
-    def excludedRegions(String... patterns) {
+    void excludedRegions(String... patterns) {
         patterns.each {
             excludedRegion(it)
         }
@@ -78,7 +78,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param pattern RegEx
      */
-    def includedRegion(String pattern) {
+    void includedRegion(String pattern) {
         includedRegions << pattern
     }
 
@@ -90,7 +90,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param patterns RegEx
      */
-    def includedRegions(String... patterns) {
+    void includedRegions(String... patterns) {
         patterns.each {
             includedRegion(it)
         }
@@ -104,7 +104,7 @@ class SvnContext implements Context {
      * determining if a build needs to be triggered.
      * @param user User to ignore when triggering builds
      */
-    def excludedUser(String user) {
+    void excludedUser(String user) {
         excludedUsers << user
     }
 
@@ -116,7 +116,7 @@ class SvnContext implements Context {
      * determining if a build needs to be triggered.
      * @param users Users to ignore when triggering builds
      */
-    def excludedUsers(String... users) {
+    void excludedUsers(String... users) {
         users.each {
             excludedUser(it)
         }
@@ -130,7 +130,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param pattern RegEx
      */
-    def excludedCommitMsg(String pattern) {
+    void excludedCommitMsg(String pattern) {
         excludedCommitMsgs << pattern
     }
 
@@ -142,7 +142,7 @@ class SvnContext implements Context {
      * patterns when determining if a build needs to be triggered.
      * @param patterns RegEx
      */
-    def excludedCommitMsgs(String... patterns) {
+    void excludedCommitMsgs(String... patterns) {
         patterns.each {
             excludedCommitMsg(it)
         }
@@ -156,7 +156,7 @@ class SvnContext implements Context {
      * This only works in Subversion 1.5 servers or greater.
      * @param pattern RegEx
      */
-    def excludedRevProp(String revisionProperty) {
+    void excludedRevProp(String revisionProperty) {
         excludedRevProp = revisionProperty
     }
 
@@ -165,7 +165,7 @@ class SvnContext implements Context {
      */
     private Closure basicBrowserXml(String className, String url) {
         return { svnNode ->
-            svnNode << browser('class':className) {
+            svnNode << browser(class: className) {
                 delegate.url url
             }
         }
@@ -176,7 +176,7 @@ class SvnContext implements Context {
      */
     private Closure sventonBrowserXml(String className, String url, String repoInstance) {
         return { svnNode ->
-            svnNode << browser('class':className) {
+            svnNode << browser(class: className) {
                 delegate.url url
                 delegate.repositoryInstance repoInstance
             }
@@ -193,7 +193,7 @@ class SvnContext implements Context {
      * }
      * </pre>
      */
-    def browserCollabnetSvn(String url) {
+    void browserCollabnetSvn(String url) {
         validateBrowser()
         browserXmlClosure = basicBrowserXml('hudson.scm.browsers.CollabNetSVN', url)
     }
@@ -209,10 +209,10 @@ class SvnContext implements Context {
      * }
      * </pre>
      */
-    def browserFishEye(String url, String rootModule) {
+    void browserFishEye(String url, String rootModule) {
         validateBrowser()
         browserXmlClosure = { svnNode ->
-            svnNode << browser('class':'hudson.scm.browsers.FishEyeSVN') {
+            svnNode << browser(class: 'hudson.scm.browsers.FishEyeSVN') {
                 delegate.url url
                 delegate.rootModule rootModule
             }
@@ -229,7 +229,7 @@ class SvnContext implements Context {
      * }
      * </pre>
      */
-    def browserSvnWeb(String url) {
+    void browserSvnWeb(String url) {
         validateBrowser()
         browserXmlClosure = basicBrowserXml('hudson.scm.browsers.SVNWeb', url)
     }
@@ -245,7 +245,7 @@ class SvnContext implements Context {
      * }
      * </pre>
      */
-    def browserSventon(String url, String repoInstance) {
+    void browserSventon(String url, String repoInstance) {
         validateBrowser()
         browserXmlClosure = sventonBrowserXml('hudson.scm.browsers.Sventon', url, repoInstance)
     }
@@ -261,7 +261,7 @@ class SvnContext implements Context {
      * }
      * </pre>
      */
-    def browserSventon2(String url, String repoInstance) {
+    void browserSventon2(String url, String repoInstance) {
         validateBrowser()
         browserXmlClosure = sventonBrowserXml('hudson.scm.browsers.Sventon2', url, repoInstance)
     }
@@ -276,7 +276,7 @@ class SvnContext implements Context {
      * }
      * </pre>
      */
-    def browserViewSvn(String url) {
+    void browserViewSvn(String url) {
         validateBrowser()
         browserXmlClosure = basicBrowserXml('hudson.scm.browsers.ViewSVN', url)
     }
@@ -291,7 +291,7 @@ class SvnContext implements Context {
      * }
      * </pre>
      */
-    def browserWebSvn(String url) {
+    void browserWebSvn(String url) {
         validateBrowser()
         browserXmlClosure = basicBrowserXml('hudson.scm.browsers.WebSVN', url)
     }
