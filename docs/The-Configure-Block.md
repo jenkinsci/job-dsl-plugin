@@ -95,23 +95,23 @@ To ease navigation, two key operators have been overridden. Try to use them as m
 * `<<` - appends as a child. If a Node is provided, it is directly added. A string is created as a node. A closure is
   processed like a NodeBuilder, allowing many nodes to be appended.
 
-# ConcurrentModificationException
+# Troubleshooting
 
-If you are getting ConcurrentModificationException when using the configure block, the XML element that you are trying
-to generate might have a conflict with job-dsl-plugin internal method names. To workaround this, you can use the
-closure's __delegate__ variable.
+## ConcurrentModificationException
+
+If you are getting a ConcurrentModificationException when using the configure block, the XML element that you are trying
+to generate might have a conflict with other (possibly undocumented and internal) DSL method names. To avoid this, you
+can use the closure's `delegate` variable.
 
 Below is an example of a configure block that is trying to generate `<label>my-label</label>`.
-Label element is conflicting with [Job.groovy label DSL]
-(https://github.com/jenkinsci/job-dsl-plugin/blob/job-dsl-1.27/job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/Job.groovy#L68).
+The label element is conflicting with the [label](Job-reference#label) DSL method.
 
 ```groovy
 job {
-    name 'foo'
     configure { project ->
-        project << 'foo' {
-            parent {
-                delegate.label('my-label') // delegate variable here
+        project << foo {
+            bar {
+                delegate.label('my-label') // use the delegate variable here
             }
         }
     }
