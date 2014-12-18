@@ -1,5 +1,6 @@
 package javaposse.jobdsl.plugin;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -34,7 +35,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static javaposse.jobdsl.plugin.JenkinsJobManagement.getItemNameFromPath;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -95,6 +98,15 @@ public class ExecuteDslScripts extends Builder {
         this.removedViewAction = removedViewAction;
         this.lookupStrategy = lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
         this.additionalClasspath = additionalClasspath;
+    }
+
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
+                             LookupStrategy lookupStrategy) {
+        this(scriptLocation, ignoreExisting, removedJobAction, RemovedViewAction.IGNORE, lookupStrategy, null);
+    }
+
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
+        this(scriptLocation, ignoreExisting, removedJobAction, LookupStrategy.JENKINS_ROOT);
     }
 
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
@@ -333,12 +345,19 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Removing views", removed);
 
         // Delete views
-        for (GeneratedView removedView : removed) {
-            String viewName = removedView.getName();
-            ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
-            if (parent instanceof ViewGroup) {
-                View view = ((ViewGroup) parent).getView(viewName);
-                if (view != null && removedViewAction == removedViewAction.DELETE) {
+        if (removedViewAction == removedViewAction.DELETE) {
+            for (GeneratedView removedView : removed) {
+                String viewName = removedView.getName();
+                ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
+                View view = null;
+                if (parent instanceof Jenkins) {
+                    view = ((ViewGroup) parent).getView(viewName);
+                } else if (parent instanceof Folder) {
+                    view = ((ViewGroup) parent).getView(getItemNameFromPath(viewName));
+                } else {
+                    LOGGER.log(Level.WARNING, format("Could not delete view within %s", parent.getClass()));
+                }
+                if (view != null) {
                     ((ViewGroup) parent).deleteView(view);
                 }
             }
