@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -88,7 +87,8 @@ public class ExecuteDslScripts extends Builder {
 
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy, String additionalClasspath) {
+                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy,
+                             String additionalClasspath) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation == null ? null : scriptLocation.targets;
@@ -112,11 +112,6 @@ public class ExecuteDslScripts extends Builder {
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
                              RemovedViewAction removedViewAction, LookupStrategy lookupStrategy) {
         this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, lookupStrategy, null);
-    }
-
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             RemovedViewAction removedViewAction) {
-        this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, LookupStrategy.JENKINS_ROOT);
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -334,7 +329,8 @@ public class ExecuteDslScripts extends Builder {
         }
     }
 
-    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedView> freshViews) throws IOException {
+    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener,
+                                      Set<GeneratedView> freshViews) throws IOException {
         Set<GeneratedView> generatedViews = extractGeneratedViews(build.getProject());
         Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
@@ -345,14 +341,12 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Removing views", removed);
 
         // Delete views
-        if (removedViewAction == removedViewAction.DELETE) {
+        if (removedViewAction == RemovedViewAction.DELETE) {
             for (GeneratedView removedView : removed) {
                 String viewName = removedView.getName();
                 ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
                 View view = null;
-                if (parent instanceof Jenkins) {
-                    view = ((ViewGroup) parent).getView(viewName);
-                } else if (parent instanceof Folder) {
+                if (parent instanceof ViewGroup) {
                     view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
                 } else {
                     LOGGER.log(Level.WARNING, format("Could not delete view within %s", parent.getClass()));
