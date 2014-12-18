@@ -26,6 +26,7 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.model.Jenkins;
+import org.apache.commons.io.FilenameUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.FileInputStream;
@@ -37,7 +38,6 @@ import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static javaposse.jobdsl.plugin.JenkinsJobManagement.getItemNameFromPath;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -353,7 +353,7 @@ public class ExecuteDslScripts extends Builder {
                 if (parent instanceof Jenkins) {
                     view = ((ViewGroup) parent).getView(viewName);
                 } else if (parent instanceof Folder) {
-                    view = ((ViewGroup) parent).getView(getItemNameFromPath(viewName));
+                    view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
                 } else {
                     LOGGER.log(Level.WARNING, format("Could not delete view within %s", parent.getClass()));
                 }
