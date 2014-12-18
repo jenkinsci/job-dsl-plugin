@@ -43,6 +43,14 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         return items;
     }
 
+    public ListBoxModel doFillRemovedViewActionItems() {
+        ListBoxModel items = new ListBoxModel();
+        for (RemovedViewAction action : RemovedViewAction.values()) {
+            items.add(action.getDisplayName(), action.name());
+        }
+        return items;
+    }
+
     public ListBoxModel doFillLookupStrategyItems() {
         ListBoxModel items = new ListBoxModel();
         for (LookupStrategy item : LookupStrategy.values()) {
