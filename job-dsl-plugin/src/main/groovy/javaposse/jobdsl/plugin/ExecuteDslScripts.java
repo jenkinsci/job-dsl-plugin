@@ -13,6 +13,9 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Item;
+import hudson.model.ItemGroup;
+import hudson.model.View;
+import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
@@ -310,7 +313,7 @@ public class ExecuteDslScripts extends Builder {
         }
     }
 
-    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedView> freshViews) {
+    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedView> freshViews) throws IOException {
         Set<GeneratedView> generatedViews = extractGeneratedViews(build.getProject());
         Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
@@ -319,6 +322,18 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Adding views", added);
         logItems(listener, "Existing views", existing);
         logItems(listener, "Removing views", removed);
+
+        // Delete views
+        for (GeneratedView removedView : removed) {
+            String viewName = removedView.getName();
+            ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
+            if (parent instanceof ViewGroup) {
+                View view = ((ViewGroup) parent).getView(viewName);
+                if (view != null && removedJobAction == RemovedJobAction.DELETE) {
+                    ((ViewGroup) parent).deleteView(view);
+                }
+            }
+        }
     }
 
     private Set<GeneratedView> extractGeneratedViews(AbstractProject<?, ?> project) {

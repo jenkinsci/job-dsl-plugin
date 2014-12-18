@@ -480,6 +480,32 @@ class ExecuteDslScriptsSpec extends Specification {
         view.description == null
     }
 
+    def deleteView() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+
+        when:
+        String script1 = 'view { name "test-view" }'
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, script1), false, DELETE
+        )
+        runBuild(job, builder1)
+
+        then:
+        jenkinsRule.instance.getView('test-view') instanceof ListView
+
+        when:
+        String script2 = 'view { name "different-view" }'
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, script2), false, DELETE
+        )
+        runBuild(job, builder2)
+
+        then:
+        jenkinsRule.jenkins.getView('different-view') instanceof ListView
+        jenkinsRule.jenkins.getView('test-view') == null
+    }
+
     def createFolder() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
