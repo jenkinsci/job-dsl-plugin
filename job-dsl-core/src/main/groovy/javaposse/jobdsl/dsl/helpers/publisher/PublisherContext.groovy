@@ -336,41 +336,39 @@ class PublisherContext implements Context {
     }
 
     /**
-     <htmlpublisher.HtmlPublisher>
-     <reportTargets>
-     <htmlpublisher.HtmlPublisherTarget>
-     <reportName>Gradle Tests</reportName>
-     <reportDir>build/reports/tests/</reportDir>
-     <reportFiles>index.html</reportFiles>
-     <keepAll>false</keepAll>
-     <allowMissing>false</allowMissing>
-     <wrapperName>htmlpublisher-wrapper.html</wrapperName>
-     </htmlpublisher.HtmlPublisherTarget>
-     </reportTargets>
-     </htmlpublisher.HtmlPublisher>
+     * <htmlpublisher.HtmlPublisher>
+     *     <reportTargets>
+     *         <htmlpublisher.HtmlPublisherTarget>
+     *             <reportName>Gradle Tests</reportName>
+     *             <reportDir>build/reports/tests/</reportDir>
+     *             <reportFiles>index.html</reportFiles>
+     *             <keepAll>false</keepAll>
+     *             <allowMissing>false</allowMissing>
+     *             <wrapperName>htmlpublisher-wrapper.html</wrapperName>
+     *         </htmlpublisher.HtmlPublisherTarget>
+     *     </reportTargets>
+     * </htmlpublisher.HtmlPublisher>
      */
     void publishHtml(Closure htmlReportContext) {
-        HtmlReportContext reportContext = new HtmlReportContext()
+        HtmlReportContext reportContext = new HtmlReportContext(jobManagement)
         ContextHelper.executeInContext(htmlReportContext, reportContext)
 
-        // Now that the context has what we need
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node htmlPublisherNode = nodeBuilder.'htmlpublisher.HtmlPublisher' {
+        publisherNodes << NodeBuilder.newInstance().'htmlpublisher.HtmlPublisher' {
             reportTargets {
-                reportContext.targets.each { HtmlReportContext.HtmlPublisherTarget target ->
+                reportContext.targets.each { HtmlReportTargetContext target ->
                     'htmlpublisher.HtmlPublisherTarget' {
-                        // All fields can have a blank, odd.
-                        reportName target.reportName
-                        reportDir target.reportDir
-                        reportFiles target.reportFiles
-                        keepAll target.keepAll
-                        allowMissing target.allowMissing
-                        wrapperName target.wrapperName
+                        reportName(target.reportName)
+                        reportDir(target.reportDir)
+                        reportFiles(target.reportFiles)
+                        keepAll(target.keepAll)
+                        if (!jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.3'))) {
+                            allowMissing(target.allowMissing)
+                        }
+                        wrapperName('htmlpublisher-wrapper.html')
                     }
                 }
             }
         }
-        publisherNodes << htmlPublisherNode
     }
 
     /**

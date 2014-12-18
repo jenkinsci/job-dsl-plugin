@@ -2651,24 +2651,40 @@ job {
 ```
 
 ## HTML Publisher
-```groovy
-publishHtml {
-    report(String reportDir, String reportName = null, String reportFiles = 'index.html', Boolean keepAll = false
-          Boolean allowMissing)
-    report(Map args) // same names as the method above
-}
 
+```groovy
+job {
+    publishers {
+        publishHtml {
+            report(String reportDir) {                    // since 1.28
+                reportName(String reportName)
+                reportFiles(String reportFiles)           // defaults to 'index.html' if omitted
+                allowMissing(boolean allowMissing = true) // defaults to false if omitted
+                keepAll(boolean keepAll = true)           // defaults to false if omitted
+            }
+            report(String reportDir, String reportName, String reportFiles = 'index.html',
+                   Boolean keepAll = false) // deprecated since 1.28
+            report(Map args) // deprecated since 1.28, same names as the method above
+        }
+    }
+}
 ```
 
-Provides context to add html reports to be archive. The report method can be called multiple times in the closure. Simple
-example with variations on how to call the report method:
+Allows HTML reports to be archived. The report method can be called multiple times to add more reports.
 
 ```groovy
-publishers {
-    publishHtml {
-        report('build/test-output/*', 'Test Output')
-        report 'build/coverage/*', 'Coverage Report', 'coverage.html' // Without parens
-        report reportName: 'Gradle Tests', reportDir: 'test/*', keepAll: true, allowMissing: false // Map synxtax
+job {
+    publishers {
+        publishHtml {
+            report('build/test-output') {
+                reportName('Test Output')
+            }
+            report('test') {
+                reportName('Gradle Tests')
+                keepAll()
+                allowMissing()
+            }
+        }
     }
 }
 ```

@@ -594,10 +594,11 @@ class PublisherContextSpec extends Specification {
         jacocoNode.changeBuildStatus[0].value() == 'true'
     }
 
-    def 'calling minimal html publisher'() {
+    def 'calling minimal html publisher closure'() {
         when:
         context.publishHtml {
-            report 'build/*'
+            report('build/*') {
+            }
         }
 
         then:
@@ -605,19 +606,88 @@ class PublisherContextSpec extends Specification {
         publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
         !publisherHtmlNode.reportTargets.isEmpty()
         def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 6
         target.reportName[0].value() == ''
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'index.html'
-        target.keepAll[0].value() == 'false'
-        target.allowMissing[0].value() == 'false'
+        target.keepAll[0].value() == false
+        target.allowMissing[0].value() == false
+        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+    }
+
+    def 'calling minimal html publisher closure, plugin version older than 1.3'() {
+        setup:
+        jobManagement.getPluginVersion('htmlpublisher') >> new VersionNumber('1.2')
+
+        when:
+        context.publishHtml {
+            report('build/*') {
+            }
+        }
+
+        then:
+        Node publisherHtmlNode = context.publisherNodes[0]
+        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
+        !publisherHtmlNode.reportTargets.isEmpty()
+        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 5
+        target.reportName[0].value() == ''
+        target.reportDir[0].value() == 'build/*'
+        target.reportFiles[0].value() == 'index.html'
+        target.keepAll[0].value() == false
+        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+    }
+
+    def 'calling html publisher closure with all options'() {
+        when:
+        context.publishHtml {
+            report('build/*') {
+                reportName('foo')
+                reportFiles('test.html')
+                allowMissing()
+                keepAll()
+            }
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.3')
+        Node publisherHtmlNode = context.publisherNodes[0]
+        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
+        !publisherHtmlNode.reportTargets.isEmpty()
+        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 6
+        target.reportName[0].value() == 'foo'
+        target.reportDir[0].value() == 'build/*'
+        target.reportFiles[0].value() == 'test.html'
+        target.keepAll[0].value() == true
+        target.allowMissing[0].value() == true
+        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+    }
+
+    def 'calling minimal html publisher'() {
+        when:
+        context.publishHtml {
+            report('build/*', 'My Name')
+        }
+
+        then:
+        Node publisherHtmlNode = context.publisherNodes[0]
+        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
+        !publisherHtmlNode.reportTargets.isEmpty()
+        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 6
+        target.reportName[0].value() == 'My Name'
+        target.reportDir[0].value() == 'build/*'
+        target.reportFiles[0].value() == 'index.html'
+        target.keepAll[0].value() == false
+        target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
     }
 
     def 'calling html publisher with a few args'() {
         when:
         context.publishHtml {
-            report reportName: 'Report Name', reportDir: 'build/*', reportFiles: 'content.html', keepAll: true,
-                   allowMissing: true
+            report(reportName: 'Report Name', reportDir: 'build/*', reportFiles: 'content.html', keepAll: true)
         }
 
         then:
@@ -625,18 +695,19 @@ class PublisherContextSpec extends Specification {
         publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
         !publisherHtmlNode.reportTargets.isEmpty()
         def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 6
         target.reportName[0].value() == 'Report Name'
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'content.html'
-        target.keepAll[0].value() == 'true'
-        target.allowMissing[0].value() == 'true'
+        target.keepAll[0].value() == true
+        target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
     }
 
     def 'calling html publisher with map syntax without all args'() {
         when:
         context.publishHtml {
-            report reportName: 'Report Name', reportDir: 'build/*'
+            report(reportName: 'Report Name', reportDir: 'build/*')
         }
 
         then:
@@ -644,11 +715,12 @@ class PublisherContextSpec extends Specification {
         publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
         !publisherHtmlNode.reportTargets.isEmpty()
         def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 6
         target.reportName[0].value() == 'Report Name'
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'index.html'
-        target.keepAll[0].value() == 'false'
-        target.allowMissing[0].value() == 'false'
+        target.keepAll[0].value() == false
+        target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
     }
 
