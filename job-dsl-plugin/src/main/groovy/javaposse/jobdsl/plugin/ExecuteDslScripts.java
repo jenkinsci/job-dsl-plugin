@@ -77,30 +77,34 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
+    private final RemovedViewAction removedViewAction;
+
     private final LookupStrategy lookupStrategy;
 
     private final String additionalClasspath;
 
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             LookupStrategy lookupStrategy, String additionalClasspath) {
+                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy, String additionalClasspath) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation == null ? null : scriptLocation.targets;
         this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
+        this.removedViewAction = removedViewAction;
         this.lookupStrategy = lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
         this.additionalClasspath = additionalClasspath;
     }
 
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             LookupStrategy lookupStrategy) {
-        this(scriptLocation, ignoreExisting, removedJobAction, lookupStrategy, null);
+                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy) {
+        this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, lookupStrategy, null);
     }
 
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
-        this(scriptLocation, ignoreExisting, removedJobAction, LookupStrategy.JENKINS_ROOT);
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
+                             RemovedViewAction removedViewAction) {
+        this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, LookupStrategy.JENKINS_ROOT);
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -109,6 +113,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
+        this.removedViewAction = RemovedViewAction.IGNORE;
         this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
         this.additionalClasspath = null;
     }
@@ -135,6 +140,10 @@ public class ExecuteDslScripts extends Builder {
 
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
+    }
+
+    public RemovedViewAction getRemovedViewAction() {
+        return removedViewAction;
     }
 
     public LookupStrategy getLookupStrategy() {
@@ -329,7 +338,7 @@ public class ExecuteDslScripts extends Builder {
             ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
             if (parent instanceof ViewGroup) {
                 View view = ((ViewGroup) parent).getView(viewName);
-                if (view != null && removedJobAction == RemovedJobAction.DELETE) {
+                if (view != null && removedViewAction == removedViewAction.DELETE) {
                     ((ViewGroup) parent).deleteView(view);
                 }
             }

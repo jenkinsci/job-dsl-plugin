@@ -22,8 +22,6 @@ import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
 
 import static hudson.model.Result.SUCCESS
-import static javaposse.jobdsl.plugin.RemovedJobAction.DELETE
-import static javaposse.jobdsl.plugin.RemovedJobAction.IGNORE
 import static org.junit.Assert.assertTrue
 
 class ExecuteDslScriptsSpec extends Specification {
@@ -51,7 +49,9 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, SCRIPT), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, SCRIPT), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
 
         when:
@@ -67,7 +67,9 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.createSlave('Node1', 'label1', null)
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, SCRIPT), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, SCRIPT), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         job.assignedLabel = Label.get('label1')
 
@@ -83,7 +85,9 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', 'jobs.groovy', null), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', 'jobs.groovy', null), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         jenkinsRule.instance.getWorkspaceFor(job).child('jobs.groovy').write(SCRIPT, UTF_8)
 
@@ -101,7 +105,9 @@ class ExecuteDslScriptsSpec extends Specification {
         new FilePath(new File(slave.remoteFS)).child('workspace/seed/jobs.groovy').write(SCRIPT, UTF_8)
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', 'jobs.groovy', null), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', 'jobs.groovy', null), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         job.assignedLabel = Label.get('label1')
 
@@ -119,7 +125,9 @@ class ExecuteDslScriptsSpec extends Specification {
         new FilePath(new File(slave.remoteFS)).child('workspace/seed/dslscripts/jobs.groovy').write(SCRIPT, UTF_8)
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', '**/*.groovy', null), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', '**/*.groovy', null), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         job.assignedLabel = Label.get('label2')
 
@@ -139,7 +147,9 @@ class ExecuteDslScriptsSpec extends Specification {
         remoteFS.child('workspace/groovyengine/util/Util.groovy').write(UTIL_CLASS, UTF_8)
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('groovyengine')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', 'jobs.groovy', null), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('false', 'jobs.groovy', null), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         job.assignedLabel = Label.get('label3')
 
@@ -161,8 +171,7 @@ class ExecuteDslScriptsSpec extends Specification {
         job.buildersList.add(
                 new ExecuteDslScripts(
                         new ExecuteDslScripts.ScriptLocation('false', 'mydsl/jobs.groovy', null),
-                        true,
-                        IGNORE
+                        true, RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
                 )
         )
         job.assignedLabel = Label.get('label4')
@@ -182,7 +191,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script1 = 'job { name "test-job" }'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script1), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script1),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE
         )
         runBuild(job, builder1)
 
@@ -192,7 +202,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script2 = 'job { name "different-job" }'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script2), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script2),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE
         )
         runBuild(job, builder2)
 
@@ -209,7 +220,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script1 = 'job { name "/folder/test-job" }'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script1), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script1),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE
         )
         runBuild(job, builder1)
 
@@ -219,7 +231,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script2 = 'job { name "/folder/different-job" }'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script2), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script2),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE
         )
         runBuild(job, builder2)
 
@@ -236,7 +249,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script1 = 'job { name "test-job" }'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script1), false, DELETE, LookupStrategy.SEED_JOB
+                new ExecuteDslScripts.ScriptLocation('true', null, script1),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE, LookupStrategy.SEED_JOB
         )
         runBuild(job, builder1)
 
@@ -246,7 +260,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script2 = 'job { name "/folder/different-job" }'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script2), false, DELETE, LookupStrategy.SEED_JOB
+                new ExecuteDslScripts.ScriptLocation('true', null, script2), false,
+                RemovedJobAction.DELETE, RemovedViewAction.DELETE, LookupStrategy.SEED_JOB
         )
         runBuild(job, builder2)
 
@@ -265,7 +280,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script = 'job {\n name("test-job")\n using("template")\n}'
         ExecuteDslScripts builder = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE
         )
         FreeStyleBuild build = runBuild(job, builder)
 
@@ -285,7 +301,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script = 'job {\n name("test-job")\n using("/template-folder/template")\n}'
         ExecuteDslScripts builder = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script), false,
+                RemovedJobAction.DELETE, RemovedViewAction.DELETE
         )
         FreeStyleBuild build = runBuild(job, builder)
 
@@ -305,7 +322,8 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script = 'job {\n name("test-job")\n using("template")\n}'
         ExecuteDslScripts builder = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script), false, DELETE, LookupStrategy.SEED_JOB
+                new ExecuteDslScripts.ScriptLocation('true', null, script),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE, LookupStrategy.SEED_JOB
         )
         FreeStyleBuild build = runBuild(job, builder)
 
@@ -462,7 +480,9 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.addView(new ListView('test-view'))
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, VIEW_SCRIPT), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, VIEW_SCRIPT),
+                        true, RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         job.onCreatedFromScratch()
 
@@ -487,7 +507,9 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script1 = 'view { name "test-view" }'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script1), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script1),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE
+
         )
         runBuild(job, builder1)
 
@@ -497,7 +519,9 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         String script2 = 'view { name "different-view" }'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, script2), false, DELETE
+                new ExecuteDslScripts.ScriptLocation('true', null, script2),
+                false, RemovedJobAction.DELETE, RemovedViewAction.DELETE
+
         )
         runBuild(job, builder2)
 
@@ -606,7 +630,9 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.createProject(Folder, 'test-folder')
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, FOLDER_SCRIPT), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, FOLDER_SCRIPT), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         job.onCreatedFromScratch()
 
@@ -628,7 +654,9 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, FOLDER_SCRIPT), true, IGNORE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, FOLDER_SCRIPT),
+                        true, RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
+                )
         )
         job.onCreatedFromScratch()
 
@@ -641,7 +669,9 @@ class ExecuteDslScriptsSpec extends Specification {
         when:
         job.buildersList.clear()
         job.buildersList.add(
-                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, '// empty'), true, DELETE)
+                new ExecuteDslScripts(new ExecuteDslScripts.ScriptLocation('true', null, '// empty'), true,
+                        RemovedJobAction.DELETE, RemovedViewAction.DELETE
+                )
         )
         freeStyleBuild = job.scheduleBuild2(0).get()
 
@@ -666,7 +696,8 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
                 new ExecuteDslScripts(
-                        new ExecuteDslScripts.ScriptLocation('true', null, mavenPrePostScript), true, IGNORE
+                        new ExecuteDslScripts.ScriptLocation('true', null, mavenPrePostScript),
+                        true, RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
                 )
         )
 
@@ -699,7 +730,8 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(
                 new ExecuteDslScripts(
-                        new ExecuteDslScripts.ScriptLocation('true', null, emptyArchiveScript), true, IGNORE
+                        new ExecuteDslScripts.ScriptLocation('true', null, emptyArchiveScript), true,
+                        RemovedJobAction.IGNORE, RemovedViewAction.IGNORE
                 )
         )
 
