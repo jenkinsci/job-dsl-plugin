@@ -319,7 +319,6 @@ public class ExecuteDslScripts extends Builder {
 
         // Update seed reference
         for (GeneratedJob generatedJob : Sets.union(added, existing)) {
-            String generatedJobName = generatedJob.getJobName();
             AbstractProject project = getLookupStrategy().getItem(seedJob, generatedJob.getJobName(),
                     AbstractProject.class);
             if (project != null) {
@@ -331,7 +330,7 @@ public class ExecuteDslScripts extends Builder {
                     newRef.setTemplateJobName(template.getFullName());
                 }
 
-                GeneratedJobSeedReference oldRef = generatedJobMap.get(generatedJobName);
+                GeneratedJobSeedReference oldRef = generatedJobMap.get(generatedJob.getJobName());
 
                 if (!newRef.equals(oldRef)) {
                     generatedJobMap.put(project.getFullName(), newRef);
