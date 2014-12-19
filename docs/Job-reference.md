@@ -638,54 +638,136 @@ git {
 ```
 
 ## Subversion
-
-### Job DSL Plugin Version 1.24 or greater
-
-As of version 1.24 of the Job DSL Plugin, the Subversion plugin can be configured using an improved svn closure.  The following are the methods availble in the svn closure (note: these methods are **not** available in the older svn(...) closures):
-
 ```groovy
+// Since 1.XX
 svn {
-    /*
-     * At least one location MUST be specified.
-     * Additional locations can be specified by calling location() multiple times.
-     *   svnUrl   - What to checkout from SVN.
-     *   localDir - Destination directory relative to workspace.
-     *              If not specified, defaults to '.'.
-     */
-    location(String svnUrl, String localDir = '.')
+    location(String svnUrl, String localDir = '.') // [At least one required] Specify the SVN location to check out.
+
+    checkoutStrategy(SvnCheckoutStrategy strategy) // [Optional] The checkout strategy that should be used.
+                                                   // If not specified the Update strategy is used by default.
+
+    excludedRegion(String pattern) // [Optional] Add an excluded region.
+
+    excludedRegions(String... patterns) // [Optional] Add a list of excluded regions.
+
+    includedRegion(String pattern) // [Optional] Add an included region.
+
+    includedRegions(String... patterns) // [Optional] Add a list of included regions.
+
+    excludedUser(String user) // [Optional] Add an excluded user.
+
+    excludedUsers(String... users) // [Optional] Add a list of excluded users.
+
+    excludedCommitMsg(String pattern) // [Optional] Add an excluded commit message.
+
+    excludedCommitMsgs(String... patterns) // [Optional] Add a list of excluded commit messages.
+
+    excludedRevProp(String revisionProperty) // [Optional] Set excluded revision property.
 
     /*
-     * The checkout strategy that should be used.  This is a global setting for all
-     * locations.
-     *   strategy - Strategy to use. Possible values:
-     *                CheckoutStrategy.Update
-     *                CheckoutStrategy.Checkout
-     *                CheckoutStrategy.UpdateWithClean
-     *                CheckoutStrategy.UpdateWithRevert
-     *
-     * If no checkout strategy is configured, the default is CheckoutStrategy.Update.
+     * Only one browser may be configured.
      */
-    checkoutStrategy(CheckoutStrategy strategy)
+    browserCollabnetSvn(String url)                  // [Optional] Configure CollabnetSvn browser.
+    browserFishEye(String url, String rootModule)    // [Optional] Configure FishEye browser.
+    browserSvnWeb(String url)                        // [Optional] Configure SvnWeb browser.
+    browserSventon(String url, String repoInstance)  // [Optional] Configure Sventon browser.
+    browserSventon2(String url, String repoInstance) // [Optional] Configure Sventon2 browser.
+    browserViewSvn(String url)                       // [Optional] Configure ViewSvn browser.
+    browserWebSvn(String url)                        // [Optional] Configure WebSvn browser.
 
-    /*
-     * Add an excluded region.  Each call to excludedRegion() adds to the list of
-     * excluded regions.
-     * If excluded regions are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any files and/or folders that match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   pattern - RegEx
-     */
-    excludedRegion(String pattern)
+    configure(Closure configure) // [Optional] Use a configure block, the SvnSCM node is passed in.
+}
 
-    /*
-     * Add a list of excluded regions.  Each call to excludedRegions() adds to the
-     * list of excluded regions.
-     * If excluded regions are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any files and/or folders that match the specified
-     * patterns when determining if a build needs to be triggered.
-     *   patterns - RegEx
-     */
-    excludedRegions(String... patterns)
+svn(String svnUrl, String localDir='.', Closure configure = null)
+```
+Adds an SVN SCM source. The first variant can be used for advanced configuration (since 1.XX), the other two variants are shortcuts for simpler SVN SCM configurations.
+Add Subversion source. 'svnUrl' is self explanatory. 'localDir' sets the <local> tag (which is set to '.' if you leave this arg out). The Configure block is handed a hudson.scm.SubversionSCM node.
+
+###
+Configuring what to check out from SVN
+
+At least one location must be configured in order for the SVN plugin to operate correctly.  Locations are configured by calling the location() method for each location desired.
+By default, files are checked out into the workspace directory. To change this behaviour specify an alternate directory using the localDir parameter. Directories specified usung localDir are relative to the workspace directory.
+
+Reference:
+```
+location(String svnUrl, String localDir = '.')
+    svnUrl   - What to checkout from SVN.
+    localDir - Destination directory relative to workspace.
+               If not specified, defaults to '.'.
+```
+
+Examples:
+```groovy
+job {
+    name 'svnLocationExample'
+    scm {
+        svn {
+            // Check out project1 into the workspace directory.
+            location 'https://svn.mydomain.com/repo/project1/trunk'
+
+            // Check out project2 into the directory 'proj2'
+            location 'https://svn.mydomain.com/repo/project2/trunk', 'proj2'
+        }
+    }
+}
+```
+
+###
+Configuring the checkout strategy
+
+More than one strategy exists for checking out files from SVN. The default strategy, Update, will attempt to perform an 'svn update' whenever possible. An alternative strategy may be used by calling the checkoutStrategy() method. The checkout strategy used by the SVN plugin is the same for all locations specified in the job.
+
+Reference:
+```
+checkoutStrategy(SvnCheckoutStrategy strategy)
+    strategy - Strategy to use.
+               Available strategies:
+                   SvnCheckoutStrategy.Update
+                       TODO
+                   SvnCheckoutStrategy.Checkout
+                       TODO
+                   SvnCheckoutStrategy.UpdateWithClean
+                       TODO
+                   SvnCheckoutStrategy.UpdateWithRevert
+                       TODO
+```
+
+Examples:
+```groovy
+job {
+    name 'svnCheckoutStrategyExample'
+    scm {
+        svn {
+            location 'https://svn.mydomain.com/repo/project1/trunk'
+
+            // Use the Checkout strategy instead of the default Update strategy.
+            checkoutStrategy SvnCheckoutStrategy.Checkout
+        }
+    }
+}
+```
+###
+Configuring excluded regions
+
+An excluded region is a regular expression pattern that matches a set of files and/or folders in the configured locations.
+If excluded regions are configured, and Jenkins is set to poll for changes, Jenkins will ignore any files and/or folders that match the specified patterns when determining if a build needs to be triggered.
+Excluded regions can be specified by calling the excludedRegion() or excludedRegions() methods. The same set of excluded regions are used for all locations specified in the job. excludedRegion() may be called multiple times, each call appends the specified pattern to the list of excluded regions. excludedRegions() can be used to add multiple patterns at once, they are appended to any excluded regions that have been already configured.
+
+Reference:
+```
+excludedRegion(String pattern)
+    pattern - A regular expression that should be matched as part of the excluded regions.
+
+excludedRegions(String... patterns)
+    patterns - A list of regular expressions that should be matched as part of the excluded regions.
+```
+
+Examples:
+```groovy
+TODO
+```
+#######################################
 
     /*
      * Add an included region.  Each call to includedRegion() adds to the list of
@@ -725,7 +807,7 @@ svn {
      * determining if a build needs to be triggered.
      *   users - Users to ignore when triggering builds
      */
-    excludedUsers(Iterable<String> users)
+    excludedUsers(String... users)
 
     /*
      * Add an exluded commit message.  Each call to excludedCommitMsg() adds to the list of
@@ -737,56 +819,43 @@ svn {
      */
     excludedCommitMsg(String pattern)
 
-    /*
-     * Add a list of excluded commit messages.  Each call to excludedCommitMsgs() adds to the
-     * list of excluded commit messages.
-     * If excluded messages are configured, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any revisions with commit messages that match the specified
-     * patterns when determining if a build needs to be triggered.
+###
+excludedCommitMsgs(String... patterns)
+
+patterns -
+
+Add a list of excluded commit messages.  Each call to excludedCommitMsgs() adds to the list of excluded commit messages.
+If excluded messages are configured, and Jenkins is set to poll for changes, Jenkins will ignore any revisions with commit messages that match the specified patterns when determining if a build needs to be triggered.
      *   patterns - RegEx
      */
-    excludedCommitMsgs(Iterable<String> patterns)
 
-    /*
-     * Set an excluded revision property.
-     * If an excluded revision property is set, and Jenkins is set to poll for changes,
-     * Jenkins will ignore any revisions that are marked with the specified
-     * revision property when determining if a build needs to be triggered.
-     * This only works in Subversion 1.5 servers or greater.
-     *   pattern - RegEx
-     */
-    excludedRevProp(String revisionProperty)
-}
-```
-Note that no support for a configure block is available in the new svn closure. Use the job closure's configure method instead.
+#######################################
+###
+excludedRevProp(String revisionProperty)
 
-### Job DSL Plugin Version less than X.XX
+revisionProperty - TODO
 
-If using a version of the Job DSL Plugin older than 1.24, the following configuration methods are available.
-Note; For backwards compatibility, these are still supported in version 1.24 and above.
-
-```groovy
-svn(String svnUrl, String localDir='.', Closure configure = null)
-```
-
-Add Subversion source. 'svnUrl' is self explanatory. 'localDir' sets the <local> tag (which is set to '.' if you leave this arg out). The Configure block is handed a hudson.scm.SubversionSCM node.
+Set an excluded revision property.
+If an excluded revision property is set, and Jenkins is set to poll for changes, Jenkins will ignore any revisions that are marked with the specified revision property when determining if a build needs to be triggered.
+Excluding revision properties only works with Subversion 1.5 servers or greater.
 
 You can use the Configure block to configure additional svn nodes such as a <browser> node. First a FishEyeSVN example:
 
-```groovy
-svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-    svnNode / browser(class:'hudson.scm.browsers.FishEyeSVN') {
-        url 'http://mycompany.com/fisheye/repo_name'
-        rootModule 'my_root_module'
-    }
-}
-```
+#######################################
+    browserCollabnetSvn(String url)                  // [Optional] Configure CollabnetSvn browser.
+    browserFishEye(String url, String rootModule)    // [Optional] Configure FishEye browser.
+    browserSvnWeb(String url)                        // [Optional] Configure SvnWeb browser.
+    browserSventon(String url, String repoInstance)  // [Optional] Configure Sventon browser.
+    browserSventon2(String url, String repoInstance) // [Optional] Configure Sventon2 browser.
+    browserViewSvn(String url)                       // [Optional] Configure ViewSvn browser.
+    browserWebSvn(String url)                        // [Optional] Configure WebSvn browser.
 
-and now a ViewSVN example:
+    configure(Closure configure) // [Optional] Use a configure block, the SvnSCM node is passed in.
+#######################################
+### Examples
+
 ```groovy
-svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-    svnNode / browser(class:'hudson.scm.browsers.ViewSVN') / url << 'http://mycompany.com/viewsvn/repo_name'
-}
+TODO
 ```
 
 For more details on using the configure block syntax, see our [dedicated page](configure-block).
