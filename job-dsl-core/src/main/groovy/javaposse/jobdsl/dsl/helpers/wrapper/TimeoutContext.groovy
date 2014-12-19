@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
 /** Context to configure timeout */

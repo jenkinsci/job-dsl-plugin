@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException

@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class PullRequestBuilderContext implements Context {
 

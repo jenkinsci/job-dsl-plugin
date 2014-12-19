@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 /**
  * DSL for https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin

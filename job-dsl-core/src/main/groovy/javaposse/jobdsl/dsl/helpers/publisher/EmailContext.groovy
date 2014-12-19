@@ -1,15 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static com.google.common.base.Preconditions.checkArgument
 
 class EmailContext implements Context {
-    Set<String> emailTriggerNames = ['PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement',
-            'Failure', 'Regression', 'Aborted', 'NotBuilt', 'FirstFailure', 'Unstable']
-    List<EmailTrigger> emailTriggers = []
+    Set<String> emailTriggerNames = [
+            'PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement',
+            'Failure', 'Regression', 'Aborted', 'NotBuilt', 'FirstFailure', 'Unstable',
+            'Always', 'SecondFailure', 'FirstUnstable', 'FixedUnhealthy', 'StatusChanged',
 
-    // Not sure why a map syntax wouldn't call method below, so creating this one
+    ]
+    List<EmailTrigger> emailTriggers = []
+    Closure configureClosure
+
     void trigger(Map args) {
         trigger(args.triggerName, args.subject, args.body, args.recipientList, args.sendToDevelopers,
                 args.sendToRequester, args.includeCulprits, args.sendToRecipientList)
@@ -24,14 +28,20 @@ class EmailContext implements Context {
                 includeCulprits, sendToRecipientList)
     }
 
-    Closure configureClosure
-
     void configure(Closure configureClosure) {
-        // save for later
         this.configureClosure = configureClosure
     }
 
     static class EmailTrigger {
+        String triggerShortName
+        String recipientList
+        String subject
+        String body
+        boolean sendToDevelopers
+        boolean sendToRequester
+        boolean includeCulprits
+        boolean sendToRecipientList
+
         EmailTrigger(String triggerShortName, String recipientList = null, String subject = null, String body = null,
                      Boolean sendToDevelopers = null, Boolean sendToRequester = null,
                      Boolean includeCulprits = null, Boolean sendToRecipientList = null) {
@@ -45,9 +55,5 @@ class EmailContext implements Context {
             this.includeCulprits = (includeCulprits == null) ? false : includeCulprits
             this.sendToRecipientList = (sendToRecipientList == null) ? true : sendToRecipientList
         }
-
-        String triggerShortName, recipientList, subject, body
-        boolean sendToDevelopers, sendToRequester, includeCulprits, sendToRecipientList
-
     }
 }

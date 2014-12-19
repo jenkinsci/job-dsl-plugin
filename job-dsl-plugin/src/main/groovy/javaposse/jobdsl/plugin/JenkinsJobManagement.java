@@ -33,6 +33,7 @@ import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
+import org.apache.commons.io.FilenameUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
@@ -113,7 +114,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         validateUpdateArgs(path, config);
 
         AbstractItem item = lookupStrategy.getItem(build.getProject(), path, AbstractItem.class);
-        String jobName = getItemNameFromPath(path);
+        String jobName = FilenameUtils.getName(path);
         Jenkins.checkGoodName(jobName);
 
         if (item == null) {
@@ -127,7 +128,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public void createOrUpdateView(String path, String config, boolean ignoreExisting) {
         validateUpdateArgs(path, config);
-        String viewBaseName = getItemNameFromPath(path);
+        String viewBaseName = FilenameUtils.getName(path);
         Jenkins.checkGoodName(viewBaseName);
         try {
             InputStream inputStream = new ByteArrayInputStream(config.getBytes("UTF-8"));
@@ -371,7 +372,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
             ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
-            String itemName = getItemNameFromPath(path);
+            String itemName = FilenameUtils.getName(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
                 ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
                 created = true;

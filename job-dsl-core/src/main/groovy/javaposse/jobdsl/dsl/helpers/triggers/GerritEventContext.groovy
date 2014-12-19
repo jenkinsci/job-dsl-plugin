@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.Context
 
 class GerritEventContext implements Context {
     private final JobManagement jobManagement

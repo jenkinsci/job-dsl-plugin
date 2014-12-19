@@ -1,7 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
-import static com.google.common.base.Preconditions.checkNotNull
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+
 import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Preconditions.checkNotNull
 
 class BuildParametersContext implements Context {
 

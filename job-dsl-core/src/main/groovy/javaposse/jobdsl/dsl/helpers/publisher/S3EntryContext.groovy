@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class S3EntryContext implements Context {
     private static final List<String> STORAGE_CLASSES = ['STANDARD', 'REDUCED_REDUNDANCY']

@@ -2,11 +2,11 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.ContextHelper
 
 class WrapperContext implements Context {
     List<Node> wrapperNodes = []

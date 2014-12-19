@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import groovy.transform.PackageScope
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull

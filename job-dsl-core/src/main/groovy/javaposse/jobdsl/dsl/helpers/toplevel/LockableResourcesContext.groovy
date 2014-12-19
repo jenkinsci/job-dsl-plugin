@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class LockableResourcesContext implements Context {
     String resourcesVariable

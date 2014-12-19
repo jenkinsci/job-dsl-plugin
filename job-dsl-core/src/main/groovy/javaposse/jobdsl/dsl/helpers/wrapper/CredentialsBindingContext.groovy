@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.Context
 
 class CredentialsBindingContext implements Context {
     private final JobManagement jobManagement

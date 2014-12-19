@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.Context
 
-import static javaposse.jobdsl.dsl.helpers.ContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class GitContext implements Context {
     private final List<WithXmlAction> withXmlActions
@@ -21,10 +21,11 @@ class GitContext implements Context {
     boolean pruneBranches = false
     String localBranch
     String relativeTargetDir
-    String reference
+    String reference = ''
     Closure withXmlClosure
     final GitBrowserContext gitBrowserContext = new GitBrowserContext()
     Node mergeOptions
+    Integer cloneTimeout
     List<Node> extensions = []
 
     GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
@@ -55,7 +56,7 @@ class GitContext implements Context {
     }
 
     void mergeOptions(String remote = null, String branch) {
-        if (jobManagement.getPluginVersion('git-plugin')?.isOlderThan(new VersionNumber('2.0.0'))) {
+        if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
             mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
                 mergeRemote(remote ?: '')
                 mergeTarget(branch)
@@ -113,6 +114,11 @@ class GitContext implements Context {
 
     void reference(String reference) {
         this.reference = reference
+    }
+
+    void cloneTimeout(int cloneTimeout) {
+        jobManagement.requireMinimumPluginVersion('git', '2.0.0')
+        this.cloneTimeout = cloneTimeout
     }
 
     void browser(Closure gitBrowserClosure) {

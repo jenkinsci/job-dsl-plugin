@@ -34,19 +34,6 @@ class JenkinsJobManagementSpec extends Specification {
     AbstractBuild build = Mock(AbstractBuild)
     JenkinsJobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), new EnvVars(), build)
 
-    def 'getItemNameFromFullName'() {
-        expect:
-        JenkinsJobManagement.getItemNameFromPath(path) == itemName
-
-        where:
-        path          || itemName
-        'a/b/c'       || 'c'
-        'folder/job'  || 'job'
-        'myjob'       || 'myjob'
-        '/folder/job' || 'job'
-        '/myjob'      || 'myjob'
-    }
-
     def 'createOrUpdateView without name'() {
         when:
         jobManagement.createOrUpdateView(null, '<View/>', true)

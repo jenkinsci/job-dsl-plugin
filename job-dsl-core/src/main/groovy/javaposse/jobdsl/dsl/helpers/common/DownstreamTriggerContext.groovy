@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.common
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static DownstreamContext.THRESHOLD_COLOR_MAP
 

@@ -13,6 +13,9 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Item;
+import hudson.model.ItemGroup;
+import hudson.model.View;
+import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
@@ -22,6 +25,7 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.model.Jenkins;
+import org.apache.commons.io.FilenameUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.FileInputStream;
@@ -32,6 +36,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 /**
@@ -75,30 +80,39 @@ public class ExecuteDslScripts extends Builder {
 
     private final RemovedJobAction removedJobAction;
 
+    private final RemovedViewAction removedViewAction;
+
     private final LookupStrategy lookupStrategy;
 
     private final String additionalClasspath;
 
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             LookupStrategy lookupStrategy, String additionalClasspath) {
+                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy,
+                             String additionalClasspath) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation == null ? null : scriptLocation.targets;
         this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
+        this.removedViewAction = removedViewAction;
         this.lookupStrategy = lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
         this.additionalClasspath = additionalClasspath;
     }
 
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
                              LookupStrategy lookupStrategy) {
-        this(scriptLocation, ignoreExisting, removedJobAction, lookupStrategy, null);
+        this(scriptLocation, ignoreExisting, removedJobAction, RemovedViewAction.IGNORE, lookupStrategy, null);
     }
 
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
         this(scriptLocation, ignoreExisting, removedJobAction, LookupStrategy.JENKINS_ROOT);
+    }
+
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
+                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy) {
+        this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, lookupStrategy, null);
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -107,6 +121,7 @@ public class ExecuteDslScripts extends Builder {
         this.targets = null;
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
+        this.removedViewAction = RemovedViewAction.IGNORE;
         this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
         this.additionalClasspath = null;
     }
@@ -133,6 +148,10 @@ public class ExecuteDslScripts extends Builder {
 
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
+    }
+
+    public RemovedViewAction getRemovedViewAction() {
+        return removedViewAction;
     }
 
     public LookupStrategy getLookupStrategy() {
@@ -349,7 +368,8 @@ public class ExecuteDslScripts extends Builder {
         }
     }
 
-    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener, Set<GeneratedView> freshViews) {
+    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener,
+                                      Set<GeneratedView> freshViews) throws IOException {
         Set<GeneratedView> generatedViews = extractGeneratedViews(build.getProject());
         Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
@@ -358,6 +378,23 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Adding views", added);
         logItems(listener, "Existing views", existing);
         logItems(listener, "Removing views", removed);
+
+        // Delete views
+        if (removedViewAction == RemovedViewAction.DELETE) {
+            for (GeneratedView removedView : removed) {
+                String viewName = removedView.getName();
+                ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
+                View view = null;
+                if (parent instanceof ViewGroup) {
+                    view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
+                } else {
+                    LOGGER.log(Level.WARNING, format("Could not delete view within %s", parent.getClass()));
+                }
+                if (view != null) {
+                    ((ViewGroup) parent).deleteView(view);
+                }
+            }
+        }
     }
 
     private Set<GeneratedView> extractGeneratedViews(AbstractProject<?, ?> project) {

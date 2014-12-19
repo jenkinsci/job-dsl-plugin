@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.Context
+
 class AxisContext implements Context {
     List<Node> axisNodes = []
     List<Closure> configureBlocks = []
