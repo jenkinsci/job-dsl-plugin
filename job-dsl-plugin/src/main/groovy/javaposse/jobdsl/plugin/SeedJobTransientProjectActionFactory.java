@@ -15,10 +15,10 @@ public class SeedJobTransientProjectActionFactory extends TransientProjectAction
     @Override
     public Collection<? extends Action> createFor(AbstractProject abstractProject) {
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
-        GeneratedJobSeedReference seedJobReference = descriptor.getGeneratedJobMap().get(abstractProject.getFullName());
-        if (seedJobReference != null) {
+        SeedReference seedReference = descriptor.getGeneratedJobMap().get(abstractProject.getFullName());
+        if (seedReference != null) {
             return Collections.singletonList(
-                    new SeedJobAction(seedJobReference.getSeedJobName(), seedJobReference.getTemplateJobName()));
+                    new SeedJobAction(seedReference.getSeedJobName(), seedReference.getTemplateJobName()));
         } else {
             return Collections.emptyList();
         }

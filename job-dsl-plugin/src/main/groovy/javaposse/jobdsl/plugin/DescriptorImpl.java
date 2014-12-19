@@ -16,7 +16,7 @@ import java.util.Map;
 public class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
     private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed
-    private Map<String, GeneratedJobSeedReference> generatedJobMap;
+    private Map<String, SeedReference> generatedJobMap;
 
     public DescriptorImpl() {
         super(ExecuteDslScripts.class);
@@ -35,7 +35,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         return templateJobMap;
     }
 
-    public Map<String, GeneratedJobSeedReference> getGeneratedJobMap() {
+    public Map<String, SeedReference> getGeneratedJobMap() {
         if (generatedJobMap == null) {
             generatedJobMap = Maps.newHashMap();
         }
