@@ -417,7 +417,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('test-job') == null
     }
 
-    def "SeedJobAction is removed from deleted jobs"() {
+    def "Deleted job is removed from GeneratedJobMap"() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
