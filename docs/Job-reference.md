@@ -758,6 +758,8 @@ rtc {
 
 Support for the [Team Concert Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin).
 
+If you want to override credentialsId, buildTool, serverURI or timout you have to specify them all.
+
 Example defining a build definition:
 
 ```groovy
