@@ -1,4 +1,5 @@
 package javaposse.jobdsl.plugin
+
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.google.common.collect.Lists
 import hudson.FilePath
