@@ -37,7 +37,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
     public Map<String, SeedReference> getGeneratedJobMap() {
         if (generatedJobMap == null) {
-            generatedJobMap = Maps.newHashMap();
+            generatedJobMap = Maps.newConcurrentMap();
         }
 
         return generatedJobMap;

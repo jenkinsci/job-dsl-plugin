@@ -19,7 +19,6 @@ import javaposse.jobdsl.dsl.GeneratedView
 import org.junit.Rule
 import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import static hudson.model.Result.SUCCESS
@@ -437,21 +436,32 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('test-job') == null
     }
 
-    @Ignore
     def "Manually deleted job is removed from GeneratedJobMap"() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
         runBuild(job, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
-        jenkinsRule.instance.getItemByFullName('test-job').delete()
 
         when:
-        runBuild(job, new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, '// do nothing'), false, DELETE
-        ))
+        jenkinsRule.instance.getItemByFullName('test-job').delete()
 
         then:
         jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('test-job') == null
+    }
+
+    def "Manually deleted job in folder is removed from GeneratedJobMap"() {
+        setup:
+        def folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(job, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+
+        when:
+        folder.delete()
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('folder/test-job') == null
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
     }
 
     def createJobInFolder() {
