@@ -674,14 +674,13 @@ class StepContext implements Context {
      *     </delegate>
      * </jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin>
      */
-    def publishOverSsh(Closure publishOverSshClosure) {
-        def nodeBuilder = new NodeBuilder()
+    void publishOverSsh(Closure publishOverSshClosure) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
-        def publishOverSshContext = new PublishOverSshContext()
+        PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
         ContextHelper.executeInContext(publishOverSshClosure, publishOverSshContext)
 
-        def publishOverSshNode = nodeBuilder.'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin' {
-            // TODO: Need to encrypt credentials
+        Node publishOverSshNode = nodeBuilder.'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin' {
             delegate.delegate {
                 consolePrefix('SSH: ')
 
