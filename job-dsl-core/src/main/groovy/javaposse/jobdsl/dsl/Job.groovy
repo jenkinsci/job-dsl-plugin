@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.ContextHelper
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
@@ -31,7 +30,7 @@ class Job extends Item {
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement
-        def typeArg = arguments['type'] ?: JobType.Freeform
+        Object typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
     }
 
@@ -41,18 +40,18 @@ class Job extends Item {
      * @return a new graph of groovy.util.Node objects, representing the job configuration structure
      * @throws JobTemplateMissingException
      */
-    def using(String templateName) throws JobTemplateMissingException {
+    void using(String templateName) throws JobTemplateMissingException {
         Preconditions.checkState(this.templateName == null, 'Can only use "using" once')
         this.templateName = templateName
     }
 
     @Deprecated
-    def name(Closure nameClosure) {
+    void name(Closure nameClosure) {
         jobManagement.logDeprecationWarning()
         name(nameClosure.call().toString())
     }
 
-    def description(String descriptionString) {
+    void description(String descriptionString) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('description', descriptionString)
             project / node
@@ -65,7 +64,7 @@ class Job extends Item {
      * @param labelExpression Label of node to use, if null is passed in, the label is cleared out and it can roam
      * @return
      */
-    def label(String labelExpression = null) {
+    void label(String labelExpression = null) {
         withXmlActions << WithXmlAction.create { Node project ->
             if (labelExpression) {
                 project / assignedNode(labelExpression)
@@ -93,11 +92,11 @@ class Job extends Item {
      *       <contributors/>
      *     </EnvInjectJobProperty>
      */
-    def environmentVariables(Closure envClosure) {
+    void environmentVariables(Closure envClosure) {
         environmentVariables(null, envClosure)
     }
 
-    def environmentVariables(Map<Object, Object> vars, Closure envClosure = null) {
+    void environmentVariables(Map<Object, Object> vars, Closure envClosure = null) {
         EnvironmentVariableContext envContext = new EnvironmentVariableContext()
         if (vars) {
             envContext.envs(vars)
@@ -130,7 +129,7 @@ class Job extends Item {
      *     <properties>
      * </project>
      */
-    def throttleConcurrentBuilds(Closure throttleClosure) {
+    void throttleConcurrentBuilds(Closure throttleClosure) {
         ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
         ContextHelper.executeInContext(throttleClosure, throttleContext)
 
@@ -164,7 +163,7 @@ class Job extends Item {
      *     <properties>
      * </project>
      */
-    def lockableResources(String resources, Closure lockClosure = null) {
+    void lockableResources(String resources, Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()
         ContextHelper.executeInContext(lockClosure, lockContext)
 
@@ -184,7 +183,7 @@ class Job extends Item {
     /**
      * <disabled>true</disabled>
      */
-    def disabled(boolean shouldDisable = true) {
+    void disabled(boolean shouldDisable = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('disabled', shouldDisable)
             project / node
@@ -199,7 +198,7 @@ class Job extends Item {
      *     <artifactNumToKeep>20</artifactNumToKeep>
      * </logRotator>
      */
-    def logRotator(int daysToKeepInt = -1, int numToKeepInt = -1,
+    void logRotator(int daysToKeepInt = -1, int numToKeepInt = -1,
                    int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / logRotator {
@@ -220,7 +219,7 @@ class Job extends Item {
      *     </hudson.plugins.buildblocker.BuildBlockerProperty>
      * </properties>
      */
-    def blockOn(Iterable<String> projectNames) {
+    void blockOn(Iterable<String> projectNames) {
         blockOn(projectNames.join('\n'))
     }
 
@@ -229,7 +228,7 @@ class Job extends Item {
      * @param projectName Can be regular expressions. Newline delimited.
      * @return
      */
-    def blockOn(String projectName) {
+    void blockOn(String projectName) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
                 useBuildBlocker 'true'
@@ -242,7 +241,7 @@ class Job extends Item {
      * Name of the JDK installation to use for this job.
      * @param jdkArg name of the JDK installation to use for this job.
      */
-    def jdk(String jdkArg) {
+    void jdk(String jdkArg) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('jdk', jdkArg)
             project / node
@@ -260,7 +259,7 @@ class Job extends Item {
      *     </hudson.queueSorter.PrioritySorterJobProperty>
      * </properties>
      */
-    def priority(int value) {
+    void priority(int value) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = new Node(project / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
             node.appendNode('priority', value)
@@ -272,7 +271,7 @@ class Job extends Item {
      *
      * @param seconds number of seconds to wait
      */
-    def quietPeriod(int seconds = 5) {
+    void quietPeriod(int seconds = 5) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('quietPeriod', seconds)
             project / node
@@ -284,7 +283,7 @@ class Job extends Item {
      *
      * @param times number of attempts
      */
-    def checkoutRetryCount(int times = 3) {
+    void checkoutRetryCount(int times = 3) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('scmCheckoutRetryCount', times)
             project / node
@@ -296,7 +295,7 @@ class Job extends Item {
      *
      * @param displayName name to display
      */
-    def displayName(String displayName) {
+    void displayName(String displayName) {
         Preconditions.checkNotNull(displayName, 'Display name must not be null.')
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('displayName', displayName)
@@ -309,7 +308,7 @@ class Job extends Item {
      *
      * @param workspacePath workspace path to use
      */
-    def customWorkspace(String workspacePath) {
+    void customWorkspace(String workspacePath) {
         Preconditions.checkNotNull(workspacePath, 'Workspace path must not be null')
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('customWorkspace', workspacePath)
@@ -320,7 +319,7 @@ class Job extends Item {
     /**
      * Configures the job to block when upstream projects are building.
      */
-    def blockOnUpstreamProjects() {
+    void blockOnUpstreamProjects() {
         withXmlActions << WithXmlAction.create { Node project ->
             project / blockBuildWhenUpstreamBuilding(true)
         }
@@ -329,7 +328,7 @@ class Job extends Item {
     /**
      * Configures the job to block when downstream projects are building.
      */
-    def blockOnDownstreamProjects() {
+    void blockOnDownstreamProjects() {
         withXmlActions << WithXmlAction.create { Node project ->
             project / blockBuildWhenDownstreamBuilding(true)
         }
@@ -340,7 +339,7 @@ class Job extends Item {
      *
      * <keepDependencies>true</keepDependencies>
      */
-    def keepDependencies(boolean keep = true) {
+    void keepDependencies(boolean keep = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('keepDependencies', keep)
             project / node
@@ -352,7 +351,7 @@ class Job extends Item {
      *
      * <concurrentBuild>true</concurrentBuild>
      */
-    def concurrentBuild(boolean allowConcurrentBuild = true) {
+    void concurrentBuild(boolean allowConcurrentBuild = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('concurrentBuild', allowConcurrentBuild)
             project / node
@@ -376,7 +375,7 @@ class Job extends Item {
      *     </com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
      * </properties>
      */
-    def notifications(Closure notificationClosure) {
+    void notifications(Closure notificationClosure) {
         NotificationContext notificationContext = new NotificationContext(jobManagement)
         ContextHelper.executeInContext(notificationClosure, notificationContext)
 
@@ -399,9 +398,9 @@ class Job extends Item {
      *     </hudson.plugins.batch__task.BatchTaskProperty>
      * </properties>
      */
-    def batchTask(String name, String script) {
+    void batchTask(String name, String script) {
         withXmlActions << WithXmlAction.create { Node project ->
-            def batchTaskProperty = project / 'properties' / 'hudson.plugins.batch__task.BatchTaskProperty'
+            Node batchTaskProperty = project / 'properties' / 'hudson.plugins.batch__task.BatchTaskProperty'
             batchTaskProperty / 'tasks' << 'hudson.plugins.batch__task.BatchTask' {
                 delegate.name name
                 delegate.script script
@@ -417,7 +416,7 @@ class Job extends Item {
      *     </se.diabol.jenkins.pipeline.PipelineProperty>
      * </properties>
      */
-    def deliveryPipelineConfiguration(String stageName, String taskName = null) {
+    void deliveryPipelineConfiguration(String stageName, String taskName = null) {
         if (stageName || taskName) {
             withXmlActions << WithXmlAction.create { Node project ->
                 project / 'properties' / 'se.diabol.jenkins.pipeline.PipelineProperty' {
@@ -432,12 +431,12 @@ class Job extends Item {
         }
     }
 
-    def authorization(Closure closure) {
+    void authorization(Closure closure) {
         AuthorizationContext context = new AuthorizationContext()
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def authorizationMatrixProperty = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
+            Node authorizationMatrixProperty = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
             context.permissions.each { String perm ->
                 authorizationMatrixProperty.appendNode('permission', perm)
             }
@@ -445,7 +444,7 @@ class Job extends Item {
     }
 
     @Deprecated
-    def permission(String permission) {
+    void permission(String permission) {
         jobManagement.logDeprecationWarning()
 
         authorization {
@@ -454,7 +453,7 @@ class Job extends Item {
     }
 
     @Deprecated
-    def permission(Permissions permission, String user) {
+    void permission(Permissions permission, String user) {
         jobManagement.logDeprecationWarning()
 
         authorization {
@@ -463,7 +462,7 @@ class Job extends Item {
     }
 
     @Deprecated
-    def permission(String permissionEnumName, String user) {
+    void permission(String permissionEnumName, String user) {
         jobManagement.logDeprecationWarning()
 
         authorization {
@@ -471,24 +470,24 @@ class Job extends Item {
         }
     }
 
-    def parameters(Closure closure) {
+    void parameters(Closure closure) {
         BuildParametersContext context = new BuildParametersContext()
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions'
+            Node node = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions'
             context.buildParameterNodes.values().each {
                 node << it
             }
         }
     }
 
-    def scm(Closure closure) {
+    void scm(Closure closure) {
         ScmContext context = new ScmContext(false, withXmlActions, jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def scm = project / scm
+            Node scm = project / scm
             if (scm) {
                 // There can only be only one SCM, so remove if there
                 project.remove(scm)
@@ -499,19 +498,19 @@ class Job extends Item {
         }
     }
 
-    def multiscm(Closure closure) {
+    void multiscm(Closure closure) {
         ScmContext context = new ScmContext(true, withXmlActions, jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def scm = project / scm
+            Node scm = project / scm
             if (scm) {
                 // There can only be only one SCM, so remove if there
                 project.remove(scm)
             }
 
-            def multiscmNode = new NodeBuilder().scm(class: 'org.jenkinsci.plugins.multiplescms.MultiSCM')
-            def scmsNode = multiscmNode / scms
+            Node multiscmNode = new NodeBuilder().scm(class: 'org.jenkinsci.plugins.multiplescms.MultiSCM')
+            Node scmsNode = multiscmNode / scms
             context.scmNodes.each {
                 scmsNode << it
             }
@@ -521,7 +520,7 @@ class Job extends Item {
         }
     }
 
-    def triggers(Closure closure) {
+    void triggers(Closure closure) {
         TriggerContext context = new TriggerContext(withXmlActions, type, jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -532,7 +531,7 @@ class Job extends Item {
         }
     }
 
-    def wrappers(Closure closure) {
+    void wrappers(Closure closure) {
         WrapperContext context = new WrapperContext(type, jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -543,7 +542,7 @@ class Job extends Item {
         }
     }
 
-    def steps(Closure closure) {
+    void steps(Closure closure) {
         Preconditions.checkState(type != JobType.Maven, 'steps cannot be applied for Maven jobs')
 
         StepContext context = new StepContext(jobManagement)
@@ -556,7 +555,7 @@ class Job extends Item {
         }
     }
 
-    def publishers(Closure closure) {
+    void publishers(Closure closure) {
         PublisherContext context = new PublisherContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -567,7 +566,7 @@ class Job extends Item {
         }
     }
 
-    def buildFlow(String buildFlowText) {
+    void buildFlow(String buildFlowText) {
         Preconditions.checkState(type == JobType.BuildFlow, 'Build Flow text can only be applied to Build Flow jobs.')
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -575,7 +574,7 @@ class Job extends Item {
         }
     }
 
-    def axes(Closure closure) {
+    void axes(Closure closure) {
         Preconditions.checkState(type == JobType.Matrix, 'axes can only be applied for Matrix jobs')
 
         AxisContext context = new AxisContext()
@@ -595,11 +594,11 @@ class Job extends Item {
     /**
      * <combinationFilter>axis_label=='a'||axis_label=='b'</combinationFilter>
      */
-    def combinationFilter(String filterExpression) {
+    void combinationFilter(String filterExpression) {
         Preconditions.checkState(type == JobType.Matrix, 'combinationFilter can only be applied for Matrix jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = methodMissing('combinationFilter', filterExpression)
+            Node node = methodMissing('combinationFilter', filterExpression)
             project / node
         }
     }
@@ -609,11 +608,11 @@ class Job extends Item {
      *     <runSequentially>false</runSequentially>
      * </executionStrategy>
      */
-    def runSequentially(boolean sequentially = true) {
+    void runSequentially(boolean sequentially = true) {
         Preconditions.checkState(type == JobType.Matrix, 'runSequentially can only be applied for Matrix jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = methodMissing('runSequentially', sequentially)
+            Node node = methodMissing('runSequentially', sequentially)
             project / 'executionStrategy' / node
         }
     }
@@ -629,7 +628,7 @@ class Job extends Item {
      *     </touchStoneResultCondition>
      * </executionStrategy>
      */
-    def touchStoneFilter(String filter, boolean continueOnUnstable = false) {
+    void touchStoneFilter(String filter, boolean continueOnUnstable = false) {
         Preconditions.checkState(type == JobType.Matrix, 'touchStoneFilter can only be applied for Matrix jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -646,11 +645,11 @@ class Job extends Item {
      * Specifies the path to the root POM.
      * @param rootPOM path to the root POM
      */
-    def rootPOM(String rootPOM) {
+    void rootPOM(String rootPOM) {
         Preconditions.checkState(type == JobType.Maven, 'rootPOM can only be applied for Maven jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = methodMissing('rootPOM', rootPOM)
+            Node node = methodMissing('rootPOM', rootPOM)
             project / node
         }
     }
@@ -659,12 +658,12 @@ class Job extends Item {
      * Specifies the goals to execute.
      * @param goals the goals to execute
      */
-    def goals(String goals) {
+    void goals(String goals) {
         Preconditions.checkState(type == JobType.Maven, 'goals can only be applied for Maven jobs')
 
         if (mavenGoals.empty) {
             withXmlActions << WithXmlAction.create { Node project ->
-                def node = methodMissing('goals', this.mavenGoals.join(' '))
+                Node node = methodMissing('goals', this.mavenGoals.join(' '))
                 project / node
             }
         }
@@ -675,12 +674,12 @@ class Job extends Item {
      * Specifies the JVM options needed when launching Maven as an external process.
      * @param mavenOpts JVM options needed when launching Maven
      */
-    def mavenOpts(String mavenOpts) {
+    void mavenOpts(String mavenOpts) {
         Preconditions.checkState(type == JobType.Maven, 'mavenOpts can only be applied for Maven jobs')
 
         if (this.mavenOpts.empty) {
             withXmlActions << WithXmlAction.create { Node project ->
-                def node = methodMissing('mavenOpts', this.mavenOpts.join(' '))
+                Node node = methodMissing('mavenOpts', this.mavenOpts.join(' '))
                 project / node
             }
         }
@@ -691,11 +690,11 @@ class Job extends Item {
      * If set, Jenkins will send an e-mail notifications for each module, defaults to <code>false</code>.
      * @param perModuleEmail set to <code>true</code> to enable per module e-mail notifications
      */
-    def perModuleEmail(boolean perModuleEmail) {
+    void perModuleEmail(boolean perModuleEmail) {
         Preconditions.checkState(type == JobType.Maven, 'perModuleEmail can only be applied for Maven jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = methodMissing('perModuleEmail', perModuleEmail)
+            Node node = methodMissing('perModuleEmail', perModuleEmail)
             project / node
         }
     }
@@ -705,11 +704,11 @@ class Job extends Item {
      * <code>false</code>.
      * @param archivingDisabled set to <code>true</code> to disable automatic archiving
      */
-    def archivingDisabled(boolean archivingDisabled) {
+    void archivingDisabled(boolean archivingDisabled) {
         Preconditions.checkState(type == JobType.Maven, 'archivingDisabled can only be applied for Maven jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = methodMissing('archivingDisabled', archivingDisabled)
+            Node node = methodMissing('archivingDisabled', archivingDisabled)
             project / node
         }
     }
@@ -718,11 +717,11 @@ class Job extends Item {
      * Set to allow Jenkins to configure the build process in headless mode, defaults to <code>false</code>.
      * @param runHeadless set to <code>true</code> to run the build process in headless mode
      */
-    def runHeadless(boolean runHeadless) {
+    void runHeadless(boolean runHeadless) {
         Preconditions.checkState(type == JobType.Maven, 'runHeadless can only be applied for Maven jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = methodMissing('runHeadless', runHeadless)
+            Node node = methodMissing('runHeadless', runHeadless)
             project / node
         }
     }
@@ -733,17 +732,17 @@ class Job extends Item {
      * Set to use isolated local Maven repositories.
      * @param location the local repository to use for isolation
      */
-    def localRepository(MavenContext.LocalRepositoryLocation location) {
+    void localRepository(MavenContext.LocalRepositoryLocation location) {
         Preconditions.checkState(type == JobType.Maven, 'localRepository can only be applied for Maven jobs')
         Preconditions.checkNotNull(location, 'localRepository can not be null')
 
         withXmlActions << WithXmlAction.create { Node project ->
-            def node = methodMissing('localRepository', [class: location.type])
+            Node node = methodMissing('localRepository', [class: location.type])
             project / node
         }
     }
 
-    def preBuildSteps(Closure preBuildClosure) {
+    void preBuildSteps(Closure preBuildClosure) {
         Preconditions.checkState(type == JobType.Maven, 'prebuildSteps can only be applied for Maven jobs')
 
         StepContext preBuildContext = new StepContext(jobManagement)
@@ -756,7 +755,7 @@ class Job extends Item {
         }
     }
 
-    def postBuildSteps(Closure postBuildClosure) {
+    void postBuildSteps(Closure postBuildClosure) {
         Preconditions.checkState(type == JobType.Maven, 'postBuildSteps can only be applied for Maven jobs')
 
         StepContext postBuildContext = new StepContext(jobManagement)
@@ -769,7 +768,7 @@ class Job extends Item {
         }
     }
 
-    def mavenInstallation(String name) {
+    void mavenInstallation(String name) {
         Preconditions.checkState(type == JobType.Maven, 'mavenInstallation can only be applied for Maven jobs')
         Preconditions.checkNotNull(name, 'name can not be null')
 
@@ -778,7 +777,7 @@ class Job extends Item {
         }
     }
 
-    def providedSettings(String settingsName) {
+    void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
 
@@ -804,7 +803,7 @@ class Job extends Item {
         }
     }
 
-    private executeUsing() {
+    private Node executeUsing() {
         String configXml
         try {
             configXml = jobManagement.getConfig(templateName)
@@ -815,7 +814,7 @@ class Job extends Item {
             throw new JobTemplateMissingException(templateName)
         }
 
-        def templateNode = new XmlParser().parse(new StringReader(configXml))
+        Node templateNode = new XmlParser().parse(new StringReader(configXml))
 
         if (type != getJobType(templateNode)) {
             throw new JobTypeMismatchException(name, templateName)
@@ -824,7 +823,7 @@ class Job extends Item {
         templateNode
     }
 
-    private executeEmptyTemplate() {
+    private Node executeEmptyTemplate() {
         new XmlParser().parse(new StringReader(getTemplate(type)))
     }
 
@@ -842,11 +841,11 @@ class Job extends Item {
      * Determines the job type from the given config XML.
      */
     private static JobType getJobType(Node node) {
-        def nodeElement = node.name()
+        String nodeElement = node.name()
         JobType.values().find { it.elementName == nodeElement }
     }
 
-    def emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    String emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -865,7 +864,7 @@ class Job extends Item {
 </project>
 '''
 
-    def emptyBuildFlowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    String emptyBuildFlowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <com.cloudbees.plugins.flow.BuildFlow>
   <actions/>
   <description></description>
@@ -886,7 +885,7 @@ class Job extends Item {
 </com.cloudbees.plugins.flow.BuildFlow>
 '''
 
-    def emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    String emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <maven2-moduleset>
   <actions/>
   <description></description>
@@ -913,7 +912,7 @@ class Job extends Item {
 </maven2-moduleset>
 '''
 
-    def emptyMultijobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    String emptyMultijobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <com.tikal.jenkins.plugins.multijob.MultiJobProject plugin="jenkins-multijob-plugin@1.8">
   <actions/>
   <description/>
@@ -932,7 +931,7 @@ class Job extends Item {
 </com.tikal.jenkins.plugins.multijob.MultiJobProject>
 '''
 
-    def emptyMatrixJobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    String emptyMatrixJobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <matrix-project>
   <description/>
   <keepDependencies>false</keepDependencies>

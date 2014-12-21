@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import  javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class RbenvContext implements Context {
     boolean ignoreLocalVersion = false
@@ -11,31 +11,31 @@ class RbenvContext implements Context {
     String rubyBuildRepository = 'https://github.com/sstephenson/ruby-build.git'
     String rubyBuildRevision = 'master'
 
-    def ignoreLocalVersion(boolean ignore = true) {
+    void ignoreLocalVersion(boolean ignore = true) {
         this.ignoreLocalVersion = ignore
     }
 
-    def gems(String... gems) {
+    void gems(String... gems) {
         this.gems.addAll(gems)
     }
 
-    def root(String root) {
+    void root(String root) {
         this.root = root
     }
 
-    def rbenvRepository(String repository) {
+    void rbenvRepository(String repository) {
         this.rbenvRepository = repository
     }
 
-    def rbenvRevision(String revision) {
+    void rbenvRevision(String revision) {
         this.rbenvRevision = revision
     }
 
-    def rubyBuildRepository(String repository) {
+    void rubyBuildRepository(String repository) {
         this.rubyBuildRepository = repository
     }
 
-    def rubyBuildRevision(String revision) {
+    void rubyBuildRevision(String revision) {
         this.rubyBuildRevision = revision
     }
 }

@@ -561,6 +561,7 @@ git {
     localBranch(String branch) // check out to specific local branch
     relativeTargetDir(String relativeTargetDir) // checkout to a sub-directory, optional
     reference(String reference) // path to a reference repository, optional
+    cloneTimeout(int timeout) // since 1.28, timeout (in minutes) for clone and fetch operations
     browser { // since 1.26
         stash(String url) // URL to the Stash repository, optional
     }
@@ -579,7 +580,7 @@ The GitHub variants will derive the Git URL from the ownerAndProject, protocol a
 
 The Git plugin has a lot of configurable options, which are currently not all supported by the DSL. A  configure block can be used to add more options.
 
-Version 2.0 or later of the Git Plugin is required to use Jenkins managed credentials for Git authentication. The arguments for the credentials method is the description field or the UUID generated from Jenkins | Manage Jenkins | Manage Credentials. The easiest way to find this value, is to navigate Jenkins | Credentials | Global credentials | (Key Name). Then look at the description in parenthesis or using the UUID in the URL.
+Version 2.0 or later of the Git Plugin is required to use `cloneTimeout` or Jenkins managed credentials for Git authentication. The arguments for the credentials method is the description field or the UUID generated from Jenkins | Manage Jenkins | Manage Credentials. The easiest way to find this value, is to navigate Jenkins | Credentials | Global credentials | (Key Name). Then look at the description in parenthesis or using the UUID in the URL.
 
 When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch.
 
@@ -1168,6 +1169,38 @@ Downloads the specified tools, if needed, and puts the path to each of them in t
 
 (since 1.21)
 
+## Config Files
+
+```groovy
+job {
+    wrappers {
+        configFiles {
+            file(String fileName) {                   // can be called multiple times
+                targetLocation(String targetLocation) // optional
+                variable(String variable)             // optional
+            }
+        }
+    }
+}
+```
+
+Makes an existing custom config file available to builds. Requires
+the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
+
+```groovy
+job {
+    wrappers {
+        configFiles {
+            file('myCustomConfigFile') {
+                variable('CONFIG_FILE')
+            }
+        }
+    }
+}
+```
+
+(since 1.28)
+
 ## Environment Variables
 ```groovy
 job {
@@ -1195,7 +1228,7 @@ job {
             releaseVersionTemplate(String template)
             doNotKeepLog(boolean keep = true)
             overrideBuildParameters(boolean override = true)
-            parameterDefinitions(Closure parameters)
+            parameters(Closure parameters)
             preBuildSteps(Closure steps)
             postSuccessfulBuildSteps(Closure steps)
             postBuildSteps(Closure steps)
@@ -1207,7 +1240,7 @@ job {
 
 Configure a release inside a Jenkins job. Requires the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin).
 
-For details of defining parameters (parameterDefinitions) see [Reference of Parameters](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-parameters)
+For details of defining parameters (parameter) see [Reference of Parameters](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-parameters)
 
 For details of defining steps (preBuildSteps, postSuccessfulBuildSteps, postBuildSteps, postFailedBuildSteps) see [Reference of Build Steps](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#wiki-build-steps)
 
@@ -1220,7 +1253,7 @@ job {
         release {
             doNotKeepLog()
             overrideBuildParameters()
-            parameterDefinitions {
+            parameters {
                 booleanParam('param', false, 'some boolean build parameter')
             }
             preBuildSteps {
@@ -1588,6 +1621,37 @@ job {
 
 (since 1.27)
 
+## Credentials Binding
+
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file(String variable, String credentials)
+            string(String variable, String credentials)
+            usernamePassword(String variable, String credentials)
+            zipFile(String variable, String credentials)
+        }
+    }
+}
+```
+
+Bindings environment variables to credentials. Requires the
+[Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin).
+
+```groovy
+job {
+    wrappers {
+        credentialsBinding {
+            file('KEYSTORE', 'keystore.jks')
+            usernamePassword('PASSWORD', 'keystore password')
+        }
+    }
+}
+```
+
+(since 1.28)
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
@@ -1920,7 +1984,7 @@ copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolea
 }
 ```
 
-Supports the Copy Artifact plugin. As per the plugin, the input glob is for files in the workspace. The methods in the closure are considered the selectors, of which only one can be used.
+Supports the version 1.26 or later of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin). As per the plugin, the input glob is for files in the workspace. The methods in the closure are considered the selectors, of which only one can be used.
 
 ## Groovy
 ```groovy
@@ -2042,6 +2106,40 @@ job {
 Injects environment variables into the build. Requires the [EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
 
 (Since 1.21)
+
+## HTTP Request
+
+```groovy
+job {
+    steps {
+        httpRequest(String url) {
+            httpMode(String mode)
+            authentication(String authentication)
+            returnCodeBuildRelevant(boolean returnCodeBuildRelevant = true)
+            logResponseBody(boolean logResponseBody = true)
+        }
+    }
+}
+```
+
+Adds a step which performs a HTTP request. `httpMode` must be either `GET`, `POST`, `PUT` or `DELETE`. `authentication`
+is configured in the global Jenkins settings. Requires the
+[HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin).
+
+```groovy
+job {
+    steps {
+        httpRequest('http://www.example.com') {
+            httpMode('POST')
+            authentication('Credentials')
+            returnCodeBuildRelevant()
+            logResponseBody()
+        }
+    }
+}
+```
+
+(since 1.28)
 
 # Multijob Phase
 
@@ -2437,30 +2535,49 @@ See [Exclusion Resources](#exclusion-resources).
 Block to contain list of publishers.
 
 ## Extended Email Plugin
-```groovy
-extendedEmail(String recipients = null, String subjectTemplate = null, String contentTemplate = null, Closure emailClosure = null)
-```
-
-Supports the Extended Email plugin. DSL methods works like the gerrit plugin, providing its own block to help set it up. The emailClosure is primarily used to specify the triggers, which is optional. Its definition:
 
 ```groovy
-extendedEmail {
-    trigger(String triggerName, String subject = null, String body = null, String recipientList = null,
-            Boolean sendToDevelopers = null, Boolean sendToRequester = null, includeCulprits = null, Boolean sendToRecipientList = null)
-    trigger(Map args)
-    configure(Closure configureClosure) // Handed hudson.plugins.emailext.ExtendedEmailPublisher
+job {
+    publishers {
+        extendedEmail(String recipients = null, String subjectTemplate = null,
+                      String contentTemplate = null) {
+            trigger(String triggerName, String subject = null, String body = null,
+                    String recipientList = null, Boolean sendToDevelopers = null,
+                    Boolean sendToRequester = null, includeCulprits = null,
+                    Boolean sendToRecipientList = null)
+            trigger(Map args)
+            configure(Closure configureClosure)
+        }
+    }
 }
 ```
 
-The first trigger method allow complete control of the email going out, and maps directly to what is seen in the config.xml of a job. The triggerName needs to be one of these values: 'PreBuild', 'StillUnstable', 'Fixed', 'Success', 'StillFailing', 'Improvement', 'Failure', 'Regression', 'Aborted', 'NotBuilt', 'FirstFailure', 'Unstable'. Those names come from classes prefix with 'hudson.plugins.emailext.plugins.trigger.' and appended with Trigger. The second form of trigger, uses the names from the first, but can be called with a Map syntax, so that values can be left out more easily. To help explain it, here an example from the unite tests:
+Supports the [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin). The closure is primarily
+used to specify the triggers, which is optional.
+
+The first trigger method allow complete control of the email going out, and maps directly to what is seen in the
+config.xml of a job. The second form of trigger, uses the names from the first, but can be called with a Map syntax, so
+that values can be left out more easily.
+
+The `triggerName` needs to be one of these values: `PreBuild`, `StillUnstable`, `Fixed`, `Success`, `StillFailing`,
+`Improvement`, `Failure`, `Regression`, `Aborted`, `NotBuilt`, `FirstFailure`, `Unstable`, `Always`, `SecondFailure`,
+`FirstUnstable`, `FixedUnhealthy` or `StatusChanged`. Older versions of the Email-ext plugin do not support all
+triggers. The DSL supports the `Always`, `SecondFailure`, `FirstUnstable`, `FixedUnhealthy` and `StatusChanged` triggers
+since version 1.28.
+
+A `hudson.plugins.emailext.ExtendedEmailPublisher` node is handed into the configure block.
 
 ```groovy
-extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
-    trigger('PreBuild')
-    trigger(triggerName: 'StillUnstable', subject: 'Subject', body:'Body', recipientList:'RecipientList',
-            sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
-    configure { node ->
-        node / contentType << 'html'
+job {
+    publishers {
+        extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
+            trigger('PreBuild')
+            trigger(triggerName: 'StillUnstable', subject: 'Subject', body:'Body', recipientList: 'RecipientList',
+                    sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
+            configure { node ->
+                node / contentType << 'html'
+            }
+        }
     }
 }
 ```
@@ -2614,23 +2731,40 @@ job {
 ```
 
 ## HTML Publisher
-```groovy
-publishHtml {
-    report(String reportDir, String reportName = null, String reportFiles = 'index.html', Boolean keepAll = false)
-    report(Map args) // same names as the method above
-}
 
+```groovy
+job {
+    publishers {
+        publishHtml {
+            report(String reportDir) {                    // since 1.28
+                reportName(String reportName)
+                reportFiles(String reportFiles)           // defaults to 'index.html' if omitted
+                allowMissing(boolean allowMissing = true) // defaults to false if omitted
+                keepAll(boolean keepAll = true)           // defaults to false if omitted
+            }
+            report(String reportDir, String reportName, String reportFiles = 'index.html',
+                   Boolean keepAll = false) // deprecated since 1.28
+            report(Map args) // deprecated since 1.28, same names as the method above
+        }
+    }
+}
 ```
 
-Provides context to add html reports to be archive. The report method can be called multiple times in the closure. Simple
-example with variations on how to call the report method:
+Allows HTML reports to be archived. The report method can be called multiple times to add more reports.
 
 ```groovy
-publishers {
-    publishHtml {
-        report('build/test-output/*', 'Test Output')
-        report 'build/coverage/*', 'Coverage Report', 'coverage.html' // Without parens
-        report reportName: 'Gradle Tests', reportDir: 'test/*', keepAll: true // Map synxtax
+job {
+    publishers {
+        publishHtml {
+            report('build/test-output') {
+                reportName('Test Output')
+            }
+            report('test') {
+                reportName('Gradle Tests')
+                keepAll()
+                allowMissing()
+            }
+        }
     }
 }
 ```

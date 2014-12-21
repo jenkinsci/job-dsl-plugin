@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.Context
 
 class RemoteContext implements Context {
     private final List<WithXmlAction> withXmlActions

@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
+import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
@@ -9,7 +11,7 @@ import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
-import static ContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
 class ScmContext implements Context {
@@ -33,7 +35,7 @@ class ScmContext implements Context {
     /**
      * Helper method for dealing with a single scm node
      */
-    def getScmNode() {
+    Node getScmNode() {
         scmNodes[0]
     }
 
@@ -54,11 +56,11 @@ class ScmContext implements Context {
         </browser>
       </scm>
      */
-    def hg(String url, String branch = null, Closure configure = null) {
+    void hg(String url, String branch = null, Closure configure = null) {
         validateMulti()
         checkNotNull(url)
 
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
         Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
             source url
@@ -115,7 +117,7 @@ class ScmContext implements Context {
        <scmName/>
      </hudson.plugins.git.GitSCM>
      */
-    def git(Closure gitClosure) {
+    void git(Closure gitClosure) {
         validateMulti()
 
         GitContext gitContext = new GitContext(withXmlActions, jobManagement)
@@ -125,7 +127,19 @@ class ScmContext implements Context {
             gitContext.branches << '**'
         }
 
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
+            if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
+                gitContext.extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.CloneOption' {
+                    shallow gitContext.shallowClone
+                    reference gitContext.reference
+                    if (gitContext.cloneTimeout) {
+                        timeout gitContext.cloneTimeout
+                    }
+                }
+            }
+        }
 
         Node gitNode = nodeBuilder.scm(class: 'hudson.plugins.git.GitSCM') {
             userRemoteConfigs(gitContext.remoteConfigs)
@@ -150,18 +164,21 @@ class ScmContext implements Context {
             if (gitContext.relativeTargetDir) {
                 relativeTargetDir gitContext.relativeTargetDir
             }
-            if (gitContext.reference) {
-                reference gitContext.reference
-            }
             if (gitContext.localBranch) {
                 localBranch gitContext.localBranch
             }
             skipTag !gitContext.createTag
-            if (gitContext.shallowClone) {
-                useShallowClone gitContext.shallowClone
-            }
-            if (gitContext.extensions) {
-                extensions gitContext.extensions
+            if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
+                if (gitContext.reference) {
+                    reference gitContext.reference
+                }
+                if (gitContext.shallowClone) {
+                    useShallowClone gitContext.shallowClone
+                }
+            } else {
+                if (gitContext.extensions) {
+                    extensions gitContext.extensions
+                }
             }
         }
 
@@ -187,11 +204,11 @@ class ScmContext implements Context {
      * @param configure
      * @return
      */
-    def git(String url, Closure configure = null) {
+    void git(String url, Closure configure = null) {
         git(url, null, configure)
     }
 
-    def git(String url, String branch, Closure configure = null) {
+    void git(String url, String branch, Closure configure = null) {
         git {
             remote {
                 delegate.url(url)
@@ -206,11 +223,11 @@ class ScmContext implements Context {
         }
     }
 
-    def github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
+    void github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
         github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
 
-    def github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
+    void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
                Closure closure = null) {
         git {
             remote {
@@ -249,15 +266,15 @@ class ScmContext implements Context {
        <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
      </scm>
      */
-    def svn(String svnUrl, Closure configure = null) {
+    void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
-    def svn(String svnUrl, String localDir, Closure configure = null) {
+    void svn(String svnUrl, String localDir, Closure configure = null) {
         checkNotNull(svnUrl)
         checkNotNull(localDir)
         validateMulti()
 
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
         Node svnNode = nodeBuilder.scm(class: 'hudson.scm.SubversionSCM') {
             locations {
@@ -319,19 +336,19 @@ class ScmContext implements Context {
        <pollOnlyOnMaster>true</pollOnlyOnMaster>
      </scm>
      */
-    def p4(String viewspec, Closure configure = null) {
+    void p4(String viewspec, Closure configure = null) {
         p4(viewspec, 'rolem', '', configure)
     }
 
-    def p4(String viewspec, String user, Closure configure = null) {
+    void p4(String viewspec, String user, Closure configure = null) {
         p4(viewspec, user, '', configure)
     }
 
-    def p4(String viewspec, String user, String password, Closure configure = null) {
+    void p4(String viewspec, String user, String password, Closure configure = null) {
         checkNotNull(viewspec)
         validateMulti()
 
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
         PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor()
 
@@ -382,7 +399,7 @@ class ScmContext implements Context {
      *   <criteria>Successful</criteria>
      * </scm>
      */
-    def cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
+    void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
         checkNotNull(parentProject)
         checkArgument(validCloneWorkspaceCriteria.contains(criteriaArg),
                 "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}")
@@ -429,7 +446,7 @@ class ScmContext implements Context {
      *
      * See http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin
      */
-    def baseClearCase(Closure closure = null) {
+    void baseClearCase(Closure closure = null) {
         validateMulti()
 
         ClearCaseContext context = new ClearCaseContext()

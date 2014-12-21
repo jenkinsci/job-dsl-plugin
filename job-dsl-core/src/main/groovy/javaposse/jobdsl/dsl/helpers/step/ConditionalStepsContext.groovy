@@ -15,21 +15,21 @@ class ConditionalStepsContext extends StepContext {
         super(jobManagement)
     }
 
-    def condition(Closure conditionClosure) {
+    void condition(Closure conditionClosure) {
         this.runCondition = RunConditionFactory.of(conditionClosure)
     }
 
-    def runner(String runnerName) {
+    void runner(String runnerName) {
         checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")
         runnerClass = EvaluationRunners.find(runnerName).longForm
     }
 
-    def runner(EvaluationRunners runner) {
+    void runner(EvaluationRunners runner) {
         runnerClass = runner.longForm
     }
 
     protected Node createSingleStepNode() {
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
         nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
             delegate.condition(class: runCondition.conditionClass) {
@@ -45,7 +45,7 @@ class ConditionalStepsContext extends StepContext {
     }
 
     protected Node createMultiStepNode() {
-        def nodeBuilder = new NodeBuilder()
+        NodeBuilder nodeBuilder = new NodeBuilder()
 
         nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
             runCondition(class: runCondition.conditionClass) {

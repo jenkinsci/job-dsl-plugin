@@ -241,7 +241,8 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildConsoleColumn'
     }
 
-    def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
+    protected String getDefaultXml() {
+        '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
@@ -252,4 +253,5 @@ class ListViewSpec extends Specification {
     <jobFilters/>
     <columns/>
 </hudson.model.ListView>'''
+    }
 }

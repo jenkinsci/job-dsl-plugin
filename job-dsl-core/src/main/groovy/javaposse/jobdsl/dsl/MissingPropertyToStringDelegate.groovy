@@ -15,13 +15,13 @@ class MissingPropertyToStringDelegate {
     /**
      * Make string for div() to do lookup
      */
-    def propertyMissing(String propertyName) {
+    String propertyMissing(String propertyName) {
         LOGGER.fine("Missing ${propertyName}")
         propertyName
     }
 
     String toXml(Node n) {
-        def writer = new StringWriter()
+        StringWriter writer = new StringWriter()
         new XmlNodePrinter(new PrintWriter(writer)).print(n)
         writer.toString()
     }

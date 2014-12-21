@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.Context
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
 /** Context to configure timeout */
@@ -31,7 +31,7 @@ class TimeoutContext implements Context {
      * @deprecated for backwards compatibility
      */
     @Deprecated
-    def limit(int limit) {
+    void limit(int limit) {
         Preconditions.checkArgument([Timeout.elastic, Timeout.absolute].contains(type))
         jobManagement.logDeprecationWarning()
         if (type == Timeout.absolute) {
@@ -45,34 +45,34 @@ class TimeoutContext implements Context {
      * @deprecated for backwards compatibility
      */
     @Deprecated
-    def percentage(int percentage) {
+    void percentage(int percentage) {
         jobManagement.logDeprecationWarning()
         this.percentage = percentage
     }
 
-    def elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60) {
+    void elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60) {
         type = Timeout.elastic
         this.percentage = percentage
         this.numberOfBuilds = numberOfBuilds
         this.minutesDefault = minutesDefault
     }
 
-    def noActivity(int seconds = 180) {
+    void noActivity(int seconds = 180) {
         jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
         type = Timeout.noActivity
         this.noActivitySeconds = seconds
     }
 
-    def absolute(int minutes = 3) {
+    void absolute(int minutes = 3) {
         type = Timeout.absolute
         this.limit = minutes
     }
 
-    def likelyStuck() {
+    void likelyStuck() {
         type = Timeout.likelyStuck
     }
 
-    def failBuild(boolean fail = true) {
+    void failBuild(boolean fail = true) {
         this.failBuild = fail
     }
 
@@ -80,12 +80,12 @@ class TimeoutContext implements Context {
      * @deprecated for backwards compatibility
      */
     @Deprecated
-    def writeDescription(boolean writeDesc = true) {
+    void writeDescription(boolean writeDesc = true) {
         jobManagement.logDeprecationWarning()
         this.writeDescription = writeDesc
     }
 
-    def writeDescription(String description) {
+    void writeDescription(String description) {
         this.description = description
         this.writeDescription = true
     }

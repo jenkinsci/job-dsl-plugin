@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-abstract class Item {
+abstract class Item implements Context {
     String name
 
     List<WithXmlAction> withXmlActions = []
@@ -12,7 +12,7 @@ abstract class Item {
     /**
      * Provide raw config.xml for direct manipulation.
      */
-    def configure(Closure withXmlClosure) {
+    void configure(Closure withXmlClosure) {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )
     }
 

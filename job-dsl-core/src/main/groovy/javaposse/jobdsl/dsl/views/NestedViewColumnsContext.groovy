@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class NestedViewColumnsContext implements Context {
     List<Node> columnNodes = []

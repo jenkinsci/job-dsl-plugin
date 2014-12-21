@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import spock.lang.Specification
@@ -679,6 +680,110 @@ class WrapperContextSpec extends Specification {
         }
     }
 
+    def 'call configFile closure'() {
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        String configTarget = 'myTargetLocation'
+        String configVariable = '$CONFIG_FILE_LOCATION'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
+
+        when:
+        context.configFiles {
+            file(configName) {
+                targetLocation configTarget
+                variable configVariable
+            }
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == configTarget
+                variable[0].value() == configVariable
+            }
+        }
+    }
+
+    def 'call configFile'() {
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
+
+        when:
+        context.configFiles {
+            file(configName)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+        }
+    }
+
+    def 'call configFile with two files'() {
+        setup:
+        String configName1 = 'myCustomConfig'
+        String configId1 = 'CustomConfig1417476679249'
+        String configName2 = 'myOtherConfig'
+        String configId2 = 'CustomConfig1417476679250'
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName1) >> configId1
+        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName2) >> configId2
+
+        when:
+        context.configFiles {
+            file(configName1)
+            file(configName2)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 2
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId1
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[1]) {
+                children().size() == 3
+                fileId[0].value() == configId2
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+        }
+    }
+
+    def 'call configFile with unknown fileName'() {
+        setup:
+        String configName = 'lala'
+
+        when:
+        context.configFiles {
+            file(configName)
+        }
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains(configName)
+    }
+
     def 'call exclusion with single arg'() {
         when:
         context.exclusionResources('first')
@@ -829,6 +934,50 @@ class WrapperContextSpec extends Specification {
         with(context.wrapperNodes[0]) {
             name() == 'org.jenkinsci.plugins.golang.GolangBuildWrapper'
             goVersion[0].value() == 'Go 1.3.3'
+        }
+    }
+
+    def 'call credentials binding'() {
+        setup:
+        mockJobManagement.getCredentialsId('foo') >> 'bar'
+        mockJobManagement.getCredentialsId('bar') >> 'baz'
+        mockJobManagement.getCredentialsId('baz') >> 'foo'
+        mockJobManagement.getCredentialsId('foobar') >> 'foobarbaz'
+
+        when:
+        context.credentialsBinding {
+            file('A', 'foo')
+            string('B', 'bar')
+            usernamePassword('C', 'baz')
+            zipFile('D', 'foobar')
+        }
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper'
+            children().size() == 1
+            bindings[0].children().size() == 4
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'A'
+                credentialsId[0].value() == 'bar'
+            }
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'B'
+                credentialsId[0].value() == 'baz'
+            }
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'C'
+                credentialsId[0].value() == 'foo'
+            }
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding'[0]) {
+                children().size() == 2
+                variable[0].value() == 'D'
+                credentialsId[0].value() == 'foobarbaz'
+            }
         }
     }
 }

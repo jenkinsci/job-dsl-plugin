@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 abstract class AbstractGroovyContext implements Context {
-    def classpathEntries = []
+    List<String> classpathEntries = []
 
-    def classpath(String classpath) {
+    void classpath(String classpath) {
         classpathEntries << classpath
     }
 }

@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.ContextHelper
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection
 
 /** Configuration container for a monitored URL.*/
@@ -20,12 +20,12 @@ class UrlTriggerEntryContext implements Context {
         lastModified
     }
 
-    def url
-    def statusCode = 200
-    def timeout = 300
-    def proxyActivated = false
+    String url
+    int statusCode = 200
+    long timeout = 300
+    boolean proxyActivated = false
     EnumSet<Check> checks = EnumSet.noneOf(Check)
-    def inspections = []
+    List<UrlTriggerInspectionContext> inspections = []
 
     /**
      * Creates a new entry for a monitored URL.
@@ -45,7 +45,7 @@ class UrlTriggerEntryContext implements Context {
      * Defaults to <code>false</code>
      * @param active <code>true</code> to use a proxy
      */
-    def proxy(boolean active) {
+    void proxy(boolean active) {
         this.proxyActivated = active
     }
 
@@ -57,7 +57,7 @@ class UrlTriggerEntryContext implements Context {
      *
      * @param statusCode status code to expect from URL
      */
-    def status(int statusCode) {
+    void status(int statusCode) {
         this.statusCode = statusCode
     }
 
@@ -68,7 +68,7 @@ class UrlTriggerEntryContext implements Context {
      *
      * @param timeout number of seconds to wait for response
      */
-    def timeout(long timeout) {
+    void timeout(long timeout) {
         this.timeout = timeout
     }
 
@@ -83,7 +83,7 @@ class UrlTriggerEntryContext implements Context {
      *
      * @param performCheck check to perform
      */
-    def check(String performCheck) {
+    void check(String performCheck) {
         Check check
 
         try {
@@ -108,7 +108,7 @@ class UrlTriggerEntryContext implements Context {
      * @param inspectionClosure for configuring RegExps/Path expressions for xml, text and json
      * @return
      */
-    def inspection(String type, Closure inspectionClosure = null) {
+    void inspection(String type, Closure inspectionClosure = null) {
         Inspection itype
         try {
             itype = Preconditions.checkNotNull(Inspection.valueOf(type), 'Inspection must not be null' as Object)

@@ -1,14 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.common
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 import static DownstreamContext.THRESHOLD_COLOR_MAP
 
 class DownstreamTriggerContext implements Context {
-    def blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
+    Set<String> blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
 
-    def blockingThresholds = []
+    List<BlockingThreshold> blockingThresholds = []
     List<String> predefinedProps = []
     String propFile
     String projects
@@ -31,68 +31,68 @@ class DownstreamTriggerContext implements Context {
     boolean usingNodeLabel = false
     boolean sameNode = false
 
-    def currentBuild() {
+    void currentBuild() {
         usingCurrentBuild = true
     }
 
-    def propertiesFile(String propFile, boolean failTriggerOnMissing = false) {
+    void propertiesFile(String propFile, boolean failTriggerOnMissing = false) {
         usingPropertiesFile = true
         this.failTriggerOnMissing = failTriggerOnMissing
         this.propFile = propFile
     }
 
-    def gitRevision(boolean combineQueuedCommits = false) {
+    void gitRevision(boolean combineQueuedCommits = false) {
         usingGitRevision = true
         this.combineQueuedCommits = combineQueuedCommits
     }
 
-    def predefinedProp(String key, String value) {
+    void predefinedProp(String key, String value) {
         usingPredefined = true
         this.predefinedProps << "${key}=${value}"
     }
 
-    def predefinedProps(Map<String, String> predefinedPropsMap) {
+    void predefinedProps(Map<String, String> predefinedPropsMap) {
         usingPredefined = true
-        def props = predefinedPropsMap.collect { "${it.key}=${it.value}" }
+        List<String> props = predefinedPropsMap.collect { "${it.key}=${it.value}" }
         this.predefinedProps.addAll(props)
     }
 
-    def predefinedProps(String predefinedProps) { // Newline separated
+    void predefinedProps(String predefinedProps) { // Newline separated
         usingPredefined = true
         this.predefinedProps.addAll(predefinedProps.split('\n'))
     }
 
-    def matrixSubset(String groovyFilter) {
+    void matrixSubset(String groovyFilter) {
         usingMatrixSubset = true
         matrixSubsetFilter = groovyFilter
     }
 
-    def subversionRevision(boolean includeUpstreamParameters = false) {
+    void subversionRevision(boolean includeUpstreamParameters = false) {
         this.includeUpstreamParameters = includeUpstreamParameters
         usingSubversionRevision = true
     }
 
-    def boolParam(String paramName, boolean defaultValue = false) {
+    void boolParam(String paramName, boolean defaultValue = false) {
         boolParams[paramName] = defaultValue
     }
 
-    def sameNode(boolean sameNode = true) {
+    void sameNode(boolean sameNode = true) {
         this.sameNode = sameNode
     }
 
-    def nodeLabel(String paramName, String nodeLabel) {
+    void nodeLabel(String paramName, String nodeLabel) {
         usingNodeLabel = true
         this.nodeLabelParam = paramName
         this.nodeLabel = nodeLabel
     }
 
-    def blockingThresholdsFromMap(Map<String, String> thresholdMap) {
+    void blockingThresholdsFromMap(Map<String, String> thresholdMap) {
         thresholdMap.each { type, name ->
             blockingThreshold(type, name)
         }
     }
 
-    def blockingThreshold(String thresholdType, String thresholdName) {
+    void blockingThreshold(String thresholdType, String thresholdName) {
         Preconditions.checkArgument(blockingThresholdTypes.contains(thresholdType),
                 "thresholdType must be one of these values: ${blockingThresholdTypes}")
         Preconditions.checkArgument(THRESHOLD_COLOR_MAP.containsKey(thresholdName),
@@ -107,7 +107,7 @@ class DownstreamTriggerContext implements Context {
     }
 
     Node createParametersNode() {
-        def nodeBuilder = NodeBuilder.newInstance()
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
 
         nodeBuilder.'configs' {
             if (usingCurrentBuild) {
@@ -160,7 +160,7 @@ class DownstreamTriggerContext implements Context {
                 'hudson.plugins.parameterizedtrigger.BooleanParameters'  {
                     configs {
                         boolParams.each { k, v ->
-                            def boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
+                            Node boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
                                 value(v)
                             }
                             boolConfigNode.appendNode('name', k)

@@ -1,7 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
-import static com.google.common.base.Preconditions.checkNotNull
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+
 import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Preconditions.checkNotNull
 
 class BuildParametersContext implements Context {
 
@@ -23,7 +26,7 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def booleanParam(String parameterName, boolean defaultValue = false, String description = null) {
+    void booleanParam(String parameterName, boolean defaultValue = false, String description = null) {
         simpleParam('hudson.model.BooleanParameterDefinition', parameterName, defaultValue, description)
     }
 
@@ -54,7 +57,7 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
+    void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
                       String description = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
@@ -105,14 +108,14 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def choiceParam(String parameterName, List<String> options, String description = null) {
+    void choiceParam(String parameterName, List<String> options, String description = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         checkNotNull(parameterName, 'parameterName cannot be null')
         checkArgument(parameterName.length() > 0)
         checkNotNull(options, 'options cannot be null')
         checkArgument(options.size() > 0, 'at least one option must be specified')
 
-        def definitionNode = NodeBuilder.newInstance().'hudson.model.ChoiceParameterDefinition' {
+        Node definitionNode = NodeBuilder.newInstance().'hudson.model.ChoiceParameterDefinition' {
             choices(class: 'java.util.Arrays\$ArrayList') {
                 a(class: 'string-array') {
                     options.each {
@@ -144,7 +147,7 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def fileParam(String fileLocation, String description = null) {
+    void fileParam(String fileLocation, String description = null) {
         checkArgument(!buildParameterNodes.containsKey(fileLocation), 'parameter $fileLocation already defined')
         checkNotNull(fileLocation, 'fileLocation cannot be null')
         checkArgument(fileLocation.length() > 0)
@@ -175,7 +178,7 @@ class BuildParametersContext implements Context {
      * @param filter (optional, one of "ALL", "COMPLETED", "SUCCESSFUL" or "STABLE")
      * @return
      */
-    def runParam(String parameterName, String jobToRun, String description = null, String filter = null) {
+    void runParam(String parameterName, String jobToRun, String description = null, String filter = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         checkNotNull(parameterName, 'parameterName cannot be null')
         checkArgument(parameterName.length() > 0)
@@ -221,7 +224,7 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def nodeParam(String parameterName, Closure nodeParamClosure = null) {
+    void nodeParam(String parameterName, Closure nodeParamClosure = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         checkNotNull(parameterName, 'parameterName cannot be null')
         checkArgument(parameterName.length() > 0)
@@ -263,7 +266,7 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def stringParam(String parameterName, String defaultValue = null, String description = null) {
+    void stringParam(String parameterName, String defaultValue = null, String description = null) {
         simpleParam('hudson.model.StringParameterDefinition', parameterName, defaultValue, description)
     }
 
@@ -283,7 +286,7 @@ class BuildParametersContext implements Context {
      * @param description (optional)
      * @return
      */
-    def textParam(String parameterName, String defaultValue = null, String description = null) {
+    void textParam(String parameterName, String defaultValue = null, String description = null) {
         simpleParam('hudson.model.TextParameterDefinition', parameterName, defaultValue, description)
     }
 

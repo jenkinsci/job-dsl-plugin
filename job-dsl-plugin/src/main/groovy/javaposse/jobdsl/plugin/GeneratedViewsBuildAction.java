@@ -8,11 +8,10 @@ import hudson.model.View;
 import hudson.model.ViewGroup;
 import javaposse.jobdsl.dsl.GeneratedView;
 import jenkins.model.RunAction2;
+import org.apache.commons.io.FilenameUtils;
 
 import java.util.Collection;
 import java.util.Set;
-
-import static javaposse.jobdsl.plugin.JenkinsJobManagement.getItemNameFromPath;
 
 public class GeneratedViewsBuildAction implements RunAction2 {
     public final Set<GeneratedView> modifiedViews;
@@ -66,7 +65,7 @@ public class GeneratedViewsBuildAction implements RunAction2 {
             for (GeneratedView generatedView : modifiedViews) {
                 ItemGroup itemGroup = getLookupStrategy().getParent(owner.getProject(), generatedView.getName());
                 if (itemGroup instanceof ViewGroup) {
-                    View view = ((ViewGroup) itemGroup).getView(getItemNameFromPath(generatedView.getName()));
+                    View view = ((ViewGroup) itemGroup).getView(FilenameUtils.getName(generatedView.getName()));
                     if (view != null) {
                         allGeneratedViews.add(view);
                     }

@@ -105,6 +105,9 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call git scm with reference'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -120,6 +123,9 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call git scm with second reference'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -135,7 +141,34 @@ class ScmContextSpec extends Specification {
         context.scmNode.reference[0].text() == '/foo/baz'
     }
 
+    def 'call git scm with reference, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            reference('/foo/bar')
+        }
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            reference.size() == 0
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 2
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == '/foo/bar'
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == false
+        }
+    }
+
     def 'call git scm with shallowClone'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -151,6 +184,9 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call git scm with shallowClone, no argument'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -166,6 +202,9 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call git scm with second shallowClone'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
+
         when:
         context.git {
             remote {
@@ -179,6 +218,56 @@ class ScmContextSpec extends Specification {
         context.scmNode != null
         context.scmNode.useShallowClone.size() == 1
         context.scmNode.useShallowClone[0].text() == 'true'
+    }
+
+    def 'call git scm with shallowClone, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            shallowClone()
+        }
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            reference.size() == 0
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 2
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == ''
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == true
+        }
+    }
+
+    def 'call git scm with cloneTimeout, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            cloneTimeout(50)
+        }
+
+        then:
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.0.0')
+        context.scmNode != null
+        with(context.scmNode) {
+            reference.size() == 0
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 3
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == ''
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == false
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].timeout[0].value() == 50
+        }
     }
 
     def 'call git scm with pruneBranches'() {
@@ -446,7 +535,7 @@ class ScmContextSpec extends Specification {
 
     def 'call git scm with mergeOptions'() {
         setup:
-        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('1.9.3')
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
 
         when:
         context.git {
@@ -467,7 +556,7 @@ class ScmContextSpec extends Specification {
 
     def 'call git scm with second mergeOptions'() {
         setup:
-        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('1.9.3')
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
 
         when:
         context.git {
@@ -489,7 +578,7 @@ class ScmContextSpec extends Specification {
 
     def 'call git scm with complex mergeOptions'() {
         setup:
-        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('1.9.3')
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
 
         when:
         context.git {
@@ -514,7 +603,7 @@ class ScmContextSpec extends Specification {
 
     def 'call git scm with mergeOptions, plugin version 2.x'() {
         setup:
-        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('2.0.0')
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
 
         when:
         context.git {
@@ -542,7 +631,7 @@ class ScmContextSpec extends Specification {
 
     def 'call git scm with second mergeOptions, plugin version 2.x'() {
         setup:
-        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('2.0.0')
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
 
         when:
         context.git {
@@ -581,7 +670,7 @@ class ScmContextSpec extends Specification {
 
     def 'call git scm with complex mergeOptions, plugin version 2.x'() {
         setup:
-        mockJobManagement.getPluginVersion('git-plugin') >> new VersionNumber('2.0.0')
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
 
         when:
         context.git {

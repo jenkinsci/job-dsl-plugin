@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 /**
  * DSL element representing a Jenkins view.
  */
-abstract class View {
+abstract class View implements Context {
     private final List<WithXmlAction> withXmlActions = []
 
     String name

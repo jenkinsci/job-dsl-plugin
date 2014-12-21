@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class GradleContext implements Context {
     final List<String> tasks = []
@@ -14,43 +14,43 @@ class GradleContext implements Context {
     String gradleName = '(Default)'
     Closure configureBlock
 
-    def tasks(String tasks) {
+    void tasks(String tasks) {
         this.tasks << tasks
     }
 
-    def switches(String switches) {
+    void switches(String switches) {
         this.switches << switches
     }
 
-    def useWrapper(boolean useWrapper = true) {
+    void useWrapper(boolean useWrapper = true) {
         this.useWrapper = useWrapper
     }
 
-    def description(String description) {
+    void description(String description) {
         this.description = description
     }
 
-    def rootBuildScriptDir(String rootBuildScriptDir) {
+    void rootBuildScriptDir(String rootBuildScriptDir) {
         this.rootBuildScriptDir = rootBuildScriptDir
     }
 
-    def buildFile(String buildFile) {
+    void buildFile(String buildFile) {
         this.buildFile = buildFile
     }
 
-    def fromRootBuildScriptDir(boolean fromRootBuildScriptDir = true) {
+    void fromRootBuildScriptDir(boolean fromRootBuildScriptDir = true) {
         this.fromRootBuildScriptDir = fromRootBuildScriptDir
     }
 
-    def gradleName(String gradleName) {
+    void gradleName(String gradleName) {
         this.gradleName = gradleName
     }
 
-    def makeExecutable(boolean makeExecutable = true) {
+    void makeExecutable(boolean makeExecutable = true) {
         this.makeExecutable = makeExecutable
     }
 
-    def configure(Closure closure) {
+    void configure(Closure closure) {
         this.configureBlock = closure
     }
 }

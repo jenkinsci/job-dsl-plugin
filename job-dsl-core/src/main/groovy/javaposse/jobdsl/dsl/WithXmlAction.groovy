@@ -9,7 +9,7 @@ class WithXmlAction {
         this.closure = Preconditions.checkNotNull(closure, 'Closure has to be set during constructor')
     }
 
-    def execute(Node root) {
+    void execute(Node root) {
         Preconditions.checkNotNull(root)
 
         closure.delegate = new MissingPropertyToStringDelegate(root)

@@ -1,15 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.ContextHelper
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 
 /**
  * Top level context for configuring the URL trigger functionality.
  */
 class UrlTriggerContext implements Context {
     Closure configureClosure
-    def label
-    def entries = []
+    String label
+    List<UrlTriggerEntryContext> entries = []
     String crontab = 'H/5 * * * *'
 
     UrlTriggerContext(String cron = null) {
@@ -19,22 +19,22 @@ class UrlTriggerContext implements Context {
     }
 
     /** Adds configure closure for overriding the generated XML */
-    def configure(Closure configureClosure) {
+    void configure(Closure configureClosure) {
         this.configureClosure = configureClosure
     }
 
     /** restrict execution to label */
-    def restrictToLabel(String label) {
+    void restrictToLabel(String label) {
         this.label = label
     }
 
     /** Sets the cron schedule */
-    def cron(String cron) {
+    void cron(String cron) {
         this.crontab = cron
     }
 
     /** adds a monitored URL to the trigger. */
-    def url(String url, Closure entryClosure = null) {
+    void url(String url, Closure entryClosure = null) {
         UrlTriggerEntryContext entryContext = new UrlTriggerEntryContext(url)
         ContextHelper.executeInContext(entryClosure, entryContext)
         entries << entryContext

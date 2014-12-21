@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class RakeContext implements Context {
     List<String> tasks = []
@@ -11,37 +11,37 @@ class RakeContext implements Context {
     boolean bundleExec = false
     boolean silent = false
 
-    def task(String task) {
+    void task(String task) {
         this.tasks << task
     }
 
-    def tasks(Iterable<String> tasks) {
+    void tasks(Iterable<String> tasks) {
         tasks.each {
             task(it)
         }
     }
 
-    def file(String file) {
+    void file(String file) {
         this.file = file
     }
 
-    def installation(String installation) {
+    void installation(String installation) {
         this.installation = installation
     }
 
-    def libDir(String libDir) {
+    void libDir(String libDir) {
         this.libDir = libDir
     }
 
-    def workingDir(String workingDir) {
+    void workingDir(String workingDir) {
         this.workingDir = workingDir
     }
 
-    def bundleExec(boolean bundleExec = true) {
+    void bundleExec(boolean bundleExec = true) {
         this.bundleExec = bundleExec
     }
 
-    def silent(boolean silent = true) {
+    void silent(boolean silent = true) {
         this.silent = silent
     }
 }

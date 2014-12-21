@@ -1,3 +1,47 @@
+## Migrating to 1.28
+
+### HTML Publisher
+
+The non-closure variants of the `report` methods in the `publishHtml` context have been deprecated in favor of a new
+closure variant.
+
+DSL prior to 1.28
+```groovy
+job {
+    publishers {
+        publishHtml {
+            report('build', 'Report Name', 'content.html', true)
+            report(reportName: 'Report Name', reportDir: 'build', reportFiles: 'content.html', keepAll: true)
+        }
+    }
+}
+```
+
+DSL since 1.28
+```groovy
+job {
+    publishers {
+        publishHtml {
+            report('build') {
+                reportName('Report Name')
+                reportFiles('content.html')
+                keepAll()
+            }
+        }
+    }
+}
+```
+
+### DSL Method Return Values
+
+Prior to version 1.28 most DSL methods had an undocumented return value. Since 1.28 DSL methods do not return a value
+except for the methods defined in `javaposse.jobdsl.dsl.DslFactory`.
+
+### Context and ContextHelper
+
+The `Context` interface and the `ContextHelper` class have been moved from package `javaposse.jobdsl.dsl.helpers` to
+package `javaposse.jobdsl.dsl`.
+
 ## Migrating to 1.27
 
 ### Job Name
@@ -19,6 +63,7 @@ DSL since 1.27
 job {
     name('foo')
 }
+```
 
 ### Permissions
 

@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class PullRequestBuilderContext implements Context {
 
@@ -14,57 +14,57 @@ class PullRequestBuilderContext implements Context {
     boolean permitAll = false
     boolean autoCloseFailedPullRequests = false
 
-    def admin(String admin) {
+    void admin(String admin) {
         admins << admin
     }
 
-    def admins(Iterable<String> admins) {
+    void admins(Iterable<String> admins) {
         admins.each {
             admin(it)
         }
     }
 
-    def userWhitelist(String user) {
+    void userWhitelist(String user) {
         userWhitelist << user
     }
 
-    def userWhitelist(Iterable<String> users) {
+    void userWhitelist(Iterable<String> users) {
         users.each {
             userWhitelist(it)
         }
     }
 
-    def orgWhitelist(String organization) {
+    void orgWhitelist(String organization) {
         orgWhitelist << organization
     }
 
-    def orgWhitelist(Iterable<String> organizations) {
+    void orgWhitelist(Iterable<String> organizations) {
         organizations.each {
             orgWhitelist(it)
         }
     }
 
-    def cron(String cron) {
+    void cron(String cron) {
         this.cron = cron
     }
 
-    def triggerPhrase(String triggerPhrase) {
+    void triggerPhrase(String triggerPhrase) {
         this.triggerPhrase = triggerPhrase
     }
 
-    def onlyTriggerPhrase(boolean onlyTriggerPhrase = true) {
+    void onlyTriggerPhrase(boolean onlyTriggerPhrase = true) {
         this.onlyTriggerPhrase = onlyTriggerPhrase
     }
 
-    def useGitHubHooks(boolean useGitHubHooks = true) {
+    void useGitHubHooks(boolean useGitHubHooks = true) {
         this.useGitHubHooks = useGitHubHooks
     }
 
-    def permitAll(boolean permitAll = true) {
+    void permitAll(boolean permitAll = true) {
         this.permitAll = permitAll
     }
 
-    def autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) {
+    void autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) {
         this.autoCloseFailedPullRequests = autoCloseFailedPullRequests
     }
 

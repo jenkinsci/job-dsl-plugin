@@ -194,41 +194,6 @@ class WithXmlActionSpec extends Specification {
         permissions[0].header[0].text() == 'My document'
     }
 
-    def 'lookup up nodes with attribute without attributes'() {
-        when:
-        Node trigger = execute { it / triggers }
-
-        then:
-        trigger != null
-        trigger.attributes()['class'] == 'vector'
-        root.triggers.size() == 1
-        root.triggers[0] == trigger
-
-    }
-
-    def 'lookup up nodes with attribute with attributes'() {
-        when:
-        Node trigger = execute { it / triggers(class: 'vector') }
-
-        then:
-        trigger != null
-        trigger.attributes()['class'] == 'vector'
-        root.triggers.size() == 1
-        root.triggers[0] == trigger
-    }
-
-    def 'lookup up nodes with attribute with different attributes'() {
-        when:
-        Node trigger = execute { it / triggers(class: 'arraylist') }
-
-        then:
-        trigger != null
-        trigger.attributes()['class'] == 'arraylist'
-        root.triggers.size() == 2
-        root.triggers[1] == trigger
-        root.triggers[0].attributes()['class'] == 'vector'
-    }
-
     void confirmBrowserUrl(Node scmNode) {
         assert scmNode.browser.size() == 1
         assert scmNode.browser[0].attributes()['class'] == 'hudson.plugins.git.browser.GithubWeb'
