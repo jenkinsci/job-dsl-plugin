@@ -160,11 +160,12 @@ class SvnContextSpec extends Specification {
         context.svn {
             location 'url'
             excludedRegions 'exreg1', 'exreg2'
+            excludedRegions(['exreg3', 'exreg4'])
         }
 
         then: 'the excludedRegions node should contain the specified regions separated by a newline'
         isValidSvnScmNode(context.scmNode)
-        context.scmNode.excludedRegions[0].value() == 'exreg1\nexreg2'
+        context.scmNode.excludedRegions[0].value() == 'exreg1\nexreg2\nexreg3\nexreg4'
     }
 
     def 'call svn with a mix of excluded region specifications'() {
@@ -221,11 +222,12 @@ class SvnContextSpec extends Specification {
         context.svn {
             location 'url'
             includedRegions 'increg1', 'increg2'
+            includedRegions(['increg3', 'increg4'])
         }
 
         then: 'the includedRegions node should contain the specified regions separated by a newline'
         isValidSvnScmNode(context.scmNode)
-        context.scmNode.includedRegions[0].value() == 'increg1\nincreg2'
+        context.scmNode.includedRegions[0].value() == 'increg1\nincreg2\nincreg3\nincreg4'
     }
 
     def 'call svn with a mix of included region specifications'() {
@@ -282,11 +284,12 @@ class SvnContextSpec extends Specification {
         context.svn {
             location 'url'
             excludedUsers 'user1', 'user2'
+            excludedUsers(['user3', 'user4'])
         }
 
         then: 'the excludedUsers node should contain the specified users separated by a newline'
         isValidSvnScmNode(context.scmNode)
-        context.scmNode.excludedUsers[0].value() == 'user1\nuser2'
+        context.scmNode.excludedUsers[0].value() == 'user1\nuser2\nuser3\nuser4'
     }
 
     def 'call svn with a mix of excluded user specifications'() {
@@ -343,11 +346,12 @@ class SvnContextSpec extends Specification {
         context.svn {
             location 'url'
             excludedCommitMsgs 'commit1', 'commit2'
+            excludedCommitMsgs(['commit3', 'commit4'])
         }
 
         then: 'the excludedCommitMessages node should contain the specified commits separated by a newline'
         isValidSvnScmNode(context.scmNode)
-        context.scmNode.excludedCommitMessages[0].value() == 'commit1\ncommit2'
+        context.scmNode.excludedCommitMessages[0].value() == 'commit1\ncommit2\ncommit3\ncommit4'
     }
 
     def 'call svn with a mix of excluded commit message specifications'() {
@@ -403,7 +407,7 @@ class SvnContextSpec extends Specification {
     def 'call svn with multiple browsers'() {
         when: 'svn is called with multiple browsers specified'
         context.svn {
-            browserCollabnetSvn 'http://url'
+            browserCollabNet 'http://url'
             browserSvnWeb 'http://url'
         }
 
@@ -414,7 +418,7 @@ class SvnContextSpec extends Specification {
     def browserTestData() {
         [
                 [
-                        { location 'url'; browserCollabnetSvn 'http://url/' },
+                        { location 'url'; browserCollabNet 'http://url/' },
                         '<browser class="hudson.scm.browsers.CollabNetSVN"><url>http://url/</url></browser>'
                 ],
                 [
