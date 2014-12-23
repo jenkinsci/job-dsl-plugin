@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.ContextHelper
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 
 class PromotionContext implements Context {
     private final JobManagement jobManagement

@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl.helpers.promotions
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.additional.AdditionalXmlConfig
 import javaposse.jobdsl.dsl.additional.Promotion
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 class PromotionsContextHelper {
 

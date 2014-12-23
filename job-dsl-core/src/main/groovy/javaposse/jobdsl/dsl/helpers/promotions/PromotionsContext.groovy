@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.Context
-import javaposse.jobdsl.dsl.helpers.ContextHelper
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 
 class PromotionsContext implements Context {
 

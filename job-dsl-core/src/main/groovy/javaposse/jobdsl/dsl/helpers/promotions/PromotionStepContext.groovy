@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.promotions
 
 import groovy.transform.InheritConstructors
-import javaposse.jobdsl.dsl.helpers.ContextHelper
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.JobManagement
