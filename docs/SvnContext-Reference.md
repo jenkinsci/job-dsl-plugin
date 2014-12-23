@@ -1,4 +1,4 @@
-# `SvnCheckoutStrategy` enum reference
+# `SvnCheckoutStrategy` enum reference.
 
 The SvnCheckoutStrategy enumeration contains the available checkout strategies provided by the Subversion Jenkins plugin.
 

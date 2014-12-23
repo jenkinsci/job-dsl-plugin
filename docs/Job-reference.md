@@ -639,49 +639,48 @@ git {
 
 ## Subversion
 
-<big><pre>
+```groovy
 // Since 1.XX
 svn {
-    [location](#configuring-what-to-check-out-from-svn)(String svnUrl, String localDir = '.') // [At least one required] Specify the SVN location to check out.
-    [checkoutStrategy](#configuring-the-checkout-strategy)(SvnCheckoutStrategy strategy) // [Optional] The checkout strategy that should be used.
-                                                   // If not specified the Update strategy is used by default.
-    [excludedRegion](#configuring-excluded-regions)(String pattern) // [Optional] Add an excluded region.
-    [excludedRegions](#configuring-excluded-regions)(String... patterns) // [Optional] Add a list of excluded regions.
-    [excludedRegions](#configuring-excluded-regions)(Iterator&lt;String&gt; patterns) // [Optional] Add a list of excluded regions.
-    [includedRegion](#configuring-included-regions)(String pattern) // [Optional] Add an included region.
-    [includedRegions](#configuring-included-regions)(String... patterns) // [Optional] Add a list of included regions.
-    [includedRegions](#configuring-included-regions)(Iterable&lt;String&gt; patterns) // [Optional] Add a list of included regions.
-    [excludedUser](#configuring-excluded-users)(String user) // [Optional] Add an excluded user.
-    [excludedUsers](#configuring-excluded-users)(String... users) // [Optional] Add a list of excluded users.
-    [excludedUsers](#configuring-excluded-users)(Iterable&lt;String&gt; users) // [Optional] Add a list of excluded users.
-    [excludedCommitMsg](#configuring-excluded-commit-messages)(String pattern) // [Optional] Add an excluded commit message.
-    [excludedCommitMsgs](#configuring-excluded-commit-messages)(String... patterns) // [Optional] Add a list of excluded commit messages.
-    [excludedCommitMsgs](#configuring-excluded-commit-messages)(Iterable&lt;String&gt; patterns) // [Optional] Add a list of excluded commit messages.
-    [excludedRevProp](#configuring-an-excluded-revision-property)(String revisionProperty) // [Optional] Set excluded revision property.
+    location(String svnUrl, String localDir = '.') // [At least one required] Specify the SVN location to check out.
+    checkoutStrategy(SvnCheckoutStrategy strategy) // [Optional] The checkout strategy that should be used.
+    excludedRegion(String pattern) // [Optional] Add an excluded region.
+    excludedRegions(String... patterns) // [Optional] Add a list of excluded regions.
+    excludedRegions(Iterator<String> patterns) // [Optional] Add a list of excluded regions.
+    includedRegion(String pattern) // [Optional] Add an included region.
+    includedRegions(String... patterns) // [Optional] Add a list of included regions.
+    includedRegions(Iterable<String> patterns) // [Optional] Add a list of included regions.
+    excludedUser(String user) // [Optional] Add an excluded user.
+    excludedUsers(String... users) // [Optional] Add a list of excluded users.
+    excludedUsers(Iterable<String> users) // [Optional] Add a list of excluded users.
+    excludedCommitMsg(String pattern) // [Optional] Add an excluded commit message.
+    excludedCommitMsgs(String... patterns) // [Optional] Add a list of excluded commit messages.
+    excludedCommitMsgs(Iterable<String> patterns) // [Optional] Add a list of excluded commit messages.
+    excludedRevProp(String revisionProperty) // [Optional] Set excluded revision property.
     /*
      * Only one browser may be configured in a single job.
      */
-    [browserCollabnet](#configuring-an-svn-browser)(String url)                  // [Optional] Configure Collabnet SVN browser.
-    [browserFishEye](#configuring-an-svn-browser)(String url, String rootModule)    // [Optional] Configure FishEye browser.
-    [browserSvnWeb](#configuring-an-svn-browser)(String url)                        // [Optional] Configure SVN::Web browser.
-    [browserSventon](#configuring-an-svn-browser)(String url, String repoInstance)  // [Optional] Configure Sventon browser.
-    [browserSventon2](#configuring-an-svn-browser)(String url, String repoInstance) // [Optional] Configure Sventon2 browser.
-    [browserViewSvn](#configuring-an-svn-browser)(String url)                       // [Optional] Configure ViewSVN browser.
-    [browserWebSvn](#configuring-an-svn-browser)(String url)                        // [Optional] Configure WebSVN browser.
-    [configure](#advanced-configuration-using-a-configure-block)(Closure configure) // [Optional] Use a configure block, the SvnSCM node is passed in.
+    browserCollabnet(String url)                     // [Optional] Configure Collabnet SVN browser.
+    browserFishEye(String url, String rootModule)    // [Optional] Configure FishEye browser.
+    browserSvnWeb(String url)                        // [Optional] Configure SVN::Web browser.
+    browserSventon(String url, String repoInstance)  // [Optional] Configure Sventon browser.
+    browserSventon2(String url, String repoInstance) // [Optional] Configure Sventon2 browser.
+    browserViewSvn(String url)                       // [Optional] Configure ViewSVN browser.
+    browserWebSvn(String url)                        // [Optional] Configure WebSVN browser.
+    configure(Closure configure) // [Optional] Use a configure block, the SvnSCM node is passed in.
 }
 svn(String svnUrl, String localDir='.', Closure configure = null)
-</pre></big>
+```
 
 Adds an SVN SCM source. The first variant can be used for advanced configuration (since 1.XX), the other variant is a shortcut for simpler SVN SCM configurations. Only one of the variants may be used in a single job.
 
 ### Configuring what to check out from SVN
 
-At least one location must be configured in order for the SVN plugin to operate correctly.  Locations are configured by calling the [`location(String, String)`](SvnContext-Reference#locationstring-svnurl-string-localdir--) method for each location desired. By default, files are checked out into the workspace directory. To change this behaviour specify an alternate directory using the _localDir_ parameter. Directories specified using _localDir_ are relative to the workspace directory.
+At least one location **must** be configured in order for the SVN plugin to operate correctly.  Locations are configured by calling the [`location(String, String)`](SvnContext-Reference#locationstring-svnurl-string-localdir--) method for each location desired. By default, files are checked out into the workspace directory. To change this behaviour specify an alternate directory using the _localDir_ parameter. Directories specified using _localDir_ are relative to the workspace directory.
 
 ### Configuring the checkout strategy
 
-More than one strategy exists for checking out files from SVN. The default strategy, Update, will attempt to perform an 'svn update' whenever possible. An alternative strategy may be used by calling the [`checkoutStrategy(SvnCheckoutStrategy)`](SvnContext-Reference#checkoutstrategysvncheckoutstrategy-strategy) method. The checkout strategy used by the SVN plugin is the same for all [locations](#configuring-what-to-check-out-from-svn) specified in the job.
+More than one strategy exists for checking out files from SVN. The default strategy, [`Update`](SvnContext-Reference#update), will attempt to perform an 'svn update' whenever possible. An alternative strategy may be used by calling the [`checkoutStrategy(SvnCheckoutStrategy)`](SvnContext-Reference#checkoutstrategysvncheckoutstrategy-strategy) method. The checkout strategy used by the SVN plugin is the same for all [locations](#configuring-what-to-check-out-from-svn) specified in the job.
 
 ### Configuring excluded regions
 
