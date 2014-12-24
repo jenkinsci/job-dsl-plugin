@@ -660,13 +660,13 @@ svn {
     /*
      * Only one browser may be configured in a single job.
      */
-    browserCollabnet(String url)                     // [Optional] Configure Collabnet SVN browser.
-    browserFishEye(String url, String rootModule)    // [Optional] Configure FishEye browser.
-    browserSvnWeb(String url)                        // [Optional] Configure SVN::Web browser.
-    browserSventon(String url, String repoInstance)  // [Optional] Configure Sventon browser.
+    browserCollabnet(String url) // [Optional] Configure Collabnet SVN browser.
+    browserFishEye(String url, String rootModule) // [Optional] Configure FishEye browser.
+    browserSvnWeb(String url) // [Optional] Configure SVN::Web browser.
+    browserSventon(String url, String repoInstance) // [Optional] Configure Sventon browser.
     browserSventon2(String url, String repoInstance) // [Optional] Configure Sventon2 browser.
-    browserViewSvn(String url)                       // [Optional] Configure ViewSVN browser.
-    browserWebSvn(String url)                        // [Optional] Configure WebSVN browser.
+    browserViewSvn(String url) // [Optional] Configure ViewSVN browser.
+    browserWebSvn(String url) // [Optional] Configure WebSVN browser.
     configure(Closure configure) // [Optional] Use a configure block, the SvnSCM node is passed in.
 }
 svn(String svnUrl, String localDir='.', Closure configure = null)
