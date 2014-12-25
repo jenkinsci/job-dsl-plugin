@@ -13,6 +13,12 @@ import org.codehaus.groovy.transform.GroovyASTTransformation
 
 import static groovy.lang.Closure.DELEGATE_FIRST
 
+/**
+ * Global AST transformation for enabling IDE support for nested DSL contexts.
+ *
+ * A <code>@groovy.lang.DelegatesTo(value = T, strategy = Closure.DELEGATE_FIRST)</code> annotation is added to each
+ * method parameter annotated by <code>@DslContext(T)</code>.
+ */
 @GroovyASTTransformation(phase = CompilePhase.CONVERSION)
 class ContextASTTransformation implements ASTTransformation {
     private static final ClassNode DELEGATES_TO_CLASS = ClassHelper.make('groovy.lang.DelegatesTo')
