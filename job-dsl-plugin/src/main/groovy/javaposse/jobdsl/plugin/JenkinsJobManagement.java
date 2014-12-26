@@ -18,8 +18,10 @@ import hudson.model.BuildableItem;
 import hudson.model.Cause;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import hudson.model.Items;
 import hudson.model.Job;
 import hudson.model.Run;
+import hudson.model.TopLevelItem;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
@@ -33,6 +35,7 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.RenameHelper;
+import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
@@ -78,9 +81,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         @Override
         public Set<String> allJobNames() {
             @SuppressWarnings("unchecked")
-            Collection<Item> items = lookupStrategy.getContext(build.getProject()).getItems();
+            Collection<TopLevelItem> items = Jenkins.getInstance().getAllItems(TopLevelItem.class);
             Set<String> itemNames = new HashSet<String>();
-            for (Item item : items) {
+            for (TopLevelItem item : items) {
                 itemNames.add(item.getFullName());
             }
 
@@ -89,9 +92,34 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         @Override
         public void renameJob(String from, String to) throws IOException {
-            Job<?, ?> job = lookupStrategy.getItem(build.getProject(), from, Job.class);
-            job.renameTo(to);
+            LOGGER.log(Level.INFO, format("Renaming Job %s to %s", from, to));
+
+            AbstractProject<?, ?> seedJob = build.getProject();
+            Job<?, ?> job = Jenkins.getInstance().getItemByFullName(from, Job.class);
+
+            ItemGroup fromParent = lookupStrategy.getParent(seedJob, from);
+            ItemGroup toParent = lookupStrategy.getParent(seedJob, to);
+            if (!(fromParent == toParent)) {
+                LOGGER.log(Level.INFO, format("Moving Job %s to folder %s", from, toParent.getFullName()));
+                if (toParent instanceof DirectlyModifiableTopLevelItemGroup) {
+                    DirectlyModifiableTopLevelItemGroup itemGroup = (DirectlyModifiableTopLevelItemGroup) toParent;
+                    doMove(job, itemGroup);
+                } else {
+                    throw new DslException(
+                            format("Failure moving Job %s to folder %s - destination is not a folder",
+                                    from,
+                                    toParent.getFullName()));
+                }
+            }
+
+            job.renameTo(FilenameUtils.getName(to));
         }
+
+        @SuppressWarnings("unchecked")
+        private <I extends AbstractItem & TopLevelItem> I doMove(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
+            return Items.move((I) item, destination);
+        }
+
     };
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build,

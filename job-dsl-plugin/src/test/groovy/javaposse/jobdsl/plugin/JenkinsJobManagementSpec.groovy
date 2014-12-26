@@ -131,6 +131,20 @@ class JenkinsJobManagementSpec extends Specification {
         jenkinsRule.jenkins.getItemByFullName('oldName') == null
     }
 
+    def 'move Job to other Folder'() {
+        setup:
+        Folder oldFolder = jenkinsRule.jenkins.createProject(Folder, 'oldFolder')
+        jenkinsRule.jenkins.createProject(Folder, 'newFolder')
+        oldFolder.createProject(FreeStyleProject, 'oldName')
+
+        when:
+        jobManagement.renameJobMatching('oldFolder/oldName', 'newFolder/newName')
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('newFolder/newName') != null
+        jenkinsRule.jenkins.getItemByFullName('oldFolder/oldName') == null
+    }
+
     def 'createOrUpdateConfig relative to folder'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')

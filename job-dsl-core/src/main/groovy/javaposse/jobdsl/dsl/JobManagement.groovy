@@ -47,11 +47,11 @@ interface JobManagement {
 
     /**
      * Renames a Job with name matching previousNames to the destination name.
-     * Does not support Jobs which are not directly below the seed job.
      *
      * If destination matches the currently found job name, then nothing happens.
      *
-     * @param previousNames a regular Expression how the job was called earlier
+     * @param previousNames a regular Expression how the job was called earlier.
+     *        Needs to match the full Name (with path) of the job.
      * @param destination the new name of the job
      * @throws IOException if renaming failed
      * @throws IllegalArgumentException if there are multiple jobs matching the previousNames
