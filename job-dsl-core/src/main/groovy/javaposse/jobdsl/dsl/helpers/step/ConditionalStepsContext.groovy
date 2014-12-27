@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
@@ -15,7 +16,7 @@ class ConditionalStepsContext extends StepContext {
         super(jobManagement)
     }
 
-    void condition(Closure conditionClosure) {
+    void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
         this.runCondition = RunConditionFactory.of(conditionClosure)
     }
 

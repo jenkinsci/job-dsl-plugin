@@ -1,11 +1,12 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class NestedView extends View {
-    void views(Closure viewsClosure) {
+    void views(@DslContext(NestedViewsContext) Closure viewsClosure) {
         NestedViewsContext context = new NestedViewsContext()
         executeInContext(viewsClosure, context)
 
@@ -19,7 +20,7 @@ class NestedView extends View {
         }
     }
 
-    void columns(Closure columnsClosure) {
+    void columns(@DslContext(NestedViewColumnsContext) Closure columnsClosure) {
         NestedViewColumnsContext context = new NestedViewColumnsContext()
         executeInContext(columnsClosure, context)
 

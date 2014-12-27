@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 class GerritContext implements Context {
@@ -57,7 +58,7 @@ class GerritContext implements Context {
         this.configureClosure = configureClosure
     }
 
-    void events(Closure eventClosure) {
+    void events(@DslContext(GerritEventContext) Closure eventClosure) {
         ContextHelper.executeInContext(eventClosure, eventContext)
     }
 

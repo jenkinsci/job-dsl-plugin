@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 class ConfigFilesContext implements Context {
@@ -15,7 +16,7 @@ class ConfigFilesContext implements Context {
         this.jobManagement = jobManagement
     }
 
-    void file(String fileName, Closure configFileClosure = null) {
+    void file(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
         String configFileId = jobManagement.getConfigFileId(ConfigFileType.Custom, fileName)
         Preconditions.checkNotNull(configFileId, "Custom config file with name '${fileName}' not found")
 

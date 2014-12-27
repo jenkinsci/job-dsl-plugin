@@ -24,7 +24,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
-    Job job(Map<String, Object> arguments=[:], Closure closure) {
+    Job job(Map<String, Object> arguments = [:], @DslContext(Job) Closure closure) {
         LOGGER.log(Level.FINE, "Got closure and have ${jm}")
         Job job = new Job(jm, arguments)
 
@@ -39,7 +39,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
-    View view(Map<String, Object> arguments=[:], Closure closure) {
+    View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
         ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
         View view = viewType.viewClass.newInstance()
         view.with(closure)
@@ -50,7 +50,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
-    Folder folder(Closure closure) {
+    Folder folder(@DslContext(Folder) Closure closure) {
         Folder folder = new Folder()
         folder.with(closure)
         referencedJobs << folder
@@ -58,7 +58,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
-    ConfigFile configFile(Map<String, Object> arguments=[:], Closure closure) {
+    ConfigFile configFile(Map<String, Object> arguments = [:], @DslContext(ConfigFile) Closure closure) {
         ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
         ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType)
         configFile.with(closure)

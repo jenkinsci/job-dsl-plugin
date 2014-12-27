@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslContext
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -30,7 +31,7 @@ class SectionsContext implements Context {
      *     </columns>
      * </hudson.plugins.sectioned__view.ListViewSection>
      */
-    void listView(Closure listViewSectionClosure) {
+    void listView(@DslContext(ListViewSectionContext) Closure listViewSectionClosure) {
         ListViewSectionContext context = new ListViewSectionContext()
         executeInContext(listViewSectionClosure, context)
 

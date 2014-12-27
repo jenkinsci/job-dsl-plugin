@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -16,7 +17,7 @@ class SectionedView extends View {
 </hudson.plugins.sectioned__view.SectionedView>'''
     }
 
-    void sections(Closure sectionsClosure) {
+    void sections(@DslContext(SectionsContext) Closure sectionsClosure) {
         SectionsContext context = new SectionsContext()
         executeInContext(sectionsClosure, context)
 

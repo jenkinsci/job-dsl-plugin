@@ -50,10 +50,23 @@ project(':job-dsl-core') {
     apply plugin: 'application'
     apply plugin: 'gradle-one-jar'
 
+    sourceSets {
+        ast {
+            groovy {
+                srcDir 'src/ast/groovy'
+            }
+            resources {
+                srcDir 'src/ast/resources'
+            }
+        }
+        main.compileClasspath += sourceSets.ast.output
+    }
+
     description = 'Generates Jenkins jobs via a DSL'
     mainClassName = 'javaposse.jobdsl.Run'
 
     dependencies {
+        astCompile 'org.codehaus.groovy:groovy-all:1.8.6'
         compile 'commons-codec:commons-codec:1.8' // for Perforce
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -66,7 +67,7 @@ class WrapperContext implements Context {
      *     </ruby-object>
      * </ruby-proxy-object>
      */
-    void rbenv(String rubyVersion, Closure rbenvClosure = null) {
+    void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
 
@@ -158,7 +159,7 @@ class WrapperContext implements Context {
      *
      * @param timeoutClosure optional closure for configuring the timeout
      */
-    void timeout(String type = Timeout.absolute.toString(), Closure timeoutClosure = null) {
+    void timeout(String type = Timeout.absolute.toString(), @DslContext(TimeoutContext) Closure timeoutClosure = null) {
         jobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
         Timeout timeoutType = null
         if (type) {
@@ -207,7 +208,7 @@ class WrapperContext implements Context {
         }
     }
 
-    void timeout(Closure timeoutClosure) {
+    void timeout(@DslContext(TimeoutContext) Closure timeoutClosure) {
         timeout(null, timeoutClosure)
     }
 
@@ -245,7 +246,8 @@ class WrapperContext implements Context {
     </org.jvnet.hudson.plugins.port__allocator.PortAllocator>
 
      */
-    void allocatePorts(String[] portsArg, Closure closure = null) {
+
+    void allocatePorts(String[] portsArg, @DslContext(PortsContext) Closure closure = null) {
         PortsContext portContext = new PortsContext()
         ContextHelper.executeInContext(closure, portContext)
 
@@ -284,7 +286,7 @@ class WrapperContext implements Context {
         }
     }
 
-    void allocatePorts(Closure cl = null) {
+    void allocatePorts(@DslContext(PortsContext) Closure cl = null) {
         allocatePorts(new String[0], cl)
     }
 
@@ -347,7 +349,7 @@ class WrapperContext implements Context {
      *
      * Runs build under XVNC.
      */
-    void xvnc(Closure xvncClosure = null) {
+    void xvnc(@DslContext(XvncContext) Closure xvncClosure = null) {
         XvncContext xvncContext = new XvncContext(jobManagement)
         ContextHelper.executeInContext(xvncClosure, xvncContext)
 
@@ -410,7 +412,7 @@ class WrapperContext implements Context {
      * @param envClosure
      * @return
      */
-    void environmentVariables(Closure envClosure) {
+    void environmentVariables(@DslContext(WrapperEnvironmentVariableContext) Closure envClosure) {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
 
@@ -480,7 +482,7 @@ class WrapperContext implements Context {
      *
      * @param releaseClosure attributes and steps used by the plugin
      */
-    void release(Closure releaseClosure) {
+    void release(@DslContext(ReleaseContext) Closure releaseClosure) {
         ReleaseContext releaseContext = new ReleaseContext(jobManagement)
         ContextHelper.executeInContext(releaseClosure, releaseContext)
 
@@ -524,7 +526,7 @@ class WrapperContext implements Context {
      *     </buildWrappers>
      * </project>
      */
-    void preBuildCleanup(Closure closure = null) {
+    void preBuildCleanup(@DslContext(PreBuildCleanupContext) Closure closure = null) {
         PreBuildCleanupContext context = new PreBuildCleanupContext()
         ContextHelper.executeInContext(closure, context)
 
@@ -550,7 +552,7 @@ class WrapperContext implements Context {
      *     </buildWrappers>
      * </project>
      */
-    void logSizeChecker(Closure closure = null) {
+    void logSizeChecker(@DslContext(LogFileSizeCheckerContext) Closure closure = null) {
         LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
         ContextHelper.executeInContext(closure, context)
 
@@ -597,7 +599,7 @@ class WrapperContext implements Context {
      *     <overwriteExistingKeychains>false</overwriteExistingKeychains>
      * </com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
      */
-    void keychains(Closure keychainsClosure) {
+    void keychains(@DslContext(KeychainsContext) Closure keychainsClosure) {
         KeychainsContext keychainsContext = new KeychainsContext()
         ContextHelper.executeInContext(keychainsClosure, keychainsContext)
 
@@ -624,7 +626,7 @@ class WrapperContext implements Context {
      *     </managedFiles>
      * </org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper>
      */
-    void configFiles(Closure configFilesClosure) {
+    void configFiles(@DslContext(ConfigFilesContext) Closure configFilesClosure) {
         ConfigFilesContext configFilesContext = new ConfigFilesContext(jobManagement)
         ContextHelper.executeInContext(configFilesClosure, configFilesContext)
 
@@ -688,7 +690,7 @@ class WrapperContext implements Context {
      *}
      * </pre>
      */
-    void mavenRelease(Closure releaseClosure = null) {
+    void mavenRelease(@DslContext(MavenReleaseContext) Closure releaseClosure = null) {
         Preconditions.checkState type == JobType.Maven, 'mavenRelease can only be applied for Maven jobs'
 
         MavenReleaseContext context = new MavenReleaseContext()
@@ -780,7 +782,7 @@ class WrapperContext implements Context {
      *     </bindings>
      * </org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
      */
-    void credentialsBinding(Closure closure) {
+    void credentialsBinding(@DslContext(CredentialsBindingContext) Closure closure) {
         CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
