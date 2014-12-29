@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslContext
@@ -7,6 +8,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
+import javaposse.jobdsl.dsl.helpers.scm.SvnContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -270,36 +272,54 @@ class ScmContext implements Context {
     void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
+
     void svn(String svnUrl, String localDir, Closure configure = null) {
         checkNotNull(svnUrl)
         checkNotNull(localDir)
+
+        svn {
+            location svnUrl, localDir
+            delegate.configure configure
+        }
+    }
+
+    void svn(Closure svnClosure) {
         validateMulti()
+
+        SvnContext svnContext = new SvnContext()
+        executeInContext(svnClosure, svnContext)
+
+        Preconditions.checkState(svnContext.locations.size() != 0, 'One or more locations must be specified')
 
         NodeBuilder nodeBuilder = new NodeBuilder()
 
         Node svnNode = nodeBuilder.scm(class: 'hudson.scm.SubversionSCM') {
             locations {
-                'hudson.scm.SubversionSCM_-ModuleLocation' {
-                    remote "${svnUrl}"
-                    local "${localDir}"
+                svnContext.locations.each { currLoc ->
+                    'hudson.scm.SubversionSCM_-ModuleLocation' {
+                        remote currLoc.url
+                        local currLoc.local
+                    }
                 }
             }
-
-            excludedRegions ''
-            includedRegions ''
-            excludedUsers ''
-            excludedRevprop ''
-            excludedCommitMessages ''
-            workspaceUpdater(class: 'hudson.scm.subversion.UpdateUpdater')
+            workspaceUpdater(class: svnContext.checkoutStrategy.className)
+            excludedRegions svnContext.excludedRegions.join('\n')
+            includedRegions svnContext.includedRegions.join('\n')
+            excludedUsers svnContext.excludedUsers.join('\n')
+            excludedCommitMessages svnContext.excludedCommitMsgs.join('\n')
+            excludedRevprop svnContext.excludedRevProp
         }
 
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
+        if (svnContext.browserXmlClosure) {
+            WithXmlAction action = new WithXmlAction(svnContext.browserXmlClosure)
+            action.execute(svnNode)
+        }
+
+        if (svnContext.configureXmlClosure) {
+            WithXmlAction action = new WithXmlAction(svnContext.configureXmlClosure)
             action.execute(svnNode)
         }
         scmNodes << svnNode
-
     }
 
     /**

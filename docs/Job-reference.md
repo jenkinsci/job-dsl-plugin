@@ -640,30 +640,167 @@ git {
 ## Subversion
 
 ```groovy
+// Since 1.XX
+svn {
+    location(String svnUrl, String localDir = '.') // [At least one required] Specify the SVN location to check out.
+    checkoutStrategy(SvnCheckoutStrategy strategy) // [Optional] The checkout strategy that should be used.
+    excludedRegion(String pattern) // [Optional] Add an excluded region.
+    excludedRegions(String... patterns) // [Optional] Add a list of excluded regions.
+    excludedRegions(Iterator<String> patterns) // [Optional] Add a list of excluded regions.
+    includedRegion(String pattern) // [Optional] Add an included region.
+    includedRegions(String... patterns) // [Optional] Add a list of included regions.
+    includedRegions(Iterable<String> patterns) // [Optional] Add a list of included regions.
+    excludedUser(String user) // [Optional] Add an excluded user.
+    excludedUsers(String... users) // [Optional] Add a list of excluded users.
+    excludedUsers(Iterable<String> users) // [Optional] Add a list of excluded users.
+    excludedCommitMsg(String pattern) // [Optional] Add an excluded commit message.
+    excludedCommitMsgs(String... patterns) // [Optional] Add a list of excluded commit messages.
+    excludedCommitMsgs(Iterable<String> patterns) // [Optional] Add a list of excluded commit messages.
+    excludedRevProp(String revisionProperty) // [Optional] Set excluded revision property.
+    /*
+     * Only one browser may be configured in a single job.
+     */
+    browserCollabnet(String url) // [Optional] Configure Collabnet SVN browser.
+    browserFishEye(String url, String rootModule) // [Optional] Configure FishEye browser.
+    browserSvnWeb(String url) // [Optional] Configure SVN::Web browser.
+    browserSventon(String url, String repoInstance) // [Optional] Configure Sventon browser.
+    browserSventon2(String url, String repoInstance) // [Optional] Configure Sventon2 browser.
+    browserViewSvn(String url) // [Optional] Configure ViewSVN browser.
+    browserWebSvn(String url) // [Optional] Configure WebSVN browser.
+    configure(Closure configure) // [Optional] Use a configure block, the SvnSCM node is passed in.
+}
 svn(String svnUrl, String localDir='.', Closure configure = null)
 ```
 
-Add Subversion source. 'svnUrl' is self explanatory. 'localDir' sets the <local> tag (which is set to '.' if you leave this arg out). The Configure block is handed a hudson.scm.SubversionSCM node.
+Adds an SVN SCM source. The first variant can be used for advanced configuration (since 1.XX), the other variant is a shortcut for simpler SVN SCM configurations. Only one of the variants may be used in a single job.
 
-You can use the Configure block to configure additional svn nodes such as a <browser> node. First a FishEyeSVN example:
+### Configuring what to check out from SVN
 
+At least one location **must** be configured in order for the SVN plugin to operate correctly.  Locations are configured by calling the [`location(String, String)`](SvnContext-Reference#locationstring-svnurl-string-localdir--) method for each location desired. By default, files are checked out into the workspace directory. To change this behaviour specify an alternate directory using the _localDir_ parameter. Directories specified using _localDir_ are relative to the workspace directory.
+
+### Configuring the checkout strategy
+
+More than one strategy exists for checking out files from SVN. The default strategy, [`Update`](SvnContext-Reference#update), will attempt to perform an 'svn update' whenever possible. An alternative strategy may be used by calling the [`checkoutStrategy(SvnCheckoutStrategy)`](SvnContext-Reference#checkoutstrategysvncheckoutstrategy-strategy) method. The checkout strategy used by the SVN plugin is the same for all [locations](#configuring-what-to-check-out-from-svn) specified in the job.
+
+### Configuring excluded regions
+
+An excluded region is a regular expression pattern that matches a set of files and/or folders in the configured [locations](#configuring-what-to-check-out-from-svn). If excluded regions are configured, and Jenkins is set to poll for changes, Jenkins will ignore any files and/or folders that match the specified patterns when determining if a build needs to be triggered. Excluded regions can be specified by calling the [`excludedRegion(String)`](SvnContext-Reference#excludedregionstring-pattern), [`excludedRegions(String...)`](SvnContext-Reference#excludedregionsstring-patterns), or [`excludedRegions(Iterable<String>)`](SvnContext-Reference#excludedregionsiterablestring-patterns) methods. The same set of excluded regions are used for all locations specified in the job. `excludedRegion(String)` may be called multiple times, each call appends the specified pattern to the list of excluded regions. `excludedRegions(String...)` and `excludedRegions(Iterable<String>)` can be used to add multiple patterns at once, they are appended to any excluded regions that have already been configured.
+
+### Configuring included regions
+
+An included region is a regular expression pattern that matches a set of files and/or folders in the configured [locations](#configuring-what-to-check-out-from-svn). If included regions are configured, and Jenkins is set to poll for changes, Jenkins will ignore any files and/or folders that **do not** match the specified patterns when determining if a build needs to be triggered. Included regions can be specified by calling the [`includedRegion(String)`](SvnContext-Reference#includedregionstring-pattern), [`includedRegions(String...)`](SvnContext-Reference#includedregionsstring-patterns), or [`includedRegions(Iterable<String>)`](SvnContext-Reference#includedregionsiterablestring-patterns) methods. The same set of included regions are used for all locations specified in the job. `includedRegion(String)` may be called multiple times, each call appends the specified pattern to the list of included regions. `includedRegions(String...)` and `includedRegion(Iterable<String>)` can be used to add multiple patterns at once, they are appended to any included regions that have already been configured.
+
+### Configuring excluded users
+
+If excluded users are configured, and Jenkins is set to poll for changes, Jenkins will ignore any revisions committed by the specified users when determining if a build needs to be triggered. Excluded users can be specified by calling the [`excludedUser(String)`](SvnContext-Reference#excludeduserstring-user), [`excludedUsers(String...)`](SvnContext-Reference#excludedusersstring-users), or [`excludedUsers(Iterable<String>)`](SvnContext-Reference#excludedusersiterablestring-users) methods. The same set of excluded regions are used for all [locations](SvnContext-Reference#configuring-what-to-check-out-from-svn) specified in the job. `excludedUser(String)` may be called multiple times, each call appends the specified user to the list of excluded users. `excludedUsers(String...)` and `excludedUsers(Iterable<String>)` can be used to add multiple users at once, they are appended to any excluded users that have already been configured.
+
+### Configuring excluded commit messages
+
+If excluded commit messages are configured, and Jenkins is set to poll for changes, Jenkins will ignore any revisions with commit messages that match the specified patterns when determining if a build needs to be triggered. Excluded commit messages can be specified by calling the [`excludedCommitMsg(String)`](SvnContext-Reference#excludedcommitmsgstring-pattern), [`excludedCommitMsgs(String...)`](SvnContext-Reference#excludedcommitmsgsstring-patterns), or [`excludedCommitMsgs(Iterable<String>)`](SvnContext-Reference#excludedcommitmsgsiterablestring-patterns) methods. The same set of excluded commit messages are used for all [locations](#configuring-what-to-check-out-from-svn) specified in the job. `excludedCommitMsg(String)` may be called multiple times, each call appends the specified pattern to the list of excluded commit messsages. `excludedCommitMsgs(String...)` and `excludedCommitMsgs(Iterable<String>)` can be used to add multiple patterns at once, they are appended to any excluded commit messages that have already been configured.
+
+### Configuring an excluded revision property
+
+If an excluded revision property is set, and Jenkins is set to poll for changes, Jenkins will ignore any revisions that are marked with the specified revision property when determining if a build needs to be triggered. The excluded revision property is set by calling [`excludedRevProp(String)`](SvnContext-Reference#excludedrevpropstring-revisionproperty). The same excluded revision property is used for all [locations](#configuring-what-to-check-out-from-svn) specified in the job.  If `excludedRevProp(String)` is called multiple times, only the last call will take effect. Excluding revision properties only works with Subversion 1.5 servers or greater.
+
+### Configuring an SVN browser
+
+SVN changes within Jenkins can be linked to an external system for browsing the details of those changes. If no browser is configured then the browser is automatically detected by attempting to infer the repository browser from other jobs, if supported by the SCM and a job with matching SCM details can be found. Only one browser per job may be configured. The following methods can be used to configure the corresponding browser:
+
+Method | Browser
+-------|--------
+[`browserCollabnet(String)`](SvnContext-Reference#browsercollabnetstring-url) | CollabNet
+[`browserFishEye(String, String)`](SvnContext-Reference#browserfisheyestring-url-string-rootmodule--) | FishEye
+[`browserSvnWeb(String)`](SvnContext-Reference#browsersvnwebstring-url) | SVN::Web.
+[`browserSventon(String, String)`](SvnContext-Reference#browsersventonstring-url-string-repoinstance) | Sventon 1.x
+[`browserSventon2(String, String)`](SvnContext-Reference#browsersventon2string-url-string-repoinstance) | Sventon 2.x
+[`browserViewSvn(String)`](SvnContext-Reference#browserviewsvnstring-url) | ViewSVN
+[`browserWebSvn(String)`](SvnContext-Reference#browserwebsvnstring-url) | WebSVN
+
+### Advanced configuration using a configure block
+
+If further configuration of the generated SVN SCM XML node is required, the [`configure(Closure)`](SvnContext-Reference#configureclosure-withxmlclosure) method can be used to set a closure to be called after creation of the SVN SCM node. The closure is passed the SVN SCM node as its first parameter.
+
+### Examples
 ```groovy
-svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-    svnNode / browser(class:'hudson.scm.browsers.FishEyeSVN') {
-        url 'http://mycompany.com/fisheye/repo_name'
-        rootModule 'my_root_module'
+// Checkout a project into the workspace directory.
+job {
+    name 'svnSimpleExample'
+    scm {
+        svn 'https://svn.mydomain.com/repo/project1/trunk'
+    }
+}
+
+// Checkout multiple projects.
+job {
+    name 'svnLocationExample'
+    scm {
+        svn {
+            // Check out project1 into the workspace directory.
+            location 'https://svn.mydomain.com/repo/project1/trunk'
+
+            // Check out project2 into a subdirectory of the workspace directory.
+            location 'https://svn.mydomain.com/repo/project2/trunk', 'proj2'
+        }
+    }
+}
+
+// Change the job's checkout strategy.
+job {
+    name 'svnCheckoutStrategyExample'
+    scm {
+        svn {
+            location 'https://svn.mydomain.com/repo/project1/trunk'
+
+            // Use the Checkout strategy instead of the default Update strategy.
+            checkoutStrategy SvnCheckoutStrategy.Checkout
+        }
+    }
+}
+
+// Configure excluded and included regions.
+job {
+    name 'svnExcludeIncludeExample'
+    scm {
+        svn {
+            location 'https://svn.mydomain.com/repo/project1/trunk'
+
+            excludedRegion '/project1/trunk/.*\\.html'
+
+            def ir = ['/project1/trunk/src/.*\\.java', '/project1/trunk/src/.*\\.groovy']
+            includedRegions(ir)
+        }
+    }
+}
+
+// Configure excluded users, commit messages, and an excluded revision property.
+job {
+    name 'svnExcludeUserMsgRevPropExample'
+    scm {
+        svn {
+            location 'https://svn.mydomain.com/repo/project1/trunk'
+
+            excludedUser 'jsmith'
+            excludedUsers 'jdoe', 'sally'
+
+            excludedCommitMsg '[Bb][Aa][Dd]'
+
+            excludedRevProp 'mycompany:dontbuild'
+        }
+    }
+}
+
+// Configure a browser.
+job {
+    name 'svnBrowserExample'
+    scm {
+        svn {
+            location 'https://svn.mydomain.com/repo/project1/trunk'
+
+            browserFishEye 'http://fisheye.mydomain.com/browse/project1'
+        }
     }
 }
 ```
-
-and now a ViewSVN example:
-```groovy
-svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-    svnNode / browser(class:'hudson.scm.browsers.ViewSVN') / url << 'http://mycompany.com/viewsvn/repo_name'
-}
-```
-
-For more details on using the configure block syntax, see our [dedicated page](configure-block).
 
 ## Perforce
 

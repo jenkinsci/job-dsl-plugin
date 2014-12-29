@@ -175,13 +175,16 @@ public class DslScriptLoader {
 
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer();
-        icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
-        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode");
-        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
-        icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");
-        icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
-        icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
-        icz.addImports("javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting");
+        icz.addImports(
+            "javaposse.jobdsl.dsl.helpers.Permissions",
+            "javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode",
+            "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior",
+            "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
+            "javaposse.jobdsl.dsl.views.ListView.StatusFilter",
+            "javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle",
+            "javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting",
+            "javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy"
+        );
         config.addCompilationCustomizers(icz);
 
         config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
