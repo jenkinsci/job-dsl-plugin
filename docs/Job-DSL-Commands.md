@@ -203,6 +203,7 @@ job(Map<String, ?> arguments = [:]) {
         phase(String name, Closure phaseClosure = null)
         phase(String name, String continuationConditionArg, Closure phaseClosure)
         prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
+        publishOverSsh(Closure publishOverSshClosure) // since 1.28
         rake(Closure rakeClosure = null) // since 1.25
         rake(String tasksArg, Closure rakeClosure = null) // since 1.25
         remoteTrigger(String remoteJenkinsName, String jobName,

@@ -1810,6 +1810,97 @@ sbt(/*standard parameters here*/) {
 }
 ```
 
+## Publish Over SSH
+
+```groovy
+job {
+    steps {
+        publishOverSsh {
+            server(String name) {
+                verbose(boolean verbose = true)
+                credentials(String username) {
+                    pathToKey(String pathToKey)
+                    key(String key)
+                }
+                retry(int retries = 0, int delay = 10000)
+                label(String label)
+                transferSet {
+                    sourceFiles(String sourceFiles)
+                    execCommand(String execCommand)
+                    removePrefix(String prefix)
+                    remoteDirectory(String remoteDirectory)
+                    excludeFiles(String excludeFiles)
+                    patternSeparator(String patternSeparator)
+                    noDefaultExcludes(boolean noDefaultExcludes = true)
+                    makeEmptyDirs(boolean makeEmptyDirs = true)
+                    flattenFiles(boolean flattenFiles = true)
+                    remoteDirIsDateFormat(boolean remoteDirIsDateFormat = true)
+                    execTimeout(long execTimeout)
+                    execInPty(boolean execInPty = true)
+                }
+            }
+            continueOnError(boolean continueOnError = true)
+            failOnError(boolean failOnError = true)
+            alwaysPublishFromMaster(boolean alwaysPublishFromMaster = true)
+            parameterizedPublishing(String parameterName)
+        }
+    }
+}
+```
+
+Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH. Requires the
+[Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin).
+
+Encrypted keys are currently not supported on job level, use the global configuration instead.
+
+Examples:
+
+```groovy
+// Basic step
+job {
+    steps {
+        publishOverSsh {
+            server('server-name') {
+                transferSet {
+                    sourceFiles('file')
+                }
+            }
+        }
+    }
+}
+
+// Using parameter to match server label
+job {
+    steps {
+        publishOverSsh {
+            server('my-server-01') {
+                credentials('user01') {
+                    pathToKey('path01')
+                }
+                label('server-01')
+                transferSet {
+                    sourceFiles('files')
+                    execCommand('command')
+                }
+            }
+            server('my-server-02') {
+                credentials('user2') {
+                    key('key')
+                }
+                label('server-02')
+                transferSet {
+                    sourceFiles('files2')
+                    execCommand('command2')
+                }
+            }
+            parameterizedPublishing('PARAMETER')
+        }
+    }
+}
+```
+
+(since 1.28)
+
 ## Rake
 
 ```groovy

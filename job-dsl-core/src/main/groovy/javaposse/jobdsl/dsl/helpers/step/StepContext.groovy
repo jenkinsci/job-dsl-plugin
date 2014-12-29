@@ -641,6 +641,136 @@ class StepContext implements Context {
     }
 
     /**
+     * <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin>
+     *     <delegate>
+     *         <consolePrefix>SSH: </consolePrefix>
+     *         <delegate>
+     *             <publishers>
+     *                 <jenkins.plugins.publish__over__ssh.BapSshPublisher>
+     *                     <configName>my-server</configName>
+     *                     <verbose>false</verbose>
+     *                     <transfers>
+     *                         <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+     *                             <remoteDirectory></remoteDirectory>
+     *                             <sourceFiles></sourceFiles>
+     *                             <excludes></excludes>
+     *                             <removePrefix></removePrefix>
+     *                             <remoteDirectorySDF>false</remoteDirectorySDF>
+     *                             <flatten>false</flatten>
+     *                             <cleanRemote>false</cleanRemote>
+     *                             <noDefaultExcludes>false</noDefaultExcludes>
+     *                             <makeEmptyDirs>false</makeEmptyDirs>
+     *                             <patternSeparator>[, ]+</patternSeparator>
+     *                             <execCommand></execCommand>
+     *                             <execTimeout>120000</execTimeout>
+     *                             <usePty>false</usePty>
+     *                         </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+     *                     </transfers>
+     *                     <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
+     *                     <usePromotionTimestamp>false</usePromotionTimestamp>
+     *                     <retry class="jenkins.plugins.publish_over_ssh.BapSshRetry">
+     *                         <retries>10</retries>
+     *                         <retryDelay>10000</retryDelay>
+     *                     </retry>
+     *                     <credentials class="jenkins.plugins.publish_over_ssh.BapSshCredentials">
+     *                         <secretPassphrase/>
+     *                         <key/>
+     *                         <keyPath>path01</keyPath>
+     *                         <username>user01</username>
+     *                     </credentials>
+     *                     <label class="jenkins.plugins.publish_over_ssh.BapSshPublisherLabel">
+     *                         <label>server-01</label>
+     *                     </label>
+     *                 </jenkins.plugins.publish__over__ssh.BapSshPublisher>
+     *             </publishers>
+     *             <continueOnError>false</continueOnError>
+     *             <failOnError>false</failOnError>
+     *             <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
+     *             <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin"
+     *                                      reference="../.."/>
+     *             <paramPublish class="jenkins.plugins.publish_over_ssh.BapSshParamPublish">
+     *                 <parameterName>PARAMETER</parameterName>
+     *             </paramPublish>
+     *         </delegate>
+     *     </delegate>
+     * </jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin>
+     */
+    void publishOverSsh(@DslContext(PublishOverSshContext) Closure publishOverSshClosure) {
+        PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
+        ContextHelper.executeInContext(publishOverSshClosure, publishOverSshContext)
+
+        Preconditions.checkArgument(!publishOverSshContext.servers.empty, 'At least 1 server must be configured')
+
+        stepNodes << new NodeBuilder().'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin' {
+            delegate.delegate {
+                consolePrefix('SSH: ')
+                delegate.delegate {
+                    publishers {
+                        publishOverSshContext.servers.each { server ->
+                            'jenkins.plugins.publish__over__ssh.BapSshPublisher' {
+                                configName(server.name)
+                                verbose(server.verbose)
+                                transfers {
+                                    server.transferSets.each { transferSet ->
+                                        'jenkins.plugins.publish__over__ssh.BapSshTransfer' {
+                                            remoteDirectory(transferSet.remoteDirectory ?: '')
+                                            sourceFiles(transferSet.sourceFiles ?: '')
+                                            excludes(transferSet.excludeFiles ?: '')
+                                            removePrefix(transferSet.removePrefix ?: '')
+                                            remoteDirectorySDF(transferSet.remoteDirIsDateFormat)
+                                            flatten(transferSet.flattenFiles)
+                                            cleanRemote(false)
+                                            noDefaultExcludes(transferSet.noDefaultExcludes)
+                                            makeEmptyDirs(transferSet.makeEmptyDirs)
+                                            patternSeparator(transferSet.patternSeparator)
+                                            execCommand(transferSet.execCommand ?: '')
+                                            execTimeout(transferSet.execTimeout)
+                                            usePty(transferSet.execInPty)
+                                        }
+                                    }
+                                }
+                                useWorkspaceInPromotion(false)
+                                usePromotionTimestamp(false)
+                                if (server.retry) {
+                                    retry(class: 'jenkins.plugins.publish_over_ssh.BapSshRetry') {
+                                        retries(server.retries)
+                                        retryDelay(server.delay)
+                                    }
+                                }
+                                if (server.credentials) {
+                                    credentials(class: 'jenkins.plugins.publish_over_ssh.BapSshCredentials') {
+                                        secretPassphrase('')
+                                        key(server.credentials.key ?: '')
+                                        keyPath(server.credentials.pathToKey ?: '')
+                                        username(server.credentials.username)
+                                    }
+                                }
+                                if (server.label) {
+                                    label(class: 'jenkins.plugins.publish_over_ssh.BapSshPublisherLabel') {
+                                        label(server.label)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    continueOnError(publishOverSshContext.continueOnError)
+                    failOnError(publishOverSshContext.failOnError)
+                    alwaysPublishFromMaster(publishOverSshContext.alwaysPublishFromMaster)
+                    hostConfigurationAccess(
+                            class: 'jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin',
+                            reference: '../..',
+                    )
+                    if (publishOverSshContext.parameterName) {
+                        paramPublish(class: 'jenkins.plugins.publish_over_ssh.BapSshParamPublish') {
+                            parameterName(publishOverSshContext.parameterName)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * <hudson.plugins.parameterizedtrigger.TriggerBuilder>
      *     <configs>
      *         <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
