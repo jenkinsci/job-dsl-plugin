@@ -26,6 +26,7 @@ view(type: ListView) {  // since 1.21
         lastFailure()
         lastDuration()
         buildButton()
+        genericColumn(String columnClass) // Since 1.28
     }
 }
 ```
@@ -50,6 +51,7 @@ view(type: ListView) {
         lastFailure()
         lastDuration()
         buildButton()
+        genericColumn('hudson.plugins.claim.ClaimColumn') // Since 1.28
     }
 }
 ```
@@ -400,6 +402,7 @@ columns {
     lastDuration()
     buildButton()
     lastBuildConsole() // since 1.23, requires the Extra Columns Plugin
+    genericColumn(String columnClass) // Since 1.28
 }
 ```
 
