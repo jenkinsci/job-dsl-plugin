@@ -1,9 +1,9 @@
-package javaposse.jobdsl.dsl.helpers.step.publishoverssh
+package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 
-class ServerContext implements Context {
+class PublishOverSshServerContext implements Context {
 
     String name
     boolean verbose
@@ -15,9 +15,9 @@ class ServerContext implements Context {
     String username
     String pathToKey
     String key
-    List<TransferSetContext> transferSets = []
+    List<PublishOverSshTransferSetContext> transferSets = []
 
-    ServerContext(String name) {
+    PublishOverSshServerContext(String name) {
         this.name = name
     }
 
@@ -50,7 +50,7 @@ class ServerContext implements Context {
     }
 
     void transferSet(String sourceFiles, String execCommand, Closure transferSetClosure = null) {
-        TransferSetContext transferSetContext = new TransferSetContext(sourceFiles, execCommand)
+        PublishOverSshTransferSetContext transferSetContext = new PublishOverSshTransferSetContext(sourceFiles, execCommand)
         ContextHelper.executeInContext(transferSetClosure, transferSetContext)
         transferSets << transferSetContext
     }

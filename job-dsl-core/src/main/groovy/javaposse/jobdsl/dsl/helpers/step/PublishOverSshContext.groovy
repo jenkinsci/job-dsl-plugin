@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
-import javaposse.jobdsl.dsl.helpers.step.publishoverssh.ServerContext
 
 class PublishOverSshContext implements Context {
 
@@ -11,7 +10,7 @@ class PublishOverSshContext implements Context {
     boolean alwaysPublishFromMaster
     String parameterName
     boolean parameterizedPublishing
-    List<ServerContext> servers = []
+    List<PublishOverSshServerContext> servers = []
 
     void continueOnError(boolean continueOnError = true) {
         this.continueOnError = continueOnError
@@ -31,7 +30,7 @@ class PublishOverSshContext implements Context {
     }
 
     void server(String name, Closure serverClosure) {
-        ServerContext serverContext = new ServerContext(name)
+        PublishOverSshServerContext serverContext = new PublishOverSshServerContext(name)
         ContextHelper.executeInContext(serverClosure, serverContext)
         servers << serverContext
     }

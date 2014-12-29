@@ -1,8 +1,8 @@
-package javaposse.jobdsl.dsl.helpers.step.publishoverssh
+package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
 
-class TransferSetContext implements Context {
+class PublishOverSshTransferSetContext implements Context {
 
     String sourceFiles = ''
     String execCommand = ''
@@ -17,7 +17,7 @@ class TransferSetContext implements Context {
     long execTimeout = 120000
     boolean execInPty
 
-    TransferSetContext(String sourceFiles, String execCommand) {
+    PublishOverSshTransferSetContext(String sourceFiles, String execCommand) {
         this.sourceFiles = sourceFiles
         this.execCommand = execCommand
     }
