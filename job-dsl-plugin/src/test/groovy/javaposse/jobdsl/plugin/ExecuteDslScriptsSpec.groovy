@@ -464,6 +464,36 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
     }
 
+    def "Renamed job is removed from GeneratedJobMap"() {
+        setup:
+        jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(job, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+
+        when:
+        (jenkinsRule.instance.getItemByFullName('/folder/test-job') as AbstractProject).renameTo('renamed')
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('folder/test-job') == null
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+    }
+
+    def "Updated job is removed from GeneratedJobMap"() {
+        setup:
+        jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(job, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+
+        when:
+        (jenkinsRule.instance.getItemByFullName('/folder/test-job') as AbstractProject).description = 'foo'
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('folder/test-job') == null
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+    }
+
     def createJobInFolder() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')

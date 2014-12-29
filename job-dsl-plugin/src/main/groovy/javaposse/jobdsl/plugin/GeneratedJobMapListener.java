@@ -1,19 +1,24 @@
 package javaposse.jobdsl.plugin;
 
 import hudson.Extension;
+import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
-import jenkins.model.Jenkins;
 
 @Extension
 public class GeneratedJobMapListener extends ItemListener {
 
     @Override
     public void onDeleted(Item item) {
-        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
-        SeedReference seedReference = descriptor.getGeneratedJobMap().remove(item.getFullName());
-        if (seedReference != null) {
-            descriptor.save();
+        GeneratedJobMapHelper.removeSeedReference(item.getFullName());
+    }
+
+    @Override
+    public void onRenamed(Item item, String oldName, String newName) {
+        if (item instanceof AbstractProject) {
+            if (GeneratedJobMapHelper.removeSeedReference(item.getFullName().replace(newName, oldName))) {
+                GeneratedJobMapHelper.updateTransientActions((AbstractProject) item);
+            }
         }
     }
 }

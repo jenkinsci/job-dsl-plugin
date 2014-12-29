@@ -307,10 +307,10 @@ public class ExecuteDslScripts extends Builder {
         // Update unreferenced jobs
         for (GeneratedJob removedJob : removed) {
             Item removedItem = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), Item.class);
-            if (removedItem != null) {
+            if (removedItem != null && removedItem instanceof AbstractProject) {
                 generatedJobMap.remove(removedItem.getFullName());
                 descriptorMutated = true;
-                removedItem.save();
+                GeneratedJobMapHelper.updateTransientActions((AbstractProject) removedItem);
             }
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
@@ -348,7 +348,7 @@ public class ExecuteDslScripts extends Builder {
                 if (!newRef.equals(oldRef)) {
                     generatedJobMap.put(project.getFullName(), newRef);
                     descriptorMutated = true;
-                    project.save();
+                    GeneratedJobMapHelper.updateTransientActions(project);
                 }
             }
         }
