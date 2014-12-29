@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 class ArchiveJUnitContext implements Context {
@@ -16,7 +17,7 @@ class ArchiveJUnitContext implements Context {
         retainLongStdout = retain
     }
 
-    void testDataPublishers(Closure testDataPublishersClosure) {
+    void testDataPublishers(@DslContext(TestDataPublishersContext) Closure testDataPublishersClosure) {
         ContextHelper.executeInContext(testDataPublishersClosure, testDataPublishersContext)
     }
 }

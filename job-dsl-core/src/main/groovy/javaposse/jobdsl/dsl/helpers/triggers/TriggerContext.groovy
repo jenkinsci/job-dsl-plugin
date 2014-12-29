@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -26,7 +27,7 @@ class TriggerContext implements Context {
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
      */
-    void urlTrigger(String crontab = null, Closure contextClosure) {
+    void urlTrigger(String crontab = null, @DslContext(UrlTriggerContext) Closure contextClosure) {
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
         ContextHelper.executeInContext(contextClosure, urlTriggerContext)
 
@@ -135,7 +136,7 @@ class TriggerContext implements Context {
      *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
-    void pullRequest(Closure contextClosure) {
+    void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
@@ -191,7 +192,7 @@ class TriggerContext implements Context {
      *                      RefUpdated
      * @return
      */
-    void gerrit(Closure contextClosure = null) {
+    void gerrit(@DslContext(GerritContext) Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
         GerritContext gerritContext = new GerritContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, gerritContext)

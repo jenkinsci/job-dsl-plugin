@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
@@ -59,7 +60,7 @@ class StepContext implements Context {
      *     <fromRootBuildScriptDir>true</fromRootBuildScriptDir>
      * </hudson.plugins.gradle.Gradle>
      */
-    void gradle(Closure gradleClosure) {
+    void gradle(@DslContext(GradleContext) Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
@@ -138,14 +139,14 @@ class StepContext implements Context {
      *     <removedJobAction>IGNORE</removedJobAction>
      * </javaposse.jobdsl.plugin.ExecuteDslScripts>
      */
-    void dsl(Closure configure = null) {
-        DslContext context = new DslContext()
+    void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure configure = null) {
+        javaposse.jobdsl.dsl.helpers.step.DslContext context = new javaposse.jobdsl.dsl.helpers.step.DslContext()
         ContextHelper.executeInContext(configure, context)
         buildDslNode(context)
     }
 
     void dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
-        DslContext ctx = new DslContext()
+        javaposse.jobdsl.dsl.helpers.step.DslContext ctx = new javaposse.jobdsl.dsl.helpers.step.DslContext()
         ctx.text(scriptText)
         if (removedJobAction) {
             ctx.removeAction(removedJobAction)
@@ -155,7 +156,7 @@ class StepContext implements Context {
     }
 
     void dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
-        DslContext ctx = new DslContext()
+        javaposse.jobdsl.dsl.helpers.step.DslContext ctx = new javaposse.jobdsl.dsl.helpers.step.DslContext()
         ctx.external(externalScripts.toArray(new String[0]))
         if (removedJobAction) {
             ctx.removeAction(removedJobAction)
@@ -191,19 +192,20 @@ class StepContext implements Context {
      *     </properties>
      * </hudson.tasks.Ant>
      */
-    void ant(Closure antClosure = null) {
+    void ant(@DslContext(AntContext) Closure antClosure = null) {
         ant(null, null, null, antClosure)
     }
 
-    void ant(String targetsStr, Closure antClosure = null) {
+    void ant(String targetsStr, @DslContext(AntContext) Closure antClosure = null) {
         ant(targetsStr, null, null, antClosure)
     }
 
-    void ant(String targetsStr, String buildFileStr, Closure antClosure = null) {
+    void ant(String targetsStr, String buildFileStr, @DslContext(AntContext) Closure antClosure = null) {
         ant(targetsStr, buildFileStr, null, antClosure)
     }
 
-    void ant(String targetsArg, String buildFileArg, String antInstallation, Closure antClosure = null) {
+    void ant(String targetsArg, String buildFileArg, String antInstallation,
+             @DslContext(AntContext) Closure antClosure = null) {
         AntContext antContext = new AntContext()
         ContextHelper.executeInContext(antClosure, antContext)
 
@@ -254,11 +256,11 @@ class StepContext implements Context {
      *     <classPath/>
      * </hudson.plugins.groovy.Groovy>
      */
-    void groovyCommand(String command, Closure groovyClosure = null) {
+    void groovyCommand(String command, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, null, groovyClosure)
     }
 
-    void groovyCommand(String command, String groovyName, Closure groovyClosure = null) {
+    void groovyCommand(String command, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, groovyName, groovyClosure)
     }
 
@@ -275,11 +277,11 @@ class StepContext implements Context {
      *     <classPath/>
      * </hudson.plugins.groovy.Groovy>
      */
-    void groovyScriptFile(String fileName, Closure groovyClosure = null) {
+    void groovyScriptFile(String fileName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, null, groovyClosure)
     }
 
-    void groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null) {
+    void groovyScriptFile(String fileName, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, groovyName, groovyClosure)
     }
 
@@ -320,7 +322,7 @@ class StepContext implements Context {
      *     <classpath/>
      * </hudson.plugins.groovy.SystemGroovy>
      */
-    void systemGroovyCommand(String command, Closure systemGroovyClosure = null) {
+    void systemGroovyCommand(String command, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
         systemGroovy(command, true, systemGroovyClosure)
     }
 
@@ -333,7 +335,7 @@ class StepContext implements Context {
      *     <classpath/>
      * </hudson.plugins.groovy.SystemGroovy>
      */
-    void systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null) {
+    void systemGroovyScriptFile(String fileName, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
 
@@ -359,7 +361,7 @@ class StepContext implements Context {
      *     <usePrivateRepository>false</usePrivateRepository>
      * </hudson.tasks.Maven>
      */
-    void maven(Closure closure) {
+    void maven(@DslContext(MavenContext) Closure closure) {
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
 
@@ -412,15 +414,16 @@ class StepContext implements Context {
      *     <useWrapper>false</useWrapper>
      * </com.g2one.hudson.grails.GrailsBuilder>
      */
-    void grails(Closure grailsClosure) {
+    void grails(@DslContext(GrailsContext) Closure grailsClosure) {
         grails null, false, grailsClosure
     }
 
-    void grails(String targetsArg, Closure grailsClosure) {
+    void grails(String targetsArg, @DslContext(GrailsContext) Closure grailsClosure) {
         grails targetsArg, false, grailsClosure
     }
 
-    void grails(String targetsArg = null, boolean useWrapperArg = false, Closure grailsClosure = null) {
+    void grails(String targetsArg = null, boolean useWrapperArg = false,
+                @DslContext(GrailsContext) Closure grailsClosure = null) {
         GrailsContext grailsContext = new GrailsContext(
             useWrapper: useWrapperArg
         )
@@ -496,21 +499,24 @@ class StepContext implements Context {
      *     </selector>
      * </hudson.plugins.copyartifact.CopyArtifact>
      */
-    void copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure) {
+    void copyArtifacts(String jobName, String includeGlob,
+                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
     }
 
-    void copyArtifacts(String jobName, String includeGlob, String targetPath, Closure copyArtifactClosure) {
+    void copyArtifacts(String jobName, String includeGlob, String targetPath,
+                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
     }
 
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                      Closure copyArtifactClosure) {
+                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                      boolean optionalAllowed, Closure copyArtifactClosure) {
+                       boolean optionalAllowed,
+                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
         jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
 
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
@@ -574,15 +580,15 @@ class StepContext implements Context {
      *   <continuationCondition>COMPLETED</continuationCondition>
      * </com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
      */
-    void phase(Closure phaseContext) {
+    void phase(@DslContext(PhaseContext) Closure phaseContext) {
         phase(null, 'SUCCESSFUL', phaseContext)
     }
 
-    void phase(String phaseName, Closure phaseContext = null) {
+    void phase(String phaseName, @DslContext(PhaseContext) Closure phaseContext = null) {
         phase(phaseName, 'SUCCESSFUL', phaseContext)
     }
 
-    void phase(String name, String continuationConditionArg, Closure phaseClosure) {
+    void phase(String name, String continuationConditionArg, @DslContext(PhaseContext) Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationConditionArg)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
@@ -635,6 +641,136 @@ class StepContext implements Context {
     }
 
     /**
+     * <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin>
+     *     <delegate>
+     *         <consolePrefix>SSH: </consolePrefix>
+     *         <delegate>
+     *             <publishers>
+     *                 <jenkins.plugins.publish__over__ssh.BapSshPublisher>
+     *                     <configName>my-server</configName>
+     *                     <verbose>false</verbose>
+     *                     <transfers>
+     *                         <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+     *                             <remoteDirectory></remoteDirectory>
+     *                             <sourceFiles></sourceFiles>
+     *                             <excludes></excludes>
+     *                             <removePrefix></removePrefix>
+     *                             <remoteDirectorySDF>false</remoteDirectorySDF>
+     *                             <flatten>false</flatten>
+     *                             <cleanRemote>false</cleanRemote>
+     *                             <noDefaultExcludes>false</noDefaultExcludes>
+     *                             <makeEmptyDirs>false</makeEmptyDirs>
+     *                             <patternSeparator>[, ]+</patternSeparator>
+     *                             <execCommand></execCommand>
+     *                             <execTimeout>120000</execTimeout>
+     *                             <usePty>false</usePty>
+     *                         </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+     *                     </transfers>
+     *                     <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
+     *                     <usePromotionTimestamp>false</usePromotionTimestamp>
+     *                     <retry class="jenkins.plugins.publish_over_ssh.BapSshRetry">
+     *                         <retries>10</retries>
+     *                         <retryDelay>10000</retryDelay>
+     *                     </retry>
+     *                     <credentials class="jenkins.plugins.publish_over_ssh.BapSshCredentials">
+     *                         <secretPassphrase/>
+     *                         <key/>
+     *                         <keyPath>path01</keyPath>
+     *                         <username>user01</username>
+     *                     </credentials>
+     *                     <label class="jenkins.plugins.publish_over_ssh.BapSshPublisherLabel">
+     *                         <label>server-01</label>
+     *                     </label>
+     *                 </jenkins.plugins.publish__over__ssh.BapSshPublisher>
+     *             </publishers>
+     *             <continueOnError>false</continueOnError>
+     *             <failOnError>false</failOnError>
+     *             <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
+     *             <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin"
+     *                                      reference="../.."/>
+     *             <paramPublish class="jenkins.plugins.publish_over_ssh.BapSshParamPublish">
+     *                 <parameterName>PARAMETER</parameterName>
+     *             </paramPublish>
+     *         </delegate>
+     *     </delegate>
+     * </jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin>
+     */
+    void publishOverSsh(@DslContext(PublishOverSshContext) Closure publishOverSshClosure) {
+        PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
+        ContextHelper.executeInContext(publishOverSshClosure, publishOverSshContext)
+
+        Preconditions.checkArgument(!publishOverSshContext.servers.empty, 'At least 1 server must be configured')
+
+        stepNodes << new NodeBuilder().'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin' {
+            delegate.delegate {
+                consolePrefix('SSH: ')
+                delegate.delegate {
+                    publishers {
+                        publishOverSshContext.servers.each { server ->
+                            'jenkins.plugins.publish__over__ssh.BapSshPublisher' {
+                                configName(server.name)
+                                verbose(server.verbose)
+                                transfers {
+                                    server.transferSets.each { transferSet ->
+                                        'jenkins.plugins.publish__over__ssh.BapSshTransfer' {
+                                            remoteDirectory(transferSet.remoteDirectory ?: '')
+                                            sourceFiles(transferSet.sourceFiles ?: '')
+                                            excludes(transferSet.excludeFiles ?: '')
+                                            removePrefix(transferSet.removePrefix ?: '')
+                                            remoteDirectorySDF(transferSet.remoteDirIsDateFormat)
+                                            flatten(transferSet.flattenFiles)
+                                            cleanRemote(false)
+                                            noDefaultExcludes(transferSet.noDefaultExcludes)
+                                            makeEmptyDirs(transferSet.makeEmptyDirs)
+                                            patternSeparator(transferSet.patternSeparator)
+                                            execCommand(transferSet.execCommand ?: '')
+                                            execTimeout(transferSet.execTimeout)
+                                            usePty(transferSet.execInPty)
+                                        }
+                                    }
+                                }
+                                useWorkspaceInPromotion(false)
+                                usePromotionTimestamp(false)
+                                if (server.retry) {
+                                    retry(class: 'jenkins.plugins.publish_over_ssh.BapSshRetry') {
+                                        retries(server.retries)
+                                        retryDelay(server.delay)
+                                    }
+                                }
+                                if (server.credentials) {
+                                    credentials(class: 'jenkins.plugins.publish_over_ssh.BapSshCredentials') {
+                                        secretPassphrase('')
+                                        key(server.credentials.key ?: '')
+                                        keyPath(server.credentials.pathToKey ?: '')
+                                        username(server.credentials.username)
+                                    }
+                                }
+                                if (server.label) {
+                                    label(class: 'jenkins.plugins.publish_over_ssh.BapSshPublisherLabel') {
+                                        label(server.label)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    continueOnError(publishOverSshContext.continueOnError)
+                    failOnError(publishOverSshContext.failOnError)
+                    alwaysPublishFromMaster(publishOverSshContext.alwaysPublishFromMaster)
+                    hostConfigurationAccess(
+                            class: 'jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin',
+                            reference: '../..',
+                    )
+                    if (publishOverSshContext.parameterName) {
+                        paramPublish(class: 'jenkins.plugins.publish_over_ssh.BapSshParamPublish') {
+                            parameterName(publishOverSshContext.parameterName)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * <hudson.plugins.parameterizedtrigger.TriggerBuilder>
      *     <configs>
      *         <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
@@ -682,7 +818,7 @@ class StepContext implements Context {
      *     </configs>
      * </hudson.plugins.parameterizedtrigger.TriggerBuilder>
      */
-    void downstreamParameterized(Closure downstreamClosure) {
+    void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext()
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
@@ -702,7 +838,7 @@ class StepContext implements Context {
      *     <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail"/>
      * </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
      */
-    void conditionalSteps(Closure conditionalStepsClosure) {
+    void conditionalSteps(@DslContext(ConditionalStepsContext) Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)
         ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
@@ -721,7 +857,7 @@ class StepContext implements Context {
      *     </info>
      * </EnvInjectBuilder>
      */
-    void environmentVariables(Closure envClosure) {
+    void environmentVariables(@DslContext(StepEnvironmentVariableContext) Closure envClosure) {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
 
@@ -759,7 +895,8 @@ class StepContext implements Context {
      *     <queryString/>
      * </org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration>
      */
-    void remoteTrigger(String remoteJenkins, String jobName, Closure closure = null) {
+    void remoteTrigger(String remoteJenkins, String jobName,
+                       @DslContext(ParameterizedRemoteTriggerContext) Closure closure = null) {
         Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), 'remoteJenkins must be specified')
         Preconditions.checkArgument(!isNullOrEmpty(jobName), 'jobName must be specified')
 
@@ -805,7 +942,7 @@ class StepContext implements Context {
      * ...
      * <org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd/>
      */
-    void criticalBlock(Closure closure) {
+    void criticalBlock(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(closure, stepContext)
 
@@ -825,11 +962,11 @@ class StepContext implements Context {
      *     <bundleExec>false</bundleExec>
      * </hudson.plugins.rake.Rake>
      */
-    void rake(Closure rakeClosure = null) {
+    void rake(@DslContext(RakeContext) Closure rakeClosure = null) {
         rake(null, rakeClosure)
     }
 
-    void rake(String tasksArg, Closure rakeClosure = null) {
+    void rake(String tasksArg, @DslContext(RakeContext) Closure rakeClosure = null) {
         RakeContext rakeContext = new RakeContext()
 
         if (tasksArg) {
@@ -923,7 +1060,7 @@ class StepContext implements Context {
      *     <logResponseBody>false</logResponseBody>
      * </jenkins.plugins.http__request.HttpRequest>
      */
-    void httpRequest(String requestUrl, Closure closure = null) {
+    void httpRequest(String requestUrl, @DslContext(HttpRequestContext) Closure closure = null) {
         HttpRequestContext context = new HttpRequestContext()
         ContextHelper.executeInContext(closure, context)
 

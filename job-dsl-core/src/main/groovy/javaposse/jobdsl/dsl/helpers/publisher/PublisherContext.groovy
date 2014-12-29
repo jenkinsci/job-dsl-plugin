@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
@@ -56,15 +57,17 @@ class PublisherContext implements Context {
      *     <attachmentsPattern/>
      * </hudson.plugins.emailext.ExtendedEmailPublisher>
      */
-    void extendedEmail(String recipients = null, Closure emailClosure = null) {
+    void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)
     }
 
-    void extendedEmail(String recipients, String subjectTemplate, Closure emailClosure = null) {
+    void extendedEmail(String recipients, String subjectTemplate,
+                       @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, subjectTemplate, null, emailClosure)
     }
 
-    void extendedEmail(String recipients, String subjectTemplate, String contentTemplate, Closure emailClosure = null) {
+    void extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
+                       @DslContext(EmailContext) Closure emailClosure = null) {
         EmailContext emailContext = new EmailContext()
         ContextHelper.executeInContext(emailClosure, emailContext)
 
@@ -136,7 +139,7 @@ class PublisherContext implements Context {
      *     <allowEmptyArchive>false</allowEmptyArchive>
      * </hudson.tasks.ArtifactArchiver>
      */
-    void archiveArtifacts(Closure artifactsClosure) {
+    void archiveArtifacts(@DslContext(ArchiveArtifactsContext) Closure artifactsClosure) {
         ArchiveArtifactsContext artifactsContext = new ArchiveArtifactsContext()
         ContextHelper.executeInContext(artifactsClosure, artifactsContext)
 
@@ -171,7 +174,7 @@ class PublisherContext implements Context {
      *     </testDataPublishers>
      * </hudson.tasks.junit.JUnitResultArchiver>
      */
-    void archiveJunit(String glob, Closure junitClosure = null) {
+    void archiveJunit(String glob, @DslContext(ArchiveJUnitContext) Closure junitClosure = null) {
         ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         ContextHelper.executeInContext(junitClosure, junitContext)
 
@@ -239,7 +242,7 @@ class PublisherContext implements Context {
      *     </extraConfiguration>
      * </xunit>
      */
-    void archiveXUnit(Closure xUnitClosure) {
+    void archiveXUnit(@DslContext(ArchiveXUnitContext) Closure xUnitClosure) {
         ArchiveXUnitContext xUnitContext = new ArchiveXUnitContext()
         ContextHelper.executeInContext(xUnitClosure, xUnitContext)
 
@@ -301,7 +304,7 @@ class PublisherContext implements Context {
      <changeBuildStatus>false</changeBuildStatus>
      </hudson.plugins.jacoco.JacocoPublisher>
      **/
-    void jacocoCodeCoverage(Closure jacocoClosure = null) {
+    void jacocoCodeCoverage(@DslContext(JacocoContext) Closure jacocoClosure = null) {
 
         JacocoContext jacocoContext = new JacocoContext()
         ContextHelper.executeInContext(jacocoClosure, jacocoContext)
@@ -348,7 +351,7 @@ class PublisherContext implements Context {
      *     </reportTargets>
      * </htmlpublisher.HtmlPublisher>
      */
-    void publishHtml(Closure htmlReportContext) {
+    void publishHtml(@DslContext(HtmlReportContext) Closure htmlReportContext) {
         HtmlReportContext reportContext = new HtmlReportContext(jobManagement)
         ContextHelper.executeInContext(htmlReportContext, reportContext)
 
@@ -388,16 +391,16 @@ class PublisherContext implements Context {
      *     <matrixMultiplier>ONLY_CONFIGURATIONS</matrixMultiplier>
      * </hudson.plugins.jabber.im.transport.JabberPublisher>
      */
-    void publishJabber(String target, Closure jabberClosure = null) {
+    void publishJabber(String target, @DslContext(JabberContext) Closure jabberClosure = null) {
         publishJabber(target, null, null, jabberClosure)
     }
 
-    void publishJabber(String target, String strategyName, Closure jabberClosure = null) {
+    void publishJabber(String target, String strategyName, @DslContext(JabberContext) Closure jabberClosure = null) {
         publishJabber(target, strategyName, null, jabberClosure)
     }
 
     void publishJabber(String targetsArg, String strategyName, String channelNotificationName,
-                      Closure jabberClosure = null) {
+                       @DslContext(JabberContext) Closure jabberClosure = null) {
         JabberContext jabberContext = new JabberContext()
         jabberContext.strategyName = strategyName ?: 'ALL'
         jabberContext.channelNotificationName = channelNotificationName ?: 'Default'
@@ -458,7 +461,7 @@ class PublisherContext implements Context {
      *     </entries>
      * </be.certipost.hudson.plugin.SCPRepositoryPublisher>
      */
-    void publishScp(String site, Closure scpClosure) {
+    void publishScp(String site, @DslContext(ScpContext) Closure scpClosure) {
         ScpContext scpContext = new ScpContext()
         ContextHelper.executeInContext(scpClosure, scpContext)
 
@@ -490,24 +493,25 @@ class PublisherContext implements Context {
      *     <overrideDefaultExcludes>true</overrideDefaultExcludes>
      * </hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
      */
-    void publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure) {
+    void publishCloneWorkspace(String workspaceGlob, @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, cloneWorkspaceClosure)
     }
 
-    void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, Closure cloneWorkspaceClosure) {
+    void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
+                               @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, cloneWorkspaceClosure)
     }
 
     void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod,
-                              Closure cloneWorkspaceClosure) {
+                               @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(
                 workspaceGlob, workspaceExcludeGlob, criteria, archiveMethod, false, cloneWorkspaceClosure
         )
     }
 
     void publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any',
-                              String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false,
-                              Closure cloneWorkspaceClosure = null) {
+                               String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false,
+                               @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure = null) {
         CloneWorkspaceContext cloneWorkspaceContext = new CloneWorkspaceContext()
         cloneWorkspaceContext.criteria = criteriaArg ?: 'Any'
         cloneWorkspaceContext.archiveMethod = archiveMethodArg ?: 'TAR'
@@ -605,7 +609,7 @@ class PublisherContext implements Context {
      </configs>
      </hudson.plugins.parameterizedtrigger.BuildTrigger>
      */
-    void downstreamParameterized(Closure downstreamClosure) {
+    void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext()
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
@@ -613,11 +617,11 @@ class PublisherContext implements Context {
         publisherNodes << publishNode
     }
 
-    void violations(Closure violationsClosure = null) {
+    void violations(@DslContext(ViolationsContext) Closure violationsClosure = null) {
         violations(100, violationsClosure)
     }
 
-    void violations(int perFileDisplayLimit, Closure violationsClosure = null) {
+    void violations(int perFileDisplayLimit, @DslContext(ViolationsContext) Closure violationsClosure = null) {
         ViolationsContext violationsContext = new ViolationsContext()
         violationsContext.perFileDisplayLimit = perFileDisplayLimit
         ContextHelper.executeInContext(violationsClosure, violationsContext)
@@ -668,7 +672,7 @@ class PublisherContext implements Context {
         publisherNodes << publishNode
     }
 
-    void irc(Closure ircClosure) {
+    void irc(@DslContext(IrcContext) Closure ircClosure) {
         IrcContext ircContext = new IrcContext()
         ContextHelper.executeInContext(ircClosure, ircContext)
 
@@ -697,7 +701,7 @@ class PublisherContext implements Context {
         publisherNodes << publishNode
     }
 
-    void cobertura(String reportFile, Closure coberturaClosure = null) {
+    void cobertura(String reportFile, @DslContext(CoberturaContext) Closure coberturaClosure = null) {
 
         CoberturaContext coberturaContext = new CoberturaContext()
         ContextHelper.executeInContext(coberturaClosure, coberturaContext)
@@ -822,7 +826,7 @@ class PublisherContext implements Context {
      *          </tasks>
      *      </hudson.plugins.postbuildtask.PostbuildTask>
      */
-    void postBuildTask(Closure postBuildClosure) {
+    void postBuildTask(@DslContext(PostBuildTaskContext) Closure postBuildClosure) {
         PostBuildTaskContext postBuildContext = new PostBuildTaskContext()
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
@@ -910,7 +914,7 @@ class PublisherContext implements Context {
      *     </hudson.tasks.JavadocArchiver>
      * </publishers>
      */
-    void archiveJavadoc(Closure javadocClosure = null) {
+    void archiveJavadoc(@DslContext(JavadocContext) Closure javadocClosure = null) {
         JavadocContext javadocContext = new JavadocContext()
         ContextHelper.executeInContext(javadocClosure, javadocContext)
 
@@ -962,7 +966,7 @@ class PublisherContext implements Context {
      *         </healthReports>
      *     </hudson.plugins.emma.EmmaPublisher>
      */
-    void emma(String fileSet = '', Closure emmaClosure = null) {
+    void emma(String fileSet = '', @DslContext(EmmaContext) Closure emmaClosure = null) {
         EmmaContext emmaContext = new EmmaContext()
         ContextHelper.executeInContext(emmaClosure, emmaContext)
 
@@ -1003,7 +1007,7 @@ class PublisherContext implements Context {
      *}
      * @see https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
      */
-    void publishRobotFrameworkReports(Closure robotClosure = null) {
+    void publishRobotFrameworkReports(@DslContext(RobotFrameworkContext) Closure robotClosure = null) {
 
         RobotFrameworkContext context = new RobotFrameworkContext()
         ContextHelper.executeInContext(robotClosure, context)
@@ -1036,7 +1040,7 @@ class PublisherContext implements Context {
      *     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
      * </publishers>
      */
-    void buildPipelineTrigger(String downstreamProjectNames, Closure closure = null) {
+    void buildPipelineTrigger(String downstreamProjectNames, @DslContext(BuildPipelineContext) Closure closure = null) {
         BuildPipelineContext buildPipelineContext = new BuildPipelineContext()
         ContextHelper.executeInContext(closure, buildPipelineContext)
 
@@ -1083,7 +1087,7 @@ class PublisherContext implements Context {
      *     </hudson.plugins.git.GitPublisher>
      * </publishers>
      */
-    void git(Closure gitPublisherClosure) {
+    void git(@DslContext(GitPublisherContext) Closure gitPublisherClosure) {
         GitPublisherContext context = new GitPublisherContext(jobManagement)
         ContextHelper.executeInContext(gitPublisherClosure, context)
 
@@ -1140,7 +1144,7 @@ class PublisherContext implements Context {
      *     </com.flowdock.jenkins.FlowdockNotifier>
      * </publishers>
      */
-    void flowdock(String token, Closure flowdockPublisherClosure = null) {
+    void flowdock(String token, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
         FlowdockPublisherContext context = new FlowdockPublisherContext()
         ContextHelper.executeInContext(flowdockPublisherClosure, context)
 
@@ -1183,7 +1187,7 @@ class PublisherContext implements Context {
         }
     }
 
-    void flowdock(String[] tokens, Closure flowdockPublisherClosure = null) {
+    void flowdock(String[] tokens, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
         // Validate values
         assert tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token'
         flowdock(tokens.join(','), flowdockPublisherClosure)
@@ -1205,7 +1209,7 @@ class PublisherContext implements Context {
      *
      * See https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin
      */
-    void stashNotifier(Closure stashNotifierClosure = null) {
+    void stashNotifier(@DslContext(StashNotifierContext) Closure stashNotifierClosure = null) {
         StashNotifierContext context = new StashNotifierContext()
         ContextHelper.executeInContext(stashNotifierClosure, context)
         publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
@@ -1238,7 +1242,7 @@ class PublisherContext implements Context {
      *     </publishers>
      * </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
      */
-    void flexiblePublish(Closure flexiblePublishClosure) {
+    void flexiblePublish(@DslContext(FlexiblePublisherContext) Closure flexiblePublishClosure) {
         FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
 
@@ -1305,7 +1309,7 @@ class PublisherContext implements Context {
      *
      * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
      */
-    void wsCleanup(Closure closure = null) {
+    void wsCleanup(@DslContext(PostBuildCleanupContext) Closure closure = null) {
         PostBuildCleanupContext context = new PostBuildCleanupContext()
         ContextHelper.executeInContext(closure, context)
 
@@ -1334,7 +1338,7 @@ class PublisherContext implements Context {
      *     </org.jenkinsci.plugins.rundeck.RundeckNotifier>
      * </publishers>
      */
-    void rundeck(String jobIdentifier, Closure rundeckClosure = null) {
+    void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(jobIdentifier), 'jobIdentifier cannot be null or empty')
 
         RundeckContext rundeckContext = new RundeckContext()
@@ -1372,7 +1376,7 @@ class PublisherContext implements Context {
      *     </hudson.plugins.s3.S3BucketPublisher>
      * </publisher>
      */
-    void s3(String profile, Closure s3PublisherClosure) {
+    void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
         checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
 
         S3BucketPublisherContext context = new S3BucketPublisherContext()
@@ -1398,7 +1402,8 @@ class PublisherContext implements Context {
      * }
      * </pre>
      **/
-    void findbugs(String pattern, boolean isRankActivated = false, Closure staticAnalysisClosure = null) {
+    void findbugs(String pattern, boolean isRankActivated = false,
+                  @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
@@ -1420,7 +1425,7 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void pmd(String pattern, Closure staticAnalysisClosure = null) {
+    void pmd(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         publisherNodes << createDefaultStaticAnalysisNode(
                 'hudson.plugins.pmd.PmdPublisher',
                 staticAnalysisClosure,
@@ -1440,7 +1445,7 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void checkstyle(String pattern, Closure staticAnalysisClosure = null) {
+    void checkstyle(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         publisherNodes << createDefaultStaticAnalysisNode(
                 'hudson.plugins.checkstyle.CheckStylePublisher',
                 staticAnalysisClosure,
@@ -1460,7 +1465,8 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void jshint(String pattern, Closure staticAnalysisClosure = null) {
+    void jshint(String pattern,
+                @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         publisherNodes << createDefaultStaticAnalysisNode(
                 'hudson.plugins.jshint.CheckStylePublisher',
                 staticAnalysisClosure,
@@ -1482,7 +1488,8 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void dry(String pattern, highThreshold = 50, normalThreshold = 25, Closure staticAnalysisClosure = null) {
+    void dry(String pattern, highThreshold = 50, normalThreshold = 25,
+             @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
@@ -1511,7 +1518,7 @@ class PublisherContext implements Context {
      * </pre>
      */
     void tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false,
-              Closure staticAnalysisClosure = null) {
+               @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
@@ -1537,7 +1544,7 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void ccm(String pattern, Closure staticAnalysisClosure = null) {
+    void ccm(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         publisherNodes << createDefaultStaticAnalysisNode(
                 'hudson.plugins.ccm.CcmPublisher',
                 staticAnalysisClosure,
@@ -1557,7 +1564,7 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void androidLint(String pattern, Closure staticAnalysisClosure = null) {
+    void androidLint(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         publisherNodes << createDefaultStaticAnalysisNode(
                 'org.jenkinsci.plugins.android__lint.LintPublisher',
                 staticAnalysisClosure,
@@ -1577,7 +1584,7 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void dependencyCheck(String pattern, Closure staticAnalysisClosure = null) {
+    void dependencyCheck(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         publisherNodes << createDefaultStaticAnalysisNode(
                 'org.jenkinsci.plugins.DependencyCheck.DependencyCheckPublisher',
                 staticAnalysisClosure,
@@ -1609,7 +1616,8 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
-    void warnings(List consoleParsers, Map parserConfigurations = [:], Closure warningsClosure = null) {
+    void warnings(List consoleParsers, Map parserConfigurations = [:],
+                  @DslContext(WarningsContext) Closure warningsClosure = null) {
         jobManagement.requireMinimumPluginVersion('warnings', '4.0')
         WarningsContext warningsContext = new WarningsContext()
         ContextHelper.executeInContext(warningsClosure,  warningsContext)
@@ -1670,7 +1678,7 @@ class PublisherContext implements Context {
      *     <isWarningsDeactivated>true</isWarningsDeactivated>
      * </hudson.plugins.analysis.collector.AnalysisPublisher>
      */
-    void analysisCollector(Closure analysisCollectorClosure = null) {
+    void analysisCollector(@DslContext(AnalysisCollectorContext) Closure analysisCollectorClosure = null) {
         AnalysisCollectorContext analysisCollectorContext = new AnalysisCollectorContext()
         ContextHelper.executeInContext(analysisCollectorClosure,  analysisCollectorContext)
 

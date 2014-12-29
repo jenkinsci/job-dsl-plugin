@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.View
 
 import static com.google.common.base.Preconditions.checkNotNull
@@ -21,7 +22,7 @@ class ListView extends View {
         }
     }
 
-    void jobs(Closure jobsClosure) {
+    void jobs(@DslContext(JobsContext) Closure jobsClosure) {
         executeInContext(jobsClosure, jobsContext)
 
         List<String> jobs = jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER) // see GROOVY-6900
@@ -40,7 +41,7 @@ class ListView extends View {
         }
     }
 
-    void columns(Closure columnsClosure) {
+    void columns(@DslContext(ColumnsContext) Closure columnsClosure) {
         ColumnsContext context = new ColumnsContext()
         executeInContext(columnsClosure, context)
 

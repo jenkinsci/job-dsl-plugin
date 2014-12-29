@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
@@ -117,7 +118,7 @@ class ScmContext implements Context {
        <scmName/>
      </hudson.plugins.git.GitSCM>
      */
-    void git(Closure gitClosure) {
+    void git(@DslContext(GitContext) Closure gitClosure) {
         validateMulti()
 
         GitContext gitContext = new GitContext(withXmlActions, jobManagement)
@@ -446,7 +447,7 @@ class ScmContext implements Context {
      *
      * See http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin
      */
-    void baseClearCase(Closure closure = null) {
+    void baseClearCase(@DslContext(ClearCaseContext) Closure closure = null) {
         validateMulti()
 
         ClearCaseContext context = new ClearCaseContext()

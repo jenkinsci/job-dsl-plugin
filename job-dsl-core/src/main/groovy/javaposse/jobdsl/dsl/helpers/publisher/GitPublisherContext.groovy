@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -41,7 +42,7 @@ class GitPublisherContext implements Context {
      *     <updateTag>false</updateTag>
      * </hudson.plugins.git.GitPublisher_-TagToPush>
      */
-    void tag(String targetRepo, String name, Closure closure = null) {
+    void tag(String targetRepo, String name, @DslContext(TagToPushContext) Closure closure = null) {
         checkArgument(!isNullOrEmpty(targetRepo), 'targetRepo must be specified')
         checkArgument(!isNullOrEmpty(name), 'name must be specified')
 

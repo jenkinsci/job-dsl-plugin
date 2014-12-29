@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.BinaryLogicOperation
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
@@ -75,16 +76,16 @@ class RunConditionContext implements Context {
         condition = new FileExistsCondition(file, baseDir)
     }
 
-    void not(Closure conditionClosure) {
+    void not(@DslContext(RunConditionContext) Closure conditionClosure) {
         this.condition = new NotCondition(RunConditionFactory.of(conditionClosure))
     }
 
-    void and(Closure... conditionClosures) {
+    void and(@DslContext(RunConditionContext) Closure... conditionClosures) {
         List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('And', conditions)
     }
 
-    void or(Closure... conditionClosures) {
+    void or(@DslContext(RunConditionContext) Closure... conditionClosures) {
         List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('Or', conditions)
     }

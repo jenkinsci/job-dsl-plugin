@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection
 
 /** Configuration container for a monitored URL.*/
@@ -108,7 +109,7 @@ class UrlTriggerEntryContext implements Context {
      * @param inspectionClosure for configuring RegExps/Path expressions for xml, text and json
      * @return
      */
-    void inspection(String type, Closure inspectionClosure = null) {
+    void inspection(String type, @DslContext(UrlTriggerInspectionContext) Closure inspectionClosure = null) {
         Inspection itype
         try {
             itype = Preconditions.checkNotNull(Inspection.valueOf(type), 'Inspection must not be null' as Object)

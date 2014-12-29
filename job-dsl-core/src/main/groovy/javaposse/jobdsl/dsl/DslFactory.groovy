@@ -1,19 +1,19 @@
 package javaposse.jobdsl.dsl
 
 interface DslFactory {
-    Job job(Closure closure)
+    Job job(@DslContext(Job) Closure closure)
 
-    Job job(Map<String, Object> arguments, Closure closure)
+    Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
 
-    View view(Closure closure)
+    View view(@DslContext(View) Closure closure)
 
-    View view(Map<String, Object> arguments, Closure closure)
+    View view(Map<String, Object> arguments, @DslContext(View) Closure closure)
 
-    Folder folder(Closure closure)
+    Folder folder(@DslContext(Folder) Closure closure)
 
-    ConfigFile configFile(Closure closure)
+    ConfigFile configFile(@DslContext(ConfigFile) Closure closure)
 
-    ConfigFile configFile(Map<String, Object> arguments, Closure closure)
+    ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
     /**
      * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
