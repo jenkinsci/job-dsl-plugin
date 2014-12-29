@@ -20,6 +20,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
  * Added support for the [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin)
  * Added support for the [Build Monitor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Monitor+Plugin)
+ * Added support for the [Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin)
  * Enhanced support for the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
  * Added allow missing option for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
  * Added clone timeout option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
@@ -35,7 +36,6 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added support for the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin)
  * Added support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
  * Added support for the [Golang Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin)
- * Added support for the [Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin)
  * Added more support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
  * Added `forcePush` option for Git Publisher
  * Improved build step console output

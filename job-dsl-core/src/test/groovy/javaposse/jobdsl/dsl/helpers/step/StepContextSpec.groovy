@@ -1260,11 +1260,27 @@ still-another-dsl.groovy'''
         thrown(IllegalArgumentException)
     }
 
+    def 'call publishOverSsh without sourceFiles and execCommand'() {
+        when:
+        context.publishOverSsh {
+            server('server-name') {
+                transferSet {
+                }
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'call publishOverSsh with minimal configuration and check the default values'() {
         when:
         context.publishOverSsh {
             server('server-name') {
-                transferSet('file', 'command')
+                transferSet {
+                    sourceFiles('file')
+                    execCommand('command')
+                }
             }
         }
 
@@ -1317,10 +1333,14 @@ still-another-dsl.groovy'''
         context.publishOverSsh {
             server('my-server-01') {
                 verbose()
-                credentialsWithPathToKey('user01', 'path01')
+                credentials('user01') {
+                    pathToKey('path01')
+                }
                 retry(10, 10000)
                 label('server-01')
-                transferSet('files', 'command') {
+                transferSet {
+                    sourceFiles('files')
+                    execCommand('command')
                     removePrefix('prefix')
                     remoteDirectory('directory')
                     excludeFiles('exclude files')
@@ -1332,14 +1352,22 @@ still-another-dsl.groovy'''
                     execTimeout(11111)
                     execInPty()
                 }
-                transferSet('files2', 'commands2')
+                transferSet {
+                    sourceFiles('files2')
+                    execCommand('commands2')
+                }
             }
             server('my-server-02') {
                 verbose(true)
-                credentialsWithKey('user2', 'key')
+                credentials('user2') {
+                    key('key')
+                }
                 retry(20, 20000)
                 label('server-02')
-                transferSet('files3', 'commands3')
+                transferSet {
+                    sourceFiles('files3')
+                    execCommand('commands3')
+                }
             }
             continueOnError()
             failOnError()

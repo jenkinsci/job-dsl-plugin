@@ -2,20 +2,20 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
+
+import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Strings.isNullOrEmpty
 
 class PublishOverSshServerContext implements Context {
-
-    String name
+    final String name
+    final List<PublishOverSshTransferSetContext> transferSets = []
     boolean verbose
     String label
     boolean retry
     long retries
     long delay
-    boolean credentials
-    String username
-    String pathToKey
-    String key
-    List<PublishOverSshTransferSetContext> transferSets = []
+    PublishOverSshCredentialsContext credentials
 
     PublishOverSshServerContext(String name) {
         this.name = name
@@ -35,23 +35,22 @@ class PublishOverSshServerContext implements Context {
         this.delay = delay
     }
 
-    void credentialsWithPathToKey(String username, String pathToKey) {
-        this.credentials = true
-        this.username = username
-        this.pathToKey = pathToKey
-        this.key = ''
+    void credentials(String username, @DslContext(PublishOverSshCredentialsContext) Closure credentialsClosure) {
+        PublishOverSshCredentialsContext credentialsContext = new PublishOverSshCredentialsContext(username)
+        ContextHelper.executeInContext(credentialsClosure, credentialsContext)
+
+        credentials = credentialsContext
     }
 
-    void credentialsWithKey(String username, String key) {
-        this.credentials = true
-        this.username = username
-        this.pathToKey = ''
-        this.key = key
-    }
-
-    void transferSet(String sourceFiles, String execCommand, Closure transferSetClosure = null) {
-        PublishOverSshTransferSetContext transferSetContext = new PublishOverSshTransferSetContext(sourceFiles, execCommand)
+    void transferSet(@DslContext(PublishOverSshTransferSetContext) Closure transferSetClosure) {
+        PublishOverSshTransferSetContext transferSetContext = new PublishOverSshTransferSetContext()
         ContextHelper.executeInContext(transferSetClosure, transferSetContext)
+
+        checkArgument(
+                !isNullOrEmpty(transferSetContext.sourceFiles) || !isNullOrEmpty(transferSetContext.execCommand),
+                'sourceFiles or execCommand must be specified'
+        )
+
         transferSets << transferSetContext
     }
 }

@@ -3,12 +3,11 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.Context
 
 class PublishOverSshTransferSetContext implements Context {
-
-    String sourceFiles = ''
-    String execCommand = ''
-    String removePrefix = ''
-    String remoteDirectory = ''
-    String excludeFiles = ''
+    String sourceFiles
+    String execCommand
+    String removePrefix
+    String remoteDirectory
+    String excludeFiles
     String patternSeparator = '[, ]+'
     boolean noDefaultExcludes
     boolean makeEmptyDirs
@@ -17,8 +16,11 @@ class PublishOverSshTransferSetContext implements Context {
     long execTimeout = 120000
     boolean execInPty
 
-    PublishOverSshTransferSetContext(String sourceFiles, String execCommand) {
+    void sourceFiles(String sourceFiles) {
         this.sourceFiles = sourceFiles
+    }
+
+    void execCommand(String execCommand) {
         this.execCommand = execCommand
     }
 
