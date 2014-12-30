@@ -18,6 +18,17 @@ view(type: ListView) {  // since 1.21
         names(String... jobNames)
         regex(String regex)
     }
+    jobFilters { // since 1.28
+        regex {
+            matchType(MatchType matchType) // what to do with matching Jobs
+            matchValue(RegexMatchValue matchValue) // what to match - one of NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE, NODE
+            regex(String regex) // the regular expression to match against
+        }
+        status {
+            matchType(MatchType matchType) // what to do with matching Jobs
+            status(Status... status) // Status to match
+        }
+    }
     columns {
         status()
         weather()
@@ -37,12 +48,17 @@ Create a view which shows jobs in a list format. Details about the options can b
 ```groovy
 view(type: ListView) {
     name('project-A')
-    description('All jobs for project A')
+    description('All unstable jobs for project A')
     filterBuildQueue()
     filterExecutors()
     jobs {
         name('release-projectA')
         regex('project-A-.+')
+    }
+    jobFilters {
+        status {
+            status(UNSTABLE)
+        }
     }
     columns {
         status()
@@ -144,6 +160,12 @@ view(type: SectionedView) {
             name('Project B')
             jobs {
                 regex('project-B-.*')
+            }
+            jobFilters {
+                regex {
+                    matchValue DESCRIPTION
+                    regex '.*-project-B-.*'
+                }
             }
             columns {
                 status()
@@ -390,6 +412,33 @@ jobs {
 }
 ```
 
+### Job Filters
+
+Require the [View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters).
+Adds or removes jobs from the view by specifying filters. Each filter needs to specify if it includes or excludes jobs from the view by calling one
+of MatchType: INCLUDE_MATCHED, INCLUDE_UNMATCHED, EXCLUDE_MATCHED, EXCLUDE_UNMATCHED.
+
+Currently supported are filtering by regular expression and job status:
+
+```groovy
+    jobFilters {
+        regex {
+            matchType(MatchType matchType) // what to do with matching Jobs
+            matchValue(RegexMatchValue matchValue) // what to match - one of NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE, NODE
+            regex(String regex) // the regular expression to match against
+        }
+    }
+```
+
+```groovy
+    jobFilters {
+        status {
+            matchType(MatchType matchType) // what to do with matching Jobs
+            status(Status... status)
+        }
+    }
+```
+
 ### Columns
 
 ```groovy
@@ -569,11 +618,12 @@ startsWithParameters()
 view(type: SectionedView) {
     sections {
         listView {
-            name(String name)               // name of the section
-            width(String width)             // either FULL, HALF, THIRD or TWO_THIRDS
-            alignment(String alignment)     // either CENTER, LEFT or RIGHT
-            jobs(Closure jobClosure)        // see the jobs closure for list views above
-            columns(Closure columnsClosure) // see the columns closure for list views above
+            name(String name)                     // name of the section
+            width(String width)                   // either FULL, HALF, THIRD or TWO_THIRDS
+            alignment(String alignment)           // either CENTER, LEFT or RIGHT
+            jobs(Closure jobClosure)              // see the jobs closure for list views above
+            jobFilters(Closure jobFiltersClosure) // see the jobFilters closure for list views above
+            columns(Closure columnsClosure)       // see the columns closure for list views above
         }
     }
 }

@@ -374,6 +374,11 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
     }
     statusFilter(StatusFilter filter)
 
+    jobFilters { // Since 1.28
+        regex(Closure regexFilterClosure)
+        status(Closure statusFilterClosure)
+    }
+
     // BuildPipelineView options
     alwaysAllowManualTrigger(boolean alwaysAllowManualTrigger = true)
     consoleOutputLinkStyle(OutputStyle consoleOutputLinkStyle)

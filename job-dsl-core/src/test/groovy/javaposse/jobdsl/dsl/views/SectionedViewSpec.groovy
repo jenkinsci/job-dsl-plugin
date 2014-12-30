@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.views.jobfilter.Status
 import spock.lang.Specification
 
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
@@ -42,6 +43,11 @@ class SectionedViewSpec extends Specification {
                 jobs {
                     name 'foo'
                     regex 'test-.*'
+                }
+                jobFilters {
+                    status {
+                        status(Status.UNSTABLE)
+                    }
                 }
                 columns {
                     status()
@@ -91,7 +97,16 @@ class SectionedViewSpec extends Specification {
                 <comparator class='hudson.util.CaseInsensitiveComparator'></comparator>
                 <string>foo</string>
             </jobNames>
-            <jobFilters></jobFilters>
+            <jobFilters>
+                <hudson.views.JobStatusFilter>
+                    <includeExcludeTypeString>includeMatched</includeExcludeTypeString>
+                    <unstable>true</unstable>
+                    <failed>false</failed>
+                    <aborted>false</aborted>
+                    <disabled>false</disabled>
+                    <stable>false</stable>
+                </hudson.views.JobStatusFilter>
+            </jobFilters>
             <name>test</name>
             <includeRegex>test-.*</includeRegex>
             <width>HALF</width>
