@@ -50,6 +50,15 @@ label(String labelStr)
 
 Label which specifies which nodes this job can run on, e.g. 'X86&&Ubuntu'
 
+## Previous Names
+```groovy
+previousNames(String regex)
+```
+
+Is used by the Plugin when the jobs configuration is updated. If exactly one jobs exists matching this regular expression
+then it is renamed to the name of the current job before the configuration is updated.
+The regular expression needs to match the full name of the job, i.e. with folders included.
+
 ## Disable
 
 ```groovy
