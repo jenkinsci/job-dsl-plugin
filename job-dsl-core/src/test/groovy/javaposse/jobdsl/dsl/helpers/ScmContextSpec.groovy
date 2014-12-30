@@ -1148,4 +1148,90 @@ class ScmContextSpec extends Specification {
             useTimeRule[0].value() == false
         }
     }
+
+    def 'call rtc without build definition or workspace'() {
+        when:
+        context.rtc {
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call rtc with build definition'() {
+        when:
+        context.rtc {
+            buildDefinition('buildDEF')
+        }
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            attributes()['class'] == 'com.ibm.team.build.internal.hjplugin.RTCScm'
+            children().size() == 5
+            overrideGlobal[0].value() == false
+            timeout[0].value() == 0
+            buildType[0].value() == 'buildDefinition'
+            buildDefinition[0].value() == 'buildDEF'
+            avoidUsingToolkit[0].value() == false
+        }
+    }
+
+    def 'call rtc with build workspace'() {
+        when:
+        context.rtc {
+            buildWorkspace('buildWS')
+        }
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            attributes()['class'] == 'com.ibm.team.build.internal.hjplugin.RTCScm'
+            children().size() == 5
+            overrideGlobal[0].value() == false
+            timeout[0].value() == 0
+            buildType[0].value() == 'buildWorkspace'
+            buildWorkspace[0].value() == 'buildWS'
+            avoidUsingToolkit[0].value() == false
+        }
+    }
+
+    def 'call rtc with connection override'() {
+        setup:
+        mockJobManagement.getCredentialsId('absd_credential') >> '0815'
+
+        when:
+        context.rtc {
+            buildDefinition('buildDEF')
+            connection('4.0.7', 'absd_credential', 'https//uri.com/ccm', 480)
+        }
+
+        then:
+        context.scmNode != null
+        with(context.scmNode) {
+            attributes()['class'] == 'com.ibm.team.build.internal.hjplugin.RTCScm'
+            children().size() == 8
+            overrideGlobal[0].value() == true
+            buildTool[0].value() == '4.0.7'
+            serverURI[0].value() == 'https//uri.com/ccm'
+            timeout[0].value() == 480
+            credentialsId[0].value() == '0815'
+            buildType[0].value() == 'buildDefinition'
+            buildDefinition[0].value() == 'buildDEF'
+            avoidUsingToolkit[0].value() == false
+        }
+    }
+
+    def 'rtc validates single SCM'() {
+        when:
+        context.rtc {
+            buildDefinition('foo')
+        }
+        context.rtc {
+            buildDefinition('bar')
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
 }

@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
+import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 
@@ -481,6 +482,45 @@ class ScmContext implements Context {
             refreshConfigSpec(false)
             refreshConfigSpecCommand('')
             useTimeRule(false)
+        }
+    }
+
+    /**
+     * <scm class="com.ibm.team.build.internal.hjplugin.RTCScm">
+     *     <overrideGlobal>false</overrideGlobal>
+     *     <timeout>0</timeout>
+     *     <buildTool/>
+     *     <serverURI>https://jazzqual.rsint.net/ccm</serverURI>
+     *     <credentialsId>/>
+     *     <buildType>buildDefinition</buildType>
+     *     <buildWorkspace/>
+     *     <buildDefinition/>
+     *     <avoidUsingToolkit>false</avoidUsingToolkit>
+     * </scm>
+     */
+    void rtc(@DslContext(RTCContext) Closure closure) {
+        validateMulti()
+
+        RTCContext context = new RTCContext(jobManagement)
+        executeInContext(closure, context)
+
+        checkArgument(context.buildType != null, 'Either buildDefinition or buildWorkspace must be specified')
+
+        scmNodes << NodeBuilder.newInstance().scm(class: 'com.ibm.team.build.internal.hjplugin.RTCScm') {
+            overrideGlobal(context.overrideGlobal)
+            timeout(context.timeout)
+            if (context.overrideGlobal) {
+                buildTool(context.buildTool)
+                serverURI(context.serverURI)
+                credentialsId(context.credentialsId)
+            }
+            buildType(context.buildType)
+            if (context.buildType == 'buildDefinition') {
+                buildDefinition(context.buildDefinition)
+            } else {
+                buildWorkspace(context.buildWorkspace)
+            }
+            avoidUsingToolkit(false)
         }
     }
 }
