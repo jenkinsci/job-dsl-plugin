@@ -747,25 +747,39 @@ baseClearCase {
 ## Rational Team Concert (RTC)
 
 ```groovy
-rtc {
-    buildDefinition(String buildDefinition)
-    buildWorkspace(String buildWorkspace)
-    credentialsId(String credentialsId)
-    buildTool(String buildTool)
-    serverURI(String serverURI)
-    timeout(int timeout)
+job {
+    scm {
+        rtc {
+            buildDefinition(String buildDefinition)
+            buildWorkspace(String buildWorkspace)
+            connection(String buildTool, String credentials,
+                       String serverURI, int timeout)
+        }
+    }
 }
 ```
 
 Support for the [Team Concert Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin).
 
-If you want to override credentialsId, buildTool, serverURI or timout you have to specify them all.
-
-Example defining a build definition:
+Examples:
 
 ```groovy
-rtc {
-    buildDefinition('buildDefinitionInRTC')
+job {
+    scm {
+        rtc {
+            buildDefinition('buildDefinitionInRTC')
+        }
+    }
+}
+
+job {
+    scm {
+        rtc {
+            buildWorkspace('some-workspace')
+            connection('my-build-tool', 'build-user', 'https://localhost:9444/ccm', 60)
+        }
+    }
+}
 ```
 
 (since 1.28)

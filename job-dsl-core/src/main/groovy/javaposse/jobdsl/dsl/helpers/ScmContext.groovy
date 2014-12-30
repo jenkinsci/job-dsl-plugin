@@ -485,40 +485,42 @@ class ScmContext implements Context {
         }
     }
 
-     /**
-     *   <scm class="com.ibm.team.build.internal.hjplugin.RTCScm">
-     *       <overrideGlobal>false</overrideGlobal>
-     *       <buildTool/>
-     *       <serverURI>https://jazzqual.rsint.net/ccm</serverURI>
-     *       <timeout/>
-     *       <credentialsId>/>
-     *       <buildType>buildDefinition</buildType>
-     *       <buildWorkspace/>
-     *       <buildDefinition/>
-     *       <avoidUsingToolkit>false</avoidUsingToolkit>
-     *   </scm>
-     *
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin
+    /**
+     * <scm class="com.ibm.team.build.internal.hjplugin.RTCScm">
+     *     <overrideGlobal>false</overrideGlobal>
+     *     <timeout>0</timeout>
+     *     <buildTool/>
+     *     <serverURI>https://jazzqual.rsint.net/ccm</serverURI>
+     *     <credentialsId>/>
+     *     <buildType>buildDefinition</buildType>
+     *     <buildWorkspace/>
+     *     <buildDefinition/>
+     *     <avoidUsingToolkit>false</avoidUsingToolkit>
+     * </scm>
      */
-    void rtc(Closure closure = null) {
+    void rtc(@DslContext(RTCContext) Closure closure) {
         validateMulti()
 
-        RTCContext context = new RTCContext()
+        RTCContext context = new RTCContext(jobManagement)
         executeInContext(closure, context)
+
+        checkArgument(context.buildType != null, 'Either buildDefinition or buildWorkspace must be specified')
 
         scmNodes << NodeBuilder.newInstance().scm(class: 'com.ibm.team.build.internal.hjplugin.RTCScm') {
             overrideGlobal(context.overrideGlobal)
-            buildTool(context.buildTool)
-            serverURI(context.serverURI)
             timeout(context.timeout)
-            userId('')
-            password('')
-            passwordFile('')
-            credentialsId(context.credentialsId)
+            if (context.overrideGlobal) {
+                buildTool(context.buildTool)
+                serverURI(context.serverURI)
+                credentialsId(context.credentialsId)
+            }
             buildType(context.buildType)
-            buildWorkspace(context.buildWorkspace)
-            buildDefinition(context.buildDefinition)
+            if (context.buildType == 'buildDefinition') {
+                buildDefinition(context.buildDefinition)
+            } else {
+                buildWorkspace(context.buildWorkspace)
+            }
             avoidUsingToolkit(false)
-       }
+        }
     }
 }

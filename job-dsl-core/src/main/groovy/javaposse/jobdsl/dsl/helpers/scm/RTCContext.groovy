@@ -1,62 +1,43 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.JobManagement
 
 /**
- * DSL for the Team Concert Plugin
- *
- * See https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin
+ * DSL context for the
+ * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin">Team Concert Plugin</a>.
  */
 class RTCContext implements Context {
+    private final JobManagement jobManagement
 
-    String buildType = 'buildDefinition'
-    String buildDefinition = ''
-    String buildWorkspace = ''
-    String credentialsId = ''
-    boolean overrideGlobal = false
-    int timeout = 0
-    String buildTool = ''
-    String serverURI = ''
+    String buildType
+    String buildDefinition
+    String buildWorkspace
+    String credentialsId
+    boolean overrideGlobal
+    int timeout
+    String buildTool
+    String serverURI
+
+    RTCContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
 
     void buildDefinition(String buildDefinition) {
         this.buildDefinition = buildDefinition
-        if (buildDefinition != '') {
-            buildType = 'buildDefinition'
-        }
+        this.buildType = 'buildDefinition'
     }
 
     void buildWorkspace(String buildWorkspace) {
         this.buildWorkspace = buildWorkspace
-        if (buildWorkspace != '' && this.buildDefinition == '') {
-            buildType = 'buildWorkspace'
-        }
+        this.buildType = 'buildWorkspace'
     }
 
-    void credentialsId(String credentialsId) {
-        this.credentialsId = credentialsId
-        if (credentialsId != '') {
-            this.overrideGlobal = true
-        }
-    }
-
-    void buildTool(String buildTool) {
+    void connection(String buildTool, String credentials, String serverURI, int timeout) {
+        this.overrideGlobal = true
         this.buildTool = buildTool
-        if (buildTool != '') {
-            this.overrideGlobal = true
-        }
-    }
-
-    void serverURI(String serverURI) {
+        this.credentialsId = jobManagement.getCredentialsId(credentials)
         this.serverURI = serverURI
-        if (serverURI != '') {
-            this.overrideGlobal = true
-        }
-    }
-
-    void timeout(int timeout) {
         this.timeout = timeout
-        if (timeout != 0) {
-            this.overrideGlobal = true
-        }
     }
 }
