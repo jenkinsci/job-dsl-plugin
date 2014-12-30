@@ -1,10 +1,16 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue
+import javaposse.jobdsl.dsl.views.jobfilter.Status
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.ALL
 import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.DISABLED
 import static javaposse.jobdsl.dsl.views.ListView.StatusFilter.ENABLED
+import static javaposse.jobdsl.dsl.views.jobfilter.MatchType.EXCLUDE_MATCHED
+import static javaposse.jobdsl.dsl.views.jobfilter.MatchType.EXCLUDE_UNMATCHED
+import static javaposse.jobdsl.dsl.views.jobfilter.MatchType.INCLUDE_MATCHED
+import static javaposse.jobdsl.dsl.views.jobfilter.MatchType.INCLUDE_UNMATCHED
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
@@ -239,6 +245,105 @@ class ListViewSpec extends Specification {
         root.columns.size() == 1
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildConsoleColumn'
+    }
+
+    def 'statusFilter'(Closure filter, Map children) {
+        when:
+        view.jobFilters(filter)
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node statusFilter = filters[0]
+        statusFilter.name() == 'hudson.views.JobStatusFilter'
+        statusFilter.children().size() == children.size()
+        children.eachWithIndex { name, value, idx ->
+            assert statusFilter.children()[idx].name() == name
+            assert statusFilter.children()[idx].value() == value
+        }
+
+        where:
+        filter || children
+        { ->
+            status {
+                matchType(INCLUDE_UNMATCHED)
+                status(Status.UNSTABLE, Status.STABLE, Status.ABORTED, Status.FAILED, Status.DISABLED)
+            }
+        } | [
+                includeExcludeTypeString: 'includeUnmatched',
+                unstable: true,
+                failed: true,
+                aborted: true,
+                disabled: true,
+                stable: true
+        ]
+        { ->
+            status {
+                matchType(INCLUDE_MATCHED)
+            }
+        } | [
+                includeExcludeTypeString: 'includeMatched',
+                unstable: false,
+                failed: false,
+                aborted: false,
+                disabled: false,
+                stable: false
+        ]
+        { ->
+            status {
+                matchType(EXCLUDE_MATCHED)
+                status(Status.UNSTABLE)
+            }
+        } | [
+                includeExcludeTypeString: 'excludeMatched',
+                unstable: true,
+                failed: false,
+                aborted: false,
+                disabled: false,
+                stable: false
+        ]
+        { ->
+            status {
+                matchType(EXCLUDE_UNMATCHED)
+                status(Status.ABORTED, Status.DISABLED)
+            }
+        } | [
+                includeExcludeTypeString: 'excludeUnmatched',
+                unstable: false,
+                failed: false,
+                aborted: true,
+                disabled: true,
+                stable: false
+        ]
+    }
+
+    def 'regex job filter'(RegexMatchValue regexType, String regexString) {
+        when:
+        view.jobFilters {
+            regex {
+                matchType(INCLUDE_UNMATCHED)
+                matchValue regexType
+                regex regexString
+            }
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node statusFilter = filters[0]
+        statusFilter.name() == 'hudson.views.RegExJobFilter'
+        statusFilter.children().size() == 3
+        statusFilter.children()[0].name() == 'includeExcludeTypeString'
+        statusFilter.children()[0].value() == 'includeUnmatched'
+        statusFilter.children()[1].name() == 'valueTypeString'
+        statusFilter.children()[1].value() == regexType.name()
+        statusFilter.children()[2].name() == 'regex'
+        statusFilter.children()[2].value() == regexString
+
+        where:
+        regexType  || regexString
+        RegexMatchValue.NAME | '.*'
     }
 
     protected String getDefaultXml() {
