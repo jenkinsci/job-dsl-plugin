@@ -49,6 +49,7 @@ project(':job-dsl-core') {
 
     apply plugin: 'application'
     apply plugin: 'gradle-one-jar'
+    apply plugin: 'maven-publish'
 
     sourceSets {
         ast {
@@ -99,38 +100,47 @@ project(':job-dsl-core') {
         mainClass = project.mainClassName
     }
 
-    artifacts {
-        archives jarJavadocs
-        archives jarGroovydocs
-        archives jarSources
-        archives oneJar
-    }
-
     run {
         if (project.hasProperty('args')) {
             args project.args.split('\\s+')
         }
     }
 
-    // gradle-jpi plugin does this for plugins, so we're mimicking it to get our additional artifacts up to repo.jenkinsci.org
-    gradle.taskGraph.whenReady { taskGraph ->
-        if (taskGraph.hasTask(uploadArchives)) {
-            uploadArchives {
-                repositories {
-                    mavenDeployer {
-                        def credentials = loadCredentialsForJenkinsCommunityRepository()
-                        repository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/releases') {
-                            authentication(credentials)
-                        }
-                        snapshotRepository(url: 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots') {
-                            authentication(credentials)
-                        }
-                    }
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+
+                artifact jarJavadocs
+                artifact jarGroovydocs
+                artifact jarSources
+                artifact oneJar
+            }
+        }
+
+        repositories {
+            maven {
+                name 'jenkins'
+                if (project.version.toString().endsWith('-SNAPSHOT')) {
+                    url 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots'
+                } else {
+                    url 'http://maven.jenkins-ci.org:8081/content/repositories/releases'
                 }
             }
         }
     }
 
+    // gradle-jpi plugin does this for plugins, so we're mimicking it to get our additional artifacts up to repo.jenkinsci.org
+    gradle.taskGraph.whenReady { taskGraph ->
+        if (taskGraph.hasTask('publish')) {
+            PublishingExtension publishingExtension = project.extensions.getByType(PublishingExtension)
+            def credentials = loadCredentialsForJenkinsCommunityRepository()
+            publishingExtension.repositories.getByName('jenkins').credentials {
+                username credentials.userName
+                password credentials.password
+            }
+        }
+    }
 }
 
 private Map loadCredentialsForJenkinsCommunityRepository() {
@@ -146,7 +156,7 @@ private Map loadCredentialsForJenkinsCommunityRepository() {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.2.1'
 }
 
 apply plugin: 'github-pages'

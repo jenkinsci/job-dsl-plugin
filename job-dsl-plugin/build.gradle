@@ -1,12 +1,16 @@
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
         maven {
             url 'http://repo.jenkins-ci.org/releases/'
         }
+        maven {
+            url 'http://repo.jenkins-ci.org/snapshots/'
+        }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.7.2'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.8.0-SNAPSHOT'
     }
 }
 
