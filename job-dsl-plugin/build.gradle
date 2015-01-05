@@ -15,7 +15,7 @@ apply plugin: 'org.jenkins-ci.jpi'
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
 
 jenkinsPlugin {
-    coreVersion = '1.509.3'
+    coreVersion = '1.554.2'
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
@@ -46,14 +46,23 @@ jenkinsPlugin {
     }
 }
 
+configurations {
+    forceInclude {}
+}
+
+jpi {
+    classpath += configurations.forceInclude
+}
+
 dependencies {
     compile project(':job-dsl-core')
+    forceInclude "org.codehaus.groovy:groovy-all:${groovyVersion}"
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.2@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.7@jar'
     jenkinsTest 'org.jenkins-ci.plugins:ant:1.2@jar' // see JENKINS-17129
-    jenkinsTest 'org.jenkins-ci.main:maven-plugin:1.509.3@jar'
+    jenkinsTest 'org.jenkins-ci.main:maven-plugin:2.0@jar'
     jenkinsTest 'org.jenkins-ci.plugins:javadoc:1.1@jar'
     jenkinsTest 'org.jenkins-ci.plugins:mailer:1.1@jar'
 }

@@ -42,7 +42,7 @@
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
-                <version>1.8.6</version>
+                <version>1.8.9</version>
             </dependency>
             <dependency>
                 <groupId>org.jenkins-ci</groupId>
@@ -52,12 +52,12 @@
             <dependency>
                 <groupId>org.jenkins-ci.main</groupId>
                 <artifactId>jenkins-core</artifactId>
-                <version>1.509.3</version>
+                <version>1.554.2</version>
             </dependency>
             <dependency>
                 <groupId>org.jenkins-ci.main</groupId>
                 <artifactId>jenkins-test-harness</artifactId>
-                <version>1.509.3</version>
+                <version>1.554.2</version>
             </dependency>
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
@@ -82,7 +82,7 @@
             <dependency>
                 <groupId>org.jvnet.hudson</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.4-jenkins-3</version>
+                <version>1.4.7-jenkins-1</version>
             </dependency>
             <dependency>
                 <groupId>org.objenesis</groupId>

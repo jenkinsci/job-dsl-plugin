@@ -21,7 +21,7 @@ subprojects {
     targetCompatibility = 1.6
 
     dependencies {
-        compile 'org.codehaus.groovy:groovy-all:1.8.6'
+        compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
         compile 'com.google.guava:guava:14.0.1'
         testCompile 'org.spockframework:spock-core:0.7-groovy-1.8'
         testCompile 'junit:junit-dep:4.10'
@@ -66,12 +66,12 @@ project(':job-dsl-core') {
     mainClassName = 'javaposse.jobdsl.Run'
 
     dependencies {
-        astCompile 'org.codehaus.groovy:groovy-all:1.8.6'
+        astCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
         compile 'commons-codec:commons-codec:1.8' // for Perforce
         compile 'org.apache.ivy:ivy:2.2.0' // Groovy optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile 'org.jenkins-ci:version-number:1.1'
-        compile 'org.jvnet.hudson:xstream:1.4.4-jenkins-3'
+        compile 'org.jvnet.hudson:xstream:1.4.7-jenkins-1'
     }
 
     jar {
