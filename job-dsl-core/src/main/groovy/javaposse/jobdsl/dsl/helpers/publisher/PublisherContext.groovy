@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
-import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
@@ -1256,7 +1256,10 @@ class PublisherContext implements Context {
                     condition(class: context.condition.conditionClass) {
                         context.condition.addArgs(delegate)
                     }
-                    publisher(class: new XmlFriendlyReplacer().unescapeName(action.name().toString()), action.value())
+                    publisher(
+                            class: new XmlFriendlyNameCoder().decodeAttribute(action.name().toString()),
+                            action.value()
+                    )
                     runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                 }
             }
