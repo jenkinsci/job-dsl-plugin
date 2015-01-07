@@ -64,8 +64,6 @@ ruleset {
         exclude 'ConfusingMethodName'
         // we don't care for now
         exclude 'FactoryMethodName'
-
-        exclude 'FieldName'
     }
 
     ruleset('rulesets/security.xml') {
