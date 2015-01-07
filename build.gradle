@@ -132,7 +132,7 @@ project(':job-dsl-core') {
 
     // gradle-jpi plugin does this for plugins, so we're mimicking it to get our additional artifacts up to repo.jenkinsci.org
     gradle.taskGraph.whenReady { taskGraph ->
-        if (taskGraph.hasTask('publish')) {
+        if (taskGraph.hasTask(tasks.publish)) {
             PublishingExtension publishingExtension = project.extensions.getByType(PublishingExtension)
             def credentials = loadCredentialsForJenkinsCommunityRepository()
             publishingExtension.repositories.getByName('jenkins').credentials {
