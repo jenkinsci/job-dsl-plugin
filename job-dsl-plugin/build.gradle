@@ -1,9 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven {
-            url 'http://repo.jenkins-ci.org/releases/'
-        }
+        jcenter()
     }
     dependencies {
         classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.8.0'
