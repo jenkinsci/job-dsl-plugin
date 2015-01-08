@@ -371,6 +371,21 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * <properties>
+     *      <jenkins.plugins.jobicon.CustomIconProperty>
+     *          <iconfile>ebabc5fd800af7cd49574f038debb6e8c2aedef9.png</iconfile>
+     *      </jenkins.plugins.jobicon.CustomIconProperty>
+     * </properties>
+     */
+    void customIcon(String iconFileName) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'jenkins.plugins.jobicon.CustomIconProperty' {
+                delegate.iconfile(iconFileName)
+            }
+        }
+    }
+
     @RequiresPlugin(id = 'matrix-auth')
     void authorization(@DslContext(JobAuthorizationContext) Closure closure) {
         JobAuthorizationContext context = new JobAuthorizationContext(jobManagement)

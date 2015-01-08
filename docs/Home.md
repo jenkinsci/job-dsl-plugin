@@ -20,6 +20,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added support for the [Build Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Publisher+Plugin)
  * Added support for the [Naginator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Naginator+Plugin)
  * Added support for the [Sidebar-Link Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sidebar-Link+Plugin)
+ * Added support for the [Custom Job Icon Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Job+Icon+Plugin)
  * Added support for "Build after other projects are built" trigger
  * Added more options for `archiveArtifacts`
  * The `latestOnly` option of `archiveArtifacts` is deprecated, see [[Migration]]
