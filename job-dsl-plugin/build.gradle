@@ -64,13 +64,8 @@ dependencies {
     jenkinsTest 'org.jenkins-ci.plugins:mailer:1.1@jar'
 }
 
-// workaround for org.jvnet.hudson.test.WarExploder which assumes that the target directory exists
-// can be removed after upgrading to 1.592, see https://github.com/jenkinsci/jenkins/commit/9aaeb0a3f2
-task makeTarget {
+// workaround for JENKINS-26331
+tasks.clean.delete('target')
+tasks.test.doFirst {
     file('target').mkdirs()
 }
-tasks.test.dependsOn('makeTarget')
-task cleanTarget(type: Delete) {
-    delete 'target'
-}
-tasks.clean.dependsOn('cleanTarget')
