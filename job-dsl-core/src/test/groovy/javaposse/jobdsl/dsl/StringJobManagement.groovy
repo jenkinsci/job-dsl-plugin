@@ -15,6 +15,19 @@ class StringJobManagement extends AbstractJobManagement {
     Map<String, String> params = [:]
     List<String> jobScheduled = []
 
+    private final RenameHelper renameHelper = new RenameHelper() {
+        @Override
+        Set<String> allJobNames() {
+            availableConfigs.keySet()
+        }
+
+        @Override
+        void renameJob(String from, String to) throws IOException {
+            availableConfigs[to] = availableConfigs[from]
+            availableConfigs.remove(from)
+        }
+    }
+
     StringJobManagement(PrintStream out) {
         super(out)
     }
@@ -54,6 +67,11 @@ class StringJobManagement extends AbstractJobManagement {
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.name)
         UUID.randomUUID().toString()
+    }
+
+    @Override
+    void renameJobMatching(String previousNames, String destination) throws IOException {
+        renameHelper.renameJobMatching(previousNames, destination)
     }
 
     @Override

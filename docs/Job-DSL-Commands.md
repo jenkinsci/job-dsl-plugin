@@ -78,6 +78,7 @@ job(Map<String, ?> arguments = [:]) {
                int artifactNumToKeep = -1)
     notifications(Closure notificationClosure) // since 1.26
     priority(int value)
+    previousNames(String regex) // since 1.29
     quietPeriod(int seconds = 5)
     throttleConcurrentBuilds(Closure throttleClosure)
     authorization {

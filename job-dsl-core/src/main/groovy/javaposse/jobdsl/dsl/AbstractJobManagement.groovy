@@ -25,8 +25,8 @@ abstract class AbstractJobManagement implements JobManagement {
     /**
      * Map if variables that should be available to the script.
      */
-     @Override
-     Map<String, String> getParameters() {
+    @Override
+    Map<String, String> getParameters() {
         [:]
     }
 
