@@ -1179,6 +1179,19 @@ class JobSpec extends Specification {
         }
     }
 
+    def 'set custom icon'() {
+        when:
+        job.customIcon('myfancyicon.png')
+
+        then:
+        job.node.'properties'.size() == 1
+        job.node.'properties'[0].'jenkins.plugins.jobicon.CustomIconProperty'.size() == 1
+        with(job.node.'properties'[0].'jenkins.plugins.jobicon.CustomIconProperty'[0]) {
+            children().size() == 1
+            iconfile[0].value() == 'myfancyicon.png'
+        }
+    }
+
     def 'set notification with default properties'() {
         when:
         job.notifications {

@@ -63,6 +63,7 @@ job(Map<String, ?> arguments = [:]) {
     blockOnUpstreamProjects()
     checkoutRetryCount(int times = 3)
     concurrentBuild(boolean allowConcurrentBuild = true) // since 1.21
+    customIcon(String iconFileName) // since 1.29
     customWorkspace(String workspacePath)
     deliveryPipelineConfiguration(String stageName, String taskName = null) // since 1.26
     description(String description)

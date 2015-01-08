@@ -400,11 +400,13 @@ columns {
     lastDuration()
     buildButton()
     lastBuildConsole() // since 1.23, requires the Extra Columns Plugin
+    customIcon() // since 1.29, requires the Custom Job Icon Plugin
 }
 ```
 
 Adds columns to the views. The view will have no columns by default. Some column types require the
-[Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin).
+[Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin) or
+[Custom Job Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Job+Icon+Plugin).
 
 ## Build Pipeline View Options
 
