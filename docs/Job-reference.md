@@ -3984,15 +3984,15 @@ job {
 
 Adds a S3 bucket publisher. Requires the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin).
 
-Valid values for region are `'GovCloud'`, `'US_EAST_1'`, `'US_WEST_1'`, `'US_WEST_2'`, `'EU_WEST_1'`,
-`'AP_SOUTHEAST_1'`, `'AP_SOUTHEAST_2'`, `'AP_NORTHEAST_1'`, `'SA_EAST_1'` or `'CN_NORTH_1'`. The storage class can be
+Valid values for region are `'us-east-1'`, `'us-west-1'`, `'us-west-2'`, `'eu-west-1'`,
+`'ap-southeast-1'`, `'ap-southeast-2'`, `'ap-northeast-2'`, `'sa-east-1'` or `'cn-north-1'`. The storage class can be
 either `'STANDARD'` or `'REDUCED_REDUNDANCY'`.
 
 ```groovy
 job {
     publishers {
         s3('myProfile') {
-            entry('foo', 'bar', 'EU_WEST_1') {
+            entry('foo', 'bar', 'eu-west-1') {
                 storageClass('REDUCED_REDUNDANCY')
                 noUploadOnFailure()
                 uploadFromSlave()

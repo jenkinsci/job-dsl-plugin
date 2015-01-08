@@ -2764,12 +2764,12 @@ class PublisherContextSpec extends Specification {
 
         where:
         source | bucket | region
-        null   | 'test' | 'EU_WEST_1'
-        ''     | 'test' | 'EU_WEST_1'
-        'test' | null   | 'EU_WEST_1'
-        'test' | ''     | 'EU_WEST_1'
-        null   | null   | 'EU_WEST_1'
-        ''     | ''     | 'EU_WEST_1'
+        null   | 'test' | 'eu-west-1'
+        ''     | 'test' | 'eu-west-1'
+        'test' | null   | 'eu-west-1'
+        'test' | ''     | 'eu-west-1'
+        null   | null   | 'eu-west-1'
+        ''     | ''     | 'eu-west-1'
         'test' | 'test' | ''
         'test' | 'test' | null
     }
@@ -2777,7 +2777,7 @@ class PublisherContextSpec extends Specification {
     def 'call s3 with invalid storage class'(String storageClass) {
         when:
         context.s3('test') {
-            entry('foo', 'bar', 'EU_WEST_1') {
+            entry('foo', 'bar', 'eu-west-1') {
                 delegate.storageClass(storageClass)
             }
         }
@@ -2792,7 +2792,7 @@ class PublisherContextSpec extends Specification {
     def 'call s3 with some options'() {
         when:
         context.s3('profile') {
-            entry('foo', 'bar', 'US_EAST_1')
+            entry('foo', 'bar', 'us-east-1')
             metadata('key', 'value')
         }
 
@@ -2807,7 +2807,7 @@ class PublisherContextSpec extends Specification {
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
                 storageClass[0].value() == 'STANDARD'
-                selectedRegion[0].value() == 'US_EAST_1'
+                selectedRegion[0].value() == 'us-east-1'
                 noUploadOnFailure[0].value() == false
                 uploadFromSlave[0].value() == false
                 managedArtifacts[0].value() == false
@@ -2821,11 +2821,31 @@ class PublisherContextSpec extends Specification {
         }
     }
 
+    def 'call s3 with older version'() {
+        setup:
+        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.6')
+
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar', 'us-east-1')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 1
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                selectedRegion[0].value() == 'US_EAST_1'
+            }
+        }
+    }
+
     def 'call s3 with more options'() {
         when:
         context.s3('profile') {
-            entry('foo', 'bar', 'EU_WEST_1')
-            entry('bar', 'baz', 'US_EAST_1') {
+            entry('foo', 'bar', 'eu-west-1')
+            entry('bar', 'baz', 'us-east-1') {
                 storageClass('REDUCED_REDUNDANCY')
                 noUploadOnFailure(true)
                 uploadFromSlave(true)
@@ -2845,7 +2865,7 @@ class PublisherContextSpec extends Specification {
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
                 storageClass[0].value() == 'STANDARD'
-                selectedRegion[0].value() == 'EU_WEST_1'
+                selectedRegion[0].value() == 'eu-west-1'
                 noUploadOnFailure[0].value() == false
                 uploadFromSlave[0].value() == false
                 managedArtifacts[0].value() == false
@@ -2854,7 +2874,7 @@ class PublisherContextSpec extends Specification {
                 sourceFile[0].value() == 'bar'
                 bucket[0].value() == 'baz'
                 storageClass[0].value() == 'REDUCED_REDUNDANCY'
-                selectedRegion[0].value() == 'US_EAST_1'
+                selectedRegion[0].value() == 'us-east-1'
                 noUploadOnFailure[0].value() == true
                 uploadFromSlave[0].value() == true
                 managedArtifacts[0].value() == true
