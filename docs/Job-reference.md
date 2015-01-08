@@ -344,6 +344,25 @@ job(type: BuildFlow) {
 
 Since 1.21.
 
+## Custom Icon
+
+```groovy
+job {
+    customIcon(String iconFileName)
+}
+```
+
+Sets the custom icon to be used for this job. Requires the
+[Custom Job Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Job+Icon+Plugin).
+
+```groovy
+job {
+    customIcon('myFancyIcon.png')
+}
+```
+
+(since 1.29)
+
 # Maven
 
 The `rootPOM`, `goals`, `mavenOpts`, `mavenInstallation`, `perModuleEmail`, `archivingDisabled`, `runHeadless`,

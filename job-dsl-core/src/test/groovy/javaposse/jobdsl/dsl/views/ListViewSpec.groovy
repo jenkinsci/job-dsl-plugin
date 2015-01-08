@@ -241,6 +241,19 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildConsoleColumn'
     }
 
+    def 'customIcon column'() {
+        when:
+        view.columns {
+            customIcon()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.jobicon.CustomIconColumn'
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
