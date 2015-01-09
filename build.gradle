@@ -22,7 +22,7 @@ subprojects {
 
     dependencies {
         compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-        compile 'com.google.guava:guava:14.0.1'
+        compile 'com.google.guava:guava:11.0.1'
         testCompile 'org.spockframework:spock-core:0.7-groovy-1.8'
         testCompile 'junit:junit-dep:4.10'
         testCompile 'cglib:cglib-nodep:2.2.2' // used by Spock
