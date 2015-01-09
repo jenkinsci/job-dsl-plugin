@@ -18,6 +18,8 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 ## Release Notes
 * 1.30 (unreleased)
  * Added configure block to the Multijob job context
+ * Added strategy option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+ * Added strategy build chooser for the [Gerrit Trigger](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
 * 1.29 (February 05 2015)
  * Show seed job and template job info in the generated jobs
  * Added [CoreMirror](https://codemirror.net/) support for the DSL script input field
