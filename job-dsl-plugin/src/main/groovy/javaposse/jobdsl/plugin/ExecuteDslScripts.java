@@ -31,6 +31,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -264,8 +265,8 @@ public class ExecuteDslScripts extends Builder {
             if (matching.size() == 1) {
                 // Just update digest
                 SeedReference ref = Iterables.get(matching, 0);
-                if (digest.equals(ref.digest)) {
-                    ref.digest = digest;
+                if (digest.equals(ref.getDigest())) {
+                    ref.setDigest(digest);
                     descriptorMutated = true;
                 }
             } else {
@@ -317,6 +318,44 @@ public class ExecuteDslScripts extends Builder {
                     }
                 }
             }
+        }
+
+        updateGeneratedJobMap(build.getProject(), Sets.union(added, existing), removed);
+    }
+
+    private void updateGeneratedJobMap(AbstractProject<?, ?> seedJob, Set<GeneratedJob> createdOrUpdatedJobs,
+                                       Set<GeneratedJob> removedJobs) throws IOException {
+        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        boolean descriptorMutated = false;
+        Map<String, SeedReference> generatedJobMap = descriptor.getGeneratedJobMap();
+
+        for (GeneratedJob generatedJob : createdOrUpdatedJobs) {
+            Item item = getLookupStrategy().getItem(seedJob, generatedJob.getJobName(), Item.class);
+            if (item != null) {
+                SeedReference newSeedReference = new SeedReference(seedJob.getFullName());
+                if (generatedJob.getTemplateName() != null) {
+                    Item template = getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), Item.class);
+                    newSeedReference.setTemplateJobName(template.getFullName());
+                }
+
+                SeedReference oldSeedReference = generatedJobMap.get(item.getFullName());
+                if (!newSeedReference.equals(oldSeedReference)) {
+                    generatedJobMap.put(item.getFullName(), newSeedReference);
+                    descriptorMutated = true;
+                }
+            }
+        }
+
+        for (GeneratedJob removedJob : removedJobs) {
+            Item removedItem = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), Item.class);
+            if (removedItem != null) {
+                generatedJobMap.remove(removedItem.getFullName());
+                descriptorMutated = true;
+            }
+        }
+
+        if (descriptorMutated) {
+            descriptor.save();
         }
     }
 
@@ -406,7 +445,7 @@ public class ExecuteDslScripts extends Builder {
 
         @Override
         public boolean apply(SeedReference input) {
-            return seedJobName.equals(input.seedJobName);
+            return seedJobName.equals(input.getSeedJobName());
         }
     }
 }

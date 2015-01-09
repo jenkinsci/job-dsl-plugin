@@ -11,6 +11,6 @@ public class SeedReferenceDigestPredicate implements Predicate<SeedReference> {
 
     @Override
     public boolean apply(SeedReference input) {
-        return !digest.equals(input.digest);
+        return !digest.equals(input.getDigest());
     }
 }

@@ -1,12 +1,16 @@
 package javaposse.jobdsl.plugin;
 
 /**
- * Bean to record a reference from a
+ * Bean to record a reference from a generated job to the seed job and optionally to the template job.
  */
 public class SeedReference {
-    String templateJobName;
-    String seedJobName;
-    String digest;
+    private final String seedJobName;
+    private String templateJobName;
+    private String digest;
+
+    public SeedReference(String seedJobName) {
+        this(null, seedJobName, null);
+    }
 
     public SeedReference(String templateJobName, String seedJobName, String digest) {
         this.templateJobName = templateJobName;
@@ -26,15 +30,34 @@ public class SeedReference {
         return seedJobName;
     }
 
-    public void setSeedJobName(String seedJobName) {
-        this.seedJobName = seedJobName;
-    }
-
     public String getDigest() {
         return digest;
     }
 
     public void setDigest(String digest) {
         this.digest = digest;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SeedReference that = (SeedReference) o;
+
+        if (digest != null ? !digest.equals(that.digest) : that.digest != null) return false;
+        if (seedJobName != null ? !seedJobName.equals(that.seedJobName) : that.seedJobName != null) return false;
+        if (templateJobName != null ? !templateJobName.equals(that.templateJobName) : that.templateJobName != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = templateJobName != null ? templateJobName.hashCode() : 0;
+        result = 31 * result + (seedJobName != null ? seedJobName.hashCode() : 0);
+        result = 31 * result + (digest != null ? digest.hashCode() : 0);
+        return result;
     }
 }

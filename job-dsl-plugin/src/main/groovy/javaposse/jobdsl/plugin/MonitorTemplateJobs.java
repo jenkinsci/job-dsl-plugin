@@ -98,7 +98,7 @@ public class MonitorTemplateJobs extends SaveableListener {
 
         @Override
         public AbstractProject apply(SeedReference input) {
-            return (AbstractProject) Jenkins.getInstance().getItem(input.seedJobName);
+            return (AbstractProject) Jenkins.getInstance().getItem(input.getSeedJobName());
         }
     }
 }

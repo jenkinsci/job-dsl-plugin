@@ -9,6 +9,7 @@ import hudson.model.AbstractProject
 import hudson.model.Action
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
+import hudson.model.Items
 import hudson.model.Label
 import hudson.model.ListView
 import hudson.model.View
@@ -326,6 +327,166 @@ class ExecuteDslScriptsSpec extends Specification {
 
         build.result == SUCCESS
         build
+    }
+
+    def "SeedJobAction is added to created jobs"() {
+        setup:
+        DescriptorImpl descriptor = jenkinsRule.instance.getDescriptorByType(DescriptorImpl)
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleProject template = jenkinsRule.createFreeStyleProject('template')
+
+        when:
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        then:
+        AbstractProject testJob = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
+        SeedJobAction action = testJob.getAction(SeedJobAction)
+        action.templateJob == template
+        action.seedJob == seedJob
+
+        SeedReference seedReference = descriptor.generatedJobMap.get('test-job')
+        seedReference.seedJobName == 'seed'
+        seedReference.templateJobName == 'template'
+    }
+
+    def "SeedJobAction is added to updated jobs"() {
+        setup:
+        DescriptorImpl descriptor = jenkinsRule.instance.getDescriptorByType(DescriptorImpl)
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleProject template = jenkinsRule.createFreeStyleProject('template')
+        jenkinsRule.createFreeStyleProject('test-job')
+
+        when:
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        then:
+        AbstractProject testJob = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
+        SeedJobAction action = testJob.getAction(SeedJobAction)
+        action.templateJob == template
+        action.seedJob == seedJob
+        SeedReference seedReference = descriptor.generatedJobMap.get('test-job')
+        seedReference.seedJobName == 'seed'
+        seedReference.templateJobName == 'template'
+    }
+
+    def "SeedJobAction is removed from ignored jobs"() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        when:
+        runBuild(seedJob, new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, '// do nothing'), false, RemovedJobAction.IGNORE
+        ))
+
+        then:
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getAction(SeedJobAction) == null
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('test-job') == null
+    }
+
+    def "SeedJobAction is removed from disabled jobs"() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        when:
+        runBuild(seedJob, new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, '// do nothing'), false, RemovedJobAction.DISABLE
+        ))
+
+        then:
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getAction(SeedJobAction) == null
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.get('test-job') == null
+    }
+
+    def "Deleted job is removed from GeneratedJobMap"() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        when:
+        runBuild(seedJob, new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, '// do nothing'), false, RemovedJobAction.DELETE
+        ))
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+    }
+
+    def "Manually deleted job is removed from GeneratedJobMap"() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+
+        when:
+        jenkinsRule.instance.getItemByFullName('test-job').delete()
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+    }
+
+    def "Manually deleted job in folder is removed from GeneratedJobMap"() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+
+        when:
+        folder.delete()
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+    }
+
+    def "Renamed job is removed from GeneratedJobMap"() {
+        setup:
+        jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+
+        when:
+        (jenkinsRule.instance.getItemByFullName('/folder/test-job') as AbstractProject).renameTo('renamed')
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+        jenkinsRule.instance.getItemByFullName('/folder/renamed', AbstractProject).getAction(SeedJobAction) == null
+    }
+
+    def "Moved job is removed from GeneratedJobMap"() {
+        setup:
+        jenkinsRule.jenkins.createProject(Folder, 'folder')
+        Folder target = jenkinsRule.jenkins.createProject(Folder, 'target')
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+
+        when:
+        Items.move(jenkinsRule.instance.getItemByFullName('/folder/test-job', FreeStyleProject), target)
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+        jenkinsRule.instance.getItemByFullName('/target/test-job', AbstractProject).getAction(SeedJobAction) == null
+    }
+
+    def "Updated job is removed from GeneratedJobMap"() {
+        setup:
+        jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+
+        when:
+        (jenkinsRule.instance.getItemByFullName('/folder/test-job') as AbstractProject).description = 'foo'
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+        jenkinsRule.instance.getItemByFullName('/folder/test-job', AbstractProject).getAction(SeedJobAction) == null
     }
 
     def createJobInFolder() {
