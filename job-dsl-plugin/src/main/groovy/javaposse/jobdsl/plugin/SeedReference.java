@@ -1,12 +1,16 @@
 package javaposse.jobdsl.plugin;
 
 /**
- * Bean to record a reference from a
+ * Bean to record a reference from a generated job to the seed job and optionally to the template job.
  */
 public class SeedReference {
-    String templateJobName;
-    String seedJobName;
-    String digest;
+    private final String seedJobName;
+    private String templateJobName;
+    private String digest;
+
+    public SeedReference(String seedJobName) {
+        this(null, seedJobName, null);
+    }
 
     public SeedReference(String templateJobName, String seedJobName, String digest) {
         this.templateJobName = templateJobName;
@@ -24,10 +28,6 @@ public class SeedReference {
 
     public String getSeedJobName() {
         return seedJobName;
-    }
-
-    public void setSeedJobName(String seedJobName) {
-        this.seedJobName = seedJobName;
     }
 
     public String getDigest() {

@@ -4,11 +4,17 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import hudson.Extension;
+import hudson.XmlFile;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
+import hudson.model.Saveable;
+import hudson.model.listeners.ItemListener;
+import hudson.model.listeners.SaveableListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import jenkins.YesNoMaybe;
+import jenkins.model.Jenkins;
 
 import java.util.Map;
 
@@ -74,5 +80,41 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     @Override
     public boolean isApplicable(Class<? extends AbstractProject> jobType) {
         return true;
+    }
+
+    private static void removeSeedReference(String key) {
+        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        SeedReference seedReference = descriptor.generatedJobMap.remove(key);
+        if (seedReference != null) {
+            descriptor.save();
+        }
+    }
+
+    @Extension
+    public static class GeneratedJobMapItemListener extends ItemListener {
+        @Override
+        public void onDeleted(Item item) {
+            removeSeedReference(item.getFullName());
+        }
+
+        @Override
+        public void onRenamed(Item item, String oldName, String newName) {
+            removeSeedReference(item.getFullName().replace(newName, oldName));
+        }
+
+        @Override
+        public void onLocationChanged(Item item, String oldFullName, String newFullName) {
+            removeSeedReference(oldFullName);
+        }
+    }
+
+    @Extension
+    public static class GeneratedJobMapSaveableListener extends SaveableListener {
+        @Override
+        public void onChange(Saveable saveable, XmlFile file) {
+            if (saveable instanceof Item) {
+                removeSeedReference(((Item) saveable).getFullName());
+            }
+        }
     }
 }

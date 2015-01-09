@@ -1,13 +1,12 @@
 package javaposse.jobdsl.plugin;
 
-import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Item;
 import jenkins.model.Jenkins;
 
 public class SeedJobAction implements Action {
-
-    String templateJobName;
-    String seedJobName;
+    private final String seedJobName;
+    private final String templateJobName;
 
     public SeedJobAction(String seedJobName, String templateJobName) {
         this.seedJobName = seedJobName;
@@ -29,12 +28,12 @@ public class SeedJobAction implements Action {
         return "seedJob";
     }
 
-    public AbstractProject<?, ?> getTemplateJob() {
-        return templateJobName == null ? null :
-                Jenkins.getInstance().getItemByFullName(templateJobName, AbstractProject.class);
+    public Item getSeedJob() {
+        return Jenkins.getInstance().getItemByFullName(seedJobName);
     }
 
-    public AbstractProject<?, ?> getSeedJob() {
-        return Jenkins.getInstance().getItemByFullName(seedJobName, AbstractProject.class);
+    public Item getTemplateJob() {
+        return templateJobName == null ? null :
+                Jenkins.getInstance().getItemByFullName(templateJobName);
     }
 }
