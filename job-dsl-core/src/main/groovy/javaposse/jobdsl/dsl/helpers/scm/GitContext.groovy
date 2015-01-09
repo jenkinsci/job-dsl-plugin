@@ -56,6 +56,18 @@ class GitContext implements Context {
         }
     }
 
+    void wipeWorkspace() {
+        extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.WipeWorkspace' {
+        }
+    }
+    void strategy(Closure strategyClosure) {
+        StrategyContext strategyContext = new StrategyContext(withXmlActions)
+        executeInContext(strategyClosure, strategyContext)
+        strategyContext.settings.each {
+            extensions << it
+        }
+    }
+
     void mergeOptions(String remote = null, String branch) {
         if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
             mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
