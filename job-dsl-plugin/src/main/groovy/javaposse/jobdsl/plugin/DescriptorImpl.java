@@ -98,11 +98,6 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         }
 
         @Override
-        public void onRenamed(Item item, String oldName, String newName) {
-            removeSeedReference(item.getFullName().replace(newName, oldName));
-        }
-
-        @Override
         public void onLocationChanged(Item item, String oldFullName, String newFullName) {
             removeSeedReference(oldFullName);
         }
