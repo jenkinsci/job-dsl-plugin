@@ -8,7 +8,7 @@ class DslScriptLoaderSpec extends Specification {
     private final resourcesDir = getClass().getResource('/simple.dsl')
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream()
     private final PrintStream ps = new PrintStream(baos)
-    private final JobManagement jm = new StringJobManagement(ps)
+    private final MemoryJobManagement jm = new MemoryJobManagement(ps)
 
     @Ignore
     def getContent() {
@@ -184,9 +184,9 @@ queue 'JobB'
         DslScriptLoader.runDslEngine(request, jm)
 
         then:
-        jm.jobScheduled.size() == 2
-        jm.jobScheduled.contains('JobA')
-        jm.jobScheduled.contains('JobB')
+        jm.scheduledJobs.size() == 2
+        jm.scheduledJobs.contains('JobA')
+        jm.scheduledJobs.contains('JobB')
     }
 
     def 'files read through to JobManagement'() {
@@ -199,7 +199,7 @@ def jobA = job {
 def content = readFileFromWorkspace('foo.txt')
 println content
 '''
-        StringJobManagement sm = new StringJobManagement(ps)
+        MemoryJobManagement sm = new MemoryJobManagement(ps)
         sm.availableFiles['foo.txt'] = 'Bar bar, bar bar.'
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
@@ -218,7 +218,7 @@ println content
         def scriptStr = '''
 readFileFromWorkspace('bar.txt')
 '''
-        StringJobManagement sm = new StringJobManagement(ps)
+        MemoryJobManagement sm = new MemoryJobManagement(ps)
         sm.availableFiles['foo.txt'] = 'Bar bar, bar bar.'
 
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)

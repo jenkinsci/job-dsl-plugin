@@ -17,14 +17,13 @@ class FileJobManagement extends AbstractJobManagement {
      * map to store job parameters from System properties and
      * Environment variables.
      */
-    protected Map params = [:]
+    final Map<String, String> parameters = [:]
 
     FileJobManagement(File root) {
         this.root = root
     }
 
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
-
         if (jobName.isEmpty()) {
             return '''
 <project>
@@ -60,11 +59,6 @@ class FileJobManagement extends AbstractJobManagement {
     @Override
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         throw new UnsupportedOperationException()
-    }
-
-    @Override
-    Map<String, String> getParameters() {
-        params
     }
 
     @Override

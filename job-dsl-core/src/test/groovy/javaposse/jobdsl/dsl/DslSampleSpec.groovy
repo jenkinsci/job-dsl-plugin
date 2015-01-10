@@ -11,9 +11,9 @@ class DslSampleSpec extends Specification {
 
     def 'load sample dsl'() {
         setup:
-        StringJobManagement jm = new StringJobManagement()
-        jm.addConfig('TMPL-test', sampleTemplate)
-        jm.addConfig('TMPL-test-maven', sampleMavenTemplate)
+        MemoryJobManagement jm = new MemoryJobManagement()
+        jm.availableConfigs['TMPL-test'] = sampleTemplate
+        jm.availableConfigs['TMPL-test-maven'] = sampleMavenTemplate
 
         when:
         Set<GeneratedJob> results = DslScriptLoader.runDslEngine(sampleDsl, jm).jobs
@@ -33,9 +33,9 @@ class DslSampleSpec extends Specification {
 
     def 'use parameters when loading script'() {
         setup:
-        StringJobManagement jm = new StringJobManagement()
-        jm.params.gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
-        jm.params.REPO = 'JavaPosseRoundup'
+        MemoryJobManagement jm = new MemoryJobManagement()
+        jm.parameters.gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
+        jm.parameters.REPO = 'JavaPosseRoundup'
 
         when:
         Set<GeneratedJob> results = DslScriptLoader.runDslEngine(sampleVarDsl, jm).jobs

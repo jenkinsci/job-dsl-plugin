@@ -1,29 +1,26 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
+import org.apache.commons.codec.digest.DigestUtils
 
 /**
- * Testing JobManagement which will deal with a single template and single saved job. Useful for testing
- * since it can be prodded with the expected value.
+ * In-memory JobManagement for testing.
  */
-class StringJobManagement extends AbstractJobManagement {
-    Map<String, String> availableConfigs = [:]
-    Map<String, String> savedConfigs = [:]
-    Map<String, String> savedViews = [:]
-    Map<String, String> availableFiles = [:]
+class MemoryJobManagement extends AbstractJobManagement {
+    final Map<String, String> availableConfigs = [:]
+    final Map<String, String> savedConfigs = [:]
+    final Map<String, String> savedViews = [:]
+    final Set<ConfigFile> savedConfigFiles = []
+    final Map<String, String> availableFiles = [:]
 
-    Map<String, String> params = [:]
-    List<String> jobScheduled = []
+    final Map<String, String> parameters = [:]
+    final List<String> scheduledJobs = []
 
-    StringJobManagement(PrintStream out) {
+    MemoryJobManagement() {
+    }
+
+    MemoryJobManagement(PrintStream out) {
         super(out)
-    }
-
-    StringJobManagement() {
-    }
-
-    void addConfig(String jobName, String xml) {
-        availableConfigs[jobName] = xml
     }
 
     String getConfig(String jobName) {
@@ -40,7 +37,7 @@ class StringJobManagement extends AbstractJobManagement {
         validateUpdateArgs(jobName, config)
 
         savedConfigs[jobName] = config
-        false
+        true
     }
 
     @Override
@@ -53,17 +50,13 @@ class StringJobManagement extends AbstractJobManagement {
     @Override
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.name)
-        UUID.randomUUID().toString()
-    }
-
-    @Override
-    Map<String, String> getParameters() {
-        params
+        savedConfigFiles << configFile
+        createConfigFileId(configFile)
     }
 
     @Override
     void queueJob(String jobName) throws NameNotProvidedException {
-        jobScheduled << jobName
+        scheduledJobs << jobName
     }
 
     @Override
@@ -101,7 +94,11 @@ class StringJobManagement extends AbstractJobManagement {
 
     @Override
     String getConfigFileId(ConfigFileType type, String name) {
-        null
+        ConfigFile configFile = savedConfigFiles.find { it.type == type && it.name == name }
+        configFile == null ? null : createConfigFileId(configFile)
+    }
+
+    private static String createConfigFileId(ConfigFile configFile) {
+        DigestUtils.md5Hex(configFile.name)
     }
 }
-
