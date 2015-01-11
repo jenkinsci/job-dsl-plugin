@@ -14,6 +14,7 @@ import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.DslException
+import javaposse.jobdsl.dsl.JobConfig
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
@@ -99,9 +100,10 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'create job with nonexisting parent'() {
         when:
-        jobManagement.createOrUpdateConfig(
-                'nonexistingfolder/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true
-        )
+        JobConfig config = new JobConfig()
+        config.setMainConfig(Resources.toString(getResource('minimal-job.xml'), UTF_8))
+
+        jobManagement.createOrUpdateConfig('nonexistingfolder/project', config, true)
 
         then:
         DslException e = thrown()
@@ -127,9 +129,11 @@ class JenkinsJobManagementSpec extends Specification {
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
                 new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
         )
+        JobConfig config = new JobConfig()
+        config.setMainConfig(Resources.toString(getResource('minimal-job.xml'), UTF_8))
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+        jobManagement.createOrUpdateConfig('project', config, true)
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/folder/project') != null

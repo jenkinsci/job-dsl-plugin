@@ -12,6 +12,8 @@ class StringJobManagement extends AbstractJobManagement {
     Map<String, String> savedViews = [:]
     Map<String, String> availableFiles = [:]
 
+    Map<String,Map<JobConfigId,String>> savedConfigsPromotions = [:]
+
     Map<String, String> params = [:]
     List<String> jobScheduled = []
 
@@ -35,11 +37,20 @@ class StringJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
+    boolean createOrUpdateConfig(String jobName, JobConfig config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
         validateUpdateArgs(jobName, config)
 
-        savedConfigs[jobName] = config
+        savedConfigs[jobName] = config.mainConfig
+
+        for (JobConfigId configId : config.configs.keySet()) {
+            def configs = savedConfigsPromotions[jobName]
+            if (!configs) {
+                configs = [:]
+                savedConfigsPromotions[jobName] = configs
+            }
+            configs[configId] = config.configs.get(configId)
+        }
         false
     }
 

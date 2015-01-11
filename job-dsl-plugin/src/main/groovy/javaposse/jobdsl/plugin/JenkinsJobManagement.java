@@ -18,6 +18,7 @@ import hudson.model.BuildableItem;
 import hudson.model.Cause;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import hudson.model.Items;
 import hudson.model.Run;
 import hudson.model.View;
 import hudson.model.ViewGroup;
@@ -29,6 +30,9 @@ import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.ItemType;
+import javaposse.jobdsl.dsl.JobConfig;
+import javaposse.jobdsl.dsl.JobConfigId;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import jenkins.model.Jenkins;
@@ -43,6 +47,7 @@ import org.jenkinsci.plugins.vSphereCloud;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -104,8 +109,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return xml;
     }
 
-    @Override
-    public boolean createOrUpdateConfig(String path, String config, boolean ignoreExisting)
+    public boolean createOrUpdateConfig(String path, JobConfig config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException {
 
         LOGGER.log(Level.INFO, format("createOrUpdateConfig for %s", path));
@@ -335,15 +339,32 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    private boolean updateExistingItem(AbstractItem item, String config) {
+    private boolean updateExistingItem(AbstractItem item, JobConfig config) {
         boolean created;
+
+        // Check additional configs
+        boolean allSimilar = true;
+        for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
+            if (jobConfigId.getType() == ItemType.ADDITIONAL) {
+                XmlFile oldXml = Items.getConfigFile(new File(item.getRootDir(), jobConfigId.getRelativePath()));
+                try {
+                    Diff diff = XMLUnit.compareXML(oldXml.asString(), config.getConfig(jobConfigId));
+                    if (!diff.similar()) {
+                        allSimilar = false;
+                    }
+                } catch (Exception e) {
+                    // It's not a big deal if we can't diff, we'll just move on
+                    LOGGER.warning(e.getMessage());
+                }
+            }
+        }
 
         // Leverage XMLUnit to perform diffs
         Diff diff;
         try {
             String oldJob = item.getConfigFile().asString();
-            diff = XMLUnit.compareXML(oldJob, config);
-            if (diff.similar()) {
+            diff = XMLUnit.compareXML(oldJob, config.getMainConfig());
+            if (diff.similar() && allSimilar) {
                 LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
                 return false;
             }
@@ -352,8 +373,22 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.warning(e.getMessage());
         }
 
+        // Create XML for additional configurations
+        try {
+            for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
+                if (jobConfigId.getType() == ItemType.ADDITIONAL) {
+                    StreamSource streamSourcePromo = new StreamSource(new StringReader(config.getConfig(jobConfigId)));
+                    JobConfigGenerator generator = new JobConfigGenerator(item.getName());
+                    generator.updateByXml(streamSourcePromo, jobConfigId.getRelativePath());
+                }
+            }
+        } catch (IOException ioex) {
+            LOGGER.log(Level.WARNING, format("Error writing updated project to file."), ioex);
+            return false;
+        }
+
         LOGGER.log(Level.FINE, format("Updating item %s as %s", item.getName(), config));
-        Source streamSource = new StreamSource(new StringReader(config));
+        Source streamSource = new StreamSource(new StringReader(config.getMainConfig()));
         try {
             item.updateByXml(streamSource);
             created = true;
@@ -364,12 +399,21 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    private boolean createNewItem(String path, String config) {
+    private boolean createNewItem(String path, JobConfig config) {
         LOGGER.log(Level.FINE, format("Creating item as %s", config));
         boolean created = false;
 
         try {
-            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));
+            // Create XML for Promotions
+            for (JobConfigId jobConfigId : config.getConfigs().keySet()) {
+                if (jobConfigId.getType() == ItemType.ADDITIONAL) {
+                    InputStream in = new ByteArrayInputStream(config.getConfig(jobConfigId).getBytes("UTF-8"));
+                    JobConfigGenerator generator = new JobConfigGenerator(path);
+                    generator.createConfigFromXML(in, jobConfigId.getRelativePath());
+                }
+            }
+
+            InputStream is = new ByteArrayInputStream(config.getMainConfig().getBytes("UTF-8"));
 
             ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
             String itemName = FilenameUtils.getName(path);

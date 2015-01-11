@@ -325,7 +325,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
-        build.result == SUCCESS
+        build.result == hudson.model.Result.SUCCESS
         build
     }
 
