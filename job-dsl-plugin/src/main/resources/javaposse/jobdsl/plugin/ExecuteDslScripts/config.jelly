@@ -2,8 +2,8 @@
 
     <f:radioBlock name="scriptLocation" value="true" title="Use the provided DSL script" checked="${instance.isUsingScriptText()}">
         <f:entry title='DSL Script' field='scriptText'>
-            <!-- TODO CodeMirror support for text/x-groovy. It was unclear how do it from a .groovy stapler script -->
-            <f:textarea style="width:100%; height:10em"/>
+            <f:textarea codemirror-mode="groovy"
+                        codemirror-config="mode: 'text/x-groovy', lineNumbers: true, matchBrackets: true, onBlur: function(editor){editor.save()}"/>
         </f:entry>
     </f:radioBlock>
 
