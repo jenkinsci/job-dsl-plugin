@@ -54,6 +54,7 @@ job(Map<String, ?> arguments = [:]) {
     // DSL specific methods
     using(String templateName)
     configure(Closure configBlock)
+    previousNames(String regex) // since 1.29
 
     // common options
     batchTask(String name, String script)
@@ -78,7 +79,6 @@ job(Map<String, ?> arguments = [:]) {
                int artifactNumToKeep = -1)
     notifications(Closure notificationClosure) // since 1.26
     priority(int value)
-    previousNames(String regex) // since 1.29
     quietPeriod(int seconds = 5)
     throttleConcurrentBuilds(Closure throttleClosure)
     authorization {

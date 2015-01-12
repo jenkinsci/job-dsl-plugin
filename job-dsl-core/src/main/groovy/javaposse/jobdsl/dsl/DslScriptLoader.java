@@ -107,18 +107,18 @@ public class DslScriptLoader {
         if (jp != null) {
             List<Item> referencedItems = Lists.newArrayList(jp.getReferencedJobs()); // As List
             Collections.sort(referencedItems, ITEM_COMPARATOR);
-            for (Item job : referencedItems) {
-                String xml = job.getXml();
-                LOGGER.log(Level.FINE, String.format("Saving job %s as %s", job.getName(), xml));
-                if (job instanceof Job) {
-                    Job realJob = (Job) job;
-                    if (realJob.getPreviousNamesRegex() != null) {
-                        jp.getJm().renameJobMatching(realJob.getPreviousNamesRegex(), realJob.getName());
+            for (Item item : referencedItems) {
+                String xml = item.getXml();
+                LOGGER.log(Level.FINE, String.format("Saving item %s as %s", item.getName(), xml));
+                if (item instanceof Job) {
+                    Job job = (Job) item;
+                    if (job.getPreviousNamesRegex() != null) {
+                        jp.getJm().renameJobMatching(job.getPreviousNamesRegex(), job.getName());
                     }
                 }
-                jp.getJm().createOrUpdateConfig(job.getName(), xml, ignoreExisting);
-                String templateName = job instanceof Job ? ((Job) job).getTemplateName() : null;
-                generatedJobs.add(new GeneratedJob(templateName, job.getName()));
+                jp.getJm().createOrUpdateConfig(item.getName(), xml, ignoreExisting);
+                String templateName = item instanceof Job ? ((Job) item).getTemplateName() : null;
+                generatedJobs.add(new GeneratedJob(templateName, item.getName()));
             }
         }
         return generatedJobs;
