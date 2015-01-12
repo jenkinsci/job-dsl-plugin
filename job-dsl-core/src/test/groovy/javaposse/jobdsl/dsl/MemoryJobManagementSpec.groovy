@@ -1,36 +1,11 @@
 package javaposse.jobdsl.dsl
 
-import org.custommonkey.xmlunit.XMLUnit
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
-class FileJobManagementSpec extends Specification {
-    @Rule
-    TemporaryFolder temporaryFolder = new TemporaryFolder()
+class MemoryJobManagementSpec extends Specification {
+    private final MemoryJobManagement jobManagement = new MemoryJobManagement()
 
-    private final FileJobManagement jobManagement = new FileJobManagement(temporaryFolder.newFolder())
-
-    def setup() {
-        XMLUnit.ignoreWhitespace = true
-    }
-
-    def cleanup() {
-        new File('foo.xml').delete()
-    }
-
-    def 'getConfig returns dummy XML when job name is empty'() {
-        when:
-        String config = jobManagement.getConfig('')
-
-        then:
-        XMLUnit.compareXML(
-                '<project><actions/><description/><keepDependencies>false</keepDependencies><properties/></project>',
-                config
-        ).similar()
-    }
-
-    def 'getConfig throws exception then config not found'() {
+    def 'getConfig throws Exception when config not available'() {
         when:
         jobManagement.getConfig('foo')
 
@@ -41,7 +16,7 @@ class FileJobManagementSpec extends Specification {
 
     def 'getConfig returns config'() {
         setup:
-        new File(jobManagement.root, 'foo.xml').write('bar')
+        jobManagement.availableConfigs['foo'] = 'bar'
 
         when:
         String config = jobManagement.getConfig('foo')
@@ -78,7 +53,7 @@ class FileJobManagementSpec extends Specification {
 
         then:
         result
-        new File('foo.xml').text == 'bar'
+        jobManagement.savedConfigs['foo'] == 'bar'
     }
 
     def 'createOrUpdateView complains about missing name'(String name) {
@@ -108,20 +83,48 @@ class FileJobManagementSpec extends Specification {
         jobManagement.createOrUpdateView('foo', 'bar', false)
 
         then:
-        new File('foo.xml').text == 'bar'
+        jobManagement.savedViews['foo'] == 'bar'
     }
 
-    def 'createOrUpdateConfigFile is not supported'() {
+    def 'createOrUpdateConfigFile complains about missing name'(String name) {
+        setup:
+        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+        configFile.name = name
+
         when:
-        jobManagement.createOrUpdateConfigFile(Mock(ConfigFile), false)
+        jobManagement.createOrUpdateConfigFile(configFile, false)
 
         then:
-        thrown(UnsupportedOperationException)
+        thrown(NameNotProvidedException)
+
+        where:
+        name << [null, '']
+    }
+
+    def 'createOrUpdateConfigFile stores config file and returns ID'() {
+        setup:
+        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+        configFile.name = 'foo'
+
+        when:
+        String id = jobManagement.createOrUpdateConfigFile(configFile, false)
+
+        then:
+        id == 'acbd18db4cc2f85cedef654fccc4a4d8'
+        jobManagement.savedConfigFiles.contains(configFile)
+    }
+
+    def 'queueJob schedules job'() {
+        when:
+        jobManagement.queueJob('foo')
+
+        then:
+        jobManagement.scheduledJobs.contains('foo')
     }
 
     def 'readFileInWorkspace returns file content'() {
         setup:
-        new File(jobManagement.root, 'foo').write('bar')
+        jobManagement.availableFiles['foo'] = 'bar'
 
         when:
         String file = jobManagement.readFileInWorkspace('foo')
@@ -141,7 +144,7 @@ class FileJobManagementSpec extends Specification {
 
     def 'streamFileInWorkspace returns file content'() {
         setup:
-        new File(jobManagement.root, 'foo').write('bar')
+        jobManagement.availableFiles['foo'] = 'bar'
 
         when:
         InputStream file = jobManagement.streamFileInWorkspace('foo')
@@ -189,5 +192,29 @@ class FileJobManagementSpec extends Specification {
 
         then:
         id == null
+    }
+
+    def 'getConfigFileId returns id when config file exists'() {
+        setup:
+        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+        configFile.name = 'foo'
+        jobManagement.savedConfigFiles << configFile
+
+        when:
+        String id = jobManagement.getConfigFileId(ConfigFileType.Custom, 'foo')
+
+        then:
+        id == 'acbd18db4cc2f85cedef654fccc4a4d8'
+    }
+
+    def 'outputStream'() {
+        setup:
+        PrintStream out = Mock(PrintStream)
+
+        when:
+        JobManagement jobManagement = new MemoryJobManagement(out)
+
+        then:
+        jobManagement.outputStream == out
     }
 }

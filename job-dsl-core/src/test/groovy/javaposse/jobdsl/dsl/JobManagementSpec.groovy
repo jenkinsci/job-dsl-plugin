@@ -18,7 +18,7 @@ class JobManagementSpec extends Specification {
 
     def 'get config - no name provided'() {
         setup:
-        JobManagement jm = new StringJobManagement()
+        JobManagement jm = new MemoryJobManagement()
 
         when:
         jm.getConfig('')
@@ -30,7 +30,7 @@ class JobManagementSpec extends Specification {
     def 'create new config - name not provided (NULL)'() {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new StringJobManagement()
+        JobManagement jm = new MemoryJobManagement()
 
         when:
         jm.createOrUpdateConfig(null, minimalXml, false)
@@ -42,7 +42,7 @@ class JobManagementSpec extends Specification {
     def 'create new config - name not provided (EMPTY)'() {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new StringJobManagement()
+        JobManagement jm = new MemoryJobManagement()
 
         when:
         jm.createOrUpdateConfig('', minimalXml, false)
@@ -54,7 +54,7 @@ class JobManagementSpec extends Specification {
     def 'create new config - config XML not provided (NULL)'() {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new StringJobManagement()
+        JobManagement jm = new MemoryJobManagement()
 
         when:
         jm.createOrUpdateConfig('NEW-JOB-NAME', null, false)
@@ -66,7 +66,7 @@ class JobManagementSpec extends Specification {
     def 'create new config - config XML not provided (EMPTY)'() {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
-        JobManagement jm = new StringJobManagement()
+        JobManagement jm = new MemoryJobManagement()
 
         when:
         jm.createOrUpdateConfig('NEW-JOB-NAME', '', false)
