@@ -70,6 +70,11 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
+        Map<String, String> getParameters() {
+            throw new UnsupportedOperationException()
+        }
+
+        @Override
         String getConfig(String jobName) {
             throw new UnsupportedOperationException()
         }

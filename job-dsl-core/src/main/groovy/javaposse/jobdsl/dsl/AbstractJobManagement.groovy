@@ -22,14 +22,6 @@ abstract class AbstractJobManagement implements JobManagement {
         out
     }
 
-    /**
-     * Map if variables that should be available to the script.
-     */
-     @Override
-     Map<String, String> getParameters() {
-        [:]
-    }
-
     @Override
     void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName)
