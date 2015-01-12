@@ -4,6 +4,7 @@ import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
@@ -18,7 +19,10 @@ import hudson.model.BuildableItem;
 import hudson.model.Cause;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import hudson.model.Items;
+import hudson.model.Job;
 import hudson.model.Run;
+import hudson.model.TopLevelItem;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
@@ -31,6 +35,7 @@ import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
+import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
@@ -303,6 +308,23 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return null;
     }
 
+    @Override
+    public void renameJobMatching(final String previousNames, String destination) throws IOException {
+        final ItemGroup context = lookupStrategy.getContext(build.getProject());
+        Collection<Job> items = Jenkins.getInstance().getAllItems(Job.class);
+        Collection<Job> matchingJobs = Collections2.filter(items, new Predicate<Job>() {
+            @Override
+            public boolean apply(Job topLevelItem) {
+                return topLevelItem.getRelativeNameFrom(context).matches(previousNames);
+            }
+        });
+        if (matchingJobs.size() == 1) {
+            renameJob(matchingJobs.iterator().next(), destination);
+        } else if (matchingJobs.size() > 1) {
+            throw new DslException(format(Messages.RenameJobMatching_MultipleJobsFound(), matchingJobs));
+        }
+    }
+
     private void markBuildAsUnstable(String message) {
         getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
         build.setResult(UNSTABLE);
@@ -396,6 +418,32 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
+    }
+
+    private void renameJob(Job from, String to) throws IOException {
+        LOGGER.info(format("Renaming job %s to %s", from.getFullName(), to));
+
+        ItemGroup fromParent = from.getParent();
+        ItemGroup toParent = lookupStrategy.getParent(build.getProject(), to);
+        if (fromParent != toParent) {
+            LOGGER.info(format("Moving Job %s to folder %s", fromParent.getFullName(), toParent.getFullName()));
+            if (toParent instanceof DirectlyModifiableTopLevelItemGroup) {
+                DirectlyModifiableTopLevelItemGroup itemGroup = (DirectlyModifiableTopLevelItemGroup) toParent;
+                move(from, itemGroup);
+            } else {
+                throw new DslException(format(
+                        Messages.RenameJobMatching_DestinationNotFolder(),
+                        from.getFullName(),
+                        toParent.getFullName()
+                ));
+            }
+        }
+        from.renameTo(FilenameUtils.getName(to));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <I extends AbstractItem & TopLevelItem> I move(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
+        return Items.move((I) item, destination);
     }
 
     public static class ExtractTemplate implements Function<GeneratedJob, String> {

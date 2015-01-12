@@ -14,6 +14,7 @@ import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.DslException
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
@@ -119,6 +120,68 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Could not create view, unknown parent path in "nonexistingfolder/view"'
     }
 
+    def 'rename job'() {
+        setup:
+        jenkinsRule.createFreeStyleProject('oldName')
+
+        when:
+        jobManagement.renameJobMatching('oldName', 'newName')
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('newName') != null
+        jenkinsRule.jenkins.getItemByFullName('oldName') == null
+    }
+
+    def 'rename job relative to seed job'() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        folder.createProject(FreeStyleProject, 'oldName')
+        FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = seedJob.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+        )
+
+        when:
+        jobManagement.renameJobMatching('oldName', 'newName')
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('folder/newName') != null
+        jenkinsRule.jenkins.getItemByFullName('folder/oldName') == null
+    }
+
+    def 'rename job relative to seed job with absolute destination'() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        folder.createProject(FreeStyleProject, 'oldName')
+        FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = seedJob.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+        )
+
+        when:
+        jobManagement.renameJobMatching('oldName', '/newName')
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('newName') != null
+        jenkinsRule.jenkins.getItemByFullName('oldName') == null
+    }
+
+    def 'move Job to other Folder'() {
+        setup:
+        Folder oldFolder = jenkinsRule.jenkins.createProject(Folder, 'oldFolder')
+        jenkinsRule.jenkins.createProject(Folder, 'newFolder')
+        oldFolder.createProject(FreeStyleProject, 'oldName')
+
+        when:
+        jobManagement.renameJobMatching('oldFolder/oldName', 'newFolder/newName')
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('newFolder/newName') != null
+        jenkinsRule.jenkins.getItemByFullName('oldFolder/oldName') == null
+    }
+
     def 'createOrUpdateConfig relative to folder'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
@@ -133,6 +196,22 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/folder/project') != null
+    }
+
+    def 'createOrUpdateConfig with absolute path'() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        JenkinsJobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+        )
+
+        when:
+        jobManagement.createOrUpdateConfig('/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/project') != null
     }
 
     def 'createOrUpdateView relative to folder'() {

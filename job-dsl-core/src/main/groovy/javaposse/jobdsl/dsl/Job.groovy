@@ -27,6 +27,7 @@ class Job extends Item {
 
     String templateName = null // Optional
     JobType type = null // Required
+    String previousNamesRegex = null // Optional
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
         this.jobManagement = jobManagement
@@ -56,6 +57,15 @@ class Job extends Item {
             Node node = methodMissing('description', descriptionString)
             project / node
         }
+    }
+
+    /**
+     * Renames jobs matching the regular expression (fullName) to the name of
+     * this job before the configuration is updated.
+     * This can be useful to keep the build history.
+     */
+    void previousNames(String regex) {
+        this.previousNamesRegex = regex
     }
 
     /**

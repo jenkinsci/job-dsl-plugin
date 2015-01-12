@@ -93,6 +93,25 @@ job {
           x << [1..25]
     }
 
+    def 'run engine renaming existing jobs'() {
+        setup:
+        def scriptStr = '''job {
+    name '5-project'
+    previousNames '\\\\d-project'
+}
+'''
+        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
+        MemoryJobManagement jm = Spy(MemoryJobManagement)
+        jm.availableFiles['4-project'] = ''
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        1 * jm.renameJobMatching(/\d-project/, '5-project')
+
+    }
+
     def 'run engine that uses static import'() {
         setup:
         def scriptStr = '''job(type: Maven) {

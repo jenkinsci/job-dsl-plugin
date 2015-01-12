@@ -55,6 +55,10 @@ class MemoryJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    void renameJobMatching(String previousNames, String destination) throws IOException {
+    }
+
+    @Override
     void queueJob(String jobName) throws NameNotProvidedException {
         scheduledJobs << jobName
     }

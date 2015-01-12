@@ -54,6 +54,7 @@ job(Map<String, ?> arguments = [:]) {
     // DSL specific methods
     using(String templateName)
     configure(Closure configBlock)
+    previousNames(String regex) // since 1.29
 
     // common options
     batchTask(String name, String script)

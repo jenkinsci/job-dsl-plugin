@@ -62,6 +62,9 @@ class FileJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    void renameJobMatching(String previousNames, String destination) throws IOException {
+    }
+
     InputStream streamFileInWorkspace(String filePath) {
         new FileInputStream(new File(root, filePath))
     }

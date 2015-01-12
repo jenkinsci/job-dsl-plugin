@@ -90,6 +90,11 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
+        void renameJobMatching(String previousNames, String destination) throws IOException {
+            throw new UnsupportedOperationException()
+        }
+
+        @Override
         void requireMinimumPluginVersion(String pluginShortName, String version) {
             throw new UnsupportedOperationException()
         }
