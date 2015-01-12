@@ -780,6 +780,84 @@ class StepContextSpec extends Specification {
 
     }
 
+    def 'call resolveArtifacts with minimal arguments'() {
+        when:
+        context.resolveArtifacts {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver'
+            children().size() == 8
+            targetDirectory[0].value() == ''
+            failOnError[0].value() == false
+            enableRepoLogging[0].value() == false
+            snapshotUpdatePolicy[0].value() == 'daily'
+            releaseUpdatePolicy[0].value() == 'daily'
+            snapshotChecksumPolicy[0].value() == 'warn'
+            releaseChecksumPolicy[0].value() == 'warn'
+            artifacts[0].children().size() == 0
+        }
+    }
+
+    def 'call resolveArtifacts with all arguments and two artifacts' () {
+        when:
+        context.resolveArtifacts {
+            failOnError()
+            enableRepoLogging()
+            snapshotUpdatePolicy 'always'
+            releaseUpdatePolicy 'never'
+            targetDirectory 'target'
+            artifact {
+                groupId 'org.slf4j'
+                artifactId 'slf4j-api'
+                version '[1.7.5,1.7.6]'
+                classifier 'javadoc'
+                extension 'jar'
+                targetFileName 'slf4j-api-1.7.6-TEST.jar'
+            }
+            artifact {
+                groupId 'ch.qos.logback'
+                artifactId 'logback-classic'
+                version '1.1.1'
+                classifier 'sources'
+                extension 'jar'
+                targetFileName 'logback-classic-1.1.1-TEST.jar'
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver'
+            children().size() == 8
+            failOnError[0].value() == true
+            enableRepoLogging[0].value() == true
+            snapshotUpdatePolicy[0].value() == 'always'
+            releaseUpdatePolicy[0].value() == 'never'
+            snapshotChecksumPolicy[0].value() == 'warn'
+            releaseChecksumPolicy[0].value() == 'warn'
+            artifacts[0].children().size() == 2
+            with(artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[0]) {
+                children().size() == 6
+                groupId[0].value() == 'org.slf4j'
+                artifactId[0].value() == 'slf4j-api'
+                version[0].value() == '[1.7.5,1.7.6]'
+                classifier[0].value() == 'javadoc'
+                extension[0].value() == 'jar'
+                targetFileName[0].value() == 'slf4j-api-1.7.6-TEST.jar'
+            }
+            with(artifacts[0].'org.jvnet.hudson.plugins.repositoryconnector.Artifact'[1]) {
+                children().size() == 6
+                groupId[0].value() == 'ch.qos.logback'
+                artifactId[0].value() == 'logback-classic'
+                version[0].value() == '1.1.1'
+                classifier[0].value() == 'sources'
+                extension[0].value() == 'jar'
+                targetFileName[0].value() == 'logback-classic-1.1.1-TEST.jar'
+            }
+        }
+    }
+
     def 'call phases with minimal arguments'() {
         when:
         context.phase('First')

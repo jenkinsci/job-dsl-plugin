@@ -210,6 +210,7 @@ job(Map<String, ?> arguments = [:]) {
         rake(String tasksArg, Closure rakeClosure = null) // since 1.25
         remoteTrigger(String remoteJenkinsName, String jobName,
                       Closure remoteTriggerClosure) // since 1.22
+        resolveArtifacts(Closure repositoryConnectorClosure) // since 1.29
         sbt(String sbtName = null, String actions = null, String sbtFlags = null,
             String jvmFlags = null, String subdirPath = null, Closure configure = null)
         shell(String command)

@@ -2555,6 +2555,60 @@ steps {
 
 (Since 1.20)
 
+## Repository Connector
+
+```groovy
+job {
+    steps {
+        resolveArtifacts {
+            targetDirectory(String targetDirectory)
+            failOnError(boolean failOnError = true)
+            enableRepoLogging(boolean enableRepoLogging = true)
+            snapshotUpdatePolicy(String updatePolicy)
+            releaseUpdatePolicy(String updatePolicy)
+            artifact {
+                groupId(String groupId)
+                artifactId(String artifactId)
+                classifier(String classifier)
+                version(String version)
+                extension(String extension)
+                targetFileName(String targetFileName)
+            }
+        }
+    }
+}
+```
+
+Resolves artifacts from a Maven repository. Requires the
+[Repository Connector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin).
+
+Valid arguments for `snapshotUpdatePolicy` and `releaseUpdatePolicy` are either `daily`, `never` or `always`.
+
+```groovy
+job {
+    steps {
+        resolveArtifacts {
+            failOnError()
+            snapshotUpdatePolicy 'always'
+            targetDirectory 'lib'
+            artifact {
+                groupId 'org.slf4j'
+                artifactId 'slf4j-api'
+                version '[1.7.5,1.7.6]'
+            }
+            artifact {
+                groupId 'ch.qos.logback'
+                artifactId 'logback-classic'
+                version '1.1.1'
+                classifier 'sources'
+            }
+        }
+    }
+}
+```
+
+(since 1.29)
+
 ## Parameterized Remote Trigger
 
 ````groovy

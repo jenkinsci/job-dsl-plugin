@@ -563,6 +563,43 @@ class StepContext implements Context {
     }
 
     /**
+     * <org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver>
+     *     <targetDirectory>target</targetDirectory>
+     *     <failOnError>false</failOnError>
+     *     <enableRepoLogging>false</enableRepoLogging>
+     *     <snapshotUpdatePolicy>daily</snapshotUpdatePolicy>
+     *     <releaseUpdatePolicy>daily</releaseUpdatePolicy>
+     *     <snapshotChecksumPolicy>warn</snapshotChecksumPolicy>
+     *     <releaseChecksumPolicy>warn</releaseChecksumPolicy>
+     *     <artifacts>
+     *         <org.jvnet.hudson.plugins.repositoryconnector.Artifact>
+     *             <groupId>de.test.me</groupId>
+     *             <artifactId>myTestArtifact</artifactId>
+     *             <classifier/>
+     *             <version>RELEASE</version>
+     *             <extension>war</extension>
+     *             <targetFileName>myTestArtifact.war</targetFileName>
+     *         </org.jvnet.hudson.plugins.repositoryconnector.Artifact>
+     *     </artifacts>
+     * </org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver>
+     */
+    void resolveArtifacts(@DslContext(RepositoryConnectorContext) Closure repositoryConnectorClosure) {
+        RepositoryConnectorContext context = new RepositoryConnectorContext()
+        ContextHelper.executeInContext(repositoryConnectorClosure, context)
+
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.repositoryconnector.ArtifactResolver' {
+            targetDirectory context.targetDirectory ?: ''
+            failOnError context.failOnError
+            enableRepoLogging context.enableRepoLogging
+            snapshotUpdatePolicy context.snapshotUpdatePolicy
+            releaseUpdatePolicy context.releaseUpdatePolicy
+            snapshotChecksumPolicy 'warn'
+            releaseChecksumPolicy 'warn'
+            artifacts context.artifactNodes
+        }
+    }
+
+    /**
      * phaseName will have to be provided in the closure
      *
      * <com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
