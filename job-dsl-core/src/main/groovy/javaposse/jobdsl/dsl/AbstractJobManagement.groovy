@@ -7,19 +7,14 @@ import static org.codehaus.groovy.runtime.StackTraceUtils.isApplicationClass
  * Abstract version of JobManagement to minimize impact on future API changes
  */
 abstract class AbstractJobManagement implements JobManagement {
-    protected PrintStream out
+    final PrintStream outputStream
 
     protected AbstractJobManagement(PrintStream out) {
-        this.out = out
+        this.outputStream = out
     }
 
     protected AbstractJobManagement() {
         this(System.out)
-    }
-
-    @Override
-    PrintStream getOutputStream() {
-        out
     }
 
     @Override
