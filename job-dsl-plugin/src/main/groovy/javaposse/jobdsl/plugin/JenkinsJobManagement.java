@@ -3,11 +3,8 @@ package javaposse.jobdsl.plugin;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Plugin;
@@ -32,7 +29,6 @@ import javaposse.jobdsl.dsl.ConfigFile;
 import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
 import javaposse.jobdsl.dsl.DslException;
-import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
@@ -55,7 +51,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -411,10 +406,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
-        return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
-    }
-
     private void renameJob(Job from, String to) throws IOException {
         LOGGER.info(format("Renaming job %s to %s", from.getFullName(), to));
 
@@ -439,12 +430,5 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     @SuppressWarnings("unchecked")
     private static <I extends AbstractItem & TopLevelItem> I move(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
         return Items.move((I) item, destination);
-    }
-
-    public static class ExtractTemplate implements Function<GeneratedJob, String> {
-        @Override
-        public String apply(GeneratedJob input) {
-            return input.getTemplateName();
-        }
     }
 }

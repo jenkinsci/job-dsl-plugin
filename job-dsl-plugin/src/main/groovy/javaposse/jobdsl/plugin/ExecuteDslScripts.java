@@ -1,6 +1,8 @@
 package javaposse.jobdsl.plugin;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -230,8 +232,8 @@ public class ExecuteDslScripts extends Builder {
                                         Set<GeneratedJob> freshJobs) throws IOException {
         AbstractProject<?, ?> seedJob = build.getProject();
 
-        Set<String> freshTemplates = JenkinsJobManagement.getTemplates(freshJobs);
-        Set<String> existingTemplates = JenkinsJobManagement.getTemplates(extractGeneratedJobs(seedJob));
+        Set<String> freshTemplates = getTemplates(freshJobs);
+        Set<String> existingTemplates = getTemplates(extractGeneratedJobs(seedJob));
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
         Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
 
@@ -434,6 +436,16 @@ public class ExecuteDslScripts extends Builder {
                 listener.getLogger().println("    " + item.toString());
             }
         }
+    }
+
+    private static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
+        Collection<String> templateNames = Collections2.transform(jobs, new Function<GeneratedJob, String>() {
+            @Override
+            public String apply(GeneratedJob input) {
+                return input.getTemplateName();
+            }
+        });
+        return Sets.newLinkedHashSet(Collections2.filter(templateNames, Predicates.notNull()));
     }
 
     private static class SeedNamePredicate implements Predicate<SeedReference> {
