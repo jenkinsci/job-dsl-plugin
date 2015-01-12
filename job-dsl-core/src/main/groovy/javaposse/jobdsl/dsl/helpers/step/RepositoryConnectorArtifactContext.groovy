@@ -1,67 +1,67 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.helpers.Context
+import javaposse.jobdsl.dsl.Context
 
 /**
- * <p>DSL Support for the repository-connector plugin's artifacts subsection.</p>
- * <p>
- *     <a href="https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin">Repository Connector Plugin</a>
- * </p>
+ * DSL support for the Repository Connector plugin's artifacts subsection.
  */
 class RepositoryConnectorArtifactContext implements Context {
-
     String groupId
     String artifactId
-    String classifier = ''
+    String classifier
     String version
-    String extension
+    String extension = 'jar'
     String targetFileName
 
     /**
-     * <p>Id of the Maven group.</p>
+     * Id of the Maven group.
+     *
      * @param groupId groupId of the Maven coordinates
      */
-    def groupId(String groupId) {
+    void groupId(String groupId) {
         this.groupId = groupId
     }
 
     /**
-     * <p>Id of the Maven artefact</p>
-     * @param artifactId artefact id of the maven coordinates
+     * Id of the Maven artifact.
+     *
+     * @param artifactId artifact id of the Maven coordinates
      */
     void artifactId(String artifactId) {
         this.artifactId = artifactId
     }
 
     /**
-     * <p>Maven version classifier (optional)</p>
-     * @param classifier version classifier which is appended
-     * to the version separated by a dash
-     * e.g. "javadoc" or "sources" (default: <empty>)
+     * Optional Maven classifier.
+     *
+     * @param classifier classifier of the Maven artifact
      */
     void classifier(String classifier) {
         this.classifier = classifier
     }
 
     /**
-     * <p>Version of the artifact to download.</p>
-     * @param version specific artifact version, RELEASE, LATEST or a
-     * version range e.g. [0-SNAPSHOT,) are supported.
+     * Version of the artifact to download.
+     *
+     * @param version specific artifact version, <code>RELEASE</code>, <code>LATEST</code> or a version range
+     *                (e.g. <code>[1.1,)</code>)
      */
     void version(String version) {
         this.version = version
     }
 
     /**
-     * <p>Artifact extension</p>
-     * @param extension e.g. jar, war, ear
+     * Artifact extension, defaults to <code>jar</code>.
+     *
+     * @param extension extension (e.g. <code>jar</code> or <code>war</code>)
      */
     void extension(String extension) {
         this.extension = extension
     }
 
     /**
-     * <p>Target file name</p>
+     * Optional target file name.
+     *
      * @param targetFileName the name of the downloaded file
      */
     void targetFileName(String targetFileName) {
