@@ -84,7 +84,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
     private static void removeSeedReference(String key) {
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
-        SeedReference seedReference = descriptor.generatedJobMap.remove(key);
+        SeedReference seedReference = descriptor.getGeneratedJobMap().remove(key);
         if (seedReference != null) {
             descriptor.save();
         }
