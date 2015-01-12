@@ -411,11 +411,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    static String getItemNameFromPath(String path) {
-        int i = path.lastIndexOf('/');
-        return i > -1 ? path.substring(i + 1) : path;
-    }
-
     public static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
         return Sets.newLinkedHashSet(Collections2.filter(Collections2.transform(jobs, new ExtractTemplate()), Predicates.notNull()));
     }
