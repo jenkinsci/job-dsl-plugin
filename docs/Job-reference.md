@@ -1993,6 +1993,7 @@ dsl {
     external (String... dslFilenames)      // one or more filenames/-paths in the workspace containing DSLs
     text (String dslSpecification)         // direct specification of DSL as String
     ignoreExisting(boolean ignoreExisting) // flag if to ignore existing jobs
+    additionalClasspath(String classpath)
 }
 
 /* equivalent calls as parameters instead of closure */
@@ -2009,6 +2010,7 @@ dsl {
     external 'some-dsl.groovy','some-other-dsl.groovy'
     external 'still-another-dsl.groovy'
     ignoreExisting true
+    additionalClasspath 'some/directory'
 }
 
 /* same definition using parameters instead of closure */

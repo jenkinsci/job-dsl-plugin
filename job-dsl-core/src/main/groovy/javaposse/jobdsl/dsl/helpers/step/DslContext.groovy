@@ -15,6 +15,7 @@ class DslContext implements Context {
     DslContext.RemovedJobAction removedJobAction = DslContext.RemovedJobAction.IGNORE
     List<String> externalScripts = []
     boolean ignoreExisting = false
+    String additionalClasspath = ''
 
     void text(String text) {
         this.scriptText = Preconditions.checkNotNull(text)
@@ -42,5 +43,9 @@ class DslContext implements Context {
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException("removeAction must be one of: ${DslContext.RemovedJobAction.values()}")
         }
+    }
+
+    void additionalClasspath(String classpath) {
+        this.additionalClasspath = classpath
     }
 }

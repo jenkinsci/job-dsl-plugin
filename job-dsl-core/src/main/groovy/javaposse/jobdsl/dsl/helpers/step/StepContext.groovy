@@ -174,6 +174,7 @@ class StepContext implements Context {
             scriptText context.scriptText
             ignoreExisting context.ignoreExisting
             removedJobAction context.removedJobAction.name()
+            additionalClasspath context.additionalClasspath
         }
 
         stepNodes << dslNode
