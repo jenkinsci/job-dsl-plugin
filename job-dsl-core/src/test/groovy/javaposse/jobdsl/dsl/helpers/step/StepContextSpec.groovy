@@ -1035,7 +1035,8 @@ class StepContextSpec extends Specification {
 
     def 'call dsl method defaults' () {
         when:
-        context.dsl()
+        context.dsl {
+        }
 
         then:
         context.stepNodes != null
@@ -1190,7 +1191,7 @@ still-another-dsl.groovy'''
 '''
     }
 
-    def 'call dsl method additional classpath' () {
+    def 'call dsl method with additional classpath' () {
         when:
         context.dsl {
             external 'some-dsl.groovy'

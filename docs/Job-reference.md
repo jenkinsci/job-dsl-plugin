@@ -1986,60 +1986,56 @@ job {
 
 (Since 1.25)
 
-## DSL
+## Job DSL
+
 ```groovy
-dsl {
-    removeAction(String removeAction)      // one of: 'DISABLE', 'IGNORE', 'DELETE'
-    external (String... dslFilenames)      // one or more filenames/-paths in the workspace containing DSLs
-    text (String dslSpecification)         // direct specification of DSL as String
-    ignoreExisting(boolean ignoreExisting) // flag if to ignore existing jobs
-    additionalClasspath(String classpath)
-}
-
-/* equivalent calls as parameters instead of closure */
-def dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false)
-def dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false)
-```
-
-The DSL build step creates a new job that in turn is able to generate other jobs. Particularly useful to generate a monitoring Job for things like feature/release branches. (Available since 1.16)
-
-Sample definition using several DSL files:
-```groovy
-dsl {
-    removeAction 'DISABLE'
-    external 'some-dsl.groovy','some-other-dsl.groovy'
-    external 'still-another-dsl.groovy'
-    ignoreExisting true
-    additionalClasspath 'some/directory'
-}
-
-/* same definition using parameters instead of closure */
-dsl(['some-dsl.groovy','some-other-dsl.groovy','still-another-dsl.groovy'], 'DISABLE', true)
-```
-
-Another sample that specifies the DSL text directly:
-```groovy
-dsl {
-    removeAction('DELETE')
-    text '''
 job {
-    foo()
-    bar {
-        baz()
+    steps {
+        dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false)
+        dsl(Iterable<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false)
+        dsl {
+            removeAction(String removeAction)             // one of: 'DISABLE', 'IGNORE', 'DELETE'
+            external(String... dslFileNames)              // file names of Job DSL scripts in the workspace
+            external(Iterable<String> dslFileNames)       // file names of Job DSL scripts in the workspace
+            text(String dslSpecification)                 // direct specification of Job DSL scripts as string
+            ignoreExisting(boolean ignoreExisting = true) // flag if to ignore existing jobs
+            additionalClasspath(String classpath)         // since 1.29
+        }
     }
 }
-}
 
-/* same definition using parameters instead of closure */
-dsl('''
+Allows the programmatic creation of jobs, folders and views using the Job DSL.
+
+```groovy
 job {
-    foo()
-    bar {
-        baz()
+    steps {
+        dsl {
+            external('projectA.groovy', 'projectB.groovy')
+            external('projectC.groovy')
+            removeAction('DISABLE')
+            ignoreExisting()
+            additionalClasspath('lib')
+        }
     }
 }
-''', 'DELETE')
+
+job {
+    steps {
+        dsl(['projectA.groovy', 'projectB.groovy'], 'DELETE')
+    }
+}
+
+job {
+    steps {
+        dsl {
+            text(readFileFromWorkspace('more-jobs.groovy'))
+            removeAction('DELETE')
+        }
+    }
+}
 ```
+
+(since 1.16)
 
 ## Copy Artifacts
 

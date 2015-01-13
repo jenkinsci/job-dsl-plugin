@@ -181,7 +181,7 @@ job(Map<String, ?> arguments = [:]) {
                       Closure copyArtifactClosure)
         criticalBlock(Closure stepClosure) // since 1.24
         downstreamParameterized(Closure downstreamClosure)
-        dsl(Closure dslClosure = null)
+        dsl(Closure dslClosure)
         dsl(String scriptText, String removedJobAction = null,
             boolean ignoreExisting = false)
         dsl(Collection<String> externalScripts, String removedJobAction = null,
