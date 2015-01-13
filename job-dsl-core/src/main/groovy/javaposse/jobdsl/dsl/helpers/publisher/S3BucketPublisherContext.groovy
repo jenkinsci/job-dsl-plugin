@@ -1,20 +1,27 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
 class S3BucketPublisherContext implements Context {
     private static final List<String> REGIONS = [
-            'GovCloud', 'US_EAST_1', 'US_WEST_1', 'US_WEST_2', 'EU_WEST_1', 'AP_SOUTHEAST_1', 'AP_SOUTHEAST_2',
-            'AP_NORTHEAST_1', 'SA_EAST_1', 'CN_NORTH_1'
+            'us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', 'ap-southeast-1', 'ap-southeast-2',
+            'ap-northeast-1', 'sa-east-1', 'cn-north-1'
     ]
 
     List<Node> entries = []
     List<Node> metadata = []
+    private final JobManagement jobManagement
+
+    S3BucketPublisherContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
 
     void entry(String source, String bucketName, String region, @DslContext(S3EntryContext) Closure closure = null) {
         checkArgument(!isNullOrEmpty(source), 'source must be specified')
@@ -28,7 +35,11 @@ class S3BucketPublisherContext implements Context {
             sourceFile(source)
             bucket(bucketName)
             storageClass(context.storageClass)
-            selectedRegion(region)
+            if (jobManagement.getPluginVersion('s3')?.isOlderThan(new VersionNumber('0.7.0'))) {
+                selectedRegion(region.replaceAll('-', '_').toUpperCase())
+            } else {
+                selectedRegion(region)
+            }
             noUploadOnFailure(context.noUploadOnFailure)
             uploadFromSlave(context.uploadFromSlave)
             managedArtifacts(context.managedArtifacts)
