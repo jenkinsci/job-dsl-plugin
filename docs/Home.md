@@ -21,6 +21,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added [CoreMirror](https://codemirror.net/) support for the DSL script input field
  * Added support for renaming existing Jobs based on a regular expression
  * Added support for the [Repository Connector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin)
+ * Enhanced DSL support for the Job DSL plugin
 * 1.28 (January 01 2015)
  * Added support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
  * Added support for the [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin)

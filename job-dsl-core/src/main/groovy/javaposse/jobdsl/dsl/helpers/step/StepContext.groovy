@@ -132,51 +132,46 @@ class StepContext implements Context {
     }
 
     /**
-     * <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.16">
+     * <javaposse.jobdsl.plugin.ExecuteDslScripts>
      *     <targets>sbt-template.groovy</targets>
      *     <usingScriptText>false</usingScriptText>
      *     <ignoreExisting>false</ignoreExisting>
      *     <removedJobAction>IGNORE</removedJobAction>
+     *     <additionalClasspath>libs</additionalClasspath>
      * </javaposse.jobdsl.plugin.ExecuteDslScripts>
      */
-    void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure configure = null) {
+    void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure configure) {
         javaposse.jobdsl.dsl.helpers.step.DslContext context = new javaposse.jobdsl.dsl.helpers.step.DslContext()
         ContextHelper.executeInContext(configure, context)
-        buildDslNode(context)
+
+        stepNodes << new NodeBuilder().'javaposse.jobdsl.plugin.ExecuteDslScripts' {
+            targets context.externalScripts.join('\n')
+            usingScriptText !isNullOrEmpty(context.scriptText)
+            scriptText context.scriptText ?: ''
+            ignoreExisting context.ignoreExisting
+            removedJobAction context.removedJobAction
+            additionalClasspath context.additionalClasspath ?: ''
+        }
     }
 
     void dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
-        javaposse.jobdsl.dsl.helpers.step.DslContext ctx = new javaposse.jobdsl.dsl.helpers.step.DslContext()
-        ctx.text(scriptText)
-        if (removedJobAction) {
-            ctx.removeAction(removedJobAction)
+        dsl {
+            text(scriptText)
+            if (removedJobAction) {
+                removeAction(removedJobAction)
+            }
+            delegate.ignoreExisting(ignoreExisting)
         }
-        ctx.ignoreExisting = ignoreExisting
-        buildDslNode(ctx)
     }
 
-    void dsl(Collection<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
-        javaposse.jobdsl.dsl.helpers.step.DslContext ctx = new javaposse.jobdsl.dsl.helpers.step.DslContext()
-        ctx.external(externalScripts.toArray(new String[0]))
-        if (removedJobAction) {
-            ctx.removeAction(removedJobAction)
+    void dsl(Iterable<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
+        dsl {
+            external(externalScripts)
+            if (removedJobAction) {
+                removeAction(removedJobAction)
+            }
+            delegate.ignoreExisting(ignoreExisting)
         }
-        ctx.ignoreExisting = ignoreExisting
-        buildDslNode(ctx)
-
-    }
-
-    protected void buildDslNode(context) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        Node dslNode = nodeBuilder.'javaposse.jobdsl.plugin.ExecuteDslScripts' {
-            targets context.targets
-            usingScriptText context.useScriptText()
-            scriptText context.scriptText
-            ignoreExisting context.ignoreExisting
-            removedJobAction context.removedJobAction.name()
-        }
-
-        stepNodes << dslNode
     }
 
     /**

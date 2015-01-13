@@ -1113,7 +1113,8 @@ class StepContextSpec extends Specification {
 
     def 'call dsl method defaults' () {
         when:
-        context.dsl()
+        context.dsl {
+        }
 
         then:
         context.stepNodes != null
@@ -1125,6 +1126,7 @@ class StepContextSpec extends Specification {
         dslStep.ignoreExisting[0].value() ==  false
         dslStep.removedJobAction[0].value() == 'IGNORE'
         dslStep.scriptText[0].value() == ''
+        dslStep.additionalClasspath[0].value() == ''
     }
 
     def 'call dsl method external script ignoring existing' () {
@@ -1265,6 +1267,26 @@ still-another-dsl.groovy'''
   }
 }
 '''
+    }
+
+    def 'call dsl method with additional classpath' () {
+        when:
+        context.dsl {
+            external 'some-dsl.groovy'
+            additionalClasspath 'some/path'
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == 'some-dsl.groovy'
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'IGNORE'
+        dslStep.scriptText[0].value() == ''
+        dslStep.additionalClasspath[0].value() == 'some/path'
     }
 
     def 'call prerequisite method with single project'() {
