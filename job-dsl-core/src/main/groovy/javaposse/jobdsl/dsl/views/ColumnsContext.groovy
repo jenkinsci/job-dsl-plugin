@@ -36,4 +36,8 @@ class ColumnsContext implements Context {
     void lastBuildConsole() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildConsoleColumn')
     }
+
+    void genericColumn(String columnClass) {
+        columnNodes << new Node(null, columnClass)
+    }
 }
