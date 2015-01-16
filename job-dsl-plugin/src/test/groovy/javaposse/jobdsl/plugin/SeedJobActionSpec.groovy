@@ -1,5 +1,6 @@
 package javaposse.jobdsl.plugin
 
+import hudson.Util
 import hudson.model.AbstractItem
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
@@ -9,9 +10,12 @@ class SeedJobActionSpec extends Specification {
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
+    AbstractItem item = Mock(AbstractItem)
+    SeedReference seedReference = new SeedReference('template', 'seed', 'digest')
+
     def 'icon file name'() {
         when:
-        String iconFileName = new SeedJobAction('foo', 'bar').iconFileName
+        String iconFileName = new SeedJobAction(item, seedReference).iconFileName
 
         then:
         iconFileName == null
@@ -19,7 +23,7 @@ class SeedJobActionSpec extends Specification {
 
     def 'display name'() {
         when:
-        String displayName = new SeedJobAction('foo', 'bar').displayName
+        String displayName = new SeedJobAction(item, seedReference).displayName
 
         then:
         displayName == 'Seed job:'
@@ -27,7 +31,7 @@ class SeedJobActionSpec extends Specification {
 
     def 'URL name'() {
         when:
-        String urlName = new SeedJobAction('foo', 'bar').urlName
+        String urlName = new SeedJobAction(item, seedReference).urlName
 
         then:
         urlName == 'seedJob'
@@ -38,7 +42,7 @@ class SeedJobActionSpec extends Specification {
         AbstractItem seedJob = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        SeedJobAction action = new SeedJobAction(seedJob.fullName, null)
+        SeedJobAction action = new SeedJobAction(item, seedReference)
 
         then:
         action.seedJob == seedJob
@@ -51,10 +55,34 @@ class SeedJobActionSpec extends Specification {
         AbstractItem templateJob = jenkinsRule.createFreeStyleProject('template')
 
         when:
-        SeedJobAction action = new SeedJobAction(seedJob.fullName, templateJob.fullName)
+        SeedJobAction action = new SeedJobAction(item, seedReference)
 
         then:
         action.seedJob == seedJob
         action.templateJob == templateJob
+    }
+
+    def 'Config is not changed when digest is the same'() {
+        setup:
+        AbstractItem item = jenkinsRule.createFreeStyleProject('test')
+        seedReference.digest = Util.getDigestOf(item.configFile.file)
+
+        when:
+        def action = new SeedJobAction(item, seedReference)
+
+        then:
+        !action.configChanged
+    }
+
+    def 'Config is changed when digest is not the same'() {
+        setup:
+        AbstractItem item = jenkinsRule.createFreeStyleProject('test')
+        seedReference.digest = 'changed'
+
+        when:
+        def action = new SeedJobAction(item, seedReference)
+
+        then:
+        action.configChanged
     }
 }

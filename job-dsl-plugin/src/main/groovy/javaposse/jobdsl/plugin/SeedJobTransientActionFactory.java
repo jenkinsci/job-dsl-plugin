@@ -7,10 +7,10 @@ import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 
 @Extension
 public class SeedJobTransientActionFactory extends TransientActionFactory<AbstractItem> {
@@ -25,7 +25,7 @@ public class SeedJobTransientActionFactory extends TransientActionFactory<Abstra
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
         SeedReference seedReference = descriptor.getGeneratedJobMap().get(target.getFullName());
         if (seedReference != null) {
-            return singletonList(new SeedJobAction(seedReference.getSeedJobName(), seedReference.getTemplateJobName()));
+            return Arrays.asList(new SeedJobAction(target, seedReference));
         } else {
             return emptyList();
         }
