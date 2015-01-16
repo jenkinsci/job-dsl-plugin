@@ -474,19 +474,21 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getItemByFullName('/target/test-job', AbstractProject).getAction(SeedJobAction) == null
     }
 
-    def "Updated job is removed from GeneratedJobMap"() {
-        setup:
-        jenkinsRule.jenkins.createProject(Folder, 'folder')
-        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
-        jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
-
+    def "Warn when job is updated manually"() {
         when:
-        (jenkinsRule.instance.getItemByFullName('/folder/test-job') as AbstractProject).description = 'foo'
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n description("abc")}'))
 
         then:
-        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
-        jenkinsRule.instance.getItemByFullName('/folder/test-job', AbstractProject).getAction(SeedJobAction) == null
+        !jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getAction(
+                WarnConfigChangeAction).isConfigChanged()
+
+        when:
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).description = 'desc'
+
+        then:
+        jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getAction(
+                WarnConfigChangeAction).isConfigChanged()
     }
 
     def createJobInFolder() {
