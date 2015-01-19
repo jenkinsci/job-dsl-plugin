@@ -1,3 +1,30 @@
+## Migrating to 1.29
+
+### Grab Support
+
+Support for the `@Grab` and `@Grapes` annotation has been deprecated and replaced by the _Additional classpath_ option
+of the _Process Job DSLs_ build step.
+
+DSL prior to 1.29
+```groovy
+@Grab(group='commons-lang', module='commons-lang', version='2.4')
+
+import org.apache.commons.lang.WordUtils
+
+println "Hello ${WordUtils.capitalize('world')}"
+```
+
+DSL since 1.29
+```groovy
+import org.apache.commons.lang.WordUtils
+
+println "Hello ${WordUtils.capitalize('world')}"
+```
+
+But to be able to use a library, it has to be added to the _Additional classpath_ option of the _Process Job DSLs_ build
+step (e.g. `lib/commons-lang-2.4.jar` or `lib/*.jar`) and the JAR files have to be in workspace of the seed job (e.g. in
+a `lib` directory). See [[Using Libraries|User-Power-Moves#using-libraries]] for details.
+
 ## Migrating to 1.28
 
 ### HTML Publisher

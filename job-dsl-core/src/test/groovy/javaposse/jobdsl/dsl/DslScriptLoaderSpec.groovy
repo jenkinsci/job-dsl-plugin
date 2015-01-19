@@ -186,6 +186,7 @@ println "Hello ${WordUtils.capitalize('world')}"
         def results = content
         results != null
         results.contains('Hello World')
+        baos.toString().contains('Warning: @Grab support is deprecated (DSL script, line 1)')
     }
 
     def 'jobs scheduled to build'() {

@@ -88,7 +88,71 @@ scm {
 
 [Original  discussion on the newsgroup](https://groups.google.com/forum/#!msg/job-dsl-plugin/EWCaCYJgfsE/X_5ci3AX4pAJ)
 
+# Using Libraries
+
+Libraries can be used in a Job DSL script by adding them to the _Additional classpath_ option in the _Process Job DSLs_
+build step. The library's JAR files must be available in the workspace of the seed job. For libraries without transitive
+dependencies this can be achieved by using the _Artifact Resolver_ build step of the
+[Repository Connector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin) prior to the
+_Process Job DSLs_ build step. For more complex setups, an extra [Gradle](http://www.gradle.org/) build step
+([Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)) can be used.
+
+For example, to use [Koshuke's GitHub API](http://github-api.kohsuke.org/), the following `build.gradle` will copy all
+necessary libraries to a `lib` directory:
+
+```groovy
+defaultTasks 'libs'
+
+repositories {
+    jcenter()
+}
+
+configurations {
+    libs
+}
+
+dependencies {
+    libs 'org.kohsuke:github-api:1.50'
+}
+
+task clean(type: Delete) {
+    delete 'lib'
+}
+
+task libs(type: Copy) {
+    into 'lib'
+    from configurations.libs
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2.1'
+}
+```
+
+The _Additional classpath_ option in the _Process Job DSLs_ build step must be set to `lib/*.jar` to pick up all
+libraries. And then the library can be used in a Job DSL script:
+
+```groovy
+import org.kohsuke.github.GitHub
+
+def gh = GitHub.connectAnonymously()
+gh.getOrganization('jenkinsci').listRepositories().each { repo ->
+    job {
+        name(repo.name)
+        scm {
+            gitHub(repo.fullName)
+        }
+        steps {
+            // ...
+        }
+    }
+}
+```
+
 # Grab a shared, groovy file
+
+**WARNING:** Grab support is deprecated, see [[Migration]]
+
 If you have a file which you want to import into your script, but you can't put it in the location described in the "Importing Other Files" example on the [[Real-World-Examples]] page, you can do this:
 
 ```groovy

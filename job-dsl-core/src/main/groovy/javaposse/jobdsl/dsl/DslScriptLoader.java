@@ -8,6 +8,7 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
@@ -189,6 +190,9 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
         icz.addImports("javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting");
         config.addCompilationCustomizers(icz);
+
+        GrabDeprecationTransformation grabDeprecationTransformation = new GrabDeprecationTransformation(jobManagement);
+        config.addCompilationCustomizers(new ASTTransformationCustomizer(grabDeprecationTransformation));
 
         config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
         return config;

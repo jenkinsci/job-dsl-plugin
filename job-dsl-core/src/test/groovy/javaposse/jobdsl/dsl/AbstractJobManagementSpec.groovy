@@ -37,6 +37,30 @@ class AbstractJobManagementSpec extends Specification {
         buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'
     }
 
+    def 'custom deprecation warning in DSL script'() {
+        setup:
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream()
+        AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
+
+        when:
+        jobManagement.logDeprecationWarning('foo', 'script123123123.groovy', 12)
+
+        then:
+        buffer.toString().trim() == 'Warning: foo is deprecated (DSL script, line 12)'
+    }
+
+    def 'custom deprecation warning in source file'() {
+        setup:
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream()
+        AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
+
+        when:
+        jobManagement.logDeprecationWarning('foo', 'test.groovy', 12)
+
+        then:
+        buffer.toString().trim() == 'Warning: foo is deprecated (test.groovy, line 12)'
+    }
+
     def 'reading files from workspace is not supported'() {
         setup:
         AbstractJobManagement jobManagement = new TestJobManagement()
