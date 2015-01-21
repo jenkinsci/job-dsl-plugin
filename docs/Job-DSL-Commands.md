@@ -127,6 +127,7 @@ job(Map<String, ?> arguments = [:]) {
         gerrit(Closure gerritClosure = null)
         githubPush()
         pullRequest(Closure pullRequestClosure) // since 1.22
+        bitbucketPullRequest(Closure pullRequestClosure)    // since ...
         scm(String cron)
         snapshotDependencies(boolean checkSnapshotDependencies)
         urlTrigger(String cronString = null, Closure urlTriggerClosure)
