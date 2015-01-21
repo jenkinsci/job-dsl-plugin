@@ -547,4 +547,50 @@ class TriggerContextSpec extends Specification {
         context.withXmlActions != null
         context.withXmlActions.size() == 1
     }
+
+    def 'call bitbucket pull request trigger with no args'() {
+        when:
+        context.bitbucketPullRequest()
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            name() == 'bitbucketpullrequestbuilder.bitbucketpullrequestbuilder.BitbucketBuildTrigger'
+            cron[0].value() == 'H/5 * * * *'
+            spec[0].value() == 'H/5 * * * *'
+            username[0].value() == ''
+            password[0].value() == ''
+            repositoryOwner[0].value() == ''
+            repositoryName[0].value() == ''
+            ciSkipPhases[0].value() == ''
+            checkDestinationCommit[0].value() == false
+        }
+    }
+
+    def 'call bitbucket pull request trigger with all args'() {
+        when:
+        context.bitbucketPullRequest {
+            cron('H/10 * * * *')
+            username('bitbucketUsername')
+            password('bitbucketPassword')
+            repositoryOwner('bitbucketRepositoryOwner')
+            repositoryName('bitbucketRepositoryName')
+            ciSkipPhases('.*\\[skip\\W+ci\\].*')
+            checkDestinationCommit(true)
+        }
+
+        then:
+        def pullRequestNode = context.triggerNodes[0]
+        with(pullRequestNode) {
+            name() == 'bitbucketpullrequestbuilder.bitbucketpullrequestbuilder.BitbucketBuildTrigger'
+            cron[0].value() == 'H/10 * * * *'
+            spec[0].value() == 'H/10 * * * *'
+            username[0].value() == 'bitbucketUsername'
+            password[0].value() == 'bitbucketPassword'
+            repositoryOwner[0].value() == 'bitbucketRepositoryOwner'
+            repositoryName[0].value() == 'bitbucketRepositoryName'
+            ciSkipPhases[0].value() == '.*\\[skip\\W+ci\\].*'
+            checkDestinationCommit[0].value() == true
+        }
+    }
 }

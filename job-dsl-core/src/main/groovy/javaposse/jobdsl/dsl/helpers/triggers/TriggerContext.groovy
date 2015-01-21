@@ -294,4 +294,36 @@ class TriggerContext implements Context {
             it.appendNode 'ignoreUpstremChanges', !checkSnapshotDependencies
         }
     }
+
+    /**
+     *  Configures the Jenkins Bitbucket pull request builder plugin
+     *  Depends on the git plugin
+     *
+     *  <bitbucketpullrequestbuilder.bitbucketpullrequestbuilder.BitbucketBuildTrigger>
+     *      <spec></spec>
+     *      <cron></cron>
+     *      <username></username>
+     *      <password></password>
+     *      <repositoryOwner></repositoryOwner>
+     *      <repositoryName></repositoryName>
+     *      <ciSkipPhases></ciSkipPhases>
+     *      <checkDestinationCommit>false</checkDestinationCommit>
+     *  </bitbucketpullrequestbuilder.bitbucketpullrequestbuilder.BitbucketBuildTrigger>
+     */
+    void bitbucketPullRequest(@DslContext(BitbucketPullRequestBuilderContext) Closure contextClosure) {
+        BitbucketPullRequestBuilderContext pullRequestBuilderContext = new BitbucketPullRequestBuilderContext()
+        ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
+
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        triggerNodes << nodeBuilder.'bitbucketpullrequestbuilder.bitbucketpullrequestbuilder.BitbucketBuildTrigger' {
+            delegate.cron(pullRequestBuilderContext.cron)
+            spec pullRequestBuilderContext.cron
+            username pullRequestBuilderContext.username
+            password pullRequestBuilderContext.password
+            repositoryOwner pullRequestBuilderContext.repositoryOwner
+            repositoryName pullRequestBuilderContext.repositoryName
+            ciSkipPhases pullRequestBuilderContext.ciSkipPhases
+            checkDestinationCommit pullRequestBuilderContext.checkDestinationCommit
+        }
+    }
 }

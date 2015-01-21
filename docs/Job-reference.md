@@ -917,6 +917,50 @@ job {
 }
 ```
 
+## Bitbucket Pull Request Trigger
+
+```groovy
+bitbucketPullRequest {
+    cron(String cron) // set cron schedule, defaults to 'H/5 * * * *'
+    username(String username)   // set Bitbucket username
+    password(String password)   // set Bitbucket password
+    repositoryOwner(String repositoryOwner) // set Bitbucket repository owner
+    repositoryName(String repositoryName)   // set Bitbucket repository name
+    ciSkipPhases(String ciSkipPhases)   // set ci skip phases
+    checkDestinationCommit(boolean checkDestinationCommit = false)  // rebuild if destination branch changes, defaults to false if not specified
+}
+```
+
+Builds pull requests from Bitbucket and will report the results directly to the pull request. Requires the [Bitbucket pull request builder plugin](https://wiki.jenkins-ci.org/display/JENKINS/Bitbucket+pullrequest+builder+plugin). (Available since 1.509.4)
+
+The Bitbucket pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for details.
+
+```groovy
+job {
+    ...
+    scm {
+        git {
+            remote {
+                url('git@bitbucket.org:\${repositoryOwner}/\${repositoryName}.git')
+                credentials('Bitbucket Credentials')
+            }
+            branch('*/\${sourceBranch}')
+        }
+    }
+    triggers {
+        bitbucketPullRequest {
+            cron('H/5 * * * *')
+            username('bitbucketUsername')
+            password('bitbucketPassword')
+            repositoryOwner('bitbucketRepositoryOwner')
+            repositoryName('bitbucketRepositoryName')
+            ciSkipPhases('.*\\[skip\\W+ci\\].*')
+            checkDestinationCommit(true)
+        }
+    }
+}
+```
+
 ## URL Trigger
 
 The URL trigger plugin checks one or more specified URLs and starts a build when a change is detected. (Since 1.16)
