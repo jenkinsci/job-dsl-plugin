@@ -8,10 +8,11 @@ import javaposse.jobdsl.dsl.ScriptRequest
 
 import static javaposse.jobdsl.plugin.WorkspaceProtocol.createWorkspaceUrl
 
-class ScriptRequestGenerator {
+class ScriptRequestGenerator implements Closeable {
 
     final AbstractBuild build
     EnvVars env
+    final Map<FilePath, File> cachedFiles = [:]
 
     ScriptRequestGenerator(AbstractBuild build, EnvVars env) {
         this.build = build
@@ -26,7 +27,13 @@ class ScriptRequestGenerator {
         List<URL> classpath = []
         if (additionalClasspath) {
             String expandedClasspath = env.expand(additionalClasspath)
-            expandedClasspath.split('\n').each { classpath << createWorkspaceUrl(build, build.workspace.child(it)) }
+            expandedClasspath.split('\n').each {
+                if (it.contains('*') || it.contains('?')) {
+                    classpath.addAll(build.workspace.list(it).collect { createClasspathURL(it) })
+                } else {
+                    classpath << createClasspathURL(build.workspace.child(it))
+                }
+            }
         }
         if (usingScriptText) {
             URL[] urlRoots = ([createWorkspaceUrl(build.project)] + classpath) as URL[]
@@ -43,5 +50,35 @@ class ScriptRequestGenerator {
             }
         }
         scriptRequests
+    }
+
+    @Override
+    void close() throws IOException {
+        cachedFiles.values().each {
+            it.delete()
+        }
+    }
+
+    private URL createClasspathURL(FilePath filePath) {
+        if (filePath.isRemote()) {
+            if (filePath.directory) {
+                createWorkspaceUrl(build, filePath)
+            } else {
+                File file = cachedFiles[filePath]
+                if (!file) {
+                    file = copyToLocal(filePath)
+                    cachedFiles.put(filePath, file)
+                }
+                file.toURI().toURL()
+            }
+        } else {
+            filePath.toURI().toURL()
+        }
+    }
+
+    private static File copyToLocal(FilePath filePath) {
+        File file = File.createTempFile('jobdsl', '.jar')
+        filePath.copyTo(new FilePath(file))
+        file
     }
 }
