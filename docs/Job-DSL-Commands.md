@@ -604,6 +604,8 @@ job {
 
 # Grab
 
+**WARNING:** Grab support is deprecated, see [[Migration]]
+
 Groovy provides the ability to "grab" dependencies and use them right away, this is called
 [Grape](http://groovy.codehaus.org/Grape). The Job DSL supports this feature, as long as it's provided at the top of the
 script. Not only can the `@Grab` annotation be used, it can be used with `@GrabResolver` to pull dependencies from

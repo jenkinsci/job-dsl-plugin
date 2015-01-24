@@ -41,7 +41,16 @@ abstract class AbstractJobManagement implements JobManagement {
     void logDeprecationWarning() {
         List<StackTraceElement> currentStackTrack = stackTrace
         String details = getSourceDetails(currentStackTrack)
-        logWarning('%s is deprecated (%s)', currentStackTrack[0].methodName, details)
+        logDeprecationWarning(currentStackTrack[0].methodName, details)
+    }
+
+    @Override
+    void logDeprecationWarning(String subject, String scriptName, int lineNumber) {
+        logDeprecationWarning(subject, getSourceDetails(scriptName, lineNumber))
+    }
+
+    protected void logDeprecationWarning(String subject, String details) {
+        logWarning('%s is deprecated (%s)', subject, details)
     }
 
     protected static void validateUpdateArgs(String jobName, String config) {
@@ -67,12 +76,16 @@ abstract class AbstractJobManagement implements JobManagement {
     }
 
     protected static String getSourceDetails(List<StackTraceElement> stackTrace) {
-        String details = 'unknown source'
         StackTraceElement source = stackTrace.find { !it.className.startsWith('javaposse.jobdsl.') }
-        if (source != null && source.fileName != null) {
-            details = source.fileName.matches(/script\d+\.groovy/) ? 'DSL script' : source.fileName
-            if (source.lineNumber > 0) {
-                details += ", line ${source.lineNumber}"
+        getSourceDetails(source?.fileName, source == null ? -1 : source.lineNumber)
+    }
+
+    protected static String getSourceDetails(String scriptName, int lineNumber) {
+        String details = 'unknown source'
+        if (scriptName != null) {
+            details = scriptName.matches(/script\d+\.groovy/) ? 'DSL script' : scriptName
+            if (lineNumber > 0) {
+                details += ", line ${lineNumber}"
             }
         }
         details
