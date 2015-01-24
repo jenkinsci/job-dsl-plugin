@@ -137,90 +137,56 @@ class WrapperContext implements Context {
     /**
      * Add a timeout to the build job.
      *
-     * May be an absolute, elastic or likely Stuck timeout.
-     *
-     * <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.13">
+     * <hudson.plugins.build__timeout.BuildTimeoutWrapper>
      *     <strategy class="hudson.plugins.build_timeout.impl.ElasticTimeOutStrategy">
      *        <timeoutPercentage>300</timeoutPercentage>
      *        <numberOfBuilds>3</numberOfBuilds>
      *        <timeoutMinutesElasticDefault>60</timeoutMinutesElasticDefault>
      *     </strategy>
      *     <operationList>
-     *         <hudson.plugins.build__timeout.operations.AbortOperation/>
      *         <hudson.plugins.build__timeout.operations.FailOperation/>
      *         <hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
      *             <description>arstrst</description>
      *         </hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
      *     </operationList>
      * </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-
-     *
-     * @param type type of timeout defaults to absolute
      *
      * @param timeoutClosure optional closure for configuring the timeout
      */
-    void timeout(String type = Timeout.absolute.toString(), @DslContext(TimeoutContext) Closure timeoutClosure = null) {
+    void timeout(@DslContext(TimeoutContext) Closure timeoutClosure = null) {
         jobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
-        Timeout timeoutType = null
-        if (type) {
-            jobManagement.logDeprecationWarning()
-            try {
-                timeoutType = Timeout.valueOf(type)
-            } catch (IllegalArgumentException ignore) {
-                throw new IllegalArgumentException("Timeout type was ${type} but must be one of: ${Timeout.values()}")
-            }
-        }
 
-        TimeoutContext ctx = new TimeoutContext(timeoutType, jobManagement)
-        ContextHelper.executeInContext(timeoutClosure, ctx)
+        TimeoutContext context = new TimeoutContext(jobManagement)
+        ContextHelper.executeInContext(timeoutClosure, context)
 
-        Preconditions.checkArgument(ctx.type != null, 'Timeout type must be selected!')
-
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
-            strategy(class: ctx.type.className) {
-                switch (ctx.type) {
+        wrapperNodes << new NodeBuilder().'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
+            strategy(class: context.type.className) {
+                switch (context.type) {
                     case Timeout.absolute:
-                        timeoutMinutes(ctx.limit)
+                        timeoutMinutes(context.limit)
                         break
                     case Timeout.elastic:
-                        timeoutPercentage(ctx.percentage)
-                        numberOfBuilds(ctx.numberOfBuilds)
-                        timeoutMinutesElasticDefault(ctx.minutesDefault)
+                        timeoutPercentage(context.percentage)
+                        numberOfBuilds(context.numberOfBuilds)
+                        timeoutMinutesElasticDefault(context.minutesDefault)
                         break
                     case Timeout.likelyStuck:
                         break
                     case Timeout.noActivity:
-                        delegate.timeout(ctx.noActivitySeconds * 1000)
+                        delegate.timeout(context.noActivitySeconds * 1000)
                         break
                 }
             }
             operationList {
-                if (ctx.failBuild) {
+                if (context.failBuild) {
                     'hudson.plugins.build__timeout.operations.FailOperation'()
                 }
-                if (ctx.writeDescription) {
+                if (context.writeDescription) {
                     'hudson.plugins.build__timeout.operations.WriteDescriptionOperation' {
-                        description(ctx.description)
+                        description(context.description)
                     }
                 }
             }
-        }
-    }
-
-    void timeout(@DslContext(TimeoutContext) Closure timeoutClosure) {
-        timeout(null, timeoutClosure)
-    }
-
-    /**
-     * @deprecated use timeout(String, Closure), this method is only for backwards compatibility
-     */
-    @Deprecated
-    void timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) {
-        jobManagement.logDeprecationWarning()
-        timeout {
-            absolute(timeoutInMinutes)
-            failBuild shouldFailBuild
         }
     }
 

@@ -156,9 +156,7 @@ job(Map<String, ?> arguments = [:]) {
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
         rvm(String rubySpecification)
         sshAgent(String credentials)
-        timeout(Closure timeoutClosure)
-        timeout(String type = 'absolute', Closure timeoutClosure = null) // deprecated
-        timeout(Integer timeoutInMinutes, Boolean shouldFailBuild = true) // deprecated
+        timeout(Closure timeoutClosure = null)
         timestamps()
         toolenv(String... tools)
         xvnc(boolean takeScreenshot) // deprecated

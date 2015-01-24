@@ -6,8 +6,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobType
 import spock.lang.Specification
 
-import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
-
 class WrapperContextSpec extends Specification {
     JobManagement mockJobManagement = Mock(JobManagement)
     WrapperContext context = new WrapperContext(JobType.Freeform, mockJobManagement)
@@ -122,51 +120,19 @@ class WrapperContextSpec extends Specification {
         context.wrapperNodes[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
     }
 
-    def 'can not run timeout with empty closure'() {
-        when:
-        context.timeout {
-        }
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
-    def 'timeout constructs xml'() {
-        when:
-        context.timeout(15)
-
-        then:
-        timeoutWrapper.name() == 'hudson.plugins.build__timeout.BuildTimeoutWrapper'
-        def strategy = timeoutWrapper.strategy[0]
-        strategy.attribute('class') == 'hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy'
-        strategy.timeoutMinutes[0].value() == 15
-        timeoutWrapper.operationList.size() == 1
-        timeoutHasFailOperation()
-    }
-
-    private void timeoutHasFailOperation() {
-        assert timeoutWrapper.operationList[0].'hudson.plugins.build__timeout.operations.FailOperation'[0] != null
-    }
-
-    def 'timeout failBuild parameter works'() {
-        when:
-        context.timeout(15, false)
-
-        then:
-        timeoutHasNoOperation()
-    }
-
-    private void timeoutHasNoOperation() {
-        assert timeoutWrapper.operationList[0].children().size() == 0
-    }
-
     def 'default timeout works' () {
         when:
         context.timeout()
 
         then:
-        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == 3
-        timeoutHasNoOperation()
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].@class == 'hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy'
+            strategy[0].timeoutMinutes[0].value() == 3
+            operationList[0].children().size() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
     def 'absolute timeout configuration working' () {
@@ -176,12 +142,13 @@ class WrapperContextSpec extends Specification {
         }
 
         then:
-        timeoutWrapper.strategy[0].timeoutMinutes[0].value() == 5
-        timeoutHasNoOperation()
-    }
-
-    private getTimeoutWrapper() {
-        context.wrapperNodes[0]
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].@class == 'hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy'
+            strategy[0].timeoutMinutes[0].value() == 5
+            operationList[0].children().size() == 0
+        }
     }
 
     def 'elastic timeout configuration working' () {
@@ -191,27 +158,67 @@ class WrapperContextSpec extends Specification {
         }
 
         then:
-        def strategy = timeoutWrapper.strategy[0]
-        strategy.timeoutMinutesElasticDefault[0].value() == 15
-        strategy.timeoutPercentage[0].value() == 200
-        strategy.attribute('class') == Timeout.elastic.className
-        timeoutHasNoOperation()
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 3
+            strategy[0].@class == 'hudson.plugins.build_timeout.impl.ElasticTimeOutStrategy'
+            strategy[0].timeoutPercentage[0].value() == 200
+            strategy[0].numberOfBuilds[0].value() == 3
+            strategy[0].timeoutMinutesElasticDefault[0].value() == 15
+            operationList[0].children().size() == 0
+        }
     }
 
-    def 'NoActivity configuration working with set description' () {
+    def 'no activity timeout configuration working'() {
         when:
         context.timeout {
             noActivity(15)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].@class == 'hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy'
+            strategy[0].timeout[0].value() == 15000
+            operationList[0].children().size() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
+    }
+
+    def 'default timeout will set description'() {
+        when:
+        context.timeout {
             writeDescription('desc')
         }
 
         then:
-        def strategy = timeoutWrapper.strategy[0]
-        strategy.timeout[0].value() == 15000
-        strategy.attribute('class') == Timeout.noActivity.className
-        def list = timeoutWrapper.operationList[0]
-        list.'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0].description[0].value() == 'desc'
-        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].timeoutMinutes[0].value() == 3
+            operationList[0].children().size() == 1
+            with(operationList[0].'hudson.plugins.build__timeout.operations.WriteDescriptionOperation'[0]) {
+                children().size() == 1
+                description[0].value() == 'desc'
+            }
+        }
+    }
+
+    def 'default timeout will fail the build'() {
+        when:
+        context.timeout {
+            failBuild()
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].timeoutMinutes[0].value() == 3
+            operationList[0].children().size() == 1
+            operationList[0].children()[0].name() == 'hudson.plugins.build__timeout.operations.FailOperation'
+        }
     }
 
     def 'likelyStuck timeout configuration working' () {
@@ -221,10 +228,12 @@ class WrapperContextSpec extends Specification {
         }
 
         then:
-        def strategy = timeoutWrapper.strategy[0]
-        strategy.attribute('class') == Timeout.likelyStuck.className
-        strategy.children().size() == 0
-        timeoutHasNoOperation()
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 0
+            strategy[0].@class == 'hudson.plugins.build_timeout.impl.LikelyStuckTimeOutStrategy'
+            operationList[0].children().size() == 0
+        }
     }
 
     def 'port allocator string list'() {

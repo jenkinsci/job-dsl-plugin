@@ -1019,27 +1019,34 @@ Configures the job to prepare a Ruby environment controlled by RVM for the build
 ## Build Timeout
 
 ```groovy
-timeout {
-    elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60)
-    noActivity(int seconds = 180)
-    absolute(int minutes = 3)                  // default
-    likelyStuck()
-    failBuild(boolean fail = true)
-    writeDescription(String description)
-    limit(int limit)                           // deprecated
-    percentage(int percentage)                 // deprecated
-    writeDescription(boolean writeDesc = true) // deprecated
+job {
+    wrappers {
+        timeout {
+            elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60)
+            noActivity(int seconds = 180)
+            absolute(int minutes = 3)                  // default
+            likelyStuck()
+            failBuild(boolean fail = true)
+            writeDescription(String description)
+        }
+    }
 }
 ```
 
-The timeout method enables you to define a timeout for builds. It can either be absolute (build times out after a fixed number of minutes), elastic (times out if build runs x% longer than the average build duration) or likelyStuck.
+The timeout method enables you to define a timeout for builds. It can either be absolute (build times out after a fixed
+number of minutes), elastic (times out if build runs x% longer than the average build duration) or likelyStuck.
 
-Requires version 1.12 or later of the [Build Timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin).
+Requires version 1.12 or later of the
+[Build Timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin).
 
 The simplest invocation looks like this:
 
 ```groovy
-timeout()
+job {
+    wrappers {
+        timeout()
+    }
+}
 ```
 
 It defines an absolute timeout with a maximum build time of 3 minutes.
@@ -1047,8 +1054,12 @@ It defines an absolute timeout with a maximum build time of 3 minutes.
 Here is an absolute timeout:
 
 ```groovy
-timeout {
-    absolute(60)   // 60 minutes before timeout
+job {
+    wrappers {
+        timeout {
+            absolute(60)   // 60 minutes before timeout
+        }
+    }
 }
 ```
 
@@ -1057,31 +1068,45 @@ a limit that is used if there is no average successful build duration (i.e. no j
 the number of successful/unstable builds to consider to calculate the average duration:
 
 ```groovy
-timeout {
-    elastic(
-        300, // Build will timeout when it take 3 time longer than the reference build duration, default = 150
-        3,   // Number of builds to consider for average calculation
-        30)  // 30 minutes default timeout (no successful builds available as reference)
+job {
+    wrappers {
+        timeout {
+            elastic(
+                300, // Build will timeout when it take 3 time longer than the reference build duration, default = 150
+                3,   // Number of builds to consider for average calculation
+                30   // 30 minutes default timeout (no successful builds available as reference)
+            )
+        }
+    }
 }
 ```
 
 The likelyStuck timeout times out a build when it is likely to be stuck. Does not take extra configuration parameters.
 
 ```groovy
-timeout {
-    likelyStuck()
+job {
+    wrappers {
+        timeout {
+            likelyStuck()
+        }
+    }
 }
 ```
 
 The noActivity timeout times out a build when there has been no console activity for a certain duration.
 
 ```groovy
-timeout {
-    noActivity(180) // Timeout if there has been no activity for 180 seconds
+job {
+    wrappers {
+        timeout {
+            noActivity(180) // Timeout if there has been no activity for 180 seconds
+        }
+    }
 }
 ```
 
-When the timeout happens, the default action is to abort if no other actions are configured. There are two other actions:
+When the timeout happens, the default action is to abort if no other actions are configured. There are two other
+actions:
 
 - Fail the build
 - Add a build description
@@ -1089,17 +1114,15 @@ When the timeout happens, the default action is to abort if no other actions are
 They are both simultaneously allowed and configured like this:
 
 ```groovy
-timeout {
-   absolute(30)
-   failBuild()
-   writeDescription('Build failed due to timeout after {0} minutes')
+job {
+    wrappers {
+        timeout {
+            absolute(30)
+            failBuild()
+            writeDescription('Build failed due to timeout after {0} minutes')
+        }
+    }
 }
-```
-
-The following syntax has been available before 1.16 and will be retained for compatibility reasons:
-
-```groovy
-timeout(int timeoutInMinutes, Boolean shouldFailBuild = true)
 ```
 
 (since 1.24)
