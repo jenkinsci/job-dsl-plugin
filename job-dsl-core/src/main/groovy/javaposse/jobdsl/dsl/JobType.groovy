@@ -5,6 +5,7 @@ enum JobType {
     Maven('maven2-moduleset'),
     Multijob('com.tikal.jenkins.plugins.multijob.MultiJobProject'),
     BuildFlow('com.cloudbees.plugins.flow.BuildFlow'),
+    Workflow('flow-definition'),
     Matrix('matrix-project')
 
     String elementName

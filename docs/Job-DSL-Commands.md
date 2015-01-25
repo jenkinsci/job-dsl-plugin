@@ -339,6 +339,11 @@ job(Map<String, ?> arguments = [:]) {
     runSequentially(boolean runSequentially = true)
     touchStoneFilter(String expression, boolean continueOnFailure = false)
     combinationFilter(String expression)
+
+    // Workflow options, since 1.29
+    definition {
+      cps(Closure cpsClosure)
+    }
 }
 
 view(Map<String, Object> arguments = [:]) { // since 1.21
@@ -465,9 +470,9 @@ myJob.with {
 ```
 
 A job can have optional attributes. Currently only a `type` attribute with value of `Freeform`, `Maven`, `Multijob`,
-`BuildFlow` or `MatrixJob` is supported. When no type is specified, a free-style job will be generated. Some methods
-will only be available in some job types, e.g. `phase` can only be used in Multijob. Each DSL method documents where
-they are relevant.
+`BuildFlow`, `MatrixJob` or `Workflow`is supported. When no type is specified, a free-style job will be generated. Some
+methods will only be available in some job types, e.g. `phase` can only be used in Multijob. Each DSL method documents
+where they are relevant.
 
 ```groovy
 job(type: Maven) {
