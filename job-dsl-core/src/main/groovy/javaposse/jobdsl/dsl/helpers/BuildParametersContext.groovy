@@ -201,6 +201,47 @@ class BuildParametersContext implements Context {
 
     /**
      * <project>
+     *   <properties>
+     *       <hudson.model.ParametersDefinitionProperty>
+     *           <parameterDefinitions>
+     *           <org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition>
+     *             <name></name>
+     *             <description></description>
+     *             <defaultValue></defaultValue>
+     *             <allNodesMatchingLabel>false</allNodesMatchingLabel>
+     *             <triggerIfResult>allCases</triggerIfResult>
+     *             <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+     *           </org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition>
+     *
+     * @param parameterName
+     * @param defaultValue (optional)
+     * @param description (optional)
+     * @param allNodes (default = false)
+     * @param trigger (one of allCases, success, unstable)
+     * @param eligibility (one of AllNodeEligibility, IgnoreOfflineNodeEligibility, IgnoreTempOfflineNodeEligibility)
+     * @return
+     */
+    void labelParam(String parameterName, @DslContext(LabelParamContext) Closure labelParamClosure = null) {
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+
+        LabelParamContext context = new LabelParamContext()
+        ContextHelper.executeInContext(labelParamClosure, context)
+
+        buildParameterNodes[parameterName] = NodeBuilder.newInstance().
+                'org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition' {
+                    name(parameterName)
+                    defaultValue(context.defaultValue)
+                    description(context.description)
+                    allNodesMatchingLabel(context.allNodes)
+                    triggerIfResult(context.trigger)
+                    nodeEligibility(class: "org.jvnet.jenkins.plugins.nodelabelparameter.node.${context.eligibility}")
+                }
+    }
+
+    /**
+     * <project>
      *     <properties>
      *         <hudson.model.ParametersDefinitionProperty>
      *             <parameterDefinitions>
