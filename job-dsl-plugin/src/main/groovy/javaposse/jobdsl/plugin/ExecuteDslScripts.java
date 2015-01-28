@@ -343,6 +343,11 @@ public class ExecuteDslScripts extends Builder {
                     Item template = getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), Item.class);
                     newSeedReference.setTemplateJobName(template.getFullName());
                 }
+                if (item instanceof AbstractProject) {
+                    AbstractProject project = (AbstractProject) item;
+                    String digest = Util.getDigestOf(new FileInputStream(project.getConfigFile().getFile()));
+                    newSeedReference.setDigest(digest);
+                }
 
                 SeedReference oldSeedReference = generatedJobMap.get(item.getFullName());
                 if (!newSeedReference.equals(oldSeedReference)) {

@@ -35,16 +35,17 @@ class SeedJobTransientActionFactorySpec extends Specification {
         AbstractItem seedJob = jenkinsRule.createFreeStyleProject('seed')
         AbstractItem templateJob = jenkinsRule.createFreeStyleProject('template')
         jenkinsRule.jenkins.getDescriptorByType(DescriptorImpl).generatedJobMap[targetJob.fullName] =
-                new SeedReference(templateJob.fullName, seedJob.fullName, null)
+                new SeedReference(templateJob.fullName, seedJob.fullName, 'digest')
 
         when:
         Collection<? extends Action> actions = new SeedJobTransientActionFactory().createFor(targetJob)
 
         then:
         actions.size() == 1
-        actions.first() instanceof SeedJobAction
-        SeedJobAction seedJobAction = actions.first() as SeedJobAction
+        SeedJobAction seedJobAction = actions.grep(SeedJobAction).first() as SeedJobAction
         seedJobAction.seedJob == seedJob
         seedJobAction.templateJob == templateJob
+        seedJobAction.digest == 'digest'
+        seedJobAction.item == targetJob
     }
 }
