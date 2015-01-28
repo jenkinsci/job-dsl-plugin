@@ -41,14 +41,11 @@ class SeedJobTransientActionFactorySpec extends Specification {
         Collection<? extends Action> actions = new SeedJobTransientActionFactory().createFor(targetJob)
 
         then:
-        actions.size() == 2
+        actions.size() == 1
         SeedJobAction seedJobAction = actions.grep(SeedJobAction).first() as SeedJobAction
         seedJobAction.seedJob == seedJob
         seedJobAction.templateJob == templateJob
-
-        WarnConfigChangeAction warnConfigChangeAction =
-                actions.grep(WarnConfigChangeAction).first() as WarnConfigChangeAction
-        warnConfigChangeAction.digest == 'digest'
-        warnConfigChangeAction.item == targetJob
+        seedJobAction.digest == 'digest'
+        seedJobAction.item == targetJob
     }
 }

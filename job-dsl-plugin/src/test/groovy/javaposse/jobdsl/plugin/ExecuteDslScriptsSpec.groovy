@@ -481,14 +481,14 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         !jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getAction(
-                WarnConfigChangeAction).isConfigChanged()
+                SeedJobAction).isConfigChanged()
 
         when:
         jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).description = 'desc'
 
         then:
         jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getAction(
-                WarnConfigChangeAction).isConfigChanged()
+                SeedJobAction).isConfigChanged()
     }
 
     def createJobInFolder() {

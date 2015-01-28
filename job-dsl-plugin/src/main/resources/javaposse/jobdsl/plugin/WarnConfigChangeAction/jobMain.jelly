@@ -1,9 +1,0 @@
-<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
-    <j:if test="${it.configChanged}">
-        <table style="margin-top: 1em; margin-left:1em;">
-            <t:summary icon="warning.gif">
-                <h3 style="color:red">Your manual config change to this job will get overridden by its seed job</h3>
-            </t:summary>
-        </table>
-    </j:if>
-</j:jelly>

@@ -25,10 +25,7 @@ public class SeedJobTransientActionFactory extends TransientActionFactory<Abstra
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
         SeedReference seedReference = descriptor.getGeneratedJobMap().get(target.getFullName());
         if (seedReference != null) {
-            return Arrays.asList(
-                    new WarnConfigChangeAction(target, seedReference.getDigest()),
-                    new SeedJobAction(seedReference.getSeedJobName(), seedReference.getTemplateJobName())
-            );
+            return Arrays.asList(new SeedJobAction(target, seedReference));
         } else {
             return emptyList();
         }
