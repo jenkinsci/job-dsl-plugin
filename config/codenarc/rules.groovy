@@ -69,6 +69,8 @@ ruleset {
     ruleset('rulesets/security.xml') {
         // we don't care because our classes need not to satisfy the Java Beans specification
         exclude 'JavaIoPackageAccess'
+        // we don't care for now
+        exclude 'FileCreateTempFile'
     }
 
     ruleset('rulesets/serialization.xml') {

@@ -54,17 +54,15 @@ class WorkspaceProtocolSpec extends Specification {
     def 'url for project with file'() {
         given:
         AbstractProject project = jenkinsRule.createFreeStyleProject('test-project')
-        AbstractBuild build = project.createExecutable()
-        FilePath workspace = jenkinsRule.jenkins.getWorkspaceFor(project)
-        build.setWorkspace workspace
-        FilePath filePath = workspace.child('files')
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        FilePath filePath = build.workspace.child('file')
 
         when:
         URL url = WorkspaceProtocol.createWorkspaceUrl(build, filePath)
 
         then:
         url.host == 'test-project'
-        url.file == '/files/'
+        url.file == '/file'
 
         when:
         AbstractProject returnedProject = WorkspaceProtocol.getProjectFromWorkspaceUrl(url)
@@ -79,17 +77,62 @@ class WorkspaceProtocolSpec extends Specification {
         given:
         Folder folder = jenkinsRule.jenkins.createProject Folder, 'folder'
         AbstractProject project = folder.createProject FreeStyleProject, 'test-project'
-        AbstractBuild build = project.createExecutable()
-        FilePath workspace = jenkinsRule.jenkins.getWorkspaceFor(project)
-        build.setWorkspace workspace
-        FilePath filePath = workspace.child('files')
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        FilePath filePath = build.workspace.child('file')
 
         when:
         URL url = WorkspaceProtocol.createWorkspaceUrl(build, filePath)
 
         then:
         url.host == 'folder%2Ftest-project'
-        url.file == '/files/'
+        url.file == '/file'
+
+        when:
+        AbstractProject returnedProject = WorkspaceProtocol.getProjectFromWorkspaceUrl(url)
+        FilePath returnedFilePath = WorkspaceProtocol.getFilePathFromUrl(url)
+
+        then:
+        project == returnedProject
+        filePath == returnedFilePath
+    }
+
+    def 'url for project with directory'() {
+        given:
+        AbstractProject project = jenkinsRule.createFreeStyleProject('test-project')
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        FilePath filePath = build.workspace.child('dir')
+        filePath.mkdirs()
+
+        when:
+        URL url = WorkspaceProtocol.createWorkspaceUrl(build, filePath)
+
+        then:
+        url.host == 'test-project'
+        url.file == '/dir/'
+
+        when:
+        AbstractProject returnedProject = WorkspaceProtocol.getProjectFromWorkspaceUrl(url)
+        FilePath returnedFilePath = WorkspaceProtocol.getFilePathFromUrl(url)
+
+        then:
+        project == returnedProject
+        filePath == returnedFilePath
+    }
+
+    def 'url for project in folder with directory'() {
+        given:
+        Folder folder = jenkinsRule.jenkins.createProject Folder, 'folder'
+        AbstractProject project = folder.createProject FreeStyleProject, 'test-project'
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        FilePath filePath = build.workspace.child('dir')
+        filePath.mkdirs()
+
+        when:
+        URL url = WorkspaceProtocol.createWorkspaceUrl(build, filePath)
+
+        then:
+        url.host == 'folder%2Ftest-project'
+        url.file == '/dir/'
 
         when:
         AbstractProject returnedProject = WorkspaceProtocol.getProjectFromWorkspaceUrl(url)

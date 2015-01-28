@@ -1,9 +1,36 @@
+## Migrating to 1.29
+
+### Grab Support
+
+Support for the `@Grab` and `@Grapes` annotation has been [[deprecated|Deprecation-Policy]] and replaced by the
+_Additional classpath_ option of the _Process Job DSLs_ build step.
+
+DSL prior to 1.29
+```groovy
+@Grab(group='commons-lang', module='commons-lang', version='2.4')
+
+import org.apache.commons.lang.WordUtils
+
+println "Hello ${WordUtils.capitalize('world')}"
+```
+
+DSL since 1.29
+```groovy
+import org.apache.commons.lang.WordUtils
+
+println "Hello ${WordUtils.capitalize('world')}"
+```
+
+But to be able to use a library, it has to be added to the _Additional classpath_ option of the _Process Job DSLs_ build
+step (e.g. `lib/commons-lang-2.4.jar` or `lib/*.jar`) and the JAR files have to be in workspace of the seed job (e.g. in
+a `lib` directory). See [[Using Libraries|User-Power-Moves#using-libraries]] for details.
+
 ## Migrating to 1.28
 
 ### HTML Publisher
 
-The non-closure variants of the `report` methods in the `publishHtml` context have been deprecated in favor of a new
-closure variant.
+The non-closure variants of the `report` methods in the `publishHtml` context have been
+[[deprecated|Deprecation-Policy]] in favor of a new closure variant.
 
 DSL prior to 1.28
 ```groovy
@@ -46,8 +73,8 @@ package `javaposse.jobdsl.dsl`.
 
 ### Job Name
 
-The `name` method variant with a closure parameter in the `job` closure is deprecated, use the string argument variant
-instead.
+The `name` method variant with a closure parameter in the `job` closure is [[deprecated|Deprecation-Policy]], use the
+string argument variant instead.
 
 DSL prior to 1.27
 ```groovy
@@ -67,8 +94,8 @@ job {
 
 ### Permissions
 
-In version 1.27 undocumented `permission` methods in the `job` context have been deprecated. Use the `authorization`
-context instead.
+In version 1.27 undocumented `permission` methods in the `job` context have been [[deprecated|Deprecation-Policy]]. Use
+the `authorization` context instead.
 
 DSL prior to 1.27
 ```groovy
@@ -94,8 +121,8 @@ job {
 
 ### Archive JUnit Report
 
-In version 1.26 the archiveJunit method with boolean arguments has been deprecated and has been replaced by a closure
-variant.
+In version 1.26 the archiveJunit method with boolean arguments has been [[deprecated|Deprecation-Policy]] and has been
+replaced by a closure variant.
 
 DSL prior to 1.26
 ```groovy
@@ -125,8 +152,8 @@ See the [[Job Reference]] for further details.
 
 ### Xvnc
 
-In version 1.26 the xvnc method with one boolean argument has been deprecated and has been replaced by a closure
-variant.
+In version 1.26 the xvnc method with one boolean argument has been [[deprecated|Deprecation-Policy]] and has been
+replaced by a closure variant.
 
 DSL prior to 1.26
 ```groovy
@@ -152,7 +179,8 @@ See the [[Job Reference]] for further details.
 
 ### Gerrit Trigger
 
-The usage "short names" in the event closure is deprecated and has been replaced by explicit DSL methods for each event.
+The usage "short names" in the event closure is [[deprecated|Deprecation-Policy]] and has been replaced by explicit DSL
+methods for each event.
 
 DSL prior to 1.26
 ```groovy
@@ -216,7 +244,7 @@ StepContext.metaClass.myStep = { ... }
 
 In version 1.24 the dsl for the build timeout plugin has been modified and the
 generated xml requires a newer version of the build timeout plugin.
-The old dsl still works but has been deprecated.
+The old dsl still works but has been [[deprecated|Deprecation-Policy]].
 
 DSL prior to 1.24
 ```groovy

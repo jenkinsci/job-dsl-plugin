@@ -4,32 +4,24 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
 
 class DslContext implements Context {
+    private static final Set<String> REMOVE_JOB_ACTIONS = ['IGNORE', 'DISABLE', 'DELETE']
 
-    enum RemovedJobAction {
-        IGNORE,
-        DISABLE,
-        DELETE
-    }
-
-    String scriptText = ''
-    DslContext.RemovedJobAction removedJobAction = DslContext.RemovedJobAction.IGNORE
+    String scriptText
+    String removedJobAction = 'IGNORE'
     List<String> externalScripts = []
     boolean ignoreExisting = false
+    String additionalClasspath
 
     void text(String text) {
         this.scriptText = Preconditions.checkNotNull(text)
-    }
-
-    boolean useScriptText() {
-        scriptText.length() > 0
     }
 
     void external(String... dslScripts) {
         externalScripts.addAll(dslScripts)
     }
 
-    String getTargets() {
-        externalScripts.join('\n')
+    void external(Iterable<String> dslScripts) {
+        dslScripts.each { externalScripts << it }
     }
 
     void ignoreExisting(boolean ignore = true) {
@@ -37,10 +29,14 @@ class DslContext implements Context {
     }
 
     void removeAction(String action) {
-        try {
-            this.removedJobAction = DslContext.RemovedJobAction.valueOf(action)
-        } catch (IllegalArgumentException iae) {
-            throw new IllegalArgumentException("removeAction must be one of: ${DslContext.RemovedJobAction.values()}")
-        }
+        Preconditions.checkArgument(
+                REMOVE_JOB_ACTIONS.contains(action),
+                "removeAction must be one of: ${REMOVE_JOB_ACTIONS.join(', ')}"
+        )
+        this.removedJobAction = action
+    }
+
+    void additionalClasspath(String classpath) {
+        this.additionalClasspath = classpath
     }
 }

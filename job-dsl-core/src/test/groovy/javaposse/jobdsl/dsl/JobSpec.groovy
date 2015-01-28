@@ -214,6 +214,52 @@ class JobSpec extends Specification {
         assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + matrixJobXml, xml
     }
 
+    def 'minimal workflow job'() {
+        setup:
+        job.type = JobType.Workflow
+
+        when:
+        def xml = job.xml
+
+        then:
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + workflowXml, xml
+    }
+
+    def 'minimal cps workflow'() {
+        setup:
+        job.type = JobType.Workflow
+
+        when:
+        job.definition {
+            cps {
+            }
+        }
+
+        then:
+        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + workflowXml, job.xml
+    }
+
+    def 'full cps workflow'() {
+        setup:
+        job.type = JobType.Workflow
+
+        when:
+        job.definition {
+            cps {
+                script('foo')
+                sandbox()
+            }
+        }
+
+        then:
+        with(job.node.definition[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition'
+            children().size() == 2
+            script[0].value() == 'foo'
+            sandbox[0].value() == true
+        }
+    }
+
     def 'call authorization'() {
         when:
         job.authorization {
@@ -1395,5 +1441,19 @@ private final matrixJobXml = '''
     <runSequentially>false</runSequentially>
   </executionStrategy>
 </matrix-project>
+'''
+
+    private final workflowXml = '''
+<flow-definition>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">
+    <script/>
+    <sandbox>false</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>
 '''
 }
