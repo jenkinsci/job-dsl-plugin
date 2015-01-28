@@ -8,10 +8,6 @@ import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
 class S3BucketPublisherContext implements Context {
-    private static final List<String> REGIONS = [
-            'GovCloud', 'US_EAST_1', 'US_WEST_1', 'US_WEST_2', 'EU_WEST_1', 'AP_SOUTHEAST_1', 'AP_SOUTHEAST_2',
-            'AP_NORTHEAST_1', 'SA_EAST_1', 'CN_NORTH_1'
-    ]
 
     List<Node> entries = []
     List<Node> metadata = []
@@ -19,7 +15,7 @@ class S3BucketPublisherContext implements Context {
     void entry(String source, String bucketName, String region, @DslContext(S3EntryContext) Closure closure = null) {
         checkArgument(!isNullOrEmpty(source), 'source must be specified')
         checkArgument(!isNullOrEmpty(bucketName), 'bucket must be specified')
-        checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")
+        checkArgument(!isNullOrEmpty(region), 'region must be specified')
 
         S3EntryContext context = new S3EntryContext()
         ContextHelper.executeInContext(closure, context)
