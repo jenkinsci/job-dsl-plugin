@@ -225,4 +225,16 @@ class JobParentSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+
+    def 'workflow'() {
+        when:
+        Job job = parent.job(type: JobType.Workflow) {
+            name 'test'
+        }
+
+        then:
+        job.name == 'test'
+        job.type == JobType.Workflow
+        parent.referencedJobs.contains(job)
+    }
 }

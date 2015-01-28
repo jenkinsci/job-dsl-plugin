@@ -4309,3 +4309,46 @@ job {
 ```
 
 (since 1.26)
+
+# Workflow Definitions
+
+## Groovy CPS DSL
+
+```
+job(type: Workflow) {
+    definition {
+        cps {
+            script(String script)
+            sandbox(boolean sandbox = true)
+        }
+    }
+}
+```
+
+Defines a Groovy CPS DSL definition.
+
+```
+def flow = '''node {
+  git url: 'https://github.com/jglick/simple-maven-project-with-tests.git'
+  def mvnHome = tool 'M3'
+  sh "${mvnHome}/bin/mvn -B verify"
+}'''
+job(type: Workflow) {
+    definition {
+        cps {
+            script(flow)
+        }
+    }
+}
+
+job(type: Workflow) {
+    definition {
+        cps {
+            script(readFileFromWorkspace('project-a-workflow.groovy'))
+            sandbox()
+        }
+    }
+}
+```
+
+(since 1.29)

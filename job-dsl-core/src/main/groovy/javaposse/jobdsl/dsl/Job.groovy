@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
+import javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -799,6 +800,21 @@ class Job extends Item {
         }
     }
 
+    void definition(@DslContext(WorkflowDefinitionContext) Closure definitionClosure) {
+        Preconditions.checkState(type == JobType.Workflow, 'definition can only be applied for Workflow jobs')
+
+        WorkflowDefinitionContext context = new WorkflowDefinitionContext()
+        ContextHelper.executeInContext(definitionClosure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node definition = project / definition
+            if (definition) {
+                project.remove(definition)
+            }
+            project << context.definitionNode
+        }
+    }
+
     Node getNode() {
         Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
 
@@ -845,6 +861,7 @@ class Job extends Item {
             case JobType.Maven: return emptyMavenTemplate
             case JobType.Multijob: return emptyMultijobTemplate
             case JobType.Matrix: return emptyMatrixJobTemplate
+            case JobType.Workflow: return emptyWorkflowTemplate
         }
     }
 
@@ -962,5 +979,19 @@ class Job extends Item {
     <runSequentially>false</runSequentially>
   </executionStrategy>
 </matrix-project>
+'''
+
+    String emptyWorkflowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">
+    <script/>
+    <sandbox>false</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>
 '''
 }
