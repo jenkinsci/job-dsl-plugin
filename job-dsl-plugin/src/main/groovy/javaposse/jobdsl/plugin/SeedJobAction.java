@@ -1,21 +1,18 @@
 package javaposse.jobdsl.plugin;
 
 import hudson.Util;
-import hudson.model.AbstractItem;
 import hudson.model.Action;
 import hudson.model.Item;
+import hudson.model.Items;
 import jenkins.model.Jenkins;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class SeedJobAction implements Action {
-    private static final Logger LOGGER = Logger.getLogger(SeedJobAction.class.getName());
-
-    private final AbstractItem item;
+    private final Item item;
     private final SeedReference seedReference;
 
-    public SeedJobAction(AbstractItem item, SeedReference seedReference) {
+    public SeedJobAction(Item item, SeedReference seedReference) {
         this.item = item;
         this.seedReference = seedReference;
     }
@@ -35,7 +32,7 @@ public class SeedJobAction implements Action {
         return "seedJob";
     }
 
-    public AbstractItem getItem() {
+    public Item getItem() {
         return item;
     }
 
@@ -55,10 +52,9 @@ public class SeedJobAction implements Action {
 
     public boolean isConfigChanged() {
         try {
-            String fileDigest = Util.getDigestOf(item.getConfigFile().getFile());
+            String fileDigest = Util.getDigestOf(Items.getConfigFile(item).getFile());
             return !fileDigest.equals(seedReference.getDigest());
         } catch (IOException e) {
-            LOGGER.warning("Unable to generate file digest, not warning user");
             return false;
         }
     }

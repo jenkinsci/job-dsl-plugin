@@ -1,7 +1,7 @@
 package javaposse.jobdsl.plugin
 
 import hudson.Util
-import hudson.model.AbstractItem
+import hudson.model.Item
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
@@ -10,7 +10,7 @@ class SeedJobActionSpec extends Specification {
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
-    AbstractItem item = Mock(AbstractItem)
+    Item item = Mock(Item)
     SeedReference seedReference = new SeedReference('template', 'seed', 'digest')
 
     def 'icon file name'() {
@@ -39,7 +39,7 @@ class SeedJobActionSpec extends Specification {
 
     def 'no template'() {
         setup:
-        AbstractItem seedJob = jenkinsRule.createFreeStyleProject('seed')
+        Item seedJob = jenkinsRule.createFreeStyleProject('seed')
 
         when:
         SeedJobAction action = new SeedJobAction(item, seedReference)
@@ -51,8 +51,8 @@ class SeedJobActionSpec extends Specification {
 
     def 'with template'() {
         setup:
-        AbstractItem seedJob = jenkinsRule.createFreeStyleProject('seed')
-        AbstractItem templateJob = jenkinsRule.createFreeStyleProject('template')
+        Item seedJob = jenkinsRule.createFreeStyleProject('seed')
+        Item templateJob = jenkinsRule.createFreeStyleProject('template')
 
         when:
         SeedJobAction action = new SeedJobAction(item, seedReference)
@@ -64,7 +64,7 @@ class SeedJobActionSpec extends Specification {
 
     def 'Config is not changed when digest is the same'() {
         setup:
-        AbstractItem item = jenkinsRule.createFreeStyleProject('test')
+        Item item = jenkinsRule.createFreeStyleProject('test')
         seedReference.digest = Util.getDigestOf(item.configFile.file)
 
         when:
@@ -76,7 +76,7 @@ class SeedJobActionSpec extends Specification {
 
     def 'Config is changed when digest is not the same'() {
         setup:
-        AbstractItem item = jenkinsRule.createFreeStyleProject('test')
+        Item item = jenkinsRule.createFreeStyleProject('test')
         seedReference.digest = 'changed'
 
         when:

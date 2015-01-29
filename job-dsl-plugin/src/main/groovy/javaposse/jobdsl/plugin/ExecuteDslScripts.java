@@ -16,6 +16,7 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import hudson.model.Items;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
@@ -343,11 +344,7 @@ public class ExecuteDslScripts extends Builder {
                     Item template = getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), Item.class);
                     newSeedReference.setTemplateJobName(template.getFullName());
                 }
-                if (item instanceof AbstractProject) {
-                    AbstractProject project = (AbstractProject) item;
-                    String digest = Util.getDigestOf(new FileInputStream(project.getConfigFile().getFile()));
-                    newSeedReference.setDigest(digest);
-                }
+                newSeedReference.setDigest(Util.getDigestOf(Items.getConfigFile(item).getFile()));
 
                 SeedReference oldSeedReference = generatedJobMap.get(item.getFullName());
                 if (!newSeedReference.equals(oldSeedReference)) {

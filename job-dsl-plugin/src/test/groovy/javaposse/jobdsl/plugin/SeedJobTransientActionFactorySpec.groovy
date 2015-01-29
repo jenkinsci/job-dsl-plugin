@@ -1,7 +1,7 @@
 package javaposse.jobdsl.plugin
 
-import hudson.model.AbstractItem
 import hudson.model.Action
+import hudson.model.Item
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
@@ -10,17 +10,17 @@ class SeedJobTransientActionFactorySpec extends Specification {
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
-    def 'handles AbstractItems'() {
+    def 'handles Items'() {
         when:
         Class<?> type = new SeedJobTransientActionFactory().type()
 
         then:
-        type == AbstractItem
+        type == Item
     }
 
     def 'no SeedReference'() {
         setup:
-        AbstractItem target = jenkinsRule.createFreeStyleProject('target')
+        Item target = jenkinsRule.createFreeStyleProject('target')
 
         when:
         Collection<? extends Action> actions = new SeedJobTransientActionFactory().createFor(target)
@@ -31,9 +31,9 @@ class SeedJobTransientActionFactorySpec extends Specification {
 
     def 'with SeedReference'() {
         setup:
-        AbstractItem targetJob = jenkinsRule.createFreeStyleProject('target')
-        AbstractItem seedJob = jenkinsRule.createFreeStyleProject('seed')
-        AbstractItem templateJob = jenkinsRule.createFreeStyleProject('template')
+        Item targetJob = jenkinsRule.createFreeStyleProject('target')
+        Item seedJob = jenkinsRule.createFreeStyleProject('seed')
+        Item templateJob = jenkinsRule.createFreeStyleProject('template')
         jenkinsRule.jenkins.getDescriptorByType(DescriptorImpl).generatedJobMap[targetJob.fullName] =
                 new SeedReference(templateJob.fullName, seedJob.fullName, 'digest')
 
