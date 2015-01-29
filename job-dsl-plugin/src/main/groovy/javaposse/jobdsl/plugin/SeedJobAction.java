@@ -1,16 +1,20 @@
 package javaposse.jobdsl.plugin;
 
+import hudson.Util;
 import hudson.model.Action;
 import hudson.model.Item;
+import hudson.model.Items;
 import jenkins.model.Jenkins;
 
-public class SeedJobAction implements Action {
-    private final String seedJobName;
-    private final String templateJobName;
+import java.io.IOException;
 
-    public SeedJobAction(String seedJobName, String templateJobName) {
-        this.seedJobName = seedJobName;
-        this.templateJobName = templateJobName;
+public class SeedJobAction implements Action {
+    private final Item item;
+    private final SeedReference seedReference;
+
+    public SeedJobAction(Item item, SeedReference seedReference) {
+        this.item = item;
+        this.seedReference = seedReference;
     }
 
     @Override
@@ -28,12 +32,30 @@ public class SeedJobAction implements Action {
         return "seedJob";
     }
 
+    public Item getItem() {
+        return item;
+    }
+
     public Item getSeedJob() {
-        return Jenkins.getInstance().getItemByFullName(seedJobName);
+        return Jenkins.getInstance().getItemByFullName(seedReference.getSeedJobName());
     }
 
     public Item getTemplateJob() {
+        String templateJobName = seedReference.getTemplateJobName();
         return templateJobName == null ? null :
                 Jenkins.getInstance().getItemByFullName(templateJobName);
+    }
+
+    public String getDigest() {
+        return seedReference.getDigest();
+    }
+
+    public boolean isConfigChanged() {
+        try {
+            String fileDigest = Util.getDigestOf(Items.getConfigFile(item).getFile());
+            return !fileDigest.equals(seedReference.getDigest());
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
