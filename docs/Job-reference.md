@@ -2638,6 +2638,10 @@ job {
         remoteTrigger(String remoteJenkinsName, String jobName) {
             parameter(String name, String value)
             parameters(Map<String, String> parameters)
+            shouldNotFailBuild(boolean shouldNotFailBuild)
+            pollInterval(int pollInterval)
+            preventRemoteBuildQueue(boolean preventRemoteBuildQueue)
+            blockBuildUntilComplete(boolean blockBuildUntilComplete)
         }
     }
 }
@@ -2657,12 +2661,13 @@ job {
 ```
 
 ````groovy
-// start the job 'test-flow' on the Jenkins instance named 'test-ci' with three parameters
+// start the job 'test-flow' on the Jenkins instance named 'test-ci' with three parameters, blocking until the build completes.
 job {
     steps {
         remoteTrigger('test-ci', 'test-flow') {
             parameter('VERSION', '$PIPELINE_VERSION')
             parameters(BRANCH: 'feature-A', STAGING_REPO_ID: '41234232')
+            blockBuildUntilComplete(true)
         }
     }
 }
