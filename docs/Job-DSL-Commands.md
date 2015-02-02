@@ -358,6 +358,7 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
     // ListView options
     columns {
         buildButton()
+        claim() // since 1.29
         lastBuildConsole() // since 1.23
         lastDuration()
         lastFailure()

@@ -26,6 +26,8 @@ view(type: ListView) {  // since 1.21
         lastFailure()
         lastDuration()
         buildButton()
+        lastBuildConsole() // since 1.23, requires the Extra Columns Plugin
+        claim()            // since 1.29, requires the Claim Plugin
     }
 }
 ```
@@ -400,6 +402,7 @@ columns {
     lastDuration()
     buildButton()
     lastBuildConsole() // since 1.23, requires the Extra Columns Plugin
+    claim()            // since 1.29, requires the Claim Plugin
 }
 ```
 

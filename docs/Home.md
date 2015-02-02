@@ -22,6 +22,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added support for renaming existing Jobs based on a regular expression
  * Added support for the [Repository Connector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin)
  * Added support for the [Workflow Plugin](https://github.com/jenkinsci/workflow-plugin)
+ * Enhabnced support for the [Claim Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Claim+plugin)
  * Enhanced DSL support for the Job DSL plugin
  * Fixed support for JARs in the "Additional classpath" option of the "Process Job DSLs" build step
  * Allow Ant-style patterns in the "Additional classpath" option of the "Process Job DSLs" build step
