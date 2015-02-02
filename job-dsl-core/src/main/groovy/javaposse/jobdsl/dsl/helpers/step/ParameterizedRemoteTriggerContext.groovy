@@ -17,19 +17,19 @@ class ParameterizedRemoteTriggerContext implements Context {
         this.parameters.putAll(parameters)
     }
 
-    void shouldNotFailBuild(boolean shouldNotFailBuild = false) {
+    void shouldNotFailBuild(boolean shouldNotFailBuild = true) {
         this.shouldNotFailBuild = shouldNotFailBuild
     }
 
-    void pollInterval(int pollInterval = 10) {
+    void pollInterval(int pollInterval) {
         this.pollInterval = pollInterval
     }
 
-    boolean preventRemoteBuildQueue(boolean preventRemoteBuildQueue = false) {
+    boolean preventRemoteBuildQueue(boolean preventRemoteBuildQueue = true) {
         this.preventRemoteBuildQueue = preventRemoteBuildQueue
     }
 
-    boolean blockBuildUntilComplete(boolean blockUntilBuildComplete = false) {
+    boolean blockBuildUntilComplete(boolean blockUntilBuildComplete = true) {
         this.blockBuildUntilComplete = blockUntilBuildComplete
     }
 }

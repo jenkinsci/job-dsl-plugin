@@ -2105,6 +2105,8 @@ still-another-dsl.groovy'''
             parameters bar: '2', baz: '3'
             shouldNotFailBuild true
             pollInterval 100
+            preventRemoteBuildQueue true
+            blockBuildUntilComplete true
         }
 
         then:
@@ -2117,8 +2119,8 @@ still-another-dsl.groovy'''
             job[0].value() == 'test'
             shouldNotFailBuild[0].value() == true
             pollInterval[0].value() == 100
-            preventRemoteBuildQueue[0].value() == false
-            blockBuildUntilComplete[0].value() == false
+            preventRemoteBuildQueue[0].value() == true
+            blockBuildUntilComplete[0].value() == true
             parameters[0].value() == 'foo=1\nbar=2\nbaz=3'
             parameterList[0].children().size() == 3
             parameterList[0].string[0].value() == 'foo=1'
