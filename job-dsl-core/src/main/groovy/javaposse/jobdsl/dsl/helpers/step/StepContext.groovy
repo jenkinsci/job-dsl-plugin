@@ -941,10 +941,10 @@ class StepContext implements Context {
             token()
             remoteJenkinsName(remoteJenkins)
             job(jobName)
-            shouldNotFailBuild(false)
-            pollInterval(10)
-            preventRemoteBuildQueue(false)
-            blockBuildUntilComplete(false)
+            shouldNotFailBuild(context.shouldNotFailBuild)
+            pollInterval(context.pollInterval)
+            preventRemoteBuildQueue(context.preventRemoteBuildQueue)
+            blockBuildUntilComplete(context.blockBuildUntilComplete)
             parameters(jobParameters.join('\n'))
             parameterList {
                 if (jobParameters.empty) {
