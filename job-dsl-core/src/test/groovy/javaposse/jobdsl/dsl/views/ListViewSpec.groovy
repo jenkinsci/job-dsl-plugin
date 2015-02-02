@@ -196,12 +196,13 @@ class ListViewSpec extends Specification {
             lastFailure()
             lastDuration()
             buildButton()
+            claim()
         }
 
         then:
         Node root = view.node
         root.columns.size() == 1
-        root.columns[0].value().size() == 7
+        root.columns[0].value().size() == 8
         root.columns[0].value()[0].name() == 'hudson.views.StatusColumn'
         root.columns[0].value()[1].name() == 'hudson.views.WeatherColumn'
         root.columns[0].value()[2].name() == 'hudson.views.JobColumn'
@@ -209,6 +210,7 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[4].name() == 'hudson.views.LastFailureColumn'
         root.columns[0].value()[5].name() == 'hudson.views.LastDurationColumn'
         root.columns[0].value()[6].name() == 'hudson.views.BuildButtonColumn'
+        root.columns[0].value()[7].name() == 'hudson.plugins.claim.ClaimColumn'
     }
 
     def 'call columns twice'() {

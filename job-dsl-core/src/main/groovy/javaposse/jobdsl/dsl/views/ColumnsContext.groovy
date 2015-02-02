@@ -36,4 +36,8 @@ class ColumnsContext implements Context {
     void lastBuildConsole() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildConsoleColumn')
     }
+
+    void claim() {
+        columnNodes << new Node(null, 'hudson.plugins.claim.ClaimColumn')
+    }
 }
