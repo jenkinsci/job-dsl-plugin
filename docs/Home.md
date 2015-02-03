@@ -28,6 +28,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Fixed support for JARs in the "Additional classpath" option of the "Process Job DSLs" build step
  * Allow Ant-style patterns in the "Additional classpath" option of the "Process Job DSLs" build step
  * Support for the `@Grab` and `@Grapes` annotations is deprecated, see [[Migration]]
+ * Deprecated `perModuleEmail` option for Maven jobs ([JENKINS-26284](https://issues.jenkins-ci.org/browse/JENKINS-26284))
  * Removed deprecated build timeout methods, see [[Migration|Migration#migrating-to-124]]
 * 1.28 (January 01 2015)
  * Added support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)

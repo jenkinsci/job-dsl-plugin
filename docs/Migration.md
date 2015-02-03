@@ -25,6 +25,33 @@ But to be able to use a library, it has to be added to the _Additional classpath
 step (e.g. `lib/commons-lang-2.4.jar` or `lib/*.jar`) and the JAR files have to be in workspace of the seed job (e.g. in
 a `lib` directory). See [[Using Libraries|User-Power-Moves#using-libraries]] for details.
 
+### Per Module Email
+
+The `perModuleEmail` option has been deprecated because the e-mail notification settings have changed in newer versions
+of the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin), see
+[JENKINS-26284](https://issues.jenkins-ci.org/browse/JENKINS-26284).
+
+DSL prior to 1.29
+```groovy
+job(type: Maven) {
+    perModuleEmail(true)
+}
+```
+
+DSL since 1.29
+```groovy
+job(type: Maven) {
+    configure {
+        it / reporters << 'hudson.maven.reporters.MavenMailer' {
+            recipients()
+            dontNotifyEveryUnstableBuild(false)
+            sendToIndividuals(false)
+            perModuleEmail(true)
+        }
+    }
+}
+```
+
 ## Migrating to 1.28
 
 ### HTML Publisher

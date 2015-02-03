@@ -309,7 +309,7 @@ job(Map<String, ?> arguments = [:]) {
     mavenOpts(String mavenOpts)
     mavenInstallation(String name) // since 1.20
     localRepository(LocalRepositoryLocation location)
-    perModuleEmail(boolean shouldSendEmailPerModule)
+    perModuleEmail(boolean shouldSendEmailPerModule) // deprecated since 1.29
     archivingDisabled(boolean shouldDisableArchiving)
     runHeadless(boolean shouldRunHeadless)
     preBuildSteps(Closure stepsClosure)
