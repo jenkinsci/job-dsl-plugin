@@ -39,7 +39,7 @@ class ListViewSectionContext implements Context {
         executeInContext(jobFiltersClosure, jobFiltersContext)
     }
 
-    void columns(@DslContext(ColumnsContext) columnsClosure) {
+    void columns(@DslContext(ColumnsContext) Closure columnsClosure) {
         executeInContext(columnsClosure, columnsContext)
     }
 }

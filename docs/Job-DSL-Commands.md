@@ -367,17 +367,16 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
         status()
         weather()
     }
+    jobFilters { // since 1.29
+        regex(Closure regexFilterClosure)
+        status(Closure statusFilterClosure)
+    }
     jobs {
         name(String jobName)
         names(String... jobNames)
         regex(String regex)
     }
     statusFilter(StatusFilter filter)
-
-    jobFilters { // Since 1.28
-        regex(Closure regexFilterClosure)
-        status(Closure statusFilterClosure)
-    }
 
     // BuildPipelineView options
     alwaysAllowManualTrigger(boolean alwaysAllowManualTrigger = true)

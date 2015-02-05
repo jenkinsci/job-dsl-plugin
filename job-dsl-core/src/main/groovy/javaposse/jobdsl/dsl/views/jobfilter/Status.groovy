@@ -6,5 +6,4 @@ enum Status {
     ABORTED,
     DISABLED,
     STABLE
-
 }

@@ -18,14 +18,14 @@ view(type: ListView) {  // since 1.21
         names(String... jobNames)
         regex(String regex)
     }
-    jobFilters { // since 1.28
+    jobFilters { // since 1.29
         regex {
-            matchType(MatchType matchType) // what to do with matching Jobs
-            matchValue(RegexMatchValue matchValue) // what to match - one of NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE, NODE
+            matchType(MatchType matchType) // what to do with matching jobs
+            matchValue(RegexMatchValue matchValue) // what to match
             regex(String regex) // the regular expression to match against
         }
         status {
-            matchType(MatchType matchType) // what to do with matching Jobs
+            matchType(MatchType matchType) // what to do with matching jobs
             status(Status... status) // Status to match
         }
     }
@@ -57,7 +57,7 @@ view(type: ListView) {
     }
     jobFilters {
         status {
-            status(UNSTABLE)
+            status(Status.UNSTABLE)
         }
     }
     columns {
@@ -163,8 +163,8 @@ view(type: SectionedView) {
             }
             jobFilters {
                 regex {
-                    matchValue DESCRIPTION
-                    regex '.*-project-B-.*'
+                    matchValue(RegexMatchValue.DESCRIPTION)
+                    regex('.*-project-B-.*')
                 }
             }
             columns {
@@ -414,29 +414,46 @@ jobs {
 
 ### Job Filters
 
-Require the [View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters).
-Adds or removes jobs from the view by specifying filters. Each filter needs to specify if it includes or excludes jobs from the view by calling one
-of MatchType: INCLUDE_MATCHED, INCLUDE_UNMATCHED, EXCLUDE_MATCHED, EXCLUDE_UNMATCHED.
-
-Currently supported are filtering by regular expression and job status:
-
 ```groovy
+view(type: ListView) {
     jobFilters {
         regex {
             matchType(MatchType matchType) // what to do with matching Jobs
-            matchValue(RegexMatchValue matchValue) // what to match - one of NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE, NODE
+            matchValue(RegexMatchValue matchValue) // what to match
             regex(String regex) // the regular expression to match against
         }
-    }
-```
-
-```groovy
-    jobFilters {
         status {
             matchType(MatchType matchType) // what to do with matching Jobs
             status(Status... status)
         }
     }
+}
+```
+
+Adds or removes jobs from the view by specifying filters. Each filter needs to specify if it includes or excludes jobs
+from the view by calling `matchType` which defaults to `MatchType.INCLUDE_MATCHED`. Requires the
+[View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters).
+
+Possible values for `matchType` are `MatchType.INCLUDE_MATCHED`, `MatchType.INCLUDE_UNMATCHED`,
+`MatchType.EXCLUDE_MATCHED` or `MatchType.EXCLUDE_UNMATCHED`. Possible values for `matchValue` are
+`RegexMatchValue.NAME`, `RegexMatchValue.DESCRIPTION`, `RegexMatchValue.SCM`, `RegexMatchValue.EMAIL`,
+`RegexMatchValue.MAVEN`, `RegexMatchValue.SCHEDULE` or `RegexMatchValue.NODE`. Possible values for `status` are
+`Status.UNSTABLE`, `Status.FAILED`, `Status.ABORTED`, `Status.DISABLED` or `Status.STABLE`.
+
+```groovy
+view(type: ListView) {
+    jobFilters {
+        regex {
+            matchType(MatchType.EXCLUDE_MATCHED)
+            matchValue(RegexMatchValue.DESCRIPTION)
+            regex('.*project-a.*')
+        }
+        status {
+            matchType(MatchType.INCLUDE_MATCHED)
+            status(Status.FAILED)
+        }
+    }
+}
 ```
 
 ### Columns

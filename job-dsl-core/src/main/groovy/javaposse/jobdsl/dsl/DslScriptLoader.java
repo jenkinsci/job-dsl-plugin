@@ -189,6 +189,9 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.views.ListView.StatusFilter");
         icz.addImports("javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle");
         icz.addImports("javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting");
+        icz.addImports("javaposse.jobdsl.dsl.views.jobfilter.Status");
+        icz.addImports("javaposse.jobdsl.dsl.views.jobfilter.MatchType");
+        icz.addImports("javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue");
         config.addCompilationCustomizers(icz);
 
         GrabDeprecationTransformation grabDeprecationTransformation = new GrabDeprecationTransformation(jobManagement);
