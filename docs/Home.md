@@ -16,7 +16,7 @@ organize a SCM repository for Job DSL scripts.
 And finally, if you want to get more involved, [here's how...](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)
 
 ## Release Notes
-* 1.29 (unreleased)
+* 1.29 (February 05 2015)
  * Show seed job and template job info in the generated jobs
  * Added [CoreMirror](https://codemirror.net/) support for the DSL script input field
  * Added support for renaming existing Jobs based on a regular expression
