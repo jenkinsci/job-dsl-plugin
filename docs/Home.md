@@ -22,6 +22,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added support for renaming existing Jobs based on a regular expression
  * Added support for the [Repository Connector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin)
  * Added support for the [Workflow Plugin](https://github.com/jenkinsci/workflow-plugin)
+ * Added support for the [View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters)
  * Enhanced support for the [Parameterized Remote Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
  * Enhanced support for the [Claim Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Claim+plugin)
  * Enhanced DSL support for the Job DSL plugin

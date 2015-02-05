@@ -42,7 +42,7 @@ class SectionsContext implements Context {
                     string(job)
                 }
             }
-            jobFilters()
+            jobFilters(context.jobFiltersContext.filterNodes)
             name(context.name)
             if (context.jobsContext.regex) {
                 includeRegex(context.jobsContext.regex)

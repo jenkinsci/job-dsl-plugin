@@ -14,6 +14,7 @@ class ListViewSectionContext implements Context {
     String width = 'FULL'
     String alignment = 'CENTER'
     JobsContext jobsContext = new JobsContext()
+    JobFiltersContext jobFiltersContext = new JobFiltersContext()
     ColumnsContext columnsContext = new ColumnsContext()
 
     void name(String name) {
@@ -32,6 +33,10 @@ class ListViewSectionContext implements Context {
 
     void jobs(@DslContext(JobsContext) Closure jobsClosure) {
         executeInContext(jobsClosure, jobsContext)
+    }
+
+    void jobFilters(@DslContext(JobFiltersContext) Closure jobFiltersClosure) {
+        executeInContext(jobFiltersClosure, jobFiltersContext)
     }
 
     void columns(@DslContext(ColumnsContext) Closure columnsClosure) {
