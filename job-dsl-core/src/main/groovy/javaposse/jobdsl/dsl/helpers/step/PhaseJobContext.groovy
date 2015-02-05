@@ -25,6 +25,7 @@ class PhaseJobContext implements Context {
     List<String> props = []
     boolean disableJob = false
     String killPhaseCondition = 'FAILURE'
+    Closure configureClosure
 
     PhaseJobContext(JobManagement jobManagement, String jobName, boolean currentJobParameters, boolean exposedScm) {
         this.jobManagement = jobManagement
@@ -120,5 +121,9 @@ class PhaseJobContext implements Context {
         )
 
         this.killPhaseCondition = killPhaseCondition
+    }
+
+    void configure(Closure configureClosure) {
+        this.configureClosure = configureClosure
     }
 }
