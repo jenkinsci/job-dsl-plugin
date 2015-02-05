@@ -418,7 +418,7 @@ localRepository(LocalToWorkspace)
 
 ## Email Per Module
 ```groovy
-perModuleEmail(boolean shouldSendEmailPerModule)
+perModuleEmail(boolean shouldSendEmailPerModule) // deprecated since 1.29
 ```
 
 Enable or disable email notifications for each Maven module.

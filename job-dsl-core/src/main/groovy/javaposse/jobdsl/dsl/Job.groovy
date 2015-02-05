@@ -702,7 +702,9 @@ class Job extends Item {
      * If set, Jenkins will send an e-mail notifications for each module, defaults to <code>false</code>.
      * @param perModuleEmail set to <code>true</code> to enable per module e-mail notifications
      */
+    @Deprecated
     void perModuleEmail(boolean perModuleEmail) {
+        jobManagement.logDeprecationWarning()
         Preconditions.checkState(type == JobType.Maven, 'perModuleEmail can only be applied for Maven jobs')
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -928,7 +930,6 @@ class Job extends Item {
   <concurrentBuild>false</concurrentBuild>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
-  <perModuleEmail>false</perModuleEmail>
   <ignoreUpstremChanges>true</ignoreUpstremChanges>
   <archivingDisabled>false</archivingDisabled>
   <resolveDependencies>false</resolveDependencies>

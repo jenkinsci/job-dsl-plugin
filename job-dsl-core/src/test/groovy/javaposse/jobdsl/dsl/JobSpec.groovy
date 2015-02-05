@@ -1388,7 +1388,6 @@ class JobSpec extends Specification {
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
-    <perModuleEmail>false</perModuleEmail>
     <ignoreUpstremChanges>true</ignoreUpstremChanges>
     <archivingDisabled>false</archivingDisabled>
     <resolveDependencies>false</resolveDependencies>
