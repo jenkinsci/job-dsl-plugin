@@ -22,9 +22,7 @@ jenkinsPlugin {
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
-    maskClasses = 'groovy.grape'
     compatibleSinceVersion = '1.35'
-    pluginFirstClassLoader = true
     localizerOutputDir = "$generatedSourcesDir/localizer"
     developers {
         developer {
@@ -59,17 +57,8 @@ test {
     systemProperty 'java.io.tmpdir', temporaryDir.absolutePath
 }
 
-configurations {
-    forceInclude {}
-}
-
-jpi {
-    classpath += configurations.forceInclude
-}
-
 dependencies {
     compile project(':job-dsl-core')
-    forceInclude "org.codehaus.groovy:groovy-all:${groovyVersion}"
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'

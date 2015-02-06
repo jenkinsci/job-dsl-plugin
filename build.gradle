@@ -75,7 +75,6 @@ project(':job-dsl-core') {
     dependencies {
         astCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
         compile 'commons-codec:commons-codec:1.8' // for Perforce
-        compile 'org.apache.ivy:ivy:2.2.0' // Groovy optional dependency, needed for @Grab
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile 'org.jenkins-ci:version-number:1.1'
         compile 'org.jvnet.hudson:xstream:1.4.7-jenkins-1'
