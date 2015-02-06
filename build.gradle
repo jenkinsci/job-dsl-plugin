@@ -84,6 +84,7 @@ project(':job-dsl-core') {
     jar {
         manifest {
             attributes 'Main-Class': project.mainClassName
+            attributes 'Implementation-Version': version
         }
     }
 
