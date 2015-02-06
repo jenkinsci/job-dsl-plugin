@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
     <j:set var="allConfigFiles" value="${it.findAllGeneratedConfigFiles()}"/>
     <j:if test="${!allConfigFiles.isEmpty()}">
