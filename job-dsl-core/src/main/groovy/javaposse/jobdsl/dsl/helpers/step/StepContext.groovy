@@ -654,7 +654,6 @@ class StepContext implements Context {
 
                     // Apply overrides
                     if (jobInPhase.configureClosure) {
-                        jobInPhase.configureClosure.resolveStrategy = Closure.DELEGATE_FIRST
                         WithXmlAction action = new WithXmlAction(jobInPhase.configureClosure)
                         action.execute(phaseJobNode)
                     }
