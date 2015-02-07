@@ -637,7 +637,7 @@ class StepContext implements Context {
             continuationCondition phaseContext.continuationCondition
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
-                    'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
+                    Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
                         jobName jobInPhase.jobName
                         currParams jobInPhase.currentJobParameters
                         exposedSCM jobInPhase.exposedScm
@@ -650,6 +650,11 @@ class StepContext implements Context {
                         } else {
                             configs('class': 'java.util.Collections$EmptyList')
                         }
+                    }
+
+                    if (jobInPhase.configureClosure) {
+                        WithXmlAction action = new WithXmlAction(jobInPhase.configureClosure)
+                        action.execute(phaseJobNode)
                     }
                 }
             }

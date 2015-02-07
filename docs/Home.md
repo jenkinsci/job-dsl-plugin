@@ -17,6 +17,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 
 ## Release Notes
 * 1.30 (unreleased)
+ * Added configure block to the Multijob job context
 * 1.29 (February 05 2015)
  * Show seed job and template job info in the generated jobs
  * Added [CoreMirror](https://codemirror.net/) support for the DSL script input field
