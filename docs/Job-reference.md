@@ -2307,7 +2307,6 @@ job(type: Multijob) {
                 configure { phaseJobConfig ->
                   phaseJobConfig / enableCondition << 'true'
                   phaseJobConfig / condition << '${RUN_JOB} == "true"'
-                  phaseJobConfig / customConfig << 'yes'
                 }
             }
         }

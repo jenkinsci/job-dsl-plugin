@@ -652,13 +652,10 @@ class StepContext implements Context {
                         }
                     }
 
-                    // Apply overrides
                     if (jobInPhase.configureClosure) {
                         WithXmlAction action = new WithXmlAction(jobInPhase.configureClosure)
                         action.execute(phaseJobNode)
                     }
-
-                    phaseJobNode
                 }
             }
         }
