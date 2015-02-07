@@ -700,6 +700,65 @@ class ScmContextSpec extends Specification {
         }
     }
 
+    def 'call git scm with inverse build chooser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            strategy {
+                inverse()
+            }
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.buildChooser.size() == 1
+        context.scmNode.buildChooser[0].attribute('class') == 'hudson.plugins.git.util.InverseBuildChooser'
+    }
+
+    def 'call git scm with ancestry build chooser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            strategy {
+                ancestry(5, 'sha1')
+            }
+        }
+
+        then:
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.3.1')
+        context.scmNode != null
+        context.scmNode.buildChooser.size() == 1
+        context.scmNode.buildChooser[0].attribute('class') == 'hudson.plugins.git.util.AncestryBuildChooser'
+        context.scmNode.buildChooser[0].children().size() == 2
+        context.scmNode.buildChooser[0].maximumAgeInDays[0].text() == '5'
+        context.scmNode.buildChooser[0].ancestorCommitSha1[0].text() == 'sha1'
+    }
+
+    def 'call git scm with gerrit trigger build chooser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            strategy {
+                gerritTrigger()
+            }
+        }
+
+        then:
+        1 * mockJobManagement.requireMinimumPluginVersion('gerrit-trigger', '2.0')
+        context.scmNode != null
+        context.scmNode.buildChooser.size() == 1
+        context.scmNode.buildChooser[0].attribute('class') ==
+                    'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser'
+        context.scmNode.buildChooser[0].children().size() == 1
+        context.scmNode.buildChooser[0].separator[0].text() == '#'
+    }
+
     def 'call git scm with credentials'() {
         setup:
         mockJobManagement.getCredentialsId('ci-user') >> '0815'

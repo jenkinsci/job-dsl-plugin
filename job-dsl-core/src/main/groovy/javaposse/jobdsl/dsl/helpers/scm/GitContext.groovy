@@ -28,6 +28,7 @@ class GitContext implements Context {
     Node mergeOptions
     Integer cloneTimeout
     List<Node> extensions = []
+    final StrategyContext strategyContext = new StrategyContext(jobManagement)
 
     GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
         this.jobManagement = jobManagement
@@ -54,6 +55,10 @@ class GitContext implements Context {
         if (remoteContext.browser) {
             gitBrowserContext.browser = remoteContext.browser
         }
+    }
+
+    void strategy(@DslContext(StrategyContext) Closure strategyClosure) {
+        executeInContext(strategyClosure, strategyContext)
     }
 
     void mergeOptions(String remote = null, String branch) {

@@ -191,6 +191,9 @@ class ScmContext implements Context {
         if (gitContext.mergeOptions) {
             gitNode.children().add(gitContext.mergeOptions)
         }
+        if (gitContext.strategyContext.buildChooser) {
+            gitNode.children().add(gitContext.strategyContext.buildChooser)
+        }
 
         // Apply Context
         if (gitContext.withXmlClosure) {

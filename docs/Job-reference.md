@@ -574,6 +574,11 @@ git {
     browser { // since 1.26
         stash(String url) // URL to the Stash repository, optional
     }
+    strategy { // since 1.30
+        inverse()
+        ancestry(int maxAgeInDays, String commit)
+        gerritTrigger()
+    }
     configure(Closure configure) // optional configure block, the GitSCM node is passed in
 }
 
