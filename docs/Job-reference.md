@@ -2263,7 +2263,7 @@ job(type: Multijob) {
                 disableJob(boolean exposedScm = true) // since 1.25
                 killPhaseCondition(String killPhaseCondition) // since 1.25
                 nodeLabel(String paramName, String nodeLabel) // since 1.26
-                configure(Closure configClosure) // since 1.29
+                configure(Closure configClosure) // since 1.30
             }
         }
     }
