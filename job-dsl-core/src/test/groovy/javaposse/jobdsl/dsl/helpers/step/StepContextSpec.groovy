@@ -945,6 +945,9 @@ class StepContextSpec extends Specification {
                         prop4: 'value4'
                 ])
                 nodeLabel('nodeParam', 'node_label')
+                configure { phaseJobConfig ->
+                    phaseJobConfig / customConfig << 'foobar'
+                }
             }
         }
 
@@ -953,6 +956,10 @@ class StepContextSpec extends Specification {
         def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
         jobNode.currParams[0].value() == false
         jobNode.exposedSCM[0].value() == true
+
+        def customConfigNode = jobNode.customConfig[0]
+        customConfigNode.value() == 'foobar'
+
         def configsNode = jobNode.configs[0]
         def boolParams = configsNode.'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
         boolParams.children().size() == 3
