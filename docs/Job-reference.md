@@ -574,12 +574,12 @@ git {
     browser { // since 1.26
         stash(String url) // URL to the Stash repository, optional
     }
-    configure(Closure configure) // optional configure block, the GitSCM node is passed in
-    strategy { // since 1.29
+    strategy { // since 1.30
         inverse()
-        ancestry(int maxAge /* days */, String commit)
+        ancestry(int maxAgeInDays, String commit)
         gerritTrigger()
     }
+    configure(Closure configure) // optional configure block, the GitSCM node is passed in
 }
 
 git(String url, String branch = null, Closure configure = null)

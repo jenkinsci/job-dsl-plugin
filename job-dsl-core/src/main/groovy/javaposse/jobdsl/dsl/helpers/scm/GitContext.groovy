@@ -28,6 +28,7 @@ class GitContext implements Context {
     Node mergeOptions
     Integer cloneTimeout
     List<Node> extensions = []
+    final StrategyContext strategyContext = new StrategyContext(jobManagement)
 
     GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
         this.jobManagement = jobManagement
@@ -56,16 +57,8 @@ class GitContext implements Context {
         }
     }
 
-    void wipeWorkspace() {
-        extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.WipeWorkspace' {
-        }
-    }
-    void strategy(Closure strategyClosure) {
-        StrategyContext strategyContext = new StrategyContext(withXmlActions)
+    void strategy(@DslContext(StrategyContext) Closure strategyClosure) {
         executeInContext(strategyClosure, strategyContext)
-        strategyContext.settings.each {
-            extensions << it
-        }
     }
 
     void mergeOptions(String remote = null, String branch) {

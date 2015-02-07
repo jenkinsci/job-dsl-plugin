@@ -1,53 +1,51 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.JobManagement
 
 class StrategyContext implements Context {
-    private final List<WithXmlAction> withXmlActions
+    private final JobManagement jobManagement
 
-    List<Node> settings = []
+    Node buildChooser
 
-    StrategyContext(List<WithXmlAction> withXmlActions) {
-        this.withXmlActions = withXmlActions
+    StrategyContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
     }
-/*
-    <extensions>
-      <hudson.plugins.git.extensions.impl.BuildChooserSetting>
-        <buildChooser
-            class="com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser"
-            plugin="gerrit-trigger@2.12.0">
-          <separator>#</separator>
-        </buildChooser>
-      </hudson.plugins.git.extensions.impl.BuildChooserSetting>
-      <hudson.plugins.git.extensions.impl.BuildChooserSetting>
-        <buildChooser class="hudson.plugins.git.util.InverseBuildChooser"/>
-      </hudson.plugins.git.extensions.impl.BuildChooserSetting>
-    </extensions>
 
- */
+    /**
+     * <buildChooser class="com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser">
+     *     <separator>#</separator>
+     * </buildChooser>
+     */
     void gerritTrigger() {
-        settings << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.BuildChooserSetting' {
-            buildChooser(
-                class: 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser',
-                plugin: 'gerrit-trigger@2.12.0') {
-                separator('#')
-            }
+        jobManagement.requireMinimumPluginVersion('gerrit-trigger', '2.0')
+
+        buildChooser = NodeBuilder.newInstance().buildChooser(
+                class: 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser'
+        ) {
+            separator('#')
         }
     }
 
+    /**
+     * <buildChooser class="hudson.plugins.git.util.InverseBuildChooser"/>
+     */
     void inverse() {
-        settings << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.BuildChooserSetting' {
-            buildChooser(class: 'hudson.plugins.git.util.InverseBuildChooser')
-        }
+        buildChooser = NodeBuilder.newInstance().buildChooser(class: 'hudson.plugins.git.util.InverseBuildChooser')
     }
 
-    void ancestry(int maxAge /* days */, String commit) {
-        settings << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.BuildChooserSetting' {
-            buildChooser(class: 'hudson.plugins.git.util.AncestryBuildChooser') {
-                maximumAgeInDays(maxAge)
-                ancestorCommitSha1(commit)
-            }
+    /**
+     * <buildChooser class="hudson.plugins.git.util.AncestryBuildChooser">
+     *     <maximumAgeInDays>30</maximumAgeInDays>
+     *     <ancestorCommitSha1>7a276ba867d84fb7823c8fbd9a491c2463de2a77</ancestorCommitSha1>
+     * </buildChooser>
+     */
+    void ancestry(int maxAge, String commit) {
+        jobManagement.requireMinimumPluginVersion('git', '2.3.1')
+
+        buildChooser = NodeBuilder.newInstance().buildChooser(class: 'hudson.plugins.git.util.AncestryBuildChooser') {
+            maximumAgeInDays(maxAge)
+            ancestorCommitSha1(commit)
         }
     }
 }
