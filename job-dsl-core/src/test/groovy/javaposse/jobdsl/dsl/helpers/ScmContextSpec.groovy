@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlActionSpec
+import javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy
 import spock.lang.Specification
 
 class ScmContextSpec extends Specification {
@@ -1068,6 +1069,342 @@ class ScmContextSpec extends Specification {
         context.scmNode != null
         context.scmNode.browser[0].attributes()['class'] == 'hudson.scm.browsers.ViewSVN'
         context.scmNode.browser[0].url[0].value() == 'http://mycompany.com/viewsvn/repo_name'
+    }
+
+    def 'call svn with no locations'() {
+        when:
+        context.svn {
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'call svn with one location'() {
+        when:
+        context.svn {
+            location('url', 'dir')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
+    }
+
+    def 'call svn with multiple locations'() {
+        when:
+        context.svn {
+            location('url1', 'dir1')
+            location('url2', 'dir2')
+            location('url3', 'dir3')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 3
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url1'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir1'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].remote[0].value() == 'url2'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].local[0].value() == 'dir2'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].remote[0].value() == 'url3'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].local[0].value() == 'dir3'
+    }
+
+    def 'call svn without specifying a local dir for the location'() {
+        when:
+        context.svn {
+            location('url')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
+    }
+
+    def 'call svn without checkout strategy'() {
+        when:
+        context.svn {
+            location('url')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.workspaceUpdater[0].attributes()['class'] == 'hudson.scm.subversion.UpdateUpdater'
+    }
+
+    def 'call svn with checkout strategy'() {
+        when:
+        context.svn {
+            location('url')
+            checkoutStrategy(strategy)
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.workspaceUpdater[0].attributes()['class'] == workspaceUpdaterClass
+
+        where:
+        strategy                             | workspaceUpdaterClass
+        SvnCheckoutStrategy.Update           | 'hudson.scm.subversion.UpdateUpdater'
+        SvnCheckoutStrategy.Checkout         | 'hudson.scm.subversion.CheckoutUpdater'
+        SvnCheckoutStrategy.UpdateWithClean  | 'hudson.scm.subversion.UpdateWithCleanUpdater'
+        SvnCheckoutStrategy.UpdateWithRevert | 'hudson.scm.subversion.UpdateWithRevertUpdater'
+    }
+
+    def 'call svn without excluded regions'() {
+        when:
+        context.svn {
+            location('url')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedRegions[0].value() == ''
+    }
+
+    def 'call svn with single excluded region'() {
+        when:
+        context.svn {
+            location('url')
+            excludedRegions('exreg')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedRegions[0].value() == 'exreg'
+    }
+
+    def 'call svn with multiple excluded regions'() {
+        when:
+        context.svn {
+            location('url')
+            excludedRegions('exreg1')
+            excludedRegions('exreg2')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedRegions[0].value() == 'exreg1\nexreg2'
+    }
+
+    def 'call svn with a list of excluded regions'() {
+        when:
+        context.svn {
+            location('url')
+            excludedRegions('exreg1', 'exreg2')
+            excludedRegions(['exreg3', 'exreg4'])
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedRegions[0].value() == 'exreg1\nexreg2\nexreg3\nexreg4'
+    }
+
+    def 'call svn without included regions'() {
+        when:
+        context.svn {
+            location('url')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.includedRegions[0].value() == ''
+    }
+
+    def 'call svn with single included region'() {
+        when:
+        context.svn {
+            location('url')
+            includedRegions('increg')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.includedRegions[0].value() == 'increg'
+    }
+
+    def 'call svn with multiple included regions'() {
+        when:
+        context.svn {
+            location('url')
+            includedRegions('increg1')
+            includedRegions('increg2')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.includedRegions[0].value() == 'increg1\nincreg2'
+    }
+
+    def 'call svn with a list of included regions'() {
+        when:
+        context.svn {
+            location('url')
+            includedRegions('increg1', 'increg2')
+            includedRegions(['increg3', 'increg4'])
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.includedRegions[0].value() == 'increg1\nincreg2\nincreg3\nincreg4'
+    }
+
+    def 'call svn without excluded users'() {
+        when:
+        context.svn {
+            location('url')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedUsers[0].value() == ''
+    }
+
+    def 'call svn with single excluded user'() {
+        when:
+        context.svn {
+            location('url')
+            excludedUsers('user')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedUsers[0].value() == 'user'
+    }
+
+    def 'call svn with multiple excluded users'() {
+        when:
+        context.svn {
+            location('url')
+            excludedUsers('user1')
+            excludedUsers('user2')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedUsers[0].value() == 'user1\nuser2'
+    }
+
+    def 'call svn with a list of excluded users'() {
+        when:
+        context.svn {
+            location('url')
+            excludedUsers('user1', 'user2')
+            excludedUsers(['user3', 'user4'])
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedUsers[0].value() == 'user1\nuser2\nuser3\nuser4'
+    }
+
+    def 'call svn without excluded commit messages'() {
+        when:
+        context.svn {
+            location('url')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedCommitMessages[0].value() == ''
+    }
+
+    def 'call svn with single excluded commit message'() {
+        when:
+        context.svn {
+            location('url')
+            excludedCommitMessages('commit')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedCommitMessages[0].value() == 'commit'
+    }
+
+    def 'call svn with multiple excluded commit messages'() {
+        when:
+        context.svn {
+            location('url')
+            excludedCommitMessages('commit1')
+            excludedCommitMessages('commit2')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedCommitMessages[0].value() == 'commit1\ncommit2'
+    }
+
+    def 'call svn with a list of excluded commit messages'() {
+        when:
+        context.svn {
+            location('url')
+            excludedCommitMessages('commit1', 'commit2')
+            excludedCommitMessages(['commit3', 'commit4'])
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedCommitMessages[0].value() == 'commit1\ncommit2\ncommit3\ncommit4'
+    }
+
+    def 'call svn with a mix of excluded commit message specifications'() {
+        when:
+        context.svn {
+            location('url')
+            excludedCommitMessages('commit1', 'commit2')
+            excludedCommitMessages('commit3')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedCommitMessages[0].value() == 'commit1\ncommit2\ncommit3'
+    }
+
+    def 'call svn without excluded revprop'() {
+        when:
+        context.svn {
+            location('url')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedRevprop[0].value() == ''
+    }
+
+    def 'call svn with an excluded revprop'() {
+        when:
+        context.svn {
+            location('url')
+            excludedRevisionProperty('revprop')
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.excludedRevprop[0].value() == 'revprop'
+    }
+
+    def 'call svn with configure'() {
+        when:
+        context.svn {
+            location('url')
+            configure { svnNode ->
+                svnNode << testNode('testValue')
+            }
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.testNode[0].value() == 'testValue'
+    }
+
+    private static void isValidSvnScmNode(scmNode) {
+        assert scmNode != null
+        assert scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
+        assert scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() > 0
     }
 
     def 'call p4 with all parameters'() {

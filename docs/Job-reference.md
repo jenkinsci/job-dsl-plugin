@@ -654,30 +654,109 @@ git {
 ## Subversion
 
 ```groovy
-svn(String svnUrl, String localDir='.', Closure configure = null)
-```
-
-Add Subversion source. 'svnUrl' is self explanatory. 'localDir' sets the <local> tag (which is set to '.' if you leave this arg out). The Configure block is handed a hudson.scm.SubversionSCM node.
-
-You can use the Configure block to configure additional svn nodes such as a <browser> node. First a FishEyeSVN example:
-
-```groovy
-svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-    svnNode / browser(class:'hudson.scm.browsers.FishEyeSVN') {
-        url 'http://mycompany.com/fisheye/repo_name'
-        rootModule 'my_root_module'
+job {
+    scm {
+        svn(String svnUrl, Closure configure = null)
+        svn(String svnUrl, String localDir, Closure configure = null)
+        svn { // since 1.30
+            location(String svnUrl, String localDir = '.') // at least on required
+            checkoutStrategy(SvnCheckoutStrategy strategy)
+            excludedRegions(String... patterns)
+            excludedRegions(Iterator<String> patterns)
+            includedRegions(String... patterns)
+            includedRegions(Iterable<String> patterns)
+            excludedUsers(String... users)
+            excludedUsers(Iterable<String> users)
+            excludedCommitMessages(String... patterns)
+            excludedCommitMessages(Iterable<String> patterns)
+            excludedRevisionProperty(String revisionProperty)
+            configure(Closure configure) // the scm node is passed into the configure block
+        }
     }
 }
 ```
 
-and now a ViewSVN example:
+Adds a Subversion SCM source. The first two variants are shortcuts for simpler SVN configurations, the last variant
+should be used for advanced configurations.
+
+When using the advanced variant, at least one location must be configured in order for the SVN plugin to operate
+correctly. By default, files are checked out into the workspace directory. To change this behaviour specify an
+alternate directory using the `localDir` parameter. Directories specified using `localDir` are relative to the workspace
+directory.
+
+Valid values for `checkoutStrategy` are `SvnCheckoutStrategy.Update` (the default), `SvnCheckoutStrategy.Checkout`,
+`SvnCheckoutStrategy.UpdateWithClean` or `SvnCheckoutStrategy.UpdateWithRevert`.
+
+`excludedRegions`, `includedRegions`, `excludedUsers` and `excludedCommitMessages` can be called multiple times to
+exclude or include more patterns or users.
+
 ```groovy
-svn('http://svn.apache.org/repos/asf/xml/crimson/trunk/') { svnNode ->
-    svnNode / browser(class:'hudson.scm.browsers.ViewSVN') / url << 'http://mycompany.com/viewsvn/repo_name'
+// checkout a project into the workspace directory
+job {
+    scm {
+        svn('https://svn.mydomain.com/repo/project1/trunk')
+    }
+}
+
+// checkout multiple projects
+job {
+    scm {
+        svn {
+            location('https://svn.mydomain.com/repo/project1/trunk')
+            location('https://svn.mydomain.com/repo/project2/trunk', 'proj2')
+        }
+    }
+}
+
+// using a different checkout strategy
+job {
+    scm {
+        svn {
+            location('https://svn.mydomain.com/repo/project1/trunk')
+            checkoutStrategy(SvnCheckoutStrategy.Checkout)
+        }
+    }
+}
+
+// configure excluded and included regions
+job {
+    scm {
+        svn {
+            location('https://svn.mydomain.com/repo/project1/trunk')
+            excludedRegions('/project1/trunk/.*\\.html')
+            includedRegions('/project1/trunk/src/.*\\.java', '/project1/trunk/src/.*\\.groovy')
+        }
+    }
+}
+
+// configure excluded users, commit messages, and an excluded revision property
+job {
+    scm {
+        svn {
+            location('https://svn.mydomain.com/repo/project1/trunk')
+            excludedUsers('jsmith')
+            excludedUsers('jdoe', 'sally')
+            excludedCommitMessages('[Bb][Aa][Dd]')
+            excludedRevisionProperty('mycompany:dontbuild')
+        }
+    }
+}
+
+// configure repository browser
+job {
+    scm {
+        svn {
+            location('https://svn.mydomain.com/repo/project1/trunk')
+            configure { scmNode ->
+                scmNode / browser(class: 'hudson.scm.browsers.FishEyeSVN') {
+                    url('http://mycompany.com/fisheye/repo_name')
+                    rootModule('my_root_module')
+                }
+            }
+        }
+    }
 }
 ```
-
-For more details on using the configure block syntax, see our [dedicated page](configure-block).
 
 ## Perforce
 
