@@ -109,7 +109,7 @@ class Job extends Item {
 
     void environmentVariables(Map<Object, Object> vars,
                               @DslContext(EnvironmentVariableContext) Closure envClosure = null) {
-        EnvironmentVariableContext envContext = new EnvironmentVariableContext()
+        EnvironmentVariableContext envContext = new EnvironmentVariableContext(jobManagement)
         if (vars) {
             envContext.envs(vars)
         }
@@ -121,7 +121,8 @@ class Job extends Item {
                 on(true)
                 keepJenkinsSystemVariables(envContext.keepSystemVariables)
                 keepBuildVariables(envContext.keepBuildVariables)
-                contributors()
+                overrideBuildParameters(envContext.overrideBuildParameters)
+                contributors().children().addAll(envContext.contributorsContext.contributors)
             }
         }
     }

@@ -493,6 +493,10 @@ environmentVariables {
     loadFilesFromMaster(boolean loadFromMaster)
     keepSystemVariables(boolean keepSystemVariables)
     keepBuildVariables(boolean keepBuildVariables)
+    overrideBuildParameters(boolean overrideBuildParameters = true)
+    contributors {
+        populateToolInstallations() // requires the SharedObjects Plugin, since 1.30
+    }
 }
 ```
 
