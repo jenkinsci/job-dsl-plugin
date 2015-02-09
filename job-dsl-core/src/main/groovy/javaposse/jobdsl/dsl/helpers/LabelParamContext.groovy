@@ -26,16 +26,12 @@ class LabelParamContext implements Context {
         this.description = description
     }
 
-    void allNodes(boolean allNodes = true) {
-        this.allNodes = allNodes
-    }
+    void allNodes(String trigger = 'allCases', String eligibility = 'AllNodeEligibility') {
+        this.allNodes = true
 
-    void trigger(String trigger) {
         checkArgument(TRIGGERS.contains(trigger), "trigger must be one of ${TRIGGERS.join(', ')}")
         this.trigger = trigger
-    }
 
-    void eligibility(String eligibility) {
         checkArgument(ELIGIBILITY.contains(eligibility), "eligibility must be one of ${ELIGIBILITY.join(', ')}")
         this.eligibility = eligibility
     }
