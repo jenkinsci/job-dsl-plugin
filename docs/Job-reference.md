@@ -1729,6 +1729,46 @@ job {
 
 (since 1.28)
 
+## Custom Tools Plugin
+
+```groovy
+job {
+    wrappers {
+        customTools(Iterable<String> toolNames) {
+            skipMasterInstallation(Boolean value = true)    // defaults to false
+            convertHomesToUppercase(Boolean value = true)   // defaults to false
+        }
+    }
+}
+```
+
+Specifies custom tools to add to the build environment. Requires the
+[Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin). Example usage:
+
+```groovy
+job {
+    wrappers {
+        customTools(['NodeJS']) {
+            skipMasterInstallation
+            convertHomesToUppercase false
+        }
+    }
+}
+```
+
+or, to accept the default of false for both the optional parameters:
+
+```groovy
+job {
+    wrappers {
+        customTools ['NodeJS', 'figlet']
+    }
+}
+```
+
+(since 1.30)
+
+
 # Build Steps
 
 Adds step block to contain an ordered list of build steps. Cannot be used for jobs with type 'maven'.
