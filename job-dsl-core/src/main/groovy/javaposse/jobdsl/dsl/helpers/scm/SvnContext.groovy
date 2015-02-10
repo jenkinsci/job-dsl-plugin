@@ -37,9 +37,7 @@ class SvnContext implements Context {
     }
 
     /**
-     * Add a list of excluded regions.  Each call adds to the list of excluded regions. If excluded
-     * regions are configured, and Jenkins is set to poll for changes, Jenkins will ignore any files and/or folders that
-     * match the specified patterns when determining if a build needs to be triggered.
+     * Add a list of excluded regions.  Each call adds to the list of excluded regions.
      *
      * @param patterns a list of regular expressions that should be matched as part of the excluded regions.
      */
@@ -48,9 +46,7 @@ class SvnContext implements Context {
     }
 
     /**
-     * Add a list of excluded regions.  Each call adds to the list of excluded regions. If excluded
-     * regions are configured, and Jenkins is set to poll for changes, Jenkins will ignore any files and/or folders that
-     * match the specified patterns when determining if a build needs to be triggered.
+     * Add a list of excluded regions.  Each call adds to the list of excluded regions.
      *
      * @param patterns a list of regular expressions that should be matched as part of the excluded regions.
      */
@@ -59,9 +55,7 @@ class SvnContext implements Context {
     }
 
     /**
-     * Add a list of included regions.  Each call adds to the list of included regions. If included
-     * regions are configured, and Jenkins is set to poll for changes, Jenkins will ignore any files and/or folders that
-     * do _not_ match the specified patterns when determining if a build needs to be triggered.
+     * Add a list of included regions.  Each call adds to the list of included regions.
      *
      * @param patterns a list of regular expressions that should be matched as part of the included regions.
      */
@@ -70,9 +64,7 @@ class SvnContext implements Context {
     }
 
     /**
-     * Add a list of included regions.  Each call adds to the list of included regions. If included
-     * regions are configured, and Jenkins is set to poll for changes, Jenkins will ignore any files and/or folders that
-     * do _not_ match the specified patterns when determining if a build needs to be triggered.
+     * Add a list of included regions.  Each call adds to the list of included regions.
      *
      * @param patterns a list of regular expressions that should be matched as part of the included regions.
      */
@@ -81,9 +73,7 @@ class SvnContext implements Context {
     }
 
     /**
-     * Add a list of excluded users.  Each call adds to the list of excluded users. If excluded users
-     * are configured, and Jenkins is set to poll for changes, Jenkins will ignore any revisions committed by the
-     * specified users when determining if a build needs to be triggered.
+     * Add a list of excluded users.  Each call adds to the list of excluded users.
      *
      * @param users a list of users to ignore when triggering builds.
      */
@@ -92,9 +82,7 @@ class SvnContext implements Context {
     }
 
     /**
-     * Add a list of excluded users.  Each call adds to the list of excluded users. If excluded users
-     * are configured, and Jenkins is set to poll for changes, Jenkins will ignore any revisions committed by the
-     * specified users when determining if a build needs to be triggered.
+     * Add a list of excluded users.  Each call adds to the list of excluded users.
      *
      * @param users a list of users to ignore when triggering builds.
      */
@@ -104,9 +92,7 @@ class SvnContext implements Context {
 
     /**
      * Add a list of excluded commit messages.  Each call adds to the list of excluded commit
-     * messages. If excluded messages are configured, and Jenkins is set to poll for changes, Jenkins will ignore any
-     * revisions with commit messages that match the specified patterns when determining if a build needs to be
-     * triggered.
+     * messages.
      *
      * @param patterns a list of regular expressions that should be matched as part of the excluded commit messages.
      */
@@ -116,9 +102,7 @@ class SvnContext implements Context {
 
     /**
      * Add a list of excluded commit messages.  Each call adds to the list of excluded commit
-     * messages. If excluded messages are configured, and Jenkins is set to poll for changes, Jenkins will ignore any
-     * revisions with commit messages that match the specified patterns when determining if a build needs to be
-     * triggered.
+     * messages.
      *
      * @param patterns a list of regular expressions that should be matched as part of the excluded commit messages.
      */
@@ -128,9 +112,6 @@ class SvnContext implements Context {
 
     /**
      * Set an excluded revision property.
-     * If an excluded revision property is set, and Jenkins is set to poll for changes, Jenkins will ignore any
-     * revisions that are marked with the specified revision property when determining if a build needs to be triggered.
-     * This only works in Subversion 1.5 servers or greater.
      *
      * @param revisionProperty the revision property checked when triggering builds.
      */
