@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
+import javaposse.jobdsl.dsl.helpers.scm.SvnContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -248,62 +249,59 @@ class ScmContext implements Context {
     }
 
     /**
-     <scm class="hudson.scm.SubversionSCM">
-       <locations>
-         <hudson.scm.SubversionSCM_-ModuleLocation>
-           <remote>http://svn/repo</remote>
-           <local>.</local>
-         </hudson.scm.SubversionSCM_-ModuleLocation>
-       </locations>
-       <browser class="hudson.scm.browsers.ViewSVN">
-         <url>http://mycompany.com/viewvn/repo_name</url>
-       </browser>
-       OR
-       <browser class="hudson.scm.browsers.FishEyeSVN">
-         <url>http://mycompany.com/viewvn/repo_name</url>
-         <rootModule>my_root_module</rootModule>
-       </browser>
-       <excludedRegions/>
-       <includedRegions/>
-       <excludedUsers/>
-       <excludedRevprop/>
-       <excludedCommitMessages/>
-       <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
-     </scm>
+     * <scm class="hudson.scm.SubversionSCM">
+     *     <locations>
+     *         <hudson.scm.SubversionSCM_-ModuleLocation>
+     *             <remote>http://svn/repo</remote>
+     *             <local>.</local>
+     *         </hudson.scm.SubversionSCM_-ModuleLocation>
+     *     </locations>
+     *     <excludedRegions/>
+     *     <includedRegions/>
+     *     <excludedUsers/>
+     *     <excludedRevprop/>
+     *     <excludedCommitMessages/>
+     *     <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
+     * </scm>
      */
     void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
+
     void svn(String svnUrl, String localDir, Closure configure = null) {
         checkNotNull(svnUrl)
         checkNotNull(localDir)
+
+        svn {
+            location(svnUrl, localDir)
+            delegate.configure(configure)
+        }
+    }
+
+    void svn(@DslContext(SvnContext) Closure svnClosure) {
         validateMulti()
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
+        SvnContext svnContext = new SvnContext()
+        executeInContext(svnClosure, svnContext)
 
-        Node svnNode = nodeBuilder.scm(class: 'hudson.scm.SubversionSCM') {
-            locations {
-                'hudson.scm.SubversionSCM_-ModuleLocation' {
-                    remote "${svnUrl}"
-                    local "${localDir}"
-                }
-            }
+        checkState(!svnContext.locations.empty, 'One or more locations must be specified')
 
-            excludedRegions ''
-            includedRegions ''
-            excludedUsers ''
-            excludedRevprop ''
-            excludedCommitMessages ''
-            workspaceUpdater(class: 'hudson.scm.subversion.UpdateUpdater')
+        Node svnNode = new NodeBuilder().scm(class: 'hudson.scm.SubversionSCM') {
+            locations(svnContext.locations)
+            workspaceUpdater(class: svnContext.checkoutStrategy.className)
+            excludedRegions(svnContext.excludedRegions.join('\n'))
+            includedRegions(svnContext.includedRegions.join('\n'))
+            excludedUsers(svnContext.excludedUsers.join('\n'))
+            excludedCommitMessages(svnContext.excludedCommitMessages.join('\n'))
+            excludedRevprop(svnContext.excludedRevisionProperty ?: '')
         }
 
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
+        if (svnContext.configureClosure) {
+            WithXmlAction action = new WithXmlAction(svnContext.configureClosure)
             action.execute(svnNode)
         }
-        scmNodes << svnNode
 
+        scmNodes << svnNode
     }
 
     /**
