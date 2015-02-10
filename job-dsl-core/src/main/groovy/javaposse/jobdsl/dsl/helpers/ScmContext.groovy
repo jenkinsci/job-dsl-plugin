@@ -284,7 +284,7 @@ class ScmContext implements Context {
         SvnContext svnContext = new SvnContext()
         executeInContext(svnClosure, svnContext)
 
-        checkState(svnContext.locations.size() != 0, 'One or more locations must be specified')
+        checkState(!svnContext.locations.empty, 'One or more locations must be specified')
 
         Node svnNode = new NodeBuilder().scm(class: 'hudson.scm.SubversionSCM') {
             locations(svnContext.locations)
