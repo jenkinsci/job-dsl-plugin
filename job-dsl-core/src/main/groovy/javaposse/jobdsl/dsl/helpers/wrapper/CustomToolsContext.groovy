@@ -7,13 +7,8 @@ import javaposse.jobdsl.dsl.Context
  * (https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin).
  */
 class CustomToolsContext implements Context {
-    final List<String> names
     boolean skipMasterInstallation = false
     boolean convertHomesToUppercase = false
-
-    CustomToolsContext(Iterable<String> toolNames) {
-        names = toolNames.toList()
-    }
 
     void skipMasterInstallation(boolean skipMasterInstallation = true) {
         this.skipMasterInstallation = skipMasterInstallation

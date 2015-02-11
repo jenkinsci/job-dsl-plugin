@@ -1735,39 +1735,27 @@ job {
 job {
     wrappers {
         customTools(Iterable<String> toolNames) {
-            skipMasterInstallation(Boolean value = true)    // defaults to false
-            convertHomesToUppercase(Boolean value = true)   // defaults to false
+            skipMasterInstallation(boolean value = true)  // defaults to false
+            convertHomesToUppercase(boolean value = true) // defaults to false
         }
     }
 }
 ```
 
 Specifies custom tools to add to the build environment. Requires the
-[Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin). Example usage:
+[Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin).
 
 ```groovy
 job {
     wrappers {
-        customTools(['NodeJS']) {
-            skipMasterInstallation
-            convertHomesToUppercase false
+        customTools(['NodeJS', 'figlet']) {
+            skipMasterInstallation()
         }
     }
 }
 ```
 
-or, to accept the default of false for both the optional parameters:
-
-```groovy
-job {
-    wrappers {
-        customTools ['NodeJS', 'figlet']
-    }
-}
-```
-
 (since 1.30)
-
 
 # Build Steps
 

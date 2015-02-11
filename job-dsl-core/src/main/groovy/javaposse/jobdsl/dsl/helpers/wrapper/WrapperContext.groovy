@@ -783,27 +783,27 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper plugin="custom-tools-plugin@0.4.4">
-     *   <selectedTools>
-     *     <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *       <name>FOO</name>
-     *     </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *     <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *       <name>BAR</name>
-     *     </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *   </selectedTools>
-     *   <multiconfigOptions>
-     *     <skipMasterInstallation>false</skipMasterInstallation>
-     *   </multiconfigOptions>
-     *   <convertHomesToUppercase>true</convertHomesToUppercase>
+     * <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper>
+     *     <selectedTools>
+     *         <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
+     *             <name>FOO</name>
+     *         </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
+     *         <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
+     *             <name>BAR</name>
+     *         </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
+     *     </selectedTools>
+     *     <multiconfigOptions>
+     *         <skipMasterInstallation>false</skipMasterInstallation>
+     *     </multiconfigOptions>
+     *     <convertHomesToUppercase>true</convertHomesToUppercase>
      * </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper>
      */
     void customTools(Iterable<String> tools, @DslContext(CustomToolsContext) Closure closure = null) {
         Preconditions.checkNotNull(tools, 'Please specify some tool names')
-        CustomToolsContext context = new CustomToolsContext(tools)
-        if (closure) {
-            ContextHelper.executeInContext(closure, context)
-        }
+
+        CustomToolsContext context = new CustomToolsContext()
+        ContextHelper.executeInContext(closure, context)
+
         wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper' {
             selectedTools {
                 tools.each { tool ->
