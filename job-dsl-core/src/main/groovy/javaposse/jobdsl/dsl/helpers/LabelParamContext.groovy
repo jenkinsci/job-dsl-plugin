@@ -15,7 +15,7 @@ class LabelParamContext implements Context {
     String defaultValue
     String description
     boolean allNodes = false
-    String trigger = 'multiSelectionDisallowed'
+    String trigger = 'allCases'
     String eligibility = 'AllNodeEligibility'
 
     void defaultValue(String defaultValue) {
@@ -27,12 +27,11 @@ class LabelParamContext implements Context {
     }
 
     void allNodes(String trigger = 'allCases', String eligibility = 'AllNodeEligibility') {
-        this.allNodes = true
-
         checkArgument(TRIGGERS.contains(trigger), "trigger must be one of ${TRIGGERS.join(', ')}")
-        this.trigger = trigger
-
         checkArgument(ELIGIBILITY.contains(eligibility), "eligibility must be one of ${ELIGIBILITY.join(', ')}")
+
+        this.allNodes = true
+        this.trigger = trigger
         this.eligibility = eligibility
     }
 }
