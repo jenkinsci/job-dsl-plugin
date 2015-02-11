@@ -92,6 +92,7 @@ job(Map<String, ?> arguments = [:]) {
                      String description = null)
         choiceParam(String parameterName, List<String> options, String description = null)
         fileParam(String fileLocation, String description = null)
+        labelParam(String parameterName, Closure closure = null) // since 1.30
         listTagsParam(String parameterName, String scmUrl, String tagFilterRegex,
                       boolean sortNewestFirst = false, boolean sortZtoA = false,
                       String maxTagsToDisplay = 'all', String defaultValue = null,

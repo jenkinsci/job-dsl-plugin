@@ -636,6 +636,136 @@ class BuildParametersContextSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    def 'labelParam base usage'() {
+        when:
+        context.labelParam('myParameterName') {
+            defaultValue('myDefaultValue')
+            description('myRunParamDescription')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition'
+            children().size() == 6
+            name.text() == 'myParameterName'
+            defaultValue.text() == 'myDefaultValue'
+            description.text() == 'myRunParamDescription'
+            allNodesMatchingLabel.text() == 'false'
+            triggerIfResult.text() == 'allCases'
+            nodeEligibility.size() == 1
+            nodeEligibility[0].@class == 'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
+        }
+    }
+
+    def 'labelParam simplest usage'() {
+        when:
+        context.labelParam('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition'
+            children().size() == 6
+            name.text() == 'myParameterName'
+            defaultValue.text() == ''
+            description.text() == ''
+            allNodesMatchingLabel.text() == 'false'
+            triggerIfResult.text() == 'allCases'
+            nodeEligibility.size() == 1
+            nodeEligibility[0].@class == 'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
+        }
+    }
+
+    def 'labelParam run on all nodes'() {
+        when:
+        context.labelParam('myParameterName') {
+            allNodes()
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition'
+            children().size() == 6
+            name.text() == 'myParameterName'
+            allNodesMatchingLabel.text() == 'true'
+            defaultValue.text() == ''
+            description.text() == ''
+            triggerIfResult.text() == 'allCases'
+            nodeEligibility.size() == 1
+            nodeEligibility[0].@class == 'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
+        }
+    }
+
+    def 'labelParam allNodes accepts valid values only'(String trigger, String eligibility) {
+        when:
+        context.labelParam('myParameterName') {
+            allNodes(trigger, eligibility)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        trigger    | eligibility
+        'allCases' | 'what?'
+        'what?'    | 'AllNodeEligibility?'
+    }
+
+    def 'labelParam fullest usage'() {
+        when:
+        context.labelParam('myParameterName') {
+            defaultValue('myDefaultValue')
+            description('myRunParamDescription')
+            allNodes('success', 'IgnoreOfflineNodeEligibility')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition'
+            children().size() == 6
+            name.text() == 'myParameterName'
+            defaultValue.text() == 'myDefaultValue'
+            description.text() == 'myRunParamDescription'
+            allNodesMatchingLabel.text() == 'true'
+            triggerIfResult.text() == 'success'
+            nodeEligibility.size() == 1
+            nodeEligibility[0].@class ==
+                    'org.jvnet.jenkins.plugins.nodelabelparameter.node.IgnoreOfflineNodeEligibility'
+        }
+    }
+
+    def 'labelParam name argument cant be null'() {
+        when:
+        context.labelParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'labelParam name argument cant be empty'() {
+        when:
+        context.labelParam('')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'labelParam already defined'() {
+        when:
+        context.booleanParam('one')
+        context.labelParam('one')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'multiple mixed Param types is just fine'() {
         when:
         context.booleanParam('myFirstBooleanParameter')

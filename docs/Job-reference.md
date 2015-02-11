@@ -4406,6 +4406,53 @@ job {
 
 (since 1.26)
 
+## Label Parameter
+
+```groovy
+job {
+    parameters {
+        labelParam(String name) {
+            defaultValue(String default)
+            description(String description)
+            allNodes(String trigger = 'allCases', String eligibility = 'AllNodeEligibility') // optional
+        }
+    }
+}
+```
+
+Defines a label used to identify/restrict the node where this job should run on. Requires the
+[NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
+
+`allNodes` defines if a job should be run on all nodes matching the label. If specified it will set the trigger and node
+eligibility criteria.
+
+`trigger` defines in which case a build on the next node should be triggered, must be one of `'allCases'`,
+`'success'` or `'unstable'`.
+
+`eligibility` defines how selected offline nodes should be handled, must be one of `'AllNodeEligibility'`,
+`'IgnoreOfflineNodeEligibility'` or `'IgnoreTempOfflineNodeEligibility'`.
+
+```groovy
+job {
+    parameters {
+        labelParam('MY_LABEL')
+    }
+}
+
+// runs on all nodes which are labeled with "linux" and are online
+job {
+    parameters {
+        labelParam('MY_LABEL') {
+            defaultValue('linux')
+            description('Select nodes')
+            allNodes('allCases', 'IgnoreOfflineNodeEligibility')
+        }
+    }
+}
+```
+
+(since 1.30)
+
 # Workflow Definitions
 
 ## Groovy CPS DSL
