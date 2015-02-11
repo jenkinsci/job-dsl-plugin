@@ -989,4 +989,53 @@ class WrapperContextSpec extends Specification {
             }
         }
     }
+
+    def 'call custom tools with no optionals'() {
+        when:
+        context.customTools(['foo', 'bar'])
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper'
+            children().size() == 3
+            convertHomesToUppercase[0].value() == false
+            multiconfigOptions[0].skipMasterInstallation[0].value() == false
+            def tools = selectedTools[0].
+                    'com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool'
+            with(tools[0]) {
+                children().size() == 1
+                name[0].value() == 'foo'
+            }
+            with(tools[1]) {
+                children().size() == 1
+                name[0].value() == 'bar'
+            }
+        }
+    }
+
+    def 'call custom tools with closure'() {
+        when:
+        context.customTools(['bar', 'baz']) {
+            convertHomesToUppercase()
+            skipMasterInstallation()
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper'
+            children().size() == 3
+            convertHomesToUppercase[0].value() == true
+            multiconfigOptions[0].skipMasterInstallation[0].value() == true
+            def tools = selectedTools[0].
+                    'com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool'
+            with(tools[0]) {
+                children().size() == 1
+                name[0].value() == 'bar'
+            }
+            with(tools[1]) {
+                children().size() == 1
+                name[0].value() == 'baz'
+            }
+        }
+    }
 }

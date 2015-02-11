@@ -142,6 +142,7 @@ job(Map<String, ?> arguments = [:]) {
         credentialsBinding(Closure closure) // since 1.28
         colorizeOutput(String colorMap = 'xterm')
         configFiles(Closure closure) // since 1.28
+        customTools(Iterable<String> toolNames, Closure closure = null) // since 1.30
         deliveryPipelineVersion(String template, boolean setDisplayName = false) // since 1.26
         environmentVariables(Closure envClosure)
         exclusionResources(String... resourceNames) // since 1.24
