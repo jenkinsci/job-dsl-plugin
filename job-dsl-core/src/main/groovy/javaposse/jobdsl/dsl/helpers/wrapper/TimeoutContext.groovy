@@ -20,6 +20,7 @@ class TimeoutContext implements Context {
     int noActivitySeconds = 180
 
     boolean failBuild = false
+    boolean abortBuild = false
     boolean writeDescription = false
     String description = ''
 
@@ -51,6 +52,11 @@ class TimeoutContext implements Context {
 
     void failBuild(boolean fail = true) {
         this.failBuild = fail
+    }
+
+    void abortBuild(boolean abort = true) {
+        jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
+        this.abortBuild = abort
     }
 
     void writeDescription(String description) {

@@ -1111,6 +1111,7 @@ job {
             absolute(int minutes = 3)                  // default
             likelyStuck()
             failBuild(boolean fail = true)
+            abortBuild(boolean abort = true)           // since 1.30
             writeDescription(String description)
         }
     }
@@ -1189,13 +1190,14 @@ job {
 }
 ```
 
-When the timeout happens, the default action is to abort if no other actions are configured. There are two other
-actions:
+When the timeout happens, the default action is to abort if no other actions are configured. There are three
+configurable actions:
 
 - Fail the build
+- Abort the build
 - Add a build description
 
-They are both simultaneously allowed and configured like this:
+They can be configured like this:
 
 ```groovy
 job {

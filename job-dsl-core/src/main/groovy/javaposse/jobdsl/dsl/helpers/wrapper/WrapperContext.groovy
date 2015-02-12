@@ -145,6 +145,7 @@ class WrapperContext implements Context {
      *     </strategy>
      *     <operationList>
      *         <hudson.plugins.build__timeout.operations.FailOperation/>
+     *         <hudson.plugins.build__timeout.operations.AbortOperation/>
      *         <hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
      *             <description>arstrst</description>
      *         </hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
@@ -180,6 +181,9 @@ class WrapperContext implements Context {
             operationList {
                 if (context.failBuild) {
                     'hudson.plugins.build__timeout.operations.FailOperation'()
+                }
+                if (context.abortBuild) {
+                    'hudson.plugins.build__timeout.operations.AbortOperation'()
                 }
                 if (context.writeDescription) {
                     'hudson.plugins.build__timeout.operations.WriteDescriptionOperation' {

@@ -221,6 +221,22 @@ class WrapperContextSpec extends Specification {
         }
     }
 
+    def 'default timeout will abort the build'() {
+        when:
+        context.timeout {
+            abortBuild()
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].timeoutMinutes[0].value() == 3
+            operationList[0].children().size() == 1
+            operationList[0].children()[0].name() == 'hudson.plugins.build__timeout.operations.AbortOperation'
+        }
+    }
+
     def 'likelyStuck timeout configuration working' () {
         when:
         context.timeout {
