@@ -887,11 +887,28 @@ class JobSpec extends Specification {
         job.node.properties[0].'EnvInjectJobProperty'[0]."${xmlElement}"[0].value() == content
 
         where:
-        method               || content || xmlElement
-        'keepSystemVariables' | true     | 'keepJenkinsSystemVariables'
-        'keepSystemVariables' | false    | 'keepJenkinsSystemVariables'
-        'keepBuildVariables'  | true     | 'keepBuildVariables'
-        'keepBuildVariables'  | false    | 'keepBuildVariables'
+        method                   || content || xmlElement
+        'keepSystemVariables'     | true     | 'keepJenkinsSystemVariables'
+        'keepSystemVariables'     | false    | 'keepJenkinsSystemVariables'
+        'keepBuildVariables'      | true     | 'keepBuildVariables'
+        'keepBuildVariables'      | false    | 'keepBuildVariables'
+        'overrideBuildParameters' | false    | 'overrideBuildParameters'
+        'overrideBuildParameters' | true     | 'overrideBuildParameters'
+    }
+
+    def 'environment can populate tool installations'() {
+        when:
+        job.environmentVariables {
+            contributors {
+                populateToolInstallations()
+            }
+        }
+
+        then:
+        def contributors = job.node.properties[0].'EnvInjectJobProperty'[0].contributors[0]
+        contributors.children().size() == 1
+        contributors.'org.jenkinsci.plugins.sharedobjects.ToolInstallationJobProperty'
+                .'populateToolInstallation'[0].value() == true
     }
 
     def 'throttle concurrents enabled as project alone'() {
