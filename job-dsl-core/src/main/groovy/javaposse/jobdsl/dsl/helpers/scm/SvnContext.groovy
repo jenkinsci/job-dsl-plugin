@@ -19,10 +19,13 @@ class SvnContext implements Context {
      * @param svnUrl the URL of the repository to be checked out.
      * @param localDir destination directory of checkout, relative to workspace
      */
-    void location(String svnUrl, String localDir = '.') {
+    void location(String svnUrl, String localDir = '.', String credential = null) {
         locations << new NodeBuilder().'hudson.scm.SubversionSCM_-ModuleLocation' {
             remote(svnUrl)
             local(localDir)
+            if(credential) {
+                credentialsId(credential)
+            }
         }
     }
 
