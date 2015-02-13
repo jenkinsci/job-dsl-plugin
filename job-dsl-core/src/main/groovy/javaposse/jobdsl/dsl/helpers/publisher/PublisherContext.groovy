@@ -157,6 +157,55 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     <hudson.plugins.performance.PerformancePublisher">
+       <errorFailedThreshold>0</errorFailedThreshold>
+       <errorUnstableThreshold>0</errorUnstableThreshold>
+       <errorUnstableResponseTimeThreshold></errorUnstableResponseTimeThreshold>
+       <relativeFailedThresholdPositive>0.0</relativeFailedThresholdPositive>
+       <relativeFailedThresholdNegative>0.0</relativeFailedThresholdNegative>
+       <relativeUnstableThresholdPositive>0.0</relativeUnstableThresholdPositive>
+       <relativeUnstableThresholdNegative>0.0</relativeUnstableThresholdNegative>
+       <nthBuildNumber>0</nthBuildNumber>
+       <modeRelativeThresholds>false</modeRelativeThresholds>
+       <configType>ART</configType>
+       <modeOfThreshold>false</modeOfThreshold>
+       <compareBuildPrevious>false</compareBuildPrevious>
+       <xml></xml>
+       <modePerformancePerTestCase>true</modePerformancePerTestCase>
+       <parsers>
+         <hudson.plugins.performance.JMeterParser>
+           <glob>dfdf</glob>
+         </hudson.plugins.performance.JMeterParser>
+       </parsers>
+       <modeThroughput>false</modeThroughput>
+     </hudson.plugins.performance.PerformancePublisher>
+     */
+    void archivePerformance(@DslContext(ArchivePerformanceContext) Closure performanceClosure = null) {
+        ArchivePerformanceContext performanceContext = new ArchivePerformanceContext()
+        ContextHelper.executeInContext(performanceClosure, performanceContext)
+
+        Node node = new NodeBuilder().'hudson.plugins.performance.PerformancePublisher' {
+            errorFailedThreshold performanceContext.errorFailedThreshold
+            errorUnstableThreshold performanceContext.errorUnstableThreshold
+            errorUnstableResponseTimeThreshold performanceContext.errorUnstableResponseTimeThreshold
+            relativeFailedThresholdPositive performanceContext.relativeFailedThresholdPositive
+            relativeFailedThresholdNegative performanceContext.relativeFailedThresholdNegative
+            relativeUnstableThresholdPositive performanceContext.relativeUnstableThresholdPositive
+            relativeUnstableThresholdNegative performanceContext.relativeUnstableThresholdNegative
+            nthBuildNumber performanceContext.nthBuildNumber
+            modeRelativeThresholds performanceContext.modeRelativeThresholds
+            configType performanceContext.configType
+            modeOfThreshold performanceContext.modeOfThreshold
+            compareBuildPrevious performanceContext.compareBuildPrevious
+            modePerformancePerTestCase performanceContext.modePerformancePerTestCase
+        }
+
+        performanceContext.withXmlActions.each { it.execute(node) }
+
+        publisherNodes << node
+    }
+
+    /**
      * @since 1.24
      */
     @RequiresPlugin(id = 'xunit')
