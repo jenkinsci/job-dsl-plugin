@@ -1,19 +1,21 @@
 Welcome to the jenkins-job-dsl wiki!
 
-Highly recommended starting point is the tutorial, [[Tutorial - Using the Jenkins Job DSL]]
+Highly recommended starting point is [the tutorial](Tutorial---Using-the-Jenkins-Job-DSL.md).
 
-Once you know how to create a "seed" job from the tutorial, start looking at the [[Real World Examples]] for examples to steal from.  **For formal documentation, the [[Job DSL Commands]]** page has what is available directly in the DSL at this time, and there are also some [[User Power Moves]] you can try to make your life easier.
+Once you know how to create a "seed" job from the tutorial, start looking at the [real-world examples](Real-World-Examples.md) for examples to steal from.
+**For formal documentation**, [Job DSL Commands](Job-DSL-Commands.md) has what is available directly in the DSL at this time, and there are also some [user power moves](User-Power-Moves.md) you can try to make your life easier.
 
 After you get familiar with some of the commands, try them out at the [Job DSL Playground](http://job-dsl.herokuapp.com/).
 
-If you want to get fancy you'll want to read up on the _configure_ block which gives you direct access to the config.xml, read [[configure block|The Configure Block]]. It's also possible (and easy) to [[define your own DSL commands|Extending the DSL from your Job Scripts]] using monkey patching.
+If you want to get fancy you'll want to read up on the _configure_ block which gives you direct access to the config.xml, read [configure block](The-Configure-Block.md). 
+It's also possible (and easy) to [define your own DSL commands](Extending-the-DSL-from-your-Job-Scripts.md) using monkey patching.
 
-There is a great load of information on [the forum](https://groups.google.com/forum/#!forum/job-dsl-plugin), but some stuff is also making its way into a [[FAQ|Frequently Asked Questions]].
+There is lots of information in [the forum](https://groups.google.com/forum/#!forum/job-dsl-plugin), but some stuff is also making its way into a [FAQ](Frequently-Asked-Questions.md).
 
 Have a look at the [Jenkins Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example) to see how to
 organize a SCM repository for Job DSL scripts.
 
-And finally, if you want to get more involved, [here's how...](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)
+And finally, if you want to get more involved, see the [contributing guide](../CONTRIBUTING.md)
 
 ## Release Notes
 * 1.30 (unreleased)
@@ -38,9 +40,9 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Enhanced DSL support for the Job DSL plugin
  * Fixed support for JARs in the "Additional classpath" option of the "Process Job DSLs" build step
  * Allow Ant-style patterns in the "Additional classpath" option of the "Process Job DSLs" build step
- * Support for the `@Grab` and `@Grapes` annotations is deprecated, see [[Migration]]
+ * Support for the `@Grab` and `@Grapes` annotations is deprecated, see [Migration](Migration.md)
  * Deprecated `perModuleEmail` option for Maven jobs ([JENKINS-26284](https://issues.jenkins-ci.org/browse/JENKINS-26284))
- * Removed deprecated build timeout methods, see [[Migration|Migration#migrating-to-124]]
+ * Removed deprecated build timeout methods, see [Migration](Migration.md#migrating-to-124)
 * 1.28 (January 01 2015)
  * Added support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
  * Added support for the [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin)
@@ -55,9 +57,9 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Fixed `copyArtifacts` build step for matrix jobs, minimum supported version of [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) raised to 1.26
  * Allow the Job DSL build step to be used as conditional build step ([JENKINS-25961](https://issues.jenkins-ci.org/browse/JENKINS-25961))
  * Allow views to be deleted ([JENKINS-26152](https://issues.jenkins-ci.org/browse/JENKINS-26152))
- * The non-closure variants of the `report` methods in the `publishHtml` context are deprecated, see [[Migration]]
- * Set return type for most DSL methods to void, see [[Migration]]
- * Moved `Context` and `ContextHelper` to package `javaposse.jobdsl.dsl`, see [[Migration]]
+ * The non-closure variants of the `report` methods in the `publishHtml` context are deprecated, see [Migration](Migration.md)
+ * Set return type for most DSL methods to void, see [Migration](Migration.md)
+ * Moved `Context` and `ContextHelper` to package `javaposse.jobdsl.dsl`, see [Migration](Migration.md)
 * 1.27 (December 05 2014)
  * Added support for the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin)
  * Added support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
@@ -67,10 +69,10 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Improved build step console output
  * added `entries` method in `publishScp` closure to add multiple entries
  * The context helper classes have been removed
- * Top-level `permission` methods are deprecated, see [[Migration]]
+ * Top-level `permission` methods are deprecated, see [Migration](Migration.md)
  * `pattern` method in `archiveArtifacts` closure can be called multiple times to collect patterns
  * Added a no parameter variant of `colorizeOutput` to match documentation.
- * The `name` method with a closure parameter in the `job` closure is deprecated, see [[Migration]]
+ * The `name` method with a closure parameter in the `job` closure is deprecated, see [Migration](Migration.md)
  * Fixed time condition for [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
 * 1.26 (October 04 2014)
  * Support for "Pipeline starts with parameters" for [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
@@ -83,11 +85,11 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Allow to merge more than one branch with Git SCM
  * Support for [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
  * Removed unnecessary undocumented methods in Gerrit trigger ([JENKINS-24787](https://issues.jenkins-ci.org/browse/JENKINS-24787))
- * Short names in the Gerrit trigger event closure have been replaced by DSL methods, see [[Migration]]
- * The `archiveJunit` method with boolean arguments has been deprecated, see [[Migration]]
- * The `xvnc` method with boolean arguments has been deprecated, see [[Migration]]
+ * Short names in the Gerrit trigger event closure have been replaced by DSL methods, see [Migration](Migration.md)
+ * The `archiveJunit` method with boolean arguments has been deprecated, see [Migration](Migration.md)
+ * The `xvnc` method with boolean arguments has been deprecated, see [Migration](Migration.md)
  * Support to specify the xAuthority file option of the [Xvnc Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xvnc+Plugin)
- * `javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, see [[Migration]]
+ * `javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, see [Migration](Migration.md)
  * Fixed endless recursion when calling `properties` in configure blocks ([JENKINS-22708](https://issues.jenkins-ci.org/browse/JENKINS-22708))
  * Support for [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
  * Support for [Any Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
@@ -167,7 +169,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * [Conditional BuildStep Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Conditional+BuildStep+Plugin)
  * [Added allowEmpty option to archiveArtifacts](wiki/Job-reference#archive-artifacts)
  * [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
- * Some implementation classes have been moved to avoid problems with Groovy closures (**BREAKING CHANGE**, see [[Migration]])
+ * Some implementation classes have been moved to avoid problems with Groovy closures (**BREAKING CHANGE**, see [Migration](Migration.md))
  * [Parameterized Trigger Plugin for build steps](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
  * [Associated Files Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin)
  * [JSHint Checkstyle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSHint+Checkstyle+Plugin)
@@ -183,7 +185,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Aggregate Downstream Test Results
  * [Post Build Task](https://wiki.jenkins-ci.org/display/JENKINS/Post+build+task)
  * [AnsiColor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/AnsiColor+Plugin)
- * new wrappers block, containing all build wrapper methods (**BREAKING CHANGE**, see [[Migration]])
+ * New wrappers block, containing all build wrapper methods (**BREAKING CHANGE**, see [Migration](Migration.md))
  * [Timestamper](https://wiki.jenkins-ci.org/display/JENKINS/Timestamper)
  * [JENKINS-20284](https://issues.jenkins-ci.org/browse/JENKINS-20284)
  * [Text Finder](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin)
@@ -210,11 +212,11 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Better Gerrit support
  * SBT Plugin
  * Update blockOn call
- * [[Help method to read files from the workspace|Job-DSL-Commands#reading-files-from-workspace]]
+ * [Help method to read files from the workspace](Job-DSL-Commands.md#reading-files-from-workspace)
  * Queue jobs after execution of the DSL
  * MultiJob Support
 * 1.15
- * [[@Grab Support|Grab Support]]
+ * [@Grab Support](Grab-Support.md)
  * Build Parameters
  * GitHub SCM Context
  * IRC Publisher
