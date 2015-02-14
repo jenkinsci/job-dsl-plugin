@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.helpers.step.StepEnvironmentVariableContext
 class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
     String script = ''
     String scriptFilePath = ''
+    String groovyScript = ''
     boolean loadFilesFromMaster = false
 
     void script(String script) {
@@ -15,6 +16,10 @@ class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
         this.scriptFilePath = scriptFilePath
     }
 
+    void groovy(String script) {
+        groovyScript = script
+    }
+
     @Override
     protected addInfoContentToBuilder(builder) {
         super.addInfoContentToBuilder(builder)
@@ -23,6 +28,9 @@ class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
         }
         if (script) {
             builder.scriptContent(script)
+        }
+        if (groovyScript) {
+            builder.groovyScriptContent(groovyScript)
         }
         builder.loadFilesFromMaster(loadFilesFromMaster)
     }

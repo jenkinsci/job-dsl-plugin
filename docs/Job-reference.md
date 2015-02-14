@@ -1364,21 +1364,24 @@ job {
 (since 1.28)
 
 ## Environment Variables
+
 ```groovy
 job {
-  wrappers {
-    environmentVariables {
-      scriptFile(String filePath)
-      script(String content)
-      env(Object key, Object value)
-      envs(Map<Object, Object> map)
-      propertiesFile(String filePath)
+    wrappers {
+        environmentVariables {
+            scriptFile(String filePath)
+            script(String content)
+            env(Object key, Object value)
+            envs(Map<Object, Object> map)
+            propertiesFile(String filePath)
+            groovy(String groovyScript)     // since 1.30
+        }
     }
-  }
 }
 ```
 
-Injects environment variables into the build. Requires the [EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
+Injects environment variables into the build. Requires the
+[EnvInject plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin).
 
 (Since 1.21)
 

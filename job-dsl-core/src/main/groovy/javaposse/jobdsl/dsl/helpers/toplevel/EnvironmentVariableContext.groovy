@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperEnvironmentVariableContext
 
 class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
-    String groovyScript = ''
     boolean keepSystemVariables = true
     boolean keepBuildVariables = true
     boolean overrideBuildParameters = false
@@ -16,10 +15,6 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     EnvironmentVariableContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
         this.contributorsContext = new EnvironmentVariableContributorsContext(jobManagement)
-    }
-
-    void groovy(String script) {
-        groovyScript = script
     }
 
     void loadFilesFromMaster(boolean loadFilesFromMaster) {
@@ -40,13 +35,5 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
 
     void contributors(@DslContext(EnvironmentVariableContributorsContext) Closure contributorsClosure) {
         ContextHelper.executeInContext(contributorsClosure, contributorsContext)
-    }
-
-    @Override
-    protected addInfoContentToBuilder(builder) {
-        super.addInfoContentToBuilder(builder)
-        if (groovyScript) {
-            builder.groovyScriptContent(groovyScript)
-        }
     }
 }

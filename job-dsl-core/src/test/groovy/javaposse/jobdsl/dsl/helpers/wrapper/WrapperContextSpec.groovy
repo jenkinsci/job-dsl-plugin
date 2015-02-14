@@ -415,17 +415,19 @@ class WrapperContextSpec extends Specification {
             env 'some', 'value'
             script 'echo Test'
             scriptFile '/var/lib/jenkins'
+            groovy 'println "Hello"'
         }
         Node envNode = context.wrapperNodes[0]
 
         then:
         envNode.name() == 'EnvInjectBuildWrapper'
         def infoNode = envNode.info[0]
-        infoNode.children().size() == 5
+        infoNode.children().size() == 6
         infoNode.propertiesFilePath[0].value() == 'some.properties'
         infoNode.propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
         infoNode.scriptFilePath[0].value() == '/var/lib/jenkins'
         infoNode.scriptContent[0].value() == 'echo Test'
+        infoNode.groovyScriptContent[0].value() == 'println "Hello"'
         infoNode.loadFilesFromMaster[0].value() == false
     }
 
