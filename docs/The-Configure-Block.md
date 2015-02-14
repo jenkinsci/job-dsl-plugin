@@ -60,19 +60,18 @@ job {
 
 The `configure` method can be stated multiple times and configure blocks are run in the order they are provided.
 
-See the [[Job Reference]] for details about the configure blocks supported by DSL methods.
+See the [job reference](Job-reference.md) for details about the configure blocks supported by DSL methods.
 
 # Transforming XML
 
 All standard documentation for Node applies here, but transforming XML via Node is no fun, and quite ugly. The general
 groovy use-cases are to consume this structure or build it up via NodeBuilder. Use the samples below to help navigate
-the Jenkins XML, but keep in mind that the actual syntax is Groovy syntax:
-http://groovy.codehaus.org/Updating+XML+with+XmlParser.
+the Jenkins XML, but keep in mind that the actual syntax is [Groovy XmlParser syntax](http://groovy.codehaus.org/Updating+XML+with+XmlParser).
 
 Things to keep in mind:
 
 * All queries (methodMissing or find) assume that a NodeList is being returned, so if you need a single Node get the
-  first element, e.g. [0]
+  first element, e.g. `[0]`
 * `+` adds siblings, so once we have one node, you can keep adding siblings, but will need an initial peer to add to.
 * Children can be easily accessed if they exist, if they don't exist you have to append them. This means accessing deep
   trees is laborious.
@@ -104,7 +103,7 @@ to generate might have a conflict with other (possibly undocumented and internal
 can use the closure's `delegate` variable.
 
 Below is an example of a configure block that is trying to generate `<label>my-label</label>`.
-The label element is conflicting with the [label](Job-reference#label) DSL method.
+The `label` element is conflicting with the [label DSL method](Job-reference.md#label).
 
 ```groovy
 job {

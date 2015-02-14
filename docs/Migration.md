@@ -2,7 +2,7 @@
 
 ### Grab Support
 
-Support for the `@Grab` and `@Grapes` annotation has been [[deprecated|Deprecation-Policy]] and replaced by the
+Support for the `@Grab` and `@Grapes` annotation has been [deprecated](Deprecation-Policy.md) and replaced by the
 _Additional classpath_ option of the _Process Job DSLs_ build step.
 
 DSL prior to 1.29
@@ -23,7 +23,7 @@ println "Hello ${WordUtils.capitalize('world')}"
 
 But to be able to use a library, it has to be added to the _Additional classpath_ option of the _Process Job DSLs_ build
 step (e.g. `lib/commons-lang-2.4.jar` or `lib/*.jar`) and the JAR files have to be in workspace of the seed job (e.g. in
-a `lib` directory). See [[Using Libraries|User-Power-Moves#using-libraries]] for details.
+a `lib` directory). See [Using Libraries](User-Power-Moves.md#using-libraries) for details.
 
 ### Per Module Email
 
@@ -57,7 +57,7 @@ job(type: Maven) {
 ### HTML Publisher
 
 The non-closure variants of the `report` methods in the `publishHtml` context have been
-[[deprecated|Deprecation-Policy]] in favor of a new closure variant.
+[deprecated](Deprecation-Policy.md) in favor of a new closure variant.
 
 DSL prior to 1.28
 ```groovy
@@ -100,7 +100,7 @@ package `javaposse.jobdsl.dsl`.
 
 ### Job Name
 
-The `name` method variant with a closure parameter in the `job` closure is [[deprecated|Deprecation-Policy]], use the
+The `name` method variant with a closure parameter in the `job` closure is [deprecated](Deprecation-Policy.md), use the
 string argument variant instead.
 
 DSL prior to 1.27
@@ -121,7 +121,7 @@ job {
 
 ### Permissions
 
-In version 1.27 undocumented `permission` methods in the `job` context have been [[deprecated|Deprecation-Policy]]. Use
+In version 1.27 undocumented `permission` methods in the `job` context have been [deprecated](Deprecation-Policy.md). Use
 the `authorization` context instead.
 
 DSL prior to 1.27
@@ -148,7 +148,7 @@ job {
 
 ### Archive JUnit Report
 
-In version 1.26 the archiveJunit method with boolean arguments has been [[deprecated|Deprecation-Policy]] and has been
+In version 1.26 the archiveJunit method with boolean arguments has been [deprecated](Deprecation-Policy.md) and has been
 replaced by a closure variant.
 
 DSL prior to 1.26
@@ -175,11 +175,11 @@ job {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [job reference](Job-reference.md) for further details.
 
 ### Xvnc
 
-In version 1.26 the xvnc method with one boolean argument has been [[deprecated|Deprecation-Policy]] and has been
+In version 1.26 the xvnc method with one boolean argument has been [deprecated](Deprecation-Policy.md) and has been
 replaced by a closure variant.
 
 DSL prior to 1.26
@@ -202,11 +202,11 @@ job {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [job reference](Job-reference.md) for further details.
 
 ### Gerrit Trigger
 
-The usage "short names" in the event closure is [[deprecated|Deprecation-Policy]] and has been replaced by explicit DSL
+The usage "short names" in the event closure is [deprecated](Deprecation-Policy.md) and has been replaced by explicit DSL
 methods for each event.
 
 DSL prior to 1.26
@@ -247,7 +247,7 @@ job {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [job reference](Job-reference.md) for further details.
 
 ### AbstractStepContext
 
@@ -271,7 +271,7 @@ StepContext.metaClass.myStep = { ... }
 
 In version 1.24 the dsl for the build timeout plugin has been modified and the
 generated xml requires a newer version of the build timeout plugin.
-The old dsl still works but has been [[deprecated|Deprecation-Policy]].
+The old dsl still works but has been [deprecated](Deprecation-Policy.md).
 
 DSL prior to 1.24
 ```groovy
@@ -297,7 +297,7 @@ timeout {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [job reference](Job-reference.md) for further details.
 
 ### Gerrit Trigger
 
@@ -306,11 +306,12 @@ Before 1.24, the Gerrit trigger configuration used hardwired configuration for u
 plugin configuration). Now the Gerrit trigger configuration correctly honors central configuration of labels. If you use
 non-default labels in your central configuration, you might need to change the trigger label configuration of your jobs.
 
-See the [[Job Reference]] for further details.
+See the [job reference](Job-reference.md) for further details.
 
 ## Migrating to 1.20
 
-In version 1.20, some implementation classes have been moved to work around a [bug](http://jira.codehaus.org/browse/GROOVY-5875) in Groovy. When these classes have been used to [extend the DSL](Extending-the-DSL-from-your-Job-Scripts), import statements and fully qualified class names have to be adjusted.
+In version 1.20, some implementation classes have been moved to work around a [bug](http://jira.codehaus.org/browse/GROOVY-5875) in Groovy.
+When these classes have been used to [extend the DSL](Extending-the-DSL-from-your-Job-Scripts.md), import statements and fully qualified class names have to be adjusted.
 
 ## Migrating to 1.19
 

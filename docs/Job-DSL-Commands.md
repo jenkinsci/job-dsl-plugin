@@ -1,4 +1,4 @@
-**NOTE: See the [[Job Reference]] and [[View Reference]] pages for details about all options.**
+**NOTE: See [job reference](Job-reference.md) and [view reference](View-Reference.md) for details about all options.**
 
 # DSL Methods
 
@@ -37,7 +37,7 @@ DSL methods can be cumulative or overriding, meaning that some methods will add 
 and some will replace nodes (e.g. `disabled` will replace any existing disabled nodes). Some methods like `scm` and
 `multiscm` are mutually exclusive. Likewise, when using the `scm` block, only one SCM can be specified.
 
-When a DSL method isn't available, look at [[The Configure Block]] for extending the DSL.
+When a DSL method isn't available, look at [the configure block](The-Configure-Block.md) for extending the DSL.
 
 **NOTE: when using these methods, remember that you need to use them in context. I.e. to use the `downstream` method,
 it needs to be enclosed in a `publishers` context.**
@@ -45,7 +45,7 @@ it needs to be enclosed in a `publishers` context.**
 The following high level overview shows what's available in a Groovy-like syntax. If an argument is followed by an
 equals sign, this means it's a default value that is used when the argument is left out. Arguments can only be omitted
 from right to left. Many methods provide options in deeper nested blocks which are not shown in this overview. See the
-[[Job Reference]] and [[View Reference]] pages for details.
+[job reference](Job-reference.md) and [view reference](View-Reference.md) pages for details.
 
 ```groovy
 job(Map<String, ?> arguments = [:]) {
@@ -450,7 +450,7 @@ configFile(Map<String, Object> arguments = [:]) { // since 1.25
 ```
 
 The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods
-fail you, you can always generate the underlying XML yourself via [[The Configure Block]]. Sometimes, a DSL
+fail you, you can always generate the underlying XML yourself via [the configure block](The-Configure-Block.md). Sometimes, a DSL
 method will provide a configure block of its own, which will set the a good context to help modify a few fields.
 This gives native access to the job config XML, which is typically very straight forward to understand.
 
@@ -615,7 +615,7 @@ job {
 
 # Grab
 
-**WARNING:** Grab support is deprecated, see [[Migration]]
+**WARNING:** Grab support is deprecated, see [migration](Migration.md).
 
 Groovy provides the ability to "grab" dependencies and use them right away, this is called
 [Grape](http://groovy.codehaus.org/Grape). The Job DSL supports this feature, as long as it's provided at the top of the
@@ -633,7 +633,7 @@ println "Hello ${WordUtils.capitalize('world')}"
 
 # Configure
 
-When an option is not supported by the Job DSL, then [[The Configure Block]] can be used for extending the DSL.
+When an option is not supported by the Job DSL, then [the configure block](The-Configure-Block.md) can be used for extending the DSL.
 
 Here is a simple example which adds a EnvInjectPasswordWrapper node:
 
@@ -648,7 +648,7 @@ job {
 }
 ```
 
-See [[The Configure Block]] page for details.
+See [the configure block](The-Configure-Block.md) page for details.
 
 # DSL Factory
 
