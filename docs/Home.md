@@ -22,6 +22,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
  * Added strategy option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
  * Added strategy build chooser for the [Gerrit Trigger](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
  * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
+ * Added `abortBuild` action for the [Build Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
  * Added support for label parameters from the [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin)
  * Added populateToolInstallations and overrideBuildVariables options for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin)
 * 1.29 (February 05 2015)
