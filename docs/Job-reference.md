@@ -666,6 +666,7 @@ job {
             location(String svnUrl) {           // at least on required
                 directory(String directory)     // defaults to '.'
                 credentials(String credentials)
+                depth(SvnDepth depth)           // defaults to INFINITY
             }
             checkoutStrategy(SvnCheckoutStrategy strategy)
             excludedRegions(String... patterns)
@@ -694,6 +695,9 @@ directory.
 Valid values for `checkoutStrategy` are `SvnCheckoutStrategy.Update` (the default), `SvnCheckoutStrategy.Checkout`,
 `SvnCheckoutStrategy.UpdateWithClean` or `SvnCheckoutStrategy.UpdateWithRevert`.
 
+Valid values for `depth` are `SvnDepth.INFINITY` (the default), `SvnDepth.EMPTY`, `SvnDepth.IMMEDIATES`,
+`SvnDepth.FILES` and `SvnDepth.AS_IT_IS`.
+
 `excludedRegions`, `includedRegions`, `excludedUsers` and `excludedCommitMessages` can be called multiple times to
 exclude or include more patterns or users.
 
@@ -715,6 +719,18 @@ job {
             location('https://svn.mydomain.com/repo/project1/trunk')
             location('https://svn.mydomain.com/repo/project2/trunk') {
                 directory('proj2')
+            }
+        }
+    }
+}
+
+// do a sparse checkout
+job {
+    scm {
+        svn {
+            location('https://svn.mydomain.com/repo/project/trunk') {
+                directory('proj2')
+                depth(SvnDepth.EMPTY)
             }
         }
     }

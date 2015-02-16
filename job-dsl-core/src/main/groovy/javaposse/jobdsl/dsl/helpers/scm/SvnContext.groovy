@@ -37,6 +37,7 @@ class SvnContext implements Context {
                 credentialsId(svnLocationContext.credentials)
             }
             local(svnLocationContext.directory)
+            depthOption(svnLocationContext.depth.xmlValue)
         }
     }
 
