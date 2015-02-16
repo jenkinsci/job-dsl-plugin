@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.8.1'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.9.0'
     }
 }
 
