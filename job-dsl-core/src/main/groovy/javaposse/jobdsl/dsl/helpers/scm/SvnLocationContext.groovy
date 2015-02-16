@@ -7,6 +7,7 @@ class SvnLocationContext implements Context {
     private final JobManagement jobManagement
     String directory = '.'
     String credentials
+    SvnDepth depth = SvnDepth.INFINITY
 
     SvnLocationContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
@@ -20,5 +21,9 @@ class SvnLocationContext implements Context {
         jobManagement.requireMinimumPluginVersion('subversion', '2.0')
 
         this.credentials = jobManagement.getCredentialsId(credentials)
+    }
+
+    void depth(SvnDepth depth) {
+        this.depth = depth
     }
 }

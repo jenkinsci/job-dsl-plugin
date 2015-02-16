@@ -4,7 +4,9 @@ import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlActionSpec
 import javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy
+import javaposse.jobdsl.dsl.helpers.scm.SvnDepth
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class ScmContextSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
@@ -1091,9 +1093,10 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNode)
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].children().size() == 2
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].children().size() == 3
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].depthOption[0].value() == 'infinity'
     }
 
     def 'call svn with credentials'() {
@@ -1145,6 +1148,28 @@ class ScmContextSpec extends Specification {
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
+    }
+
+    @Unroll
+    def 'call svn setting the checkout depth to #depth'(SvnDepth depth, String xmlValue) {
+        when:
+        context.svn {
+            location('url') {
+                delegate.depth depth
+            }
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].depthOption[0].value() == xmlValue
+
+        where:
+        depth              || xmlValue
+        SvnDepth.EMPTY      | 'empty'
+        SvnDepth.AS_IT_IS   | 'unknown'
+        SvnDepth.INFINITY   | 'infinity'
+        SvnDepth.FILES      | 'files'
+        SvnDepth.IMMEDIATES | 'immediates'
     }
 
     def 'call svn without checkout strategy'() {

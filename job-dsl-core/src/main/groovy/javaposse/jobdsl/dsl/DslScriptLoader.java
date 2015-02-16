@@ -193,6 +193,7 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.views.jobfilter.MatchType");
         icz.addImports("javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue");
         icz.addImports("javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.scm.SvnDepth");
         config.addCompilationCustomizers(icz);
 
         GrabDeprecationTransformation grabDeprecationTransformation = new GrabDeprecationTransformation(jobManagement);
