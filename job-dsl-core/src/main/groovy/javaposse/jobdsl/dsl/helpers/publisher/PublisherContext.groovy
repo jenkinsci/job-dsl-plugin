@@ -436,7 +436,7 @@ class PublisherContext implements Context {
             }
             strategy jabberContext.strategyName
             notifyOnBuildStart jabberContext.notifyOnBuildStart ? 'true' : 'false'
-            notifySuspects jabberContext.notifyOnBuildStart ? 'true' : 'false'
+            notifySuspects jabberContext.notifySuspects ? 'true' : 'false'
             notifyCulprits jabberContext.notifyCulprits ? 'true' : 'false'
             notifyFixers jabberContext.notifyFixers ? 'true' : 'false'
             notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters ? 'true' : 'false'
