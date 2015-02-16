@@ -120,7 +120,8 @@ class WrapperContext implements Context {
             }
         }
     }
-    /** Enumeration of timeout types for parsing and error reporting*/
+
+    @Deprecated
     static enum Timeout {
         absolute('Absolute'),
         elastic('Elastic'),
@@ -160,38 +161,10 @@ class WrapperContext implements Context {
         TimeoutContext context = new TimeoutContext(jobManagement)
         ContextHelper.executeInContext(timeoutClosure, context)
 
-        wrapperNodes << new NodeBuilder().'hudson.plugins.build__timeout.BuildTimeoutWrapper' {
-            strategy(class: context.type.className) {
-                switch (context.type) {
-                    case Timeout.absolute:
-                        timeoutMinutes(context.limit)
-                        break
-                    case Timeout.elastic:
-                        timeoutPercentage(context.percentage)
-                        numberOfBuilds(context.numberOfBuilds)
-                        timeoutMinutesElasticDefault(context.minutesDefault)
-                        break
-                    case Timeout.likelyStuck:
-                        break
-                    case Timeout.noActivity:
-                        delegate.timeout(context.noActivitySeconds * 1000)
-                        break
-                }
-            }
-            operationList {
-                if (context.failBuild) {
-                    'hudson.plugins.build__timeout.operations.FailOperation'()
-                }
-                if (context.abortBuild) {
-                    'hudson.plugins.build__timeout.operations.AbortOperation'()
-                }
-                if (context.writeDescription) {
-                    'hudson.plugins.build__timeout.operations.WriteDescriptionOperation' {
-                        description(context.description)
-                    }
-                }
-            }
-        }
+        Node node = new Node(null, 'hudson.plugins.build__timeout.BuildTimeoutWrapper')
+        node.append(context.strategy)
+        node.appendNode('operationList', context.operations)
+        wrapperNodes << node
     }
 
     /*

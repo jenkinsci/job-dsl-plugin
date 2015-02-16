@@ -1114,8 +1114,9 @@ job {
             noActivity(int seconds = 180)
             absolute(int minutes = 3)                  // default
             likelyStuck()
-            failBuild(boolean fail = true)
-            abortBuild(boolean abort = true)           // since 1.30
+            failBuild()
+            failBuild(boolean fail)                    // deprecated since 1.30
+            abortBuild()                               // since 1.30
             writeDescription(String description)
         }
     }
