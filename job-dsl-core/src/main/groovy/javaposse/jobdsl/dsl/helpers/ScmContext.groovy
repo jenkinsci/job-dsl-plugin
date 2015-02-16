@@ -253,6 +253,7 @@ class ScmContext implements Context {
      *     <locations>
      *         <hudson.scm.SubversionSCM_-ModuleLocation>
      *             <remote>http://svn/repo</remote>
+     *             <credentialsId>31a56ed2-f7be-4da6-8c91-36a8eebaf016</credentialsId>
      *             <local>.</local>
      *         </hudson.scm.SubversionSCM_-ModuleLocation>
      *     </locations>
@@ -273,7 +274,9 @@ class ScmContext implements Context {
         checkNotNull(localDir)
 
         svn {
-            location(svnUrl, localDir)
+            location(svnUrl) {
+                directory(localDir)
+            }
             delegate.configure(configure)
         }
     }
@@ -281,7 +284,7 @@ class ScmContext implements Context {
     void svn(@DslContext(SvnContext) Closure svnClosure) {
         validateMulti()
 
-        SvnContext svnContext = new SvnContext()
+        SvnContext svnContext = new SvnContext(jobManagement)
         executeInContext(svnClosure, svnContext)
 
         checkState(!svnContext.locations.empty, 'One or more locations must be specified')

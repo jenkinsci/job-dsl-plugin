@@ -1083,33 +1083,55 @@ class ScmContextSpec extends Specification {
     def 'call svn with one location'() {
         when:
         context.svn {
-            location('url', 'dir')
+            location('url') {
+                directory('dir')
+            }
+        }
+
+        then:
+        isValidSvnScmNode(context.scmNode)
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].children().size() == 2
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
+    }
+
+    def 'call svn with credentials'() {
+        setup:
+        mockJobManagement.getCredentialsId('foo') >> '4711'
+
+        when:
+        context.svn {
+            location('url') {
+                credentials('foo')
+            }
         }
 
         then:
         isValidSvnScmNode(context.scmNode)
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].credentialsId[0].value() == '4711'
+        1 * mockJobManagement.requireMinimumPluginVersion('subversion', '2.0')
     }
 
     def 'call svn with multiple locations'() {
         when:
         context.svn {
-            location('url1', 'dir1')
-            location('url2', 'dir2')
-            location('url3', 'dir3')
+            location('url1')
+            location('url2') {
+                directory('dir2')
+            }
         }
 
         then:
         isValidSvnScmNode(context.scmNode)
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 3
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 2
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url1'
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir1'
+        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].remote[0].value() == 'url2'
         context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].local[0].value() == 'dir2'
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].remote[0].value() == 'url3'
-        context.scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[2].local[0].value() == 'dir3'
     }
 
     def 'call svn without specifying a local dir for the location'() {
