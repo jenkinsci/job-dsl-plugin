@@ -3057,19 +3057,44 @@ job {
 ```
 
 ## Jabber Publisher
+
 ```groovy
-publishJabber(String target, String strategyName, String channelNotificationName, Closure jabberClosure) {
-    strategyName 'ALL' // ALL, FAILURE_AND_FIXED, ANY_FAILURE, STATECHANGE_ONLY
-    notifyOnBuildStart false
-    notifySuspects false
-    notifyCulprits false
-    notifyFixers false
-    notifyUpstreamCommitters false
-    channelNotificationName 'Default' // Default, SummaryOnly, BuildParameters, PrintFailingTests
+job {
+    publishers {
+        publishJabber(String target, String strategyName, String channelNotificationName,
+                      Closure jabberClosure = null)        // deprecated since 1.30
+        publishJabber(String target, String strategyName,
+                      Closure jabberClosure = null)        // deprecated since 1.30
+        publishJabber(String target) {
+            strategyName(String strategy)                  // defaults to 'ALL'
+            notifyOnBuildStart(boolean value = true)       // defaults to false
+            notifySuspects(boolean value = true)           // defaults to false
+            notifyCulprits(boolean value = true)           // defaults to false
+            notifyFixers(boolean value = true)             // defaults to false
+            notifyUpstreamCommitters(boolean value = true) // defaults to false
+            channelNotificationName(String name)           // defaults to 'Default'
+        }
+    }
 }
 ```
 
-Supports <a href="https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin">Jabber Plugin</a>. A few arguments can be specified in the method call or in the closure.
+Enables Jenkins to send build notifications via Jabber. Requires the
+[Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin).
+
+Valid values for `strategyName` are `ALL`, `FAILURE_AND_FIXED`, `ANY_FAILURE` and `STATECHANGE_ONLY`. Valid values for
+`channelNotificationName` are `Default`, `SummaryOnly`, `BuildParameters` and `PrintFailingTests`.
+
+```groovy
+job {
+    publishers {
+        publishJabber('*room@example.org') {
+            strategyName('STATECHANGE_ONLY')
+            notifySuspects()
+            channelNotificationName('BuildParameters')
+        }
+    }
+}
+```
 
 ## SCP Publisher
 

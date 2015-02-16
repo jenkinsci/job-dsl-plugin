@@ -395,29 +395,35 @@ class PublisherContext implements Context {
         publishJabber(target, null, null, jabberClosure)
     }
 
+    @Deprecated
     void publishJabber(String target, String strategyName, @DslContext(JabberContext) Closure jabberClosure = null) {
         publishJabber(target, strategyName, null, jabberClosure)
     }
 
+    @Deprecated
     void publishJabber(String targetsArg, String strategyName, String channelNotificationName,
                        @DslContext(JabberContext) Closure jabberClosure = null) {
+        if (strategyName || channelNotificationName) {
+            jobManagement.logDeprecationWarning()
+        }
+
         JabberContext jabberContext = new JabberContext()
         jabberContext.strategyName = strategyName ?: 'ALL'
         jabberContext.channelNotificationName = channelNotificationName ?: 'Default'
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
         // Validate values
-        assert validJabberStrategyNames.contains(jabberContext.strategyName),
+        Preconditions.checkArgument(
+                validJabberStrategyNames.contains(jabberContext.strategyName),
                 "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
-        assert validJabberChannelNotificationNames.contains(jabberContext.channelNotificationName),
+        )
+        Preconditions.checkArgument(
+                validJabberChannelNotificationNames.contains(jabberContext.channelNotificationName),
                 'Jabber Channel Notification name needs to be one of these values: ' +
                         validJabberChannelNotificationNames.join(',')
+        )
 
-        String notifierClass =
-                "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier"
-
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node publishNode = nodeBuilder.'hudson.plugins.jabber.im.transport.JabberPublisher' {
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.jabber.im.transport.JabberPublisher' {
             targets {
                 targetsArg.split().each { target ->
                     boolean isGroup = target.startsWith('*')
@@ -435,18 +441,21 @@ class PublisherContext implements Context {
                 }
             }
             strategy jabberContext.strategyName
-            notifyOnBuildStart jabberContext.notifyOnBuildStart ? 'true' : 'false'
-            notifySuspects jabberContext.notifySuspects ? 'true' : 'false'
-            notifyCulprits jabberContext.notifyCulprits ? 'true' : 'false'
-            notifyFixers jabberContext.notifyFixers ? 'true' : 'false'
-            notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters ? 'true' : 'false'
-            buildToChatNotifier(class: notifierClass)
+            notifyOnBuildStart jabberContext.notifyOnBuildStart
+            notifySuspects jabberContext.notifySuspects
+            notifyCulprits jabberContext.notifyCulprits
+            notifyFixers jabberContext.notifyFixers
+            notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters
+            buildToChatNotifier(
+                    class: "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier"
+            )
             matrixMultiplier 'ONLY_CONFIGURATIONS'
         }
-        publisherNodes << publishNode
     }
 
+    @Deprecated
     Set<String> validJabberStrategyNames = ['ALL', 'FAILURE_AND_FIXED', 'ANY_FAILURE', 'STATECHANGE_ONLY']
+    @Deprecated
     Set<String> validJabberChannelNotificationNames = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
     /**

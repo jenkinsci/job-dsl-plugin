@@ -1,3 +1,35 @@
+## Migrating to 1.30
+
+### Jabber Publisher
+
+The `publishJabber` DSL methods with `strategyName` and `channelNotificationName` have been
+[[deprecated|Deprecation-Policy]]. Use the methods of the context instead.
+
+DSL prior to 1.30
+```groovy
+job {
+    publishers {
+        publishJabber('one@example.org', 'ANY_FAILURE')
+        publishJabber('two@example.org', 'STATECHANGE_ONLY', 'BuildParameters')
+    }
+}
+```
+
+DSL since 1.30
+```groovy
+job {
+    publishers {
+        publishJabber('one@example.org' {
+            strategyName('ANY_FAILURE')
+        }
+        publishJabber('two@example.org') {
+            strategyName('STATECHANGE_ONLY')
+            channelNotificationName('BuildParameters')
+        }
+    }
+}
+```
+
 ## Migrating to 1.29
 
 ### Grab Support
