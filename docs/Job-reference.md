@@ -663,7 +663,10 @@ job {
         svn(String svnUrl, Closure configure = null)
         svn(String svnUrl, String localDir, Closure configure = null)
         svn { // since 1.30
-            location(String svnUrl, String localDir = '.') // at least on required
+            location(String svnUrl) {           // at least on required
+                directory(String directory)     // defaults to '.'
+                credentials(String credentials)
+            }
             checkoutStrategy(SvnCheckoutStrategy strategy)
             excludedRegions(String... patterns)
             excludedRegions(Iterator<String> patterns)
@@ -685,7 +688,7 @@ should be used for advanced configurations.
 
 When using the advanced variant, at least one location must be configured in order for the SVN plugin to operate
 correctly. By default, files are checked out into the workspace directory. To change this behaviour specify an
-alternate directory using the `localDir` parameter. Directories specified using `localDir` are relative to the workspace
+alternate directory using the `directory` option. Directories specified using `directory` are relative to the workspace
 directory.
 
 Valid values for `checkoutStrategy` are `SvnCheckoutStrategy.Update` (the default), `SvnCheckoutStrategy.Checkout`,
@@ -693,6 +696,9 @@ Valid values for `checkoutStrategy` are `SvnCheckoutStrategy.Update` (the defaul
 
 `excludedRegions`, `includedRegions`, `excludedUsers` and `excludedCommitMessages` can be called multiple times to
 exclude or include more patterns or users.
+
+Version 2.0 or later of the Subversion Plugin is required to use the `credentials` method. The parameter can either be
+the credentials` description or its UUID.
 
 ```groovy
 // checkout a project into the workspace directory
@@ -707,7 +713,9 @@ job {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
-            location('https://svn.mydomain.com/repo/project2/trunk', 'proj2')
+            location('https://svn.mydomain.com/repo/project2/trunk') {
+                directory('proj2')
+            }
         }
     }
 }

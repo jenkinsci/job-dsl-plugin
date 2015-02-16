@@ -1,8 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 
 class SvnContext implements Context {
+    private final JobManagement jobManagement
     List<Node> locations = []
     SvnCheckoutStrategy checkoutStrategy = SvnCheckoutStrategy.Update
     List<String> excludedRegions = []
@@ -12,17 +16,27 @@ class SvnContext implements Context {
     String excludedRevisionProperty
     Closure configureClosure
 
+    SvnContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
+
     /**
      * At least one location must be specified. Additional locations can be specified by calling {@link #location}
      * multiple times.
      *
      * @param svnUrl the URL of the repository to be checked out.
-     * @param localDir destination directory of checkout, relative to workspace
+     * @param svnLocationClosure closure to specify option settings for the location
      */
-    void location(String svnUrl, String localDir = '.') {
+    void location(String svnUrl, @DslContext(SvnLocationContext) Closure svnLocationClosure = null) {
+        SvnLocationContext svnLocationContext = new SvnLocationContext(jobManagement)
+        ContextHelper.executeInContext(svnLocationClosure, svnLocationContext)
+
         locations << new NodeBuilder().'hudson.scm.SubversionSCM_-ModuleLocation' {
             remote(svnUrl)
-            local(localDir)
+            if (svnLocationContext.credentials) {
+                credentialsId(svnLocationContext.credentials)
+            }
+            local(svnLocationContext.directory)
         }
     }
 
