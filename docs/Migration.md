@@ -32,6 +32,37 @@ job {
 
 ## Migrating to 1.29
 
+### Build Timeout
+
+The `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout` enum has been [[deprecated|Deprecation-Policy]]
+because it's not used by the DSL anymore.
+
+The `failBuild` option with a boolean argument has been [[deprecated|Deprecation-Policy]].
+
+DSL prior to 1.30
+```groovy
+job {
+    wrappers {
+        buildTimeout() {
+            failBuild(true)
+        }
+    }
+}
+```
+
+DSL since 1.30
+```groovy
+job {
+    wrappers {
+        buildTimeout() {
+            failBuild()
+        }
+    }
+}
+```
+
+## Migrating to 1.29
+
 ### Grab Support
 
 Support for the `@Grab` and `@Grapes` annotation has been [[deprecated|Deprecation-Policy]] and replaced by the

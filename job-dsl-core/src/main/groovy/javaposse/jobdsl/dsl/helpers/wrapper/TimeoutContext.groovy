@@ -2,65 +2,83 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout
 
 /**
  * Context to configure build timeouts.
  */
 class TimeoutContext implements Context {
     private final JobManagement jobManagement
-
-    Timeout type = Timeout.absolute
-    int limit = 3
-
-    int percentage = 150
-    int numberOfBuilds = 3
-    int minutesDefault = 60
-
-    int noActivitySeconds = 180
-
-    boolean failBuild = false
-    boolean abortBuild = false
-    boolean writeDescription = false
-    String description = ''
+    Node strategy
+    List<Node> operations = []
 
     TimeoutContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
+
+        // apply defaults
+        absolute()
     }
 
     void elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60) {
-        type = Timeout.elastic
-        this.percentage = percentage
-        this.numberOfBuilds = numberOfBuilds
-        this.minutesDefault = minutesDefault
+        setStrategy('Elastic') {
+            timeoutPercentage(percentage)
+            delegate.numberOfBuilds(numberOfBuilds)
+            timeoutMinutesElasticDefault(minutesDefault)
+        }
     }
 
     void noActivity(int seconds = 180) {
         jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
-        type = Timeout.noActivity
-        this.noActivitySeconds = seconds
+
+        setStrategy('NoActivity') {
+            timeout(seconds * 1000)
+        }
     }
 
     void absolute(int minutes = 3) {
-        type = Timeout.absolute
-        this.limit = minutes
+        setStrategy('Absolute') {
+            timeoutMinutes(minutes)
+        }
     }
 
     void likelyStuck() {
-        type = Timeout.likelyStuck
+        setStrategy('LikelyStuck')
     }
 
-    void failBuild(boolean fail = true) {
-        this.failBuild = fail
+    void failBuild() {
+        addOperation('Fail')
     }
 
-    void abortBuild(boolean abort = true) {
+    @Deprecated
+    void failBuild(boolean fail) {
+        jobManagement.logDeprecationWarning()
+
+        if (fail) {
+            failBuild()
+        } else {
+            operations.removeAll { it.name() == 'hudson.plugins.build__timeout.operations.FailOperation' }
+        }
+    }
+
+    void abortBuild() {
         jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
-        this.abortBuild = abort
+
+        addOperation('Abort')
     }
 
     void writeDescription(String description) {
-        this.description = description
-        this.writeDescription = true
+        addOperation('WriteDescription') {
+            delegate.description(description)
+        }
+    }
+
+    private void setStrategy(String type, Closure closure = null) {
+        strategy = new NodeBuilder().strategy(
+                class: "hudson.plugins.build_timeout.impl.${type}TimeOutStrategy",
+                closure
+        )
+    }
+
+    private void addOperation(String type, Closure closure = null) {
+        operations << new NodeBuilder()."hudson.plugins.build__timeout.operations.${type}Operation"(closure)
     }
 }
