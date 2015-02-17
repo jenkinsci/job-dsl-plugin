@@ -3016,6 +3016,7 @@ job {
                 allowClaimingOfFailedTests()
                 publishTestAttachments()
                 publishTestStabilityData()
+                publishFlakyTestsReport() // since 1.30
             }
         }
     }
@@ -3026,7 +3027,9 @@ Supports archiving JUnit results for each build. The
 [Claim Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Claim+plugin) is required for `allowClaimingOfFailedTests`.
 The [JUnit Attachments Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Attachments+Plugin) is required for
 `publishTestAttachments`. The [Test Stability Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Test+stability+plugin)
-is required for `publishTestStabilityData`.
+is required for `publishTestStabilityData`. The
+[Flaky Test Handler Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flaky+Test+Handler+Plugin) is required for
+`publishFlakyTestsReport`.
 
 ```groovy
 job {
