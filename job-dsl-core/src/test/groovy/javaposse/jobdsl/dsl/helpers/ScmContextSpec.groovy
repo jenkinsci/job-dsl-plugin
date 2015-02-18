@@ -16,7 +16,7 @@ class ScmContextSpec extends Specification {
     ScmContext context = new ScmContext(false, [], mockJobManagement)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
-    def 'base hg configuration'() {
+    def 'call hg simple configuration'() {
         when:
         context.hg(HG_REPO_URL)
 
@@ -27,7 +27,7 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('mercurial')
     }
 
-    def 'hg with branch'() {
+    def 'call hg simple with branch'() {
         String branch = 'not-default'
 
         when:
@@ -38,7 +38,178 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('mercurial')
     }
 
-    def 'duplicate scm calls disallowed'() {
+    def 'duplicate scm calls disallowed hg'() {
+        when:
+        context.hg(HG_REPO_URL)
+        context.hg(HG_REPO_URL)
+
+        then:
+        thrown(RuntimeException)
+    }
+
+    def 'call hg without url disallowed'() {
+        when:
+        context.hg {
+            url(null)
+        }
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'call hg branch and tag disallowed'() {
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            branch('branch')
+            tag('tag')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call hg with installation'() {
+        String valueInstallation  = 'companyMercurial'
+
+        when:
+        context.hg {
+            installation(valueInstallation)
+            url(HG_REPO_URL)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.installation[0].text() == valueInstallation
+        context.scmNode.source[0].text() == HG_REPO_URL
+    }
+
+    def 'call hg with branch'() {
+        String valueBranch = 'not-default'
+
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            branch(valueBranch)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.revisionType[0].text() == 'BRANCH'
+        context.scmNode.revision[0].text() == valueBranch
+    }
+
+    def 'call hg with tag'() {
+        String valueTag = 'not-default'
+
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            tag(valueTag)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.revisionType[0].text() == 'TAG'
+        context.scmNode.revision[0].text() == valueTag
+    }
+
+    def 'call hg with modules'() {
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            modul('modul-1')
+            modules('modul-2', 'modul-3')
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.modules[0].text() == 'modul-1 modul-2 modul-3'
+    }
+
+    def 'call hg with credentials'() {
+        String valueUser = 'user1'
+        String valueCredentialsId = 'user1-credentials'
+
+        setup:
+        mockJobManagement.getCredentialsId(valueUser) >> valueCredentialsId
+
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            credentials(valueUser)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.credentialsId[0].text() == valueCredentialsId
+    }
+
+    def 'call hg with subdirectory'() {
+        String valueSubDirectory = '/foo/bar'
+
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            subDirectory(valueSubDirectory)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.subdir[0].text() == valueSubDirectory
+    }
+
+    def 'call hg with clean'() {
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            clean(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.clean[0].text() == 'true'
+    }
+
+    def 'call hg with disableChangeLog'() {
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+            disableChangeLog(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.disableChangeLog[0].text() == 'true'
+    }
+
+    def 'call hg with default values'() {
+        when:
+        context.hg {
+            url(HG_REPO_URL)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.installation.size() == 0
+        context.scmNode.source[0].text() == HG_REPO_URL
+        context.scmNode.modules[0].text() == ''
+        context.scmNode.revisionType[0].text() == 'BRANCH'
+        context.scmNode.revision[0].text() == 'default'
+        context.scmNode.subdir.size() == 0
+        context.scmNode.clean[0].text() == 'false'
+        context.scmNode.credentialsId[0].text() == ''
+        context.scmNode.disableChangeLog[0].text() == 'false'
+    }
+
+    def 'duplicate scm calls disallowed git'() {
         when:
         context.git(GIT_REPO_URL)
         context.git(GIT_REPO_URL)

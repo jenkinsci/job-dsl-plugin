@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
+import javaposse.jobdsl.dsl.helpers.scm.HgContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.SvnContext
@@ -61,6 +62,46 @@ class ScmContext extends AbstractContext {
         // Apply Context
         if (configure) {
             WithXmlAction action = new WithXmlAction(configure)
+            action.execute(scmNode)
+        }
+
+        scmNodes << scmNode
+    }
+
+    /**
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'mercurial')
+    void hg(@DslContext(HgContext) Closure hgClosure) {
+        validateMulti()
+
+        HgContext hgContext = new HgContext(withXmlActions, jobManagement)
+        executeInContext(hgClosure, hgContext)
+
+        checkNotNull(hgContext.url)
+        checkArgument(!(hgContext.tag && hgContext.branch), 'Eihter tag or branch should be used, not both')
+
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
+            source hgContext.url
+            modules hgContext.modules.join(' ')
+            revisionType hgContext.tag ? 'TAG' : 'BRANCH'
+            revision hgContext.tag ?: hgContext.branch ?: 'default'
+            clean hgContext.clean
+            credentialsId hgContext.credentialsId ?: ''
+            disableChangeLog hgContext.disableChangeLog
+        }
+        if (hgContext.installation) {
+            scmNode.appendNode('installation', hgContext.installation)
+        }
+        if (hgContext.subDirectory) {
+            scmNode.appendNode('subdir', hgContext.subDirectory)
+        }
+
+        // Apply Context
+        if (hgContext.withXmlClosure) {
+            WithXmlAction action = new WithXmlAction(hgContext.withXmlClosure)
             action.execute(scmNode)
         }
 
