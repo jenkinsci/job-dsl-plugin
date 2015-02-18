@@ -116,7 +116,7 @@ class ScmContextSpec extends Specification {
         context.hg {
             url(HG_REPO_URL)
             modul('modul-1')
-            modules('modul-2','modul-3')
+            modules('modul-2', 'modul-3')
         }
 
         then:
@@ -183,10 +183,6 @@ class ScmContextSpec extends Specification {
         context.scmNode != null
         context.scmNode.source[0].text() == HG_REPO_URL
         context.scmNode.disableChangeLog[0].text() == 'true'
-    }
-
-    def 'call hg with xmlAction'() {
-        
     }
 
     def 'call hg with default values'() {

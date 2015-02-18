@@ -1,10 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import groovy.lang.Closure;
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
-import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class HgContext implements Context {
     private final List<WithXmlAction> withXmlActions
@@ -61,7 +59,7 @@ class HgContext implements Context {
     void clean(boolean clean = true) {
         this.clean = clean
     }
-    
+
     void disableChangeLog(boolean disableChangeLog = true) {
         this.disableChangeLog = disableChangeLog
     }
