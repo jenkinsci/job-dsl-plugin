@@ -535,14 +535,40 @@ The parameterless invocation sets a default retry count of three (3) times. To s
 ## Mercurial
 
 ```groovy
+hg {
+    // since 1.30
+    installation(String installation) // optional, if you want to use a special Mercurial-installation defined in the global Jenkins-settings
+    url(String url) // repository url
+    modul(String modul) // checkout only specified modules, optional
+    modules(String... modules) // checkout only specified modules, optional
+    subDirectory(String subDirectory) // checkout into this subdirectory, optional
+    branch (String branch) // checkout selected branch, optional
+    tag (String tag) // checkout selected tag, optional
+    credentials(String credentials) // use one of the pre-defined credentials, optional
+    clean(boolean clean=true) // perform a clean checkout, optional, defaults to false
+    disableChangeLog(boolean disableChangeLog=true) // optional, defaults to false
+    configure(Closure configure) // optional configure block
+}
+
 hg(String url, String branch = null, Closure configure = null)
 ```
 
-Add Mercurial SCM source. Will not clean by default, to change this use the configure block, e.g.
+Add Mercurial SCM source. The first variant can be used for advanced configuration (since 1.30), the other variant is a shortcut for simpler Mercurial SCM configuration.
+
+Examples:
 
 ```groovy
-hg('http://scm') { node ->
-    node / clean('true')
+// checkout feature_branch1
+hg('http://scm','feature_branch1')
+```
+
+```groovy
+// clean checkout modul1 from feature_branch1
+hg {
+    url('http://scm')
+    branch('feature_branch1')
+    modul('modul1')
+    clean(true)
 }
 ```
 
