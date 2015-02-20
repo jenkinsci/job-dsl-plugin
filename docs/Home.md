@@ -18,6 +18,7 @@ And finally, if you want to get more involved, [here's how...](https://github.co
 ## Release Notes
 * 1.30 (unreleased)
  * Added support for [Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin)
+ * Added support for [Flaky Test Handler Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flaky+Test+Handler+Plugin)
  * Added configure block to the Multijob job context
  * Added strategy option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
  * Added strategy build chooser for the [Gerrit Trigger](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)

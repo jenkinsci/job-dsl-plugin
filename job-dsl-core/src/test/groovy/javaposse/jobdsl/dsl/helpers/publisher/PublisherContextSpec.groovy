@@ -203,6 +203,7 @@ class PublisherContextSpec extends Specification {
                 allowClaimingOfFailedTests()
                 publishTestAttachments()
                 publishTestStabilityData()
+                publishFlakyTestsReport()
             }
         }
 
@@ -212,11 +213,17 @@ class PublisherContextSpec extends Specification {
             children().size() == 3
             testResults[0].value() == 'include/*'
             keepLongStdio[0].value() == true
-            testDataPublishers[0].children().size() == 3
+            testDataPublishers[0].children().size() == 4
             testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
             testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
             testDataPublishers[0].'de.esailors.jenkins.teststability.StabilityTestDataPublisher'[0] != null
+            testDataPublishers[0].'com.google.jenkins.flakyTestHandler.plugin.JUnitFlakyTestDataPublisher'[0] != null
         }
+
+        1 * jobManagement.requireMinimumPluginVersion('claim', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('junit-attachments', '1.0')
+        1 * jobManagement.requireMinimumPluginVersion('test-stability', '1.0')
+        1 * jobManagement.requireMinimumPluginVersion('flaky-test-handler', '1.0.0')
     }
 
     def 'call junit archive with minimal args'() {
