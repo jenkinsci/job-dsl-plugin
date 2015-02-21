@@ -301,7 +301,7 @@ view(type: BuildMonitorView) {  // since 1.28
 
 Create a view that provides a highly visible view of the status of selected Jenkins jobs. Details
 about the options can be found below. Similar to jobs, the view DSL can be extended using a
-[[configure block|The Configure Block]].
+[configure block](The-Configure-Block.md).
 
 ```groovy
 view(type: BuildMonitorView) {

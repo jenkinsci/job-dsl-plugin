@@ -1,4 +1,4 @@
->**Before proceeding, make sure to have the latest Job DSL plugin installed. Install it from the update center or use the .hpi file provided from [this site](https://github.com/downloads/JavaPosseRoundup/job-dsl-plugin/job-dsl.hpi).**
+>**Before proceeding, make sure to have the latest Job DSL plugin installed. Install it from the update center or use the .hpi file provided [on the GitHub site](https://github.com/downloads/JavaPosseRoundup/job-dsl-plugin/job-dsl.hpi).**
 
 This tutorial will walk you through how to create a single job using a DSL script; and then add a few more.
 
@@ -9,13 +9,13 @@ The first step is to create this Job.
 
 * From the Jenkins main page, select either the "New Job" or "Create new Jobs" link. A new job creation page will be displayed.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/newjob.png|center|frame]]
+![New Job](../images/newjob.png)
 
 * Fill in the name field, e.g. "tutorial-job-dsl-1"
 * Select the "Build a free-style software project" radio button.
 * Click the OK button
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/createjob.png|center|frame]]
+![Create Job](../images/createjob.png)
 
 ## 2. Adding a DSL Script
 
@@ -23,11 +23,11 @@ Now that we have created our empty Seed Job we need to configure it. We're going
 
 * On the configure screen, scroll down to the "Build: Add build step" pull down menu
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/AddBuildStep.png|center|frame]]
+![Add Build Step](../images/AddBuildStep.png)
 
 * From the pull down menu, select "Process Job DSLs". You should be presented with two radio buttons. The default will be "Use the provided DSL script" and a text input box will be displayed below it.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/AddBuildStepSelected.png|center|frame]]
+![AddBuildStepSelected](../images/AddBuildStepSelected.png)
 
 * Copy the following DSL Script block into the input box. (Note: The job resulting from this will be called DSL-Tutorial-1-Test. It'll check a GitHub repo every 15 minutes, then run 'clean test' if there's any changes found.)
 
@@ -46,11 +46,11 @@ job {
 }
 ```
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/DslBuildStep.png|center|frame]]
+![DslBuildStep](../images/DslBuildStep.png)
 
 * Click the "Save" button.  You'll be shown the overview page for the new Seed job you just created.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/EmptySeed.png|center|frame]]
+![EmptySeed](../images/EmptySeed.png)
 
 ## 3. Run the Seed Job and Generate the new Jobs from the Script
 
@@ -62,7 +62,7 @@ Let's just run it ourselves manually.
 
 * Click the "Build Now" link/button on the tutorial-job-dsl-1 overview page. It should only take a second to run.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/Build1.png|center|frame]]
+![Build1](../images/Build1.png)
 
 * Look at the build result to see a link to the new Job which has been created by the running of your DSL script in the Seed Job. You should see this in the section called "Generated Jobs". (If you don't see it, you probably have Auto-Refresh disabled.  Enable it, or just refresh the page and then you'll see the new job.)
 
@@ -102,4 +102,5 @@ branches.each {
 
 ## 5. Enjoy the results
 
-That's it. Now you know how to make Seed Jobs, which can create a multitude of Scripted child Jobs. Take a look at some [Real World Examples](https://github.com/jenkinsci/job-dsl-plugin/wiki/Real-World-Examples) or jump ahead and [read up on the DSL commands in detail](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands) for more fun.
+That's it. Now you know how to make Seed Jobs, which can create a multitude of Scripted child Jobs.
+Take a look at some [Real World Examples](Real-World-Examples.md) or jump ahead and [read up on the DSL commands in detail](Job-DSL-Commands.md) for more fun.

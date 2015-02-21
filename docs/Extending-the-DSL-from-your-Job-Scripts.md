@@ -25,7 +25,7 @@ job {
     }
 }
 ```
-If you find these monkey-patches useful, consider [submitting them to the Core DSL as an enhancement.](Contributing-to-the-job-dsl-plugin-Project).
+If you find these monkey-patches useful, consider [submitting them to the Core DSL as an enhancement](../CONTRIBUTING.md).
 
 ## Using helper files
 
