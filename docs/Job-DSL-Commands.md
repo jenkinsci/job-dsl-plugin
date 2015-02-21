@@ -285,9 +285,10 @@ job(Map<String, ?> arguments = [:]) {
                               Closure cloneWorkspaceClosure = null)
         publishHtml(Closure htmlReportClosure)
         publishJabber(String target, Closure jabberClosure = null)
-        publishJabber(String target, String strategyName, Closure jabberClosure = null)
+        publishJabber(String target, String strategyName,
+                      Closure jabberClosure = null) // deprecated since 1.30
         publishJabber(String target, String strategyName, String channelNotificationName,
-                      Closure jabberClosure = null)
+                      Closure jabberClosure = null) // deprecated since 1.30
         publishRobotFrameworkReports(Closure closure = null) // since 1.21
         publishScp(String site, Closure scpClosure)
         rundeck(String jobId, Closure rundeckClosure = null) // since 1.24

@@ -221,6 +221,22 @@ class WrapperContextSpec extends Specification {
         }
     }
 
+    def 'default timeout will not fail the build'() {
+        when:
+        context.timeout {
+            failBuild()
+            failBuild(false)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].timeoutMinutes[0].value() == 3
+            operationList[0].children().size() == 0
+        }
+    }
+
     def 'default timeout will abort the build'() {
         when:
         context.timeout {

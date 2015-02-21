@@ -663,7 +663,11 @@ job {
         svn(String svnUrl, Closure configure = null)
         svn(String svnUrl, String localDir, Closure configure = null)
         svn { // since 1.30
-            location(String svnUrl, String localDir = '.') // at least on required
+            location(String svnUrl) {           // at least on required
+                directory(String directory)     // defaults to '.'
+                credentials(String credentials)
+                depth(SvnDepth depth)           // defaults to INFINITY
+            }
             checkoutStrategy(SvnCheckoutStrategy strategy)
             excludedRegions(String... patterns)
             excludedRegions(Iterator<String> patterns)
@@ -685,14 +689,20 @@ should be used for advanced configurations.
 
 When using the advanced variant, at least one location must be configured in order for the SVN plugin to operate
 correctly. By default, files are checked out into the workspace directory. To change this behaviour specify an
-alternate directory using the `localDir` parameter. Directories specified using `localDir` are relative to the workspace
+alternate directory using the `directory` option. Directories specified using `directory` are relative to the workspace
 directory.
 
 Valid values for `checkoutStrategy` are `SvnCheckoutStrategy.Update` (the default), `SvnCheckoutStrategy.Checkout`,
 `SvnCheckoutStrategy.UpdateWithClean` or `SvnCheckoutStrategy.UpdateWithRevert`.
 
+Valid values for `depth` are `SvnDepth.INFINITY` (the default), `SvnDepth.EMPTY`, `SvnDepth.IMMEDIATES`,
+`SvnDepth.FILES` and `SvnDepth.AS_IT_IS`.
+
 `excludedRegions`, `includedRegions`, `excludedUsers` and `excludedCommitMessages` can be called multiple times to
 exclude or include more patterns or users.
+
+Version 2.0 or later of the Subversion Plugin is required to use the `credentials` method. The parameter can either be
+the credentials` description or its UUID.
 
 ```groovy
 // checkout a project into the workspace directory
@@ -707,7 +717,21 @@ job {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
-            location('https://svn.mydomain.com/repo/project2/trunk', 'proj2')
+            location('https://svn.mydomain.com/repo/project2/trunk') {
+                directory('proj2')
+            }
+        }
+    }
+}
+
+// do a sparse checkout
+job {
+    scm {
+        svn {
+            location('https://svn.mydomain.com/repo/project/trunk') {
+                directory('proj2')
+                depth(SvnDepth.EMPTY)
+            }
         }
     }
 }
@@ -1114,8 +1138,9 @@ job {
             noActivity(int seconds = 180)
             absolute(int minutes = 3)                  // default
             likelyStuck()
-            failBuild(boolean fail = true)
-            abortBuild(boolean abort = true)           // since 1.30
+            failBuild()
+            failBuild(boolean fail)                    // deprecated since 1.30
+            abortBuild()                               // since 1.30
             writeDescription(String description)
         }
     }
@@ -2991,6 +3016,7 @@ job {
                 allowClaimingOfFailedTests()
                 publishTestAttachments()
                 publishTestStabilityData()
+                publishFlakyTestsReport() // since 1.30
             }
         }
     }
@@ -3001,7 +3027,9 @@ Supports archiving JUnit results for each build. The
 [Claim Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Claim+plugin) is required for `allowClaimingOfFailedTests`.
 The [JUnit Attachments Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Attachments+Plugin) is required for
 `publishTestAttachments`. The [Test Stability Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Test+stability+plugin)
-is required for `publishTestStabilityData`.
+is required for `publishTestStabilityData`. The
+[Flaky Test Handler Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flaky+Test+Handler+Plugin) is required for
+`publishFlakyTestsReport`.
 
 ```groovy
 job {
@@ -3057,19 +3085,44 @@ job {
 ```
 
 ## Jabber Publisher
+
 ```groovy
-publishJabber(String target, String strategyName, String channelNotificationName, Closure jabberClosure) {
-    strategyName 'ALL' // ALL, FAILURE_AND_FIXED, ANY_FAILURE, STATECHANGE_ONLY
-    notifyOnBuildStart false
-    notifySuspects false
-    notifyCulprits false
-    notifyFixers false
-    notifyUpstreamCommitters false
-    channelNotificationName 'Default' // Default, SummaryOnly, BuildParameters, PrintFailingTests
+job {
+    publishers {
+        publishJabber(String target, String strategyName, String channelNotificationName,
+                      Closure jabberClosure = null)        // deprecated since 1.30
+        publishJabber(String target, String strategyName,
+                      Closure jabberClosure = null)        // deprecated since 1.30
+        publishJabber(String target) {
+            strategyName(String strategy)                  // defaults to 'ALL'
+            notifyOnBuildStart(boolean value = true)       // defaults to false
+            notifySuspects(boolean value = true)           // defaults to false
+            notifyCulprits(boolean value = true)           // defaults to false
+            notifyFixers(boolean value = true)             // defaults to false
+            notifyUpstreamCommitters(boolean value = true) // defaults to false
+            channelNotificationName(String name)           // defaults to 'Default'
+        }
+    }
 }
 ```
 
-Supports <a href="https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin">Jabber Plugin</a>. A few arguments can be specified in the method call or in the closure.
+Enables Jenkins to send build notifications via Jabber. Requires the
+[Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin).
+
+Valid values for `strategyName` are `ALL`, `FAILURE_AND_FIXED`, `ANY_FAILURE` and `STATECHANGE_ONLY`. Valid values for
+`channelNotificationName` are `Default`, `SummaryOnly`, `BuildParameters` and `PrintFailingTests`.
+
+```groovy
+job {
+    publishers {
+        publishJabber('*room@example.org') {
+            strategyName('STATECHANGE_ONLY')
+            notifySuspects()
+            channelNotificationName('BuildParameters')
+        }
+    }
+}
+```
 
 ## SCP Publisher
 

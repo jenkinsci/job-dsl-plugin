@@ -203,6 +203,7 @@ class PublisherContextSpec extends Specification {
                 allowClaimingOfFailedTests()
                 publishTestAttachments()
                 publishTestStabilityData()
+                publishFlakyTestsReport()
             }
         }
 
@@ -212,11 +213,17 @@ class PublisherContextSpec extends Specification {
             children().size() == 3
             testResults[0].value() == 'include/*'
             keepLongStdio[0].value() == true
-            testDataPublishers[0].children().size() == 3
+            testDataPublishers[0].children().size() == 4
             testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
             testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
             testDataPublishers[0].'de.esailors.jenkins.teststability.StabilityTestDataPublisher'[0] != null
+            testDataPublishers[0].'com.google.jenkins.flakyTestHandler.plugin.JUnitFlakyTestDataPublisher'[0] != null
         }
+
+        1 * jobManagement.requireMinimumPluginVersion('claim', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('junit-attachments', '1.0')
+        1 * jobManagement.requireMinimumPluginVersion('test-stability', '1.0')
+        1 * jobManagement.requireMinimumPluginVersion('flaky-test-handler', '1.0.0')
     }
 
     def 'call junit archive with minimal args'() {
@@ -755,21 +762,20 @@ class PublisherContextSpec extends Specification {
         targetNode.value[0].value() == 'me@gmail.com'
         targetNode.notificationOnly.size() == 0 // No noficationOnly when not a group
         publisherNode.strategy[0].value() == 'ALL'
-        publisherNode.notifyOnBuildStart[0].value() == 'false'
-        publisherNode.notifySuspects[0].value() == 'false'
-        publisherNode.notifyCulprits[0].value() == 'false'
-        publisherNode.notifyFixers[0].value() == 'false'
-        publisherNode.notifyUpstreamCommitters[0].value() == 'false'
+        publisherNode.notifyOnBuildStart[0].value() == false
+        publisherNode.notifySuspects[0].value() == false
+        publisherNode.notifyCulprits[0].value() == false
+        publisherNode.notifyFixers[0].value() == false
+        publisherNode.notifyUpstreamCommitters[0].value() == false
         Node buildToNode = publisherNode.buildToChatNotifier[0]
         buildToNode.attributes().containsKey('class')
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
         publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
-
     }
 
     def 'call Jabber publish with all args'() {
         when:
-        context.publishJabber('me@gmail.com *tools@hipchat.com', 'ANY_FAILURE', 'SummaryOnly' )
+        context.publishJabber('me@gmail.com *tools@hipchat.com', 'ANY_FAILURE', 'SummaryOnly')
 
         then:
         Node publisherNode = context.publisherNodes[0]
@@ -793,14 +799,14 @@ class PublisherContextSpec extends Specification {
 
     def 'call Jabber publish with closure args'() {
         when:
-        context.publishJabber('me@gmail.com', 'ANY_FAILURE', 'SummaryOnly' ) {
-            strategyName 'FAILURE_AND_FIXED' // ALL,  FAILURE_AND_FIXED, ANY_FAILURE, STATECHANGE_ONLY
-            notifyOnBuildStart = true
-            notifySuspects = true
-            notifyCulprits = true
-            notifyFixers = true
-            notifyUpstreamCommitters = true
-            channelNotificationName = 'PrintFailingTests' // Default, SummaryOnly, BuildParameters, PrintFailingTests
+        context.publishJabber('me@gmail.com') {
+            strategyName('FAILURE_AND_FIXED')
+            notifyOnBuildStart()
+            notifySuspects()
+            notifyCulprits()
+            notifyFixers()
+            notifyUpstreamCommitters()
+            channelNotificationName('PrintFailingTests')
         }
 
         then:
@@ -810,11 +816,11 @@ class PublisherContextSpec extends Specification {
         targetNode.value[0].value() == 'me@gmail.com'
         targetNode.notificationOnly.size() == 0
         publisherNode.strategy[0].value() == 'FAILURE_AND_FIXED'
-        publisherNode.notifyOnBuildStart[0].value() == 'true'
-        publisherNode.notifySuspects[0].value() == 'true'
-        publisherNode.notifyCulprits[0].value() == 'true'
-        publisherNode.notifyFixers[0].value() == 'true'
-        publisherNode.notifyUpstreamCommitters[0].value() == 'true'
+        publisherNode.notifyOnBuildStart[0].value() == true
+        publisherNode.notifySuspects[0].value() == true
+        publisherNode.notifyCulprits[0].value() == true
+        publisherNode.notifyFixers[0].value() == true
+        publisherNode.notifyUpstreamCommitters[0].value() == true
         Node buildToNode = publisherNode.buildToChatNotifier[0]
         buildToNode.attributes().containsKey('class')
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
@@ -826,14 +832,13 @@ class PublisherContextSpec extends Specification {
         context.publishJabber('me@gmail.com', 'NOPE')
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
 
         when:
         context.publishJabber('me@gmail.com', 'ALL', 'Nope')
 
         then:
-        thrown(AssertionError)
-
+        thrown(IllegalArgumentException)
     }
 
     def 'call Clone Workspace publish with minimal args'() {

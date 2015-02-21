@@ -15,23 +15,23 @@ class JabberContext implements Context {
         this.strategyName = strategyName
     }
 
-    void notifyOnBuildStart(boolean notifyOnBuildStart) {
+    void notifyOnBuildStart(boolean notifyOnBuildStart = true) {
         this.notifyOnBuildStart = notifyOnBuildStart
     }
 
-    void notifySuspects(boolean notifySuspects) {
+    void notifySuspects(boolean notifySuspects = true) {
         this.notifySuspects = notifySuspects
     }
 
-    void notifyCulprits(boolean notifyCulprits) {
+    void notifyCulprits(boolean notifyCulprits = true) {
         this.notifyCulprits = notifyCulprits
     }
 
-    void notifyFixers(boolean notifyFixers) {
+    void notifyFixers(boolean notifyFixers = true) {
         this.notifyFixers = notifyFixers
     }
 
-    void notifyUpstreamCommitters(boolean notifyUpstreamCommitters) {
+    void notifyUpstreamCommitters(boolean notifyUpstreamCommitters = true) {
         this.notifyUpstreamCommitters = notifyUpstreamCommitters
     }
 

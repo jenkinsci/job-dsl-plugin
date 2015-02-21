@@ -20,14 +20,19 @@ And finally, if you want to get more involved, see the [contributing guide](../C
 ## Release Notes
 * 1.30 (unreleased)
  * Added support for [Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin)
+ * Added support for [Flaky Test Handler Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flaky+Test+Handler+Plugin)
  * Added configure block to the Multijob job context
  * Added strategy option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
  * Added strategy build chooser for the [Gerrit Trigger](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
  * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
  * Added `abortBuild` action for the [Build Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
+ * Deprecated the `failBuild` action with a boolean parameter for the [Build Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin), see [[Migration]]
+ * Deprecated the `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout` enum, see [[Migration]]
  * Added support for label parameters from the [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin)
  * Added populateToolInstallations and overrideBuildVariables options for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin)
  * Added groovy option in the wrappers context for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin)
+ * Fixed the `notifySuspects` option for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
+ * Deprecated some overloaded DSL methods for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin), see [[Migration]]
 * 1.29 (February 05 2015)
  * Show seed job and template job info in the generated jobs
  * Added [CoreMirror](https://codemirror.net/) support for the DSL script input field

@@ -6,10 +6,10 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
-import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
-import javaposse.jobdsl.dsl.helpers.scm.SvnContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
+import javaposse.jobdsl.dsl.helpers.scm.RTCContext
+import javaposse.jobdsl.dsl.helpers.scm.SvnContext
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
@@ -253,7 +253,9 @@ class ScmContext implements Context {
      *     <locations>
      *         <hudson.scm.SubversionSCM_-ModuleLocation>
      *             <remote>http://svn/repo</remote>
+     *             <credentialsId>31a56ed2-f7be-4da6-8c91-36a8eebaf016</credentialsId>
      *             <local>.</local>
+     *             <depthOption>infinity</depthOption>
      *         </hudson.scm.SubversionSCM_-ModuleLocation>
      *     </locations>
      *     <excludedRegions/>
@@ -273,7 +275,9 @@ class ScmContext implements Context {
         checkNotNull(localDir)
 
         svn {
-            location(svnUrl, localDir)
+            location(svnUrl) {
+                directory(localDir)
+            }
             delegate.configure(configure)
         }
     }
@@ -281,7 +285,7 @@ class ScmContext implements Context {
     void svn(@DslContext(SvnContext) Closure svnClosure) {
         validateMulti()
 
-        SvnContext svnContext = new SvnContext()
+        SvnContext svnContext = new SvnContext(jobManagement)
         executeInContext(svnClosure, svnContext)
 
         checkState(!svnContext.locations.empty, 'One or more locations must be specified')
