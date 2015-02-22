@@ -127,17 +127,24 @@ jobs are not the first thing a user sees when they login
 
 Building
 --------
+Prerequisites:
+* JDK 6 (or above)
+
 To build the plugin from source:
 
     ./gradlew build
 
-To run Jenkins and test JPI:
+To run Jenkins (http://localhost:8080) and test the plugin:
 
     ./gradlew server
 
 Build job-dsl.hpi to be installed in Jenkins:
 
     ./gradlew jpi
+
+IntelliJ IDEA and Eclipse (STS) have the ability to open Gradle projects directly, but they both have their own issues
+actually running Gradle and running tests. As a workaround Maven POMs have been added and those can be opened
+directly in IntelliJ IDEA to create a project.
 
 Authors
 -------
