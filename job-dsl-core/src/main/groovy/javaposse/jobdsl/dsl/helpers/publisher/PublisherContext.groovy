@@ -376,22 +376,22 @@ class PublisherContext implements Context {
     *     </plots>
     * </hudson.plugins.plot.PlotPublisher>
     */
-    void plotPlugin(Closure plotPluginClosure) {
+    void plotBuildData(Closure plotsClosure) {
 
-        PlotPluginContext plotPluginContext = new PlotPluginContext()
-        ContextHelper.executeInContext(plotPluginClosure, plotPluginContext)
+        PlotsContext plotsContext = new PlotsContext()
+        ContextHelper.executeInContext(plotsClosure, plotsContext)
 
         NodeBuilder nodeBuilder = NodeBuilder.newInstance()
 
-        Node plotPluginNode = nodeBuilder.'hudson.plugins.plot.PlotPublisher' {
+        Node plotsNode = nodeBuilder.'hudson.plugins.plot.PlotPublisher' {
             plots {
-                plotPluginContext.plots.each { PlotPluginPlotContext plot ->
+                plotsContext.plots.each { PlotContext plot ->
                     'hudson.plugins.plot.Plot' {
                         group plot.group
                         csvFileName plot.dataStore
                         style plot.style
                         series {
-                            plot.dataSeriesList.each { PlotPluginPlotSeriesContext data ->
+                            plot.dataSeriesList.each { PlotSeriesContext data ->
                                 "hudson.plugins.plot.${data.type}" {
                                     file data.file
                                     label data.label
@@ -404,7 +404,7 @@ class PublisherContext implements Context {
             }
         }
 
-        publisherNodes << plotPluginNode
+        publisherNodes << plotsNode
     }
 
     /**

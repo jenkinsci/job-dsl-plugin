@@ -2,13 +2,13 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 
-class PlotPluginPlotSeriesContext implements Context {
+class PlotSeriesContext implements Context {
     final String type
     final String fileType
     String file = ''
     String label = ''
 
-    PlotPluginPlotSeriesContext(String type, String fileType) {
+    PlotSeriesContext(String type, String fileType) {
         this.type = type
         this.fileType = fileType
     }
