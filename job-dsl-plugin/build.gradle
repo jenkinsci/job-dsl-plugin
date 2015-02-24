@@ -11,6 +11,9 @@ apply plugin: 'org.jenkins-ci.jpi'
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
 
+// keep the generated sources outside of the build directory, see http://stackoverflow.com/a/21003914/1271460
+def generatedSourcesDir = 'generated'
+
 jenkinsPlugin {
     coreVersion = '1.554.2'
     displayName = 'Job DSL'
@@ -19,6 +22,7 @@ jenkinsPlugin {
     maskClasses = 'groovy.grape'
     compatibleSinceVersion = '1.29'
     pluginFirstClassLoader = true
+    localizerOutputDir = "$generatedSourcesDir/localizer"
     developers {
         developer {
             id 'quidryan'
@@ -41,6 +45,10 @@ jenkinsPlugin {
             email 'mail@daniel-spilker.com'
         }
     }
+}
+
+clean {
+    delete generatedSourcesDir
 }
 
 configurations {
