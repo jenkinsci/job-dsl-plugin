@@ -1,19 +1,21 @@
 Welcome to the jenkins-job-dsl wiki!
 
-Highly recommended starting point is the tutorial, [[Tutorial - Using the Jenkins Job DSL]]
+* The formal documentation and full syntax reference is detailed in [[Job DSL Commands]].
+* There are also tips on [[more advanced usage and workflows|User Power Moves]].
+* [The forum](https://groups.google.com/forum/#!forum/job-dsl-plugin) has lots of information, some of which is making its way to the [[FAQ|Frequently Asked Questions]].
+* If you want to get more involved, here's [how to contribute](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)...
 
-Once you know how to create a "seed" job from the tutorial, start looking at the [[Real World Examples]] for examples to steal from.  **For formal documentation, the [[Job DSL Commands]]** page has what is available directly in the DSL at this time, and there are also some [[User Power Moves]] you can try to make your life easier.
+## Getting Started
+Highly recommended starting point is [[the tutorial|Tutorial - Using the Jenkins Job DSL]].
 
+Once you know how to create a "seed" job from the tutorial, start looking at the [[real world examples|Real World Examples]] for examples to steal from.
 After you get familiar with some of the commands, try them out at the [Job DSL Playground](http://job-dsl.herokuapp.com/).
 
-If you want to get fancy you'll want to read up on the _configure_ block which gives you direct access to the config.xml, read [[configure block|The Configure Block]]. It's also possible (and easy) to [[define your own DSL commands|Extending the DSL from your Job Scripts]] using monkey patching.
+If you want to get fancy you'll want to read up on [[configure block|The Configure Block]], which gives you direct access to the `config.xml`.
+It's also possible (and easy) to [[define your own DSL commands|Extending the DSL from your Job Scripts]] using monkey patching.
 
-There is a great load of information on [the forum](https://groups.google.com/forum/#!forum/job-dsl-plugin), but some stuff is also making its way into a [[FAQ|Frequently Asked Questions]].
 
-Have a look at the [Jenkins Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example) to see how to
-organize a SCM repository for Job DSL scripts.
-
-And finally, if you want to get more involved, [here's how...](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)
+Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
 * 1.30 (unreleased)

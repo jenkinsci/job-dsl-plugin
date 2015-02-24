@@ -25,7 +25,8 @@ job {
     }
 }
 ```
-If you find these monkey-patches useful, consider [submitting them to the Core DSL as an enhancement.](Contributing-to-the-job-dsl-plugin-Project).
+If you find these monkey-patches useful, consider
+[submitting them to the Core DSL as an enhancement](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md).
 
 ## Using helper files
 
@@ -58,4 +59,6 @@ use(common) {
     }
 }
 ```
-Have a look at source job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/helpers/* to see which Context classes you can monkey-patch to introduce new DSL commands.
+
+Have a look at [job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/helpers/](https://github.com/jenkinsci/job-dsl-plugin/tree/master/job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/helpers)
+to see which `Context` classes you can monkey-patch to introduce new DSL commands.
