@@ -17,6 +17,7 @@ gradle-app.setting
 *.bak
 /local*
 build
+generated
 /out
 /classes
 
