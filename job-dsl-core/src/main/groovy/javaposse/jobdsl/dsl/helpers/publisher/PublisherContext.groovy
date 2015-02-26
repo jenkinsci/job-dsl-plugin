@@ -105,7 +105,6 @@ class PublisherContext implements Context {
 
         // Apply their overrides
         if (emailContext.configureClosure) {
-            emailContext.configureClosure.resolveStrategy = Closure.DELEGATE_FIRST
             WithXmlAction action = new WithXmlAction(emailContext.configureClosure)
             action.execute(emailNode)
         }
