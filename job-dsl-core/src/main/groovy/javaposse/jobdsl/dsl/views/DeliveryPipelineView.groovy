@@ -1,11 +1,16 @@
 package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class DeliveryPipelineView extends View {
+    DeliveryPipelineView(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
     void pipelineInstances(int number) {
         execute {
             it / noOfPipelines(number)

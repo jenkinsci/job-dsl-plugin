@@ -6,31 +6,27 @@ The DSL execution engine exposes a method, called `job`. This `job` method impli
 and the closure to this method can be used to define the job's settings. The only mandatory option is `name`.
 
 ```groovy
-job {
-    name 'my-job'
+job('my-job') {
 }
 ```
 
 There are similar methods to create Jenkins views, folders and config files:
 
 ```groovy
-view {
-    name 'my-view'
+view('my-view') {
 }
 
-folder {
-    name 'my-folder'
+folder('my-folder') {
 }
 
-configFile {
-    name 'my-config'
+configFile('my-config') {
 }
 ```
 
 When defining jobs, views or folders the name is treated as absolute to the Jenkins root by default, but the seed job
 can be configured to interpret names relative to the seed job. (since 1.24)
 
-In the closure provided to `job` there are a few top level methods, like `label` and `chucknorris`. Others are nested
+In the closure provided to `job` there are a few top level methods, like `label` and `description`. Others are nested
 deeper in blocks which represent their role in Jenkins, e.g. the `publishers` block contains all the publisher actions.
 
 DSL methods can be cumulative or overriding, meaning that some methods will add nodes (e.g. `publishers` and `steps`)
@@ -48,8 +44,8 @@ from right to left. Many methods provide options in deeper nested blocks which a
 [[Job Reference]] and [[View Reference]] pages for details.
 
 ```groovy
-job(Map<String, ?> arguments = [:]) {
-    name(String name)
+job(Map<String, ?> arguments = [:], String name) { // since 1.30
+    name(String name) // deprecated since 1.30
 
     // DSL specific methods
     using(String templateName)
@@ -347,9 +343,10 @@ job(Map<String, ?> arguments = [:]) {
       cps(Closure cpsClosure)
     }
 }
+job(Map<String, ?> arguments = [:], Closure jobClosure) // deprecated since 1.30
 
-view(Map<String, Object> arguments = [:]) { // since 1.21
-    name(String name)
+view(Map<String, Object> arguments = [:], String name) { // since 1.30
+    name(String name) // deprecated since 1.30
 
     // DSL specific methods
     configure(Closure configBlock)
@@ -432,9 +429,11 @@ view(Map<String, Object> arguments = [:]) { // since 1.21
     }
     statusFilter(StatusFilter filter)
 }
+view(Map<String, Object> arguments = [:],
+     Closure viewClosure) // since 1.21, deprecated since 1.30
 
-folder { // since 1.23
-    name(String name)
+folder(String name) { // since 1.30
+    name(String name) // deprecated since 1.30
 
     // DSL specific methods
     configure(Closure configBlock)
@@ -442,12 +441,15 @@ folder { // since 1.23
     // common options
     displayName(String displayName)
 }
+folder(Closure folderClosure) // since 1.23, deprecated since 1.30
 
-configFile(Map<String, Object> arguments = [:]) { // since 1.25
-    name(String name)
+configFile(Map<String, Object> arguments = [:], String name) { // since 1.30
+    name(String name) // deprecated since 1.30
     comment(String comment)
     content(String content)
 }
+configFile(Map<String, Object> arguments = [:],
+           Closure configFileClosure) // since 1.25, deprecated since 1.30
 ```
 
 The plugin tries to provide DSL methods to cover "common use case" scenarios as simple method calls. When these methods
@@ -462,14 +464,13 @@ need.)
 # Job
 
 ```groovy
-job(Map<String, Object> attributes = [:], Closure closure)
+job(Map<String, Object> attributes = [:], String name, Closure closure)
 ```
 
 The above method will return a _Job_ object that can be re-used and passed around. E.g.
 
 ```groovy
-def myJob = job {
-    name 'SimpleJob'
+def myJob = job('SimpleJob') {
 }
 myJob.with {
     description 'A Simple Job'
@@ -482,8 +483,7 @@ methods will only be available in some job types, e.g. `phase` can only be used 
 where they are relevant.
 
 ```groovy
-job(type: Maven) {
-  name 'maven-job'
+job('maven-job', type: Maven) {
 }
 ```
 
@@ -492,7 +492,7 @@ Please see the [[Job Reference]] page for details.
 # View
 
 ```groovy
-view(Map<String, Object> attributes = [:], Closure closure)
+view(Map<String, Object> attributes = [:], String name, Closure closure)
 ```
 
 The `view` method behaves like the `job` method explained above and will return a _View_ object.
@@ -501,8 +501,7 @@ Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`,
 `DeliveryPipelineView` or `BuildMonitorView` is supported. When no type is specified, a list view will be generated.
 
 ```groovy
-view(type: ListView) {
-  name 'project-view'
+view('project-view', type: ListView) {
 }
 ```
 
@@ -511,7 +510,7 @@ Please see the [[View Reference]] page for details.
 # Folder
 
 ```groovy
-folder(Closure closure)
+folder(String name, Closure closure)
 ```
 
 The `folder` method behaves like the `job` method explained above and will return a _Folder_ object.
@@ -519,8 +518,7 @@ The `folder` method behaves like the `job` method explained above and will retur
 Folders will be created before jobs and views to ensure that a folder exists before entries are created.
 
 ```groovy
-folder {
-  name 'project-a'
+folder('project-a') {
   displayName 'Project A'
 }
 ```
@@ -528,27 +526,23 @@ folder {
 Items can be created within folders by using the full path as job name.
 
 ```groovy
-folder {
-  name 'project-a'
+folder('project-a') {
 }
 
-job {
-  name 'project-a/compile'
+job('project-a/compile') {
 }
 
-view {
-  name 'project-a/pipeline'
+view('project-a/pipeline') {
 }
 
-folder {
-  name 'project-a/testing'
+folder('project-a/testing') {
 }
 ```
 
 # Config File
 
 ```groovy
-configFile(Map<String, Object> attributes = [:], Closure closure)
+configFile(Map<String, Object> attributes = [:], String name, Closure closure)
 ```
 
 The `configFile` method behaves like the `job` method explained above and will return a _ConfigFile_ object.
@@ -559,14 +553,12 @@ is supported. When no type is specified, a custom config file will be generated.
 Config files will be created before jobs to ensure that the file exists before it is referenced.
 
 ```groovy
-configFile {
-  name 'my-config'
+configFile('my-config') {
   comment 'My important configuration'
   content '<some-xml/>'
 }
 
-configFile(type: MavenSettings) {
-  name 'central-mirror'
+configFile('central-mirror', type: MavenSettings) {
   content readFileFromWorkspace('maven-settings/central-mirror.xml')
 }
 ```
@@ -594,7 +586,7 @@ you checked out some source control as part of the job processing the DSL. This 
 a generated job, e.g.
 
 ```groovy
-job {
+job('example') {
     steps {
         shell(readFileFromWorkspace('build.sh')
     }
@@ -606,8 +598,7 @@ of a job from a file in the job's workspace. The method will return `null` when 
 the job has no workspace, e.g. when it has not been built yet.
 
 ```groovy
-job {
-    name('acme-tests')
+job('acme-tests') {
     description(readFileFromWorkspace('acme-tests', 'README.txt'))
 }
 ```
@@ -639,7 +630,7 @@ When an option is not supported by the Job DSL, then [[The Configure Block]] can
 Here is a simple example which adds a EnvInjectPasswordWrapper node:
 
 ```groovy
-job {
+job('example') {
     ...
     configure { project ->
         project / buildWrappers / EnvInjectPasswordWrapper {

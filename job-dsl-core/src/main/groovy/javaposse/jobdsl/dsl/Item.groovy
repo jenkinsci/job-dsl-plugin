@@ -1,11 +1,19 @@
 package javaposse.jobdsl.dsl
 
 abstract class Item implements Context {
+    protected final JobManagement jobManagement
+
     String name
 
     List<WithXmlAction> withXmlActions = []
 
+    protected Item(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
+
+    @Deprecated
     void name(String name) {
+        jobManagement.logDeprecationWarning()
         this.name = name
     }
 

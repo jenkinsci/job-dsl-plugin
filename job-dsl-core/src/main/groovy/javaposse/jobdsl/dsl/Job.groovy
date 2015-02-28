@@ -24,14 +24,12 @@ class Job extends Item {
     private final List<String> mavenGoals = []
     private final List<String> mavenOpts = []
 
-    JobManagement jobManagement
-
     String templateName = null // Optional
     JobType type = null // Required
     String previousNamesRegex = null // Optional
 
     Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
         Object typeArg = arguments['type'] ?: JobType.Freeform
         this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
     }

@@ -18,9 +18,9 @@ class ItemProcessingOrderComparatorSpec extends Specification {
 
         where:
         o1                                        | o2                                        | result
-        new Folder()                              | new Folder()                              | 0
-        new Folder()                              | new Job(jobManagement)                    | -1
-        new Job(jobManagement)                    | new Folder()                              | 1
+        new Folder(jobManagement)                 | new Folder(jobManagement)                 | 0
+        new Folder(jobManagement)                 | new Job(jobManagement)                    | -1
+        new Job(jobManagement)                    | new Folder(jobManagement)                 | 1
         new Job(jobManagement, [type: BuildFlow]) | new Job(jobManagement, [type: BuildFlow]) | 0
         new Job(jobManagement, [type: Multijob])  | new Job(jobManagement, [type: BuildFlow]) | 1
         new Job(jobManagement, [type: BuildFlow]) | new Job(jobManagement, [type: Multijob])  | -1

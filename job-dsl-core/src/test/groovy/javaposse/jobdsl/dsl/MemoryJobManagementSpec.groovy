@@ -88,7 +88,7 @@ class MemoryJobManagementSpec extends Specification {
 
     def 'createOrUpdateConfigFile complains about missing name'(String name) {
         setup:
-        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
         configFile.name = name
 
         when:
@@ -103,7 +103,7 @@ class MemoryJobManagementSpec extends Specification {
 
     def 'createOrUpdateConfigFile stores config file and returns ID'() {
         setup:
-        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
         configFile.name = 'foo'
 
         when:
@@ -196,7 +196,7 @@ class MemoryJobManagementSpec extends Specification {
 
     def 'getConfigFileId returns id when config file exists'() {
         setup:
-        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
         configFile.name = 'foo'
         jobManagement.savedConfigFiles << configFile
 

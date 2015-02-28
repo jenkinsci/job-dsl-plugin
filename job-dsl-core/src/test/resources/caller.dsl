@@ -1,4 +1,3 @@
-
 job {
     name 'test'
 }

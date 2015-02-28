@@ -5,7 +5,8 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class ViewSpec extends Specification {
-    View view = Spy(View)
+    JobManagement jobManagement = Mock(JobManagement)
+    View view = new TestView(jobManagement)
 
     def 'name'() {
         when:
@@ -13,12 +14,10 @@ class ViewSpec extends Specification {
 
         then:
         view.name == 'test'
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'description'() {
-        setup:
-        view.template >> '<View/>'
-
         when:
         view.description('test view')
 
@@ -29,9 +28,6 @@ class ViewSpec extends Specification {
     }
 
     def 'filterBuildQueue'() {
-        setup:
-        view.template >> '<View/>'
-
         when:
         view.filterBuildQueue(true)
 
@@ -42,9 +38,6 @@ class ViewSpec extends Specification {
     }
 
     def 'filterBuildQueue without argument'() {
-        setup:
-        view.template >> '<View/>'
-
         when:
         view.filterBuildQueue()
 
@@ -55,9 +48,6 @@ class ViewSpec extends Specification {
     }
 
     def 'filterExecutors'() {
-        setup:
-        view.template >> '<View/>'
-
         when:
         view.filterExecutors(true)
 
@@ -68,9 +58,6 @@ class ViewSpec extends Specification {
     }
 
     def 'filterExecutors without argument'() {
-        setup:
-        view.template >> '<View/>'
-
         when:
         view.filterExecutors()
 
@@ -81,9 +68,6 @@ class ViewSpec extends Specification {
     }
 
     def 'configure'() {
-        setup:
-        view.template >> '<View/>'
-
         when:
         view.configure {
             it / foo('bar')
@@ -96,13 +80,21 @@ class ViewSpec extends Specification {
     }
 
     def 'xml'() {
-        setup:
-        view.template >> '<View/>'
-
         when:
         String xml = view.xml
 
         then:
         compareXML('<View/>', xml).similar()
+    }
+
+    static class TestView extends View {
+        TestView(JobManagement jobManagement) {
+            super(jobManagement)
+        }
+
+        @Override
+        protected String getTemplate() {
+            '<View/>'
+        }
     }
 }

@@ -18,7 +18,7 @@ ScmContext.metaClass.our_p4 = { String mapping ->
 }
 
 // Then you can use the new DSL command(s) just as any other:
-job {
+job('example') {
     // ....
     scm {
         our_p4("//p4path/... //workspace/...")
@@ -50,7 +50,7 @@ Then just `import common` and `use(common) {` in your script and the DSL command
 import common
 
 use(common) {
-    job {
+    job('example') {
          // ....
          scm {
              our_p4("....")
