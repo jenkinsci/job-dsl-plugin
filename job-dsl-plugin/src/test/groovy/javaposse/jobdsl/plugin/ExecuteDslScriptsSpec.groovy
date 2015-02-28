@@ -20,6 +20,7 @@ import javaposse.jobdsl.dsl.GeneratedView
 import org.junit.Rule
 import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
+import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 
 import static hudson.model.Result.SUCCESS
@@ -34,6 +35,7 @@ class ExecuteDslScriptsSpec extends Specification {
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule()
 
+    @WithoutJenkins
     def 'getProjectActions'() {
         when:
         List<? extends Action> actions = Lists.newArrayList(executeDslScripts.getProjectActions(project))

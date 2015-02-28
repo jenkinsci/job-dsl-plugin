@@ -6,6 +6,7 @@ import hudson.model.Item
 import hudson.model.ItemGroup
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
+import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 
 import static javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
@@ -26,6 +27,7 @@ class LookupStrategySpec extends Specification {
         jenkinsRule.createFreeStyleProject('job')
     }
 
+    @WithoutJenkins
     def 'display name'(LookupStrategy lookupStrategy, String expectedName) {
         when:
         String name = lookupStrategy.displayName

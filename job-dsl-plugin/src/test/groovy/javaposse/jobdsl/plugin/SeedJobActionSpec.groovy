@@ -4,6 +4,7 @@ import hudson.Util
 import hudson.model.Item
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
+import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 
 class SeedJobActionSpec extends Specification {
@@ -13,6 +14,7 @@ class SeedJobActionSpec extends Specification {
     Item item = Mock(Item)
     SeedReference seedReference = new SeedReference('template', 'seed', 'digest')
 
+    @WithoutJenkins
     def 'icon file name'() {
         when:
         String iconFileName = new SeedJobAction(item, seedReference).iconFileName
@@ -21,6 +23,7 @@ class SeedJobActionSpec extends Specification {
         iconFileName == null
     }
 
+    @WithoutJenkins
     def 'display name'() {
         when:
         String displayName = new SeedJobAction(item, seedReference).displayName
@@ -29,6 +32,7 @@ class SeedJobActionSpec extends Specification {
         displayName == 'Seed job:'
     }
 
+    @WithoutJenkins
     def 'URL name'() {
         when:
         String urlName = new SeedJobAction(item, seedReference).urlName

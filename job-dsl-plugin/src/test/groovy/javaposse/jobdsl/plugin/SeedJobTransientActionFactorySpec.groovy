@@ -4,12 +4,14 @@ import hudson.model.Action
 import hudson.model.Item
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
+import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 
 class SeedJobTransientActionFactorySpec extends Specification {
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
+    @WithoutJenkins
     def 'handles Items'() {
         when:
         Class<?> type = new SeedJobTransientActionFactory().type()

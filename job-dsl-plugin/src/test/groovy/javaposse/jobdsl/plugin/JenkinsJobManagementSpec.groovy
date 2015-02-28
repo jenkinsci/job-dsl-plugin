@@ -18,6 +18,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
+import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 
 import static com.google.common.base.Charsets.UTF_8
@@ -35,6 +36,7 @@ class JenkinsJobManagementSpec extends Specification {
     AbstractBuild build = Mock(AbstractBuild)
     JenkinsJobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), new EnvVars(), build)
 
+    @WithoutJenkins
     def 'createOrUpdateView without name'() {
         when:
         jobManagement.createOrUpdateView(null, '<View/>', true)
@@ -49,6 +51,7 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(NameNotProvidedException)
     }
 
+    @WithoutJenkins
     def 'createOrUpdateView without config'() {
         when:
         jobManagement.createOrUpdateView('test', null, true)
@@ -63,6 +66,7 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(ConfigurationMissingException)
     }
 
+    @WithoutJenkins
     def 'createOrUpdateView with invalid name'() {
         when:
         jobManagement.createOrUpdateView('t<e*st', '<View/>', true)
@@ -322,6 +326,7 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(DslException)
     }
 
+    @WithoutJenkins
     def 'create config file without name'() {
         setup:
         ConfigFile configFile = Mock(ConfigFile)
