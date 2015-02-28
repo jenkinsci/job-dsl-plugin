@@ -142,9 +142,12 @@ Build job-dsl.hpi to be installed in Jenkins:
 
     ./gradlew jpi
 
-IntelliJ IDEA and Eclipse (STS) have the ability to open Gradle projects directly, but they both have their own issues
-actually running Gradle and running tests. As a workaround Maven POMs have been added and those can be opened
-directly in IntelliJ IDEA to create a project.
+IntelliJ IDEA and Eclipse (STS) have the ability to open Gradle projects directly, but they both have issues. IDEA
+sometimes does not detect all plugin dependencies (e.g. `hudson.maven.MavenModuleSet`) and as a workaround you need to
+hit the refresh button in the Gradle tool window until it does. You also need to run the `localizer` task to generate
+the `Messages` class before building and testing the project in the IDE:
+
+    ./gradlew localizer
 
 Authors
 -------
