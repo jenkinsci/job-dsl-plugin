@@ -37,6 +37,37 @@ class AbstractJobManagementSpec extends Specification {
         buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'
     }
 
+    def 'deprecation warning with custom subject in DSL script'() {
+        setup:
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream()
+        AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
+
+        GroovyClassLoader classLoader = new GroovyClassLoader()
+        Class scriptClass = classLoader.parseClass(this.class.getResourceAsStream('/deprecation-subject.groovy').text)
+        Script script = createScript(scriptClass, new Binding([jm: jobManagement]))
+
+        when:
+        script.run()
+
+        then:
+        buffer.toString().trim() == 'Warning: foo is deprecated (DSL script, line 3)'
+    }
+
+    def 'deprecation warning with custom subject  in source file'() {
+        setup:
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream()
+        AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
+
+        URL[] roots = [this.class.getResource('/deprecation-subject.groovy')]
+        GroovyScriptEngine groovyScriptEngine = new GroovyScriptEngine(roots)
+
+        when:
+        groovyScriptEngine.run('deprecation-subject.groovy', new Binding([jm: jobManagement]))
+
+        then:
+        buffer.toString().trim() == 'Warning: foo is deprecated (deprecation-subject.groovy, line 3)'
+    }
+
     def 'custom deprecation warning in DSL script'() {
         setup:
         ByteArrayOutputStream buffer = new ByteArrayOutputStream()
@@ -150,6 +181,10 @@ class AbstractJobManagementSpec extends Specification {
 
         void testMethod() {
             logDeprecationWarning()
+        }
+
+        void testMethodWithCustomSubject() {
+            logDeprecationWarning('foo')
         }
     }
 }

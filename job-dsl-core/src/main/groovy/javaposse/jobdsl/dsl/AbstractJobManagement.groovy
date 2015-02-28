@@ -45,6 +45,11 @@ abstract class AbstractJobManagement implements JobManagement {
     }
 
     @Override
+    void logDeprecationWarning(String subject) {
+        logDeprecationWarning(subject, getSourceDetails(stackTrace))
+    }
+
+    @Override
     void logDeprecationWarning(String subject, String scriptName, int lineNumber) {
         logDeprecationWarning(subject, getSourceDetails(scriptName, lineNumber))
     }

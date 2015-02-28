@@ -560,7 +560,7 @@ git {
         github(String ownerAndProject, String protocol = "https", String host = "github.com") // will also set the browser
                                                                                               // and GitHub property
         refspec(String refspec) // optional
-        credentials(String credentials) // optional
+        credentials(String credentialsId) // optional
     }
     branch(String name) // the branches to build, multiple calls are accumulated, defaults to **
     branches(String... names)
@@ -598,7 +598,9 @@ The GitHub variants will derive the Git URL from the ownerAndProject, protocol a
 
 The Git plugin has a lot of configurable options, which are currently not all supported by the DSL. A  configure block can be used to add more options.
 
-Version 2.0 or later of the Git Plugin is required to use `cloneTimeout` or Jenkins managed credentials for Git authentication. The arguments for the credentials method is the description field or the UUID generated from Jenkins | Manage Jenkins | Manage Credentials. The easiest way to find this value, is to navigate Jenkins | Credentials | Global credentials | (Key Name). Then look at the description in parenthesis or using the UUID in the URL.
+Version 2.0 or later of the Git Plugin is required to use `cloneTimeout` or Jenkins managed credentials for Git
+authentication. The argument for the `credentials` method can either be the ID of the credentials or its description.
+Note that finding credentials by description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
 When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch.
 
@@ -650,7 +652,7 @@ github('jenkinsci/job-dsl-plugin')
 git {
     remote {
         github('account/repo', 'ssh')
-        credentials('GitHub CI Key')
+        credentials('github-ci-key')
     }
 }
 ```
@@ -665,7 +667,7 @@ job {
         svn { // since 1.30
             location(String svnUrl) {           // at least on required
                 directory(String directory)     // defaults to '.'
-                credentials(String credentials)
+                credentials(String credentialsId)
                 depth(SvnDepth depth)           // defaults to INFINITY
             }
             checkoutStrategy(SvnCheckoutStrategy strategy)
@@ -701,8 +703,9 @@ Valid values for `depth` are `SvnDepth.INFINITY` (the default), `SvnDepth.EMPTY`
 `excludedRegions`, `includedRegions`, `excludedUsers` and `excludedCommitMessages` can be called multiple times to
 exclude or include more patterns or users.
 
-Version 2.0 or later of the Subversion Plugin is required to use the `credentials` method. The parameter can either be
-the credentials` description or its UUID.
+Version 2.0 or later of the Subversion Plugin is required to use the `credentials` method. The argument for the
+`credentialsId` method can either be the ID of the credentials or its description. Note that finding credentials by
+description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
 ```groovy
 // checkout a project into the workspace directory
@@ -873,7 +876,7 @@ job {
         rtc {
             buildDefinition(String buildDefinition)
             buildWorkspace(String buildWorkspace)
-            connection(String buildTool, String credentials,
+            connection(String buildTool, String credentialsId,
                        String serverURI, int timeout)
         }
     }
@@ -881,6 +884,9 @@ job {
 ```
 
 Support for the [Team Concert Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin).
+
+The `credentialsId` argument can either be the ID of the credentials or its description. Note that finding credentials
+by description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
 Examples:
 
@@ -1264,12 +1270,13 @@ Makes shared SSH credential available to builds.
 ```groovy
 job {
     wrappers {
-        sshAgent(String credentials)
+        sshAgent(String credentialsId)
     }
 }
 ```
 
-The credentials argument is the description field or the UUID generated from Jenkins | Manage Jenkins | Manage Credentials. The easiest way to find this value, is to navigate Jenkins | Credentials | Global credentials | (Key Name). The look at the description in parenthesis or using the UUID in the URL.
+The `credentialsId` argument can either be the ID of the credentials or its description. Note that finding credentials
+by description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
 (Since 1.17)
 
@@ -1817,10 +1824,10 @@ job {
 job {
     wrappers {
         credentialsBinding {
-            file(String variable, String credentials)
-            string(String variable, String credentials)
-            usernamePassword(String variable, String credentials)
-            zipFile(String variable, String credentials)
+            file(String variable, String credentialsId)
+            string(String variable, String credentialsId)
+            usernamePassword(String variable, String credentialsId)
+            zipFile(String variable, String credentialsId)
         }
     }
 }
@@ -1828,6 +1835,9 @@ job {
 
 Bindings environment variables to credentials. Requires the
 [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin).
+
+The `credentialsId` argument can either be the ID of the credentials or its description. Note that finding credentials
+by description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
 ```groovy
 job {

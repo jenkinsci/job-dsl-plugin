@@ -93,6 +93,11 @@ interface JobManagement {
     void logDeprecationWarning()
 
     /**
+     * Logs a deprecation warning for the calling method with the given subject.
+     */
+    void logDeprecationWarning(String subject)
+
+    /**
      * Logs a deprecation warning for the given subject and source position.
      */
     void logDeprecationWarning(String subject, String scriptName, int lineNumber)
