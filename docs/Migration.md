@@ -63,6 +63,44 @@ job {
 }
 ```
 
+## Finding Credentials by Description
+
+Finding credentials by description has been [[deprecated|Deprecation-Policy]]. The argument passed to the `credentials`
+methods (e.g. for Git or Subversion SCM) has been used to find credentials by comparing the value to the credential's
+description and ID. Using the description can cause problems because it's not enforced that descriptions are unique. But
+it was useful because the ID was a generated UUID that could not be changed and thus was neither portable between
+Jenkins instances nor readable in scripts as a symbolic name would be. Since version 1.21, the credentials plugin
+supports to set the ID to any unique value when creating new credentials. So it's no longer necessary to use the
+description for matching.
+
+DSL prior to 1.30
+```groovy
+job {
+    scm {
+        git {
+            remote {
+                github('account/repo')
+                credentials('GitHub CI Key')
+            }
+        }
+    }
+}
+```
+
+DSL since 1.30
+```groovy
+job {
+    scm {
+        git {
+            remote {
+                github('account/repo')
+                credentials('github-ci-key')
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.29
 
 ### Build Timeout
