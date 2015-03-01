@@ -6,7 +6,8 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class FolderSpec extends Specification {
-    Folder folder = new Folder()
+    JobManagement jobManagement = Mock(JobManagement)
+    Folder folder = new Folder(jobManagement)
 
     def setupSpec() {
         XMLUnit.ignoreWhitespace = true
@@ -18,6 +19,7 @@ class FolderSpec extends Specification {
 
         then:
         folder.name == 'test'
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'displayName'() {

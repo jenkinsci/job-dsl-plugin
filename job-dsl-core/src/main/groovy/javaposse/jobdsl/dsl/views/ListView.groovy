@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
 
 import static com.google.common.base.Preconditions.checkNotNull
@@ -9,6 +10,10 @@ import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class ListView extends View {
     private final JobsContext jobsContext = new JobsContext()
+
+    ListView(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     void statusFilter(StatusFilter filter) {
         checkNotNull(filter, 'filter must not be null')

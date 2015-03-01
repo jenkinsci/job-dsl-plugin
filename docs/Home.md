@@ -34,6 +34,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Fixed the `notifySuspects` option for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
  * Fixed `extendedEmail` configure block resolve strategy ([JENKINS-27063](https://issues.jenkins-ci.org/browse/JENKINS-27063))
  * Deprecated some overloaded DSL methods for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin), see [[Migration]]
+ * Deprecated `name` method, name is now an argument of the factory methods, see [[Migration]]
 * 1.29 (February 05 2015)
  * Show seed job and template job info in the generated jobs
  * Added [CoreMirror](https://codemirror.net/) support for the DSL script input field

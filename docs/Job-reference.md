@@ -108,10 +108,8 @@ concurrentBuild(boolean allowConcurrentBuild = true)
 If enabled, Jenkins will schedule and execute multiple builds concurrently (provided that you have sufficient executors and incoming build requests).
 
 ```groovy
-job {
-   ...
+job('example') {
    concurrentBuild()
-   ...
 }
 ```
 
@@ -145,7 +143,7 @@ multiple times to add more batch tasks. Requires the
 Example:
 
 ```groovy
-job {
+job('example') {
     batchTask('upload', 'curl --upload-file build/dist.zip http://www.example.com/upload')
     batchTask('release', readFileFromWorkspace('scripts/release.sh'))
 }
@@ -171,17 +169,17 @@ Examples:
 
 ```groovy
 // lock single resource
-job {
+job('example-1') {
     lockableResources('lock-resource')
 }
 
 // notation that locks three resources at once
-job {
+job('example-2') {
     lockableResources('resource1 resource2 resource3')
 }
 
 // lock two available resources from given three and capture locked resources in the variable name
-job {
+job('example-3') {
     lockableResources('resource1 resource2 resource3') {
         resourcesVariable('LOCKED_RESOURCES')
         resourceNumber(2)
@@ -213,21 +211,21 @@ The permissions as of the latest version can be found in [the Permissions enum](
 
 ```groovy
 // Gives permission for the special authenticated group to see the workspace of the job
-job {
+job('example-1') {
     authorization {
         permission('hudson.model.Item.Workspace:authenticated')
     }
 }
 
 // Gives discover permission for the special anonymous user
-job {
+job('example-2') {
     authorization {
         permission(Permissions.ItemDiscover, 'anonymous')
     }
 }
 
 // Gives all permissions found in the Permissions enum to the special authenticated group
-job {
+job('example-3') {
     authorization {
         permissionAll('authenticated')
     }
@@ -237,7 +235,7 @@ job {
 ## [Throttle Concurrent Builds](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
 
 ```groovy
-job {
+job('example-1') {
     // Throttle one job on its own
     throttleConcurrentBuilds {
         maxPerNode 1
@@ -247,7 +245,7 @@ job {
 ```
 
 ```groovy
-job {
+job('example-2') {
     // Throttle as part of a category
     throttleConcurrentBuilds {
         categories(['cat-1'])
@@ -269,12 +267,12 @@ job name as stage or task name. Requires the
 
 ```groovy
 // use job name as task name
-job {
+job('example-1') {
     deliveryPipelineConfiguration('qa')
 }
 
 // use custom task name
-job {
+job('example-2') {
     deliveryPipelineConfiguration('qa', 'integration-tests')
 }
 ```
@@ -301,7 +299,7 @@ Possible values for protocol are `'HTTP'`, `'TCP'`, or `'UDP'`. Possible values 
 Possible values for event are `'all'`, `'started'`, `'completed'`, or `'finalized'`.
 
 ```groovy
-job {
+job('example') {
     notifications {
         endpoint('http://example.com:8080/monitor')
         endpoint('10.100.2.3:3434', 'TCP', 'XML') {
@@ -327,7 +325,7 @@ Examples:
 Triple-quote can be used for retaining Groovy style in the embedded DSL.
 
 ```groovy
-job(type: BuildFlow) {
+job('example-1', type: BuildFlow) {
     buildFlow("""
         build("job1")
     """)
@@ -338,7 +336,7 @@ Using job variables in build flow text block. The new job will have a build flow
 
 ```groovy
 CUSTOM_VARIABLE = "hello-there"
-job(type: BuildFlow) {
+job('example-2', type: BuildFlow) {
     buildFlow('build("${CUSTOM_VARIABLE}")')
 }
 ```
@@ -346,7 +344,7 @@ job(type: BuildFlow) {
 The build flow text can also be stored in a file and set in the new job when it's created.
 
 ```groovy
-job(type: BuildFlow) {
+job('example-3', type: BuildFlow) {
     buildFlow(readFileFromWorkspace("my-build-flow-text.groovy"))
 }
 ```
@@ -447,7 +445,7 @@ For Maven jobs, you can also run arbitrary build steps before and after the Mave
 
 Examples:
 ```groovy
-job(type: Maven) {
+job('example', type: Maven) {
   preBuildSteps {
     shell("echo 'run before Maven'")
   }
@@ -473,7 +471,7 @@ Use managed Maven settings. Requires the
 Example:
 
 ```groovy
-job(type: Maven) {
+job('example', type: Maven) {
     providedSettings('central-mirror')
 }
 ```
@@ -706,14 +704,14 @@ the credentials` description or its UUID.
 
 ```groovy
 // checkout a project into the workspace directory
-job {
+job('example-1') {
     scm {
         svn('https://svn.mydomain.com/repo/project1/trunk')
     }
 }
 
 // checkout multiple projects
-job {
+job('example-2') {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
@@ -725,7 +723,7 @@ job {
 }
 
 // do a sparse checkout
-job {
+job('example-3') {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project/trunk') {
@@ -737,7 +735,7 @@ job {
 }
 
 // using a different checkout strategy
-job {
+job('example-4') {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
@@ -747,7 +745,7 @@ job {
 }
 
 // configure excluded and included regions
-job {
+job('example-5') {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
@@ -758,7 +756,7 @@ job {
 }
 
 // configure excluded users, commit messages, and an excluded revision property
-job {
+job('example-6') {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
@@ -771,7 +769,7 @@ job {
 }
 
 // configure repository browser
-job {
+job('example-7') {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
@@ -885,7 +883,7 @@ Support for the [Team Concert Plugin](https://wiki.jenkins-ci.org/display/JENKIN
 Examples:
 
 ```groovy
-job {
+job('example-1') {
     scm {
         rtc {
             buildDefinition('buildDefinitionInRTC')
@@ -893,7 +891,7 @@ job {
     }
 }
 
-job {
+job('example-2') {
     scm {
         rtc {
             buildWorkspace('some-workspace')
@@ -1001,8 +999,7 @@ Builds pull requests from GitHub and will report the results directly to the pul
 The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for details.
 
 ```groovy
-job {
-    ...
+job('example') {
     scm {
         git {
             remote {
@@ -1025,7 +1022,6 @@ job {
             autoCloseFailedPullRequests()
         }
     }
-    ...
 }
 ```
 
@@ -1156,7 +1152,7 @@ Requires version 1.12 or later of the
 The simplest invocation looks like this:
 
 ```groovy
-job {
+job('example-1') {
     wrappers {
         timeout()
     }
@@ -1168,7 +1164,7 @@ It defines an absolute timeout with a maximum build time of 3 minutes.
 Here is an absolute timeout:
 
 ```groovy
-job {
+job('example-2') {
     wrappers {
         timeout {
             absolute(60)   // 60 minutes before timeout
@@ -1182,7 +1178,7 @@ a limit that is used if there is no average successful build duration (i.e. no j
 the number of successful/unstable builds to consider to calculate the average duration:
 
 ```groovy
-job {
+job('example-3') {
     wrappers {
         timeout {
             elastic(
@@ -1198,7 +1194,7 @@ job {
 The likelyStuck timeout times out a build when it is likely to be stuck. Does not take extra configuration parameters.
 
 ```groovy
-job {
+job('example-4') {
     wrappers {
         timeout {
             likelyStuck()
@@ -1210,7 +1206,7 @@ job {
 The noActivity timeout times out a build when there has been no console activity for a certain duration.
 
 ```groovy
-job {
+job('example-5') {
     wrappers {
         timeout {
             noActivity(180) // Timeout if there has been no activity for 180 seconds
@@ -1229,7 +1225,7 @@ configurable actions:
 They can be configured like this:
 
 ```groovy
-job {
+job('example-6') {
     wrappers {
         timeout {
             absolute(30)
@@ -1301,7 +1297,7 @@ Renders ANSI escape sequences, including color, to console output. Requires the
 [AnsiColor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/AnsiColor+Plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         colorizeOutput()
     }
@@ -1330,7 +1326,7 @@ display available. Requires the [Xvnc Plugin](https://wiki.jenkins-ci.org/displa
 The `useXauthority` option requires version 1.16 or later of the Xvnc Plugin.
 
 ```groovy
-job {
+job('example') {
     wrappers {
         xvnc {
             takeScreenshot()
@@ -1345,7 +1341,7 @@ job {
 ## [Tool Environment](https://wiki.jenkins-ci.org/display/JENKINS/Tool+Environment+Plugin)
 
 ```groovy
-job {
+job('example') {
   wrappers {
     toolenv("Ant 1.8.2", "Maven 3.1")
   }
@@ -1375,7 +1371,7 @@ Makes an existing custom config file available to builds. Requires
 the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         configFiles {
             file('myCustomConfigFile') {
@@ -1436,10 +1432,8 @@ For details of defining steps (preBuildSteps, postSuccessfulBuildSteps, postBuil
 
 Example
 ```groovy
-job {
-    ...
+job('example') {
     wrappers {
-        ...
         release {
             doNotKeepLog()
             overrideBuildParameters()
@@ -1478,7 +1472,7 @@ Examples:
 
 ```groovy
 // cleanup all files
-job {
+job('example') {
     wrappers {
         preBuildCleanup()
     }
@@ -1487,7 +1481,7 @@ job {
 
 ```groovy
 // cleanup all files and directories in target directories, but only if the CLEANUP build parameter is set to 'true'
-job {
+job('example') {
     wrappers {
         preBuildCleanup {
             includePattern('**/target/**')
@@ -1518,7 +1512,7 @@ Configures the log file size checker plugin. Requires the [LogFileSizeChecker Pl
 Examples:
 ```groovy
 // default configuration using the system wide definition
-job {
+job('example') {
     wrappers {
         logSizeChecker()
     }
@@ -1527,7 +1521,7 @@ job {
 
 ```groovy
 // using job specific configuration, setting the max log size to 10 MB and fail the build of the log file is larger.
-job {
+job('example') {
     wrappers {
         logSizeChecker {
             maxSize(10)
@@ -1556,7 +1550,7 @@ expansion mechanism is provided by the
 Example:
 ```groovy
 // define the build name based on the build number and an environment variable
-job {
+job('example') {
     wrappers {
         buildName('#${BUILD_NUMBER} on ${ENV,var="BRANCH"}')
     }
@@ -1588,7 +1582,7 @@ multiple keychains, a prefix to differentiate between them.
 Example:
 
 ```groovy
-job {
+job('example') {
     wrappers {
         keychains {
             keychain('test1', 'test2')
@@ -1619,7 +1613,7 @@ Requires the [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Excl
 Example:
 
 ```groovy
-job {
+job('example') {
     wrappers {
         exclusionResources('first', 'second')
     }
@@ -1659,7 +1653,7 @@ the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+P
 Example:
 
 ```groovy
-job(type: Maven) {
+job('example', type: Maven) {
     wrappers {
         mavenRelease {
             scmUserEnvVar('MY_USER_ENV')
@@ -1692,7 +1686,7 @@ Create a version based on the template and optionally sets that version as displ
 [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         deliveryPipelineVersion('1.0.${BUILD_NUMBER}', true)
     }
@@ -1744,7 +1738,7 @@ job {
 Sets up a NodeJS environment. Requires the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         nodejs('NodeJS 0.10.26')
     }
@@ -1767,7 +1761,7 @@ Adds a wrapper for a golang environment. Requires the
 [Golang Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         golang('Go 1.3.3')
     }
@@ -1799,7 +1793,7 @@ Adds the ability to specify the rbenv wrapper to be used during job execution. Y
 [rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         rbenv('2.1.2') {
             ignoreLocalVersion()
@@ -1830,7 +1824,7 @@ Bindings environment variables to credentials. Requires the
 [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         credentialsBinding {
             file('KEYSTORE', 'keystore.jks')
@@ -1859,7 +1853,7 @@ Specifies custom tools to add to the build environment. Requires the
 [Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin).
 
 ```groovy
-job {
+job('example') {
     wrappers {
         customTools(['NodeJS', 'figlet']) {
             skipMasterInstallation()
@@ -1915,7 +1909,7 @@ Runs Gradle, defaulting to the Gradle Wrapper. A `hudson.plugins.gradle.Gradle` 
 Requires the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin).
 
 ```groovy
-job {
+job('example') {
     steps {
         gradle('check')
         gradle {
@@ -2075,7 +2069,7 @@ Examples:
 
 ```groovy
 // Basic step
-job {
+job('example') {
     steps {
         publishOverSsh {
             server('server-name') {
@@ -2088,7 +2082,7 @@ job {
 }
 
 // Using parameter to match server label
-job {
+job('example') {
     steps {
         publishOverSsh {
             server('my-server-01') {
@@ -2144,10 +2138,9 @@ Executes Rake as a build step. Requires the [Rake Plugin](https://wiki.jenkins-c
 Examples:
 
 ```groovy
-job {
+job('example') {
     steps {
         rake('task')
-
         rake('first') {
             task('second')
             tasks(['third', 'fourth'])
@@ -2185,7 +2178,7 @@ job {
 Allows the programmatic creation of jobs, folders and views using the Job DSL.
 
 ```groovy
-job {
+job('example-1') {
     steps {
         dsl {
             external('projectA.groovy', 'projectB.groovy')
@@ -2197,13 +2190,13 @@ job {
     }
 }
 
-job {
+job('example-2') {
     steps {
         dsl(['projectA.groovy', 'projectB.groovy'], 'DELETE')
     }
 }
 
-job {
+job('example-3') {
     steps {
         dsl {
             text(readFileFromWorkspace('more-jobs.groovy'))
@@ -2301,7 +2294,7 @@ Example:
 
 ```groovy
 // power off the VM 'foo' on server 'vsphere.acme.org', then revert to snapshot 'clean' and power on again
-job {
+job('example') {
     steps {
         vSpherePowerOff('vsphere.acme.org', 'foo')
         vSphereRevertToSnapshot('vsphere.acme.org', 'foo', 'clean')
@@ -2373,7 +2366,7 @@ is configured in the global Jenkins settings. Requires the
 [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin).
 
 ```groovy
-job {
+job('example') {
     steps {
         httpRequest('http://www.example.com') {
             httpMode('POST')
@@ -2427,7 +2420,7 @@ The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
 
 ```
-job(type: Multijob) {
+job('example', type: Multijob) {
     steps {
         phase() {
             phaseName 'Second'
@@ -2497,7 +2490,7 @@ passed into the configure block.
 Example:
 
 ```groovy
-job(type: Matrix) {
+job('example', type: Matrix) {
     axes {
         label('label', 'linux', 'windows')
         jdk('jdk6', 'jdk7')
@@ -2521,7 +2514,7 @@ Run each matrix combination in sequence. If omitted, Jenkins will try to build t
 Example:
 
 ```groovy
-job(type: Matrix) {
+job('example', type: Matrix) {
     sequential()
 }
 ```
@@ -2539,7 +2532,7 @@ An expression of which combination to run first, the second parameter controls i
 Example:
 
 ```groovy
-job(type: Matrix) {
+job('example', type: Matrix) {
     touchStoneFilter('label=="linux"')
 }
 ```
@@ -2557,7 +2550,7 @@ An expression to limit which combinations can be run.
 Example:
 
 ```groovy
-job(type: Matrix) {
+job('example', type: Matrix) {
     combinationFilter('jdk=="jdk-6" || label=="linux"')
 }
 ```
@@ -2757,7 +2750,7 @@ Resolves artifacts from a Maven repository. Requires the
 Valid arguments for `snapshotUpdatePolicy` and `releaseUpdatePolicy` are either `daily`, `never` or `always`.
 
 ```groovy
-job {
+job('example') {
     steps {
         resolveArtifacts {
             failOnError()
@@ -2803,19 +2796,17 @@ Triggers a job on another Jenkins instance. Requires the
 
 Examples:
 
-````groovy
+```groovy
 // start the job 'test-flow' on the Jenkins instance named 'test-ci' without parameters
-job {
+job('example-1') {
     steps {
         remoteTrigger('test-ci', 'test-flow')
     }
 }
-```
 
-````groovy
 // start the job 'test-flow' on the Jenkins instance named 'test-ci' with three parameters,
 // blocking until the build completes.
-job {
+job('example-2') {
     steps {
         remoteTrigger('test-ci', 'test-flow') {
             parameter('VERSION', '$PIPELINE_VERSION')
@@ -2880,7 +2871,7 @@ since version 1.28.
 A `hudson.plugins.emailext.ExtendedEmailPublisher` node is handed into the configure block.
 
 ```groovy
-job {
+job('example') {
     publishers {
         extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
             trigger('PreBuild')
@@ -2931,13 +2922,13 @@ Supports archiving artifacts with each build.
 Examples:
 
 ```groovy
-job {
+job('example-1') {
     publishers {
         archiveArtifacts('build/test-output/**/*.html')
     }
 }
 
-job {
+job('example-2') {
     publishers {
         archiveArtifacts {
             pattern('build/test-output/**/*.html')
@@ -3032,7 +3023,7 @@ is required for `publishTestStabilityData`. The
 `publishFlakyTestsReport`.
 
 ```groovy
-job {
+job('example') {
     publishers {
         archiveJunit('**/target/surefire-reports/*.xml')
         archiveJunit('**/minitest-reports/*.xml') {
@@ -3068,7 +3059,7 @@ job {
 Allows HTML reports to be archived. The report method can be called multiple times to add more reports.
 
 ```groovy
-job {
+job('example') {
     publishers {
         publishHtml {
             report('build/test-output') {
@@ -3113,7 +3104,7 @@ Valid values for `strategyName` are `ALL`, `FAILURE_AND_FIXED`, `ANY_FAILURE` an
 `channelNotificationName` are `Default`, `SummaryOnly`, `BuildParameters` and `PrintFailingTests`.
 
 ```groovy
-job {
+job('example') {
     publishers {
         publishJabber('*room@example.org') {
             strategyName('STATECHANGE_ONLY')
@@ -3142,7 +3133,7 @@ e.g. entry can be called multiple times. Requires the
 [SCP Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SCP+plugin).
 
 ```groovy
-job {
+job('example') {
     publishers {
         publishScp('docs.acme.org') {
             entry('build/docs/**', 'project-a', true)
@@ -3527,7 +3518,7 @@ The analysisCollectorClosure takes, additional to all the options from the stati
 * warnings, defaults to false
 
 ```groovy
-job {
+job('example') {
     publishers {
         analysisCollector {
             checkstyle()
@@ -3820,7 +3811,7 @@ The `nodeLabel` parameter type requires the
 Examples:
 
 ```groovy
-job {
+job('example-1') {
     publishers {
         buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2')
     }
@@ -3828,7 +3819,7 @@ job {
 ```
 
 ```groovy
-job {
+job('example-2') {
     publishers {
         buildPipelineTrigger('deploy-cluster-1, deploy-cluster-2') {
             parameters {
@@ -3879,7 +3870,7 @@ Examples:
 
 ```groovy
 // push a to branch if the job succeeded
-job {
+job('example-1') {
     publishers {
         git {
             pushOnlyIfSuccess()
@@ -3891,7 +3882,7 @@ job {
 
 ```groovy
 // create and push a tag if the job succeeded, the tag name and message are parametrized.
-job {
+job('example-2') {
     publishers {
         git {
             pushOnlyIfSuccess()
@@ -3934,7 +3925,7 @@ Examples:
 
 ```groovy
 // Minimal example. Notify using all the plugin defaults (inbox, not chat; notify on success, failure, fixed; no tags)
-job {
+job('example-1') {
     publishers {
         flowdock('a-flow-token')
     }
@@ -3943,7 +3934,7 @@ job {
 
 ```groovy
 // Notify on all build statuses
-job {
+job('example-2') {
     publishers {
         flowdock('flow-token') {
             unstable()
@@ -3959,7 +3950,7 @@ job {
 
 ```groovy
 // Notify on multiple flows in their chat for the default build statuses (success, failure and fixed) using the tags 'jenkins' and 'build'
-job {
+job('example-3') {
     publishers {
         flowdock('first-flow-token', 'second-flow-token') {
             chat()
@@ -3992,7 +3983,7 @@ Examples:
 
 ```groovy
 //The following example will notify Stash using the global Jenkins settings
-job {
+job('example-1') {
     publishers {
         stashNotifier()
     }
@@ -4001,7 +3992,7 @@ job {
 
 ```groovy
 // The following example will notify Stash using the global Jenkins settings and sets keepRepeatedBuilds to true
-job {
+job('example-2') {
     publishers {
         stashNotifier {
             keepRepeatedBuilds()
@@ -4027,7 +4018,7 @@ Supports the [Maven Deployment Linker Plugin](https://wiki.jenkins-ci.org/displa
 The following example will create links to all tar.gz build artifacts.
 
 ```groovy
-job {
+job('example') {
     publishers {
         mavenDeploymentLinker('.*.tar.gz')
     }
@@ -4063,7 +4054,7 @@ job {
 The following example will delete all files after a build.
 
 ```groovy
-job {
+job('example-1') {
     publishers {
         wsCleanup()
     }
@@ -4073,7 +4064,7 @@ job {
 The following example will delete all 'src' directories in the directory tree
 
 ```groovy
-job {
+job('example-2') {
     publishers {
         wsCleanup {
             includePattern('**/src/**')
@@ -4107,7 +4098,7 @@ Configure a Jenkins job to trigger a Rundeck job as a post-build action. Require
 Examples:
 
 ```groovy
-job {
+job('example-1') {
     publishers {
         rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {
     }
@@ -4115,7 +4106,7 @@ job {
 ```
 
 ```groovy
-job {
+job('example-2') {
     publishers {
         rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {
             options(artifact: 'app', env: 'dev')
@@ -4192,7 +4183,7 @@ The threshold mode can either be `ThresholdMode.NUMBER` or `ThresholdMode.PERCEN
 Examples:
 
 ```groovy
-job {
+job('example-1') {
     publishers {
         archiveXUnit {
             jUnit {
@@ -4204,7 +4195,7 @@ job {
 ```
 
 ```groovy
-job {
+job('example-2') {
     publishers {
         archiveXUnit {
             aUnit {
@@ -4259,7 +4250,7 @@ Valid values for region are `'GovCloud'`, `'US_EAST_1'`, `'US_WEST_1'`, `'US_WES
 either `'STANDARD'` or `'REDUCED_REDUNDANCY'`.
 
 ```groovy
-job {
+job('example') {
     publishers {
         s3('myProfile') {
             entry('foo', 'bar', 'EU_WEST_1') {
@@ -4297,7 +4288,7 @@ limitation of the Flexible Publish Plugin).
 Examples:
 
 ```groovy
-job {
+job('example-1') {
     publishers {
         flexiblePublish {
             condition {
@@ -4310,7 +4301,7 @@ job {
     }
 }
 
-job {
+job('example-2') {
     publishers {
         flexiblePublish {
             condition {
@@ -4474,14 +4465,14 @@ Define a list of nodes on which the job should be allowed to be executed on. Req
 
 ```groovy
 // allows to select a single node from all nodes available
-job {
+job('example-1') {
     parameters {
         nodeParam('TEST_HOST')
     }
 }
 
 // runs on node1 by default and can be run on node1, node2 or node3 when triggered manually
-job {
+job('example-2') {
     parameters {
         nodeParam('TEST_HOST') {
             description('select test host')
@@ -4523,14 +4514,14 @@ eligibility criteria.
 `'IgnoreOfflineNodeEligibility'` or `'IgnoreTempOfflineNodeEligibility'`.
 
 ```groovy
-job {
+job('example-1') {
     parameters {
         labelParam('MY_LABEL')
     }
 }
 
 // runs on all nodes which are labeled with "linux" and are online
-job {
+job('example-2') {
     parameters {
         labelParam('MY_LABEL') {
             defaultValue('linux')
@@ -4566,7 +4557,7 @@ def flow = '''node {
   def mvnHome = tool 'M3'
   sh "${mvnHome}/bin/mvn -B verify"
 }'''
-job(type: Workflow) {
+job('example-1', type: Workflow) {
     definition {
         cps {
             script(flow)
@@ -4574,7 +4565,7 @@ job(type: Workflow) {
     }
 }
 
-job(type: Workflow) {
+job('example-2', type: Workflow) {
     definition {
         cps {
             script(readFileFromWorkspace('project-a-workflow.groovy'))

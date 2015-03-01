@@ -4,6 +4,10 @@ package javaposse.jobdsl.dsl
  * DSL element representing a Jenkins folder.
  */
 class Folder extends Item {
+    Folder(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
     void displayName(String displayNameArg) {
         execute {
             it / methodMissing('displayName', displayNameArg)

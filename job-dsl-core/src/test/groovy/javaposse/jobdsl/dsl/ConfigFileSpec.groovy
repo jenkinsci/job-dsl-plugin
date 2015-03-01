@@ -3,11 +3,12 @@ package javaposse.jobdsl.dsl
 import spock.lang.Specification
 
 class ConfigFileSpec extends Specification {
-    private final ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
 
     def 'get type'() {
         when:
-        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom)
+        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
 
         then:
         configFile.type == ConfigFileType.Custom
@@ -19,6 +20,7 @@ class ConfigFileSpec extends Specification {
 
         then:
         configFile.name == 'foo'
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'set comment'() {

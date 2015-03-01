@@ -1,11 +1,16 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
 
 class BuildPipelineView extends View {
+    BuildPipelineView(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
     /**
      * <noOfDisplayedBuilds>5</noOfDisplayedBuilds>
      */

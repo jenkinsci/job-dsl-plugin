@@ -9,19 +9,19 @@ passed in. For free-style jobs that is `<project>`, but for other job types the 
 `<maven2-moduleset>` for Maven projects.
 
 ```groovy
-job {
+job('example-1') {
     configure { node ->
         // node represents <project>
     }
 }
 
-job(type: Maven) {
+job('example-2', type: Maven) {
     configure { node ->
         // node represents <maven2-moduleset>
     }
 }
 
-view {
+view('example') {
     configure { node ->
         // node represents <hudson.model.ListView>
     }
@@ -32,7 +32,7 @@ Several DSL methods define their own `configure` methods, so that the XML can be
 are not supported by the DSL.
 
 ```groovy
-job {
+job('example') {
     scm {
         git {
             remote {
@@ -49,7 +49,7 @@ job {
 Other DSL elements allow configure blocks to be used directly without a `configure` method.
 
 ```groovy
-job {
+job('example') {
     steps {
         gradle('build', '', true) { node ->
             // node represents <hudson.plugins.gradle.Gradle>
@@ -107,7 +107,7 @@ Below is an example of a configure block that is trying to generate `<label>my-l
 The label element is conflicting with the [label](Job-reference#label) DSL method.
 
 ```groovy
-job {
+job('example') {
     configure { project ->
         project << foo {
             bar {
@@ -150,7 +150,7 @@ get a runnable DSL script, further methods have to be added, like setting the jo
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         def matrix = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty' {
             permission('hudson.model.Item.Configure:jill')
@@ -176,7 +176,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     authorization {
         permission(Permissions.ItemConfigure, 'jill')
         permission(Permissions.ItemConfigure, 'jack')
@@ -189,7 +189,7 @@ job {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         // Doesn't take into account existing node
         project << logRotator {
@@ -219,7 +219,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     logRotator(2, 10, -1, -1)
 }
 ```
@@ -242,7 +242,7 @@ def emailTrigger = {
     }
 }
 
-job {
+job('example') {
     configure { project ->
         project / publisher << 'hudson.plugins.emailext.ExtendedEmailPublisher' {
               recipientList 'Engineering@company.com'
@@ -298,7 +298,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     publishers {
         extendedEmail('Engineering@company.com') {
             trigger(triggerName: 'Failure', recipientList: '$PROJECT_DEFAULT_RECIPIENTS')
@@ -312,7 +312,7 @@ job {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project / builders / 'hudson.tasks.Shell' {
             command 'echo "Hello" > ${WORKSPACE}/out.txt'
@@ -334,7 +334,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     steps {
         shell 'echo "Hello" > ${WORKSPACE}/out.txt'
     }
@@ -345,7 +345,7 @@ job {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project / builders << 'hudson.plugins.gradle.Gradle' {
             description ''
@@ -379,7 +379,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     steps {
         gradle('test', '-Dtiming-multiple-5', true) {
             it / wrapperScript 'gradlew'
@@ -392,7 +392,7 @@ job {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project / scm(class: 'hudson.scm.SubversionSCM') {
             locations {
@@ -434,7 +434,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     scm {
         svn('http://svn.apache.org/repos/asf/tomcat/maven-plugin/trunk')
     }
@@ -460,7 +460,7 @@ def gitConfigWithSubdir(subdir, remote) {
     }
 }
 
-job {
+job('example') {
     scm {
         git(
             'git@server:account/repo1.git',
@@ -499,7 +499,7 @@ Result:
 DSL:
 ```groovy
 // this creates XML for version 1.x of the Git Plugin, but version 2.x is backwards compatible
-job {
+job('example') {
     scm {
         git {
             remote {
@@ -517,7 +517,7 @@ job {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project.name = 'matrix-project'
         project / axes / 'hudson.matrix.LabelAxis' {
@@ -568,7 +568,7 @@ Result:
 
 DSL:
 ```groovy
-job(type: Matrix) {
+job('example', type: Matrix) {
     axes {
         label('label', 'linux', 'windows')
     }
@@ -579,7 +579,7 @@ job(type: Matrix) {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project / publishers << 'hudson.tasks.test.AggregatedTestResultPublisher' {
             jobs('some-downstream-test')
@@ -603,7 +603,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     publishers {
         aggregateDownstreamTestResults 'some-downstream-test'
     }
@@ -614,7 +614,7 @@ job {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project / builders / 'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
             projects('project-A,project-B') // no spaces, plugin doesn't handle trimming
@@ -638,7 +638,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     steps {
         prerequisite('project-A, project-B') // any spaces will be trimmed
     }
@@ -649,7 +649,7 @@ job {
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         def postbuildTask = project / publishers / 'hudson.plugins.postbuildtask.PostbuildTask'
         postbuildTask / tasks << 'hudson.plugins.postbuildtask.TaskProperties' {
@@ -692,7 +692,7 @@ Result:
 
 DSL:
 ```groovy
-job {
+job('example') {
     publishers {
         postBuildTask {
             task('BUILD SUCCESSFUL', 'git clean -fdx')
@@ -712,7 +712,7 @@ The requirements are:
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project / publishers << 'hudson.plugins.sonar.SonarPublisher' {
             jdk('(Inherit From Job)')
@@ -761,7 +761,7 @@ page. It is an hidden element.
 
 Configure block:
 ```groovy
-job {
+job('example') {
     configure { project ->
         project / publishers << 'org.jfrog.hudson.ArtifactoryRedeployPublisher' {
             details {
@@ -829,12 +829,12 @@ In the job script you can then import the helper method and use it create severa
 ```groovy
 import static helpers.MatrixProjectHelper.matrixProject
 
-job {
+job('example-1') {
     name 'matrix-job-A'
     configure matrixProject(['label-1', 'label-2'])
 }
 
-job {
+job('example-2') {
     name 'matrix-job-B'
     configure matrixProject(['label-3', 'label-4'])
 }

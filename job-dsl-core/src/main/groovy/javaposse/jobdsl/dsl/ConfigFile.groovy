@@ -4,15 +4,19 @@ import com.google.common.base.Preconditions
 
 class ConfigFile implements Context {
     final ConfigFileType type
+    final JobManagement jobManagement
     String name
     String comment = ''
     String content = ''
 
-    ConfigFile(ConfigFileType type) {
+    ConfigFile(ConfigFileType type, JobManagement jobManagement) {
         this.type = type
+        this.jobManagement = jobManagement
     }
 
+    @Deprecated
     void name(String name) {
+        jobManagement.logDeprecationWarning()
         this.name = name
     }
 

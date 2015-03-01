@@ -6,27 +6,35 @@ package javaposse.jobdsl.dsl
 abstract class View implements Context {
     private final List<WithXmlAction> withXmlActions = []
 
+    protected final JobManagement jobManagement
+
     String name
 
+    protected View(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
+
+    @Deprecated
     void name(String name) {
+        jobManagement.logDeprecationWarning()
         this.name = name
     }
 
     void description(String descriptionArg) {
         execute {
-            it / methodMissing('description', descriptionArg)
+            it / delegate.methodMissing('description', descriptionArg)
         }
     }
 
     void filterBuildQueue(boolean filterBuildQueueArg = true) {
         execute {
-            it / methodMissing('filterQueue', filterBuildQueueArg)
+            it / delegate.methodMissing('filterQueue', filterBuildQueueArg)
         }
     }
 
     void filterExecutors(boolean filterExecutorsArg = true) {
         execute {
-            it / methodMissing('filterExecutors', filterExecutorsArg)
+            it / delegate.methodMissing('filterExecutors', filterExecutorsArg)
         }
     }
 

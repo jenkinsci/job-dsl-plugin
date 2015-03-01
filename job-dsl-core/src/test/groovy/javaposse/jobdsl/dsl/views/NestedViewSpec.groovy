@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.ViewType
 import spock.lang.Specification
 
@@ -7,7 +8,8 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class NestedViewSpec extends Specification {
-    NestedView view = new NestedView()
+    JobManagement jobManagement = Mock(JobManagement)
+    NestedView view = new NestedView(jobManagement)
 
     def setup() {
         setIgnoreWhitespace(true)
@@ -32,7 +34,7 @@ class NestedViewSpec extends Specification {
         compareXML(nestedViewColumnsXml, view.xml).similar()
     }
 
-    def 'nested view views'() {
+    def 'nested view with deprecated view method'() {
         when:
         view.views {
             delegate.view {
@@ -40,6 +42,20 @@ class NestedViewSpec extends Specification {
             }
             delegate.view(type: ViewType.SectionedView) {
                 name('bar')
+            }
+        }
+
+        then:
+        compareXML(nestedViewViewsXml, view.xml).similar()
+        4 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'nested view with views'() {
+        when:
+        view.views {
+            delegate.view('foo') {
+            }
+            delegate.view('bar', type: ViewType.SectionedView) {
             }
         }
 

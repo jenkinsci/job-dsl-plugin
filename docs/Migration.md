@@ -1,5 +1,38 @@
 ## Migrating to 1.30
 
+### Name
+
+The `name` methods have been [[deprecated|Deprecation-Policy]]. The name must be specified as argument to the factory
+methods.
+
+DSL prior to 1.30
+```groovy
+job {
+    name('one')
+}
+folder {
+    name('two')
+}
+view {
+    name('three')
+}
+configFile {
+    name('four')
+}
+```
+
+DSL since 1.30
+```groovy
+job('one') {
+}
+folder('two') {
+}
+view('three') {
+}
+configFile('four') {
+}
+```
+
 ### Jabber Publisher
 
 The `publishJabber` DSL methods with `strategyName` and `channelNotificationName` have been

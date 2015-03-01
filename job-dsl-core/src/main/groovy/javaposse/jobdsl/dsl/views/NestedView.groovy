@@ -1,13 +1,18 @@
 package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class NestedView extends View {
+    NestedView(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
     void views(@DslContext(NestedViewsContext) Closure viewsClosure) {
-        NestedViewsContext context = new NestedViewsContext()
+        NestedViewsContext context = new NestedViewsContext(jobManagement)
         executeInContext(viewsClosure, context)
 
         execute {

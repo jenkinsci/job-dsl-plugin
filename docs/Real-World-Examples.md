@@ -8,31 +8,26 @@ This page capture the most common use cases, of which we'll try our best to make
 
 First every job has to be encased in a job block with a name. Feel free to add variables, e.g.
 ```
-def jobName =
-job {
-    name jobName
+def jobName = 'example'
+job(jobName) {
 }
-job {
-    name 'SomeJob'
+job('SomeJob') {
 }
 ```
 
 * Git
 ```
-job {
-    name 'GitJob'
+job('GitJob') {
     scm {
         git('git://github.com/JavaPosseRoundup/job-dsl-plugin')
     }
 }
-job {
-    name 'GitJobForFeatureBranch'
+job('GitJobForFeatureBranch') {
     scm {
         git('git://github.com/JavaPosseRoundup/job-dsl-plugin', 'feature-branch')
     }
 }
-job {
-    name 'GitJobXmlConfigured'
+job('GitJobXmlConfigured') {
     scm {
         git('git://github.com/JavaPosseRoundup/job-dsl-plugin') { node ->
             // These names come straight from the xml, <scm class="hudson.plugins.git.GitSCM">
@@ -49,8 +44,7 @@ job {
 ```groovy
 def giturl = 'git://github.com/quidryan/aws-sdk-test.git'
 for(i in 0..10) {
-    job {
-        name "DSL-Tutorial-1-Test-${i}"
+    job("DSL-Tutorial-1-Test-${i}") {
         scm {
             git(giturl)
         }
@@ -70,8 +64,7 @@ def viewspec = '''
 //depot/webapplications/helloworld/... //jryan_car/webapplications/helloworld/...
 '''
 
-job {
-    name 'PerforceJob'
+job('PerforceJob') {
     scm {
         perforce(viewspec)
     }
@@ -85,8 +78,8 @@ def branchApi = new URL("https://api.github.com/repos/${project}/branches")
 def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
 branches.each {
     def branchName = it.name
-    job {
-        name "${project}-${branchName}".replaceAll('/','-')
+    def jobName = "${project}-${branchName}".replaceAll('/','-')
+    job(jobName) {
         scm {
             git("git://github.com/${project}.git", branchName)
         }
@@ -98,8 +91,7 @@ branches.each {
 
 * Add Gradle Build Step
 ```
-job {
-    name 'GradleJob'
+job('GradleJob') {
     steps {
         gradle('build')
     }
@@ -108,8 +100,7 @@ job {
 
 * Maven build
 ```
-job {
-    name 'MavenJob'
+job('MavenJob') {
     steps {
         maven('clean build')
     }
@@ -135,5 +126,5 @@ job {
 4. Then from the DSL, add something like this:
 ```
   import utilities.MyUtilities
-  MyUtilities.addEnterpriseFeature(job {})
+  MyUtilities.addEnterpriseFeature(job('example') {})
 ```

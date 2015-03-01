@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
+import com.google.common.base.Strings
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 
@@ -24,7 +25,10 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
+    @Deprecated
     Job job(Map<String, Object> arguments = [:], @DslContext(Job) Closure closure) {
+        jm.logDeprecationWarning()
+
         LOGGER.log(Level.FINE, "Got closure and have ${jm}")
         Job job = new Job(jm, arguments)
 
@@ -39,9 +43,23 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
+    Job job(Map<String, Object> arguments = [:], String name, @DslContext(Job) Closure closure) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+
+        Job job = new Job(jm, arguments)
+        job.name = name
+        job.with(closure)
+        referencedJobs << job
+        job
+    }
+
+    @Override
+    @Deprecated
     View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
+        jm.logDeprecationWarning()
+
         ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
-        View view = viewType.viewClass.newInstance()
+        View view = viewType.viewClass.newInstance(jm)
         view.with(closure)
         referencedViews << view
 
@@ -50,17 +68,59 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
+    View view(Map<String, Object> arguments = [:], String name, @DslContext(View) Closure closure) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+
+        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
+        View view = viewType.viewClass.newInstance(jm)
+        view.name = name
+        view.with(closure)
+        referencedViews << view
+        view
+    }
+
+    @Override
+    @Deprecated
     Folder folder(@DslContext(Folder) Closure closure) {
-        Folder folder = new Folder()
+        jm.logDeprecationWarning()
+
+        Folder folder = new Folder(jm)
         folder.with(closure)
         referencedJobs << folder
         folder
     }
 
     @Override
+    Folder folder(String name, @DslContext(Folder) Closure closure) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+
+        Folder folder = new Folder(jm)
+        folder.name = name
+        folder.with(closure)
+        referencedJobs << folder
+        folder
+    }
+
+    @Override
+    @Deprecated
     ConfigFile configFile(Map<String, Object> arguments = [:], @DslContext(ConfigFile) Closure closure) {
+        jm.logDeprecationWarning()
+
         ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
-        ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType)
+        ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType, jm)
+        configFile.with(closure)
+        referencedConfigFiles << configFile
+
+        configFile
+    }
+
+    @Override
+    ConfigFile configFile(Map<String, Object> arguments = [:], String name, @DslContext(ConfigFile) Closure closure) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+
+        ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
+        ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType, jm)
+        configFile.name = name
         configFile.with(closure)
         referencedConfigFiles << configFile
 

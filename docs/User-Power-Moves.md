@@ -137,8 +137,7 @@ import org.kohsuke.github.GitHub
 
 def gh = GitHub.connectAnonymously()
 gh.getOrganization('jenkinsci').listRepositories().each { repo ->
-    job {
-        name(repo.name)
+    job(repo.name) {
         scm {
             gitHub(repo.fullName)
         }

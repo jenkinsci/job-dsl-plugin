@@ -32,8 +32,7 @@ Now that we have created our empty Seed Job we need to configure it. We're going
 * Copy the following DSL Script block into the input box. (Note: The job resulting from this will be called DSL-Tutorial-1-Test. It'll check a GitHub repo every 15 minutes, then run 'clean test' if there's any changes found.)
 
 ```
-job {
-    name 'DSL-Tutorial-1-Test'
+job('DSL-Tutorial-1-Test') {
     scm {
         git('git://github.com/jgritman/aws-sdk-test.git')
     }
@@ -88,8 +87,8 @@ def branchApi = new URL("https://api.github.com/repos/${project}/branches")
 def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
 branches.each {
     def branchName = it.name
-    job {
-        name "${project}-${branchName}".replaceAll('/','-')
+    def jobName = "${project}-${branchName}".replaceAll('/','-')
+    job(jobName) {
         scm {
             git("git://github.com/${project}.git", branchName)
         }
