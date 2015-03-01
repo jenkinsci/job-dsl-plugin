@@ -12,8 +12,6 @@ Once you know how to create a "seed" job from the tutorial, start looking at the
 After you get familiar with some of the commands, try them out at the [Job DSL Playground](http://job-dsl.herokuapp.com/).
 
 If you want to get fancy you'll want to read up on [[configure block|The Configure Block]], which gives you direct access to the `config.xml`.
-It's also possible (and easy) to [[define your own DSL commands|Extending the DSL from your Job Scripts]] using monkey patching.
-
 
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
