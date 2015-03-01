@@ -46,38 +46,41 @@ public class DslScriptLoader {
         config.addCompilationCustomizers(icz);
 
         GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
-
-        engine.setConfig(config);
-
-        Binding binding = createBinding(jobManagement);
-
-        JobParent jp;
         try {
-            Script script;
-            if (scriptRequest.getBody() != null) {
-                jobManagement.getOutputStream().println("Processing provided DSL script");
-                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody());
-                script = InvokerHelper.createScript(cls, binding);
-            } else {
-                jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
-                script = engine.createScript(scriptRequest.getLocation(), binding);
+            engine.setConfig(config);
+
+            Binding binding = createBinding(jobManagement);
+
+            JobParent jp;
+            try {
+                Script script;
+                if (scriptRequest.getBody() != null) {
+                    jobManagement.getOutputStream().println("Processing provided DSL script");
+                    Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody());
+                    script = InvokerHelper.createScript(cls, binding);
+                } else {
+                    jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
+                    script = engine.createScript(scriptRequest.getLocation(), binding);
+                }
+                assert script instanceof JobParent;
+
+                jp = (JobParent) script;
+                jp.setJm(jobManagement);
+
+                binding.setVariable("jobFactory", jp);
+
+                script.run();
+            } catch (Exception e) { // ResourceException or ScriptException
+                if (e instanceof RuntimeException) {
+                    throw ((RuntimeException) e);
+                } else {
+                    throw new IOException("Unable to run script", e);
+                }
             }
-            assert script instanceof JobParent;
-
-            jp = (JobParent) script;
-            jp.setJm(jobManagement);
-
-            binding.setVariable("jobFactory", jp);
-
-            script.run();
-        } catch (Exception e) { // ResourceException or ScriptException
-            if (e instanceof RuntimeException) {
-                throw ((RuntimeException) e);
-            } else {
-                throw new IOException("Unable to run script", e);
-            }
+            return jp;
+        } finally {
+            engine.getGroovyClassLoader().close();
         }
-        return jp;
     }
 
     /**
