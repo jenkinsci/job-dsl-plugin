@@ -1,17 +1,25 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.jobs.BuildFlowJob
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.MatrixJob
+import javaposse.jobdsl.dsl.jobs.MavenJob
+import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
+
+@Deprecated
 enum JobType {
-    Freeform('project'),
-    Maven('maven2-moduleset'),
-    Multijob('com.tikal.jenkins.plugins.multijob.MultiJobProject'),
-    BuildFlow('com.cloudbees.plugins.flow.BuildFlow'),
-    Workflow('flow-definition'),
-    Matrix('matrix-project')
+    Freeform(FreeStyleJob),
+    Maven(MavenJob),
+    Multijob(MultiJob),
+    BuildFlow(BuildFlowJob),
+    Workflow(WorkflowJob),
+    Matrix(MatrixJob)
 
-    String elementName
+    final Class<? extends Job> jobClass
 
-    JobType(String elementName) {
-        this.elementName = elementName
+    JobType(Class<? extends Job> jobClass) {
+        this.jobClass = jobClass
     }
 
     static find(String enumName) {

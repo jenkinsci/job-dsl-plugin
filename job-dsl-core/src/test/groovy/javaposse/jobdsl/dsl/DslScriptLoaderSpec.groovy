@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.collect.Iterables
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -17,7 +18,7 @@ class DslScriptLoaderSpec extends Specification {
 
     def 'load template from file'() {
         setup:
-        Job job = new Job(jm)
+        Job job = new FreeStyleJob(jm)
 
         when:
         job.using('config') // src/test/resources/config.xml
@@ -28,7 +29,7 @@ class DslScriptLoaderSpec extends Specification {
 
     def 'configure block without template'() {
         setup:
-        Job job = new Job(jm)
+        Job job = new FreeStyleJob(jm)
 
         when:
         job.configure {
@@ -129,7 +130,6 @@ job {
         jobs.size() == 1
         def job = Iterables.get(jobs, 0)
         job.name == 'test'
-        job.type == JobType.Maven
     }
 
     def 'run engine that uses static import for LocalRepositoryLocation'() {

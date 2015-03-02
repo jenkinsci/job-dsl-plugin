@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.JobParent
  */
 class Callee {
     static def makeJob(JobParent jobParent, String nameOfJob) {
-        jobParent.job(nameOfJob) {
+        jobParent.freeStyleJob(nameOfJob) {
         }
     }
 }

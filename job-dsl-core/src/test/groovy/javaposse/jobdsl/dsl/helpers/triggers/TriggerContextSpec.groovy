@@ -1,14 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.JobType
 import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
 class TriggerContextSpec extends Specification {
     List<WithXmlAction> mockActions = Mock()
     JobManagement mockJobManagement = Mock(JobManagement)
-    TriggerContext context = new TriggerContext(mockActions, JobType.Freeform, mockJobManagement)
+    TriggerContext context = new TriggerContext(mockActions, mockJobManagement)
 
     def 'call github trigger methods'() {
         when:
@@ -528,23 +527,5 @@ class TriggerContextSpec extends Specification {
             gerritBuildStartedCodeReviewValue.size() == 1
             gerritBuildStartedCodeReviewValue[0].value() == 55
         }
-    }
-
-    def 'call snapshotDependencies for free-style job fails'() {
-        when:
-        context.snapshotDependencies(false)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'call snapshotDependencies for Maven job succeeds'() {
-        when:
-        TriggerContext context = new TriggerContext([], JobType.Maven, mockJobManagement)
-        context.snapshotDependencies(false)
-
-        then:
-        context.withXmlActions != null
-        context.withXmlActions.size() == 1
     }
 }

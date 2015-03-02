@@ -1,15 +1,37 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.jobs.BuildFlowJob
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.MatrixJob
+import javaposse.jobdsl.dsl.jobs.MavenJob
+import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.views.BuildMonitorView
+import javaposse.jobdsl.dsl.views.BuildPipelineView
+import javaposse.jobdsl.dsl.views.DeliveryPipelineView
+import javaposse.jobdsl.dsl.views.ListView
+import javaposse.jobdsl.dsl.views.NestedView
+import javaposse.jobdsl.dsl.views.SectionedView
+
 interface DslFactory {
+
     @Deprecated
     Job job(@DslContext(Job) Closure closure)
 
     @Deprecated
     Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
 
-    Job job(String name, @DslContext(Job) Closure closure)
+    FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure)
 
-    Job job(Map<String, Object> arguments, String name, @DslContext(Job) Closure closure)
+    BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)
+
+    MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure)
+
+    MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure)
+
+    MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure)
+
+    WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
     @Deprecated
     View view(@DslContext(View) Closure closure)
@@ -17,9 +39,17 @@ interface DslFactory {
     @Deprecated
     View view(Map<String, Object> arguments, @DslContext(View) Closure closure)
 
-    View view(String name, @DslContext(View) Closure closure)
+    ListView listView(String name, @DslContext(ListView) Closure closure)
 
-    View view(Map<String, Object> arguments, String name, @DslContext(View) Closure closure)
+    SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure)
+
+    NestedView nestedView(String name, @DslContext(NestedView) Closure closure)
+
+    DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure)
+
+    BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure)
+
+    BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure)
 
     @Deprecated
     Folder folder(@DslContext(Folder) Closure closure)
@@ -32,9 +62,9 @@ interface DslFactory {
     @Deprecated
     ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
-    ConfigFile configFile(String name, @DslContext(ConfigFile) Closure closure)
+    ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
-    ConfigFile configFile(Map<String, Object> arguments, String name, @DslContext(ConfigFile) Closure closure)
+    ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
      * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
