@@ -94,6 +94,8 @@ public class ExecuteDslScripts extends Builder {
 
     private final boolean ignoreExisting;
 
+    private final boolean dryRun;
+
     private final RemovedJobAction removedJobAction;
 
     private final RemovedViewAction removedViewAction;
@@ -105,7 +107,7 @@ public class ExecuteDslScripts extends Builder {
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
                              RemovedViewAction removedViewAction, LookupStrategy lookupStrategy,
-                             String additionalClasspath) {
+                             String additionalClasspath, boolean dryRun) {
         // Copy over from embedded object
         this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
         this.targets = scriptLocation == null ? null : scriptLocation.targets;
@@ -115,6 +117,13 @@ public class ExecuteDslScripts extends Builder {
         this.removedViewAction = removedViewAction;
         this.lookupStrategy = lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
         this.additionalClasspath = additionalClasspath;
+        this.dryRun = dryRun;
+    }
+
+    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
+            RemovedViewAction removedViewAction, LookupStrategy lookupStrategy,
+            String additionalClasspath) {
+        this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, lookupStrategy, additionalClasspath, false);
     }
 
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
@@ -140,6 +149,7 @@ public class ExecuteDslScripts extends Builder {
         this.removedViewAction = RemovedViewAction.IGNORE;
         this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
         this.additionalClasspath = null;
+        this.dryRun = false;
     }
 
     ExecuteDslScripts() {
@@ -160,6 +170,10 @@ public class ExecuteDslScripts extends Builder {
 
     public boolean isIgnoreExisting() {
         return ignoreExisting;
+    }
+
+    public boolean isDryRun() {
+        return dryRun;
     }
 
     public RemovedJobAction getRemovedJobAction() {
@@ -199,9 +213,9 @@ public class ExecuteDslScripts extends Builder {
             EnvVars env = build.getEnvironment(listener);
             env.putAll(build.getBuildVariables());
 
-            JobManagement jm = new InterruptibleJobManagement(
-                    new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy())
-            );
+            JenkinsJobManagement jjm = new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy());
+            jjm.setDryRun(dryRun);
+            JobManagement jm = new InterruptibleJobManagement(jjm);
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
             try {
@@ -272,8 +286,10 @@ public class ExecuteDslScripts extends Builder {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
             if (!matching.isEmpty()) {
-                seedJobReferences.removeAll(matching);
-                descriptorMutated = true;
+                if (!isDryRun()) {
+                    seedJobReferences.removeAll(matching);
+                    descriptorMutated = true;
+                }
             }
         }
 
@@ -289,16 +305,20 @@ public class ExecuteDslScripts extends Builder {
                 // Just update digest
                 SeedReference ref = Iterables.get(matching, 0);
                 if (digest.equals(ref.getDigest())) {
-                    ref.setDigest(digest);
-                    descriptorMutated = true;
+                    if (!isDryRun()) {
+                        ref.setDigest(digest);
+                        descriptorMutated = true;
+                    }
                 }
             } else {
-                if (matching.size() > 1) {
-                    // Not sure how there could be more one, throw it all away and start over
-                    seedJobReferences.removeAll(matching);
+                if (!isDryRun()) {
+                    if (matching.size() > 1) {
+                        // Not sure how there could be more one, throw it all away and start over
+                        seedJobReferences.removeAll(matching);
+                    }
+                    seedJobReferences.add(new SeedReference(templateName, seedJobName, digest));
+                    descriptorMutated = true;
                 }
-                seedJobReferences.add(new SeedReference(templateName, seedJobName, digest));
-                descriptorMutated = true;
             }
         }
 
@@ -328,11 +348,15 @@ public class ExecuteDslScripts extends Builder {
             Item removedItem = getLookupStrategy().getItem(build.getProject(), unreferencedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
-                    removedItem.delete();
+                    if (!isDryRun()) {
+                        removedItem.delete();
+                    }
                     removed.add(unreferencedJob);
                 } else {
                     if (removedItem instanceof AbstractProject) {
-                        ((AbstractProject) removedItem).disable();
+                        if (!isDryRun()) {
+                            ((AbstractProject) removedItem).disable();
+                        }
                         disabled.add(unreferencedJob);
                     }
                 }
@@ -366,8 +390,10 @@ public class ExecuteDslScripts extends Builder {
 
                 SeedReference oldSeedReference = generatedJobMap.get(item.getFullName());
                 if (!newSeedReference.equals(oldSeedReference)) {
-                    generatedJobMap.put(item.getFullName(), newSeedReference);
-                    descriptorMutated = true;
+                    if (!isDryRun()) {
+                        generatedJobMap.put(item.getFullName(), newSeedReference);
+                        descriptorMutated = true;
+                    }
                 }
             }
         }
@@ -375,8 +401,10 @@ public class ExecuteDslScripts extends Builder {
         for (GeneratedJob removedJob : removedJobs) {
             Item removedItem = getLookupStrategy().getItem(seedJob, removedJob.getJobName(), Item.class);
             if (removedItem != null) {
-                generatedJobMap.remove(removedItem.getFullName());
-                descriptorMutated = true;
+                if (!isDryRun()) {
+                    generatedJobMap.remove(removedItem.getFullName());
+                    descriptorMutated = true;
+                }
             }
         }
 
@@ -405,7 +433,9 @@ public class ExecuteDslScripts extends Builder {
                 if (parent instanceof ViewGroup) {
                     View view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
                     if (view != null) {
-                        ((ViewGroup) parent).deleteView(view);
+                        if(!isDryRun()) {
+                            ((ViewGroup) parent).deleteView(view);
+                        }
                         removed.add(unreferencedView);
                     }
                 } else if (parent == null) {

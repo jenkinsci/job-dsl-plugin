@@ -23,6 +23,10 @@
      <f:entry title="Action for removed views:" field="removedViewAction">
         <f:select/>
     </f:entry>
+    <f:entry title="Dry run:" field="dryRun">
+        <f:checkbox name="dryRun" title="Dry run" checked="${instance.dryRun}"
+                    description="Test specified DSL script by generating configuration but do not actually modify anything"/>
+    </f:entry>
 
     <f:advanced>
         <f:entry title="Context to use for relative job names:" field="lookupStrategy">
