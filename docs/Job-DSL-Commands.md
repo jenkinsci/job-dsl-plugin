@@ -112,6 +112,7 @@ job(Map<String, ?> arguments = [:], String name) { // since 1.30
         github(String ownerAndProject, String branch = null, String protocol = 'https',
                String host = 'github.com', Closure configure = null)
         hg(String url, String branch = null, Closure configure = null)
+        hg(Closure hgClosure)
         p4(String viewspec, Closure configure = null)
         p4(String viewspec, String user, Closure configure = null)
         p4(String viewspec, String user, String password, Closure configure = null)

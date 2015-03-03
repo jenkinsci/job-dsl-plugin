@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
+import javaposse.jobdsl.dsl.helpers.scm.HgContext
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.SvnContext
@@ -75,6 +76,58 @@ class ScmContext implements Context {
         // Apply Context
         if (configure) {
             WithXmlAction action = new WithXmlAction(configure)
+            action.execute(scmNode)
+        }
+
+        scmNodes << scmNode
+    }
+
+    /**
+      <scm class="hudson.plugins.mercurial.MercurialSCM">
+        <installation>companyMercurial</installation>
+        <source>http://selenic.com/repo/hello</source>
+        <modules>sample-module1 sample-module2</modules>
+        <revisionType>BRANCH</revisionType>
+        <revision>branch-feature-1</revision>
+        <subdir>path-to-check-out-into</subdir>
+        <clean>false</clean>
+        <browser class="hudson.plugins.mercurial.browser.HgWeb">
+          <url>http://selenic.com/repo/hello/</url>
+        </browser>
+        <credentialsId>xyz-123-abc-sample</credentialsId>
+        <disableChangeLog>false</disableChangeLog>
+      </scm>
+     */
+    void hg(@DslContext(HgContext) Closure hgClosure) {
+        validateMulti()
+
+        HgContext hgContext = new HgContext(withXmlActions, jobManagement)
+        executeInContext(hgClosure, hgContext)
+
+        checkNotNull(hgContext.url)
+        checkArgument(!(hgContext.tag && hgContext.branch), 'Eihter tag or branch should be used, not both')
+
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
+            source hgContext.url
+            modules hgContext.modules.join(' ')
+            revisionType hgContext.tag ? 'TAG' : 'BRANCH'
+            revision hgContext.tag ?: hgContext.branch ?: 'default'
+            clean hgContext.clean
+            credentialsId hgContext.credentialsId ?: ''
+            disableChangeLog hgContext.disableChangeLog
+        }
+        if (hgContext.installation) {
+            scmNode.appendNode('installation', hgContext.installation)
+        }
+        if (hgContext.subDirectory) {
+            scmNode.appendNode('subdir', hgContext.subDirectory)
+        }
+
+        // Apply Context
+        if (hgContext.withXmlClosure) {
+            WithXmlAction action = new WithXmlAction(hgContext.withXmlClosure)
             action.execute(scmNode)
         }
 
