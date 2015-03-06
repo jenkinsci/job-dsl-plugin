@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.JobTypeMismatchException
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
@@ -10,7 +9,6 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class MavenJobSpec extends Specification {
-
     private final JobManagement jobManagement = Mock(JobManagement)
     private final MavenJob job = new MavenJob(jobManagement)
 
@@ -24,27 +22,6 @@ class MavenJobSpec extends Specification {
 
         then:
         assertXMLEqual MavenJob.TEMPLATE, xml
-    }
-
-    def 'free-style job extends Maven template and fails to generate xml'() {
-        when:
-        FreeStyleJob job = new FreeStyleJob(jobManagement)
-        job.using('TMPL')
-        job.xml
-
-        then:
-        1 * jobManagement.getConfig('TMPL') >> MavenJob.TEMPLATE
-        thrown(JobTypeMismatchException)
-    }
-
-    def 'Maven job extends free-style template and fails to generate xml'() {
-        when:
-        job.using('TMPL')
-        job.xml
-
-        then:
-        1 * jobManagement.getConfig('TMPL') >> FreeStyleJob.TEMPLATE
-        thrown(JobTypeMismatchException)
     }
 
     def 'no steps for Maven jobs'() {
