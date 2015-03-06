@@ -618,5 +618,5 @@ abstract class Job extends Item {
         new XmlParser().parse(new StringReader(template))
     }
 
-    abstract String getTemplate()
+    protected abstract String getTemplate()
 }
