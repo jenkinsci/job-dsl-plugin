@@ -6,7 +6,6 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class MatrixJobSpec extends Specification {
-
     private final JobManagement jobManagement = Mock(JobManagement)
     private final MatrixJob job = new MatrixJob(jobManagement)
 

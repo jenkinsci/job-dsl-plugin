@@ -14,7 +14,6 @@ import javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 
 class MavenJob extends Job {
-
     static final String TEMPLATE = '''
         <?xml version='1.0' encoding='UTF-8'?>
         <maven2-moduleset>

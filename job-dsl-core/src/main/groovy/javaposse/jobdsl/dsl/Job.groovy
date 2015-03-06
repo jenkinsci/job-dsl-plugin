@@ -18,7 +18,6 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
  * DSL element representing a Jenkins job.
  */
 abstract class Job extends Item {
-
     String templateName = null // Optional
     String previousNamesRegex = null // Optional
 

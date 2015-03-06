@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
 
 class FlowdockPublisherContext implements Context {
-
     List<String> notificationTags = []
     boolean chat = false
 

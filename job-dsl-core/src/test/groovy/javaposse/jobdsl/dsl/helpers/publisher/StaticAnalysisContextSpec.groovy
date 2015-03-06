@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import spock.lang.Specification
 
 class StaticAnalysisContextSpec extends Specification {
-
     StaticAnalysisContext context = new StaticAnalysisContext()
 
     def 'computeNew is set correctly when setting thresholds'(thresholds, dontComputeNew) {

@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class CloneWorkspaceContext implements Context {
-
     String workspaceExcludeGlob = ''
     String criteria = 'Any' // 'Not Failed', 'Successful'
     String archiveMethod = 'TAR' // 'ZIP'

@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class BuildFlowJob extends Job {
-
     static final String TEMPLATE = '''
         <?xml version='1.0' encoding='UTF-8'?>
         <com.cloudbees.plugins.flow.BuildFlow>

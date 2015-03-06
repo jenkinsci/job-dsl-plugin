@@ -17,7 +17,6 @@ import java.util.Map;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public class DescriptorImpl extends BuildStepDescriptor<Builder> {
-
     private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed
     private Map<String, SeedReference> generatedJobMap;
 

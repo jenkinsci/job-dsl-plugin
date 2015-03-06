@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 class WarningsContext extends StaticAnalysisContext {
-
     String includePattern = ''
     String excludePattern = ''
 

@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class StaticAnalysisContext implements Context {
-
     private static final List<String> THRESHOLD_LIMITS = ['low', 'normal', 'high']
     private static final ALLOWED_THRESHOLDS = ['unstableTotal', 'failedTotal', 'unstableNew', 'failedNew']
     private static final ALLOWED_THRESHOLD_TYPES = THRESHOLD_LIMITS + 'all'

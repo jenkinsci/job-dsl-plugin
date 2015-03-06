@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.ScriptRequest
 import static javaposse.jobdsl.plugin.WorkspaceProtocol.createWorkspaceUrl
 
 class ScriptRequestGenerator implements Closeable {
-
     final AbstractBuild build
     EnvVars env
     final Map<FilePath, File> cachedFiles = [:]

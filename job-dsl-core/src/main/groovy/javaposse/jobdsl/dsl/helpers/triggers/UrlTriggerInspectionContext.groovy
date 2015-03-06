@@ -8,7 +8,6 @@ import java.util.regex.PatternSyntaxException
 
 /** Context for configuring inspections that support paths/RegExps. */
 class UrlTriggerInspectionContext implements Context {
-
     /** Enumeration of inspections with their respective element names in XML */
     enum Inspection {
         /** Simple monitor for change of MD5 hash. no nested elements.*/

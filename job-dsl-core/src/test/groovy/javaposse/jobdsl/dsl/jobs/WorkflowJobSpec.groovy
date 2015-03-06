@@ -7,7 +7,6 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class WorkflowJobSpec extends Specification {
-
     private final JobManagement jobManagement = Mock(JobManagement)
     private final WorkflowJob job = new WorkflowJob(jobManagement)
 

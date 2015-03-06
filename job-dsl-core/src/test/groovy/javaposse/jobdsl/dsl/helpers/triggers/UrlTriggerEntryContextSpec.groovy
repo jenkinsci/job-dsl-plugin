@@ -6,7 +6,6 @@ import spock.lang.Specification
  * UrlTriggerEntryContextSpec
  */
 class UrlTriggerEntryContextSpec extends Specification {
-
     def 'missing URL causes NullPointerException' () {
         when:
         new UrlTriggerEntryContext(null)

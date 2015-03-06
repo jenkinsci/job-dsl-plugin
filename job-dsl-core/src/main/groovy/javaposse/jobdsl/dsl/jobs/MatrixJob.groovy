@@ -8,7 +8,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AxisContext
 
 class MatrixJob extends Job {
-
     static final String TEMPLATE = '''
         <?xml version='1.0' encoding='UTF-8'?>
         <matrix-project>

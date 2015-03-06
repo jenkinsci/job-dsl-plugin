@@ -7,7 +7,6 @@ import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
 
 class CoberturaContext implements Context {
-
     boolean onlyStable = false
     boolean failUnhealthy = false
     boolean failUnstable = false

@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 
 class FreeStyleJob extends Job {
-
     static final String TEMPLATE = '''
         <?xml version='1.0' encoding='UTF-8'?>
         <project>

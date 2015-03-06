@@ -8,7 +8,6 @@ import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspect
 
 /** Configuration container for a monitored URL.*/
 class UrlTriggerEntryContext implements Context {
-
     /** Enumeration of defined checks */
     enum Check {
         /** Check the response status */

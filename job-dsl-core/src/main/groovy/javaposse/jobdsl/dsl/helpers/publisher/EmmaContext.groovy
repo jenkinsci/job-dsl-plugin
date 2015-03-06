@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.Context
 import static com.google.common.base.Preconditions.checkArgument
 
 class EmmaContext implements Context {
-
     IntRange classRange = 0..100
     IntRange methodRange = 0..70
     IntRange blockRange = 0..80

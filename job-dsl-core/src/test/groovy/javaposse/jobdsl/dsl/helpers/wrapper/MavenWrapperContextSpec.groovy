@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class MavenWrapperContextSpec extends Specification {
-
     JobManagement mockJobManagement = Mock(JobManagement)
     MavenWrapperContext context = new MavenWrapperContext(mockJobManagement)
 

@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step.condition
 
 class FileExistsCondition extends SimpleCondition {
-
     String file
     BaseDir baseDir
 

@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl
 import spock.lang.Specification
 
 class ConfigFileSpec extends Specification {
-
     private final JobManagement jobManagement = Mock(JobManagement)
     private final ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
 

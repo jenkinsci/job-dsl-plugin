@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 
 class MultiJob extends Job {
-
     static final String TEMPLATE = '''
         <?xml version='1.0' encoding='UTF-8'?>
         <com.tikal.jenkins.plugins.multijob.MultiJobProject plugin="jenkins-multijob-plugin@1.8">

@@ -8,7 +8,6 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
  * Attempt to execute the sample page in README.md
  */
 class DslSampleSpec extends Specification {
-
     def 'load sample dsl'() {
         setup:
         MemoryJobManagement jm = new MemoryJobManagement()

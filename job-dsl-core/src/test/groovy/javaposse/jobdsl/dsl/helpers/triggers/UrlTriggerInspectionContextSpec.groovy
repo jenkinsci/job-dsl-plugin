@@ -9,7 +9,6 @@ import static javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.
  * UrlTriggerEntryContextSpec
  */
 class UrlTriggerInspectionContextSpec extends Specification {
-
     def 'missing URL causes NullPointerException' () {
         when:
         new UrlTriggerInspectionContext(null)

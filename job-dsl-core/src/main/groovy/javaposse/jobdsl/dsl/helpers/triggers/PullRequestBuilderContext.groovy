@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import javaposse.jobdsl.dsl.Context
 
 class PullRequestBuilderContext implements Context {
-
     List admins = []
     List userWhitelist = []
     List orgWhitelist = []

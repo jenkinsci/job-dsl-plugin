@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class MavenTriggerContextSpec extends Specification {
-
     JobManagement mockJobManagement = Mock(JobManagement)
 
     def 'call snapshotDependencies for Maven job succeeds'() {

@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 class MavenWrapperContext extends WrapperContext {
-
     MavenWrapperContext(JobManagement jobManagement) {
         super(jobManagement)
     }

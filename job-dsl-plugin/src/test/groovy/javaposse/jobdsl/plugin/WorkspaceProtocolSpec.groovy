@@ -10,7 +10,6 @@ import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
 
 class WorkspaceProtocolSpec extends Specification {
-
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule()
 
