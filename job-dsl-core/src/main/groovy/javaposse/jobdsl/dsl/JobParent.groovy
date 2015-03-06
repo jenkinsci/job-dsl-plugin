@@ -1,6 +1,8 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
+import com.google.common.base.Strings
+import com.google.common.collect.Sets
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
@@ -13,8 +15,6 @@ import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.SectionedView
-import com.google.common.base.Strings
-import com.google.common.collect.Sets
 
 abstract class JobParent extends Script implements DslFactory {
 
