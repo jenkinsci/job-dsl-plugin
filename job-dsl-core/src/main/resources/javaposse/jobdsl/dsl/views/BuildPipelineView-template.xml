@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <noOfDisplayedBuilds>1</noOfDisplayedBuilds>
+    <buildViewTitle/>
+    <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+    <cssUrl/>
+    <triggerOnlyLatestJob>false</triggerOnlyLatestJob>
+    <alwaysAllowManualTrigger>false</alwaysAllowManualTrigger>
+    <showPipelineParameters>false</showPipelineParameters>
+    <showPipelineParametersInHeaders>false</showPipelineParametersInHeaders>
+    <refreshFrequency>3</refreshFrequency>
+    <showPipelineDefinitionHeader>false</showPipelineDefinitionHeader>
+</au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>
