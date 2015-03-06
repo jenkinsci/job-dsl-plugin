@@ -26,32 +26,32 @@ abstract class JobParent extends Script implements DslFactory {
 
     @Override
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure) {
-        processJob name, FreeStyleJob, closure
+        processJob(name, FreeStyleJob, closure)
     }
 
     @Override
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure) {
-        processJob name, BuildFlowJob, closure
+        processJob(name, BuildFlowJob, closure)
     }
 
     @Override
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure) {
-        processJob name, MatrixJob, closure
+        processJob(name, MatrixJob, closure)
     }
 
     @Override
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure) {
-        processJob name, MavenJob, closure
+        processJob(name, MavenJob, closure)
     }
 
     @Override
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure) {
-        processJob name, MultiJob, closure
+        processJob(name, MultiJob, closure)
     }
 
     @Override
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure) {
-        processJob name, WorkflowJob, closure
+        processJob(name, WorkflowJob, closure)
     }
 
     private <T extends Job> T processJob(String name, Class<T> jobClass, Closure closure) {
@@ -78,32 +78,32 @@ abstract class JobParent extends Script implements DslFactory {
 
     @Override
     ListView listView(String name, @DslContext(ListView) Closure closure) {
-        processView name, ListView, closure
+        processView(name, ListView, closure)
     }
 
     @Override
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure) {
-        processView name, SectionedView, closure
+        processView(name, SectionedView, closure)
     }
 
     @Override
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure) {
-        processView name, NestedView, closure
+        processView(name, NestedView, closure)
     }
 
     @Override
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure) {
-        processView name, DeliveryPipelineView, closure
+        processView(name, DeliveryPipelineView, closure)
     }
 
     @Override
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure) {
-        processView name, BuildPipelineView, closure
+        processView(name, BuildPipelineView, closure)
     }
 
     @Override
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure) {
-        processView name, BuildMonitorView, closure
+        processView(name, BuildMonitorView, closure)
     }
 
     private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
@@ -150,11 +150,11 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure) {
-        processConfigFile name, ConfigFileType.Custom, closure
+        processConfigFile(name, ConfigFileType.Custom, closure)
     }
 
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure) {
-        processConfigFile name, ConfigFileType.MavenSettings, closure
+        processConfigFile(name, ConfigFileType.MavenSettings, closure)
     }
 
     @Override
