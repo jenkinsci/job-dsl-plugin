@@ -17,17 +17,17 @@ class ItemProcessingOrderComparatorSpec extends Specification {
 
         where:
         o1                              | o2                              | result
-        new Folder(jobManagement)                    | new Folder(jobManagement)                    | 0
-        new Folder(jobManagement)                    | new FreeStyleJob(jobManagement)  | -1
-        new FreeStyleJob(jobManagement)  | new Folder(jobManagement)                    | 1
+        new Folder(jobManagement)       | new Folder(jobManagement)       | 0
+        new Folder(jobManagement)       | new FreeStyleJob(jobManagement) | -1
+        new FreeStyleJob(jobManagement) | new Folder(jobManagement)       | 1
         new BuildFlowJob(jobManagement) | new BuildFlowJob(jobManagement) | 0
         new MultiJob(jobManagement)     | new BuildFlowJob(jobManagement) | 1
         new BuildFlowJob(jobManagement) | new MultiJob(jobManagement)     | -1
-        new MultiJob(jobManagement)     | new FreeStyleJob(jobManagement)  | 1
-        new FreeStyleJob(jobManagement)  | new MultiJob(jobManagement)     | -1
+        new MultiJob(jobManagement)     | new FreeStyleJob(jobManagement) | 1
+        new FreeStyleJob(jobManagement) | new MultiJob(jobManagement)     | -1
         new MultiJob(jobManagement)     | new MavenJob(jobManagement)     | 1
         new MavenJob(jobManagement)     | new MultiJob(jobManagement)     | -1
-        new MavenJob(jobManagement)     | new FreeStyleJob(jobManagement)  | 0
+        new MavenJob(jobManagement)     | new FreeStyleJob(jobManagement) | 0
         new MultiJob(jobManagement)     | new MultiJob(jobManagement)     | 0
     }
 }
