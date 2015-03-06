@@ -478,7 +478,7 @@ myJob.with {
 ```
 
 A job can have optional attributes. Currently only a `type` attribute with value of `Freeform`, `Maven`, `Multijob`,
-`BuildFlow`, `MatrixJob` or `Workflow`is supported. When no type is specified, a free-style job will be generated. Some
+`BuildFlow`, `Matrix` or `Workflow`is supported. When no type is specified, a free-style job will be generated. Some
 methods will only be available in some job types, e.g. `phase` can only be used in Multijob. Each DSL method documents
 where they are relevant.
 
