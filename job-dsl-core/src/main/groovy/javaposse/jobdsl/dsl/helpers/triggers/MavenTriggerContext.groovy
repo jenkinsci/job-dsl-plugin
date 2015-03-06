@@ -4,9 +4,11 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class MavenTriggerContext extends TriggerContext {
+    protected final List<WithXmlAction> withXmlActions
 
     MavenTriggerContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
-        super(withXmlActions, jobManagement)
+        super(jobManagement)
+        this.withXmlActions = withXmlActions
     }
 
     /**

@@ -1,13 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 import spock.lang.Specification
 
 class TriggerContextSpec extends Specification {
-    List<WithXmlAction> mockActions = Mock()
     JobManagement mockJobManagement = Mock(JobManagement)
-    TriggerContext context = new TriggerContext(mockActions, mockJobManagement)
+    TriggerContext context = new TriggerContext(mockJobManagement)
 
     def 'call github trigger methods'() {
         when:

@@ -9,12 +9,10 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
 class TriggerContext implements Context {
-    protected final List<WithXmlAction> withXmlActions
     protected final JobManagement jobManagement
     final List<Node> triggerNodes = []
 
-    TriggerContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
-        this.withXmlActions = withXmlActions
+    TriggerContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
     }
 
