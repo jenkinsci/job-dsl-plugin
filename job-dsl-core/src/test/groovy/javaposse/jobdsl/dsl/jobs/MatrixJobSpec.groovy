@@ -3,18 +3,17 @@ package javaposse.jobdsl.dsl.jobs
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
-
 class MatrixJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
     private final MatrixJob job = new MatrixJob(jobManagement)
 
     def 'construct simple Matrix job and generate xml from it'() {
         when:
-        def xml = job.xml
+        def xml = job.node
 
         then:
-        assertXMLEqual MatrixJob.TEMPLATE, xml
+        xml.name() == 'matrix-project'
+        xml.children().size() == 15
     }
 
     def 'combinationFilter constructs xml'() {

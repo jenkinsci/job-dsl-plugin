@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition>
+    <actions/>
+    <description/>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">
+        <script/>
+        <sandbox>false</sandbox>
+    </definition>
+    <triggers/>
+</flow-definition>

@@ -3,25 +3,19 @@ package javaposse.jobdsl.dsl.jobs
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
-import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
-
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class MavenJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
     private final MavenJob job = new MavenJob(jobManagement)
 
-    def setup() {
-        XMLUnit.setIgnoreWhitespace(true)
-    }
-
     def 'construct simple Maven job and generate xml from it'() {
         when:
-        def xml = job.xml
+        def xml = job.node
 
         then:
-        assertXMLEqual MavenJob.TEMPLATE, xml
+        xml.name() == 'maven2-moduleset'
+        xml.children().size() == 21
     }
 
     def 'no steps for Maven jobs'() {

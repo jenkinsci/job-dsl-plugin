@@ -8,23 +8,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext
 
 class WorkflowJob extends Job {
-    static final String TEMPLATE = '''
-        <?xml version='1.0' encoding='UTF-8'?>
-        <flow-definition>
-          <actions/>
-          <description/>
-          <keepDependencies>false</keepDependencies>
-          <properties/>
-          <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">
-            <script/>
-            <sandbox>false</sandbox>
-          </definition>
-          <triggers/>
-        </flow-definition>
-    '''.stripIndent().trim()
-
-    final String template = TEMPLATE
-
     WorkflowJob(JobManagement jobManagement) {
         super(jobManagement)
     }

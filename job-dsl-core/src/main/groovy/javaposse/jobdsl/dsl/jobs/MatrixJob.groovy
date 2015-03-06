@@ -8,31 +8,6 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AxisContext
 
 class MatrixJob extends Job {
-    static final String TEMPLATE = '''
-        <?xml version='1.0' encoding='UTF-8'?>
-        <matrix-project>
-          <description/>
-          <keepDependencies>false</keepDependencies>
-          <properties/>
-          <scm class="hudson.scm.NullSCM"/>
-          <canRoam>true</canRoam>
-          <disabled>false</disabled>
-          <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-          <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-          <triggers class="vector"/>
-          <concurrentBuild>false</concurrentBuild>
-          <axes/>
-          <builders/>
-          <publishers/>
-          <buildWrappers/>
-          <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-            <runSequentially>false</runSequentially>
-          </executionStrategy>
-        </matrix-project>
-    '''.stripIndent().trim()
-
-    final String template = TEMPLATE
-
     MatrixJob(JobManagement jobManagement) {
         super(jobManagement)
     }

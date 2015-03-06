@@ -1,25 +1,19 @@
 package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.JobManagement
-import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
-
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class WorkflowJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
     private final WorkflowJob job = new WorkflowJob(jobManagement)
 
-    def setup() {
-        XMLUnit.setIgnoreWhitespace(true)
-    }
-
-    def 'minimal workflow job'() {
+    def 'construct simple workflow job and generate xml from it'() {
         when:
-        def xml = job.xml
+        def xml = job.node
 
         then:
-        assertXMLEqual WorkflowJob.TEMPLATE, xml
+        xml.name() == 'flow-definition'
+        xml.children().size() == 6
     }
 
     def 'minimal cps workflow'() {
@@ -30,7 +24,12 @@ class WorkflowJobSpec extends Specification {
         }
 
         then:
-        assertXMLEqual WorkflowJob.TEMPLATE, job.xml
+        with(job.node.definition[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition'
+            children().size() == 2
+            script[0].value() == ''
+            sandbox[0].value() == false
+        }
     }
 
     def 'full cps workflow'() {
