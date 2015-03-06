@@ -4,7 +4,7 @@
 
 The DSL execution engine exposes several methods to create Jenkins jobs, views, folders and config files. These
 methods imply the creation of a Jenkins item and the closure to the method can be used to define the item's settings.
-The only mandatory option is `name`.
+The only mandatory option is the item's name.
 
 ```groovy
 freeStyleJob('my-job') {
@@ -21,8 +21,6 @@ DSL methods can be cumulative or overriding, meaning that some methods will add 
 and some will replace nodes (e.g. `disabled` will replace any existing disabled nodes). Some methods like `scm` and
 `multiscm` are mutually exclusive. Likewise, when using the `scm` block, only one SCM can be specified.
 
-When a DSL method isn't available, look at [[The Configure Block]] for extending the DSL.
-
 **NOTE: when using these methods, remember that you need to use them in context. I.e. to use the `downstream` method,
 it needs to be enclosed in a `publishers` context.**
 
@@ -37,25 +35,23 @@ need.)
 
 # Job
 
-See the [[Job Reference]] page for details.
+The DSL exposes several methods to create jobs of different types.
 
 ```groovy
-freeStyleJob(String name, Closure closure)  // since 1.30
+freeStyleJob(String name, Closure closure) // since 1.30
 
-buildFlowJob(String name, Closure closure)  // since 1.30
+buildFlowJob(String name, Closure closure) // since 1.30
 
-matrixJob(String name, Closure closure)  // since 1.30
+matrixJob(String name, Closure closure)    // since 1.30
 
-mavenJob(String name, Closure closure)  // since 1.30
+mavenJob(String name, Closure closure)     // since 1.30
 
-multiJob(String name, Closure closure)  // since 1.30
+multiJob(String name, Closure closure)     // since 1.30
 
 workflowJob(String name, Closure closure)  // since 1.30
-
-job(Map<String, ?> arguments = [:], Closure closure) // deprecated since 1.30
 ```
 
-These methods will return a _Job_ object that can be re-used and passed around. E.g.
+These methods will return a job object that can be re-used and passed around. E.g.
 
 ```groovy
 def myJob = freeStyleJob('SimpleJob') {
@@ -65,35 +61,51 @@ myJob.with {
 }
 ```
 
-A job can have optional attributes. Currently only a `type` attribute with value of `Freeform`, `Maven`, `Multijob`,
-`BuildFlow`, `MatrixJob` or `Workflow`is supported. When no type is specified, a free-style job will be generated. Some
-methods will only be available in some job types, e.g. `phase` can only be used in Multijob. Each DSL method documents
-where they are relevant.
+See the [[Job Reference]] page for details about all job options.
+
+For compatibility with previous releases, a generic `job` method exists which has an optional `type` attribute to
+specify the type of job to be created. The `type` attribute can have a value of `Freeform`, `Maven`, `Multijob`,
+`BuildFlow`, `MatrixJob` or `Workflow`. When no type is specified, a free-style job will be generated.
+
+```groovy
+job(Map<String, ?> arguments = [:], Closure closure) // deprecated since 1.30
+```
 
 # View
 
-See the [[View Reference]] pages for details.
+To create views, the DSL provides the following methods.
 
 ```groovy
-listView(String name, Closure closure)  // since 1.30
+listView(String name, Closure closure)             // since 1.30
 
-sectionedView(String name, Closure closure)  // since 1.30
+sectionedView(String name, Closure closure)        // since 1.30
 
-nestedView(String name, Closure closure)  // since 1.30
+nestedView(String name, Closure closure)           // since 1.30
 
-deliveryPipelineView(String name, Closure closure)  // since 1.30
+deliveryPipelineView(String name, Closure closure) // since 1.30
 
-buildPipelineView(String name, Closure closure)  // since 1.30
+buildPipelineView(String name, Closure closure)    // since 1.30
 
+buildMonitorView(String name, Closure closure)     // since 1.30
+```
+
+The view methods behaves like the [job](#job) methods and will return a view object.
+
+See the [[View Reference]] pages for details about view options.
+
+For compatibility with previous releases, a generic `view` method exists which has an optional `type` attribute to
+specify the type of view to be created. The `type` attribute can have a value of `ListView`, `BuildPipelineView`,
+`SectionedView`, `NestedView`, `DeliveryPipelineView` or `BuildMonitorView`. When no type is specified, a list view will
+be generated.
+
+```groovy
 view(Map<String, Object> arguments = [:], Closure closure) // since 1.21, deprecated since 1.30
 ```
 
-The `view` method behaves like the `job` method explained above and will return a _View_ object.
-
-Currently only a `type` attribute with value of `ListView`, `BuildPipelineView`, `SectionedView`, `NestedView`,
-`DeliveryPipelineView` or `BuildMonitorView` is supported. When no type is specified, a list view will be generated.
-
 # Folder
+
+When the [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) has been
+installed, the DSL can be used to create folders.
 
 ```groovy
 folder(String name) { // since 1.30
@@ -109,7 +121,7 @@ folder(String name) { // since 1.30
 folder(Closure folderClosure) // since 1.23, deprecated since 1.30
 ```
 
-The `folder` method behaves like the `job` method explained above and will return a _Folder_ object.
+The `folder` methods behaves like the [job](#job) methods and will return a folder object.
 
 Folders will be created before jobs and views to ensure that a folder exists before entries are created.
 
@@ -137,18 +149,16 @@ folder('project-a/testing') {
 
 # Config File
 
+When the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) has been
+installed, the DSL can be used to create configuration files.
+
 ```groovy
-customConfigFile(String name, Closure configFileClosure)  // since 1.30
+customConfigFile(String name, Closure configFileClosure)        // since 1.30
 
-mavenSettingsConfigFile(String name, Closure configFileClosure)  // since 1.30
-
-configFile(Map<String, Object> attributes = [:], String name, Closure closure)  // since 1.25, deprecated since 1.30
+mavenSettingsConfigFile(String name, Closure configFileClosure) // since 1.30
 ```
 
-The `configFile` method behaves like the `job` method explained above and will return a _ConfigFile_ object.
-
-A config file can have optional attributes. Currently only a `type` attribute with value of `Custom` or `MavenSettings`
-is supported. When no type is specified, a custom config file will be generated.
+These methods behaves like the [job](#job) methods and will return a config file object.
 
 Config files will be created before jobs to ensure that the file exists before it is referenced.
 
@@ -161,6 +171,14 @@ customConfigFile('my-config') {
 mavenSettingsConfigFile('central-mirror') {
   content readFileFromWorkspace('maven-settings/central-mirror.xml')
 }
+```
+
+For compatibility with previous releases, a generic `configFile` method exists which has an optional `type` attribute to
+specify the type of configuration file to be created. The `type` attribute can have a value of `Custom` or
+`MavenSettings`. When no type is specified, a custom config file will be generated.
+
+```groovy
+configFile(Map<String, Object> attributes = [:], Closure closure) // since 1.25, deprecated since 1.30
 ```
 
 # Queue

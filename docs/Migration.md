@@ -1,8 +1,9 @@
 ## Migrating to 1.30
 
-### Name
+### Factory and Name Methods
 
-The `name` methods have been [[deprecated|Deprecation-Policy]]. The name must be specified as argument to the factory
+The generic factory methods `job`, `view` and `configFile` have been [[deprecated|Deprecation-Policy]] and replaced by
+concrete ones. The `name` methods have also been deprecated. The name must be specified as argument to the factory
 methods.
 
 DSL prior to 1.30
@@ -10,26 +11,41 @@ DSL prior to 1.30
 job {
     name('one')
 }
-folder {
+job(type: Maven) {
     name('two')
 }
-view {
+folder {
     name('three')
 }
-configFile {
+view {
     name('four')
+}
+view(type: NestedView) {
+    name('five')
+}
+configFile {
+    name('six')
+}
+configFile(type: MavenSettings) {
+    name('seven')
 }
 ```
 
 DSL since 1.30
 ```groovy
-job('one') {
+freeStyleJob('one') {
 }
-folder('two') {
+mavenJob('two') {
 }
-view('three') {
+folder('three') {
 }
-configFile('four') {
+listView('four') {
+}
+nestedView('five') {
+}
+customConfigFile('six')
+}
+mavenSettingsConfigFile('seven') {
 }
 ```
 

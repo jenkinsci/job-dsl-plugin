@@ -3,8 +3,7 @@ This is the in-depth documentation of the methods available on inside the _job_ 
 ## Free Style Job
 
 ```groovy
-
-freeStyleJob('my-job') { // since 1.30
+freeStyleJob(String name) { // since 1.30
     name(String name) // deprecated since 1.30
 
     // DSL specific methods
@@ -269,9 +268,8 @@ job(type: Freeform, Closure closure) // deprecated since 1.30
 ## Build Flow Job
 
 ```groovy
-buildFlowJob('my-job') { // since 1.30
-
-    // Includes all options from freeStyleJob
+buildFlowJob(String name) { // since 1.30
+    // includes all options from freeStyleJob
 
     buildFlow(String buildFlowText)
 }
@@ -282,9 +280,8 @@ job(type: BuildFlow, Closure closure) // deprecated since 1.30
 ## Matrix Job
 
 ```groovy
-matrixJob('my-job') { // since 1.30
-
-    // Includes all options from freeStyleJob
+matrixJob(String name) { // since 1.30
+    // includes all options from freeStyleJob
 
     axes {
         text(String name, String... values)
@@ -308,9 +305,8 @@ job(type: Matrix, Closure closure) // deprecated since 1.30
 ## Maven Job
 
 ```groovy
-mavenJob('my-job') { // since 1.30
-
-    // Includes all options from freeStyleJob
+mavenJob(String name) { // since 1.30
+    // includes all options from freeStyleJob
 
     rootPOM(String rootPOM)
     goals(String goals)
@@ -333,9 +329,8 @@ job(type: Maven, Closure closure) // deprecated since 1.30
 
 ## Multi Job
 ```groovy
-multiJob('my-job') { // since 1.30
-
-    // Includes all options from freeStyleJob
+multiJob(String name) { // since 1.30
+    // includes all options from freeStyleJob
 }
 
 job(type: Multijob, Closure closure) // deprecated since 1.30
@@ -343,12 +338,11 @@ job(type: Multijob, Closure closure) // deprecated since 1.30
 
 ## Workflow Job
 ```groovy
-workflowJob('my-job') { // since 1.30
-
-    // Includes all options from freeStyleJob
+workflowJob(String name) { // since 1.30
+    // includes all options from freeStyleJob
 
     definition {
-      cps(Closure cpsClosure)
+        cps(Closure cpsClosure)
     }
 }
 
