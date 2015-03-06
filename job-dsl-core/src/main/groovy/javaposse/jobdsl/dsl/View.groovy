@@ -22,19 +22,19 @@ abstract class View implements Context {
 
     void description(String descriptionArg) {
         execute {
-            it / delegate.methodMissing('description', descriptionArg)
+            it / methodMissing('description', descriptionArg)
         }
     }
 
     void filterBuildQueue(boolean filterBuildQueueArg = true) {
         execute {
-            it / delegate.methodMissing('filterQueue', filterBuildQueueArg)
+            it / methodMissing('filterQueue', filterBuildQueueArg)
         }
     }
 
     void filterExecutors(boolean filterExecutorsArg = true) {
         execute {
-            it / delegate.methodMissing('filterExecutors', filterExecutorsArg)
+            it / methodMissing('filterExecutors', filterExecutorsArg)
         }
     }
 

@@ -86,15 +86,4 @@ class ViewSpec extends Specification {
         then:
         compareXML('<View/>', xml).similar()
     }
-
-    static class TestView extends View {
-        TestView(JobManagement jobManagement) {
-            super(jobManagement)
-        }
-
-        @Override
-        protected String getTemplate() {
-            '<View/>'
-        }
-    }
 }
