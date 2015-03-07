@@ -1195,11 +1195,11 @@ class ScmContextSpec extends Specification {
         context.scmNode.workspaceUpdater[0].attributes()['class'] == workspaceUpdaterClass
 
         where:
-        strategy                             | workspaceUpdaterClass
-        SvnCheckoutStrategy.Update           | 'hudson.scm.subversion.UpdateUpdater'
-        SvnCheckoutStrategy.Checkout         | 'hudson.scm.subversion.CheckoutUpdater'
-        SvnCheckoutStrategy.UpdateWithClean  | 'hudson.scm.subversion.UpdateWithCleanUpdater'
-        SvnCheckoutStrategy.UpdateWithRevert | 'hudson.scm.subversion.UpdateWithRevertUpdater'
+        strategy                               | workspaceUpdaterClass
+        SvnCheckoutStrategy.UPDATE             | 'hudson.scm.subversion.UpdateUpdater'
+        SvnCheckoutStrategy.CHECKOUT           | 'hudson.scm.subversion.CheckoutUpdater'
+        SvnCheckoutStrategy.UPDATE_WITH_CLEAN  | 'hudson.scm.subversion.UpdateWithCleanUpdater'
+        SvnCheckoutStrategy.UPDATE_WITH_REVERT | 'hudson.scm.subversion.UpdateWithRevertUpdater'
     }
 
     def 'call svn without excluded regions'() {

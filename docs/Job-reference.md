@@ -1043,8 +1043,8 @@ correctly. By default, files are checked out into the workspace directory. To ch
 alternate directory using the `directory` option. Directories specified using `directory` are relative to the workspace
 directory.
 
-Valid values for `checkoutStrategy` are `SvnCheckoutStrategy.Update` (the default), `SvnCheckoutStrategy.Checkout`,
-`SvnCheckoutStrategy.UpdateWithClean` or `SvnCheckoutStrategy.UpdateWithRevert`.
+Valid values for `checkoutStrategy` are `SvnCheckoutStrategy.UPDATE` (the default), `SvnCheckoutStrategy.CHECKOUT`,
+`SvnCheckoutStrategy.UPDATE_WITH_CLEAN` or `SvnCheckoutStrategy.UPDATE_WITH_REVERT`.
 
 Valid values for `depth` are `SvnDepth.INFINITY` (the default), `SvnDepth.EMPTY`, `SvnDepth.IMMEDIATES`,
 `SvnDepth.FILES` and `SvnDepth.AS_IT_IS`.
@@ -1093,7 +1093,7 @@ job('example-4') {
     scm {
         svn {
             location('https://svn.mydomain.com/repo/project1/trunk')
-            checkoutStrategy(SvnCheckoutStrategy.Checkout)
+            checkoutStrategy(SvnCheckoutStrategy.CHECKOUT)
         }
     }
 }

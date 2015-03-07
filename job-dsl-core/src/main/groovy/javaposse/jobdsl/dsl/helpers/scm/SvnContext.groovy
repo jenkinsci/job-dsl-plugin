@@ -8,7 +8,7 @@ import javaposse.jobdsl.dsl.JobManagement
 class SvnContext implements Context {
     private final JobManagement jobManagement
     List<Node> locations = []
-    SvnCheckoutStrategy checkoutStrategy = SvnCheckoutStrategy.Update
+    SvnCheckoutStrategy checkoutStrategy = SvnCheckoutStrategy.UPDATE
     List<String> excludedRegions = []
     List<String> includedRegions = []
     List<String> excludedUsers = []
@@ -43,7 +43,7 @@ class SvnContext implements Context {
 
     /**
      * The checkout strategy that should be used.  This is a global setting for all locations. If no checkout strategy
-     * is configured, the default is {@link SvnCheckoutStrategy#Update}.
+     * is configured, the default is {@link SvnCheckoutStrategy#UPDATE}.
      *
      * @param strategy the strategy to use, see {@link SvnCheckoutStrategy}
      */
