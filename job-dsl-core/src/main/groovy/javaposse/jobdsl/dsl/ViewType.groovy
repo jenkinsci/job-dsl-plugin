@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+@Deprecated
 enum ViewType {
     ListView(javaposse.jobdsl.dsl.views.ListView),
     SectionedView(javaposse.jobdsl.dsl.views.SectionedView),

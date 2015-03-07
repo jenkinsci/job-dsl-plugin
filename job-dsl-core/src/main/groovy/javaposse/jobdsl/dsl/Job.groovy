@@ -2,12 +2,9 @@ package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
-import javaposse.jobdsl.dsl.helpers.AxisContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
-import javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext
-import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
@@ -20,18 +17,13 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 /**
  * DSL element representing a Jenkins job.
  */
-class Job extends Item {
-    private final List<String> mavenGoals = []
-    private final List<String> mavenOpts = []
+abstract class Job extends Item {
 
     String templateName = null // Optional
-    JobType type = null // Required
     String previousNamesRegex = null // Optional
 
-    Job(JobManagement jobManagement, Map<String, Object> arguments=[:]) {
+    protected Job(JobManagement jobManagement) {
         super(jobManagement)
-        Object typeArg = arguments['type'] ?: JobType.Freeform
-        this.type = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
     }
 
     /**
@@ -532,7 +524,7 @@ class Job extends Item {
     }
 
     void triggers(@DslContext(TriggerContext) Closure closure) {
-        TriggerContext context = new TriggerContext(withXmlActions, type, jobManagement)
+        TriggerContext context = new TriggerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -543,7 +535,7 @@ class Job extends Item {
     }
 
     void wrappers(@DslContext(WrapperContext) Closure closure) {
-        WrapperContext context = new WrapperContext(type, jobManagement)
+        WrapperContext context = new WrapperContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -554,8 +546,6 @@ class Job extends Item {
     }
 
     void steps(@DslContext(StepContext) Closure closure) {
-        Preconditions.checkState(type != JobType.Maven, 'steps cannot be applied for Maven jobs')
-
         StepContext context = new StepContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -577,219 +567,6 @@ class Job extends Item {
         }
     }
 
-    void buildFlow(String buildFlowText) {
-        Preconditions.checkState(type == JobType.BuildFlow, 'Build Flow text can only be applied to Build Flow jobs.')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            project / dsl(buildFlowText)
-        }
-    }
-
-    void axes(@DslContext(AxisContext) Closure closure) {
-        Preconditions.checkState(type == JobType.Matrix, 'axes can only be applied for Matrix jobs')
-
-        AxisContext context = new AxisContext()
-        ContextHelper.executeInContext(closure, context)
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node axesNode = project / 'axes'
-            context.axisNodes.each {
-                axesNode  << it
-            }
-            context.configureBlocks.each {
-                new WithXmlAction(it).execute(axesNode)
-            }
-        }
-    }
-
-    /**
-     * <combinationFilter>axis_label=='a'||axis_label=='b'</combinationFilter>
-     */
-    void combinationFilter(String filterExpression) {
-        Preconditions.checkState(type == JobType.Matrix, 'combinationFilter can only be applied for Matrix jobs')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('combinationFilter', filterExpression)
-            project / node
-        }
-    }
-
-    /**
-     * <executionStrategy>
-     *     <runSequentially>false</runSequentially>
-     * </executionStrategy>
-     */
-    void runSequentially(boolean sequentially = true) {
-        Preconditions.checkState(type == JobType.Matrix, 'runSequentially can only be applied for Matrix jobs')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('runSequentially', sequentially)
-            project / 'executionStrategy' / node
-        }
-    }
-
-    /**
-     * <executionStrategy>
-     *     <touchStoneCombinationFilter>axis_label=='a'||axis_label=='b'</touchStoneCombinationFilter>
-     *     <touchStoneResultCondition>
-     *         <name>UNSTABLE</name>
-     *         <ordinal>1</ordinal>
-     *         <color>YELLOW</color>
-     *         <completeBuild>true</completeBuild>
-     *     </touchStoneResultCondition>
-     * </executionStrategy>
-     */
-    void touchStoneFilter(String filter, boolean continueOnUnstable = false) {
-        Preconditions.checkState(type == JobType.Matrix, 'touchStoneFilter can only be applied for Matrix jobs')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            project / 'executionStrategy' / 'touchStoneCombinationFilter'(filter)
-            project / 'executionStrategy' / 'touchStoneResultCondition' {
-                name continueOnUnstable ? 'UNSTABLE' : 'STABLE'
-                color continueOnUnstable ? 'YELLOW' : 'BLUE'
-                ordinal continueOnUnstable ? 1 : 0
-            }
-        }
-    }
-
-    /**
-     * Specifies the path to the root POM.
-     * @param rootPOM path to the root POM
-     */
-    void rootPOM(String rootPOM) {
-        Preconditions.checkState(type == JobType.Maven, 'rootPOM can only be applied for Maven jobs')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('rootPOM', rootPOM)
-            project / node
-        }
-    }
-
-    /**
-     * Specifies the goals to execute.
-     * @param goals the goals to execute
-     */
-    void goals(String goals) {
-        Preconditions.checkState(type == JobType.Maven, 'goals can only be applied for Maven jobs')
-
-        if (mavenGoals.empty) {
-            withXmlActions << WithXmlAction.create { Node project ->
-                Node node = methodMissing('goals', this.mavenGoals.join(' '))
-                project / node
-            }
-        }
-        mavenGoals << goals
-    }
-
-    /**
-     * Specifies the JVM options needed when launching Maven as an external process.
-     * @param mavenOpts JVM options needed when launching Maven
-     */
-    void mavenOpts(String mavenOpts) {
-        Preconditions.checkState(type == JobType.Maven, 'mavenOpts can only be applied for Maven jobs')
-
-        if (this.mavenOpts.empty) {
-            withXmlActions << WithXmlAction.create { Node project ->
-                Node node = methodMissing('mavenOpts', this.mavenOpts.join(' '))
-                project / node
-            }
-        }
-        this.mavenOpts << mavenOpts
-    }
-
-    /**
-     * If set, Jenkins will send an e-mail notifications for each module, defaults to <code>false</code>.
-     * @param perModuleEmail set to <code>true</code> to enable per module e-mail notifications
-     */
-    @Deprecated
-    void perModuleEmail(boolean perModuleEmail) {
-        jobManagement.logDeprecationWarning()
-        Preconditions.checkState(type == JobType.Maven, 'perModuleEmail can only be applied for Maven jobs')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('perModuleEmail', perModuleEmail)
-            project / node
-        }
-    }
-
-    /**
-     * If set, Jenkins  will not automatically archive all artifacts generated by this project, defaults to
-     * <code>false</code>.
-     * @param archivingDisabled set to <code>true</code> to disable automatic archiving
-     */
-    void archivingDisabled(boolean archivingDisabled) {
-        Preconditions.checkState(type == JobType.Maven, 'archivingDisabled can only be applied for Maven jobs')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('archivingDisabled', archivingDisabled)
-            project / node
-        }
-    }
-
-    /**
-     * Set to allow Jenkins to configure the build process in headless mode, defaults to <code>false</code>.
-     * @param runHeadless set to <code>true</code> to run the build process in headless mode
-     */
-    void runHeadless(boolean runHeadless) {
-        Preconditions.checkState(type == JobType.Maven, 'runHeadless can only be applied for Maven jobs')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('runHeadless', runHeadless)
-            project / node
-        }
-    }
-
-    /**
-     * <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
-     *
-     * Set to use isolated local Maven repositories.
-     * @param location the local repository to use for isolation
-     */
-    void localRepository(MavenContext.LocalRepositoryLocation location) {
-        Preconditions.checkState(type == JobType.Maven, 'localRepository can only be applied for Maven jobs')
-        Preconditions.checkNotNull(location, 'localRepository can not be null')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('localRepository', [class: location.type])
-            project / node
-        }
-    }
-
-    void preBuildSteps(@DslContext(StepContext) Closure preBuildClosure) {
-        Preconditions.checkState(type == JobType.Maven, 'prebuildSteps can only be applied for Maven jobs')
-
-        StepContext preBuildContext = new StepContext(jobManagement)
-        ContextHelper.executeInContext(preBuildClosure, preBuildContext)
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            preBuildContext.stepNodes.each {
-                project / 'prebuilders' << it
-            }
-        }
-    }
-
-    void postBuildSteps(@DslContext(StepContext) Closure postBuildClosure) {
-        Preconditions.checkState(type == JobType.Maven, 'postBuildSteps can only be applied for Maven jobs')
-
-        StepContext postBuildContext = new StepContext(jobManagement)
-        ContextHelper.executeInContext(postBuildClosure, postBuildContext)
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            postBuildContext.stepNodes.each {
-                project / 'postbuilders' << it
-            }
-        }
-    }
-
-    void mavenInstallation(String name) {
-        Preconditions.checkState(type == JobType.Maven, 'mavenInstallation can only be applied for Maven jobs')
-        Preconditions.checkNotNull(name, 'name can not be null')
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            project / 'mavenName'(name)
-        }
-    }
-
     void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
@@ -798,21 +575,6 @@ class Job extends Item {
             project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
                 settingsConfigId(settingsId)
             }
-        }
-    }
-
-    void definition(@DslContext(WorkflowDefinitionContext) Closure definitionClosure) {
-        Preconditions.checkState(type == JobType.Workflow, 'definition can only be applied for Workflow jobs')
-
-        WorkflowDefinitionContext context = new WorkflowDefinitionContext()
-        ContextHelper.executeInContext(definitionClosure, context)
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node definition = project / definition
-            if (definition) {
-                project.remove(definition)
-            }
-            project << context.definitionNode
         }
     }
 
@@ -843,8 +605,9 @@ class Job extends Item {
         }
 
         Node templateNode = new XmlParser().parse(new StringReader(configXml))
+        Node emptyTemplateNode = executeEmptyTemplate()
 
-        if (type != getJobType(templateNode)) {
+        if (emptyTemplateNode.name() != templateNode.name()) {
             throw new JobTypeMismatchException(name, templateName)
         }
 
@@ -852,146 +615,8 @@ class Job extends Item {
     }
 
     private Node executeEmptyTemplate() {
-        new XmlParser().parse(new StringReader(getTemplate(type)))
+        new XmlParser().parse(new StringReader(template))
     }
 
-    private String getTemplate(JobType type) {
-        switch (type) {
-            case JobType.Freeform: return emptyTemplate
-            case JobType.BuildFlow: return emptyBuildFlowTemplate
-            case JobType.Maven: return emptyMavenTemplate
-            case JobType.Multijob: return emptyMultijobTemplate
-            case JobType.Matrix: return emptyMatrixJobTemplate
-            case JobType.Workflow: return emptyWorkflowTemplate
-        }
-    }
-
-    /**
-     * Determines the job type from the given config XML.
-     */
-    private static JobType getJobType(Node node) {
-        String nodeElement = node.name()
-        JobType.values().find { it.elementName == nodeElement }
-    }
-
-    String emptyTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<project>
-  <actions/>
-  <description></description>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
-  <builders/>
-  <publishers/>
-  <buildWrappers/>
-</project>
-'''
-
-    String emptyBuildFlowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<com.cloudbees.plugins.flow.BuildFlow>
-  <actions/>
-  <description></description>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
-  <builders/>
-  <publishers/>
-  <buildWrappers/>
-  <icon/>
-  <dsl></dsl>
-</com.cloudbees.plugins.flow.BuildFlow>
-'''
-
-    String emptyMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<maven2-moduleset>
-  <actions/>
-  <description></description>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
-  <aggregatorStyleBuild>true</aggregatorStyleBuild>
-  <incrementalBuild>false</incrementalBuild>
-  <ignoreUpstremChanges>true</ignoreUpstremChanges>
-  <archivingDisabled>false</archivingDisabled>
-  <resolveDependencies>false</resolveDependencies>
-  <processPlugins>false</processPlugins>
-  <mavenValidationLevel>-1</mavenValidationLevel>
-  <runHeadless>false</runHeadless>
-  <publishers/>
-  <buildWrappers/>
-</maven2-moduleset>
-'''
-
-    String emptyMultijobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<com.tikal.jenkins.plugins.multijob.MultiJobProject plugin="jenkins-multijob-plugin@1.8">
-  <actions/>
-  <description/>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
-  <builders/>
-  <publishers/>
-  <buildWrappers/>
-</com.tikal.jenkins.plugins.multijob.MultiJobProject>
-'''
-
-    String emptyMatrixJobTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<matrix-project>
-  <description/>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
-  <axes/>
-  <builders/>
-  <publishers/>
-  <buildWrappers/>
-  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-    <runSequentially>false</runSequentially>
-  </executionStrategy>
-</matrix-project>
-'''
-
-    String emptyWorkflowTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<flow-definition>
-  <actions/>
-  <description/>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">
-    <script/>
-    <sandbox>false</sandbox>
-  </definition>
-  <triggers/>
-</flow-definition>
-'''
+    protected abstract String getTemplate()
 }

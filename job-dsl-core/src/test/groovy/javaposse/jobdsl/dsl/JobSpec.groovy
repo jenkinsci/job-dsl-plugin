@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.helpers.Permissions
-import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -14,7 +13,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 class JobSpec extends Specification {
     private final resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
     private final JobManagement jobManagement = Mock(JobManagement)
-    private Job job = new Job(jobManagement)
+    private Job job = new TestJob(jobManagement)
 
     def setup() {
         XMLUnit.setIgnoreWhitespace(true)
@@ -28,29 +27,20 @@ class JobSpec extends Specification {
         job.name == 'NAME'
     }
 
-    def 'load an empty template from a manually constructed job'() {
-        when:
-        job.using('TMPL')
-        job.xml
-
-        then:
-        1 * jobManagement.getConfig('TMPL') >> minimalXml
-    }
-
     def 'load an empty template from a manually constructed job and generate xml from it'() {
         when:
         job.using('TMPL')
         def xml = job.xml
 
         then:
-        _ * jobManagement.getConfig('TMPL') >> minimalXml
-        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + minimalXml, xml
+        _ * jobManagement.getConfig('TMPL') >> '<test/>'
+        assertXMLEqual '<test/>', xml
     }
 
     def 'load large template from file'() {
         setup:
         JobManagement jm = new FileJobManagement(resourcesDir)
-        Job job = new Job(jm)
+        TestJob job = new TestJob(jm)
 
         when:
         job.using('config')
@@ -63,7 +53,7 @@ class JobSpec extends Specification {
     def 'generate job from missing template - throws JobTemplateMissingException'() {
         setup:
         JobManagement jm = new FileJobManagement(resourcesDir)
-        Job job = new Job(jm)
+        TestJob job = new TestJob(jm)
 
         when:
         job.using('TMPL-NOT_THERE')
@@ -73,24 +63,27 @@ class JobSpec extends Specification {
         thrown(JobTemplateMissingException)
     }
 
+    def 'template type mismatch'() {
+        when:
+        TestJob job = new TestJob(jobManagement)
+        job.using('TMPL')
+        job.xml
+
+        then:
+        1 * jobManagement.getConfig('TMPL') >> '<other/>'
+        thrown(JobTypeMismatchException)
+    }
+
     def 'run engine and ensure canRoam values'() {
         setup:
         JobManagement jm = new FileJobManagement(resourcesDir)
-        Job job = new Job(jm)
-
-        when:
-        def projectRoaming = job.node
-
-        then:
-        // See that jobs can roam by default
-        projectRoaming.canRoam[0].value() == ['true']
+        TestJob job = new TestJob(jm)
 
         when:
         job.label('Ubuntu')
-        def projectLabelled = job.node
 
         then:
-        projectLabelled.canRoam[0].value() == false
+        job.node.canRoam[0].value() == false
     }
 
     def 'create withXml blocks'() {
@@ -109,155 +102,53 @@ class JobSpec extends Specification {
 
     def 'update Node using withXml'() {
         setup:
-        Node project = new XmlParser().parse(new StringReader(minimalXml))
-        Job job = new Job(null)
+        Node project = new XmlParser().parse(new StringReader('<test><foo/><bar/><baz/></test>'))
+        TestJob job = new TestJob(null)
         AtomicBoolean boolOutside = new AtomicBoolean(true)
 
         when: 'Simple update'
         job.configure { Node node ->
-            node.description[0].value = 'Test Description'
+            node.foo[0].value = 'Test'
         }
         job.executeWithXmlActions(project)
 
         then:
-        project.description[0].text() == 'Test Description'
+        project.foo[0].text() == 'Test'
 
         when: 'Update using variable from outside scope'
         job.configure { Node node ->
-            node.keepDependencies[0].value = boolOutside.get()
+            node.bar[0].value = boolOutside.get()
         }
         job.executeWithXmlActions(project)
 
         then:
-        project.keepDependencies[0].text() == 'true'
+        project.bar[0].text() == 'true'
 
         then:
-        project.description[0].text() == 'Test Description'
+        project.foo[0].text() == 'Test'
 
         when: 'Change value on outside scope variable to ensure closure is being run again'
         boolOutside.set(false)
         job.executeWithXmlActions(project)
 
         then:
-        project.keepDependencies[0].text() == 'false'
+        project.bar[0].text() == 'false'
 
         when: 'Append node'
         job.configure { Node node ->
-            def actions = node.actions[0]
-            actions.appendNode('action', 'Make Breakfast')
+            def baz = node.baz[0]
+            baz.appendNode('some', 'value')
         }
         job.executeWithXmlActions(project)
 
         then:
-        project.actions[0].children().size() == 1
+        project.baz[0].children().size() == 1
 
         when: 'Execute withXmlActions again'
         job.executeWithXmlActions(project)
 
         then:
-        project.actions[0].children().size() == 2
-    }
-
-    def 'construct simple Maven job and generate xml from it'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        def xml = job.xml
-
-        then:
-        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + mavenXml, xml
-    }
-
-    def 'free-style job extends Maven template and fails to generate xml'() {
-        when:
-        job.using('TMPL')
-        job.xml
-
-        then:
-        1 * jobManagement.getConfig('TMPL') >> mavenXml
-        thrown(JobTypeMismatchException)
-    }
-
-    def 'Maven job extends free-style template and fails to generate xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.using('TMPL')
-        job.xml
-
-        then:
-        1 * jobManagement.getConfig('TMPL') >> minimalXml
-        thrown(JobTypeMismatchException)
-    }
-
-    def 'construct simple Build Flow job and generate xml from it'() {
-        setup:
-        job.type = JobType.BuildFlow
-
-        when:
-        def xml = job.xml
-
-        then:
-        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + buildFlowXml, xml
-    }
-
-    def 'construct simple Matrix job and generate xml from it'() {
-        setup:
-        job.type = JobType.Matrix
-
-        when:
-        def xml = job.xml
-
-        then:
-        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + matrixJobXml, xml
-    }
-
-    def 'minimal workflow job'() {
-        setup:
-        job.type = JobType.Workflow
-
-        when:
-        def xml = job.xml
-
-        then:
-        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + workflowXml, xml
-    }
-
-    def 'minimal cps workflow'() {
-        setup:
-        job.type = JobType.Workflow
-
-        when:
-        job.definition {
-            cps {
-            }
-        }
-
-        then:
-        assertXMLEqual '<?xml version="1.0" encoding="UTF-8"?>' + workflowXml, job.xml
-    }
-
-    def 'full cps workflow'() {
-        setup:
-        job.type = JobType.Workflow
-
-        when:
-        job.definition {
-            cps {
-                script('foo')
-                sandbox()
-            }
-        }
-
-        then:
-        with(job.node.definition[0]) {
-            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition'
-            children().size() == 2
-            script[0].value() == 'foo'
-            sandbox[0].value() == true
-        }
+        project.baz[0].children().size() == 2
     }
 
     def 'call authorization'() {
@@ -334,7 +225,7 @@ class JobSpec extends Specification {
 
         then:
         job.node.buildWrappers[0].children()[0].name() ==
-                'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
+            'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
     }
 
     def 'call triggers'() {
@@ -345,18 +236,6 @@ class JobSpec extends Specification {
 
         then:
         job.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
-    }
-
-    def 'no steps for Maven jobs'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.steps {
-        }
-
-        then:
-        thrown(IllegalStateException)
     }
 
     def 'call steps'() {
@@ -379,408 +258,6 @@ class JobSpec extends Specification {
         job.node.publishers[0].'hudson.plugins.chucknorris.CordellWalkerRecorder'[0].factGenerator[0].text() == ''
     }
 
-    def 'cannot create Build Flow for free style jobs'() {
-        when:
-        job.buildFlow('build block')
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'buildFlow constructs xml'() {
-        setup:
-        job.type = JobType.BuildFlow
-
-        when:
-        job.buildFlow('build Flow Block')
-
-        then:
-        job.node.dsl.size() == 1
-        job.node.dsl[0].value() == 'build Flow Block'
-    }
-
-    def 'cannot run combinationFilter for free style jobs'() {
-        when:
-        job.combinationFilter('LABEL1 == "TEST"')
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'combinationFilter constructs xml'() {
-        setup:
-        job.type = JobType.Matrix
-
-        when:
-        job.combinationFilter('LABEL1 == "TEST"')
-
-        then:
-        job.node.combinationFilter.size() == 1
-        job.node.combinationFilter[0].value() == 'LABEL1 == "TEST"'
-    }
-
-    def 'cannot set runSequentially for free style jobs'() {
-        when:
-        job.runSequentially()
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'runSequentially constructs xml'() {
-        setup:
-        job.type = JobType.Matrix
-
-        when:
-        job.runSequentially(false)
-
-        then:
-        job.node.executionStrategy.runSequentially.size() == 1
-        job.node.executionStrategy.runSequentially[0].value() == false
-    }
-
-    def 'cannot set touchStoneFilter for free style jobs'() {
-        when:
-        job.touchStoneFilter('LABEL1 == "TEST"', true)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'touchStoneFilter constructs xml'() {
-        setup:
-        job.type = JobType.Matrix
-
-        when:
-        job.touchStoneFilter('LABEL1 == "TEST"', true)
-
-        then:
-        with(job.node.executionStrategy) {
-            touchStoneCombinationFilter.size() == 1
-            touchStoneCombinationFilter[0].value() == 'LABEL1 == "TEST"'
-            touchStoneResultCondition.size() == 1
-            touchStoneResultCondition[0].children().size() == 3
-            touchStoneResultCondition[0].name[0].value() == 'UNSTABLE'
-            touchStoneResultCondition[0].color[0].value() == 'YELLOW'
-            touchStoneResultCondition[0].ordinal[0].value() == 1
-        }
-
-        when:
-        job.touchStoneFilter('LABEL1 == "TEST"', false)
-
-        then:
-        with(job.node.executionStrategy) {
-            touchStoneCombinationFilter.size() == 1
-            touchStoneCombinationFilter[0].value() == 'LABEL1 == "TEST"'
-            touchStoneResultCondition.size() == 1
-            touchStoneResultCondition[0].children().size() == 3
-            touchStoneResultCondition[0].name[0].value() == 'STABLE'
-            touchStoneResultCondition[0].color[0].value() == 'BLUE'
-            touchStoneResultCondition[0].ordinal[0].value() == 0
-        }
-    }
-
-    def 'cannot run axis for free style jobs'() {
-        when:
-        job.axes {
-            label('LABEL1', 'a', 'b', 'c')
-        }
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'can set axis'() {
-        setup:
-        job.type = JobType.Matrix
-
-        when:
-        job.axes {
-            label('LABEL1', 'a', 'b', 'c')
-        }
-
-        then:
-        job.node.axes.size() == 1
-        job.node.axes[0].children().size() == 1
-        job.node.axes[0].children()[0].name() == 'hudson.matrix.LabelAxis'
-    }
-
-    def 'axes configure block constructs xml'() {
-        setup:
-        job.type = JobType.Matrix
-
-        when:
-        job.axes {
-            configure { axes ->
-                axes << 'FooAxis'()
-            }
-        }
-
-        then:
-        job.node.axes.size() == 1
-        job.node.axes[0].children().size() == 1
-        job.node.axes[0].children()[0].name() == 'FooAxis'
-    }
-
-    def 'cannot run rootPOM for free style jobs'() {
-        when:
-        job.rootPOM('pom.xml')
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'rootPOM constructs xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.rootPOM('my_module/pom.xml')
-
-        then:
-        job.node.rootPOM.size() == 1
-        job.node.rootPOM[0].value() == 'my_module/pom.xml'
-    }
-
-    def 'cannot run goals for free style jobs'() {
-        when:
-        job.goals('package')
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'goals constructs xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.goals('clean')
-        job.goals('verify')
-
-        then:
-        job.node.goals.size() == 1
-        job.node.goals[0].value() == 'clean verify'
-    }
-
-    def 'cannot run mavenOpts for free style jobs'() {
-        when:
-        job.mavenOpts('-Xmx512m')
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'mavenOpts constructs xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.mavenOpts('-Xms256m')
-        job.mavenOpts('-Xmx512m')
-
-        then:
-        job.node.mavenOpts.size() == 1
-        job.node.mavenOpts[0].value() == '-Xms256m -Xmx512m'
-    }
-
-    def 'cannot run perModuleEmail for free style jobs'() {
-        when:
-        job.perModuleEmail(false)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'perModuleEmail constructs xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.perModuleEmail(false)
-
-        then:
-        job.node.perModuleEmail.size() == 1
-        job.node.perModuleEmail[0].value() == false
-    }
-
-    def 'cannot run archivingDisabled for free style jobs'() {
-        when:
-        job.archivingDisabled(false)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'archivingDisabled constructs xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.archivingDisabled(true)
-
-        then:
-        job.node.archivingDisabled.size() == 1
-        job.node.archivingDisabled[0].value() == true
-    }
-
-    def 'cannot run runHeadless for free style jobs'() {
-        when:
-        job.runHeadless(false)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'runHeadless constructs xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.runHeadless(true)
-
-        then:
-        job.node.runHeadless.size() == 1
-        job.node.runHeadless[0].value() == true
-    }
-
-    def 'cannot run localRepository for free style jobs'() {
-        when:
-        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'cannot run localRepository with null argument'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.localRepository(null)
-
-        then:
-        thrown(NullPointerException)
-    }
-
-    def 'localRepository constructs xml for LocalToExecutor'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
-
-        then:
-        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'
-    }
-
-    def 'localRepository constructs xml for LocalToWorkspace'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToWorkspace)
-
-        then:
-        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
-    }
-
-    def 'cannot run preBuildSteps for freestyle jobs'() {
-        when:
-        job.preBuildSteps {
-        }
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'can add preBuildSteps'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.preBuildSteps {
-            shell('ls')
-        }
-
-        then:
-        job.node.prebuilders[0].children()[0].name() == 'hudson.tasks.Shell'
-        job.node.prebuilders[0].children()[0].command[0].value() == 'ls'
-    }
-
-    def 'cannot run postBuildSteps for freestyle jobs'() {
-        when:
-        job.postBuildSteps {
-        }
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'can add postBuildSteps'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.postBuildSteps {
-            shell('ls')
-        }
-
-        then:
-        job.node.postbuilders[0].children()[0].name() == 'hudson.tasks.Shell'
-        job.node.postbuilders[0].children()[0].command[0].value() == 'ls'
-    }
-
-    def 'cannot run mavenInstallation for free style jobs'() {
-        when:
-        job.mavenInstallation('test')
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'mavenInstallation constructs xml'() {
-        setup:
-        job.type = JobType.Maven
-
-        when:
-        job.mavenInstallation('test')
-
-        then:
-        job.node.mavenName.size() == 1
-        job.node.mavenName[0].value() == 'test'
-    }
-
-    def 'call maven method with unknown provided settings'() {
-        setup:
-        job.type = JobType.Maven
-        String settingsName = 'lalala'
-
-        when:
-        job.providedSettings(settingsName)
-
-        then:
-        Exception e = thrown(NullPointerException)
-        e.message.contains(settingsName)
-    }
-
-    def 'call maven method with provided settings'() {
-        setup:
-        job.type = JobType.Maven
-        String settingsName = 'maven-proxy'
-        String settingsId = '123123415'
-        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
-
-        when:
-        job.providedSettings(settingsName)
-
-        then:
-        job.node.settings.size() == 1
-        job.node.settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
-        job.node.settings[0].children().size() == 1
-        job.node.settings[0].settingsConfigId[0].value() == settingsId
-    }
-
     def 'add description'() {
         when:
         job.description('Description')
@@ -800,8 +277,8 @@ class JobSpec extends Specification {
     def 'environments work with map arg'() {
         when:
         job.environmentVariables([
-                key1: 'val1',
-                key2: 'val2'
+            key1: 'val1',
+            key2: 'val2'
         ])
 
         then:
@@ -908,7 +385,7 @@ class JobSpec extends Specification {
         def contributors = job.node.properties[0].'EnvInjectJobProperty'[0].contributors[0]
         contributors.children().size() == 1
         contributors.'org.jenkinsci.plugins.sharedobjects.ToolInstallationJobProperty'
-                .'populateToolInstallation'[0].value() == true
+            .'populateToolInstallation'[0].value() == true
     }
 
     def 'throttle concurrents enabled as project alone'() {
@@ -1380,96 +857,4 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].timeout[0].value() == 30000
         }
     }
-
-    private final minimalXml = '''
-<project>
-  <actions/>
-  <description/>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-</project>
-'''
-
-    private final mavenXml = '''
-<maven2-moduleset>
-    <actions/>
-    <description></description>
-    <keepDependencies>false</keepDependencies>
-    <properties/>
-    <scm class="hudson.scm.NullSCM"/>
-    <canRoam>true</canRoam>
-    <disabled>false</disabled>
-    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-    <triggers class="vector"/>
-    <concurrentBuild>false</concurrentBuild>
-    <aggregatorStyleBuild>true</aggregatorStyleBuild>
-    <incrementalBuild>false</incrementalBuild>
-    <ignoreUpstremChanges>true</ignoreUpstremChanges>
-    <archivingDisabled>false</archivingDisabled>
-    <resolveDependencies>false</resolveDependencies>
-    <processPlugins>false</processPlugins>
-    <mavenValidationLevel>-1</mavenValidationLevel>
-    <runHeadless>false</runHeadless>
-    <publishers/>
-    <buildWrappers/>
-</maven2-moduleset>
-'''
-
-    private final buildFlowXml = '''
-<com.cloudbees.plugins.flow.BuildFlow>
-  <actions/>
-  <description></description>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
-  <builders/>
-  <publishers/>
-  <buildWrappers/>
-  <icon/>
-  <dsl></dsl>
-</com.cloudbees.plugins.flow.BuildFlow>
-'''
-
-private final matrixJobXml = '''
-<matrix-project>
-  <description/>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
-  <axes/>
-  <builders/>
-  <publishers/>
-  <buildWrappers/>
-  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-    <runSequentially>false</runSequentially>
-  </executionStrategy>
-</matrix-project>
-'''
-
-    private final workflowXml = '''
-<flow-definition>
-  <actions/>
-  <description/>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">
-    <script/>
-    <sandbox>false</sandbox>
-  </definition>
-  <triggers/>
-</flow-definition>
-'''
 }

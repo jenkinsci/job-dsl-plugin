@@ -3,7 +3,7 @@ This is the in-depth documentation of the methods available on inside the _view_
 ## List View
 
 ```groovy
-view(type: ListView) { // since 1.30
+listView(String name) { // since 1.30
     // common options
     name(String name) // deprecated since 1.30
     description(String description)
@@ -47,7 +47,7 @@ view(type: ListView, Closure viewClosure) // since 1.21, deprecated since 1.30
 Create a view which shows jobs in a list format. Details about the options can be found below. Similar to jobs, the view DSL can be extended using a [[configure block|The Configure Block]].
 
 ```groovy
-view('project-A', type: ListView) {
+listView('project-A') {
     description('All unstable jobs for project A')
     filterBuildQueue()
     filterExecutors()
@@ -75,7 +75,7 @@ view('project-A', type: ListView) {
 ## Build Pipeline View
 
 ```groovy
-view(type: BuildPipelineView) {  // since 1.30
+buildPipelineView(String name) {  // since 1.30
     // common options
     name(String name) // deprecated since 1.30
     description(String description)
@@ -104,7 +104,7 @@ view(type: BuildPipelineView, Closure viewClosure) // since 1.21, deprecated sin
 Create a view of upstream and downstream connected jobs. Details about the options can be found below. Requires the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
 
 ```groovy
-view('project-A', type: BuildPipelineView) {
+buildPipelineView('project-A') {
     filterBuildQueue()
     filterExecutors()
     title('Project A CI Pipeline')
@@ -119,7 +119,7 @@ view('project-A', type: BuildPipelineView) {
 ## Sectioned View
 
 ```groovy
-view(type: SectionedView) {  // since 1.30
+sectionedView(String name) {  // since 1.30
     // common options
     name(String name) // deprecated since 1.30
     description(String description)
@@ -139,7 +139,7 @@ Create a view that can be divided into sections. Details about the options can b
 [Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin).
 
 ```groovy
-view('project-summary', type: SectionedView) {
+sectionedView('project-summary', type: SectionedView) {
     filterBuildQueue()
     filterExecutors()
     sections {
@@ -182,7 +182,7 @@ view('project-summary', type: SectionedView) {
 ## Nested View
 
 ```groovy
-view(type: NestedView) { // since 1.30
+nestedView(String name) { // since 1.30
     // common options
     name(String name) // deprecated since 1.30
     description(String description)
@@ -207,7 +207,7 @@ Create a view that allows grouping views into multiple levels. Details about the
 the [Nested View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Nested+View+Plugin).
 
 ```groovy
-view('project-a', type: NestedView) {
+nestedView('project-a') {
     views {
         view('overview') {
             jobs {
@@ -231,7 +231,7 @@ view('project-a', type: NestedView) {
 ## Delivery Pipeline View
 
 ```groovy
-view(type: DeliveryPipelineView) {  // since 1.30
+deliveryPipelineView(String name) {  // since 1.30
     // common options
     name(String name) // deprecated since 1.30
     description(String description)
@@ -260,7 +260,7 @@ Create a view that renders pipelines based on upstream/downstream jobs. Details 
 Requires the [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin).
 
 ```groovy
-view('project-a', type: DeliveryPipelineView) {
+deliveryPipelineView('project-a') {
     pipelineInstances(5)
     showAggregatedPipeline()
     columns(2)
@@ -280,7 +280,7 @@ view('project-a', type: DeliveryPipelineView) {
 ## Build Monitor View
 
 ```groovy
-view(type: BuildMonitorView) {  // since 1.28
+buildMonitorView(String name) {  // since 1.28
     // common options
     name(String name) // deprecated since 1.30
     description(String description)
@@ -304,7 +304,7 @@ about the options can be found below. Similar to jobs, the view DSL can be exten
 [[configure block|The Configure Block]].
 
 ```groovy
-view('project-A', type: BuildMonitorView) {
+buildMonitorView('project-A', type: BuildMonitorView) {
     description('All jobs for project A')
     jobs {
         name('release-projectA')

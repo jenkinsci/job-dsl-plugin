@@ -1,5 +1,11 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.jobs.BuildFlowJob
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.MatrixJob
+import javaposse.jobdsl.dsl.jobs.MavenJob
+import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
@@ -29,17 +35,6 @@ class JobParentSpec extends Specification {
         2 * jobManagement.logDeprecationWarning()
     }
 
-    def 'default view type'() {
-        when:
-        View view = parent.view('test') {
-        }
-
-        then:
-        view.name == 'test'
-        view instanceof ListView
-        parent.referencedViews.contains(view)
-    }
-
     def 'list view deprecated variant'() {
         when:
         View view = parent.view(type: ViewType.ListView) {
@@ -55,7 +50,7 @@ class JobParentSpec extends Specification {
 
     def 'list view'() {
         when:
-        View view = parent.view('test', type: ViewType.ListView) {
+        View view = parent.listView('test') {
         }
 
         then:
@@ -79,7 +74,7 @@ class JobParentSpec extends Specification {
 
     def 'build pipeline view'() {
         when:
-        View view = parent.view('test', type: ViewType.BuildPipelineView) {
+        View view = parent.buildPipelineView('test') {
         }
 
         then:
@@ -103,7 +98,7 @@ class JobParentSpec extends Specification {
 
     def 'build monitor view'() {
         when:
-        View view = parent.view('test', type: ViewType.BuildMonitorView) {
+        View view = parent.buildMonitorView('test') {
         }
 
         then:
@@ -127,7 +122,7 @@ class JobParentSpec extends Specification {
 
     def 'sectioned view'() {
         when:
-        View view = parent.view('test', type: ViewType.SectionedView) {
+        View view = parent.sectionedView('test') {
         }
 
         then:
@@ -151,7 +146,7 @@ class JobParentSpec extends Specification {
 
     def 'nested view'() {
         when:
-        View view = parent.view('test', type: ViewType.NestedView) {
+        View view = parent.nestedView('test') {
         }
 
         then:
@@ -175,7 +170,7 @@ class JobParentSpec extends Specification {
 
     def 'delivery pipeline view'() {
         when:
-        View view = parent.view('test', type: ViewType.DeliveryPipelineView) {
+        View view = parent.deliveryPipelineView('test') {
         }
 
         then:
@@ -219,17 +214,6 @@ class JobParentSpec extends Specification {
         2 * jobManagement.logDeprecationWarning()
     }
 
-    def 'default config file'() {
-        when:
-        ConfigFile configFile = parent.configFile('test') {
-        }
-
-        then:
-        configFile.name == 'test'
-        configFile.type == ConfigFileType.Custom
-        parent.referencedConfigFiles.contains(configFile)
-    }
-
     def 'custom config file deprecated variant'() {
         when:
         ConfigFile configFile = parent.configFile(type: ConfigFileType.Custom) {
@@ -245,7 +229,7 @@ class JobParentSpec extends Specification {
 
     def 'custom config file'() {
         when:
-        ConfigFile configFile = parent.configFile('test', type: ConfigFileType.Custom) {
+        ConfigFile configFile = parent.customConfigFile('test') {
         }
 
         then:
@@ -269,7 +253,7 @@ class JobParentSpec extends Specification {
 
     def 'Maven settings config file'() {
         when:
-        ConfigFile configFile = parent.configFile('test', type: ConfigFileType.MavenSettings) {
+        ConfigFile configFile = parent.mavenSettingsConfigFile('test') {
         }
 
         then:
@@ -357,6 +341,116 @@ class JobParentSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    def 'freeStyleJob deprecated variant'() {
+        when:
+        Job job = parent.job(type: JobType.Freeform) {
+            name 'test'
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        2 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'freeStyleJob'() {
+        when:
+        FreeStyleJob job = parent.freeStyleJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+    }
+
+    def 'buildFlowJob deprecated variant'() {
+        when:
+        Job job = parent.job(type: JobType.BuildFlow) {
+            name 'test'
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        2 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'buildFlowJob'() {
+        when:
+        BuildFlowJob job = parent.buildFlowJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+    }
+
+    def 'matrixJob deprecated variant'() {
+        when:
+        Job job = parent.job(type: JobType.Matrix) {
+            name 'test'
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        2 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'matrixJob'() {
+        when:
+        MatrixJob job = parent.matrixJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+    }
+
+    def 'mavenJob deprecated variant'() {
+        when:
+        Job job = parent.job(type: JobType.Maven) {
+            name 'test'
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        2 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'mavenJob'() {
+        when:
+        MavenJob job = parent.mavenJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+    }
+
+    def 'multiJob deprecated variant'() {
+        when:
+        Job job = parent.job(type: JobType.Multijob) {
+            name 'test'
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        2 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'multiJob'() {
+        when:
+        MultiJob job = parent.multiJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+    }
+
     def 'workflow deprecated variant'() {
         when:
         Job job = parent.job(type: JobType.Workflow) {
@@ -365,19 +459,17 @@ class JobParentSpec extends Specification {
 
         then:
         job.name == 'test'
-        job.type == JobType.Workflow
         parent.referencedJobs.contains(job)
         2 * jobManagement.logDeprecationWarning()
     }
 
     def 'workflow'() {
         when:
-        Job job = parent.job('test', type: JobType.Workflow) {
+        WorkflowJob job = parent.workflowJob('test') {
         }
 
         then:
         job.name == 'test'
-        job.type == JobType.Workflow
         parent.referencedJobs.contains(job)
     }
 }

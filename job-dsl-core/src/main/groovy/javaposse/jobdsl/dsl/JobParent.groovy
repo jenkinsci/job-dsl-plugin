@@ -1,52 +1,61 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.jobs.BuildFlowJob
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.MatrixJob
+import javaposse.jobdsl.dsl.jobs.MavenJob
+import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.views.BuildMonitorView
+import javaposse.jobdsl.dsl.views.BuildPipelineView
+import javaposse.jobdsl.dsl.views.DeliveryPipelineView
+import javaposse.jobdsl.dsl.views.ListView
+import javaposse.jobdsl.dsl.views.NestedView
+import javaposse.jobdsl.dsl.views.SectionedView
 import com.google.common.base.Strings
-import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 
-import java.util.logging.Level
-import java.util.logging.Logger
-
 abstract class JobParent extends Script implements DslFactory {
-    private static final Logger LOGGER = Logger.getLogger(JobParent.name)
 
     JobManagement jm
-    Set<Item> referencedJobs
-    Set<View> referencedViews
-    Set<ConfigFile> referencedConfigFiles
-    List<String> queueToBuild
+    Set<Item> referencedJobs = Sets.newLinkedHashSet()
+    Set<View> referencedViews = Sets.newLinkedHashSet()
+    Set<ConfigFile> referencedConfigFiles = Sets.newLinkedHashSet()
+    List<String> queueToBuild = []
 
-    protected JobParent() {
-        referencedJobs = Sets.newLinkedHashSet()
-        referencedViews = Sets.newLinkedHashSet()
-        referencedConfigFiles = Sets.newLinkedHashSet()
-        queueToBuild = Lists.newArrayList()
+    @Override
+    FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure) {
+        processJob(name, FreeStyleJob, closure)
     }
 
     @Override
-    @Deprecated
-    Job job(Map<String, Object> arguments = [:], @DslContext(Job) Closure closure) {
-        jm.logDeprecationWarning()
-
-        LOGGER.log(Level.FINE, "Got closure and have ${jm}")
-        Job job = new Job(jm, arguments)
-
-        // Configure with what we have already
-        job.with(closure)
-
-        // Save jobs, so that we know what to extract XML from
-        referencedJobs << job
-
-        // This job can have .configure { } called on
-        job
+    BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure) {
+        processJob(name, BuildFlowJob, closure)
     }
 
     @Override
-    Job job(Map<String, Object> arguments = [:], String name, @DslContext(Job) Closure closure) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+    MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure) {
+        processJob(name, MatrixJob, closure)
+    }
 
-        Job job = new Job(jm, arguments)
+    @Override
+    MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure) {
+        processJob(name, MavenJob, closure)
+    }
+
+    @Override
+    MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure) {
+        processJob(name, MultiJob, closure)
+    }
+
+    @Override
+    WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure) {
+        processJob(name, WorkflowJob, closure)
+    }
+
+    private <T extends Job> T processJob(String name, Class<T> jobClass, Closure closure) {
+        T job = jobClass.newInstance(jm)
         job.name = name
         job.with(closure)
         referencedJobs << job
@@ -55,25 +64,64 @@ abstract class JobParent extends Script implements DslFactory {
 
     @Override
     @Deprecated
-    View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
+    Job job(Map<String, Object> arguments = [:], @DslContext(Job) Closure closure) {
         jm.logDeprecationWarning()
 
-        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
-        View view = viewType.viewClass.newInstance(jm)
+        Object typeArg = arguments['type'] ?: JobType.Freeform
+        JobType jobType = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
+
+        Job job = jobType.jobClass.newInstance(jm)
+        job.with(closure)
+        referencedJobs << job
+        job
+    }
+
+    @Override
+    ListView listView(String name, @DslContext(ListView) Closure closure) {
+        processView(name, ListView, closure)
+    }
+
+    @Override
+    SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure) {
+        processView(name, SectionedView, closure)
+    }
+
+    @Override
+    NestedView nestedView(String name, @DslContext(NestedView) Closure closure) {
+        processView(name, NestedView, closure)
+    }
+
+    @Override
+    DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure) {
+        processView(name, DeliveryPipelineView, closure)
+    }
+
+    @Override
+    BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure) {
+        processView(name, BuildPipelineView, closure)
+    }
+
+    @Override
+    BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure) {
+        processView(name, BuildMonitorView, closure)
+    }
+
+    private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
+        T view = viewClass.newInstance(jm)
+        view.name = name
         view.with(closure)
         referencedViews << view
-
-        // This view can have .configure { } called on
         view
     }
 
     @Override
-    View view(Map<String, Object> arguments = [:], String name, @DslContext(View) Closure closure) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+    @Deprecated
+    View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
+        jm.logDeprecationWarning()
 
         ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
+
         View view = viewType.viewClass.newInstance(jm)
-        view.name = name
         view.with(closure)
         referencedViews << view
         view
@@ -101,29 +149,32 @@ abstract class JobParent extends Script implements DslFactory {
         folder
     }
 
+    ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure) {
+        processConfigFile(name, ConfigFileType.Custom, closure)
+    }
+
+    ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure) {
+        processConfigFile(name, ConfigFileType.MavenSettings, closure)
+    }
+
     @Override
     @Deprecated
     ConfigFile configFile(Map<String, Object> arguments = [:], @DslContext(ConfigFile) Closure closure) {
         jm.logDeprecationWarning()
 
         ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
-        ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType, jm)
+
+        ConfigFile configFile = new ConfigFile(configFileType, jm)
         configFile.with(closure)
         referencedConfigFiles << configFile
-
         configFile
     }
 
-    @Override
-    ConfigFile configFile(Map<String, Object> arguments = [:], String name, @DslContext(ConfigFile) Closure closure) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
-
-        ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
-        ConfigFile configFile = configFileType.configFileClass.newInstance(configFileType, jm)
+    protected ConfigFile processConfigFile(String name, ConfigFileType configFileType, Closure closure) {
+        ConfigFile configFile = new ConfigFile(configFileType, jm)
         configFile.name = name
         configFile.with(closure)
         referencedConfigFiles << configFile
-
         configFile
     }
 

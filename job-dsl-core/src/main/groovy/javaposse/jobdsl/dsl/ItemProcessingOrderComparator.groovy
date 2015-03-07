@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-import static javaposse.jobdsl.dsl.JobType.Multijob
+import javaposse.jobdsl.dsl.jobs.MultiJob
 
 /**
  * Sorts items so that folders come first and MultiJobs come last.
@@ -20,9 +20,9 @@ class ItemProcessingOrderComparator implements Comparator<Item> {
     }
 
     private static int compareJobs(Job job1, Job job2) {
-        if (job1.type == Multijob && job2.type != Multijob) {
+        if (job1 instanceof MultiJob && !(job2 instanceof MultiJob)) {
             return 1
-        } else if (job1.type != Multijob && job2.type == Multijob) {
+        } else if (!(job1 instanceof MultiJob) && job2 instanceof MultiJob) {
             return -1
         } else {
             return 0

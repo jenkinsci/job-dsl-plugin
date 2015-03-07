@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project>
+<test>
   <actions/>
   <description>Description</description>
   <logRotator>
@@ -119,4 +119,4 @@
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers/>
-</project>
+</test>

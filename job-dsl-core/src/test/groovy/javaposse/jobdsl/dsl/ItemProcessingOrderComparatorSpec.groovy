@@ -1,12 +1,11 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.jobs.BuildFlowJob
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.MavenJob
+import javaposse.jobdsl.dsl.jobs.MultiJob
 import spock.lang.Shared
 import spock.lang.Specification
-
-import static javaposse.jobdsl.dsl.JobType.BuildFlow
-import static javaposse.jobdsl.dsl.JobType.Freeform
-import static javaposse.jobdsl.dsl.JobType.Maven
-import static javaposse.jobdsl.dsl.JobType.Multijob
 
 class ItemProcessingOrderComparatorSpec extends Specification {
     @Shared
@@ -17,18 +16,18 @@ class ItemProcessingOrderComparatorSpec extends Specification {
         new ItemProcessingOrderComparator().compare(o1, o2) == result
 
         where:
-        o1                                        | o2                                        | result
-        new Folder(jobManagement)                 | new Folder(jobManagement)                 | 0
-        new Folder(jobManagement)                 | new Job(jobManagement)                    | -1
-        new Job(jobManagement)                    | new Folder(jobManagement)                 | 1
-        new Job(jobManagement, [type: BuildFlow]) | new Job(jobManagement, [type: BuildFlow]) | 0
-        new Job(jobManagement, [type: Multijob])  | new Job(jobManagement, [type: BuildFlow]) | 1
-        new Job(jobManagement, [type: BuildFlow]) | new Job(jobManagement, [type: Multijob])  | -1
-        new Job(jobManagement, [type: Multijob])  | new Job(jobManagement, [type: Freeform])  | 1
-        new Job(jobManagement, [type: Freeform])  | new Job(jobManagement, [type: Multijob])  | -1
-        new Job(jobManagement, [type: Multijob])  | new Job(jobManagement, [type: Maven])     | 1
-        new Job(jobManagement, [type: Maven])     | new Job(jobManagement, [type: Multijob])  | -1
-        new Job(jobManagement, [type: Maven])     | new Job(jobManagement, [type: Freeform])  | 0
-        new Job(jobManagement, [type: Multijob])  | new Job(jobManagement, [type: Multijob])  | 0
+        o1                              | o2                              | result
+        new Folder(jobManagement)       | new Folder(jobManagement)       | 0
+        new Folder(jobManagement)       | new FreeStyleJob(jobManagement) | -1
+        new FreeStyleJob(jobManagement) | new Folder(jobManagement)       | 1
+        new BuildFlowJob(jobManagement) | new BuildFlowJob(jobManagement) | 0
+        new MultiJob(jobManagement)     | new BuildFlowJob(jobManagement) | 1
+        new BuildFlowJob(jobManagement) | new MultiJob(jobManagement)     | -1
+        new MultiJob(jobManagement)     | new FreeStyleJob(jobManagement) | 1
+        new FreeStyleJob(jobManagement) | new MultiJob(jobManagement)     | -1
+        new MultiJob(jobManagement)     | new MavenJob(jobManagement)     | 1
+        new MavenJob(jobManagement)     | new MultiJob(jobManagement)     | -1
+        new MavenJob(jobManagement)     | new FreeStyleJob(jobManagement) | 0
+        new MultiJob(jobManagement)     | new MultiJob(jobManagement)     | 0
     }
 }
