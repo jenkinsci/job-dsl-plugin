@@ -65,7 +65,7 @@ See the [[Job Reference]] page for details about all job options.
 
 For compatibility with previous releases, a generic `job` method exists which has an optional `type` attribute to
 specify the type of job to be created. The `type` attribute can have a value of `Freeform`, `Maven`, `Multijob`,
-`BuildFlow`, `MatrixJob` or `Workflow`. When no type is specified, a free-style job will be generated.
+`BuildFlow`, `Matrix` or `Workflow`. When no type is specified, a free-style job will be generated.
 
 ```groovy
 job(Map<String, ?> arguments = [:], Closure closure) // deprecated since 1.30
