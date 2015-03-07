@@ -11,17 +11,6 @@ class SectionedView extends View {
         super(jobManagement)
     }
 
-    @Override
-    protected String getTemplate() {
-        '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.sectioned__view.SectionedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <sections/>
-</hudson.plugins.sectioned__view.SectionedView>'''
-    }
-
     void sections(@DslContext(SectionsContext) Closure sectionsClosure) {
         SectionsContext context = new SectionsContext()
         executeInContext(sectionsClosure, context)

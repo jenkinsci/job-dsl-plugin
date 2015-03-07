@@ -614,8 +614,6 @@ abstract class Job extends Item {
     }
 
     private Node executeEmptyTemplate() {
-        new XmlParser().parse(new StringReader(template))
+        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
     }
-
-    protected abstract String getTemplate()
 }

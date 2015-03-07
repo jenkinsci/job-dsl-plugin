@@ -68,21 +68,6 @@ class ListView extends View {
         }
     }
 
-    @Override
-    protected String getTemplate() {
-        '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.model.ListView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <jobNames class="tree-set">
-        <comparator class="hudson.util.CaseInsensitiveComparator"/>
-    </jobNames>
-    <jobFilters/>
-    <columns/>
-</hudson.model.ListView>'''
-    }
-
     static enum StatusFilter {
         ALL, ENABLED, DISABLED
     }

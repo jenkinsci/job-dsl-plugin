@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<se.diabol.jenkins.pipeline.DeliveryPipelineView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <noOfPipelines>3</noOfPipelines>
+    <showAggregatedPipeline>false</showAggregatedPipeline>
+    <noOfColumns>1</noOfColumns>
+    <sorting>none</sorting>
+    <showAvatars>false</showAvatars>
+    <updateInterval>2</updateInterval>
+    <showChanges>false</showChanges>
+    <allowManualTriggers>false</allowManualTriggers>
+</se.diabol.jenkins.pipeline.DeliveryPipelineView>

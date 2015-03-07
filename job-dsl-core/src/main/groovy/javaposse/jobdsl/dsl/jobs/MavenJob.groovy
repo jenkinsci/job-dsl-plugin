@@ -14,35 +14,6 @@ import javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 
 class MavenJob extends Job {
-    static final String TEMPLATE = '''
-        <?xml version='1.0' encoding='UTF-8'?>
-        <maven2-moduleset>
-          <actions/>
-          <description></description>
-          <keepDependencies>false</keepDependencies>
-          <properties/>
-          <scm class="hudson.scm.NullSCM"/>
-          <canRoam>true</canRoam>
-          <disabled>false</disabled>
-          <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-          <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-          <triggers class="vector"/>
-          <concurrentBuild>false</concurrentBuild>
-          <aggregatorStyleBuild>true</aggregatorStyleBuild>
-          <incrementalBuild>false</incrementalBuild>
-          <ignoreUpstremChanges>true</ignoreUpstremChanges>
-          <archivingDisabled>false</archivingDisabled>
-          <resolveDependencies>false</resolveDependencies>
-          <processPlugins>false</processPlugins>
-          <mavenValidationLevel>-1</mavenValidationLevel>
-          <runHeadless>false</runHeadless>
-          <publishers/>
-          <buildWrappers/>
-        </maven2-moduleset>
-    '''.stripIndent().trim()
-
-    final String template = TEMPLATE
-
     private final List<String> mavenGoals = []
     private final List<String> mavenOpts = []
 

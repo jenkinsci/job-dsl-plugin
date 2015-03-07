@@ -61,7 +61,7 @@ abstract class View implements Context {
     }
 
     Node getNode() {
-        Node root = new XmlParser().parse(new StringReader(template))
+        Node root = new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
 
         withXmlActions.each { it.execute(root) }
         root
@@ -70,6 +70,4 @@ abstract class View implements Context {
     protected void execute(Closure rootClosure) {
         withXmlActions << new WithXmlAction(rootClosure)
     }
-
-    protected abstract String getTemplate()
 }

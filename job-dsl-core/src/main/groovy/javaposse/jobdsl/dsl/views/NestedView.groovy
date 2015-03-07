@@ -35,15 +35,4 @@ class NestedView extends View {
             }
         }
     }
-
-    @Override
-    protected String getTemplate() {
-        '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.nested__view.NestedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <views/>
-</hudson.plugins.nested__view.NestedView>'''
-    }
 }
