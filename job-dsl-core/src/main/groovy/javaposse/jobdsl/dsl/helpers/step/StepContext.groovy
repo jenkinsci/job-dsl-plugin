@@ -15,11 +15,10 @@ import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLo
 class StepContext implements Context {
     private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
 
-    List<Node> stepNodes = []
-    JobManagement jobManagement
+    final List<Node> stepNodes = []
+    private final JobManagement jobManagement
 
-    StepContext(List<Node> stepNodes = [], JobManagement jobManagement) {
-        this.stepNodes = stepNodes
+    StepContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
     }
 

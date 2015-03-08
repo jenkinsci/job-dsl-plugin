@@ -18,21 +18,15 @@ import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
 class ScmContext implements Context {
-    boolean multiEnabled
-    List<Node> scmNodes = []
-    List<WithXmlAction> withXmlActions = []
-    JobManagement jobManagement
+    private final boolean multiEnabled
+    final List<Node> scmNodes = []
+    private final List<WithXmlAction> withXmlActions
+    private final JobManagement jobManagement
 
-    ScmContext(multiEnabled = false, withXmlActions = [], jobManagement = null) {
+    ScmContext(boolean multiEnabled, List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
         this.multiEnabled = multiEnabled
         this.withXmlActions = withXmlActions
         this.jobManagement = jobManagement
-    }
-
-    // Package scope
-    ScmContext(Node singleNode, multiEnabled = false) {
-        this.multiEnabled = multiEnabled
-        scmNodes << singleNode // Safe since this is the constructor
     }
 
     /**
