@@ -1013,4 +1013,39 @@ class WrapperContextSpec extends Specification {
             }
         }
     }
+
+    def 'pre SCM build steps with minimal options'() {
+        when:
+        context.preScmSteps {
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper'
+            children().size() == 2
+            buildSteps[0].children().size() == 0
+            failOnError[0].value() == false
+        }
+    }
+
+    def 'pre SCM build steps with all options'() {
+        when:
+        context.preScmSteps {
+            steps {
+                shell('echo HELLO')
+                batchFile('echo WORLD')
+            }
+            failOnError()
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper'
+            children().size() == 2
+            buildSteps[0].children().size() == 2
+            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            buildSteps[0].children()[1].name() == 'hudson.tasks.BatchFile'
+            failOnError[0].value() == true
+        }
+    }
 }

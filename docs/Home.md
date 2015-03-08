@@ -17,6 +17,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.31 (unreleased)
+ * Added support for [Pre-SCM Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/pre-scm-buildstep)
  * The enum argument of `localRepository` for the Maven job and context has changed, see [[Migration]]
 * 1.30 (March 08 2015)
  * Added support for [Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin)

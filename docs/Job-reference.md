@@ -108,6 +108,7 @@ freeStyleJob(String name) { // since 1.30
         maskPasswords() // since 1.26
         nodejs(String installation) // since 1.27
         preBuildCleanup(Closure closure = null) // since 1.22
+        preScmSteps(Closure closure) // since 1.31
         rbenv(String rubyVersion, Closure rbenvClosure = null) // since 1.27
         release(Closure releaseClosure) // since 1.22
         runOnSameNodeAs(String jobName, boolean useSameWorkspace = false)
@@ -1853,6 +1854,39 @@ job('example') {
 ```
 
 (since 1.22)
+
+### Pre SCM Build Steps
+
+```groovy
+job {
+    wrappers {
+        preScmSteps {
+            steps(Closure stepClosure)
+            failOnError(boolean failOnError = true) // defaults to false
+        }
+    }
+}
+```
+
+Allows build steps to run before SCM checkout. Requires the
+[Pre-SCM Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/pre-scm-buildstep).
+
+See [Build Steps](#build-steps) for available steps in the `stepClosure`.
+
+```groovy
+job {
+    wrappers {
+        preScmSteps {
+            steps {
+                shell('echo Hello World')
+            }
+            failOnError()
+        }
+    }
+}
+```
+
+(since 1.31)
 
 ### Log File Size Checker Plugin
 
