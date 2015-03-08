@@ -1,3 +1,41 @@
+## Migrating to 1.31
+
+### Local Maven Repository Location
+
+The `localRepository` method with a `javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation` argument
+has been [[deprecated|Deprecation-Policy]] and replaced by a method with a
+`javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation` argument. The values of the enum have been renamed from camel
+case to upper case to follow the naming convention for enum values. The new enum is implicitly imported, but not with
+star import as the new deprecated variant.
+
+DSL prior to 1.31
+```groovy
+mavenJob {
+    localRepository(LocalToWorkspace)
+}
+job {
+    steps {
+        maven {
+            localRepository(LocalToWorkspace)
+        }
+    }
+}
+```
+
+DSL since 1.31
+```groovy
+mavenJob {
+    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+}
+job {
+    steps {
+        maven {
+            localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+        }
+    }
+}
+```
+
 ## Migrating to 1.30
 
 ### Factory and Name Methods

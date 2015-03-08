@@ -10,7 +10,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
 import static com.google.common.base.Strings.isNullOrEmpty
-import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
+import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
 
 class StepContext implements Context {
     private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
@@ -370,7 +370,7 @@ class StepContext implements Context {
             if (mavenContext.rootPOM) {
                 pom mavenContext.rootPOM
             }
-            usePrivateRepository mavenContext.localRepositoryLocation == LocalToWorkspace ? 'true' : 'false'
+            usePrivateRepository mavenContext.localRepositoryLocation == LOCAL_TO_WORKSPACE
             if (mavenContext.providedSettingsId) {
                 settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
                     settingsConfigId(mavenContext.providedSettingsId)

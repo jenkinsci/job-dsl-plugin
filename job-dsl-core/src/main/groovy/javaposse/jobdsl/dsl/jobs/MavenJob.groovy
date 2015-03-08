@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext
@@ -132,7 +133,22 @@ class MavenJob extends Job {
      * Set to use isolated local Maven repositories.
      * @param location the local repository to use for isolation
      */
+    @Deprecated
     void localRepository(MavenContext.LocalRepositoryLocation location) {
+        jobManagement.logDeprecationWarning()
+
+        Preconditions.checkNotNull(location, 'localRepository can not be null')
+
+        localRepository(location.location)
+    }
+
+    /**
+     * <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
+     *
+     * Set to use isolated local Maven repositories.
+     * @param location the local repository to use for isolation
+     */
+    void localRepository(LocalRepositoryLocation location) {
         Preconditions.checkNotNull(location, 'localRepository can not be null')
 
         withXmlActions << WithXmlAction.create { Node project ->

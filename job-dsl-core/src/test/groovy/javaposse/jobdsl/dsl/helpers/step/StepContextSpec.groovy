@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.step
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -299,7 +300,7 @@ class StepContextSpec extends Specification {
             goals('install')
             mavenOpts('-Xms256m')
             mavenOpts('-Xmx512m')
-            localRepository(LocalToWorkspace)
+            localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
             mavenInstallation('Maven 3.0.5')
             properties skipTests: true, other: 'some'
             property 'evenAnother', 'One'
@@ -317,7 +318,7 @@ class StepContextSpec extends Specification {
         mavenStep.targets[0].value() == 'clean install'
         mavenStep.pom[0].value() == 'module-a/pom.xml'
         mavenStep.jvmOptions[0].value() == '-Xms256m -Xmx512m'
-        mavenStep.usePrivateRepository[0].value() == 'true'
+        mavenStep.usePrivateRepository[0].value() == true
         mavenStep.mavenName[0].value() == 'Maven 3.0.5'
         mavenStep.settingsConfigId[0].value() == 'foo-bar'
         mavenStep.properties[0].value() == 'skipTests=true\nother=some\nevenAnother=One'
@@ -336,8 +337,22 @@ class StepContextSpec extends Specification {
         mavenStep.children().size() == 4
         mavenStep.targets[0].value() == ''
         mavenStep.jvmOptions[0].value() == ''
-        mavenStep.usePrivateRepository[0].value() == 'false'
+        mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
+    }
+
+    def 'call maven method with deprecated options'() {
+        when:
+        context.maven {
+            localRepository(LocalToWorkspace)
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Maven'
+            children().size() == 4
+            usePrivateRepository[0].value() == true
+        }
     }
 
     def 'call maven method with unknown provided settings'() {
@@ -373,7 +388,7 @@ class StepContextSpec extends Specification {
             children().size() == 5
             targets[0].value() == ''
             jvmOptions[0].value() == ''
-            usePrivateRepository[0].value() == 'false'
+            usePrivateRepository[0].value() == false
             mavenName[0].value() == '(Default)'
             settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
             settings[0].children().size() == 1
