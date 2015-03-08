@@ -60,6 +60,10 @@ ruleset {
     ruleset('rulesets/logging.xml')
 
     ruleset('rulesets/naming.xml') {
+        FieldName {
+            // ignoring some names for compatibility
+            ignoreFieldNames = new File('config/codenarc/ignored-field-names.txt').readLines().join(',')
+        }
         // this is an issue, but currently the Context classes violate this by convention
         exclude 'ConfusingMethodName'
         // we don't care for now
