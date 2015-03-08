@@ -7,7 +7,7 @@ methods imply the creation of a Jenkins item and the closure to the method can b
 The only mandatory option is the item's name.
 
 ```groovy
-freeStyleJob('my-job') {
+job('my-job') {
 }
 ```
 
@@ -38,6 +38,8 @@ need.)
 The DSL exposes several methods to create jobs of different types.
 
 ```groovy
+job(String name, Closure closure)          // since 1.30, an alias for freeStyleJob
+
 freeStyleJob(String name, Closure closure) // since 1.30
 
 buildFlowJob(String name, Closure closure) // since 1.30

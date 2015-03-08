@@ -21,6 +21,8 @@ interface DslFactory {
     @Deprecated
     Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
 
+    FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure)
+
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure)
 
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)

@@ -353,6 +353,16 @@ class JobParentSpec extends Specification {
         2 * jobManagement.logDeprecationWarning()
     }
 
+    def 'job is an alias for freeStyleJob'() {
+        when:
+        FreeStyleJob job = parent.job('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+    }
+
     def 'freeStyleJob'() {
         when:
         FreeStyleJob job = parent.freeStyleJob('test') {

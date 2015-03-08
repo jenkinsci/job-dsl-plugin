@@ -17,12 +17,16 @@ import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.SectionedView
 
 abstract class JobParent extends Script implements DslFactory {
-
     JobManagement jm
     Set<Item> referencedJobs = Sets.newLinkedHashSet()
     Set<View> referencedViews = Sets.newLinkedHashSet()
     Set<ConfigFile> referencedConfigFiles = Sets.newLinkedHashSet()
     List<String> queueToBuild = []
+
+    @Override
+    FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure) {
+        freeStyleJob(name, closure)
+    }
 
     @Override
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure) {
