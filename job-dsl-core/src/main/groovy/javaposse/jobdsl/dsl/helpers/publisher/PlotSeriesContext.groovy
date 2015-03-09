@@ -8,13 +8,10 @@ class PlotSeriesContext implements Context {
     String file = ''
     String label = ''
 
-    PlotSeriesContext(String type, String fileType) {
+    PlotSeriesContext(String fileName, String type, String fileType) {
+        this.file = fileName
         this.type = type
         this.fileType = fileType
-    }
-
-    void file(String file) {
-        this.file = file
     }
 
     void label(String label) {

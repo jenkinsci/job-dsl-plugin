@@ -25,8 +25,8 @@ class PlotContext implements Context {
         this.style = style
     }
 
-    void propertiesFile(Closure plotSeriesClosure) {
-        PlotSeriesContext plotSeriesContext = new PlotSeriesContext('PropertiesSeries', 'properties')
+    void propertiesFile(String fileName, Closure plotSeriesClosure = null) {
+        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName, 'PropertiesSeries', 'properties')
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
 
         dataSeriesList << plotSeriesContext
