@@ -283,6 +283,21 @@ class TriggerContextSpec extends Specification {
         timerTrigger.spec[0].value() == '*/5 * * * *'
     }
 
+    def 'call scm trigger with closure'() {
+        when:
+        context.scm('*/5 * * * *') {
+            ignorePostCommitHooks()
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'hudson.triggers.SCMTrigger'
+            children().size() == 2
+            spec[0].value() == '*/5 * * * *'
+            ignorePostCommitHooks[0].value() == true
+        }
+    }
+
     def 'call pull request trigger with no args'() {
         when:
         context.pullRequest()

@@ -85,6 +85,7 @@ freeStyleJob(String name) { // since 1.30
         githubPush()
         pullRequest(Closure pullRequestClosure) // since 1.22
         scm(String cron)
+        scm(String cron, Closure scmTriggerClosure) // since 1.31
         snapshotDependencies(boolean checkSnapshotDependencies)
         urlTrigger(String cronString = null, Closure urlTriggerClosure)
     }
@@ -1276,11 +1277,34 @@ cron(String cronString)
 Triggers job based on regular intervals.
 
 ### Source Control Trigger
+
 ```groovy
-scm(String cronString)
+job {
+    triggers {
+        scm(String cronString) {
+            ignorePostCommitHooks(boolean ignorePostCommitHooks = true) // since 1.31
+        }
+    }
+}
 ```
 
 Polls source control for changes at regular intervals.
+
+```groovy
+job {
+    triggers {
+        scm('@daily')
+    }
+}
+
+job {
+    triggers {
+        scm('@midnight') {
+            ignorePostCommitHooks()
+        }
+    }
+}
+```
 
 ### Github Push Notification Trigger
 ```groovy
