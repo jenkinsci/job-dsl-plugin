@@ -751,4 +751,24 @@ class WrapperContext implements Context {
             convertHomesToUppercase context.convertHomesToUppercase
         }
     }
+
+    /**
+     * <org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper>
+     *     <buildSteps>
+     *         <hudson.tasks.Shell>
+     *             <command>echo hello</command>
+     *         </hudson.tasks.Shell>
+     *     </buildSteps>
+     *     <failOnError>false</failOnError>
+     * </org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper>
+     */
+    void preScmSteps(@DslContext(PreScmStepsContext) Closure closure) {
+        PreScmStepsContext context = new PreScmStepsContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper' {
+            buildSteps(context.stepContext.stepNodes)
+            failOnError(context.failOnError)
+        }
+    }
 }
