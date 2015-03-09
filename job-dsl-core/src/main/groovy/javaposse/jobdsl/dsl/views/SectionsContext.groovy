@@ -2,12 +2,18 @@ package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class SectionsContext implements Context {
+    private final JobManagement jobManagement
     List<Node> sectionNodes = []
+
+    SectionsContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
 
     /**
      * <hudson.plugins.sectioned__view.ListViewSection>
@@ -32,7 +38,7 @@ class SectionsContext implements Context {
      * </hudson.plugins.sectioned__view.ListViewSection>
      */
     void listView(@DslContext(ListViewSectionContext) Closure listViewSectionClosure) {
-        ListViewSectionContext context = new ListViewSectionContext()
+        ListViewSectionContext context = new ListViewSectionContext(jobManagement)
         executeInContext(listViewSectionClosure, context)
 
         sectionNodes << new NodeBuilder().'hudson.plugins.sectioned__view.ListViewSection' {

@@ -1,9 +1,15 @@
 package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.JobManagement
 
 class ColumnsContext implements Context {
+    private final JobManagement jobManagement
     List<Node> columnNodes = []
+
+    ColumnsContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
 
     void status() {
         columnNodes << new Node(null, 'hudson.views.StatusColumn')
@@ -39,5 +45,10 @@ class ColumnsContext implements Context {
 
     void claim() {
         columnNodes << new Node(null, 'hudson.plugins.claim.ClaimColumn')
+    }
+
+    void lastBuildNode() {
+        jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
+        columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
     }
 }

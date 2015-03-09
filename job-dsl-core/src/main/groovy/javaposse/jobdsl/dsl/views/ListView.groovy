@@ -47,7 +47,7 @@ class ListView extends View {
     }
 
     void columns(@DslContext(ColumnsContext) Closure columnsClosure) {
-        ColumnsContext context = new ColumnsContext()
+        ColumnsContext context = new ColumnsContext(jobManagement)
         executeInContext(columnsClosure, context)
 
         execute {

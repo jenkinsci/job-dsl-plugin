@@ -39,6 +39,7 @@ listView(String name) { // since 1.30
         buildButton()
         lastBuildConsole() // since 1.23, requires the Extra Columns Plugin
         claim()            // since 1.29, requires the Claim Plugin
+        lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
     }
 }
 view(type: ListView, Closure viewClosure) // since 1.21, deprecated since 1.30
@@ -468,6 +469,7 @@ columns {
     buildButton()
     lastBuildConsole() // since 1.23, requires the Extra Columns Plugin
     claim()            // since 1.29, requires the Claim Plugin
+    lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
 }
 ```
 
