@@ -757,10 +757,12 @@ Refers to the pull down box in the UI to select which installation of Maven to u
 localRepository(LocalRepositoryLocation location)
 ```
 
-LocalRepositoryLocation is available as two enums, injected into the script. Their names are LocalToExecutor and LocalToWorkspace, they can be used like this:
+Possible values for `localRepository` are `LocalRepositoryLocation.LOCAL_TO_WORKSPACE` and
+`LocalRepositoryLocation.LOCAL_TO_EXECUTOR`. The `LocalToWorkspace` and `LocalToExecutor` values are deprecated since
+1.31.
 
 ```groovy
-localRepository(LocalToWorkspace)
+localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
 ```
 
 (Since 1.17)
@@ -2290,7 +2292,7 @@ maven {                                               // since 1.20; all methods
     goals(String goals)                               // the goals to run, multiple calls will be accumulated
     rootPOM(String fileName)                          // path to the POM
     mavenOpts(String options)                         // JVM options, multiple calls will be accumulated
-    localRepository(LocalRepositoryLocation location) // can be either LocalToWorkspace or LocalToExecutor (default)
+    localRepository(LocalRepositoryLocation location) // defaults to LocalRepositoryLocation.LOCAL_TO_EXECUTOR
     mavenInstallation(String name)                    // name of the Maven installation to use
     properties(Map properties)                        // since 1.21; add (system)-properties
     property(String key, String value)                // since 1.21; add a (system)-property
@@ -2302,6 +2304,10 @@ maven {                                               // since 1.20; all methods
 Runs Apache Maven. Configure block is handed `hudson.tasks.Maven`. The
 [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) is required to
 use `providedSettings`.
+
+Possible values for `localRepository` are `LocalRepositoryLocation.LOCAL_TO_WORKSPACE` and
+`LocalRepositoryLocation.LOCAL_TO_EXECUTOR`. The `LocalToWorkspace` and `LocalToExecutor` values are deprecated since
+1.31.
 
 Examples:
 
