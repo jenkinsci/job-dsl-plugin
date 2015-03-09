@@ -2992,4 +2992,37 @@ class PublisherContextSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+
+    def 'call post build scripts with minimal options'() {
+        when:
+        context.postBuildScripts {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 2
+            buildSteps[0].children().size == 0
+            scriptOnlyIfSuccess[0].value() == true
+        }
+    }
+
+    def 'call post build scripts with all options'() {
+        when:
+        context.postBuildScripts {
+            steps {
+                shell('echo TEST')
+            }
+            onlyIfBuildSucceeds(false)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 2
+            buildSteps[0].children().size == 1
+            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            scriptOnlyIfSuccess[0].value() == false
+        }
+    }
 }
