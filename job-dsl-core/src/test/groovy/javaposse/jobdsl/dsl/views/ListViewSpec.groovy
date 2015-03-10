@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue
 import javaposse.jobdsl.dsl.views.jobfilter.Status
 import spock.lang.Specification
@@ -15,7 +16,8 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class ListViewSpec extends Specification {
-    ListView view = new ListView()
+    JobManagement jobManagement = Mock(JobManagement)
+    ListView view = new ListView(jobManagement)
 
     def 'defaults'() {
         when:
@@ -203,12 +205,13 @@ class ListViewSpec extends Specification {
             lastDuration()
             buildButton()
             claim()
+            lastBuildNode()
         }
 
         then:
         Node root = view.node
         root.columns.size() == 1
-        root.columns[0].value().size() == 8
+        root.columns[0].value().size() == 9
         root.columns[0].value()[0].name() == 'hudson.views.StatusColumn'
         root.columns[0].value()[1].name() == 'hudson.views.WeatherColumn'
         root.columns[0].value()[2].name() == 'hudson.views.JobColumn'
@@ -217,6 +220,8 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[5].name() == 'hudson.views.LastDurationColumn'
         root.columns[0].value()[6].name() == 'hudson.views.BuildButtonColumn'
         root.columns[0].value()[7].name() == 'hudson.plugins.claim.ClaimColumn'
+        root.columns[0].value()[8].name() == 'org.jenkins.plugins.column.LastBuildNodeColumn'
+        _ * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
     }
 
     def 'call columns twice'() {

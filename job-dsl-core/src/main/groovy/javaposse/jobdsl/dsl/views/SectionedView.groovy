@@ -12,7 +12,7 @@ class SectionedView extends View {
     }
 
     void sections(@DslContext(SectionsContext) Closure sectionsClosure) {
-        SectionsContext context = new SectionsContext()
+        SectionsContext context = new SectionsContext(jobManagement)
         executeInContext(sectionsClosure, context)
 
         execute {
