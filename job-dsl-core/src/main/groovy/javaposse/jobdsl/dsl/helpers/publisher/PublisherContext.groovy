@@ -1705,6 +1705,26 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * <org.jenkinsci.plugins.postbuildscript.PostBuildScript>
+     *     <buildSteps>
+     *         <hudson.tasks.Shell>
+     *             <command>echo foo</command>
+     *         </hudson.tasks.Shell>
+     *     </buildSteps>
+     *     <scriptOnlyIfSuccess>true</scriptOnlyIfSuccess>
+     * </org.jenkinsci.plugins.postbuildscript.PostBuildScript>
+     */
+    void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
+        PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
+            buildSteps(context.stepContext.stepNodes)
+            scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
+        }
+    }
+
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()

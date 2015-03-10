@@ -228,6 +228,7 @@ freeStyleJob(String name) { // since 1.30
                Boolean sendToIndividuals = false)
         mavenDeploymentLinker(String regex) // since 1.23
         pmd(String pattern, Closure staticAnalysisClosure = null)
+        postBuildScripts(Closure postBuildScriptsClosure) // since 1.31
         postBuildTask(Closure closure) // since 1.19
         publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure)
         publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
@@ -3986,6 +3987,37 @@ publishers {
 ```
 
 (Since 1.19)
+
+### Post Build Scripts
+
+```groovy
+job {
+    publishers {
+        postBuildScripts {
+            steps(Closure stepClosure)
+            onlyIfBuildSucceeds(boolean onlyIfBuildSucceeds = true) // defaults to true
+        }
+    }
+}
+```
+
+Execute a set of scripts at the end of the build. Requires the
+[PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin).
+
+```groovy
+job {
+    publishers {
+        postBuildScripts {
+            steps {
+                shell('echo Hello World')
+            }
+            onlyIfBuildSucceeds(false)
+        }
+    }
+}
+```
+
+(since 1.31)
 
 ### [Post Build Task](https://wiki.jenkins-ci.org/display/JENKINS/Post+build+task)
 
