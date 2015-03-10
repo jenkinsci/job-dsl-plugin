@@ -413,6 +413,65 @@ class WrapperContextSpec extends Specification {
         wrapper.takeScreenshot[0].value() == false
     }
 
+    def 'xvfb with minimal options'() {
+        when:
+        context.xvfb('default')
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+            children().size() == 8
+            installationName[0].value() == 'default'
+            screen[0].value() == '1024x768x24'
+            debug[0].value() == false
+            timeout[0].value() == 0
+            displayNameOffset[0].value() == 1
+            shutdownWithBuild[0].value() == false
+            autoDisplayName[0].value() == false
+            parallelBuild[0].value() == false
+        }
+    }
+
+    def 'xvfb with all options'() {
+        when:
+        context.xvfb('default') {
+            screen('1920x1080x32')
+            debug()
+            timeout(500)
+            displayNameOffset(24)
+            shutdownWithBuild()
+            autoDisplayName()
+            assignedLabels('test')
+            parallelBuild()
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+            children().size() == 9
+            installationName[0].value() == 'default'
+            screen[0].value() == '1920x1080x32'
+            debug[0].value() == true
+            timeout[0].value() == 500
+            displayNameOffset[0].value() == 24
+            shutdownWithBuild[0].value() == true
+            autoDisplayName[0].value() == true
+            assignedLabels[0].value() == 'test'
+            parallelBuild[0].value() == true
+        }
+    }
+
+    def 'xvfb without installation'() {
+        when:
+        context.xvfb(installation)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        installation << [null, '']
+    }
+
     def 'toolenv' () {
         when:
         context.toolenv('Ant 1.8.2', 'Maven 3')
