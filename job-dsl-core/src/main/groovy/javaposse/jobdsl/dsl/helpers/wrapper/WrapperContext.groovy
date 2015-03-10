@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
+
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
@@ -305,6 +306,46 @@ class WrapperContext implements Context {
         jobManagement.logDeprecationWarning()
         xvnc {
             takeScreenshot(takeScreenshotAtEndOfBuild)
+        }
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * <project>
+     *     <buildWrappers>
+     *         <org.jenkinsci.plugins.xvfb.XvfbBuildWrapper>
+     *             <installationName>xvfb</installationName>
+     *             <screen>1024x768x24</screen>
+     *             <debug>false</debug>
+     *             <timeout>0</timeout>
+     *             <displayNameOffset>1</displayNameOffset>
+     *             <shutdownWithBuild>false</shutdownWithBuild>
+     *             <autoDisplayName>false</autoDisplayName>
+     *             <assignedLabels>xvfb</assignedLabels>
+     *             <parallelBuild>false</parallelBuild>
+     *         </org.jenkinsci.plugins.xvfb.XvfbBuildWrapper>
+     *     </buildWrappers>
+     * </project>
+     * }
+     *
+     * Runs build under XVFB.
+     * @param name of the Xvfb tool installation that Jenkins administrator set up
+     */
+    void xvfb(String installation, @DslContext(XvfbContext) Closure closure = null) {
+        XvfbContext context = new XvfbContext(installation)
+        ContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper' {
+            installationName(context.installationName)
+            screen(context.screen)
+            debug(context.debug)
+            timeout(context.timeout)
+            displayNameOffset(context.displayNameOffset)
+            shutdownWithBuild(context.shutdownWithBuild)
+            autoDisplayName(context.autoDisplayName)
+            assignedLabels(context.assignedLabels)
+            parallelBuild(context.parallelBuild)
         }
     }
 
