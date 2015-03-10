@@ -2992,4 +2992,62 @@ class PublisherContextSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+
+    def 'call plotPlugin with some basic args'() {
+        when:
+        context.plotBuildData {
+            plot('some.csv', 'my group') {
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                group[0].value() == 'my group'
+                csvFileName[0].value() == 'some.csv'
+                style[0].value() == 'line'
+
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    file[0].value() == 'data.prop'
+                    label[0].value() == ''
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+    }
+
+    def 'call plotPlugin with all chart styles'() {
+        when:
+        context.plotBuildData {
+            plot('some.csv', 'my group') {
+                style(chart)
+                propertiesFile('data.prop') {
+                    label('some label')
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                group[0].value() == 'my group'
+                csvFileName[0].value() == 'some.csv'
+                style[0].value() == chart
+
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    file[0].value() == 'data.prop'
+                    label[0].value() == 'some label'
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+
+        where:
+        chart << ['area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall']
+    }
 }
