@@ -92,12 +92,18 @@ class TriggerContext implements Context {
     /**
      * <hudson.triggers.SCMTrigger>
      *     <spec>10 * * * *</spec>
+     *     <ignorePostCommitHooks>false</ignorePostCommitHooks>
      * </hudson.triggers.SCMTrigger>
      */
-    void scm(String cronString) {
+    void scm(String cronString, @DslContext(ScmTriggerContext) Closure scmTriggerClosure = null) {
         Preconditions.checkNotNull(cronString)
+
+        ScmTriggerContext scmTriggerContext = new ScmTriggerContext()
+        ContextHelper.executeInContext(scmTriggerClosure, scmTriggerContext)
+
         triggerNodes << new NodeBuilder().'hudson.triggers.SCMTrigger' {
             spec cronString
+            ignorePostCommitHooks scmTriggerContext.ignorePostCommitHooks
         }
     }
 
