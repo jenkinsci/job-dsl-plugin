@@ -3025,4 +3025,59 @@ class PublisherContextSpec extends Specification {
             scriptOnlyIfSuccess[0].value() == false
         }
     }
+
+    def 'call sonar with no options'() {
+        when:
+        context.sonar()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.sonar.SonarPublisher'
+            children().size() == 10
+            jdk[0].value() == '(Inherit From Job)'
+            branch[0].value() == ''
+            language[0].value().empty
+            mavenOpts[0].value().empty
+            jobAdditionalProperties[0].value().empty
+            mavenInstallationName[0].value() == '(Inherit From Job)'
+            rootPom[0].value().empty
+            settings[0].value().empty
+            settings[0].@class == 'jenkins.mvn.DefaultSettingsProvider'
+            globalSettings[0].value().empty
+            globalSettings[0].@class == 'jenkins.mvn.DefaultGlobalSettingsProvider'
+            usePrivateRepository[0].value() == false
+        }
+    }
+
+    def 'call sonar with all options'() {
+        when:
+        context.sonar {
+            branch('test')
+            overrideTriggers {
+                skipIfEnvironmentVariable('FOO')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.sonar.SonarPublisher'
+            children().size() == 11
+            jdk[0].value() == '(Inherit From Job)'
+            branch[0].value() == 'test'
+            language[0].value().empty
+            mavenOpts[0].value().empty
+            jobAdditionalProperties[0].value().empty
+            mavenInstallationName[0].value() == '(Inherit From Job)'
+            rootPom[0].value().empty
+            settings[0].value().empty
+            settings[0].@class == 'jenkins.mvn.DefaultSettingsProvider'
+            globalSettings[0].value().empty
+            globalSettings[0].@class == 'jenkins.mvn.DefaultGlobalSettingsProvider'
+            usePrivateRepository[0].value() == false
+            triggers[0].children().size() == 3
+            triggers[0].skipScmCause[0].value() == false
+            triggers[0].skipUpstreamCause[0].value() == false
+            triggers[0].envVar[0].value() == 'FOO'
+        }
+    }
 }
