@@ -3080,4 +3080,136 @@ class PublisherContextSpec extends Specification {
             triggers[0].envVar[0].value() == 'FOO'
         }
     }
+
+    def 'call plotPlugin with some basic args'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 11
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                usrDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    children().size() == 3
+                    file[0].value() == 'data.prop'
+                    label[0].value() == ''
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+    }
+
+    def 'call plotPlugin with all chart styles'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                style(chart)
+                propertiesFile('data.prop') {
+                    label('some label')
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 11
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == chart
+                usrDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    children().size() == 3
+                    file[0].value() == 'data.prop'
+                    label[0].value() == 'some label'
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+
+        where:
+        chart << ['area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall']
+    }
+
+    def 'call plotPlugin without group'() {
+        when:
+        context.plotBuildData {
+            plot(group, 'some.csv') {
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        group << [null, '']
+    }
+
+    def 'call plotPlugin without data store'() {
+        when:
+        context.plotBuildData {
+            plot('my group', dataStore) {
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        dataStore << [null, '']
+    }
+
+    def 'call plotPlugin without file name'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'test.csv') {
+                propertiesFile(fileName)
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        fileName << [null, '']
+    }
+
+    def 'call plotPlugin with invalid style'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'test.csv') {
+                style('foo')
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }

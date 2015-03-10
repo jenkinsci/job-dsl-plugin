@@ -23,6 +23,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added `ignorePostCommitHooks` option for SCM trigger
  * Added support for [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
  * The enum argument of `localRepository` for the Maven job and context has changed, see [[Migration]]
+ * Added partial support for [Plot Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin)
 * 1.30 (March 08 2015)
  * Added support for [Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin)
  * Added support for [Flaky Test Handler Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flaky+Test+Handler+Plugin)

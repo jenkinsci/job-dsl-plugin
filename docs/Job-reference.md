@@ -227,6 +227,7 @@ freeStyleJob(String name) { // since 1.30
         mailer(String recipients, Boolean dontNotifyEveryUnstableBuild = false,
                Boolean sendToIndividuals = false)
         mavenDeploymentLinker(String regex) // since 1.23
+        plotBuildData(Closure closure) // since 1.31
         pmd(String pattern, Closure staticAnalysisClosure = null)
         postBuildScripts(Closure postBuildScriptsClosure) // since 1.31
         postBuildTask(Closure closure) // since 1.19
@@ -3825,6 +3826,60 @@ publishers {
 The arguments here are in order:
 * (String) the findbugs-files to parse
 * (boolean) use the findbugs rank for the priority, default to false
+
+#### Plot Build Data
+
+```groovy
+job {
+    publishers {
+        plotBuildData {
+            plot(String group, String dataStore) {
+                style(String style)                // defaults to 'line'
+                propertiesFile(String fileName) {
+                    label(String label)
+                }
+            }
+        }
+    }
+}
+```
+
+Show a number of plots, each containing a single data series. Requires the
+[Plot Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin).
+
+Plot plugin relies on a data store to hold the plot data, this is normally stored in a randomly named CSV file within
+the workspace root. To avoid conflicts this location needs to be set manually relative to the workspace using the
+`dataStore` parameter.
+
+The `style` option can be one of `'area'`, `'bar'`, `'bar3d'`, `'line'` (default), `'line3d'`, `'stackedArea'`,
+`'stackedbar'`, `'stackedbar3d'` or `'waterfall'`.
+
+```groovy
+job {
+    publishers {
+        plotBuildData {
+            plot('Important Plot', 'my_data_store.csv') {
+                propertiesFile('my_data.properties')
+            }
+        }
+    }
+}
+
+job {
+    publishers {
+        plotBuildData {
+            plot('Bar Charts', 'bar_chart_data_store.csv') {
+                style('bar')
+                propertiesFile('my_data.properties') {
+                    label('My Label')
+                }
+            }
+        }
+    }
+}
+```
+
+(since 1.31)
 
 #### [Pmd](https://wiki.jenkins-ci.org/display/JENKINS/PMD+Plugin)
 ```groovy

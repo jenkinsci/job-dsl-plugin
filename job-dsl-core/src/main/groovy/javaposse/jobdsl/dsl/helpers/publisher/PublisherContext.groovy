@@ -337,6 +337,64 @@ class PublisherContext implements Context {
     }
 
     /**
+     * <hudson.plugins.plot.PlotPublisher>
+     *     <plots>
+     *         <hudson.plugins.plot.Plot>
+     *             <title/>
+     *             <yaxis/>
+     *             <series>
+     *                 <hudson.plugins.plot.PropertiesSeries>
+     *                     <file>test.properties</file>
+     *                     <label>test</label>
+     *                     <fileType>properties</fileType>
+     *                 </hudson.plugins.plot.PropertiesSeries>
+     *             </series>
+     *             <group>test</group>
+     *             <numBuilds/>
+     *             <csvFileName>744827576.csv</csvFileName>
+     *             <csvLastModification>0</csvLastModification>
+     *             <style>line</style>
+     *             <useDescr>false</useDescr>
+     *             <keepRecords>false</keepRecords>
+     *             <exclZero>false</exclZero>
+     *         </hudson.plugins.plot.Plot>
+     *     </plots>
+     * </hudson.plugins.plot.PlotPublisher>
+     */
+    void plotBuildData(Closure plotsClosure) {
+        PlotsContext plotsContext = new PlotsContext()
+        ContextHelper.executeInContext(plotsClosure, plotsContext)
+
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.plot.PlotPublisher' {
+            plots {
+                plotsContext.plots.each { PlotContext plot ->
+                    'hudson.plugins.plot.Plot' {
+                        title()
+                        yaxis()
+                        series {
+                            plot.dataSeriesList.each { PlotSeriesContext data ->
+                                'hudson.plugins.plot.PropertiesSeries' {
+                                    file(data.fileName)
+                                    label(data.label ?: '')
+                                    fileType('properties')
+                                }
+                            }
+                        }
+                        group(plot.group)
+                        numBuilds()
+                        csvFileName(plot.dataStore)
+                        csvLastModification(0)
+                        style(plot.style)
+                        usrDescr(false)
+                        keepRecords(false)
+                        exclZero(false)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * <htmlpublisher.HtmlPublisher>
      *     <reportTargets>
      *         <htmlpublisher.HtmlPublisherTarget>
