@@ -413,6 +413,27 @@ class WrapperContextSpec extends Specification {
         wrapper.takeScreenshot[0].value() == false
     }
 
+    def 'xvfb' () {
+        when:
+        context.xvfb('default') {
+            assignedLabels 'xvfb'
+        }
+
+        then:
+        context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+        def wrapper = context.wrapperNodes[0]
+        wrapper.children().size() == 9
+        wrapper.installationName[0].value() == 'default'
+        wrapper.screen[0].value() == '1024x768x24'
+        wrapper.debug[0].value() == false
+        wrapper.timeout[0].value() == 0
+        wrapper.displayNameOffset[0].value() == 1
+        wrapper.shutdownWithBuild[0].value() == false
+        wrapper.autoDisplayName[0].value() == false
+        wrapper.assignedLabels[0].value() == 'xvfb'
+        wrapper.parallelBuild[0].value() == false
+    }
+
     def 'toolenv' () {
         when:
         context.toolenv('Ant 1.8.2', 'Maven 3')

@@ -117,6 +117,7 @@ freeStyleJob(String name) { // since 1.30
         timeout(Closure timeoutClosure = null)
         timestamps()
         toolenv(String... tools)
+        xvfb(String installation)
         xvnc(boolean takeScreenshot) // deprecated
         xvnc(Closure xvncClosure = null) // since 1.26
     }
@@ -1666,6 +1667,29 @@ job('example') {
 ```
 
 (Since 1.19)
+
+### Xvfb
+
+```groovy
+job {
+    wrappers {
+        xvfb('xvfb') {
+            screen '1024x768x24' // defaults to 1024x768x24
+            debug(boolean debug = true) // defaults to false
+            timeout(int timeout) // defaults to 0
+            displayNameOffset(int displayNameOffset) // defaults to 1
+            shutdownWithBuild(boolean shutdownWithBuild = true) // defaults to false
+            autoDisplayName(boolean autoDisplayName = true) // defaults to false
+            assignedLabels 'xvfb'
+            parallelBuild(boolean parallelBuild = true) // defaults to false
+        }
+    }
+}
+```
+
+Lets you control Xvfb virtual frame buffer X11 server with each build. It starts Xvfb before the build starts, and stops
+it with the build. This is very useful if your build requires X11 access, for instance runs tests that require GUI.
+Requires the [Xvfb Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xvfb+Plugin).
 
 ### Xvnc
 
