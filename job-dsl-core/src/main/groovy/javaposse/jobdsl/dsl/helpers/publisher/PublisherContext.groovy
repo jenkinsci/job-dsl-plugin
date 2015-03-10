@@ -337,74 +337,61 @@ class PublisherContext implements Context {
     }
 
     /**
-    * <hudson.plugins.plot.PlotPublisher>
-    *     <plots>
-    *         <hudson.plugins.plot.Plot>
-    *             <title></title>
-    *             <yaxis></yaxis>
-    *             <series>
-    *                 <hudson.plugins.plot.PropertiesSeries>
-    *                     <file>Properties</file>
-    *                     <label></label>
-    *                     <fileType>properties</fileType>
-    *                 </hudson.plugins.plot.PropertiesSeries>
-    *                 <hudson.plugins.plot.CSVSeries>
-    *                     <file>CSV</file>
-    *                     <label></label>
-    *                     <fileType>csv</fileType>
-    *                     <inclusionFlag>OFF</inclusionFlag>
-    *                     <exclusionValues></exclusionValues>
-    *                     <url></url>
-    *                     <displayTableFlag>false</displayTableFlag>
-    *                 </hudson.plugins.plot.CSVSeries>
-    *                 <hudson.plugins.plot.XMLSeries>
-    *                     <file>XML</file>
-    *                     <label></label>
-    *                     <fileType>xml</fileType>
-    *                     <xpathString></xpathString>
-    *                     <url></url>
-    *                     <nodeTypeString>NODESET</nodeTypeString>
-    *                 </hudson.plugins.plot.XMLSeries>
-    *             </series>
-    *             <group></group>
-    *             <numBuilds></numBuilds>
-    *             <csvFileName></csvFileName>
-    *             <csvLastModification></csvLastModification>
-    *             <style></style>
-    *             <useDescr></useDescr>
-    *         </hudson.plugins.plot.Plot>
-    *     </plots>
-    * </hudson.plugins.plot.PlotPublisher>
-    */
+     * <hudson.plugins.plot.PlotPublisher>
+     *     <plots>
+     *         <hudson.plugins.plot.Plot>
+     *             <title/>
+     *             <yaxis/>
+     *             <series>
+     *                 <hudson.plugins.plot.PropertiesSeries>
+     *                     <file>test.properties</file>
+     *                     <label>test</label>
+     *                     <fileType>properties</fileType>
+     *                 </hudson.plugins.plot.PropertiesSeries>
+     *             </series>
+     *             <group>test</group>
+     *             <numBuilds/>
+     *             <csvFileName>744827576.csv</csvFileName>
+     *             <csvLastModification>0</csvLastModification>
+     *             <style>line</style>
+     *             <useDescr>false</useDescr>
+     *             <keepRecords>false</keepRecords>
+     *             <exclZero>false</exclZero>
+     *         </hudson.plugins.plot.Plot>
+     *     </plots>
+     * </hudson.plugins.plot.PlotPublisher>
+     */
     void plotBuildData(Closure plotsClosure) {
-
         PlotsContext plotsContext = new PlotsContext()
         ContextHelper.executeInContext(plotsClosure, plotsContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-
-        Node plotsNode = nodeBuilder.'hudson.plugins.plot.PlotPublisher' {
+        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.plot.PlotPublisher' {
             plots {
                 plotsContext.plots.each { PlotContext plot ->
                     'hudson.plugins.plot.Plot' {
-                        group plot.group
-                        csvFileName plot.dataStore
-                        style plot.style
+                        title()
+                        yaxis()
                         series {
                             plot.dataSeriesList.each { PlotSeriesContext data ->
-                                "hudson.plugins.plot.${data.type}" {
-                                    file data.file
-                                    label data.label
-                                    fileType data.fileType
+                                'hudson.plugins.plot.PropertiesSeries' {
+                                    file(data.fileName)
+                                    label(data.label ?: '')
+                                    fileType('properties')
                                 }
                             }
                         }
+                        group(plot.group)
+                        numBuilds()
+                        csvFileName(plot.dataStore)
+                        csvLastModification(0)
+                        style(plot.style)
+                        usrDescr(false)
+                        keepRecords(false)
+                        exclZero(false)
                     }
                 }
             }
         }
-
-        publisherNodes << plotsNode
     }
 
     /**

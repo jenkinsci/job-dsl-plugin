@@ -3801,57 +3801,59 @@ The arguments here are in order:
 * (String) the findbugs-files to parse
 * (boolean) use the findbugs rank for the priority, default to false
 
-#### [Plot Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin)
+#### Plot Build Data
+
 ```groovy
-publishers {
-  plotBuildData {
-    plot(String dataStore, String group) {
-      style(String style = 'line')
-      propertiesFile(String fileName) {
-        label(String label)
-      }
+job {
+    publishers {
+        plotBuildData {
+            plot(String group, String dataStore) {
+                style(String style)                // defaults to 'line'
+                propertiesFile(String fileName) {
+                    label(String label)
+                }
+            }
+        }
     }
-  }
 }
 ```
 
-Plot plugin is able to show a number of plots, each containing a single data series.
+Show a number of plots, each containing a single data series. Requires the
+[Plot Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin).
 
-`plot` arguments:
-* `dataStore` Plot plugin relies on a data store to hold the plot data, this is normally stored in a randomly named CSV file within the workspace root. To avoid conflicts this location needs to be set manually and is within the workspace root.
-* `group` Specifies to which group the plot belongs.
-* `style` Optional, Specifies which chart style to display the plot data as, one of: 'area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall'.
+Plot plugin relies on a data store to hold the plot data, this is normally stored in a randomly named CSV file within
+the workspace root. To avoid conflicts this location needs to be set manually relative to the workspace using the
+`dataStore` parameter.
 
-`propertiesFile` arguments:
-* `fileName` Specifies the filename that contains this data series, relative to the workspace root.
-* `label` Optional, specifies the legend label for this data series.
-
-Examples:
+The `style` option can be one of `'area'`, `'bar'`, `'bar3d'`, `'line'` (default), `'line3d'`, `'stackedArea'`,
+`'stackedbar'`, `'stackedbar3d'` or `'waterfall'`.
 
 ```groovy
-publishers {
-  plotBuildData {
-    plot('my_data_store.csv', 'Important plot') {
-      propertiesFile('my_data.prop')
+job {
+    publishers {
+        plotBuildData {
+            plot('Important Plot', 'my_data_store.csv') {
+                propertiesFile('my_data.properties')
+            }
+        }
     }
-  }
+}
+
+job {
+    publishers {
+        plotBuildData {
+            plot('Bar Charts', 'bar_chart_data_store.csv') {
+                style('bar')
+                propertiesFile('my_data.properties') {
+                    label('My Label')
+                }
+            }
+        }
+    }
 }
 ```
 
-```groovy
-publishers {
-  plotBuildData {
-    style('bar')
-    plot('bar_chart_data_store.csv', 'Bar charts') {
-      propertiesFile('my_data.prop') {
-        label('My label')
-      }
-    }
-  }
-}
-```
-
-// since 1.31
+(since 1.31)
 
 #### [Pmd](https://wiki.jenkins-ci.org/display/JENKINS/PMD+Plugin)
 ```groovy

@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.Context
 
@@ -10,14 +11,14 @@ class PlotContext implements Context {
         'area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall'
     ]
 
+    final String group
+    final String dataStore
+    final List<PlotSeriesContext> dataSeriesList = []
     String style = 'line'
-    String dataStore
-    String group
-    List<PlotSeriesContext> dataSeriesList = []
 
-    PlotContext(String dataStore, String group) {
-        this.dataStore = dataStore
+    PlotContext(String group, String dataStore) {
         this.group = group
+        this.dataStore = dataStore
     }
 
     void style(String style) {
@@ -26,7 +27,9 @@ class PlotContext implements Context {
     }
 
     void propertiesFile(String fileName, Closure plotSeriesClosure = null) {
-        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName, 'PropertiesSeries', 'properties')
+        checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
+
+        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName)
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
 
         dataSeriesList << plotSeriesContext

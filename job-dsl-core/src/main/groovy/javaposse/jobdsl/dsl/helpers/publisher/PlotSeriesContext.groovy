@@ -3,15 +3,11 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class PlotSeriesContext implements Context {
-    final String type
-    final String fileType
-    String file = ''
-    String label = ''
+    final String fileName
+    String label
 
-    PlotSeriesContext(String fileName, String type, String fileType) {
-        this.file = fileName
-        this.type = type
-        this.fileType = fileType
+    PlotSeriesContext(String fileName) {
+        this.fileName = fileName
     }
 
     void label(String label) {
