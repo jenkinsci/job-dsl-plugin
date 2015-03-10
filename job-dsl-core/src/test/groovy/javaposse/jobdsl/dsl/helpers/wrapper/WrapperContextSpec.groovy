@@ -413,25 +413,63 @@ class WrapperContextSpec extends Specification {
         wrapper.takeScreenshot[0].value() == false
     }
 
-    def 'xvfb' () {
+    def 'xvfb with minimal options'() {
+        when:
+        context.xvfb('default')
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+            children().size() == 8
+            installationName[0].value() == 'default'
+            screen[0].value() == '1024x768x24'
+            debug[0].value() == false
+            timeout[0].value() == 0
+            displayNameOffset[0].value() == 1
+            shutdownWithBuild[0].value() == false
+            autoDisplayName[0].value() == false
+            parallelBuild[0].value() == false
+        }
+    }
+
+    def 'xvfb with all options'() {
         when:
         context.xvfb('default') {
-            assignedLabels 'xvfb'
+            screen('1920x1080x32')
+            debug()
+            timeout(500)
+            displayNameOffset(24)
+            shutdownWithBuild()
+            autoDisplayName()
+            assignedLabels('test')
+            parallelBuild()
         }
 
         then:
-        context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
-        def wrapper = context.wrapperNodes[0]
-        wrapper.children().size() == 9
-        wrapper.installationName[0].value() == 'default'
-        wrapper.screen[0].value() == '1024x768x24'
-        wrapper.debug[0].value() == false
-        wrapper.timeout[0].value() == 0
-        wrapper.displayNameOffset[0].value() == 1
-        wrapper.shutdownWithBuild[0].value() == false
-        wrapper.autoDisplayName[0].value() == false
-        wrapper.assignedLabels[0].value() == 'xvfb'
-        wrapper.parallelBuild[0].value() == false
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+            children().size() == 9
+            installationName[0].value() == 'default'
+            screen[0].value() == '1920x1080x32'
+            debug[0].value() == true
+            timeout[0].value() == 500
+            displayNameOffset[0].value() == 24
+            shutdownWithBuild[0].value() == true
+            autoDisplayName[0].value() == true
+            assignedLabels[0].value() == 'test'
+            parallelBuild[0].value() == true
+        }
+    }
+
+    def 'xvfb without installation'() {
+        when:
+        context.xvfb(installation)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        installation << [null, '']
     }
 
     def 'toolenv' () {

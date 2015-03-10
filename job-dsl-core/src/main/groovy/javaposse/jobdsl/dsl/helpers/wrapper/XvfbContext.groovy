@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import javaposse.jobdsl.dsl.Context
 
 class XvfbContext implements Context {
-    String installationName
     String screen = '1024x768x24'
     boolean debug = false
     int timeout = 0
@@ -12,14 +11,6 @@ class XvfbContext implements Context {
     boolean autoDisplayName = false
     String assignedLabels
     boolean parallelBuild = false
-
-    XvfbContext(String installationName) {
-        this.installationName = installationName
-    }
-
-    void installationName(String installationName) {
-        this.installationName = installationName
-    }
 
     void screen(String screen) {
         this.screen = screen
@@ -41,7 +32,7 @@ class XvfbContext implements Context {
         this.shutdownWithBuild = shutdownWithBuild
     }
 
-    void autoDisplayName(boolean autoDisplayName = false) {
+    void autoDisplayName(boolean autoDisplayName = true) {
         this.autoDisplayName = autoDisplayName
     }
 
