@@ -250,6 +250,7 @@ freeStyleJob(String name) { // since 1.30
         publishScp(String site, Closure scpClosure)
         rundeck(String jobId, Closure rundeckClosure = null) // since 1.24
         s3(String profile, Closure s3Closure) // since 1.26
+        sonar(Closure sonarClosure = null) // since 1.31
         stashNotifier(Closure stashNotifierClosure = null) // since 1.23
         tasks(String pattern, excludePattern = '', high = '', normal = '', low = '',
               ignoreCase = false, Closure staticAnalysisClosure = null)
@@ -4418,6 +4419,41 @@ job('example-3') {
 ```
 
 (Since 1.23)
+
+### Sonar
+
+```groovy
+job {
+    publishers {
+        sonar {
+            branch(String branch)
+            overrideTriggers {
+                skipIfEnvironmentVariable(String environmentVariable)
+            }
+        }
+    }
+}
+```
+
+Allows to trigger SonarQube analysis. Requires the
+[Sonar Plugin](http://docs.sonarqube.org/display/SONAR/Jenkins+Plugin).
+
+```groovy
+// run Sonar analysis for feature-xy branch,
+// but skip if SKIP_SONAR environment variable is set to true
+job {
+    publishers {
+        sonar {
+            branch('feature-xy')
+            overrideTriggers {
+                skipIfEnvironmentVariable('SKIP_SONAR')
+            }
+        }
+    }
+}
+```
+
+(since 1.31)
 
 ### StashNotifier Publisher
 

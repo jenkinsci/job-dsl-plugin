@@ -1725,6 +1725,50 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * <hudson.plugins.sonar.SonarPublisher>
+     *     <jdk>(Inherit From Job)</jdk>
+     *     <branch/>
+     *     <language/>
+     *     <mavenOpts/>
+     *     <jobAdditionalProperties/>
+     *     <triggers>
+     *         <skipScmCause>false</skipScmCause>
+     *         <skipUpstreamCause>false</skipUpstreamCause>
+     *         <envVar/>
+     *     </triggers>
+     *     <mavenInstallationName>(Inherit From Job)</mavenInstallationName>
+     *     <rootPom/>
+     *     <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+     *     <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+     *     <usePrivateRepository>false</usePrivateRepository>
+     * </hudson.plugins.sonar.SonarPublisher>
+     */
+    void sonar(@DslContext(SonarContext) Closure sonarClosure = null) {
+        SonarContext sonarContext = new SonarContext()
+        ContextHelper.executeInContext(sonarClosure, sonarContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.sonar.SonarPublisher' {
+            jdk('(Inherit From Job)')
+            branch(sonarContext.branch ?: '')
+            language()
+            mavenOpts()
+            jobAdditionalProperties()
+            if (sonarContext.overrideTriggers) {
+                triggers {
+                    skipScmCause(false)
+                    skipUpstreamCause(false)
+                    envVar(sonarContext.sonarTriggersContext.skipIfEnvironmentVariable ?: '')
+                }
+            }
+            mavenInstallationName('(Inherit From Job)')
+            rootPom()
+            settings(class: 'jenkins.mvn.DefaultSettingsProvider')
+            globalSettings(class: 'jenkins.mvn.DefaultGlobalSettingsProvider')
+            usePrivateRepository(false)
+        }
+    }
+
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
