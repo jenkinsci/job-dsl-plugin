@@ -174,7 +174,7 @@ abstract class JobParent extends Script implements DslFactory {
         configFile
     }
 
-    protected ConfigFile processConfigFile(String name, ConfigFileType configFileType, Closure closure) {
+    private ConfigFile processConfigFile(String name, ConfigFileType configFileType, Closure closure) {
         ConfigFile configFile = new ConfigFile(configFileType, jm)
         configFile.name = name
         configFile.with(closure)
