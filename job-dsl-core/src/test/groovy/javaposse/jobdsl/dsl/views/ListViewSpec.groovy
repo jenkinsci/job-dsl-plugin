@@ -254,6 +254,19 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildConsoleColumn'
     }
 
+    def 'configureProject column'() {
+        when:
+        view.columns {
+            configureProject()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.ConfigureProjectColumn'
+    }
+
     def 'statusFilter'(Closure filter, Map children) {
         when:
         view.jobFilters(filter)
