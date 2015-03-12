@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.Permissions
+import javaposse.jobdsl.dsl.helpers.PromotionContext
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -13,6 +14,7 @@ import javaposse.jobdsl.dsl.helpers.toplevel.NotificationContext
 import javaposse.jobdsl.dsl.helpers.toplevel.ThrottleConcurrentBuildsContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
+import javaposse.jobdsl.dsl.jobs.Promotion
 
 /**
  * DSL element representing a Jenkins job.
@@ -20,6 +22,7 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 abstract class Job extends Item {
     String templateName = null // Optional
     String previousNamesRegex = null // Optional
+    List<Promotion> promotions = []
 
     protected Job(JobManagement jobManagement) {
         super(jobManagement)
@@ -566,6 +569,12 @@ abstract class Job extends Item {
         }
     }
 
+    void promotion(String name, @DslContext(PromotionContext) Closure closure) {
+        PromotionContext context = new PromotionContext(jobManagement, name)
+        ContextHelper.executeInContext(closure, context)
+        promotions.add(context.promotion)
+    }
+
     void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
@@ -614,6 +623,6 @@ abstract class Job extends Item {
     }
 
     private Node executeEmptyTemplate() {
-        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
+        getJobTemplate()
     }
 }
