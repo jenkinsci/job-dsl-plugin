@@ -21,9 +21,11 @@ public class Promotion extends Item {
     @Override
     public Node getNode() {
         Node root = getJobTemplate()
-        WithXmlAction configure = WithXmlAction.create(context.configureClosure)
 
-        configure.execute(root)
+        if(context.configureClosure) {
+            WithXmlAction configure = WithXmlAction.create(context.configureClosure)
+            configure.execute(root)
+        }
 
         return root
     }
