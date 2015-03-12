@@ -102,6 +102,10 @@ class MemoryJobManagement extends AbstractJobManagement {
         configFile == null ? null : createConfigFileId(configFile)
     }
 
+    @Override
+    void createOrUpdatePromotionConfig(String jobName, String promotionName, String xml) {
+    }
+
     private static String createConfigFileId(ConfigFile configFile) {
         DigestUtils.md5Hex(configFile.name)
     }

@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.promoted__builds.PromotionProcess>
     <actions/>
+    <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
     <canRoam>false</canRoam>
@@ -10,6 +11,6 @@
     <triggers/>
     <conditions/>
     <icon/>
-    <assignedLabel/>
     <buildSteps/>
+    <properties/>
 </hudson.plugins.promoted__builds.PromotionProcess>

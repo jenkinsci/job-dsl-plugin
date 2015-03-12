@@ -22,7 +22,7 @@ import javaposse.jobdsl.dsl.jobs.Promotion
 abstract class Job extends Item {
     String templateName = null // Optional
     String previousNamesRegex = null // Optional
-    List<Promotion> promotions = []
+    private List<Promotion> promotions = []
 
     protected Job(JobManagement jobManagement) {
         super(jobManagement)
@@ -573,6 +573,12 @@ abstract class Job extends Item {
         PromotionContext context = new PromotionContext(jobManagement, name)
         ContextHelper.executeInContext(closure, context)
         promotions.add(context.promotion)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'hudson.plugins.promoted__builds.JobPropertyImpl' / 'activeProcessNames' {
+                string context.name
+            }
+        }
     }
 
     void providedSettings(String settingsName) {
@@ -624,5 +630,9 @@ abstract class Job extends Item {
 
     private Node executeEmptyTemplate() {
         getJobTemplate()
+    }
+
+    public List<Promotion> getPromotions() {
+        Collections.unmodifiableList(promotions)
     }
 }

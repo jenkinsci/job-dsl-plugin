@@ -129,4 +129,6 @@ interface JobManagement {
      *         be found
      */
     String getConfigFileId(ConfigFileType type, String name)
+
+    void createOrUpdatePromotionConfig(String jobName, String promotionName, String xml)
 }
