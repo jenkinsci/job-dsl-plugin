@@ -43,6 +43,10 @@ class ColumnsContext implements Context {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildConsoleColumn')
     }
 
+    void configureProject() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.ConfigureProjectColumn')
+    }
+
     void claim() {
         columnNodes << new Node(null, 'hudson.plugins.claim.ClaimColumn')
     }
