@@ -47,7 +47,7 @@ abstract class Item implements Context {
         throw new UnsupportedOperationException()
     }
 
-    protected Node getJobTemplate() {
+    protected Node loadJobTemplate() {
         new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
     }
 
