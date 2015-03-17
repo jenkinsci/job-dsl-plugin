@@ -6,28 +6,42 @@ import javaposse.jobdsl.dsl.JobManagement
 class CredentialsBindingContext implements Context {
     private final JobManagement jobManagement
 
-    Map<String, String> file = [:]
-    Map<String, String> string = [:]
-    Map<String, String> usernamePassword = [:]
-    Map<String, String> zipFile = [:]
+    final List<Node> nodes = []
 
     CredentialsBindingContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
     }
 
     void file(String variable, String credentials) {
-        this.file[variable] = jobManagement.getCredentialsId(credentials)
+        addSimpleBinding('File', variable, credentials)
     }
 
     void string(String variable, String credentials) {
-        this.string[variable] = jobManagement.getCredentialsId(credentials)
+        addSimpleBinding('String', variable, credentials)
     }
 
     void usernamePassword(String variable, String credentials) {
-        this.usernamePassword[variable] = jobManagement.getCredentialsId(credentials)
+        addSimpleBinding('UsernamePassword', variable, credentials)
+    }
+
+    void usernamePassword(String userVariableName, String passwordVariableName, String credentials) {
+        jobManagement.requireMinimumPluginVersion('credentials-binding', '1.3')
+
+        nodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding' {
+            credentialsId(jobManagement.getCredentialsId(credentials))
+            usernameVariable(userVariableName)
+            passwordVariable(passwordVariableName)
+        }
     }
 
     void zipFile(String variable, String credentials) {
-        this.zipFile[variable] = jobManagement.getCredentialsId(credentials)
+        addSimpleBinding('ZipFile', variable, credentials)
+    }
+
+    private void addSimpleBinding(String type, String variableName, String credentials) {
+        nodes << new NodeBuilder()."org.jenkinsci.plugins.credentialsbinding.impl.${type}Binding" {
+            variable(variableName)
+            credentialsId(jobManagement.getCredentialsId(credentials))
+        }
     }
 }

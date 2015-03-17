@@ -1024,6 +1024,31 @@ class WrapperContextSpec extends Specification {
         }
     }
 
+    def 'call credentials binding with username password multi binding'() {
+        setup:
+        mockJobManagement.getCredentialsId('foo') >> 'bar'
+
+        when:
+        context.credentialsBinding {
+            usernamePassword('A', 'B', 'foo')
+        }
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper'
+            children().size() == 1
+            bindings[0].children().size() == 1
+            with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding'[0]) {
+                children().size() == 3
+                usernameVariable[0].value() == 'A'
+                passwordVariable[0].value() == 'B'
+                credentialsId[0].value() == 'bar'
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('credentials-binding', '1.3')
+    }
+
     def 'call custom tools with no optionals'() {
         when:
         context.customTools(['foo', 'bar'])

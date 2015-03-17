@@ -721,32 +721,7 @@ class WrapperContext implements Context {
         ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper' {
-            'bindings' {
-                context.file.each { key, value ->
-                    'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding' {
-                        variable(key)
-                        credentialsId(value)
-                    }
-                }
-                context.string.each { key, value ->
-                    'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding' {
-                        variable(key)
-                        credentialsId(value)
-                    }
-                }
-                context.usernamePassword.each { key, value ->
-                    'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding' {
-                        variable(key)
-                        credentialsId(value)
-                    }
-                }
-                context.zipFile.each { key, value ->
-                    'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding' {
-                        variable(key)
-                        credentialsId(value)
-                    }
-                }
-            }
+            bindings(context.nodes)
         }
     }
 
