@@ -2268,6 +2268,8 @@ job {
             file(String variable, String credentialsId)
             string(String variable, String credentialsId)
             usernamePassword(String variable, String credentialsId)
+            usernamePassword(String usernameVariable,
+                             String passwordVariable, String credentialsId) // since 1.31
             zipFile(String variable, String credentialsId)
         }
     }
