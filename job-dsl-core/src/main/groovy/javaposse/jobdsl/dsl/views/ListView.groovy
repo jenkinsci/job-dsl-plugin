@@ -68,6 +68,12 @@ class ListView extends View {
         }
     }
 
+    void recurse(boolean shouldRecurse = true) {
+        execute {
+            it / 'recurse' << shouldRecurse
+        }
+    }
+
     static enum StatusFilter {
         ALL, ENABLED, DISABLED
     }

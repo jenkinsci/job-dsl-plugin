@@ -366,6 +366,16 @@ class ListViewSpec extends Specification {
         RegexMatchValue.NAME | '.*'
     }
 
+    def 'recurse folders'() {
+        when:
+        view.recurse()
+
+        then:
+        Node root = view.node
+        root.recurse[0].text() == 'true'
+
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
