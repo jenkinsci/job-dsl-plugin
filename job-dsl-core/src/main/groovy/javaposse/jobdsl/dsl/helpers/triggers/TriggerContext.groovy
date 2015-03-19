@@ -139,7 +139,7 @@ class TriggerContext implements Context {
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
-        PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext()
+        PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
         triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
@@ -148,12 +148,12 @@ class TriggerContext implements Context {
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
             delegate.cron(pullRequestBuilderContext.cron)
             spec pullRequestBuilderContext.cron
-            triggerPhrase pullRequestBuilderContext.triggerPhrase
+            triggerPhrase pullRequestBuilderContext.triggerPhrase ?: ''
             onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase
             useGitHubHooks pullRequestBuilderContext.useGitHubHooks
             permitAll pullRequestBuilderContext.permitAll
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
-            commentFilePath pullRequestBuilderContext.commentFilePath
+            commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
         }
     }
 

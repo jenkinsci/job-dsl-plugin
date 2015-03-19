@@ -300,7 +300,8 @@ class TriggerContextSpec extends Specification {
 
     def 'call pull request trigger with no args'() {
         when:
-        context.pullRequest()
+        context.pullRequest {
+        }
 
         then:
         def pullRequestNode = context.triggerNodes[0]
@@ -368,6 +369,7 @@ class TriggerContextSpec extends Specification {
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.14')
     }
 
     def 'call empty gerrit trigger methods'() {

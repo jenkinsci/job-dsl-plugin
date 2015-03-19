@@ -1366,24 +1366,29 @@ gerrit {
 ### Github Pull Request Trigger
 
 ```groovy
-pullRequest {
-    admin(String admin) // add admin
-    admins(Iterable<String> admins) // add admins
-    userWhitelist(String user) // add user to whitelist
-    userWhitelist(Iterable<String> users) // add users to whitelist
-    orgWhitelist(String organization) // add organization to whitelist
-    orgWhitelist(Iterable<String> organizations) // add organizations to whitelist
-    cron(String cron) // set cron schedule, defaults to 'H/5 * * * *'
-    triggerPhrase(String triggerPhrase) // set phrase to trigger by commenting within the pull request
-    onlyTriggerPhrase(boolean onlyTriggerPhrase = true) // defaults to false if not specified
-    useGitHubHooks(boolean useGithubHooks = true) // defaults to false if not specified
-    permitAll(boolean permitAll = true) // defaults to false if not specified
-    autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) // defaults to false if not specified
-    commentFilePath(String commentFilePath) // post the content of the commentFile on the pull request as comment
+job('example') {
+    triggers {
+        pullRequest {
+            admin(String admin)
+            admins(Iterable<String> admins)
+            userWhitelist(String user)
+            userWhitelist(Iterable<String> users)
+            orgWhitelist(String organization)
+            orgWhitelist(Iterable<String> organizations)
+            cron(String cron)                                 // defaults to 'H/5 * * * *'
+            triggerPhrase(String triggerPhrase)
+            onlyTriggerPhrase(boolean value = true)            // defaults to false
+            useGitHubHooks(boolean useGithubHooks = true)     // defaults to false
+            permitAll(boolean permitAll = true)               // defaults to false
+            autoCloseFailedPullRequests(boolean value = true) // defaults to false
+            commentFilePath(String commentFilePath)           // since 1.31
+        }
+    }
 }
 ```
 
-Builds pull requests from GitHub and will report the results directly to the pull request. Requires the [GitHub pull request builder plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin). (Available since 1.22)
+Builds pull requests from GitHub and will report the results directly to the pull request. Requires the
+[GitHub pull request builder plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin).
 
 The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for details.
 
@@ -1400,9 +1405,9 @@ job('example') {
     }
     triggers {
         pullRequest {
-            admins('USER_ID')
+            admin('USER_ID')
             userWhitelist('you@you.com')
-            orgWhitelist('your_github_org', 'another_org')
+            orgWhitelist(['your_github_org', 'another_org'])
             cron('H/5 * * * *')
             triggerPhrase('Ok to test')
             onlyTriggerPhrase()
@@ -1413,6 +1418,8 @@ job('example') {
     }
 }
 ```
+
+(since 1.22)
 
 ### URL Trigger
 
