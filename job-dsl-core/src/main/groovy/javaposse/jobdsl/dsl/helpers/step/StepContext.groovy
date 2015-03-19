@@ -16,7 +16,7 @@ class StepContext implements Context {
     private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
 
     final List<Node> stepNodes = []
-    private final JobManagement jobManagement
+    protected final JobManagement jobManagement
 
     StepContext(JobManagement jobManagement) {
         this.jobManagement = jobManagement
