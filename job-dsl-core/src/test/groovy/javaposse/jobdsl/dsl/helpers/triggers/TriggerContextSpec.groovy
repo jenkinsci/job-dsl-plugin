@@ -315,6 +315,7 @@ class TriggerContextSpec extends Specification {
             adminlist[0].value() == ''
             whitelist[0].value() == ''
             orgslist[0].value() == ''
+            commentFilePath[0].value() == ''
         }
 
     }
@@ -348,6 +349,7 @@ class TriggerContextSpec extends Specification {
             useGitHubHooks(true)
             permitAll(true)
             autoCloseFailedPullRequests(true)
+            commentFilePath('myCommentFile')
         }
 
         then:
@@ -364,6 +366,7 @@ class TriggerContextSpec extends Specification {
             useGitHubHooks[0].value() == true
             permitAll[0].value() == true
             autoCloseFailedPullRequests[0].value() == true
+            commentFilePath[0].value() == 'myCommentFile'
         }
     }
 

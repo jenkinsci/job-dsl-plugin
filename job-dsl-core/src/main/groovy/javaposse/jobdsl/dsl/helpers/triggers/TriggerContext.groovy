@@ -135,6 +135,7 @@ class TriggerContext implements Context {
      *      <useGitHubHooks>true</useGitHubHooks>
      *      <permitAll>true</permitAll>
      *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
+     *      <commentFilePath>$WORKSPACE/myCommentFile.log</commentFilePath>
      *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
      */
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
@@ -152,6 +153,7 @@ class TriggerContext implements Context {
             useGitHubHooks pullRequestBuilderContext.useGitHubHooks
             permitAll pullRequestBuilderContext.permitAll
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
+            commentFilePath pullRequestBuilderContext.commentFilePath
         }
     }
 

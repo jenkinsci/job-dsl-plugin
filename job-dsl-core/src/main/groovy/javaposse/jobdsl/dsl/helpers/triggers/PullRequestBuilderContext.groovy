@@ -12,6 +12,7 @@ class PullRequestBuilderContext implements Context {
     boolean useGitHubHooks = false
     boolean permitAll = false
     boolean autoCloseFailedPullRequests = false
+    String commentFilePath = ''
 
     void admin(String admin) {
         admins << admin
@@ -45,6 +46,10 @@ class PullRequestBuilderContext implements Context {
 
     void cron(String cron) {
         this.cron = cron
+    }
+
+    void commentFilePath(String commentFilePath) {
+        this.commentFilePath = commentFilePath
     }
 
     void triggerPhrase(String triggerPhrase) {

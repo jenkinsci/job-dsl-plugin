@@ -1379,6 +1379,7 @@ pullRequest {
     useGitHubHooks(boolean useGithubHooks = true) // defaults to false if not specified
     permitAll(boolean permitAll = true) // defaults to false if not specified
     autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) // defaults to false if not specified
+    commentFilePath(String commentFilePath) // post the content of the commentFile on the pull request as comment
 }
 ```
 
