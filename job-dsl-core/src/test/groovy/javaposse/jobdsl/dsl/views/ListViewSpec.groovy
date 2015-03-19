@@ -368,7 +368,7 @@ class ListViewSpec extends Specification {
 
     def 'recurse folders'() {
         when:
-        view.recurse(true)
+        view.recurse()
 
         then:
         Node root = view.node

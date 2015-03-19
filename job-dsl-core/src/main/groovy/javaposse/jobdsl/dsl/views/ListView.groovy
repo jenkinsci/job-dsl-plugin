@@ -68,13 +68,9 @@ class ListView extends View {
         }
     }
 
-    /**
-    * Should we look through folders
-    */
     void recurse(boolean shouldRecurse = true) {
-
         execute {
-          it / 'recurse' << shouldRecurse
+            it / 'recurse' << shouldRecurse
         }
     }
 

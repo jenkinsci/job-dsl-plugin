@@ -42,7 +42,7 @@ listView(String name) { // since 1.30
         claim()            // since 1.29, requires the Claim Plugin
         lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
     }
-    recurse() // Recurse down folders, requires Cloudbees Folder Plugin
+    recurse(boolean shouldRecurse = true) // since 1.31
 }
 view(type: ListView, Closure viewClosure) // since 1.21, deprecated since 1.30
 ```
