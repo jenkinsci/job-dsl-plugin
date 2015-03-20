@@ -22,7 +22,7 @@ class Folder extends Item {
 
     void bundledIcon(String name) {
         withXmlActions << WithXmlAction.create { Node folder ->
-            folder / icon(class:'com.cloudbees.hudson.plugins.folder.icons.BuiltinFolderIcon') {
+            folder / icon(class: 'com.cloudbees.hudson.plugins.folder.icons.BuiltinFolderIcon') {
                 baseName(name)
             }
         }
@@ -30,8 +30,8 @@ class Folder extends Item {
 
     void iconUrl(String iconUrl) {
         withXmlActions << WithXmlAction.create { Node folder ->
-            folder / icon(class:'com.cloudbees.hudson.plugins.folder.icons.UrlFolderIcon') {
-                url(iconUrl) 
+            folder / icon(class: 'com.cloudbees.hudson.plugins.folder.icons.UrlFolderIcon') {
+                url(iconUrl)
             }
         }
     }
