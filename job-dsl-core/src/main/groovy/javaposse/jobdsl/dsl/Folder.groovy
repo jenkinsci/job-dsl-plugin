@@ -20,6 +20,22 @@ class Folder extends Item {
         }
     }
 
+    void bundledIcon(String name) {
+        withXmlActions << WithXmlAction.create { Node folder ->
+            folder / icon(class:'com.cloudbees.hudson.plugins.folder.icons.BuiltinFolderIcon') {
+                baseName(name)
+            }
+        }
+    }
+
+    void iconUrl(String iconUrl) {
+        withXmlActions << WithXmlAction.create { Node folder ->
+            folder / icon(class:'com.cloudbees.hudson.plugins.folder.icons.UrlFolderIcon') {
+                url(iconUrl) 
+            }
+        }
+    }
+
     Node getNode() {
         Node root = new XmlParser().parse(new StringReader(TEMPLATE))
         withXmlActions.each { it.execute(root) }
