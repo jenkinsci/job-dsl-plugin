@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
+import static java.util.UUID.randomUUID
 
 class BuildParametersContext implements Context {
     Map<String, Node> buildParameterNodes = [:]
@@ -276,6 +277,39 @@ class BuildParametersContext implements Context {
                     triggerConcurrentBuilds(context.triggerConcurrentBuilds)
                     ignoreOfflineNodes(false)
                     nodeEligibility(class: "org.jvnet.jenkins.plugins.nodelabelparameter.node.${context.eligibility}")
+                }
+    }
+
+    /**
+     * <net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition>
+     *     <name></name>
+     *     <description></description>
+     *     <uuid></uuid>
+     *     <type>PT_TAG</type>
+     *     <branch></branch>
+     *     <tagFilter>*</tagFilter>
+     *     <sortMode>NONE</sortMode>
+     *     <defaultValue></defaultValue>
+     * </net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition>
+     */
+    void gitParam(String parameterName, @DslContext(GitParamContext) Closure closure = null) {
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+
+        GitParamContext context = new GitParamContext()
+        ContextHelper.executeInContext(closure, context)
+
+        buildParameterNodes[parameterName] = NodeBuilder.newInstance().
+                'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition' {
+                    name(parameterName)
+                    description(context.description)
+                    uuid(randomUUID() as String)
+                    type(context.type.value)
+                    branch(context.branch)
+                    tagFilter(context.tagFilter)
+                    sortMode(context.sortMode)
+                    defaultValue(context.defaultValue)
                 }
     }
 

@@ -1,6 +1,8 @@
 package javaposse.jobdsl.dsl.helpers
 
 import spock.lang.Specification
+import static javaposse.jobdsl.dsl.helpers.GitParamContext.SortMode
+import static javaposse.jobdsl.dsl.helpers.GitParamContext.Type
 
 class BuildParametersContextSpec extends Specification {
     BuildParametersContext context = new BuildParametersContext()
@@ -764,6 +766,78 @@ class BuildParametersContextSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'gitParam already defined'() {
+        when:
+        context.stringParam('paramName')
+        context.gitParam('paramName')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'gitParam name argument cant be null'() {
+        when:
+        context.gitParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'gitParam name argument cant be empty'() {
+        when:
+        context.gitParam('')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'gitParam minimal options'() {
+        when:
+        context.gitParam('paramName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['paramName']) {
+            name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
+            children().size() == 8
+            name.text() == 'paramName'
+            description[0].value() == ''
+            type[0].value() == Type.TAG.value
+            branch[0].value() == ''
+            tagFilter[0].value() == '*'
+            sortMode[0].value() == SortMode.NONE
+            defaultValue[0].value() == ''
+        }
+    }
+
+    def 'gitParam all options'() {
+        when:
+        context.gitParam('sha') {
+            description 'Revision commit SHA'
+            type Type.REVISION
+            branch 'master'
+            tagFilter '*'
+            sortMode SortMode.ASCENDING_SMART
+            defaultValue ''
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['sha']) {
+            name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
+            children().size() == 8
+            name.text() == 'sha'
+            description[0].value() == 'Revision commit SHA'
+            type[0].value() == Type.REVISION.value
+            branch[0].value() == 'master'
+            tagFilter[0].value() == '*'
+            sortMode[0].value() == SortMode.ASCENDING_SMART
+            defaultValue[0].value() == ''
+        }
     }
 
     def 'multiple mixed Param types is just fine'() {
