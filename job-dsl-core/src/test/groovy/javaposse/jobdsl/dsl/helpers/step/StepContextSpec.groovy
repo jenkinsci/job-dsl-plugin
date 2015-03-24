@@ -2451,4 +2451,41 @@ still-another-dsl.groovy'''
         where:
         mode << ['GET', 'POST', 'PUT', 'DELETE']
     }
+
+    def 'call debian package with only required option'() {
+        when:
+        context.debianPackage('package')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder'
+            pathToDebian[0].value() == 'package'
+            signPackage[0].value() == false
+            generateChangelog[0].value() == false
+            buildEvenWhenThereAreNoChanges[0].value() == false
+        }
+
+    }
+
+    def 'call debian package with all options'() {
+        when:
+        context.debianPackage('package') {
+            signPackage(true)
+            generateChangelog(true)
+            buildEvenWhenThereAreNoChanges(true)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder'
+            pathToDebian[0].value() == 'package'
+            signPackage[0].value() == true
+            generateChangelog[0].value() == true
+            buildEvenWhenThereAreNoChanges[0].value() == true
+        }
+
+    }
+
 }

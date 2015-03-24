@@ -1116,4 +1116,30 @@ class StepContext implements Context {
             }
         }
     }
+
+    /**
+     * <ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder plugin="debian-package-builder@1.6.6">
+     *     <pathToDebian>package</pathToDebian>
+     *     <nextVersion></nextVersion>
+     *     <generateChangelog>false</generateChangelog>
+     *     <signPackage>false</signPackage>
+     *     <buildEvenWhenThereAreNoChanges>false</buildEvenWhenThereAreNoChanges>
+     * </ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder>
+     */
+    void debianPackage(String path, @DslContext(DebianContext) Closure closure = null) {
+        Preconditions.checkArgument(!isNullOrEmpty(path), 'path must be specified')
+
+        DebianContext context = new DebianContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder' {
+            pathToDebian(path)
+            if (context.nextVersion != null) {
+                nextVersion(context.nextVersion)
+            }
+            generateChangelog(context.generateChangelog)
+            signPackage(context.signPackage)
+            buildEvenWhenThereAreNoChanges(context.buildEvenWhenThereAreNoChanges)
+        }
+    }
 }
