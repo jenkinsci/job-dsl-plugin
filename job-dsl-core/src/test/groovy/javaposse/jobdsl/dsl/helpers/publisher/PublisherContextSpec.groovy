@@ -3115,6 +3115,46 @@ class PublisherContextSpec extends Specification {
         }
     }
 
+    def 'call plotPlugin with all args'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                title('plot title')
+                yaxis('yaxis title')
+                numBuilds(42)
+                useDescr()
+                keepRecords()
+                exclZero()
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 11
+                title[0].value() == 'plot title'
+                yaxis[0].value() == 'yaxis title'
+                group[0].value() == 'my group'
+                numBuilds[0].value() == 42
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == true
+                keepRecords[0].value() == true
+                exclZero[0].value() == true
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    children().size() == 3
+                    file[0].value() == 'data.prop'
+                    label[0].value() == ''
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+    }
+
     def 'call plotPlugin with all chart styles'() {
         when:
         context.plotBuildData {
