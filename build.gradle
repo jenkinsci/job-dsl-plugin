@@ -47,9 +47,9 @@ subprojects {
 
 project(':job-dsl-core') {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
-            url('http://maven.jenkins-ci.org/content/repositories/releases')
+            url('http://repo.jenkins-ci.org/releases/')
         }
     }
 
