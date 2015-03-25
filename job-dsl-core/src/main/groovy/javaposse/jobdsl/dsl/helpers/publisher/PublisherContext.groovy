@@ -369,8 +369,8 @@ class PublisherContext implements Context {
             plots {
                 plotsContext.plots.each { PlotContext plot ->
                     'hudson.plugins.plot.Plot' {
-                        title()
-                        yaxis()
+                        title(plot.title)
+                        yaxis(plot.yaxis)
                         series {
                             plot.dataSeriesList.each { PlotSeriesContext data ->
                                 'hudson.plugins.plot.PropertiesSeries' {
@@ -381,13 +381,13 @@ class PublisherContext implements Context {
                             }
                         }
                         group(plot.group)
-                        numBuilds()
+                        numBuilds(plot.numBuilds ?: '')
                         csvFileName(plot.dataStore)
                         csvLastModification(0)
                         style(plot.style)
-                        usrDescr(false)
-                        keepRecords(false)
-                        exclZero(false)
+                        useDescr(plot.useDescr)
+                        keepRecords(plot.keepRecords)
+                        exclZero(plot.exclZero)
                     }
                 }
             }

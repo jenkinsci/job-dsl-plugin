@@ -3102,7 +3102,7 @@ class PublisherContextSpec extends Specification {
                 csvFileName[0].value() == 'some.csv'
                 csvLastModification[0].value() == 0
                 style[0].value() == 'line'
-                usrDescr[0].value() == false
+                useDescr[0].value() == false
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
@@ -3139,7 +3139,7 @@ class PublisherContextSpec extends Specification {
                 csvFileName[0].value() == 'some.csv'
                 csvLastModification[0].value() == 0
                 style[0].value() == chart
-                usrDescr[0].value() == false
+                useDescr[0].value() == false
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
