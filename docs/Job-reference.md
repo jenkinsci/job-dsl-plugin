@@ -3877,6 +3877,12 @@ job {
     publishers {
         plotBuildData {
             plot(String group, String dataStore) {
+                title(String title)                         // optional
+                yaxis(String yaxis)                         // optional
+                numBuilds(int numBuilds)                    // optional
+                useDescr(boolean useDescr = true)           // optional
+                keepRecords(boolean keepRecords = true)     // optional
+                exclZero(boolean exclZero = true)           // optional
                 style(String style)                // defaults to 'line'
                 propertiesFile(String fileName) {
                     label(String label)
@@ -3915,6 +3921,24 @@ job {
                 style('bar')
                 propertiesFile('my_data.properties') {
                     label('My Label')
+                }
+            }
+        }
+    }
+}
+
+job {
+    publishers {
+        plotBuildData {
+            plot('Exciting plots', 'excitment.csv') {
+                title('X vs Y')
+                yaxis('Y')
+                numBuilds(42)
+                useDescr()
+                keepRecords()
+                exclZero()
+                propertiesFile('my_data.properties') {
+                    label('Builds')
                 }
             }
         }
