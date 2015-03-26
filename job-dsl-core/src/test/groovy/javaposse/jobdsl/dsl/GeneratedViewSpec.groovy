@@ -19,20 +19,6 @@ class GeneratedViewSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'compareTo'() {
-        when:
-        GeneratedView view = new GeneratedView('test')
-
-        then:
-        view.compareTo('test') == 0
-        view.compareTo('test2') < 0
-        view.compareTo('t') > 0
-        view.compareTo(new GeneratedView('test')) == 0
-        view.compareTo(new GeneratedView('test2')) < 0
-        view.compareTo(new GeneratedView('t')) > 0
-        view.compareTo(2) > 0
-    }
-
     def 'test equals'() {
         when:
         GeneratedView view = new GeneratedView('test')

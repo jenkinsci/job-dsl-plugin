@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl;
 
-public class GeneratedView implements Comparable {
+public class GeneratedView {
     private final String name;
 
     public GeneratedView(String name) {
@@ -12,15 +12,6 @@ public class GeneratedView implements Comparable {
 
     public String getName() {
         return name;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if (o instanceof GeneratedView) {
-            return name.compareTo(((GeneratedView) o).getName());
-        } else {
-            return name.compareTo(o.toString());
-        }
     }
 
     @Override
