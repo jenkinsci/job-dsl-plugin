@@ -1080,6 +1080,45 @@ class StepContextSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    def 'call phase with unsupported condition'(String condition, String version) {
+        setup:
+        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber(version)
+
+        when:
+        context.phase('test', condition) {
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        condition | version
+        'FAILURE' | '1.10'
+        'ALWAYS'  | '1.15'
+    }
+
+    def 'call phase with supported condition'(String condition, String version) {
+        setup:
+        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber(version)
+
+        when:
+        context.phase('test', condition) {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
+            children().size() == 3
+            phaseName[0].value() == 'test'
+            continuationCondition[0].value() == condition
+        }
+
+        where:
+        condition | version
+        'FAILURE' | '1.11'
+        'ALWAYS'  | '1.16'
+    }
+
     def 'call sbt method minimal'() {
         when:
         context.sbt('SBT 0.12.3')

@@ -623,13 +623,21 @@ class StepContext implements Context {
         PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationConditionArg)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
+        VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
+
+        Set<String> validContinuationConditions = new HashSet<String>(VALID_CONTINUATION_CONDITIONS)
+        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.10'))) {
+            validContinuationConditions << 'FAILURE'
+        }
+        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.15'))) {
+            validContinuationConditions << 'ALWAYS'
+        }
+
         Preconditions.checkArgument(phaseContext.phaseName as Boolean, 'A phase needs a name')
         Preconditions.checkArgument(
-                VALID_CONTINUATION_CONDITIONS.contains(phaseContext.continuationCondition),
-                "Continuation Condition needs to be one of these values: ${VALID_CONTINUATION_CONDITIONS.join(', ')}"
+                validContinuationConditions.contains(phaseContext.continuationCondition),
+                "Continuation Condition needs to be one of these values: ${validContinuationConditions.join(', ')}"
         )
-
-        VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
 
         stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName

@@ -1,5 +1,9 @@
 ## Migrating to 1.31
 
+### MultiJob Plugin
+
+Support for version 1.15 and earlier of the MultiJob Plugin is [[deprecated|Deprecation-Policy]] and will be removed.
+
 ### Local Maven Repository Location
 
 The `localRepository` method with a `javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation` argument
