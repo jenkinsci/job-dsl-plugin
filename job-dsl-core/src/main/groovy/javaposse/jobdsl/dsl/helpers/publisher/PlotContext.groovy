@@ -69,4 +69,13 @@ class PlotContext implements Context {
 
         dataSeriesList << plotSeriesContext
     }
+
+    void xmlFile(String fileName, Closure plotSeriesClosure = null) {
+        checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
+
+        PlotSeriesContext plotSeriesContext = new PlotXMLContext(fileName)
+        ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
+
+        dataSeriesList << plotSeriesContext
+    }
 }
