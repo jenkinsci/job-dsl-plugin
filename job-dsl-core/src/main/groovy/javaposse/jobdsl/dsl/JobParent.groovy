@@ -60,6 +60,8 @@ abstract class JobParent extends Script implements DslFactory {
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends Job> T processJob(String name, Class<T> jobClass, Closure closure) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+
         T job = jobClass.newInstance(jm)
         job.name = name
         if (closure) {
@@ -115,6 +117,8 @@ abstract class JobParent extends Script implements DslFactory {
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+
         T view = viewClass.newInstance(jm)
         view.name = name
         if (closure) {
@@ -184,6 +188,8 @@ abstract class JobParent extends Script implements DslFactory {
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected ConfigFile processConfigFile(String name, ConfigFileType configFileType, Closure closure) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+
         ConfigFile configFile = new ConfigFile(configFileType, jm)
         configFile.name = name
         if (closure) {

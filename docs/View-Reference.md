@@ -142,7 +142,7 @@ Create a view that can be divided into sections. Details about the options can b
 [Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin).
 
 ```groovy
-sectionedView('project-summary', type: SectionedView) {
+sectionedView('project-summary') {
     filterBuildQueue()
     filterExecutors()
     sections {
@@ -195,7 +195,13 @@ nestedView(String name) { // since 1.30
 
     // nested view options
     views {
-        view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30
+        listView(String name, Closure closure = null)             // since 1.30
+        sectionedView(String name, Closure closure = null)        // since 1.30
+        nestedView(String name, Closure closure = null)           // since 1.30
+        deliveryPipelineView(String name, Closure closure = null) // since 1.30
+        buildPipelineView(String name, Closure closure = null)    // since 1.30
+        buildMonitorView(String name, Closure closure = null)     // since 1.30
+        view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30, deprecated since 1.31
         view(Map<String, Object> arguments = [:], Closure viewClosure) // deprecated since 1.30
     }
     columns {
@@ -212,7 +218,7 @@ the [Nested View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Nested+View
 ```groovy
 nestedView('project-a') {
     views {
-        view('overview') {
+        listView('overview') {
             jobs {
                 regex('project-A-.*')
             }
@@ -224,7 +230,7 @@ nestedView('project-a') {
                 lastFailure()
             }
         }
-        view('pipeline', type: BuildPipelineView) {
+        buildPipelineView('pipeline') {
             selectedJob('project-a-compile')
         }
     }
@@ -307,7 +313,7 @@ about the options can be found below. Similar to jobs, the view DSL can be exten
 [[configure block|The Configure Block]].
 
 ```groovy
-buildMonitorView('project-A', type: BuildMonitorView) {
+buildMonitorView('project-A') {
     description('All jobs for project A')
     jobs {
         name('release-projectA')
@@ -417,7 +423,7 @@ jobs {
 ### Job Filters
 
 ```groovy
-view(type: ListView) {
+listView {
     jobFilters {
         regex {
             matchType(MatchType matchType) // what to do with matching Jobs
@@ -443,7 +449,7 @@ Possible values for `matchType` are `MatchType.INCLUDE_MATCHED`, `MatchType.INCL
 `Status.UNSTABLE`, `Status.FAILED`, `Status.ABORTED`, `Status.DISABLED` or `Status.STABLE`.
 
 ```groovy
-view('example', type: ListView) {
+listView('example') {
     jobFilters {
         regex {
             matchType(MatchType.EXCLUDE_MATCHED)
@@ -636,7 +642,7 @@ startsWithParameters()
 ### List View Section
 
 ```groovy
-view(type: SectionedView) {
+sectionedView {
     sections {
         listView {
             name(String name)                     // name of the section
@@ -654,7 +660,7 @@ Creates a section containing a list of jobs. Width defaults to `FULL` and alignm
 specified.
 
 ```groovy
-view('example', type: SectionedView) {
+sectionedView('example') {
     sections {
         listView {
             name('project-A')
@@ -680,9 +686,15 @@ view('example', type: SectionedView) {
 ### Views
 
 ```groovy
-view(type: NestedView) {
+nestedView {
     views {
-        view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30
+        listView(String name, Closure closure = null)             // since 1.30
+        sectionedView(String name, Closure closure = null)        // since 1.30
+        nestedView(String name, Closure closure = null)           // since 1.30
+        deliveryPipelineView(String name, Closure closure = null) // since 1.30
+        buildPipelineView(String name, Closure closure = null)    // since 1.30
+        buildMonitorView(String name, Closure closure = null)     // since 1.30
+        view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30, deprecated since 1.31
         view(Map<String, Object> arguments = [:], Closure viewClosure) // deprecated since 1.30
     }
 }
@@ -691,9 +703,9 @@ view(type: NestedView) {
 Creates the nested views. The view methods works like the top-level view method.
 
 ```groovy
-view('example-1', type: NestedView) {
+nestedView('example-1') {
     views {
-        view('overview') {
+        listView('overview') {
             jobs {
                 regex('project-A-.*')
             }
@@ -702,7 +714,7 @@ view('example-1', type: NestedView) {
                 name()
             }
         }
-        view('pipeline', type: BuildPipelineView) {
+        buildPipelineView('pipeline') {
             selectedJob('project-a-compile')
         }
     }
@@ -712,7 +724,7 @@ view('example-1', type: NestedView) {
 ### Columns
 
 ```groovy
-view(type: NestedView) {
+nestedView {
     columns {
         status()
         weather()
@@ -727,7 +739,7 @@ Adds columns to the view. Only the status and weather column are supported.
 ### Pipeline Instances
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     pipelineInstances(int number)
 }
 ```
@@ -735,7 +747,7 @@ view(type: DeliveryPipelineView) {
 Number of pipelines instances showed for each pipeline. Optional, defaults to 3 if omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     pipelineInstances(5)
 }
 ```
@@ -743,7 +755,7 @@ view('example', type: DeliveryPipelineView) {
 ### Aggregated Pipeline
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     showAggregatedPipeline(boolean showAggregatedPipeline = true)
 }
 ```
@@ -752,7 +764,7 @@ Show a aggregated view where each stage shows the latest version being executed.
 omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     showAggregatedPipeline()
 }
 ```
@@ -760,7 +772,7 @@ view('example', type: DeliveryPipelineView) {
 ### Columns
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     columns(int number)
 }
 ```
@@ -768,7 +780,7 @@ view(type: DeliveryPipelineView) {
 Number of columns used for showing pipelines. Optional, defaults to 1 if omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     columns(2)
 }
 ```
@@ -776,7 +788,7 @@ view('example', type: DeliveryPipelineView) {
 ### Sorting
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     sorting(Sorting sorting)
 }
 ```
@@ -785,7 +797,7 @@ Specifies how to sort the pipeline in the view, only applicable for several pipe
 `Sorting.NONE`, `Sorting.TITLE` and `Sorting.LAST_ACTIVITY`. Optional, defaults to `Sorting.NONE` if omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     sorting(Sorting.TITLE)
 }
 ```
@@ -793,7 +805,7 @@ view('example', type: DeliveryPipelineView) {
 ### Avatars
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     showAvatars(boolean showAvatars = true)
 }
 ```
@@ -801,7 +813,7 @@ view(type: DeliveryPipelineView) {
 Show avatar pictures instead of user names. Optional, defaults to `false` if omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     showAvatars()
 }
 ```
@@ -809,7 +821,7 @@ view('example', type: DeliveryPipelineView) {
 ### Update Interval
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     updateInterval(int seconds)
 }
 ```
@@ -817,7 +829,7 @@ view(type: DeliveryPipelineView) {
 Specifies how often the view will be updated. Optional, defaults to 2 if omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     updateInterval(60)
 }
 ```
@@ -825,7 +837,7 @@ view('example', type: DeliveryPipelineView) {
 ### Manual Triggers
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     enableManualTriggers(boolean enable = true)
 }
 ```
@@ -833,7 +845,7 @@ view(type: DeliveryPipelineView) {
 Show a button if a task is manual. Optional, defaults to `false` if omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     enableManualTriggers()
 }
 ```
@@ -841,7 +853,7 @@ view('example', type: DeliveryPipelineView) {
 ### Change Log
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     showChangeLog(boolean showChangeLog = true)
 }
 ```
@@ -849,7 +861,7 @@ view(type: DeliveryPipelineView) {
 Show SCM change log for the first job in the pipeline. Optional, defaults to `false` if omitted.
 
 ```groovy
-view('example', type: DeliveryPipelineView) {
+deliveryPipelineView('example') {
     showChangeLog()
 }
 ```
@@ -857,7 +869,7 @@ view('example', type: DeliveryPipelineView) {
 ### Pipelines
 
 ```groovy
-view(type: DeliveryPipelineView) {
+deliveryPipelineView {
     pipelines {
         component(String name, String initialJob)
         regex(String regex)
@@ -869,14 +881,14 @@ Defines pipelines by either specifying names and start jobs or by regular expres
 multiple times to add different pipelines to the view.
 
 ```groovy
-view('example-1', type: DeliveryPipelineView) {
+deliveryPipelineView('example-1') {
     pipelines {
         component('Sub System A', 'compile-a')
         component('Sub System B', 'compile-b')
     }
 }
 
-view('example-2', type: DeliveryPipelineView) {
+deliveryPipelineView('example-2') {
     pipelines {
         regex(/compile-(.*)/)
     }
