@@ -189,4 +189,14 @@ class MavenJobSpec extends Specification {
         job.node.settings[0].children().size() == 1
         job.node.settings[0].settingsConfigId[0].value() == settingsId
     }
+
+    def 'call publishers'() {
+        when:
+        job.publishers {
+            deployArtifacts()
+        }
+
+        then:
+        job.node.publishers[0].children()[0].name() == 'hudson.maven.RedeployPublisher'
+    }
 }

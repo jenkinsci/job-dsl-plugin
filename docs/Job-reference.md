@@ -205,6 +205,7 @@ freeStyleJob(String name) { // since 1.30
         chucknorris()
         cobertura(String coberturaReportFilePattern, Closure coberturaClosure = null)
         dependencyCheck(String pattern, Closure staticAnalysisClosure = null)
+        deployArtifacts(Closure deployArtifactsClosure = null) // since 1.31 
         downstream(String projectName, String thresholdName = 'SUCCESS')
         downstreamParameterized(Closure downstreamClosure)
         dry(String pattern, highThreshold = 50, normalThreshold = 25,
@@ -4139,6 +4140,40 @@ job('example') {
 ```
 
 (since 1.26)
+
+#### Deploy Maven Artifacts
+
+```groovy
+job {
+    publishers {
+        deployArtifacts {
+            uniqueVersion(boolean uniqueVersion = true)   // defaults to true 
+            evenIfUnstable(boolean evenIfUnstable = true) // defaults to false 
+        }
+    }
+}
+```
+
+Deploy artifacts to a Maven repository. Only available for Maven jobs. Requires the
+[Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin).
+
+```groovy
+job {
+    publishers {
+        deployArtifacts()
+    }
+}
+
+job {
+    publishers {
+        deployArtifacts {
+            evenIfUnstable()
+        }
+    }
+}
+```
+
+(since 1.31)
 
 ### Text Finder
 

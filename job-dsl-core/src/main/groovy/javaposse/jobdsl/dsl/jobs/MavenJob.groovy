@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
+import javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
@@ -47,6 +48,18 @@ class MavenJob extends Job {
         withXmlActions << WithXmlAction.create { Node project ->
             context.wrapperNodes.each {
                 project / 'buildWrappers' << it
+            }
+        }
+    }
+
+    @Override
+    void publishers(@DslContext(MavenPublisherContext) Closure closure) {
+        MavenPublisherContext context = new MavenPublisherContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.publisherNodes.each {
+                project / 'publishers' << it
             }
         }
     }
