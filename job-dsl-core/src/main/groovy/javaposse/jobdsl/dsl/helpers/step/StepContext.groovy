@@ -1059,4 +1059,30 @@ class StepContext implements Context {
             nodeJSInstallationName(installation)
         }
     }
+
+    /**
+     * <ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder>
+     *     <pathToDebian>package</pathToDebian>
+     *     <nextVersion></nextVersion>
+     *     <generateChangelog>false</generateChangelog>
+     *     <signPackage>false</signPackage>
+     *     <buildEvenWhenThereAreNoChanges>false</buildEvenWhenThereAreNoChanges>
+     * </ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder>
+     */
+    void debianPackage(String path, @DslContext(DebianContext) Closure closure = null) {
+        jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
+
+        Preconditions.checkArgument(!isNullOrEmpty(path), 'path must be specified')
+
+        DebianContext context = new DebianContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder' {
+            pathToDebian(path)
+            nextVersion(context.nextVersion ?: '')
+            generateChangelog(context.generateChangelog)
+            signPackage(context.signPackage)
+            buildEvenWhenThereAreNoChanges(context.alwaysBuild)
+        }
+    }
 }

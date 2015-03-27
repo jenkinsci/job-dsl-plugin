@@ -139,6 +139,7 @@ freeStyleJob(String name) { // since 1.30
                       boolean flattenFiles, boolean optionalAllowed,
                       Closure copyArtifactClosure)
         criticalBlock(Closure stepClosure) // since 1.24
+        debianPackage(String path, Closure debianClosure = null) // since 1.31
         downstreamParameterized(Closure downstreamClosure)
         dsl(Closure dslClosure)
         dsl(String scriptText, String removedJobAction = null,
@@ -3066,6 +3067,36 @@ When a job is checked the following conditions must be validated before the job 
 * The last completed build must have resulted in a stable (blue) build.
 
 (Since 1.19)
+
+# Debian Package Builder
+
+```groovy
+job {
+    step {
+        debianPackage(String path) {
+            signPackage(boolean sign = true) // defaults to true
+            generateChangelog(String nextVersion = null, boolean alwaysBuild = false)
+        }
+    }
+}
+```
+
+Requires the [Debian Package Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Debian+Package+Builder+Plugin).
+
+The `path` parameter refers to a path in the workspace where the 'debian' catalog is stored. The plugin will
+automatically install packages required to build Debian packages.
+
+```groovy
+job {
+    step {
+        debianPackage('module') {
+            generateChangelog()
+        }
+    }
+}
+```
+
+(since 1.31)
 
 # [Parameterized Trigger as Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
 

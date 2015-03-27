@@ -2256,4 +2256,41 @@ still-another-dsl.groovy'''
             nodeJSInstallationName[0].value() == 'node (0.0.1)'
         }
     }
+
+    def 'call debian package with only required option'() {
+        when:
+        context.debianPackage('package')
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder'
+            children().size() == 5
+            pathToDebian[0].value() == 'package'
+            nextVersion[0].value() == ''
+            generateChangelog[0].value() == false
+            signPackage[0].value() == true
+            buildEvenWhenThereAreNoChanges[0].value() == false
+        }
+        _ * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
+    }
+
+    def 'call debian package with all options'() {
+        when:
+        context.debianPackage('package') {
+            signPackage(false)
+            generateChangelog('1.0', true)
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder'
+            children().size() == 5
+            pathToDebian[0].value() == 'package'
+            nextVersion[0].value() == '1.0'
+            generateChangelog[0].value() == true
+            signPackage[0].value() == false
+            buildEvenWhenThereAreNoChanges[0].value() == true
+        }
+        _ * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
+    }
 }
