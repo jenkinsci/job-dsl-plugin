@@ -21,17 +21,31 @@ interface DslFactory {
     @Deprecated
     Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
 
+    FreeStyleJob job(String name)
+
     FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure)
+
+    FreeStyleJob freeStyleJob(String name)
 
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure)
 
+    BuildFlowJob buildFlowJob(String name)
+
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)
+
+    MatrixJob matrixJob(String name)
 
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure)
 
+    MavenJob mavenJob(String name)
+
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure)
 
+    MultiJob multiJob(String name)
+
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure)
+
+    WorkflowJob workflowJob(String name)
 
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
@@ -41,20 +55,34 @@ interface DslFactory {
     @Deprecated
     View view(Map<String, Object> arguments, @DslContext(View) Closure closure)
 
+    ListView listView(String name)
+
     ListView listView(String name, @DslContext(ListView) Closure closure)
+
+    SectionedView sectionedView(String name)
 
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure)
 
+    NestedView nestedView(String name)
+
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure)
+
+    DeliveryPipelineView deliveryPipelineView(String name)
 
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure)
 
+    BuildPipelineView buildPipelineView(String name)
+
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure)
+
+    BuildMonitorView buildMonitorView(String name)
 
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure)
 
     @Deprecated
     Folder folder(@DslContext(Folder) Closure closure)
+
+    Folder folder(String name)
 
     Folder folder(String name, @DslContext(Folder) Closure closure)
 
@@ -64,7 +92,11 @@ interface DslFactory {
     @Deprecated
     ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
+    ConfigFile customConfigFile(String name)
+
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure)
+
+    ConfigFile mavenSettingsConfigFile(String name)
 
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
