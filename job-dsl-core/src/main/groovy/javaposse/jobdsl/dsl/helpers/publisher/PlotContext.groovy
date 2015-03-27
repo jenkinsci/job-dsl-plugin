@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslContext
 
 import static com.google.common.base.Preconditions.checkArgument
 
@@ -61,10 +62,19 @@ class PlotContext implements Context {
         this.logarithmic = logarithmic
     }
 
-    void propertiesFile(String fileName, Closure plotSeriesClosure = null) {
+    void propertiesFile(String fileName, @DslContext(PlotSeriesContext) Closure plotSeriesClosure = null) {
         checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
 
-        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName)
+        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName, 'properties', 'PropertiesSeries')
+        ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
+
+        dataSeriesList << plotSeriesContext
+    }
+
+    void xmlFile(String fileName, @DslContext(PlotXMLSeriesContext) Closure plotSeriesClosure = null) {
+        checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
+
+        PlotSeriesContext plotSeriesContext = new PlotXMLSeriesContext(fileName)
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
 
         dataSeriesList << plotSeriesContext

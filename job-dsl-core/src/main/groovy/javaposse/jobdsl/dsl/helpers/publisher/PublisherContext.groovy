@@ -348,6 +348,14 @@ class PublisherContext implements Context {
      *                     <label>test</label>
      *                     <fileType>properties</fileType>
      *                 </hudson.plugins.plot.PropertiesSeries>
+     *                 <hudson.plugins.plot.XMLSeries>
+     *                     <file>XML</file>
+     *                     <label></label>
+     *                     <fileType>xml</fileType>
+     *                     <xpathString></xpathString>
+     *                     <url></url>
+     *                     <nodeTypeString>NODESET</nodeTypeString>
+     *                 </hudson.plugins.plot.XMLSeries>
      *             </series>
      *             <group>test</group>
      *             <numBuilds/>
@@ -376,10 +384,15 @@ class PublisherContext implements Context {
                         yaxis(plot.yAxis ?: '')
                         series {
                             plot.dataSeriesList.each { PlotSeriesContext data ->
-                                'hudson.plugins.plot.PropertiesSeries' {
+                                "hudson.plugins.plot.${data.seriesType}" {
                                     file(data.fileName)
                                     label(data.label ?: '')
-                                    fileType('properties')
+                                    fileType(data.fileType)
+                                    if (data instanceof PlotXMLSeriesContext) {
+                                        xpathString(data.xpath ?: '')
+                                        url(data.url ?: '')
+                                        nodeTypeString(data.nodeType)
+                                    }
                                 }
                             }
                         }
