@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
-import static javaposse.jobdsl.dsl.helpers.GitParamContext.SortMode
-import static javaposse.jobdsl.dsl.helpers.GitParamContext.Type
 
 class BuildParametersContextSpec extends Specification {
-    BuildParametersContext context = new BuildParametersContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    BuildParametersContext context = new BuildParametersContext(jobManagement)
 
     def 'base booleanParam usage'() {
         when:
@@ -805,23 +805,25 @@ class BuildParametersContextSpec extends Specification {
             children().size() == 8
             name.text() == 'paramName'
             description[0].value() == ''
-            type[0].value() == Type.TAG.value
+            UUID.fromString(uuid[0].value() as String)
+            type[0].value() == 'PT_TAG'
             branch[0].value() == ''
-            tagFilter[0].value() == '*'
-            sortMode[0].value() == SortMode.NONE
+            tagFilter[0].value() == ''
+            sortMode[0].value() == 'NONE'
             defaultValue[0].value() == ''
         }
+        _ * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
     }
 
     def 'gitParam all options'() {
         when:
         context.gitParam('sha') {
-            description 'Revision commit SHA'
-            type Type.REVISION
-            branch 'master'
-            tagFilter '*'
-            sortMode SortMode.ASCENDING_SMART
-            defaultValue ''
+            description('Revision commit SHA')
+            type('REVISION')
+            branch('master')
+            tagFilter('*')
+            sortMode('ASCENDING_SMART')
+            defaultValue('foo')
         }
 
         then:
@@ -832,12 +834,14 @@ class BuildParametersContextSpec extends Specification {
             children().size() == 8
             name.text() == 'sha'
             description[0].value() == 'Revision commit SHA'
-            type[0].value() == Type.REVISION.value
+            UUID.fromString(uuid[0].value() as String)
+            type[0].value() == 'PT_REVISION'
             branch[0].value() == 'master'
             tagFilter[0].value() == '*'
-            sortMode[0].value() == SortMode.ASCENDING_SMART
-            defaultValue[0].value() == ''
+            sortMode[0].value() == 'ASCENDING_SMART'
+            defaultValue[0].value() == 'foo'
         }
+        _ * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
     }
 
     def 'multiple mixed Param types is just fine'() {

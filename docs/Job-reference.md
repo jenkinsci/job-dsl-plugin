@@ -46,7 +46,7 @@ freeStyleJob(String name) { // since 1.30
                      String description = null)
         choiceParam(String parameterName, List<String> options, String description = null)
         fileParam(String fileLocation, String description = null)
-        gitParam(String parameterName, Closure closure = null)
+        gitParam(String parameterName, Closure closure = null) // since 1.31
         labelParam(String parameterName, Closure closure = null) // since 1.30
         listTagsParam(String parameterName, String scmUrl, String tagFilterRegex,
                       boolean sortNewestFirst = false, boolean sortZtoA = false,
@@ -5127,37 +5127,41 @@ job('example-2') {
 (since 1.30)
 
 ### Git Parameter
+
 ```groovy
 job {
     parameters {
         gitParam(String name) {
             description(String description)   // empty by default
-            type(Type type)                   // 'TAG' by default, could also be 'BRANCH', 'BRANCH_OR_TAG', 'REVISION' 
+            type(String type)                 // defaults to 'TAG'
             branch(String branch)             // empty by default
-            tagFilter(String tagFilter)       // all by default
-            sortMode(SortMode sortMode)       // 'NONE' by default, could also be 'ASCENDING_SMART', 'DESCENDING_SMART', 'ASCENDING', 'DESCENDING'
+            tagFilter(String tagFilter)       // empty by default
+            sortMode(SortMode sortMode)       // defaults to 'NONE'
             defaultValue(String defaultValue) // empty by default
         }
     }
 }
 ```
 
-Allows you to assign git tag or revision as parameter in Parametrized builds. Requires the
+Allows you to assign a Git tag or revision as parameter in parametrized builds. Requires the
 [Git Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Parameter+Plugin).
 
-```groovy
-import static javaposse.jobdsl.dsl.helpers.GitParamContext.Type
+The `type` parameter can be one of `'TAG'`, `'BRANCH'`, `'BRANCH_TAG'` or `'REVISION'`. The `sortMode` can be either
+`'NONE'`, `'ASCENDING_SMART'`, `'DESCENDING_SMART'`, `'ASCENDING'` or `'DESCENDING'`.
 
-job {
+```groovy
+job('example') {
     parameters {
         gitParam('sha') {
-            description 'Revision commit SHA'
-            type Type.REVISION
-            branch 'master'
+            description('Revision commit SHA')
+            type('REVISION')
+            branch('master')
         }
     }
 }
 ```
+
+(since 1.31)
 
 # Workflow Definitions
 

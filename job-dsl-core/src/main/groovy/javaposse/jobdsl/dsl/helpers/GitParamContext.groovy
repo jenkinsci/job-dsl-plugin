@@ -2,19 +2,29 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.Context
 
+import static com.google.common.base.Preconditions.checkArgument
+
 final class GitParamContext implements Context {
-    String description = ''
-    Type type = Type.TAG
-    String branch = ''
-    String tagFilter = '*'
-    SortMode sortMode = SortMode.NONE
-    String defaultValue = ''
+    private static final Set<String> VALID_TYPES = [
+            'TAG', 'BRANCH', 'BRANCH_TAG', 'REVISION'
+    ]
+    private static final Set<String> VALID_SORT_MODES = [
+            'NONE', 'ASCENDING_SMART', 'DESCENDING_SMART', 'ASCENDING', 'DESCENDING'
+    ]
+
+    String description
+    String type = 'TAG'
+    String branch
+    String tagFilter
+    String sortMode = 'NONE'
+    String defaultValue
 
     void description(String description) {
         this.description = description
     }
 
-    void type(Type type) {
+    void type(String type) {
+        checkArgument(VALID_TYPES.contains(type), "type must be one of ${VALID_TYPES.join(', ')}")
         this.type = type
     }
 
@@ -26,31 +36,12 @@ final class GitParamContext implements Context {
         this.tagFilter = tagFilter
     }
 
-    void sortMode(SortMode sortMode) {
+    void sortMode(String sortMode) {
+        checkArgument(VALID_SORT_MODES.contains(sortMode), "sortMode must be one of ${VALID_SORT_MODES.join(', ')}")
         this.sortMode = sortMode
     }
 
     void defaultValue(String defaultValue) {
         this.defaultValue = defaultValue
-    }
-
-    static enum Type {
-        TAG('PT_TAG'),
-        BRANCH('PT_BRANCH'),
-        BRANCH_OR_TAG('PT_BRANCH_TAG'),
-        REVISION('PT_REVISION')
-
-        Type(String value) {
-            this.value = value
-        }
-        private final String value
-    }
-
-    static enum SortMode {
-        NONE,
-        ASCENDING_SMART,
-        DESCENDING_SMART,
-        ASCENDING,
-        DESCENDING
     }
 }
