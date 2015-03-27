@@ -3944,7 +3944,6 @@ job {
                     label(String label)
                 }
                 xmlFile(String fileName) {
-                    label(String label)
                     nodeType(String nodeType)                   // defaults to 'NODESET'
                     url(String url)
                     xpath(String xpath)

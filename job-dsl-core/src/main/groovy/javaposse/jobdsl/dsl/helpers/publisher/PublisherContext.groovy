@@ -388,11 +388,10 @@ class PublisherContext implements Context {
                                     file(data.fileName)
                                     label(data.label ?: '')
                                     fileType(data.fileType)
-
-                                    if (data.seriesType == 'XMLSeries') {
-                                        nodeTypeString(data.nodeType ?: '')
-                                        url(data.url ?: '')
+                                    if (data instanceof PlotXMLSeriesContext) {
                                         xpathString(data.xpath ?: '')
+                                        url(data.url ?: '')
+                                        nodeTypeString(data.nodeType)
                                     }
                                 }
                             }

@@ -4,9 +4,9 @@ import javaposse.jobdsl.dsl.Context
 
 class PlotSeriesContext implements Context {
     final String fileName
+    final String fileType
+    final String seriesType
     String label
-    String fileType
-    String seriesType
 
     PlotSeriesContext(String fileName, String fileType, String seriesType) {
         this.fileName = fileName
