@@ -1,5 +1,34 @@
 ## Migrating to 1.31
 
+### Nested Views
+
+The views closure of the nested view type has been changed to use the same method signatures than the top-level factory
+methods.
+
+DSL prior to 1.31
+```groovy
+nestedView('project-a') {
+    views {
+        view('overview') {
+        }
+        view('pipeline', type: BuildPipelineView) {
+        }
+    }
+}
+```
+
+DSL since 1.31
+```groovy
+nestedView('project-a') {
+    views {
+        listView('overview') {
+        }
+        buildPipelineView('pipeline') {
+        }
+    }
+}
+```
+
 ### MultiJob Plugin
 
 Support for version 1.15 and earlier of the MultiJob Plugin is [[deprecated|Deprecation-Policy]] and will be removed.
