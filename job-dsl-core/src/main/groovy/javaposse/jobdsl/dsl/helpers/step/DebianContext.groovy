@@ -3,25 +3,18 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.Context
 
 class DebianContext implements Context {
-    String nextVersion
     boolean generateChangelog
-    boolean signPackage
-    boolean buildEvenWhenThereAreNoChanges
+    String nextVersion
+    boolean alwaysBuild
+    boolean signPackage = true
 
-    void nextVersion(String nextVersion) {
+    void generateChangelog(String nextVersion = null, boolean alwaysBuild = false) {
+        this.generateChangelog = true
         this.nextVersion = nextVersion
+        this.alwaysBuild = alwaysBuild
     }
 
-    void generateChangelog(boolean generateChangelog) {
-        this.generateChangelog = generateChangelog
-    }
-
-    void signPackage(boolean signPackage) {
+    void signPackage(boolean signPackage = true) {
         this.signPackage = signPackage
     }
-
-    void buildEvenWhenThereAreNoChanges(boolean buildEvenWhenThereAreNoChanges) {
-        this.buildEvenWhenThereAreNoChanges = buildEvenWhenThereAreNoChanges
-    }
-
 }

@@ -139,7 +139,7 @@ freeStyleJob(String name) { // since 1.30
                       boolean flattenFiles, boolean optionalAllowed,
                       Closure copyArtifactClosure)
         criticalBlock(Closure stepClosure) // since 1.24
-        debianPackage(String path, Closure debianClosure)
+        debianPackage(String path, Closure debianClosure = null) // since 1.31
         downstreamParameterized(Closure downstreamClosure)
         dsl(Closure dslClosure)
         dsl(String scriptText, String removedJobAction = null,
@@ -3045,21 +3045,35 @@ When a job is checked the following conditions must be validated before the job 
 
 (Since 1.19)
 
-# [Debian Package Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Debian+Package+Builder+Plugin)
+# Debian Package Builder
 
 ```groovy
-debianPackage(String path, Closure debianClosure) {
-    signPackage(true) // Sign package with GPG (key configured in Jenkins settings)
-    generateChangelog(false) // Build changelog from Git
-    buildEvenWhenThereAreNoChanges(false) // Build package if no changes has been made in SCM
+job {
+    step {
+        debianPackage(String path) {
+            signPackage(boolean sign = true) // defaults to true
+            generateChangelog(String nextVersion = null, boolean alwaysBuild = false)
+        }
+    }
 }
 ```
 
-Supports <a href="https://wiki.jenkins-ci.org/display/JENKINS/Debian+Package+Builder+Plugin">the Debian PackageBuilder Plugin</a>.
+Requires the [Debian Package Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Debian+Package+Builder+Plugin).
 
-Path refers to a path in the workspace where the 'debian' catalog is stored.
+The `path` parameter refers to a path in the workspace where the 'debian' catalog is stored. The plugin will
+automatically install packages required to build Debian packages.
 
-The plugin will automatically install packages required to build Debian packages.
+```groovy
+job {
+    step {
+        debianPackage('module') {
+            generateChangelog()
+        }
+    }
+}
+```
+
+(since 1.31)
 
 # [Parameterized Trigger as Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
 

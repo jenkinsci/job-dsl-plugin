@@ -2457,35 +2457,35 @@ still-another-dsl.groovy'''
         context.debianPackage('package')
 
         then:
-        context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder'
+            children().size() == 5
             pathToDebian[0].value() == 'package'
-            signPackage[0].value() == false
+            nextVersion[0].value() == ''
             generateChangelog[0].value() == false
+            signPackage[0].value() == true
             buildEvenWhenThereAreNoChanges[0].value() == false
         }
-
+        _ * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
     }
 
     def 'call debian package with all options'() {
         when:
         context.debianPackage('package') {
-            signPackage(true)
-            generateChangelog(true)
-            buildEvenWhenThereAreNoChanges(true)
+            signPackage(false)
+            generateChangelog('1.0', true)
         }
 
         then:
-        context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder'
+            children().size() == 5
             pathToDebian[0].value() == 'package'
-            signPackage[0].value() == true
+            nextVersion[0].value() == '1.0'
             generateChangelog[0].value() == true
+            signPackage[0].value() == false
             buildEvenWhenThereAreNoChanges[0].value() == true
         }
-
+        _ * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
     }
-
 }

@@ -1118,7 +1118,7 @@ class StepContext implements Context {
     }
 
     /**
-     * <ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder plugin="debian-package-builder@1.6.6">
+     * <ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder>
      *     <pathToDebian>package</pathToDebian>
      *     <nextVersion></nextVersion>
      *     <generateChangelog>false</generateChangelog>
@@ -1127,6 +1127,8 @@ class StepContext implements Context {
      * </ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder>
      */
     void debianPackage(String path, @DslContext(DebianContext) Closure closure = null) {
+        jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
+
         Preconditions.checkArgument(!isNullOrEmpty(path), 'path must be specified')
 
         DebianContext context = new DebianContext()
@@ -1134,12 +1136,10 @@ class StepContext implements Context {
 
         stepNodes << new NodeBuilder().'ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder' {
             pathToDebian(path)
-            if (context.nextVersion != null) {
-                nextVersion(context.nextVersion)
-            }
+            nextVersion(context.nextVersion ?: '')
             generateChangelog(context.generateChangelog)
             signPackage(context.signPackage)
-            buildEvenWhenThereAreNoChanges(context.buildEvenWhenThereAreNoChanges)
+            buildEvenWhenThereAreNoChanges(context.alwaysBuild)
         }
     }
 }
