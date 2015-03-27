@@ -14,16 +14,46 @@ class PlotContext implements Context {
     final String group
     final String dataStore
     final List<PlotSeriesContext> dataSeriesList = []
+    String title
+    String yAxis
     String style = 'line'
+    Integer numberOfBuilds
+    boolean useDescriptions
+    boolean keepRecords
+    boolean excludeZero
 
     PlotContext(String group, String dataStore) {
         this.group = group
         this.dataStore = dataStore
     }
 
+    void title(String title) {
+        this.title = title
+    }
+
+    void yAxis(String yAxis) {
+        this.yAxis = yAxis
+    }
+
     void style(String style) {
         checkArgument(STYLE.contains(style), "style must be one of ${STYLE.join(', ')}")
         this.style = style
+    }
+
+    void numberOfBuilds(int numberOfBuilds) {
+        this.numberOfBuilds = numberOfBuilds
+    }
+
+    void useDescriptions(boolean useDescriptions = true) {
+        this.useDescriptions = useDescriptions
+    }
+
+    void keepRecords(boolean keepRecords = true) {
+        this.keepRecords = keepRecords
+    }
+
+    void excludeZero(boolean excludeZero = true) {
+        this.excludeZero = excludeZero
     }
 
     void propertiesFile(String fileName, Closure plotSeriesClosure = null) {

@@ -357,11 +357,14 @@ class PublisherContext implements Context {
      *             <useDescr>false</useDescr>
      *             <keepRecords>false</keepRecords>
      *             <exclZero>false</exclZero>
+     *             <logarithmic>false</logarithmic>
      *         </hudson.plugins.plot.Plot>
      *     </plots>
      * </hudson.plugins.plot.PlotPublisher>
      */
-    void plotBuildData(Closure plotsClosure) {
+    void plotBuildData(@DslContext(PlotsContext) Closure plotsClosure) {
+        jobManagement.requireMinimumPluginVersion('plot', '1.9')
+
         PlotsContext plotsContext = new PlotsContext()
         ContextHelper.executeInContext(plotsClosure, plotsContext)
 
@@ -369,8 +372,8 @@ class PublisherContext implements Context {
             plots {
                 plotsContext.plots.each { PlotContext plot ->
                     'hudson.plugins.plot.Plot' {
-                        title()
-                        yaxis()
+                        title(plot.title ?: '')
+                        yaxis(plot.yAxis ?: '')
                         series {
                             plot.dataSeriesList.each { PlotSeriesContext data ->
                                 'hudson.plugins.plot.PropertiesSeries' {
@@ -381,13 +384,14 @@ class PublisherContext implements Context {
                             }
                         }
                         group(plot.group)
-                        numBuilds()
+                        numBuilds(plot.numberOfBuilds ?: '')
                         csvFileName(plot.dataStore)
                         csvLastModification(0)
                         style(plot.style)
-                        usrDescr(false)
-                        keepRecords(false)
-                        exclZero(false)
+                        useDescr(plot.useDescriptions)
+                        keepRecords(plot.keepRecords)
+                        exclZero(plot.excludeZero)
+                        logarithmic(false)
                     }
                 }
             }

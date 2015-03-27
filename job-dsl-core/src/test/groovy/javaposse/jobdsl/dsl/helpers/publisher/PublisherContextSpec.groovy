@@ -3094,7 +3094,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 11
+                children().size() == 12
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3102,9 +3102,10 @@ class PublisherContextSpec extends Specification {
                 csvFileName[0].value() == 'some.csv'
                 csvLastModification[0].value() == 0
                 style[0].value() == 'line'
-                usrDescr[0].value() == false
+                useDescr[0].value() == false
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
+                logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3113,6 +3114,49 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with all args'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                title('plot title')
+                yAxis('yaxis title')
+                numberOfBuilds(42)
+                useDescriptions()
+                keepRecords()
+                excludeZero()
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value() == 'plot title'
+                yaxis[0].value() == 'yaxis title'
+                group[0].value() == 'my group'
+                numBuilds[0].value() == 42
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == true
+                keepRecords[0].value() == true
+                exclZero[0].value() == true
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    children().size() == 3
+                    file[0].value() == 'data.prop'
+                    label[0].value() == ''
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with all chart styles'() {
@@ -3131,7 +3175,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 11
+                children().size() == 12
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3139,9 +3183,10 @@ class PublisherContextSpec extends Specification {
                 csvFileName[0].value() == 'some.csv'
                 csvLastModification[0].value() == 0
                 style[0].value() == chart
-                usrDescr[0].value() == false
+                useDescr[0].value() == false
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
+                logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3150,6 +3195,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
 
         where:
         chart << ['area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall']
