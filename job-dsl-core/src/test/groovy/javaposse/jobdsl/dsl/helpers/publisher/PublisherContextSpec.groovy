@@ -3127,6 +3127,7 @@ class PublisherContextSpec extends Specification {
                 useDescriptions()
                 keepRecords()
                 excludeZero()
+                logarithmic()
                 propertiesFile('data.prop')
             }
         }
@@ -3147,7 +3148,7 @@ class PublisherContextSpec extends Specification {
                 useDescr[0].value() == true
                 keepRecords[0].value() == true
                 exclZero[0].value() == true
-                logarithmic[0].value() == false
+                logarithmic[0].value() == true
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
