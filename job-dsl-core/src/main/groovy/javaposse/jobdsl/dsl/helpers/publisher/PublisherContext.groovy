@@ -163,6 +163,22 @@ class PublisherContext implements Context {
     }
 
     /**
+     * <hudson.maven.RedeployPublisher>
+     *     <id/>
+     *     <uniqueVersion>true</uniqueVersion>
+     *     <evenIfUnstable>false</evenIfUnstable>
+     * </hudson.maven.RedeployPublisher>
+     *
+     */
+     void uploadMavenArtifacts(Boolean isUniqueVersion = true, Boolean uploadEvenIfUnstable = false) {
+        publisherNodes << new NodeBuilder().'hudson.maven.RedeployPublisher' {
+              id()
+              uniqueVersion(isUniqueVersion.toString())
+              evenIfUnstable(uploadEvenIfUnstable.toString())
+        }
+    }
+
+    /**
      * <hudson.tasks.junit.JUnitResultArchiver>
      *     <testResults>build/test/*.xml</testResults>
      *     <keepLongStdio>true</keepLongStdio>

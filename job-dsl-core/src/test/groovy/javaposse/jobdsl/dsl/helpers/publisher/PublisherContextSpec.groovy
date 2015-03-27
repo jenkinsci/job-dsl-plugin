@@ -179,6 +179,19 @@ class PublisherContextSpec extends Specification {
         archiveNode.allowEmptyArchive.isEmpty()
     }
 
+    def 'call uploadMavenArtifacts with no options'() {
+        when:
+        context.uploadMavenArtifacts()
+        
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.maven.RedeployPublisher'
+            children().size() == 3
+            uniqueVersion[0].value() == 'true'
+            evenIfUnstable[0].value() == 'false'
+        }
+    }
+
     def 'call deprecated junit archive with all args'() {
         when:
         context.archiveJunit('include/*', true, true, true)
