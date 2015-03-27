@@ -473,7 +473,7 @@ abstract class Job extends Item {
     }
 
     void parameters(@DslContext(BuildParametersContext) Closure closure) {
-        BuildParametersContext context = new BuildParametersContext()
+        BuildParametersContext context = new BuildParametersContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

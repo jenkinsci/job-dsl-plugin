@@ -1,9 +1,11 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BuildParametersContextSpec extends Specification {
-    BuildParametersContext context = new BuildParametersContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    BuildParametersContext context = new BuildParametersContext(jobManagement)
 
     def 'base booleanParam usage'() {
         when:
@@ -764,6 +766,82 @@ class BuildParametersContextSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'gitParam already defined'() {
+        when:
+        context.stringParam('paramName')
+        context.gitParam('paramName')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'gitParam name argument cant be null'() {
+        when:
+        context.gitParam(null)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    def 'gitParam name argument cant be empty'() {
+        when:
+        context.gitParam('')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'gitParam minimal options'() {
+        when:
+        context.gitParam('paramName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['paramName']) {
+            name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
+            children().size() == 8
+            name.text() == 'paramName'
+            description[0].value() == ''
+            UUID.fromString(uuid[0].value() as String)
+            type[0].value() == 'PT_TAG'
+            branch[0].value() == ''
+            tagFilter[0].value() == ''
+            sortMode[0].value() == 'NONE'
+            defaultValue[0].value() == ''
+        }
+        _ * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
+    }
+
+    def 'gitParam all options'() {
+        when:
+        context.gitParam('sha') {
+            description('Revision commit SHA')
+            type('REVISION')
+            branch('master')
+            tagFilter('*')
+            sortMode('ASCENDING_SMART')
+            defaultValue('foo')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['sha']) {
+            name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
+            children().size() == 8
+            name.text() == 'sha'
+            description[0].value() == 'Revision commit SHA'
+            UUID.fromString(uuid[0].value() as String)
+            type[0].value() == 'PT_REVISION'
+            branch[0].value() == 'master'
+            tagFilter[0].value() == '*'
+            sortMode[0].value() == 'ASCENDING_SMART'
+            defaultValue[0].value() == 'foo'
+        }
+        _ * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
     }
 
     def 'multiple mixed Param types is just fine'() {

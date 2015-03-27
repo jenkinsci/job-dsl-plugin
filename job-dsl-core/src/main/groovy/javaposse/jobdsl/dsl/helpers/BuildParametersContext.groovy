@@ -3,14 +3,21 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
+import static java.util.UUID.randomUUID
 
 class BuildParametersContext implements Context {
+    private final JobManagement jobManagement
+
     Map<String, Node> buildParameterNodes = [:]
 
-    /**
+    BuildParametersContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
+/**
      * <project>
      *     <properties>
      *         <hudson.model.ParametersDefinitionProperty>
@@ -276,6 +283,41 @@ class BuildParametersContext implements Context {
                     triggerConcurrentBuilds(context.triggerConcurrentBuilds)
                     ignoreOfflineNodes(false)
                     nodeEligibility(class: "org.jvnet.jenkins.plugins.nodelabelparameter.node.${context.eligibility}")
+                }
+    }
+
+    /**
+     * <net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition>
+     *     <name></name>
+     *     <description></description>
+     *     <uuid></uuid>
+     *     <type>PT_TAG</type>
+     *     <branch></branch>
+     *     <tagFilter>*</tagFilter>
+     *     <sortMode>NONE</sortMode>
+     *     <defaultValue></defaultValue>
+     * </net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition>
+     */
+    void gitParam(String parameterName, @DslContext(GitParamContext) Closure closure = null) {
+        jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
+
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNull(parameterName, 'parameterName cannot be null')
+        checkArgument(parameterName.length() > 0)
+
+        GitParamContext context = new GitParamContext()
+        ContextHelper.executeInContext(closure, context)
+
+        buildParameterNodes[parameterName] = NodeBuilder.newInstance().
+                'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition' {
+                    name(parameterName)
+                    description(context.description ?: '')
+                    uuid(randomUUID().toString())
+                    type("PT_$context.type")
+                    branch(context.branch ?: '')
+                    tagFilter(context.tagFilter ?: '')
+                    sortMode(context.sortMode)
+                    defaultValue(context.defaultValue ?: '')
                 }
     }
 

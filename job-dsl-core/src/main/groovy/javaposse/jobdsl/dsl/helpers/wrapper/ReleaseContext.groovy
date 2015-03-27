@@ -65,7 +65,7 @@ class ReleaseContext implements Context {
     }
 
     void parameters(@DslContext(BuildParametersContext) Closure parametersClosure) {
-        BuildParametersContext parametersContext = new BuildParametersContext()
+        BuildParametersContext parametersContext = new BuildParametersContext(jobManagement)
         ContextHelper.executeInContext(parametersClosure, parametersContext)
         params.addAll(parametersContext.buildParameterNodes.values())
     }
