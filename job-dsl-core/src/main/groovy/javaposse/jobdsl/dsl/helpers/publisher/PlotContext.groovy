@@ -21,6 +21,7 @@ class PlotContext implements Context {
     boolean useDescriptions
     boolean keepRecords
     boolean excludeZero
+    boolean logarithmic
 
     PlotContext(String group, String dataStore) {
         this.group = group
@@ -54,6 +55,10 @@ class PlotContext implements Context {
 
     void excludeZero(boolean excludeZero = true) {
         this.excludeZero = excludeZero
+    }
+
+    void logarithmic(boolean logarithmic = true) {
+        this.logarithmic = logarithmic
     }
 
     void propertiesFile(String fileName, Closure plotSeriesClosure = null) {

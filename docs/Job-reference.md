@@ -3938,6 +3938,7 @@ job {
                 useDescriptions(boolean useDescriptions = true) // defaults to false
                 excludeZero(boolean excludeZero = true)         // defaults to false
                 keepRecords(boolean keepRecords = true)         // defaults to false
+                logarithmic(bollean logarithmic = true)         // defaults to false
                 propertiesFile(String fileName) {
                     label(String label)
                 }
@@ -3991,6 +3992,7 @@ job {
                 useDescriptions()
                 keepRecords()
                 excludeZero()
+                logarithmic()
                 propertiesFile('my_data.properties') {
                     label('Builds')
                 }

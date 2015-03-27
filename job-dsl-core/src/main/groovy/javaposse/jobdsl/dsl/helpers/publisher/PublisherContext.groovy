@@ -391,7 +391,7 @@ class PublisherContext implements Context {
                         useDescr(plot.useDescriptions)
                         keepRecords(plot.keepRecords)
                         exclZero(plot.excludeZero)
-                        logarithmic(false)
+                        logarithmic(plot.logarithmic)
                     }
                 }
             }
