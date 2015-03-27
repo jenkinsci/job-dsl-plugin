@@ -24,37 +24,37 @@ abstract class JobParent extends Script implements DslFactory {
     List<String> queueToBuild = []
 
     @Override
-    FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure) {
+    FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure = null) {
         freeStyleJob(name, closure)
     }
 
     @Override
-    FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure) {
+    FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure = null) {
         processJob(name, FreeStyleJob, closure)
     }
 
     @Override
-    BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure) {
+    BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
         processJob(name, BuildFlowJob, closure)
     }
 
     @Override
-    MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure) {
+    MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure = null) {
         processJob(name, MatrixJob, closure)
     }
 
     @Override
-    MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure) {
+    MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure = null) {
         processJob(name, MavenJob, closure)
     }
 
     @Override
-    MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure) {
+    MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
         processJob(name, MultiJob, closure)
     }
 
     @Override
-    WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure) {
+    WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
         processJob(name, WorkflowJob, closure)
     }
 
@@ -62,7 +62,9 @@ abstract class JobParent extends Script implements DslFactory {
     protected <T extends Job> T processJob(String name, Class<T> jobClass, Closure closure) {
         T job = jobClass.newInstance(jm)
         job.name = name
-        job.with(closure)
+        if (closure) {
+            job.with(closure)
+        }
         referencedJobs << job
         job
     }
@@ -82,32 +84,32 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
-    ListView listView(String name, @DslContext(ListView) Closure closure) {
+    ListView listView(String name, @DslContext(ListView) Closure closure = null) {
         processView(name, ListView, closure)
     }
 
     @Override
-    SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure) {
+    SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
 
     @Override
-    NestedView nestedView(String name, @DslContext(NestedView) Closure closure) {
+    NestedView nestedView(String name, @DslContext(NestedView) Closure closure = null) {
         processView(name, NestedView, closure)
     }
 
     @Override
-    DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure) {
+    DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         processView(name, DeliveryPipelineView, closure)
     }
 
     @Override
-    BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure) {
+    BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
 
     @Override
-    BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure) {
+    BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
     }
 
@@ -115,7 +117,9 @@ abstract class JobParent extends Script implements DslFactory {
     protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
         T view = viewClass.newInstance(jm)
         view.name = name
-        view.with(closure)
+        if (closure) {
+            view.with(closure)
+        }
         referencedViews << view
         view
     }
@@ -145,21 +149,23 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
-    Folder folder(String name, @DslContext(Folder) Closure closure) {
+    Folder folder(String name, @DslContext(Folder) Closure closure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
 
         Folder folder = new Folder(jm)
         folder.name = name
-        folder.with(closure)
+        if (closure) {
+            folder.with(closure)
+        }
         referencedJobs << folder
         folder
     }
 
-    ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure) {
+    ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.Custom, closure)
     }
 
-    ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure) {
+    ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.MavenSettings, closure)
     }
 
@@ -180,7 +186,9 @@ abstract class JobParent extends Script implements DslFactory {
     protected ConfigFile processConfigFile(String name, ConfigFileType configFileType, Closure closure) {
         ConfigFile configFile = new ConfigFile(configFileType, jm)
         configFile.name = name
-        configFile.with(closure)
+        if (closure) {
+            configFile.with(closure)
+        }
         referencedConfigFiles << configFile
         configFile
     }

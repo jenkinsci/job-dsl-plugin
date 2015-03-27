@@ -51,7 +51,19 @@ class JobParentSpec extends Specification {
     def 'list view'() {
         when:
         View view = parent.listView('test') {
+            description('foo')
         }
+
+        then:
+        view.name == 'test'
+        view instanceof ListView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+    }
+
+    def 'list view without closure'() {
+        when:
+        View view = parent.listView('test')
 
         then:
         view.name == 'test'
@@ -75,7 +87,19 @@ class JobParentSpec extends Specification {
     def 'build pipeline view'() {
         when:
         View view = parent.buildPipelineView('test') {
+            description('foo')
         }
+
+        then:
+        view.name == 'test'
+        view instanceof BuildPipelineView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+    }
+
+    def 'build pipeline view without closure'() {
+        when:
+        View view = parent.buildPipelineView('test')
 
         then:
         view.name == 'test'
@@ -99,7 +123,19 @@ class JobParentSpec extends Specification {
     def 'build monitor view'() {
         when:
         View view = parent.buildMonitorView('test') {
+            description('foo')
         }
+
+        then:
+        view.name == 'test'
+        view instanceof BuildMonitorView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+    }
+
+    def 'build monitor view without closure'() {
+        when:
+        View view = parent.buildMonitorView('test')
 
         then:
         view.name == 'test'
@@ -123,7 +159,19 @@ class JobParentSpec extends Specification {
     def 'sectioned view'() {
         when:
         View view = parent.sectionedView('test') {
+            description('foo')
         }
+
+        then:
+        view.name == 'test'
+        view instanceof SectionedView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+    }
+
+    def 'sectioned view without closure'() {
+        when:
+        View view = parent.sectionedView('test')
 
         then:
         view.name == 'test'
@@ -147,7 +195,19 @@ class JobParentSpec extends Specification {
     def 'nested view'() {
         when:
         View view = parent.nestedView('test') {
+            description('foo')
         }
+
+        then:
+        view.name == 'test'
+        view instanceof NestedView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+    }
+
+    def 'nested view without closure'() {
+        when:
+        View view = parent.nestedView('test')
 
         then:
         view.name == 'test'
@@ -171,7 +231,19 @@ class JobParentSpec extends Specification {
     def 'delivery pipeline view'() {
         when:
         View view = parent.deliveryPipelineView('test') {
+            description('foo')
         }
+
+        then:
+        view.name == 'test'
+        view instanceof DeliveryPipelineView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+    }
+
+    def 'delivery pipeline view without closure'() {
+        when:
+        View view = parent.deliveryPipelineView('test')
 
         then:
         view.name == 'test'
@@ -194,7 +266,18 @@ class JobParentSpec extends Specification {
     def 'folder'() {
         when:
         Folder folder = parent.folder('test') {
+            displayName('foo')
         }
+
+        then:
+        folder.name == 'test'
+        parent.referencedJobs.contains(folder)
+        folder.node.displayName[0].text() == 'foo'
+    }
+
+    def 'folder without closure'() {
+        when:
+        Folder folder = parent.folder('test')
 
         then:
         folder.name == 'test'
@@ -230,7 +313,19 @@ class JobParentSpec extends Specification {
     def 'custom config file'() {
         when:
         ConfigFile configFile = parent.customConfigFile('test') {
+            comment('foo')
         }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.Custom
+        configFile.comment == 'foo'
+        parent.referencedConfigFiles.contains(configFile)
+    }
+
+    def 'custom config file without closure'() {
+        when:
+        ConfigFile configFile = parent.customConfigFile('test')
 
         then:
         configFile.name == 'test'
@@ -254,7 +349,19 @@ class JobParentSpec extends Specification {
     def 'Maven settings config file'() {
         when:
         ConfigFile configFile = parent.mavenSettingsConfigFile('test') {
+            comment('foo')
         }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.MavenSettings
+        configFile.comment == 'foo'
+        parent.referencedConfigFiles.contains(configFile)
+    }
+
+    def 'Maven settings config file without closure'() {
+        when:
+        ConfigFile configFile = parent.mavenSettingsConfigFile('test')
 
         then:
         configFile.name == 'test'
