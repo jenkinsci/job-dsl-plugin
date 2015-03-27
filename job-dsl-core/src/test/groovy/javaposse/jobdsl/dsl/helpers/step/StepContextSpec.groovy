@@ -1825,6 +1825,20 @@ still-another-dsl.groovy'''
         'dsl'                 | 'job { name "test" }'
     }
 
+    def 'JobManagement should be accessible from ConditionalStep when using Categories'() {
+        when:
+        use(ArbitraryCategory) {
+            context.conditionalSteps {
+                condition {
+                    status('FAILURE', 'SUCCESS')
+                }
+                useJobManagement('credentials')
+            }
+        }
+        then:
+        notThrown(MissingPropertyException)
+    }
+
     def 'environmentVariables are added'() {
         when:
         context.environmentVariables {
