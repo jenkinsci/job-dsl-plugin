@@ -3202,6 +3202,89 @@ class PublisherContextSpec extends Specification {
         chart << ['area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall']
     }
 
+    def 'call plotPlugin with a xml series'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                xmlFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
+                    children().size() == 6
+                    file[0].value() == 'data.prop'
+                    label[0].value() == ''
+                    fileType[0].value() == 'xml'
+                    nodeTypeString[0].value() == 'NODESET'
+                    url[0].value() == ''
+                    xpathString[0].value() == ''
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with full xml series'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                xmlFile('data.prop') {
+                    label('some label')
+                    nodeType('NODE')
+                    url('http://somewhere')
+                    xpath('an xpath string')
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
+                    children().size() == 6
+                    file[0].value() == 'data.prop'
+                    label[0].value() == 'some label'
+                    fileType[0].value() == 'xml'
+                    nodeTypeString[0].value() == 'NODE'
+                    url[0].value() == 'http://somewhere'
+                    xpathString[0].value() == 'an xpath string'
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
     def 'call plotPlugin without group'() {
         when:
         context.plotBuildData {
