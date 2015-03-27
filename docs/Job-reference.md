@@ -3943,6 +3943,12 @@ job {
                 propertiesFile(String fileName) {
                     label(String label)
                 }
+                xmlFile(String fileName) {
+                    label(String label)
+                    nodeType(String nodeType)                   // defaults to 'NODESET'
+                    url(String url)
+                    xpath(String xpath)
+                }
             }
         }
     }
@@ -3958,6 +3964,8 @@ the workspace root. To avoid conflicts this location needs to be set manually re
 
 The `style` option can be one of `'area'`, `'bar'`, `'bar3d'`, `'line'` (default), `'line3d'`, `'stackedArea'`,
 `'stackedbar'`, `'stackedbar3d'` or `'waterfall'`.
+
+The `nodeType` option can be one of `'NODESET'`, `'NODE'`, `'STRING'`, `'BOOLEAN'`, `'NUMBER'`.
 
 ```groovy
 job {
