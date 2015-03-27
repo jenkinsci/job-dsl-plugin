@@ -182,7 +182,7 @@ class PublisherContextSpec extends Specification {
     def 'call uploadMavenArtifacts with no options'() {
         when:
         context.uploadMavenArtifacts()
-        
+
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.maven.RedeployPublisher'
