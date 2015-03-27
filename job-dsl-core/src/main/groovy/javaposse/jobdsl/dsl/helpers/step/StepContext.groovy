@@ -1118,18 +1118,15 @@ class StepContext implements Context {
     }
 
     /**
-     * <jenkins.plugins.nodejs.NodeJsCommandInterpreter plugin="nodejs@0.2.1">
-     *     <command></command>
-     *     <nodeJSInstallationName></nodeJSInstallationName>
+     * <jenkins.plugins.nodejs.NodeJsCommandInterpreter>
+     *     <command>console.log("Hello World!")</command>
+     *     <nodeJSInstallationName>Node 0.12.0</nodeJSInstallationName>
      * </jenkins.plugins.nodejs.NodeJsCommandInterpreter>
      */
     void nodejsCommand(String commandScript, String installation) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        stepNodes << nodeBuilder.'jenkins.plugins.nodejs.NodeJsCommandInterpreter' {
-            'command' commandScript
-            nodeJSInstallationName installation
+        stepNodes << new NodeBuilder().'jenkins.plugins.nodejs.NodeJsCommandInterpreter' {
+            command(commandScript)
+            nodeJSInstallationName(installation)
         }
-
     }
-
 }

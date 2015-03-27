@@ -156,7 +156,7 @@ freeStyleJob(String name) { // since 1.30
         groovyCommand(String command, String groovyName, Closure groovyClosure = null)
         groovyScriptFile(String fileName, Closure groovyClosure = null)
         groovyScriptFile(String fileName, String groovyName, Closure groovyClosure = null)
-        nodejsCommand(String command, String nodeVersion)
+        nodejsCommand(String command, String nodeVersion) // since 1.31
         httpRequest(String url, Closure closure = null) // since 1.28
         maven(Closure mavenClosure) // since 1.20
         maven(String target = null, String pom = null, Closure configure = null)
@@ -2211,6 +2211,7 @@ job('example') {
 (since 1.27)
 
 ### NodeJS Command
+
 ```groovy
 job {
     steps {
@@ -2220,6 +2221,15 @@ job {
 ```
 
 Executes a NodeJS script. Requires the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin).
+
+```groovy
+job {
+    steps {
+        nodejsCommand('console.log("Hello World!")', 'Node 0.12.0')
+    }
+}
+```
+
 (since 1.31)
 
 ### Golang
