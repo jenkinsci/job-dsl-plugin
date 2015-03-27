@@ -376,10 +376,10 @@ class PublisherContext implements Context {
                         yaxis(plot.yAxis ?: '')
                         series {
                             plot.dataSeriesList.each { PlotSeriesContext data ->
-                                'hudson.plugins.plot.PropertiesSeries' {
+                                "hudson.plugins.plot.${data.seriesType}" {
                                     file(data.fileName)
                                     label(data.label ?: '')
-                                    fileType('properties')
+                                    fileType(data.fileType)
                                 }
                             }
                         }

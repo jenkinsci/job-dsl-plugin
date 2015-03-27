@@ -64,7 +64,7 @@ class PlotContext implements Context {
     void propertiesFile(String fileName, Closure plotSeriesClosure = null) {
         checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
 
-        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName)
+        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName, 'properties', 'PropertiesSeries')
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
 
         dataSeriesList << plotSeriesContext
