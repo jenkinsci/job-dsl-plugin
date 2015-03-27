@@ -28,6 +28,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added support for [Xvfb Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xvfb+Plugin)
  * Enhanced support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
  * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+ * Enhanced support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
  * The enum argument of `localRepository` for the Maven job and context has changed, see [[Migration]]
  * Added partial support for [Plot Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin)
  * Support for the older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin) is deprecated, see [[Migration]]

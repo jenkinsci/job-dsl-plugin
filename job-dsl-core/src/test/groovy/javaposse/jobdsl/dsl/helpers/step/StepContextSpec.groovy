@@ -2243,4 +2243,17 @@ still-another-dsl.groovy'''
         where:
         mode << ['GET', 'POST', 'PUT', 'DELETE']
     }
+
+    def 'call nodejsCommand method'() {
+        when:
+        context.nodejsCommand('var test = require("node");', 'node (0.0.1)')
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'jenkins.plugins.nodejs.NodeJsCommandInterpreter'
+            children().size() == 2
+            command[0].value() == 'var test = require("node");'
+            nodeJSInstallationName[0].value() == 'node (0.0.1)'
+        }
+    }
 }
