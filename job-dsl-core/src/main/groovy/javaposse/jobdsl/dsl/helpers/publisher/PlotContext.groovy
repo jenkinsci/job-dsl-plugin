@@ -14,13 +14,13 @@ class PlotContext implements Context {
     final String group
     final String dataStore
     final List<PlotSeriesContext> dataSeriesList = []
-    String title = ''
-    String yaxis = ''
+    String title
+    String yAxis
     String style = 'line'
-    int numBuilds
-    boolean useDescr = false
-    boolean keepRecords = false
-    boolean exclZero = false
+    Integer numberOfBuilds
+    boolean useDescriptions
+    boolean keepRecords
+    boolean excludeZero
 
     PlotContext(String group, String dataStore) {
         this.group = group
@@ -31,8 +31,8 @@ class PlotContext implements Context {
         this.title = title
     }
 
-    void yaxis(String yaxis) {
-        this.yaxis = yaxis
+    void yAxis(String yAxis) {
+        this.yAxis = yAxis
     }
 
     void style(String style) {
@@ -40,20 +40,20 @@ class PlotContext implements Context {
         this.style = style
     }
 
-    void numBuilds(int numBuilds) {
-        this.numBuilds = numBuilds
+    void numberOfBuilds(int numberOfBuilds) {
+        this.numberOfBuilds = numberOfBuilds
     }
 
-    void useDescr(boolean useDescr = true) {
-        this.useDescr = useDescr
+    void useDescriptions(boolean useDescriptions = true) {
+        this.useDescriptions = useDescriptions
     }
 
     void keepRecords(boolean keepRecords = true) {
         this.keepRecords = keepRecords
     }
 
-    void exclZero(boolean exclZero = true) {
-        this.exclZero = exclZero
+    void excludeZero(boolean excludeZero = true) {
+        this.excludeZero = excludeZero
     }
 
     void propertiesFile(String fileName, Closure plotSeriesClosure = null) {

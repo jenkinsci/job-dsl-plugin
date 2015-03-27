@@ -3877,13 +3877,13 @@ job {
     publishers {
         plotBuildData {
             plot(String group, String dataStore) {
-                title(String title)                         // optional
-                yaxis(String yaxis)                         // optional
-                numBuilds(int numBuilds)                    // optional
-                useDescr(boolean useDescr = true)           // optional
-                keepRecords(boolean keepRecords = true)     // optional
-                exclZero(boolean exclZero = true)           // optional
-                style(String style)                // defaults to 'line'
+                title(String title)
+                numberOfBuilds(int numberOfBuilds)
+                yAxis(String yAxis)
+                style(String style)                             // defaults to 'line'
+                useDescriptions(boolean useDescriptions = true) // defaults to false
+                excludeZero(boolean excludeZero = true)         // defaults to false
+                keepRecords(boolean keepRecords = true)         // defaults to false
                 propertiesFile(String fileName) {
                     label(String label)
                 }
@@ -3932,11 +3932,11 @@ job {
         plotBuildData {
             plot('Exciting plots', 'excitment.csv') {
                 title('X vs Y')
-                yaxis('Y')
-                numBuilds(42)
-                useDescr()
+                yAxis('Y')
+                numberOfBuilds(42)
+                useDescriptions()
                 keepRecords()
-                exclZero()
+                excludeZero()
                 propertiesFile('my_data.properties') {
                     label('Builds')
                 }

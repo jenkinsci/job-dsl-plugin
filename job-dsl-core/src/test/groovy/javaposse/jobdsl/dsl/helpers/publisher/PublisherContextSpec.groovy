@@ -3094,7 +3094,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 11
+                children().size() == 12
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3105,6 +3105,7 @@ class PublisherContextSpec extends Specification {
                 useDescr[0].value() == false
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
+                logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3113,6 +3114,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with all args'() {
@@ -3120,11 +3122,11 @@ class PublisherContextSpec extends Specification {
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 title('plot title')
-                yaxis('yaxis title')
-                numBuilds(42)
-                useDescr()
+                yAxis('yaxis title')
+                numberOfBuilds(42)
+                useDescriptions()
                 keepRecords()
-                exclZero()
+                excludeZero()
                 propertiesFile('data.prop')
             }
         }
@@ -3134,7 +3136,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 11
+                children().size() == 12
                 title[0].value() == 'plot title'
                 yaxis[0].value() == 'yaxis title'
                 group[0].value() == 'my group'
@@ -3145,6 +3147,7 @@ class PublisherContextSpec extends Specification {
                 useDescr[0].value() == true
                 keepRecords[0].value() == true
                 exclZero[0].value() == true
+                logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3153,6 +3156,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with all chart styles'() {
@@ -3171,7 +3175,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 11
+                children().size() == 12
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3182,6 +3186,7 @@ class PublisherContextSpec extends Specification {
                 useDescr[0].value() == false
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
+                logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3190,6 +3195,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
 
         where:
         chart << ['area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall']

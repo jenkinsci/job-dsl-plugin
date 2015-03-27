@@ -4,11 +4,12 @@ import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslContext
 
 class PlotsContext implements Context {
     final List<PlotContext> plots = []
 
-    void plot(String group, String dataStore, Closure plotClosure) {
+    void plot(String group, String dataStore, @DslContext(PlotContext) Closure plotClosure) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(group), 'group must not be null or empty')
         Preconditions.checkArgument(!Strings.isNullOrEmpty(dataStore), 'dataStore must not be null or empty')
 
