@@ -42,6 +42,26 @@ class FolderSpec extends Specification {
         root.description[0].text() == 'test folder'
     }
 
+    def 'bundledIcon'() {
+        when:
+        folder.bundledIcon('test-icon')
+
+        then:
+        Node root = folder.node
+        root.icon.baseName.size() == 1
+        root.icon.baseName[0].text() == 'test-icon'
+    }
+
+    def 'iconUrl'() {
+        when:
+        folder.iconUrl('http://url/to/icon.png')
+
+        then:
+        Node root = folder.node
+        root.icon.url.size() == 1
+        root.icon.url[0].text() == 'http://url/to/icon.png'
+    }
+
     def 'configure'() {
         when:
         folder.configure {
