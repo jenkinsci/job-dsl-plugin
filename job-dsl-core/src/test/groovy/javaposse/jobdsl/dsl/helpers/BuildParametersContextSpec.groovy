@@ -179,20 +179,25 @@ class BuildParametersContextSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'listTagsParam tagFilterRegex argument cant be null'() {
+    def 'listTagsParam tagFilterRegex argument can be null or empty'(String filter) {
         when:
-        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', null)
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', filter)
 
         then:
-        thrown(NullPointerException)
-    }
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            name.text() == 'myParameterName'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text() == ''
+            reverseByDate.text() == 'false'
+            reverseByName.text() == 'false'
+            maxTags.text() == 'all'
+        }
 
-    def 'listTagsParam tagFilterRegex argument cant be empty'() {
-        when:
-        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '')
-
-        then:
-        thrown(IllegalArgumentException)
+        where:
+        filter << [null, '']
     }
 
     def 'listTagsParam already defined'() {
