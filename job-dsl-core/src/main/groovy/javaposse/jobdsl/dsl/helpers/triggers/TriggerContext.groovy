@@ -197,7 +197,7 @@ class TriggerContext implements Context {
      */
     void gerrit(@DslContext(GerritContext) Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
-        GerritContext gerritContext = new GerritContext(jobManagement)
+        GerritContext gerritContext = new GerritContext()
         ContextHelper.executeInContext(contextClosure, gerritContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()

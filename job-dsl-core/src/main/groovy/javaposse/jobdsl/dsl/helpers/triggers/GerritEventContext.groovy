@@ -1,15 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.Context
-import javaposse.jobdsl.dsl.JobManagement
 
 class GerritEventContext implements Context {
-    private final JobManagement jobManagement
     final List<String> eventShortNames = []
-
-    GerritEventContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
-    }
 
     void changeAbandoned() {
         eventShortNames << 'ChangeAbandoned'
@@ -37,10 +31,5 @@ class GerritEventContext implements Context {
 
     void refUpdated() {
         eventShortNames << 'RefUpdated'
-    }
-
-    void propertyMissing(String shortName) {
-        jobManagement.logDeprecationWarning()
-        eventShortNames << shortName
     }
 }

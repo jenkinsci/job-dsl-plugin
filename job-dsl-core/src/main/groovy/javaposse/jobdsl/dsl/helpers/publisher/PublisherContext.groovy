@@ -184,24 +184,6 @@ class PublisherContext implements Context {
         }
     }
 
-    void archiveJunit(String glob, boolean retainLongStdout, boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false) {
-        jobManagement.logDeprecationWarning()
-        archiveJunit(glob) {
-            if (retainLongStdout) {
-                delegate.retainLongStdout()
-            }
-            testDataPublishers {
-                if (allowClaimingOfFailedTests) {
-                    delegate.allowClaimingOfFailedTests()
-                }
-                if (publishTestAttachments) {
-                    delegate.publishTestAttachments()
-                }
-            }
-        }
-    }
-
     /**
      * <xunit>
      *     <types>

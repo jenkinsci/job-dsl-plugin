@@ -302,13 +302,6 @@ class WrapperContext implements Context {
         }
     }
 
-    void xvnc(boolean takeScreenshotAtEndOfBuild) {
-        jobManagement.logDeprecationWarning()
-        xvnc {
-            takeScreenshot(takeScreenshotAtEndOfBuild)
-        }
-    }
-
     /**
      * <org.jenkinsci.plugins.xvfb.XvfbBuildWrapper>
      *     <installationName>xvfb</installationName>

@@ -389,8 +389,8 @@ class TriggerContextSpec extends Specification {
         when:
         context.gerrit {
             events {
-                ChangeMerged
-                DraftPublished
+                changeMerged()
+                draftPublished()
             }
             project('reg_exp:myProject', ['ant:feature-branch', 'plain:origin/refs/mybranch']) // full access
             project('test-project', '**') // simplified
@@ -452,34 +452,12 @@ class TriggerContextSpec extends Specification {
         ]
     }
 
-    def 'call gerrit trigger with deprecated events'(String event) {
-        when:
-        context.gerrit {
-            events {
-                delegate."${event}"
-            }
-        }
-
-        then:
-        with(context.triggerNodes[0].triggerOnEvents[0]) {
-            children().size() == 1
-            children()[0].name() ==
-                    "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${event}Event"
-        }
-
-        where:
-        event << [
-                'ChangeAbandoned', 'ChangeMerged', 'ChangeRestored', 'CommentAdded', 'DraftPublished',
-                'PatchsetCreated', 'RefUpdated'
-        ]
-    }
-
     def 'call gerrit trigger and verify build status value settings'() {
         when:
         context.gerrit {
             events {
-                PatchsetCreated
-                DraftPublished
+                patchsetCreated()
+                draftPublished()
             }
 
             project('test-project', '**')
@@ -500,8 +478,8 @@ class TriggerContextSpec extends Specification {
         when:
         context.gerrit {
             events {
-                PatchsetCreated
-                DraftPublished
+                patchsetCreated()
+                draftPublished()
             }
 
             project('test-project', '**')
