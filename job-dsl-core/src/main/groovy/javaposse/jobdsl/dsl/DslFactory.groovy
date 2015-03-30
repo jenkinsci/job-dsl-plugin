@@ -65,12 +65,14 @@ interface DslFactory extends ViewFactory {
 
     /**
      * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
+     *
      * @param jobName the name of the job to be queued
      */
     void queue(String jobName)
 
     /**
      * Schedule a job to be run later.
+     *
      * @param job the job to be queued
      */
     void queue(Job job)

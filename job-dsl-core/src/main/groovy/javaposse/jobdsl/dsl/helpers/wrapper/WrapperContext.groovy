@@ -24,15 +24,8 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <project>
-     *   <buildWrappers>
-     *     <com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper plugin="job-node-stalker@1.0.1">
-     *       <job>test</job>
-     *       <shareWorkspace>true</shareWorkspace>
-     *     </com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper>
-     *   </buildWrappers>
-
      * Build the job on the same node as another job and optionally use the same workspace as the other job.
+     *
      * @param jobName name of the job
      * @param useSameWorkspace set to <code>true</code> to share the workspace with the given job
      */
@@ -45,27 +38,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <ruby-proxy-object>
-     *     <ruby-object ruby-class="Jenkins::Tasks::BuildWrapperProxy" pluginid="rbenv">
-     *         <pluginid pluginid="rbenv" ruby-class="String">rbenv</pluginid>
-     *         <object ruby-class="RbenvWrapper" pluginid="rbenv">
-     *             <version pluginid="rbenv" ruby-class="String">1.9.3-p484</version>
-     *             <ignore__local__version ruby-class="String" pluginid="rbenv">false</ignore__local__version>
-     *             <gem__list pluginid="rbenv" ruby-class="String">bundler,rake</gem__list>
-     *             <rbenv__root pluginid="rbenv" ruby-class="String">$HOME/.rbenv</rbenv__root>
-     *             <rbenv__repository pluginid="rbenv" ruby-class="String">
-     *                 https://github.com/sstephenson/rbenv.git
-     *             </rbenv__repository>
-     *             <rbenv__revision pluginid="rbenv" ruby-class="String">master</rbenv__revision>
-     *             <ruby__build__repository pluginid="rbenv" ruby-class="String">
-     *                 https://github.com/sstephenson/ruby-build.git
-     *             </ruby__build__repository>
-     *             <ruby__build__revision pluginid="rbenv" ruby-class="String">master</ruby__build__revision>
-     *         </object>
-     *     </ruby-object>
-     * </ruby-proxy-object>
-     */
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
@@ -95,16 +67,6 @@ class WrapperContext implements Context {
      * @param rubySpecification Specification of the required ruby version,
      *                          optionally containing a gemset
      *                          (i.e. ruby-1.9.3, ruby-2.0.0@gemset-foo)
-     *
-     * Generates XML:
-     * <ruby-proxy-object>
-     *   <ruby-object ruby-class="Jenkins::Plugin::Proxies::BuildWrapper" pluginid="rvm">
-     *     <pluginid pluginid="rvm" ruby-class="String">rvm</pluginid>
-     *     <object ruby-class="RvmWrapper" pluginid="rvm">
-     *       <impl pluginid="rvm" ruby-class="String">ruby-1.9.2-p290</impl>
-     *     </object>
-     *   </ruby-object>
-     * </ruby-proxy-object>
      */
     void rvm(String rubySpecification) {
         Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
@@ -137,21 +99,6 @@ class WrapperContext implements Context {
     /**
      * Add a timeout to the build job.
      *
-     * <hudson.plugins.build__timeout.BuildTimeoutWrapper>
-     *     <strategy class="hudson.plugins.build_timeout.impl.ElasticTimeOutStrategy">
-     *        <timeoutPercentage>300</timeoutPercentage>
-     *        <numberOfBuilds>3</numberOfBuilds>
-     *        <timeoutMinutesElasticDefault>60</timeoutMinutesElasticDefault>
-     *     </strategy>
-     *     <operationList>
-     *         <hudson.plugins.build__timeout.operations.FailOperation/>
-     *         <hudson.plugins.build__timeout.operations.AbortOperation/>
-     *         <hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
-     *             <description>arstrst</description>
-     *         </hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
-     *     </operationList>
-     * </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-     *
      * @param timeoutClosure optional closure for configuring the timeout
      */
     @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.12')
@@ -164,29 +111,6 @@ class WrapperContext implements Context {
         node.appendNode('operationList', context.operations)
         wrapperNodes << node
     }
-
-    /*
-    <org.jvnet.hudson.plugins.port__allocator.PortAllocator plugin="port-allocator@1.5">
-        <ports>
-            <org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
-                <name>HTTP</name>
-            </org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
-            <org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
-                <name>8080</name>
-            </org.jvnet.hudson.plugins.port__allocator.DefaultPortType>
-            <org.jvnet.hudson.plugins.port__allocator.GlassFishJmxPortType>
-                <name>JMX_PORT</name>
-                <userName>admin</userName>
-                <password>adminadmin</password>
-            </org.jvnet.hudson.plugins.port__allocator.GlassFishJmxPortType>
-            <org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType>
-                <name>SHUTDOWN_PORT</name>
-                <password>SHUTDOWN</password>
-            </org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType>
-        </ports>
-    </org.jvnet.hudson.plugins.port__allocator.PortAllocator>
-
-     */
 
     void allocatePorts(String[] portsArg, @DslContext(PortsContext) Closure closure = null) {
         PortsContext portContext = new PortsContext()
@@ -232,16 +156,8 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <pre>
-     * {@code
-     * <project>
-     *     <buildWrappers>
-     *         <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
-     *             <user>25899f16-1b91-4656-90cd-3f1c26ef6292</user>
-     *         </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
-     * }
-     * </pre>
      * Provide SSH credentials to builds via a ssh-agent in Jenkins.
+     *
      * @param credentials name of the credentials to use
      */
     void sshAgent(String credentials) {
@@ -255,18 +171,8 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <pre>
-     * {@code
-     * <project>
-     *     <buildWrappers>
-     *         <hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-     *             <colorMapName>xterm</colorMapName>
-     *         </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-     *     </buildWrappers>
-     * </project>
-     * }
-     *
      * Converts ANSI escape codes to colors.
+     *
      * @param colorMap name of colormap to use (eg: xterm)
      */
     void colorizeOutput(String colorMap = 'xterm') {
@@ -276,18 +182,6 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <pre>
-     * {@code
-     * <project>
-     *     <buildWrappers>
-     *         <hudson.plugins.xvnc.Xvnc>
-     *             <takeScreenshot>false</takeScreenshot>
-     *             <useXauthority>true</useXauthority>
-     *         </hudson.plugins.xvnc.Xvnc>
-     *     </buildWrappers>
-     * </project>
-     * }
-     *
      * Runs build under XVNC.
      */
     void xvnc(@DslContext(XvncContext) Closure xvncClosure = null) {
@@ -302,19 +196,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <org.jenkinsci.plugins.xvfb.XvfbBuildWrapper>
-     *     <installationName>xvfb</installationName>
-     *     <screen>1024x768x24</screen>
-     *     <debug>false</debug>
-     *     <timeout>0</timeout>
-     *     <displayNameOffset>1</displayNameOffset>
-     *     <shutdownWithBuild>false</shutdownWithBuild>
-     *     <autoDisplayName>false</autoDisplayName>
-     *     <assignedLabels>xvfb</assignedLabels>
-     *     <parallelBuild>false</parallelBuild>
-     * </org.jenkinsci.plugins.xvfb.XvfbBuildWrapper>
-     */
     void xvfb(String installation, @DslContext(XvfbContext) Closure closure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(installation), 'installation must not be null or empty')
 
@@ -337,18 +218,6 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <pre>
-     * {@code
-     * <project>
-     *     <buildWrappers>
-     *         <hudson.plugins.toolenv.ToolEnvBuildWrapper>
-     *             <vars>ANT_1_8_2_HOME,MAVEN_3_0_HOME,DEFAULT_HOME</vars>
-     *         </hudson.plugins.toolenv.ToolEnvBuildWrapper>
-     *     </buildWrappers>
-     * </project>
-     * }
-     * </pre>
-     *
      * Lets you use "tools" in unusual ways, such as from shell scripts.
      *
      * Note that we do not check for validity of tool names.
@@ -363,23 +232,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <pre>
-     *     {@code
-     * <EnvInjectBuildWrapper>
-     *   <info>
-     *     <propertiesFilePath>some.properties</propertiesFilePath>
-     *     <propertiesContent>REV=14</propertiesContent>
-     *     <scriptFilePath>/test/script.sh</scriptFilePath>
-     *     <scriptContent>echo 5</scriptContent>
-     *     <loadFilesFromMaster>false</loadFilesFromMaster>
-     *   </info>
-     * </EnvInjectBuildWrapper>
-     * }
-     * </pre>
-     * @param envClosure
-     * @return
-     */
     void environmentVariables(@DslContext(WrapperEnvironmentVariableContext) Closure envClosure) {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
@@ -392,18 +244,6 @@ class WrapperContext implements Context {
     }
 
     /**
-     * <pre>
-     * {@code
-     * <project>
-     *     <buildWrappers>
-     *         <EnvInjectPasswordWrapper>
-     *             <injectGlobalPasswords>true</injectGlobalPasswords>
-     *             <passwordEntries/>
-     *         </EnvInjectPasswordWrapper>
-     *     </buildWrappers>
-     * </project>
-     * }
-     *
      * Injects global passwords into the job
      */
     void injectPasswords() {
@@ -414,38 +254,6 @@ class WrapperContext implements Context {
     }
 
     /**
-     * {@code
-     *  <project>
-     *      <buildWrappers>
-     *          <hudson.plugins.release.ReleaseWrapper>
-     *              <releaseVersionTemplate>template</releaseVersionTemplate>
-     *              <doNotKeepLog>true</doNotKeepLog>
-     *              <overrideBuildParameters>false</overrideBuildParameters>
-     *              <parameterDefinitions>
-     *                  <hudson.model.BooleanParameterDefinition>
-     *                      <name>booleanValue</name>
-     *                      <description>ths description of the boolean value</description>
-     *                      <defaultValue>true</defaultValue>
-     *                  </hudson.model.BooleanParameterDefinition>
-     *              </parameterDefinitions>
-     *              <preBuildSteps>
-     *                  <hudson.tasks.Maven>
-     *                      <targets>install</targets>
-     *                      <mavenName>(Default)</mavenName>
-     *                  </hudson.tasks.Maven>
-     *              </preBuildSteps>
-     *              <postBuildSteps>
-     *                  <hudson.tasks.Maven>
-     *                      <targets>site</targets>
-     *                      <mavenName>(Default)</mavenName>
-     *                 </hudson.tasks.Maven>
-     *              </postBuildSteps>
-     *          </hudson.plugins.release.ReleaseWrapper>
-     *      </buildWrappers>
-     *  </project>
-     * }
-     * </pre>
-     *
      * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
      *
      * @param releaseClosure attributes and steps used by the plugin
@@ -477,23 +285,6 @@ class WrapperContext implements Context {
         wrapperNodes << releaseNode
     }
 
-    /**
-     * <project>
-     *     <buildWrappers>
-     *         <hudson.plugins.ws__cleanup.PreBuildCleanup>
-     *             <patterns>
-     *                 <hudson.plugins.ws__cleanup.Pattern>
-     *                     <pattern>*.class</pattern>
-     *                     <type>INCLUDE</type>
-     *                 </hudson.plugins.ws__cleanup.Pattern>
-     *             </patterns>
-     *             <deleteDirs>false</deleteDirs>
-     *             <cleanupParameter/>
-     *             <externalDelete/>
-     *         </hudson.plugins.ws__cleanup.PreBuildCleanup>
-     *     </buildWrappers>
-     * </project>
-     */
     void preBuildCleanup(@DslContext(PreBuildCleanupContext) Closure closure = null) {
         PreBuildCleanupContext context = new PreBuildCleanupContext()
         ContextHelper.executeInContext(closure, context)
@@ -509,16 +300,6 @@ class WrapperContext implements Context {
     /**
      * Configures the configuration for the Log File Size Checker build wrapper.
      * See https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin
-     *
-     * <project>
-     *     <buildWrappers>
-     *         <hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
-     *             <setOwn>true</setOwn>
-     *             <maxLogSize>10</maxLogSize>
-     *             <failBuild>true</failBuild>
-     *         </hudson.plugins.logfilesizechecker.LogfilesizecheckerWrapper>
-     *     </buildWrappers>
-     * </project>
      */
     void logSizeChecker(@DslContext(LogFileSizeCheckerContext) Closure closure = null) {
         LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
@@ -535,14 +316,6 @@ class WrapperContext implements Context {
      * Enables the "Build Name Setter Plugin" build wrapper.
      * See https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin
      *
-     * <project>
-     *     <buildWrappers>
-     *         <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
-     *             <template>#${BUILD_NUMBER} on ${ENV,var="BRANCH"}</template>
-     *         </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
-     *     </buildWrappers>
-     * </project>
-     *
      * @param nameTemplate template defining the build name. Tokens expansion
      *   mechanism is provided by the Token Macro Plugin.
      */
@@ -554,19 +327,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
-     *     <keychainCertificatePairs>
-     *         <com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
-     *             <keychain></keychain>
-     *             <codeSigningIdentity></codeSigningIdentity>
-     *             <varPrefix></varPrefix>
-     *         </com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
-     *     </keychainCertificatePairs>
-     *     <deleteKeychainsAfterBuild>false</deleteKeychainsAfterBuild>
-     *     <overwriteExistingKeychains>false</overwriteExistingKeychains>
-     * </com.sic.plugins.kpp.KPPKeychainsBuildWrapper>
-     */
     void keychains(@DslContext(KeychainsContext) Closure keychainsClosure) {
         KeychainsContext keychainsContext = new KeychainsContext()
         ContextHelper.executeInContext(keychainsClosure, keychainsContext)
@@ -578,22 +338,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper>
-     *     <managedFiles>
-     *         <org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
-     *             <fileId>CustomConfig1417476679249</fileId>
-     *             <targetLocation>/tmp/test.txt</targetLocation>
-     *             <variable>FILE</variable>
-     *         </org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
-     *         <org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
-     *             <fileId>CustomConfig1417476679250</fileId>
-     *             <targetLocation>/tmp/other.txt</targetLocation>
-     *             <variable>OTHER</variable>
-     *         </org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile>
-     *     </managedFiles>
-     * </org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper>
-     */
     void configFiles(@DslContext(ConfigFilesContext) Closure configFilesClosure) {
         ConfigFilesContext configFilesContext = new ConfigFilesContext(jobManagement)
         ContextHelper.executeInContext(configFilesClosure, configFilesContext)
@@ -611,15 +355,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <org.jvnet.hudson.plugins.exclusion.IdAllocator>
-     *     <ids>
-     *         <org.jvnet.hudson.plugins.exclusion.DefaultIdType>
-     *             <name>example</name>
-     *         </org.jvnet.hudson.plugins.exclusion.DefaultIdType>
-     *     </ids>
-     * </org.jvnet.hudson.plugins.exclusion.IdAllocator>
-     */
     void exclusionResources(String... resourceNames) {
         exclusionResources(resourceNames.toList())
     }
@@ -636,12 +371,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <se.diabol.jenkins.pipeline.PipelineVersionContributor>
-     *     <versionTemplate>1.0.${BUILD_NUMBER}</versionTemplate>
-     *     <updateDisplayName>true</updateDisplayName>
-     * </se.diabol.jenkins.pipeline.PipelineVersionContributor>
-     */
     void deliveryPipelineVersion(String template, boolean setDisplayName = false) {
         wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
             versionTemplate(template)
@@ -649,66 +378,26 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
-     * </com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
-     */
     void maskPasswords() {
         wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
     }
 
-    /**
-     * <org.jenkinsci.plugins.builduser.BuildUser>
-     * </org.jenkinsci.plugins.builduser.BuildUser>
-     */
     void buildUserVars() {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
 
-    /**
-     * <jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper>
-     *     <nodeJSInstallationName>NodeJS 0.10.26</nodeJSInstallationName>
-     * </jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper>
-     */
     void nodejs(String installation) {
         wrapperNodes << new NodeBuilder().'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper' {
             nodeJSInstallationName(installation)
         }
     }
 
-    /**
-     * <org.jenkinsci.plugins.golang.GolangBuildWrapper>
-     *     <goVersion>Go 1.3.3</goVersion>
-     * </org.jenkinsci.plugins.golang.GolangBuildWrapper>
-     */
     void golang(String version) {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.golang.GolangBuildWrapper' {
             goVersion(version)
         }
     }
 
-    /**
-     * <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
-     *     <bindings>
-     *         <org.jenkinsci.plugins.credentialsbinding.impl.FileBinding>
-     *             <variable>FOO</variable>
-     *             <credentialsId>b1f273ef-4219-4fa0-9489-53dc08df58ef</credentialsId>
-     *         </org.jenkinsci.plugins.credentialsbinding.impl.FileBinding>
-     *         <org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
-     *             <variable>BAR</variable>
-     *             <credentialsId>b1f273ef-4219-4fa0-9489-53dc08df58ef</credentialsId>
-     *         </org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
-     *         <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
-     *             <variable>BAZ</variable>
-     *             <credentialsId>7725107c-5110-45dc-84b4-2482b75022f1</credentialsId>
-     *         </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
-     *         <org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding>
-     *             <variable>ZIP</variable>
-     *             <credentialsId>b1f273ef-4219-4fa0-9489-53dc08df58ef</credentialsId>
-     *         </org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding>
-     *     </bindings>
-     * </org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
-     */
     void credentialsBinding(@DslContext(CredentialsBindingContext) Closure closure) {
         CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
@@ -718,22 +407,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper>
-     *     <selectedTools>
-     *         <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *             <name>FOO</name>
-     *         </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *         <com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *             <name>BAR</name>
-     *         </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper_-SelectedTool>
-     *     </selectedTools>
-     *     <multiconfigOptions>
-     *         <skipMasterInstallation>false</skipMasterInstallation>
-     *     </multiconfigOptions>
-     *     <convertHomesToUppercase>true</convertHomesToUppercase>
-     * </com.cloudbees.jenkins.plugins.customtools.CustomToolInstallWrapper>
-     */
     void customTools(Iterable<String> tools, @DslContext(CustomToolsContext) Closure closure = null) {
         Preconditions.checkNotNull(tools, 'Please specify some tool names')
 
@@ -755,16 +428,6 @@ class WrapperContext implements Context {
         }
     }
 
-    /**
-     * <org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper>
-     *     <buildSteps>
-     *         <hudson.tasks.Shell>
-     *             <command>echo hello</command>
-     *         </hudson.tasks.Shell>
-     *     </buildSteps>
-     *     <failOnError>false</failOnError>
-     * </org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper>
-     */
     void preScmSteps(@DslContext(PreScmStepsContext) Closure closure) {
         PreScmStepsContext context = new PreScmStepsContext(jobManagement)
         ContextHelper.executeInContext(closure, context)

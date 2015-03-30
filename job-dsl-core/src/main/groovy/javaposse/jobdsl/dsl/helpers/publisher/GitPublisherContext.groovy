@@ -34,15 +34,6 @@ class GitPublisherContext implements Context {
         this.forcePush = forcePush
     }
 
-    /**
-     * <hudson.plugins.git.GitPublisher_-TagToPush>
-     *     <targetRepoName>origin</targetRepoName>
-     *     <tagName>foo-$PIPELINE_VERSION</tagName>
-     *     <tagMessage>Release $PIPELINE_VERSION</tagMessage>
-     *     <createTag>true</createTag>
-     *     <updateTag>false</updateTag>
-     * </hudson.plugins.git.GitPublisher_-TagToPush>
-     */
     void tag(String targetRepo, String name, @DslContext(TagToPushContext) Closure closure = null) {
         checkArgument(!isNullOrEmpty(targetRepo), 'targetRepo must be specified')
         checkArgument(!isNullOrEmpty(name), 'name must be specified')
@@ -59,12 +50,6 @@ class GitPublisherContext implements Context {
         }
     }
 
-    /**
-     * <hudson.plugins.git.GitPublisher_-BranchToPush>
-     *     <targetRepoName>origin</targetRepoName>
-     *     <branchName>master</branchName>
-     * </hudson.plugins.git.GitPublisher_-BranchToPush>
-     */
     void branch(String targetRepo, String name) {
         checkArgument(!isNullOrEmpty(targetRepo), 'targetRepo must be specified')
         checkArgument(!isNullOrEmpty(name), 'name must be specified')

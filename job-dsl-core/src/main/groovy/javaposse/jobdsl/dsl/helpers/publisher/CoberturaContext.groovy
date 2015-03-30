@@ -41,196 +41,58 @@ class CoberturaContext implements Context {
 
     String sourceEncoding = 'ASCII'
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <onlyStable>false</onlyStable>
-     *
-     * @param onlyStable
-     */
     void onlyStable(boolean onlyStable) {
         this.onlyStable = onlyStable
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <failUnhealthy>false</failUnhealthy>
-     *
-     * @param failUnhealthy
-     */
     void failUnhealthy(boolean failUnhealthy) {
         this.failUnhealthy = failUnhealthy
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <failUnstable>false</failUnstable>
-     *
-     * @param failUnstable
-     */
     void failUnstable(boolean failUnstable) {
         this.failUnstable = failUnstable
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <autoUpdateHealth>false</autoUpdateHealth>
-     *
-     * @param autoUpdateHealth
-     */
     void autoUpdateHealth(boolean autoUpdateHealth) {
         this.autoUpdateHealth = autoUpdateHealth
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <autoUpdateStability>false</autoUpdateStability>
-     *
-     * @param autoUpdateStability
-     */
     void autoUpdateStability(boolean autoUpdateStability) {
         this.autoUpdateStability = autoUpdateStability
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <zoomCoverageChart>false</failNoReports>
-     *
-     * @param zoomCoverageChart
-     */
     void zoomCoverageChart(boolean zoomCoverageChart) {
         this.zoomCoverageChart = zoomCoverageChart
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <failNoReports>true</failNoReports>
-     *
-     * @param failNoReports
-     */
     void failNoReports(boolean failNoReports) {
         this.failNoReports = failNoReports
     }
 
-    /**
-     * @see target('METHOD')
-     *
-     * @param healthy
-     * @param unhealthy
-     * @param failing
-     */
     void methodTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.METHOD.name(), healthy, unhealthy, failing)
     }
 
-    /**
-     * @see target('LINE')
-     *
-     * @param healthy
-     * @param unhealthy
-     * @param failing
-     */
     void lineTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.LINE.name(), healthy, unhealthy, failing)
     }
 
-    /**
-     * @see target('CONDITIONAL')
-     *
-     * @param healthy
-     * @param unhealthy
-     * @param failing
-     */
     void conditionalTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.CONDITIONAL.name(), healthy, unhealthy, failing)
     }
 
-    /**
-     * @see target('FILES')
-     *
-     * @param healthy
-     * @param unhealthy
-     * @param failing
-     */
     void fileTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.FILES.name(), healthy, unhealthy, failing)
     }
 
-    /**
-     * @see target('CLASSES')
-     *
-     * @param healthy
-     * @param unhealthy
-     * @param failing
-     */
     void classTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.CLASSES.name(), healthy, unhealthy, failing)
     }
 
-    /**
-     * @see target('PACKAGES')
-     *
-     * @param healthy
-     * @param unhealthy
-     * @param failing
-     */
     void packageTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.PACKAGES.name(), healthy, unhealthy, failing)
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <healthyTarget>
-     *     <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
-     *     <entry>
-     *      <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-     *        METHOD
-     *      </hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-     *      <int>8000000</int>
-     *     </entry>
-     *     <targets>
-     *    </healthyTarget>
-     *    <unhealthyTarget>
-     *     <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
-     *     <entry>
-     *      <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-     *        LINE
-     *      </hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-     *      <int>8000000</int>
-     *     </entry>
-     *     <targets>
-     *    </unhealthyTarget>
-     *    <failingTarget>
-     *     <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
-     *     <entry>
-     *      <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-     *        CONDITIONAL
-     *      </hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-     *      <int>7000000</int>
-     *     </entry>
-     *     <targets>
-     *    </failingTarget>
-     *
-     * @param targetType
-     * @param healthy
-     * @param unhealthy
-     * @param failing
-     */
     @PackageScope
     void target(String targetType, Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         checkArgument(TargetType.values().any { it.toString() == targetType },
@@ -246,14 +108,6 @@ class CoberturaContext implements Context {
         ))
     }
 
-    /**
-     * <project>
-     *  <publishers>
-     *   <hudson.plugins.cobertura.CoberturaPublisher>
-     *    <sourceEncoding>UTF-8</sourceEncoding>
-     *
-     * @param sourceEncoding
-     */
     void sourceEncoding(String sourceEncoding) {
         checkNotNull(sourceEncoding, 'Source encoding must not be null!')
         this.sourceEncoding = sourceEncoding

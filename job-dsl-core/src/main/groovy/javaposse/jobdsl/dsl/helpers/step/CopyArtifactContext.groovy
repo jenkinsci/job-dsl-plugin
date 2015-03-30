@@ -15,10 +15,11 @@ class CopyArtifactContext implements Context {
             throw new IllegalStateException('Only one selector can be chosen')
         }
     }
+
     /**
-     * Upstream build that triggered this job
-     * @arg fallback Use "Last successful build" as fallback
-     * @return
+     * Upstream build that triggered this job.
+     *
+     * @param fallback Use "Last successful build" as fallback
      */
     void upstreamBuild(boolean fallback = false) {
         ensureFirst()
@@ -27,26 +28,26 @@ class CopyArtifactContext implements Context {
     }
 
     /**
-     * Latest successful build
-     * @return
+     * Latest successful build.
      */
     void latestSuccessful(boolean stable = false) {
         ensureFirst()
         this.stable = stable
         selectedSelector = 'StatusBuild'
     }
+
     /**
-     * Latest saved build (marked "keep forever")
-     * @return
+     * Latest saved build (marked "keep forever").
      */
     void latestSaved() {
         ensureFirst()
         selectedSelector = 'SavedBuild'
     }
+
     /**
-     * Specified by permalink
+     * Specified by permalink.
+     *
      * @param linkName Values like lastBuild, lastStableBuild
-     * @return
      */
     void permalink(String linkName) {
         ensureFirst()
@@ -55,13 +56,10 @@ class CopyArtifactContext implements Context {
     }
 
     /**
-     * Specific Build
-     * @param buildNumber
-     * @return
+     * Specific Build.
      */
     void buildNumber(int buildNumber) {
         this.buildNumber(Integer.toString(buildNumber))
-
     }
 
     void buildNumber(String buildNumber) {
@@ -71,8 +69,7 @@ class CopyArtifactContext implements Context {
     }
 
     /**
-     * Copy from WORKSPACE of latest completed build
-     * @return
+     * Copy from WORKSPACE of latest completed build.
      */
     void workspace() {
         ensureFirst()
@@ -80,9 +77,7 @@ class CopyArtifactContext implements Context {
     }
 
     /**
-     * Specified by build parameter
-     * @param parameterName
-     * @return
+     * Specified by build parameter.
      */
     void buildParameter(String parameterName) {
         ensureFirst()

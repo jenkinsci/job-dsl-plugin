@@ -42,16 +42,6 @@ class ScmContext implements Context {
 
     /**
      * Generate configuration for Mercurial.
-     *
-     <scm class="hudson.plugins.mercurial.MercurialSCM">
-        <source>http://selenic.com/repo/hello</source>
-        <modules>sample-module1 sample-module2</modules>
-        <subdir>path-to-check-out-into</subdir>
-        <clean>true</clean>
-        <browser class="hudson.plugins.mercurial.browser.HgWeb">
-          <url>http://selenic.com/repo/hello/</url>
-        </browser>
-      </scm>
      */
     void hg(String url, String branch = null, Closure configure = null) {
         validateMulti()
@@ -75,45 +65,6 @@ class ScmContext implements Context {
         scmNodes << scmNode
     }
 
-    /**
-     <hudson.plugins.git.GitSCM>
-       <configVersion>2</configVersion>
-       <userRemoteConfigs>
-         <hudson.plugins.git.UserRemoteConfig>
-           <name/>
-           <refspec/>
-           <url>git@github.com:jenkinsci/job-dsl-plugin.git</url>
-         </hudson.plugins.git.UserRemoteConfig>
-       </userRemoteConfigs>
-       <branches>
-         <hudson.plugins.git.BranchSpec>
-           <name>**</name>
-         </hudson.plugins.git.BranchSpec>
-       </branches>
-       <disableSubmodules>false</disableSubmodules>
-       <recursiveSubmodules>false</recursiveSubmodules>
-       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-       <authorOrCommitter>false</authorOrCommitter>
-       <clean>false</clean>
-       <wipeOutWorkspace>false</wipeOutWorkspace>
-       <pruneBranches>false</pruneBranches>
-       <remotePoll>false</remotePoll>
-       <ignoreNotifyCommit>false</ignoreNotifyCommit>
-       <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
-       <gitTool>Default</gitTool>
-       <submoduleCfg class="list"/>
-       <relativeTargetDir/>
-       <reference/>
-       <excludedRegions/>
-       <excludedUsers/>
-       <gitConfigName/>
-       <gitConfigEmail/>
-       <skipTag>false</skipTag>
-       <useShallowClone>false</useShallowClone>
-       <includedRegions/>
-       <scmName/>
-     </hudson.plugins.git.GitSCM>
-     */
     void git(@DslContext(GitContext) Closure gitClosure) {
         validateMulti()
 
@@ -198,12 +149,6 @@ class ScmContext implements Context {
         scmNodes << gitNode
     }
 
-    /**
-     * @param url
-     * @param branch
-     * @param configure
-     * @return
-     */
     void git(String url, Closure configure = null) {
         git(url, null, configure)
     }
@@ -242,24 +187,6 @@ class ScmContext implements Context {
         }
     }
 
-    /**
-     * <scm class="hudson.scm.SubversionSCM">
-     *     <locations>
-     *         <hudson.scm.SubversionSCM_-ModuleLocation>
-     *             <remote>http://svn/repo</remote>
-     *             <credentialsId>31a56ed2-f7be-4da6-8c91-36a8eebaf016</credentialsId>
-     *             <local>.</local>
-     *             <depthOption>infinity</depthOption>
-     *         </hudson.scm.SubversionSCM_-ModuleLocation>
-     *     </locations>
-     *     <excludedRegions/>
-     *     <includedRegions/>
-     *     <excludedUsers/>
-     *     <excludedRevprop/>
-     *     <excludedCommitMessages/>
-     *     <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
-     * </scm>
-     */
     void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
@@ -302,41 +229,6 @@ class ScmContext implements Context {
         scmNodes << svnNode
     }
 
-    /**
-     <scm class="hudson.plugins.perforce.PerforceSCM">
-       <p4User>rolem</p4User>
-       <p4Passwd></p4Passwd>
-       <p4Port>perforce:1666</p4Port>
-       <p4Client>builds-workspace</p4Client>
-       <projectPath>//depot/webapplication/...
-       //depot/Tools/build/...</projectPath>
-       <projectOptions>noallwrite clobber nocompress unlocked nomodtime rmdir</projectOptions>
-       <p4Exe>p4</p4Exe>
-       <p4SysDrive>C:</p4SysDrive>
-       <p4SysRoot>C:\WINDOWS</p4SysRoot>
-       <useClientSpec>false</useClientSpec>
-       <forceSync>false</forceSync>
-       <alwaysForceSync>false</alwaysForceSync>
-       <dontUpdateServer>false</dontUpdateServer>
-       <disableAutoSync>false</disableAutoSync>
-       <disableSyncOnly>false</disableSyncOnly>
-       <useOldClientName>false</useOldClientName>
-       <updateView>true</updateView>
-       <dontRenameClient>false</dontRenameClient>
-       <updateCounterValue>false</updateCounterValue>
-       <dontUpdateClient>false</dontUpdateClient>
-       <exposeP4Passwd>false</exposeP4Passwd>
-       <wipeBeforeBuild>true</wipeBeforeBuild>
-       <wipeRepoBeforeBuild>false</wipeRepoBeforeBuild>
-       <firstChange>-1</firstChange>
-       <slaveClientNameFormat>${basename}-${nodename}</slaveClientNameFormat>
-       <lineEndValue></lineEndValue>
-       <useViewMask>false</useViewMask>
-       <useViewMaskForPolling>false</useViewMaskForPolling>
-       <useViewMaskForSyncing>false</useViewMaskForSyncing>
-       <pollOnlyOnMaster>true</pollOnlyOnMaster>
-     </scm>
-     */
     void p4(String viewspec, Closure configure = null) {
         p4(viewspec, 'rolem', '', configure)
     }
@@ -394,12 +286,6 @@ class ScmContext implements Context {
         scmNodes << p4Node
     }
 
-    /**
-     * <scm class="hudson.plugins.cloneworkspace.CloneWorkspaceSCM">
-     *   <parentJobName>test-job</parentJobName>
-     *   <criteria>Successful</criteria>
-     * </scm>
-     */
     void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
         checkNotNull(parentProject)
         checkArgument(validCloneWorkspaceCriteria.contains(criteriaArg),
@@ -413,38 +299,6 @@ class ScmContext implements Context {
     }
 
     /**
-     * <scm class="hudson.plugins.clearcase.ClearCaseSCM">
-     *     <changeset>BRANCH</changeset>
-     *     <createDynView>false</createDynView>
-     *     <excludedRegions/>
-     *     <extractLoadRules>false</extractLoadRules>
-     *     <filteringOutDestroySubBranchEvent>false</filteringOutDestroySubBranchEvent>
-     *     <freezeCode>false</freezeCode>
-     *     <loadRules/>
-     *     <loadRulesForPolling/>
-     *     <mkviewOptionalParam/>
-     *     <multiSitePollBuffer>0</multiSitePollBuffer>
-     *     <recreateView>false</recreateView>
-     *     <removeViewOnRename>false</removeViewOnRename>
-     *     <useDynamicView>false</useDynamicView>
-     *     <useOtherLoadRulesForPolling>false</useOtherLoadRulesForPolling>
-     *     <useUpdate>true</useUpdate>
-     *     <viewDrive>/view</viewDrive>
-     *     <viewName>
-     *     Jenkins_${USER_NAME}_${NODE_NAME}_${JOB_NAME}${DASH_WORKSPACE_NUMBER}
-     *     </viewName>
-     *     <viewPath>view</viewPath>
-     *     <branch/>
-     *     <configSpec/>
-     *     <configSpecFileName/>
-     *     <doNotUpdateConfigSpec>false</doNotUpdateConfigSpec>
-     *     <extractConfigSpec>false</extractConfigSpec>
-     *     <label/>
-     *     <refreshConfigSpec>false</refreshConfigSpec>
-     *     <refreshConfigSpecCommand/>
-     *     <useTimeRule>false</useTimeRule>
-     * </scm>
-     *
      * See http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin
      */
     void baseClearCase(@DslContext(ClearCaseContext) Closure closure = null) {
@@ -484,19 +338,6 @@ class ScmContext implements Context {
         }
     }
 
-    /**
-     * <scm class="com.ibm.team.build.internal.hjplugin.RTCScm">
-     *     <overrideGlobal>false</overrideGlobal>
-     *     <timeout>0</timeout>
-     *     <buildTool/>
-     *     <serverURI>https://jazzqual.rsint.net/ccm</serverURI>
-     *     <credentialsId>/>
-     *     <buildType>buildDefinition</buildType>
-     *     <buildWorkspace/>
-     *     <buildDefinition/>
-     *     <avoidUsingToolkit>false</avoidUsingToolkit>
-     * </scm>
-     */
     void rtc(@DslContext(RTCContext) Closure closure) {
         validateMulti()
 

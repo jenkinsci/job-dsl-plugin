@@ -7,13 +7,6 @@ class KeychainsContext implements Context {
     boolean delete = false
     boolean overwrite = false
 
-    /**
-     * <com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
-     *     <keychain></keychain>
-     *     <codeSigningIdentity></codeSigningIdentity>
-     *     <varPrefix></varPrefix>
-     * </com.sic.plugins.kpp.model.KPPKeychainCertificatePair>
-     */
     void keychain(String keychain, String identity, String prefix = '') {
         keychains << new NodeBuilder().'com.sic.plugins.kpp.model.KPPKeychainCertificatePair' {
             delegate.keychain(keychain)

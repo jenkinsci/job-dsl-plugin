@@ -27,6 +27,7 @@ abstract class Job extends Item {
 
     /**
      * Creates a new job configuration, based on the job template referenced by the parameter and stores this.
+     *
      * @param templateName the name of the template upon which to base the new job
      * @return a new graph of groovy.util.Node objects, representing the job configuration structure
      * @throws JobTemplateMissingException
@@ -60,7 +61,7 @@ abstract class Job extends Item {
 
     /**
      * "Restrict where this project can be run"
-     * <assignedNode>FullTools&amp;&amp;RPM&amp;&amp;DC</assignedNode>
+     *
      * @param labelExpression Label of node to use, if null is passed in, the label is cleared out and it can roam
      * @return
      */
@@ -78,19 +79,6 @@ abstract class Job extends Item {
 
     /**
      * Add environment variables to the build.
-     *
-     * <project>
-     *   <properties>
-     *     <EnvInjectJobProperty>
-     *       <info>
-     *         <propertiesContent>TEST=foo BAR=123</propertiesContent>
-     *         <loadFilesFromMaster>false</loadFilesFromMaster>
-     *       </info>
-     *       <on>true</on>
-     *       <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
-     *       <keepBuildVariables>true</keepBuildVariables>
-     *       <contributors/>
-     *     </EnvInjectJobProperty>
      */
     void environmentVariables(@DslContext(EnvironmentVariableContext) Closure envClosure) {
         environmentVariables(null, envClosure)
@@ -116,21 +104,6 @@ abstract class Job extends Item {
         }
     }
 
-    /**
-     * <project>
-     *     <properties>
-     *         <hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-     *             <maxConcurrentPerNode>0</maxConcurrentPerNode>
-     *             <maxConcurrentTotal>0</maxConcurrentTotal>
-     *             <categories>
-     *                 <string>CDH5-repo-update</string>
-     *             </categories>
-     *             <throttleEnabled>true</throttleEnabled>
-     *             <throttleOption>category</throttleOption>
-     *         </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-     *     <properties>
-     * </project>
-     */
     void throttleConcurrentBuilds(@DslContext(ThrottleConcurrentBuildsContext) Closure throttleClosure) {
         ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
         ContextHelper.executeInContext(throttleClosure, throttleContext)
@@ -154,17 +127,6 @@ abstract class Job extends Item {
         }
     }
 
-    /**
-     * <project>
-     *     <properties>
-     *         <org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
-     *             <resourceNames>lock-resource</resourceNames>
-     *             <resourceNamesVar>NAMES</resourceNamesVar>
-     *             <resourceNumber>0</resourceNumber>
-     *         </org.jenkins.plugins.lockableresources.RequiredResourcesProperty>
-     *     <properties>
-     * </project>
-     */
     void lockableResources(String resources, @DslContext(LockableResourcesContext) Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()
         ContextHelper.executeInContext(lockClosure, lockContext)
@@ -182,9 +144,6 @@ abstract class Job extends Item {
         }
     }
 
-    /**
-     * <disabled>true</disabled>
-     */
     void disabled(boolean shouldDisable = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('disabled', shouldDisable)
@@ -192,14 +151,6 @@ abstract class Job extends Item {
         }
     }
 
-    /**
-     * <logRotator>
-     *     <daysToKeep>14</daysToKeep>
-     *     <numToKeep>50</numToKeep>
-     *     <artifactDaysToKeep>5</artifactDaysToKeep>
-     *     <artifactNumToKeep>20</artifactNumToKeep>
-     * </logRotator>
-     */
     void logRotator(int daysToKeepInt = -1, int numToKeepInt = -1,
                    int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -213,13 +164,7 @@ abstract class Job extends Item {
     }
 
     /**
-     * Block build if certain jobs are running
-     * <properties>
-     *     <hudson.plugins.buildblocker.BuildBlockerProperty>
-     *         <useBuildBlocker>true</useBuildBlocker>  <!-- Always true -->
-     *         <blockingJobs>JobA</blockingJobs>
-     *     </hudson.plugins.buildblocker.BuildBlockerProperty>
-     * </properties>
+     * Block build if certain jobs are running.
      */
     void blockOn(Iterable<String> projectNames) {
         blockOn(projectNames.join('\n'))
@@ -227,8 +172,8 @@ abstract class Job extends Item {
 
     /**
      * Block build if certain jobs are running.
+     *
      * @param projectName Can be regular expressions. Newline delimited.
-     * @return
      */
     void blockOn(String projectName) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -241,6 +186,7 @@ abstract class Job extends Item {
 
     /**
      * Name of the JDK installation to use for this job.
+     *
      * @param jdkArg name of the JDK installation to use for this job.
      */
     void jdk(String jdkArg) {
@@ -254,12 +200,6 @@ abstract class Job extends Item {
      * Priority of this job. Requires the
      * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
      * Default value is 100.
-     *
-     * <properties>
-     *     <hudson.queueSorter.PrioritySorterJobProperty plugin="PrioritySorter@1.3">
-     *         <priority>100</priority>
-     *     </hudson.queueSorter.PrioritySorterJobProperty>
-     * </properties>
      */
     void priority(int value) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -337,9 +277,7 @@ abstract class Job extends Item {
     }
 
     /**
-     * Configures the keep Dependencies Flag which can be set in the Fingerprinting action
-     *
-     * <keepDependencies>true</keepDependencies>
+     * Configures the keep Dependencies Flag which can be set in the Fingerprinting action.
      */
     void keepDependencies(boolean keep = true) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -349,9 +287,7 @@ abstract class Job extends Item {
     }
 
     /**
-     * Configures the 'Execute concurrent builds if necessary' flag
-     *
-     * <concurrentBuild>true</concurrentBuild>
+     * Configures the 'Execute concurrent builds if necessary' flag.
      */
     void concurrentBuild(boolean allowConcurrentBuild = true) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -362,20 +298,6 @@ abstract class Job extends Item {
 
     /**
      * Configures the Notification Plugin.
-     *
-     * <properties>
-     *     <com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
-     *         <endpoints>
-     *             <com.tikal.hudson.plugins.notification.Endpoint>
-     *                 <protocol>HTTP</protocol>
-     *                 <format>JSON</format>
-     *                 <url />
-     *                 <event>all</event>
-     *                 <timeout>30000</timeout>
-     *             </com.tikal.hudson.plugins.notification.Endpoint>
-     *         </endpoints>
-     *     </com.tikal.hudson.plugins.notification.HudsonNotificationProperty>
-     * </properties>
      */
     void notifications(@DslContext(NotificationContext) Closure notificationClosure) {
         NotificationContext notificationContext = new NotificationContext(jobManagement)
@@ -388,18 +310,6 @@ abstract class Job extends Item {
         }
     }
 
-    /**
-     * <properties>
-     *     <hudson.plugins.batch__task.BatchTaskProperty>
-     *         <tasks>
-     *             <hudson.plugins.batch__task.BatchTask>
-     *                 <name>Hello World</name>
-     *                 <script>echo Hello World</script>
-     *             </hudson.plugins.batch__task.BatchTask>
-     *         </tasks>
-     *     </hudson.plugins.batch__task.BatchTaskProperty>
-     * </properties>
-     */
     void batchTask(String name, String script) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node batchTaskProperty = project / 'properties' / 'hudson.plugins.batch__task.BatchTaskProperty'
@@ -410,14 +320,6 @@ abstract class Job extends Item {
         }
     }
 
-    /**
-     * <properties>
-     *     <se.diabol.jenkins.pipeline.PipelineProperty>
-     *         <taskName>integration-tests</taskName>
-     *         <stageName>qa</stageName>
-     *     </se.diabol.jenkins.pipeline.PipelineProperty>
-     * </properties>
-     */
     void deliveryPipelineConfiguration(String stageName, String taskName = null) {
         if (stageName || taskName) {
             withXmlActions << WithXmlAction.create { Node project ->

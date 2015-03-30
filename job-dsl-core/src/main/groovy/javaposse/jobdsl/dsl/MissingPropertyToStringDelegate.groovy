@@ -13,7 +13,7 @@ class MissingPropertyToStringDelegate {
         this.root = root
     }
     /**
-     * Make string for div() to do lookup
+     * Make string for div() to do lookup.
      */
     String propertyMissing(String propertyName) {
         LOGGER.fine("Missing ${propertyName}")
