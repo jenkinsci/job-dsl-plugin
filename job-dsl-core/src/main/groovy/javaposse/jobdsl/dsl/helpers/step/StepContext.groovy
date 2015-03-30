@@ -34,6 +34,14 @@ class StepContext implements Context {
         }
     }
 
+    void buildDescription(String regexpStr, String descriptionStr) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        stepNodes << nodeBuilder.'hudson.plugins.descriptionsetter.DescriptionSetterBuilder' {
+            'regexp' regexpStr
+            'description' descriptionStr
+        }
+    }
+
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()
         ContextHelper.executeInContext(gradleClosure, gradleContext)
