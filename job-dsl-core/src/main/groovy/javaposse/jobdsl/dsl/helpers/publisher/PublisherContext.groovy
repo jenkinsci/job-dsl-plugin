@@ -386,8 +386,10 @@ class PublisherContext implements Context {
                             plot.dataSeriesList.each { PlotSeriesContext data ->
                                 "hudson.plugins.plot.${data.seriesType}" {
                                     file(data.fileName)
-                                    label(data.label ?: '')
                                     fileType(data.fileType)
+                                    if (data instanceof PlotPropertiesSeriesContext) {
+                                        label(data.label ?: '')
+                                    }
                                     if (data instanceof PlotXMLSeriesContext) {
                                         xpathString(data.xpath ?: '')
                                         url(data.url ?: '')

@@ -62,10 +62,10 @@ class PlotContext implements Context {
         this.logarithmic = logarithmic
     }
 
-    void propertiesFile(String fileName, @DslContext(PlotSeriesContext) Closure plotSeriesClosure = null) {
+    void propertiesFile(String fileName, @DslContext(PlotPropertiesSeriesContext) Closure plotSeriesClosure = null) {
         checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
 
-        PlotSeriesContext plotSeriesContext = new PlotSeriesContext(fileName, 'properties', 'PropertiesSeries')
+        PlotSeriesContext plotSeriesContext = new PlotPropertiesSeriesContext(fileName)
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
 
         dataSeriesList << plotSeriesContext

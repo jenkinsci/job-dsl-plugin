@@ -3228,9 +3228,8 @@ class PublisherContextSpec extends Specification {
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
-                    children().size() == 6
+                    children().size() == 5
                     file[0].value() == 'data.prop'
-                    label[0].value() == ''
                     fileType[0].value() == 'xml'
                     nodeTypeString[0].value() == 'NODESET'
                     url[0].value() == ''
@@ -3246,7 +3245,6 @@ class PublisherContextSpec extends Specification {
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 xmlFile('data.prop') {
-                    label('some label')
                     nodeType('NODE')
                     url('http://somewhere')
                     xpath('an xpath string')
@@ -3272,9 +3270,8 @@ class PublisherContextSpec extends Specification {
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
-                    children().size() == 6
+                    children().size() == 5
                     file[0].value() == 'data.prop'
-                    label[0].value() == 'some label'
                     fileType[0].value() == 'xml'
                     nodeTypeString[0].value() == 'NODE'
                     url[0].value() == 'http://somewhere'
