@@ -1,9 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-class PlotPropSeriesContext extends PlotSeriesContext {
+class PlotPropertiesSeriesContext extends PlotSeriesContext {
     String label
 
-    PlotPropSeriesContext(String fileName) {
+    PlotPropertiesSeriesContext(String fileName) {
         super(fileName, 'properties', 'PropertiesSeries')
     }
 

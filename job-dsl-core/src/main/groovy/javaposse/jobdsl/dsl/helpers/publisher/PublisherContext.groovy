@@ -387,7 +387,7 @@ class PublisherContext implements Context {
                                 "hudson.plugins.plot.${data.seriesType}" {
                                     file(data.fileName)
                                     fileType(data.fileType)
-                                    if (data instanceof PlotPropSeriesContext) {
+                                    if (data instanceof PlotPropertiesSeriesContext) {
                                         label(data.label ?: '')
                                     }
                                     if (data instanceof PlotXMLSeriesContext) {
