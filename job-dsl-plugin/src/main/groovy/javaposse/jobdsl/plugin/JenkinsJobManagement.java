@@ -263,10 +263,18 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public void requireMinimumPluginVersion(String pluginShortName, String version) {
+    public void requirePlugin(String pluginShortName) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         if (plugin == null) {
             markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be installed");
+        }
+    }
+
+    @Override
+    public void requireMinimumPluginVersion(String pluginShortName, String version) {
+        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        if (plugin == null) {
+            markBuildAsUnstable("version " + version + " or later of plugin '" + pluginShortName + "' needs to be installed");
         } else if (plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version))) {
             markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be updated to version " + version + " or later");
         }

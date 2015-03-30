@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.step
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerContext
 
 class PhaseJobContext implements Context {
@@ -107,14 +108,13 @@ class PhaseJobContext implements Context {
                 gitRevision != null || !props.isEmpty() || nodeLabelParam
     }
 
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void disableJob(boolean disableJob = true) {
-        jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.11')
         this.disableJob = disableJob
     }
 
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void killPhaseCondition(String killPhaseCondition) {
-        jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.11')
-
         Preconditions.checkArgument(
                 VALID_KILL_CONDITIONS.contains(killPhaseCondition),
                 "Kill Phase on Job Result Condition needs to be one of these values: ${VALID_KILL_CONDITIONS.join(',')}"

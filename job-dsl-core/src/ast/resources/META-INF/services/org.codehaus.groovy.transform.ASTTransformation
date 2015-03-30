@@ -1,1 +1,2 @@
 javaposse.jobdsl.dsl.transform.ContextASTTransformation
+javaposse.jobdsl.dsl.transform.PluginASTTransformation

@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
@@ -505,11 +506,10 @@ class StepContext implements Context {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        boolean optionalAllowed,
                        @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
-        jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
-
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
@@ -1069,9 +1069,8 @@ class StepContext implements Context {
      *     <buildEvenWhenThereAreNoChanges>false</buildEvenWhenThereAreNoChanges>
      * </ru.yandex.jenkins.plugins.debuilder.DebianPackageBuilder>
      */
+    @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.6')
     void debianPackage(String path, @DslContext(DebianContext) Closure closure = null) {
-        jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
-
         Preconditions.checkArgument(!isNullOrEmpty(path), 'path must be specified')
 
         DebianContext context = new DebianContext()

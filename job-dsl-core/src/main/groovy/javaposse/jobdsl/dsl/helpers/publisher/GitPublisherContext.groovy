@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
@@ -28,8 +29,8 @@ class GitPublisherContext implements Context {
         this.pushMerge = pushMerge
     }
 
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void forcePush(boolean forcePush = true) {
-        jobManagement.requireMinimumPluginVersion('git', '2.2.6')
         this.forcePush = forcePush
     }
 

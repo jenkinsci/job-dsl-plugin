@@ -56,6 +56,15 @@ job {
 ```
 
 * Use private or protected access modifiers for context and helper methods that should not be exposed to DSL users.
+* Add the `@RequiresPlugin` annotation if the feature needs a specific plugin to be installed in Jenkins.
+
+```groovy
+@RequiresPlugin(id = 'foo', minimumVersion = '1.2')
+void foo(String fooOption) {
+    // your implementation goes here
+}
+```
+
 * Use enum values where appropriate, e.g. when the UI displays a chooser. The enum should be an inner class of the
 context which uses the enum. Use conventions for constants for naming enum values. Add the enum to the implicit imports
 in `DslScriptLoader.createCompilerConfiguration`.
@@ -64,7 +73,7 @@ in `DslScriptLoader.createCompilerConfiguration`.
 class FooContext {
     FooOptions option = FooOptions.FIRST
 
-    def option(FooOptions option) {
+    void option(FooOptions option) {
         this.option = option
     }
 
@@ -82,7 +91,7 @@ of `enableSomeOption(true)`.
 class FooContext {
     boolean foo
 
-    def foo(boolean foo = true) {
+    void foo(boolean foo = true) {
         this.foo = foo
     }
 }
@@ -95,19 +104,19 @@ class FooContext {
     Map<String, String> jvmOptions = [:]
     List<String> args = []
 
-    def jvmOption(String key, String value) {
+    void jvmOption(String key, String value) {
         jvmOptions[key] = value
     }
 
-    def jvmOptions(Map<String, String> options) {
+    void jvmOptions(Map<String, String> options) {
         jvmOptions.putAll(options)
     }
 
-    def arg(String arg) {
+    void arg(String arg) {
         args << arg
     }
 
-    def args(String... args) {
+    void args(String... args) {
         this.args.addAll(args)
     }
 }

@@ -78,6 +78,10 @@ class MemoryJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    void requirePlugin(String pluginShortName) {
+    }
+
+    @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
     }
 

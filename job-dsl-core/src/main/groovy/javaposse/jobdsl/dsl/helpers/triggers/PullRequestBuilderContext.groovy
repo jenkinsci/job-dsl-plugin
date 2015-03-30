@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class PullRequestBuilderContext implements Context {
     private final JobManagement jobManagement
@@ -55,9 +56,8 @@ class PullRequestBuilderContext implements Context {
         this.cron = cron
     }
 
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
     void commentFilePath(String commentFilePath) {
-        jobManagement.requireMinimumPluginVersion('ghprb', '1.14')
-
         this.commentFilePath = commentFilePath
     }
 

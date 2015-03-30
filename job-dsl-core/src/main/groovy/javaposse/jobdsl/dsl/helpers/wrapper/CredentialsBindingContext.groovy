@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class CredentialsBindingContext implements Context {
     private final JobManagement jobManagement
@@ -24,9 +25,8 @@ class CredentialsBindingContext implements Context {
         addSimpleBinding('UsernamePassword', variable, credentials)
     }
 
+    @RequiresPlugin(id = 'credentials-binding', minimumVersion = '1.3')
     void usernamePassword(String userVariableName, String passwordVariableName, String credentials) {
-        jobManagement.requireMinimumPluginVersion('credentials-binding', '1.3')
-
         nodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding' {
             credentialsId(jobManagement.getCredentialsId(credentials))
             usernameVariable(userVariableName)

@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class WrapperContext implements Context {
@@ -153,9 +154,8 @@ class WrapperContext implements Context {
      *
      * @param timeoutClosure optional closure for configuring the timeout
      */
+    @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.12')
     void timeout(@DslContext(TimeoutContext) Closure timeoutClosure = null) {
-        jobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
-
         TimeoutContext context = new TimeoutContext(jobManagement)
         ContextHelper.executeInContext(timeoutClosure, context)
 

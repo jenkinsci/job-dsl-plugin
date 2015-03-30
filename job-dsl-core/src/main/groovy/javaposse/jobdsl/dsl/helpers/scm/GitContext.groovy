@@ -4,6 +4,7 @@ import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -122,8 +123,8 @@ class GitContext implements Context {
         this.reference = reference
     }
 
+    @RequiresPlugin(id = 'git', minimumVersion = '2.0.0')
     void cloneTimeout(int cloneTimeout) {
-        jobManagement.requireMinimumPluginVersion('git', '2.0.0')
         this.cloneTimeout = cloneTimeout
     }
 

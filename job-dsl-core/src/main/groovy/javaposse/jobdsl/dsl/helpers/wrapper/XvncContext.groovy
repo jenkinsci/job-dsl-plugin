@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class XvncContext implements Context {
     private final JobManagement jobManagement
@@ -17,8 +18,8 @@ class XvncContext implements Context {
         this.takeScreenshot = takeScreenshot
     }
 
+    @RequiresPlugin(id = 'xvnc', minimumVersion = '1.16')
     void useXauthority(boolean useXauthority = true) {
-        jobManagement.requireMinimumPluginVersion('xvnc', '1.16')
         this.useXauthority = useXauthority
     }
 }
