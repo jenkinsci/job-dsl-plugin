@@ -3,16 +3,11 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.JobManagement
 
 class GerritContext implements Context {
-    GerritEventContext eventContext
+    GerritEventContext eventContext = new GerritEventContext()
     Closure configureClosure
     List projects = []
-
-    GerritContext(JobManagement jobManagement) {
-        this.eventContext = new GerritEventContext(jobManagement)
-    }
 
     Integer startedCodeReview = null
     Integer startedVerified = null

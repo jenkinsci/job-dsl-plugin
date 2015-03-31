@@ -179,22 +179,6 @@ class PublisherContextSpec extends Specification {
         archiveNode.allowEmptyArchive.isEmpty()
     }
 
-    def 'call deprecated junit archive with all args'() {
-        when:
-        context.archiveJunit('include/*', true, true, true)
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.tasks.junit.JUnitResultArchiver'
-            children().size() == 3
-            testResults[0].value() == 'include/*'
-            keepLongStdio[0].value() == true
-            testDataPublishers[0].children().size() == 2
-            testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
-            testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
-        }
-    }
-
     def 'call junit archive with all args'() {
         when:
         context.archiveJunit('include/*') {

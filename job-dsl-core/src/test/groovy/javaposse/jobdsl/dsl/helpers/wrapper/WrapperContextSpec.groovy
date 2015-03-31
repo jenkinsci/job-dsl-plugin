@@ -367,21 +367,6 @@ class WrapperContextSpec extends Specification {
         wrapper.useXauthority[0].value() == true
     }
 
-    def 'xvnc with takeScreenshot arg' () {
-        setup:
-        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
-
-        when:
-        context.xvnc(true)
-
-        then:
-        context.wrapperNodes[0].name() == 'hudson.plugins.xvnc.Xvnc'
-        def wrapper = context.wrapperNodes[0]
-        wrapper.children().size() == 2
-        wrapper.takeScreenshot[0].value() == true
-        wrapper.useXauthority[0].value() == true
-    }
-
     def 'xvnc with closure' () {
         setup:
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')

@@ -188,8 +188,6 @@ job {
 }
 ```
 
-## Migrating to 1.29
-
 ### Build Timeout
 
 The `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext.Timeout` enum has been [[deprecated|Deprecation-Policy]]
