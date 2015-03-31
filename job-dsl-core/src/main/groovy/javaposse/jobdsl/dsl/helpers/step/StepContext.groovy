@@ -44,6 +44,20 @@ class StepContext implements Context {
     }
 
     /**
+     * <hudson.plugins.descriptionsetter.DescriptionSetterBuilder>
+     *     <regexp>\[version\] (.*)</regexp>
+     *     <description>foo \1</description>
+     * </hudson.plugins.descriptionsetter.DescriptionSetterBuilder>
+     */
+    void buildDescription(String regexpStr, String descriptionStr) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        stepNodes << nodeBuilder.'hudson.plugins.descriptionsetter.DescriptionSetterBuilder' {
+            'regexp' regexpStr
+            'description' descriptionStr
+        }
+    }
+
+    /**
      * <hudson.plugins.gradle.Gradle>
      *     <description/>
      *     <switches/>
