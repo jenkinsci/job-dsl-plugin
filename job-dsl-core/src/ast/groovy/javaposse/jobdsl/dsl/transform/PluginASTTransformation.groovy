@@ -32,7 +32,7 @@ class PluginASTTransformation implements ASTTransformation {
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
         sourceUnit.AST?.classes*.methods.flatten().each { MethodNode method ->
             method.getAnnotations(REQUIRES_PLUGIN_ANNOTATION).each { AnnotationNode requiresPluginAnnotation ->
-                if (!method.declaringClass.getField('jobManagement')) {
+                if (!method.declaringClass.getField('jobManagement') && !method.declaringClass.getField('jm')) {
                     sourceUnit.errorCollector.addError(
                             "no jobManagement field in $method.declaringClass",
                             Token.newString(
@@ -43,11 +43,12 @@ class PluginASTTransformation implements ASTTransformation {
                             sourceUnit
                     )
                 }
+                String jobManagementVariable = method.declaringClass.getField('jobManagement') ? 'jobManagement' : 'jm'
 
                 MethodCallExpression pluginCheckStatement
                 if (requiresPluginAnnotation.members.minimumVersion) {
                     pluginCheckStatement = new MethodCallExpression(
-                            new VariableExpression('jobManagement'),
+                            new VariableExpression(jobManagementVariable),
                             new ConstantExpression('requireMinimumPluginVersion'),
                             new ArgumentListExpression(
                                     requiresPluginAnnotation.members.id,
@@ -56,7 +57,7 @@ class PluginASTTransformation implements ASTTransformation {
                     )
                 } else {
                     pluginCheckStatement = new MethodCallExpression(
-                            new VariableExpression('jobManagement'),
+                            new VariableExpression(jobManagementVariable),
                             new ConstantExpression('requirePlugin'),
                             new ArgumentListExpression(
                                     requiresPluginAnnotation.members.id,

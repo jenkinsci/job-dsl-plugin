@@ -34,6 +34,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
+    @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
         processJob(name, BuildFlowJob, closure)
     }
@@ -44,16 +45,19 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
+    @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure = null) {
         processJob(name, MavenJob, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
         processJob(name, MultiJob, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
         processJob(name, WorkflowJob, closure)
     }
@@ -91,26 +95,31 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
+    @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'nested-view')
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure = null) {
         processView(name, NestedView, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         processView(name, DeliveryPipelineView, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
     }
@@ -143,6 +152,7 @@ abstract class JobParent extends Script implements DslFactory {
 
     @Override
     @Deprecated
+    @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(@DslContext(Folder) Closure closure) {
         jm.logDeprecationWarning()
 
@@ -153,6 +163,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
+    @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
 
@@ -165,16 +176,19 @@ abstract class JobParent extends Script implements DslFactory {
         folder
     }
 
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.Custom, closure)
     }
 
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.MavenSettings, closure)
     }
 
     @Override
     @Deprecated
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile configFile(Map<String, Object> arguments = [:], @DslContext(ConfigFile) Closure closure) {
         jm.logDeprecationWarning()
 
