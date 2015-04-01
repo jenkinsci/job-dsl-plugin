@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
+import javaposse.jobdsl.dsl.views.CategorizedJobsView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -37,4 +38,8 @@ interface ViewFactory {
     BuildMonitorView buildMonitorView(String name)
 
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure)
+
+    CategorizedJobsView categorizedJobsView(String name)
+
+    CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure)
 }

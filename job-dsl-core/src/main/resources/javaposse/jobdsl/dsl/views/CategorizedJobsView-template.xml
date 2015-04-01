@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.categorizedview.CategorizedJobsView plugin="categorized-view">
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+    </jobNames>
+    <jobFilters/>
+    <columns/>
+    <groupingRules/>
+    <categorizationCriteria/>
+</org.jenkinsci.plugins.categorizedview.CategorizedJobsView>

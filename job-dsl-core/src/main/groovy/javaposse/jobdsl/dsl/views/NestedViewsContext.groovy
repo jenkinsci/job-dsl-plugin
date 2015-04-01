@@ -72,6 +72,11 @@ class NestedViewsContext implements Context, ViewFactory {
         processView(name, BuildMonitorView, closure)
     }
 
+    @Override
+    CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
+        processView(name, CategorizedJobsView, closure)
+    }
+
     private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
 

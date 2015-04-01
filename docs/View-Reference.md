@@ -201,6 +201,7 @@ nestedView(String name) { // since 1.30
         deliveryPipelineView(String name, Closure closure = null) // since 1.30
         buildPipelineView(String name, Closure closure = null)    // since 1.30
         buildMonitorView(String name, Closure closure = null)     // since 1.30
+        categorizedJobsView(String name, Closure closure = null)  // since 1.31
         view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30, deprecated since 1.31
         view(Map<String, Object> arguments = [:], Closure viewClosure) // deprecated since 1.30
     }
@@ -318,6 +319,53 @@ buildMonitorView('project-A') {
     jobs {
         name('release-projectA')
         regex('project-A-.+')
+    }
+}
+```
+
+## Categorized Jobs View
+
+```groovy
+categorizedJobsView(String name) {  // since 1.31
+    // common options
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // list view options
+    // ... (all of them)
+    
+    // categorized jobs view options
+    categorizationCriteria {
+        groupingRule {
+            groupRegex(String groupRegex)
+            namingRule(String namingRule)
+        }
+        // short alias for groupingRule
+        byRegexWithNaming(String groupRegex, String namingRule)
+    }
+}
+```
+
+Creates a new view that is very similar to the standard Jenkins List Views, but where you can group jobs and 
+categorize them according to regular expressions.
+Requires the [Categorized Jobs View](https://wiki.jenkins-ci.org/display/JENKINS/Categorized+Jobs+View).
+
+```groovy
+categorizedJobsView("Configuration") {
+    jobs {
+        regex("configuration_.*")
+    }
+
+    categorizationCriteria {
+        byRegexWithNaming('^configuration_([^_]+).*$', '$1')
+    }
+
+    columns {
+        status()
+        name()
+        buildButton()
     }
 }
 ```
@@ -904,3 +952,26 @@ See [Status Filter](#status-filter) in the [List View Options](#list-view-option
 ### Jobs
 
 See [Jobs](#jobs) in the [List View Options](#list-view-options) above.
+
+
+## Categorized Jobs View Options
+
+### Categorization criteria
+
+Contains list of grouping rules in full or short form
+```groovy
+categorizationCriteria {
+      groupingRule {
+          groupRegex('^configuration_([^_]+).*$')
+          namingRule('$1')
+      }
+      // short alias for groupingRule (same effect)
+      byRegexWithNaming('^configuration_([^_]+).*$', '$1')
+    }
+```
+### Grouping rule (alias *byRegexWithNaming*)
+
+Adds a rule to categorize your jobs. Contains parameters: 
+- `groupRegex` - rule on how to group jobs (can use regex groups e.g. `some_(.*)_end`)
+- `namingRule` - how to name grouped jobs section (can use groups from `groupRegex` field, e.g. `$1`)
+

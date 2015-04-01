@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
+import javaposse.jobdsl.dsl.views.CategorizedJobsView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -259,6 +260,31 @@ class JobParentSpec extends Specification {
         view instanceof DeliveryPipelineView
         parent.referencedViews.contains(view)
         _ * jobManagement.requirePlugin('delivery-pipeline-plugin')
+    }
+
+    def 'should add categorized jobs view'() {
+        when:
+        View view = parent.categorizedJobsView('test') {
+            description('foo')
+        }
+
+        then:
+        view.name == 'test'
+        view instanceof CategorizedJobsView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+        _ * jobManagement.requirePlugin('categorized-view')
+    }
+
+    def 'should add categorized jobs view without closure'() {
+        when:
+        View view = parent.categorizedJobsView('test')
+
+        then:
+        view.name == 'test'
+        view instanceof CategorizedJobsView
+        parent.referencedViews.contains(view)
+        _ * jobManagement.requirePlugin('categorized-view')
     }
 
     def 'folder deprecated variant'() {
