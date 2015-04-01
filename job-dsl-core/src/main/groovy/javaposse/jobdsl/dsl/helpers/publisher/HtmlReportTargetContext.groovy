@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class HtmlReportTargetContext implements Context {
     private final JobManagement jobManagement
@@ -29,9 +30,8 @@ class HtmlReportTargetContext implements Context {
         this.keepAll = keepAll
     }
 
+    @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.3')
     void allowMissing(boolean allowMissing = true) {
-        jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.3')
-
         this.allowMissing = allowMissing
     }
 }

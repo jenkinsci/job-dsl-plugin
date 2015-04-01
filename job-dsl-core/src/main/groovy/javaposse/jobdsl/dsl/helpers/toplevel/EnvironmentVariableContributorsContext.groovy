@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class EnvironmentVariableContributorsContext implements Context {
     List<Node> contributors = []
@@ -11,8 +12,8 @@ class EnvironmentVariableContributorsContext implements Context {
         this.jobManagement = jobManagement
     }
 
+    @RequiresPlugin(id = 'shared-objects', minimumVersion = '0.1')
     void populateToolInstallations() {
-        jobManagement.requireMinimumPluginVersion('shared-objects', '0.1')
         Node node = new NodeBuilder().'org.jenkinsci.plugins.sharedobjects.ToolInstallationJobProperty' {
             delegate.populateToolInstallation(true)
         }

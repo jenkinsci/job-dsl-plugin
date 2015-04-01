@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 /**
  * Context to configure build timeouts.
@@ -26,9 +27,8 @@ class TimeoutContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.13')
     void noActivity(int seconds = 180) {
-        jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
-
         setStrategy('NoActivity') {
             timeout(seconds * 1000)
         }
@@ -59,9 +59,8 @@ class TimeoutContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.13')
     void abortBuild() {
-        jobManagement.requireMinimumPluginVersion('build-timeout', '1.13')
-
         addOperation('Abort')
     }
 

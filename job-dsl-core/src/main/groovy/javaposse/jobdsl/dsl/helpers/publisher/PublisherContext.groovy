@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
@@ -66,6 +67,7 @@ class PublisherContext implements Context {
         extendedEmail(recipients, subjectTemplate, null, emailClosure)
     }
 
+    @RequiresPlugin(id = 'email-ext')
     void extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
         EmailContext emailContext = new EmailContext()
@@ -352,9 +354,8 @@ class PublisherContext implements Context {
      *     </plots>
      * </hudson.plugins.plot.PlotPublisher>
      */
+    @RequiresPlugin(id = 'plot', minimumVersion = '1.9')
     void plotBuildData(@DslContext(PlotsContext) Closure plotsClosure) {
-        jobManagement.requireMinimumPluginVersion('plot', '1.9')
-
         PlotsContext plotsContext = new PlotsContext()
         ContextHelper.executeInContext(plotsClosure, plotsContext)
 
@@ -1686,9 +1687,9 @@ class PublisherContext implements Context {
      * }
      * </pre>
      */
+    @RequiresPlugin(id = 'warnings', minimumVersion = '4.0')
     void warnings(List consoleParsers, Map parserConfigurations = [:],
                   @DslContext(WarningsContext) Closure warningsClosure = null) {
-        jobManagement.requireMinimumPluginVersion('warnings', '4.0')
         WarningsContext warningsContext = new WarningsContext()
         ContextHelper.executeInContext(warningsClosure,  warningsContext)
 
