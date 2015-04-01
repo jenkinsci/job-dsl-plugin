@@ -12,8 +12,8 @@ class MultiJob extends Job {
     MultiJob(JobManagement jobManagement) {
         super(jobManagement)
 
-        if (jobManagement.getPluginVersion('jenkins-multijob-plugin')?.isOlderThan(new VersionNumber('1.16'))) {
-            jobManagement.logDeprecationWarning('support for MultiJob plugin versions 1.15 and earlier')
+        if (jobManagement.getPluginVersion('jenkins-multijob-plugin')?.isOlderThan(new VersionNumber('1.13'))) {
+            jobManagement.logDeprecationWarning('support for MultiJob plugin versions 1.12 and earlier')
         }
     }
 

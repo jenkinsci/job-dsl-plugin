@@ -31,7 +31,7 @@ nestedView('project-a') {
 
 ### MultiJob Plugin
 
-Support for version 1.15 and earlier of the MultiJob Plugin is [[deprecated|Deprecation-Policy]] and will be removed.
+Support for version 1.12 and earlier of the MultiJob Plugin is [[deprecated|Deprecation-Policy]] and will be removed.
 
 ### Local Maven Repository Location
 
