@@ -101,4 +101,8 @@ class FileJobManagement extends AbstractJobManagement {
     String getConfigFileId(ConfigFileType type, String name) {
         null
     }
+
+    @Override
+    void createOrUpdatePromotionConfig(String jobName, String promotionName, String xml) {
+    }
 }

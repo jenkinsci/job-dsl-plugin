@@ -7,6 +7,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
+import javaposse.jobdsl.dsl.jobs.Promotion;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
@@ -118,6 +119,13 @@ public class DslScriptLoader {
                     }
                 }
                 jp.getJm().createOrUpdateConfig(item.getName(), xml, ignoreExisting);
+
+                if(item instanceof Job) {
+                    for(Promotion promotion : ((Job) item).getPromotions()) {
+                        jp.getJm().createOrUpdatePromotionConfig(item.getName(), promotion.getContext().getName(), promotion.getXml());
+                    }
+                }
+
                 String templateName = item instanceof Job ? ((Job) item).getTemplateName() : null;
                 generatedJobs.add(new GeneratedJob(templateName, item.getName()));
             }

@@ -184,6 +184,10 @@ class AbstractJobManagementSpec extends Specification {
             null
         }
 
+        @Override
+        void createOrUpdatePromotionConfig(String jobName, String promotionName, String xml) {
+        }
+
         void testMethod() {
             logDeprecationWarning()
         }
