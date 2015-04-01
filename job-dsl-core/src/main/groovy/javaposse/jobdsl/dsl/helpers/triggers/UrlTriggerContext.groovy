@@ -19,22 +19,30 @@ class UrlTriggerContext implements Context {
         }
     }
 
-    /** Adds configure closure for overriding the generated XML */
+    /**
+     * Adds configure closure for overriding the generated XML.
+     */
     void configure(Closure configureClosure) {
         this.configureClosure = configureClosure
     }
 
-    /** restrict execution to label */
+    /**
+     * Restrict execution to label.
+     */
     void restrictToLabel(String label) {
         this.label = label
     }
 
-    /** Sets the cron schedule */
+    /**
+     * Sets the cron schedule.
+     */
     void cron(String cron) {
         this.crontab = cron
     }
 
-    /** adds a monitored URL to the trigger. */
+    /**
+     * Adds a monitored URL to the trigger.
+     */
     void url(String url, @DslContext(UrlTriggerEntryContext) Closure entryClosure = null) {
         UrlTriggerEntryContext entryContext = new UrlTriggerEntryContext(url)
         ContextHelper.executeInContext(entryClosure, entryContext)

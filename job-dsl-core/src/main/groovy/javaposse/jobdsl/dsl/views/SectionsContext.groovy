@@ -15,28 +15,6 @@ class SectionsContext implements Context {
         this.jobManagement = jobManagement
     }
 
-    /**
-     * <hudson.plugins.sectioned__view.ListViewSection>
-     *     <jobNames>
-     *         <comparator class="hudson.util.CaseInsensitiveComparator"/>
-     *         <string>test</string>
-     *     </jobNames>
-     *     <jobFilters/>
-     *     <name>foo</name>
-     *     <includeRegex>bla</includeRegex>
-     *     <width>FULL</width>
-     *     <alignment>CENTER</alignment>
-     *     <columns>
-     *         <hudson.views.StatusColumn/>
-     *         <hudson.views.WeatherColumn/>
-     *         <hudson.views.JobColumn/>
-     *         <hudson.views.LastSuccessColumn/>
-     *         <hudson.views.LastFailureColumn/>
-     *         <hudson.views.LastDurationColumn/>
-     *         <hudson.views.BuildButtonColumn/>
-     *     </columns>
-     * </hudson.plugins.sectioned__view.ListViewSection>
-     */
     void listView(@DslContext(ListViewSectionContext) Closure listViewSectionClosure) {
         ListViewSectionContext context = new ListViewSectionContext(jobManagement)
         executeInContext(listViewSectionClosure, context)

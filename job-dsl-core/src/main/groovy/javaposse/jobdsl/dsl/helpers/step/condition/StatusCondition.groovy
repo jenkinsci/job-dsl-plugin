@@ -6,15 +6,6 @@ import static com.google.common.base.Preconditions.checkArgument
  * Generate config for a status condition.
  *
  * https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin
- *
- * <condition class="org.jenkins_ci.plugins.run_condition.core.StatusCondition">
- *   <worstResult>
- *     <ordinal>2</ordinal>
- *   </worstResult>
- *   <bestResult>
- *     <ordinal>2</ordinal>
- *   </bestResult>
- * </condition>
  */
 class StatusCondition extends SimpleCondition {
     private static final STATUSES = [

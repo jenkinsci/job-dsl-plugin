@@ -128,22 +128,6 @@ class FooContext {
 * We roughly follow the [Java](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html) and [Groovy](http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers) style guidelines.
 * When using IntelliJ IDEA, use the default code style, but disable '*' imports for Java and Groovy.
 * Add a CRLF at the end of a file.
-* Include an example of the generated XML in the GroovyDoc comment of DSL methods.
-
-```groovy
-/**
- * <project>
- *     <buildWrappers>
- *         <hudson.plugins.foo.FooWrapper>
- *             <option>bar</option>
- *         </hudson.plugins.foo.FooWrapper>
- *     </buildWrappers>
- * </project>
- */
-def foo(String optionArg) {
-    ...
-}
-```
 
 ## Documentation
 * Add an entry to the [Release Notes](docs/Home.md#release-notes).

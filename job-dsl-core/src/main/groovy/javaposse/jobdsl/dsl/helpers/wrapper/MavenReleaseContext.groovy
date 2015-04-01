@@ -21,6 +21,7 @@ class MavenReleaseContext implements Context {
      * <p>If defined, an environment variable with this name will hold the scm username when triggering a
      * release build (this is the username the user enters when triggering a release build, not the username
      * given to Jenkins' SCM configuration of the job).</p>
+     *
      * @param scmUserEnvVar (default: &laquo;empty&raquo;)
      */
     void scmUserEnvVar(String scmUserEnvVar) {
@@ -34,6 +35,7 @@ class MavenReleaseContext implements Context {
      * <p>As the passed passwords would potentially get written to the logs and therefore visible to users,
      * we recommend you to install the
      * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin">Mask Password Plugin</a>.</p>
+     *
      * @param scmPasswordEnvVar (default: &laquo;empty&raquo;)
      */
     void scmPasswordEnvVar(String scmPasswordEnvVar) {
@@ -44,6 +46,7 @@ class MavenReleaseContext implements Context {
      * <p>An environment variable with this name indicates whether the current build is a release build or not.
      * This can be used e.g. within a shell or the conditional buildstep to do pre and post release processing.
      * The value will be boolean (true if it is a release build, false if its not a release build).</p>
+     *
      * @param releaseEnvVar (default: "IS_M2RELEASEBUILD")
      */
     void releaseEnvVar(String releaseEnvVar) {
@@ -52,6 +55,7 @@ class MavenReleaseContext implements Context {
 
     /**
      * <p>Enter the goals you wish to use as part of the release process. e.g. "release:prepare release:perform"</p>
+     *
      * @param releaseGoals (default: "-Dresume=false release:prepare release:perform")
      */
     void releaseGoals(String releaseGoals) {
@@ -61,6 +65,7 @@ class MavenReleaseContext implements Context {
     /**
      * <p>Enter the goals you wish to use as part of the 'dryRun' - to simulate the release build.
      * e.g. "release:prepare -DdryRun=true"</p>
+     *
      * @param dryRunGoals (default: "-Dresume=false -DdryRun=true release:prepare")
      */
     void dryRunGoals(String dryRunGoals) {
@@ -70,6 +75,7 @@ class MavenReleaseContext implements Context {
     /**
      * <p>Enable this to have the "Select custom SCM comment prefix" option selected by default
      * in the "Perform Maven Release" view.</p>
+     *
      * @param selectCustomScmCommentPrefix (default: false)
      */
     void selectCustomScmCommentPrefix(boolean selectCustomScmCommentPrefix = true) {
@@ -79,6 +85,7 @@ class MavenReleaseContext implements Context {
     /**
      * <p>Enable this to have the "Append Jenkins Username" option (part of the "Specify custom SCM comment prefix"
      * configuration) selected by default in the "Perform Maven Release" view.</p>
+     *
      * @param selectAppendHudsonUsername (default: false)
      */
     void selectAppendJenkinsUsername(boolean selectAppendJenkinsUsername = true) {
@@ -88,6 +95,7 @@ class MavenReleaseContext implements Context {
     /**
      * <p>Enable this to have the "specify SCM login/password" option selected by default in the
      * "Perform Maven Release" view.</p>
+     *
      * @param selectScmCredentials (default: false)
      */
     void selectScmCredentials(boolean selectScmCredentials = true) {
@@ -97,6 +105,7 @@ class MavenReleaseContext implements Context {
     /**
      * <p>Specify the number of successful release builds to keep forever. A value of -1 will lock all successful
      * release builds, 0 will not lock any builds.</p>
+     *
      * @param numberOfReleaseBuildsToKeep (default: 1)
      */
     void numberOfReleaseBuildsToKeep(int numberOfReleaseBuildsToKeep) {

@@ -89,12 +89,6 @@ class TriggerContext implements Context {
         }
     }
 
-    /**
-     * <hudson.triggers.SCMTrigger>
-     *     <spec>10 * * * *</spec>
-     *     <ignorePostCommitHooks>false</ignorePostCommitHooks>
-     * </hudson.triggers.SCMTrigger>
-     */
     void scm(String cronString, @DslContext(ScmTriggerContext) Closure scmTriggerClosure = null) {
         Preconditions.checkNotNull(cronString)
 
@@ -108,11 +102,7 @@ class TriggerContext implements Context {
     }
 
     /**
-     * Trigger that runs jobs on push notifications from Github/Github enterprise.
-     *
-     * <com.cloudbees.jenkins.GitHubPushTrigger>
-     *     <spec/>
-     * </com.cloudbees.jenkins.GitHubPushTrigger>
+     * Trigger that runs jobs on push notifications from GitHub.
      */
     void githubPush() {
         triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
@@ -121,22 +111,7 @@ class TriggerContext implements Context {
     }
 
     /**
-     *  Configures the Jenkins GitHub pull request builder plugin
-     *  Depends on the github-api, github, and git plugins
-     *
-     *  <org.jenkinsci.plugins.ghprb.GhprbTrigger>
-     *      <adminlist></adminlist>
-     *      <whitelist></whitelist>
-     *      <orgslist></orgslist>
-     *      <cron></cron>
-     *      <spec></spec>
-     *      <triggerPhrase></triggerPhrase>
-     *      <onlyTriggerPhrase>false</onlyTriggerPhrase>
-     *      <useGitHubHooks>true</useGitHubHooks>
-     *      <permitAll>true</permitAll>
-     *      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
-     *      <commentFilePath>$WORKSPACE/myCommentFile.log</commentFilePath>
-     *  </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+     *  Configures the Jenkins GitHub pull request builder plugin.
      */
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
@@ -157,44 +132,6 @@ class TriggerContext implements Context {
         }
     }
 
-    /**
-     * <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
-     *     <spec></spec>
-     *     <gerritProjects>
-     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
-     *             <compareType>PLAIN</compareType>
-     *             <pattern>test-project</pattern>
-     *             <branches>
-     *                 <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
-     *                    <compareType>ANT</compareType>
-     *                    <pattern>**</pattern>
-     *                 </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch>
-     *             </branches>
-     *         </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject>
-     *     </gerritProjects>
-     *     <silentMode>false</silentMode>
-     *     <escapeQuotes>true</escapeQuotes>
-     *     <buildStartMessage></buildStartMessage>
-     *     <buildFailureMessage></buildFailureMessage>
-     *     <buildSuccessfulMessage></buildSuccessfulMessage>
-     *     <buildUnstableMessage></buildUnstableMessage>
-     *     <buildNotBuiltMessage></buildNotBuiltMessage>
-     *     <buildUnsuccessfulFilepath></buildUnsuccessfulFilepath>
-     *     <customUrl></customUrl>
-     *     <triggerOnEvents>
-     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginChangeMergedEvent/>
-     *         <com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.PluginPatchsetCreatedEvent/>
-     *     </triggerOnEvents>
-     *     <dynamicTriggerConfiguration>false</dynamicTriggerConfiguration>
-     *     <triggerConfigURL></triggerConfigURL>
-     *     <triggerInformationAction/>
-     * </com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger>
-     *
-     * @param triggerEvents Can be ommited and the plugin will user PatchsetCreated and DraftPublished by default.
-     *                      Provide in show name format: ChangeMerged, CommentAdded, DraftPublished, PatchsetCreated,
-     *                      RefUpdated
-     * @return
-     */
     void gerrit(@DslContext(GerritContext) Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
         GerritContext gerritContext = new GerritContext()

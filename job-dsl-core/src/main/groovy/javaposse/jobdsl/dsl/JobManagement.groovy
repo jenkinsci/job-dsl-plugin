@@ -9,6 +9,7 @@ interface JobManagement {
     /**
      * Gets (loads) the job configuration for the Jenkins job with the specified name.  If no name is supplied, an empty
      * configuration is returned.
+     *
      * @param jobName the name of the job to look up
      * @return the job configuration as XML
      * @throws JobConfigurationNotFoundException
@@ -17,6 +18,7 @@ interface JobManagement {
 
     /**
      * Creates or updates the job config for the named Jenkins job with the config provided.
+     *
      * @param jobName the name of the new / updated job
      * @param config the new / updated job config
      * @param ignoreExisting do not update existing jobs
@@ -28,6 +30,7 @@ interface JobManagement {
 
     /**
      * Creates or updates the view config for the named Jenkins view with the config provided.
+     *
      * @param viewName the name of the new / updated view
      * @param config the new / updated view config
      * @param ignoreExisting do not update existing view
@@ -39,6 +42,7 @@ interface JobManagement {
 
     /**
      * Creates or updates the managed config file.
+     *
      * @param configFile the config file to create or update
      * @param ignoreExisting do not update existing config files
      * @return the id of the created or updated config file
@@ -71,7 +75,6 @@ interface JobManagement {
 
     /**
      * Stream to write to, for stdout.
-     * @return PrintWriter
      */
     PrintStream getOutputStream()
 
@@ -82,6 +85,7 @@ interface JobManagement {
 
     /**
      * Returns the id of a Credentials object.
+     *
      * @param credentialsDescription the description of the credentials to lookup
      * @return id of Credentials or <code>null</code> if no credentials could be found
      */

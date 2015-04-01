@@ -15,22 +15,7 @@ class MultiJobStepContext extends StepContext {
     }
 
     /**
-     * phaseName will have to be provided in the closure
-     *
-     * <com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
-     *   <phaseName>name-of-phase</phaseName>
-     *   <phaseJobs>
-     *     <com.tikal.jenkins.plugins.multijob.PhaseJobsConfig>
-     *       <jobName>job-in-phase</jobName>
-     *       <currParams>true</currParams>
-     *       <exposedSCM>false</exposedSCM>
-     *       <disableJob>false</disableJob>
-     *       <configs class="empty-list"/>
-     *       <killPhaseOnJobResultCondition>FAILURE</killPhaseOnJobResultCondition>
-     *     </com.tikal.jenkins.plugins.multijob.PhaseJobsConfig>
-     *   </phaseJobs>
-     *   <continuationCondition>COMPLETED</continuationCondition>
-     * </com.tikal.jenkins.plugins.multijob.MultiJobBuilder>
+     * phaseName will have to be provided in the closure.
      */
     void phase(@DslContext(PhaseContext) Closure phaseContext) {
         phase(null, 'SUCCESSFUL', phaseContext)

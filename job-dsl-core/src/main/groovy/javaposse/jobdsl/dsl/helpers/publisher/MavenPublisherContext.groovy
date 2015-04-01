@@ -9,13 +9,6 @@ class MavenPublisherContext extends PublisherContext {
         super(jobManagement)
     }
 
-    /**
-     * <hudson.maven.RedeployPublisher>
-     *     <id/>
-     *     <uniqueVersion>true</uniqueVersion>
-     *     <evenIfUnstable>false</evenIfUnstable>
-     * </hudson.maven.RedeployPublisher>
-     */
     void deployArtifacts(@DslContext(DeployArtifactsContext) Closure closure = null) {
         DeployArtifactsContext context = new DeployArtifactsContext()
         ContextHelper.executeInContext(closure, context)

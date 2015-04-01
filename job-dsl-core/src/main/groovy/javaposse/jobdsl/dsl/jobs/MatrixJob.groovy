@@ -27,9 +27,6 @@ class MatrixJob extends Job {
         }
     }
 
-    /**
-     * <combinationFilter>axis_label=='a'||axis_label=='b'</combinationFilter>
-     */
     void combinationFilter(String filterExpression) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('combinationFilter', filterExpression)
@@ -37,11 +34,6 @@ class MatrixJob extends Job {
         }
     }
 
-    /**
-     * <executionStrategy>
-     *     <runSequentially>false</runSequentially>
-     * </executionStrategy>
-     */
     void runSequentially(boolean sequentially = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('runSequentially', sequentially)
@@ -49,17 +41,6 @@ class MatrixJob extends Job {
         }
     }
 
-    /**
-     * <executionStrategy>
-     *     <touchStoneCombinationFilter>axis_label=='a'||axis_label=='b'</touchStoneCombinationFilter>
-     *     <touchStoneResultCondition>
-     *         <name>UNSTABLE</name>
-     *         <ordinal>1</ordinal>
-     *         <color>YELLOW</color>
-     *         <completeBuild>true</completeBuild>
-     *     </touchStoneResultCondition>
-     * </executionStrategy>
-     */
     void touchStoneFilter(String filter, boolean continueOnUnstable = false) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'executionStrategy' / 'touchStoneCombinationFilter'(filter)

@@ -24,6 +24,7 @@ class MavenContext implements Context {
 
     /**
      * Specifies the path to the root POM.
+     *
      * @param rootPOM path to the root POM
      */
     void rootPOM(String rootPOM) {
@@ -32,6 +33,7 @@ class MavenContext implements Context {
 
     /**
      * Specifies the goals to execute.
+     *
      * @param goals the goals to execute
      */
     void goals(String goals) {
@@ -40,6 +42,7 @@ class MavenContext implements Context {
 
     /**
      * Specifies the JVM options needed when launching Maven as an external process.
+     *
      * @param mavenOpts JVM options needed when launching Maven
      */
     void mavenOpts(String mavenOpts) {
@@ -54,6 +57,7 @@ class MavenContext implements Context {
 
     /**
      * Set to use isolated local Maven repositories.
+     *
      * @param location the local repository to use for isolation
      */
     void localRepository(LocalRepositoryLocation location) {
@@ -61,7 +65,8 @@ class MavenContext implements Context {
     }
 
     /**
-     * Specifies the Maven installation for executing this step or job
+     * Specifies the Maven installation for executing this step or job.
+     *
      * @param name name of the Maven installation to use
      */
     void mavenInstallation(String name) {
@@ -70,6 +75,7 @@ class MavenContext implements Context {
 
     /**
      * Specifies the managed Maven settings to be used.
+     *
      * @param settings name of the managed Maven settings
      */
     void providedSettings(String settingsName) {

@@ -27,7 +27,6 @@ abstract class Item implements Context {
     /**
      * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
      * even if the user didn't specify them in order.
-     * @return
      */
     String getXml() {
         Writer xmlOutput = new StringWriter()

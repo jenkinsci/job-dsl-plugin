@@ -11,9 +11,6 @@ class BuildPipelineView extends View {
         super(jobManagement)
     }
 
-    /**
-     * <noOfDisplayedBuilds>5</noOfDisplayedBuilds>
-     */
     void displayedBuilds(int displayedBuilds) {
         checkArgument(displayedBuilds > 0, 'displayedBuilds must be greater than zero')
 
@@ -22,18 +19,12 @@ class BuildPipelineView extends View {
         }
     }
 
-    /**
-     * <buildViewTitle>Project A</buildViewTitle>
-     */
     void title(String title) {
         execute {
             it / buildViewTitle(title ?: '')
         }
     }
 
-    /**
-     * <selectedJob>project-a-compile</selectedJob>
-     */
     void selectedJob(String selectedJob) {
         checkNotNull(selectedJob, 'selectedJob must not be null')
 
@@ -42,9 +33,6 @@ class BuildPipelineView extends View {
         }
     }
 
-    /**
-     * <consoleOutputLinkStyle>Output Style</consoleOutputLinkStyle>
-     */
     void consoleOutputLinkStyle(OutputStyle outputStyle) {
         checkNotNull(outputStyle, 'consoleOutputLinkStyle must not be null')
 
@@ -53,54 +41,36 @@ class BuildPipelineView extends View {
         }
     }
 
-    /**
-     * <cssUrl>Css Url</csUrl>
-     */
     void customCssUrl(String customCssUrl) {
         execute {
             it / cssUrl(customCssUrl ?: '')
         }
     }
 
-    /**
-     * <triggerOnlyLatestJob>true</triggerOnlyLatestJob>
-     */
     void triggerOnlyLatestJob(boolean triggerOnlyLatestJob = true) {
         execute {
             it / methodMissing('triggerOnlyLatestJob', triggerOnlyLatestJob)
         }
     }
 
-    /**
-     * <alwaysAllowManualTrigger>true</alwaysAllowManualTrigger>
-     */
     void alwaysAllowManualTrigger(boolean alwaysAllowManualTrigger = true) {
         execute {
             it / methodMissing('alwaysAllowManualTrigger', alwaysAllowManualTrigger)
         }
     }
 
-    /**
-     * <showPipelineParameters>true</showPipelineParameters>
-     */
     void showPipelineParameters(boolean showPipelineParameters = true) {
         execute {
             it / methodMissing('showPipelineParameters', showPipelineParameters)
         }
     }
 
-    /**
-     * <showPipelineParametersInHeaders>true</showPipelineParametersInHeaders>
-     */
     void showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true) {
         execute {
             it / methodMissing('showPipelineParametersInHeaders', showPipelineParametersInHeaders)
         }
     }
 
-    /**
-     * <refreshFrequency>60</refreshFrequency>
-     */
     void refreshFrequency(int refreshFrequency) {
         checkArgument(refreshFrequency > 0, 'refreshFrequency must be greater than zero')
 
@@ -109,18 +79,12 @@ class BuildPipelineView extends View {
         }
     }
 
-    /**
-     * <showPipelineDefinitionHeader>true</showPipelineDefinitionHeader>
-     */
     void showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true) {
         execute {
             it / methodMissing('showPipelineDefinitionHeader', showPipelineDefinitionHeader)
         }
     }
 
-    /**
-     * <startsWithParameters>true</startsWithParameters>
-     */
     void startsWithParameters(boolean startsWithParameters = true) {
         execute {
             it / methodMissing('startsWithParameters', startsWithParameters)

@@ -4,7 +4,7 @@ import static java.lang.Thread.currentThread
 import static org.codehaus.groovy.runtime.StackTraceUtils.isApplicationClass
 
 /**
- * Abstract version of JobManagement to minimize impact on future API changes
+ * Abstract version of JobManagement to minimize impact on future API changes.
  */
 abstract class AbstractJobManagement implements JobManagement {
     final PrintStream outputStream

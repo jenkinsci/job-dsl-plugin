@@ -6,17 +6,27 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection
 
-/** Configuration container for a monitored URL.*/
+/**
+ * Configuration container for a monitored URL.
+ */
 class UrlTriggerEntryContext implements Context {
-    /** Enumeration of defined checks */
+    /**
+     * Enumeration of defined checks.
+     */
     enum Check {
-        /** Check the response status */
+        /**
+         * Check the response status.
+         */
         status,
 
-        /** Check the ETag information of the URL*/
+        /**
+         * Check the ETag information of the URL.
+         */
         etag,
 
-        /** Check the last modified date */
+        /**
+         * Check the last modified date.
+         */
         lastModified
     }
 
@@ -43,6 +53,7 @@ class UrlTriggerEntryContext implements Context {
      * Enables/Disables the use of the global proxy that is configured for Jenkins.
      *
      * Defaults to <code>false</code>
+     *
      * @param active <code>true</code> to use a proxy
      */
     void proxy(boolean active) {
@@ -106,7 +117,6 @@ class UrlTriggerEntryContext implements Context {
      *
      * @param type type of inspection to use
      * @param inspectionClosure for configuring RegExps/Path expressions for xml, text and json
-     * @return
      */
     void inspection(String type, @DslContext(UrlTriggerInspectionContext) Closure inspectionClosure = null) {
         Inspection itype
