@@ -219,7 +219,35 @@ class PublisherContext implements Context {
                                     if (data instanceof PlotPropertiesSeriesContext) {
                                         label(data.label ?: '')
                                     }
+                                    if (data instanceof PlotCSVSeriesContext) {
+                                        label('')
+                                        inclusionFlag(data.inclusionFlag)
+                                        switch (data.inclusionFlag) {
+                                            case 'OFF':
+                                                exclusionValues('')
+                                                break
+                                            case ['INCLUDE_BY_STRING', 'EXCLUDE_BY_STRING']:
+                                                strExclusionSet {
+                                                    data.strExclusionSet.each { String exclusion ->
+                                                        string(exclusion)
+                                                    }
+                                                }
+                                                exclusionValues(data.strExclusionSet.join(','))
+                                                break
+                                            case ['INCLUDE_BY_COLUMN', 'EXCLUDE_BY_COLUMN']:
+                                                colExclusionSet {
+                                                    data.colExclusionSet.each { Integer exclusion ->
+                                                        'int'(exclusion)
+                                                    }
+                                                }
+                                                exclusionValues(data.colExclusionSet.join(','))
+                                                break
+                                        }
+                                        url(data.url ?: '')
+                                        displayTableFlag(data.showTable)
+                                    }
                                     if (data instanceof PlotXMLSeriesContext) {
+                                        label('')
                                         xpathString(data.xpath ?: '')
                                         url(data.url ?: '')
                                         nodeTypeString(data.nodeType)
