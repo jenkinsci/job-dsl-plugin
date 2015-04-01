@@ -468,17 +468,6 @@ abstract class Job extends Item {
         }
     }
 
-    void providedSettings(String settingsName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
-        Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
-                settingsConfigId(settingsId)
-            }
-        }
-    }
-
     Node getNode() {
         Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
 
