@@ -37,17 +37,32 @@ class StepContextSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello from Windows"'
     }
 
-    def 'call buildDescription method'() {
+    def 'call buildDescription method with all options'() {
         when:
         context.buildDescription('[version] (.*)', 'foo \\1')
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def descStep = context.stepNodes[0]
-        descStep.name() == 'hudson.plugins.descriptionsetter.DescriptionSetterBuilder'
-        descStep.description[0].value() == 'foo \\1'
-        descStep.regexp[0].value() == '[version] (.*)'
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.descriptionsetter.DescriptionSetterBuilder'
+            children().size() == 2
+            regexp[0].value() == '[version] (.*)'
+            description[0].value() == 'foo \\1'
+        }
+        _ * jobManagement.requireMinimumPluginVersion('description-setter', '1.9')
+    }
+
+    def 'call buildDescription method with minimum options'() {
+        when:
+        context.buildDescription('[version] (.*)')
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.descriptionsetter.DescriptionSetterBuilder'
+            children().size() == 2
+            regexp[0].value() == '[version] (.*)'
+            description[0].value() == ''
+        }
+        _ * jobManagement.requireMinimumPluginVersion('description-setter', '1.9')
     }
 
     def 'call gradle methods'() {

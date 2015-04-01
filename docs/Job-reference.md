@@ -130,7 +130,7 @@ freeStyleJob(String name) { // since 1.30
         ant(String targets, String buildFile, String antInstallation,
             Closure antClosure = null)
         batchFile(String command)
-        buildDescription(String regexp, String text) // since 1.31
+        buildDescription(String regexp, String description = null) // since 1.31
         conditionalSteps(Closure conditionalClosure)
         copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure)
         copyArtifacts(String jobName, String includeGlob, String targetPath,
@@ -2377,12 +2377,25 @@ batchFile(String commandStr)
 Supports running a Windows batch file as a build step.
 
 ### Build Description
+
 ```groovy
-buildDescription(String regexpStr, String descriptionStr)
+job {
+    steps {
+        buildDescription(String regexp, String description = null)
+    }
+}
 ```
 
-Set build description based upon a RegEx test of the log file, as a build step.
+Set build description based upon a regular expression test of the log file.
 Requires the [Description Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin)
+
+```groovy
+job('example') {
+    steps {
+        buildDescription(/.*\[INFO\] Uploading project information for [^\s]* ([^\s]*)/)
+    }
+}
+```
 
 ### Gradle
 

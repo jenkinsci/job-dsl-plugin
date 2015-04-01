@@ -34,11 +34,11 @@ class StepContext implements Context {
         }
     }
 
-    void buildDescription(String regexpStr, String descriptionStr) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        stepNodes << nodeBuilder.'hudson.plugins.descriptionsetter.DescriptionSetterBuilder' {
-            'regexp' regexpStr
-            'description' descriptionStr
+    @RequiresPlugin(id = 'description-setter', minimumVersion = '1.9')
+    void buildDescription(String regexp, String description = null) {
+        stepNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterBuilder' {
+            delegate.regexp(regexp ?: '')
+            delegate.description(description ?: '')
         }
     }
 
