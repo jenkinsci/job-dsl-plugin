@@ -42,6 +42,30 @@ class FolderSpec extends Specification {
         root.description[0].text() == 'test folder'
     }
 
+    def 'call authorization'() {
+        setup:
+        String propertyName = 'com.cloudbees.hudson.plugins.folder.properties.AuthorizationMatrixProperty'
+        jobManagement.getPermissions(propertyName) >> [
+                'hudson.model.Item.Build',
+                'hudson.model.Item.Configure',
+        ]
+
+        when:
+        folder.authorization {
+            permission('hudson.model.Item.Build:jill')
+            permission('hudson.model.Item.Configure', 'jack')
+            permissionAll('anonymous')
+        }
+
+        then:
+        NodeList permissions = folder.node.properties[0]."$propertyName"[0].permission
+        permissions.size() == 4
+        permissions[0].text() == 'hudson.model.Item.Build:jill'
+        permissions[1].text() == 'hudson.model.Item.Configure:jack'
+        permissions[2].text() == 'hudson.model.Item.Build:anonymous'
+        permissions[3].text() == 'hudson.model.Item.Configure:anonymous'
+    }
+
     def 'configure'() {
         when:
         folder.configure {

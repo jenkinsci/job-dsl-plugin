@@ -1,9 +1,14 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.helpers.AuthorizationContext
+
 /**
  * DSL element representing a Jenkins folder.
  */
 class Folder extends Item {
+    private static final AUTHORIZATION_MATRIX_PROPERTY_NAME =
+            'com.cloudbees.hudson.plugins.folder.properties.AuthorizationMatrixProperty'
+
     Folder(JobManagement jobManagement) {
         super(jobManagement)
     }
@@ -17,6 +22,18 @@ class Folder extends Item {
     void description(String descriptionArg) {
         execute {
             it / methodMissing('description', descriptionArg)
+        }
+    }
+
+    void authorization(@DslContext(AuthorizationContext) Closure closure) {
+        AuthorizationContext context = new AuthorizationContext(jobManagement,  AUTHORIZATION_MATRIX_PROPERTY_NAME)
+        ContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node authorizationMatrixProperty = project / 'properties' / AUTHORIZATION_MATRIX_PROPERTY_NAME
+            context.permissions.each { String perm ->
+                authorizationMatrixProperty.appendNode('permission', perm)
+            }
         }
     }
 

@@ -34,6 +34,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced support for the [NodeJS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeJS+Plugin)
  * Enhanced support for the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
  * Enhanced support for the [Description Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin)
+ * Enhanced support for ([Cloudbees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin))
  * Support all available permissions ([JENKINS-16365](https://issues.jenkins-ci.org/browse/JENKINS-16365))
  * Deprecated the Permissions enum, see [[Migration]]
  * The `tagFilterRegex` argument of `listTagsParam` can be null or empty

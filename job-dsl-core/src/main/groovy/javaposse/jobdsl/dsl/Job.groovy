@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
+import javaposse.jobdsl.dsl.helpers.JobAuthorizationContext
 import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
@@ -344,8 +344,8 @@ abstract class Job extends Item {
     }
 
     @RequiresPlugin(id = 'matrix-auth')
-    void authorization(@DslContext(AuthorizationContext) Closure closure) {
-        AuthorizationContext context = new AuthorizationContext(jobManagement)
+    void authorization(@DslContext(JobAuthorizationContext) Closure closure) {
+        JobAuthorizationContext context = new JobAuthorizationContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
