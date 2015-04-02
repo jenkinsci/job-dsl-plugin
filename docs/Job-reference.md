@@ -3963,6 +3963,14 @@ job {
                 excludeZero(boolean excludeZero = true)         // defaults to false
                 keepRecords(boolean keepRecords = true)         // defaults to false
                 logarithmic(boolean logarithmic = true)         // defaults to false
+                csvFile(String fileName) {
+                    includeColumn(String columnName)
+                    excludeColumn(String columnName)
+                    includeColumn(int columnIndex)
+                    excludeColumn(int columnIndex)
+                    showTable(boolean showTable = true)         // defaults to false
+                    url(String url)
+                }
                 propertiesFile(String fileName) {
                     label(String label)
                 }
@@ -3988,6 +3996,8 @@ The `style` option can be one of `'area'`, `'bar'`, `'bar3d'`, `'line'` (default
 `'stackedbar'`, `'stackedbar3d'` or `'waterfall'`.
 
 The `nodeType` option can be one of `'NODESET'`, `'NODE'`, `'STRING'`, `'BOOLEAN'`, `'NUMBER'`.
+
+When using `csvFile`, it is not possible to mix `includeColumn()` and `excludeColumn()` or use both `String` and `int` arguments.
 
 ```groovy
 job {
@@ -4026,6 +4036,22 @@ job {
                 logarithmic()
                 propertiesFile('my_data.properties') {
                     label('Builds')
+                }
+            }
+        }
+    }
+}
+
+job {
+    publishers {
+        plotBuildData {
+            plot('Other charts', '123012992213.csv') {
+                style('line3d')
+                csvFile('my_data.properties') {
+                    includeColumn(1)
+                    includeColumn(8)
+                    includeColumn(14)
+                    showTable()
                 }
             }
         }
