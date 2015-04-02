@@ -3212,9 +3212,10 @@ class PublisherContextSpec extends Specification {
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
-                    children().size() == 5
+                    children().size() == 6
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'xml'
+                    label[0].value().empty
                     nodeTypeString[0].value() == 'NODESET'
                     url[0].value() == ''
                     xpathString[0].value() == ''
@@ -3254,9 +3255,10 @@ class PublisherContextSpec extends Specification {
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
                 with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
-                    children().size() == 5
+                    children().size() == 6
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'xml'
+                    label[0].value().empty
                     nodeTypeString[0].value() == 'NODE'
                     url[0].value() == 'http://somewhere'
                     xpathString[0].value() == 'an xpath string'
@@ -3264,6 +3266,495 @@ class PublisherContextSpec extends Specification {
             }
         }
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with a csv series'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 7
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'OFF'
+                    exclusionValues[0].value() == ''
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with full csv series'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    url('http://somewhere')
+                    showTable()
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 7
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'OFF'
+                    exclusionValues[0].value() == ''
+                    url[0].value() == 'http://somewhere'
+                    displayTableFlag[0].value() == true
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using single includeColumns(str)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    includeColumns('foo')
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
+                    exclusionValues[0].value() == 'foo'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(strExclusionSet[0]) {
+                        children().size() == 1
+                        string[0].value() == 'foo'
+                    }
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using multiple includeColumns(str)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    includeColumns('foo')
+                    includeColumns('bar', 'woo')
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
+                    exclusionValues[0].value() == 'foo,bar,woo'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(strExclusionSet[0]) {
+                        children().size() == 3
+                        string[0].value() == 'foo'
+                        string[1].value() == 'bar'
+                        string[2].value() == 'woo'
+                    }
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using single excludeColumns(str)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    excludeColumns('foo')
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'EXCLUDE_BY_STRING'
+                    exclusionValues[0].value() == 'foo'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(strExclusionSet[0]) {
+                        children().size() == 1
+                        string[0].value() == 'foo'
+                    }
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using multiple excludeColumns(str)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    excludeColumns('foo')
+                    excludeColumns('bar', 'woo')
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'EXCLUDE_BY_STRING'
+                    exclusionValues[0].value() == 'foo,bar,woo'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(strExclusionSet[0]) {
+                        children().size() == 3
+                        string[0].value() == 'foo'
+                        string[1].value() == 'bar'
+                        string[2].value() == 'woo'
+                    }
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using single includeColumns(int)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    includeColumns(1)
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'INCLUDE_BY_COLUMN'
+                    exclusionValues[0].value() == '1'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(colExclusionSet[0]) {
+                        children().size() == 1
+                    }
+                    colExclusionSet[0].'int'[0].value() == '1'
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using multiple includeColumns(int)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    includeColumns(1)
+                    includeColumns(3, 6)
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'INCLUDE_BY_COLUMN'
+                    exclusionValues[0].value() == '1,3,6'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(colExclusionSet[0]) {
+                        children().size() == 3
+                    }
+                    colExclusionSet[0].'int'[0].value() == '1'
+                    colExclusionSet[0].'int'[1].value() == '3'
+                    colExclusionSet[0].'int'[2].value() == '6'
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using single excludeColumns(int)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    excludeColumns(1)
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'EXCLUDE_BY_COLUMN'
+                    exclusionValues[0].value() == '1'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(colExclusionSet[0]) {
+                        children().size() == 1
+                    }
+                    colExclusionSet[0].'int'[0].value() == '1'
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series using multiple excludeColumns(int)'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    excludeColumns(1)
+                    excludeColumns(3, 6)
+                }
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 12
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
+                    children().size() == 8
+                    file[0].value() == 'data.prop'
+                    fileType[0].value() == 'csv'
+                    label[0].value().empty
+                    inclusionFlag[0].value() == 'EXCLUDE_BY_COLUMN'
+                    exclusionValues[0].value() == '1,3,6'
+                    url[0].value() == ''
+                    displayTableFlag[0].value() == false
+                    with(colExclusionSet[0]) {
+                        children().size() == 3
+                    }
+                    colExclusionSet[0].'int'[0].value() == '1'
+                    colExclusionSet[0].'int'[1].value() == '3'
+                    colExclusionSet[0].'int'[2].value() == '6'
+                }
+            }
+        }
+        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with csv series mixing exclude types'() {
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                csvFile('data.prop') {
+                    "$type0"(data0)
+                    "$type1"(data1)
+                }
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        type0            | data0 | type1            | data1
+        'includeColumns' | 0     | 'includeColumns' | 'foo'
+        'includeColumns' | 'foo' | 'includeColumns' | 0
+        'excludeColumns' | 0     | 'excludeColumns' | 'foo'
+        'excludeColumns' | 'foo' | 'excludeColumns' | 0
+        'includeColumns' | 0     | 'excludeColumns' | 0
+        'excludeColumns' | 0     | 'includeColumns' | 0
+        'includeColumns' | 'foo' | 'excludeColumns' | 'foo'
+        'excludeColumns' | 'foo' | 'includeColumns' | 'foo'
     }
 
     def 'call plotPlugin without group'() {

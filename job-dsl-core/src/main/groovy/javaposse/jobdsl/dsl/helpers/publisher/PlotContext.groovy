@@ -62,6 +62,15 @@ class PlotContext implements Context {
         this.logarithmic = logarithmic
     }
 
+    void csvFile(String fileName, @DslContext(PlotCSVSeriesContext) Closure plotSeriesClosure = null) {
+        checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
+
+        PlotSeriesContext plotSeriesContext = new PlotCSVSeriesContext(fileName)
+        ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
+
+        dataSeriesList << plotSeriesContext
+    }
+
     void propertiesFile(String fileName, @DslContext(PlotPropertiesSeriesContext) Closure plotSeriesClosure = null) {
         checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
 

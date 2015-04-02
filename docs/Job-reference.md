@@ -3969,6 +3969,14 @@ job {
                 propertiesFile(String fileName) {
                     label(String label)
                 }
+                csvFile(String fileName) {
+                    includeColumns(String... columnNames)
+                    excludeColumns(String... columnNames)
+                    includeColumns(int... columnIndexes)
+                    excludeColumns(int... columnIndexes)
+                    url(String url)
+                    showTable(boolean showTable = true)         // defaults to false
+                }
                 xmlFile(String fileName) {
                     nodeType(String nodeType)                   // defaults to 'NODESET'
                     url(String url)
@@ -3992,8 +4000,11 @@ The `style` option can be one of `'area'`, `'bar'`, `'bar3d'`, `'line'` (default
 
 The `nodeType` option can be one of `'NODESET'`, `'NODE'`, `'STRING'`, `'BOOLEAN'`, `'NUMBER'`.
 
+When using `csvFile`, it is not possible to mix `includeColumn` and `excludeColumn` or use both `String` and `int`
+arguments.
+
 ```groovy
-job {
+job('example-1') {
     publishers {
         plotBuildData {
             plot('Important Plot', 'my_data_store.csv') {
@@ -4003,7 +4014,7 @@ job {
     }
 }
 
-job {
+job('example-2') {
     publishers {
         plotBuildData {
             plot('Bar Charts', 'bar_chart_data_store.csv') {
@@ -4016,7 +4027,7 @@ job {
     }
 }
 
-job {
+job('example-3') {
     publishers {
         plotBuildData {
             plot('Exciting plots', 'excitment.csv') {
@@ -4029,6 +4040,20 @@ job {
                 logarithmic()
                 propertiesFile('my_data.properties') {
                     label('Builds')
+                }
+            }
+        }
+    }
+}
+
+job('example-4') {
+    publishers {
+        plotBuildData {
+            plot('Other charts', '123012992213.csv') {
+                style('line3d')
+                csvFile('my_data.properties') {
+                    includeColumns(1, 8, 14)
+                    showTable()
                 }
             }
         }
