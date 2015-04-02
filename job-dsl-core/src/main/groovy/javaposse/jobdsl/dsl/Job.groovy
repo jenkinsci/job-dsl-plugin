@@ -84,6 +84,7 @@ abstract class Job extends Item {
         environmentVariables(null, envClosure)
     }
 
+    @RequiresPlugin(id = 'envinject')
     void environmentVariables(Map<Object, Object> vars,
                               @DslContext(EnvironmentVariableContext) Closure envClosure = null) {
         EnvironmentVariableContext envContext = new EnvironmentVariableContext(jobManagement)
@@ -104,6 +105,7 @@ abstract class Job extends Item {
         }
     }
 
+    @RequiresPlugin(id = 'throttle-concurrents')
     void throttleConcurrentBuilds(@DslContext(ThrottleConcurrentBuildsContext) Closure throttleClosure) {
         ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
         ContextHelper.executeInContext(throttleClosure, throttleContext)
@@ -127,6 +129,7 @@ abstract class Job extends Item {
         }
     }
 
+    @RequiresPlugin(id = 'lockable-resources')
     void lockableResources(String resources, @DslContext(LockableResourcesContext) Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()
         ContextHelper.executeInContext(lockClosure, lockContext)
@@ -175,6 +178,7 @@ abstract class Job extends Item {
      *
      * @param projectName Can be regular expressions. Newline delimited.
      */
+    @RequiresPlugin(id = 'build-blocker-plugin')
     void blockOn(String projectName) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
@@ -201,6 +205,7 @@ abstract class Job extends Item {
      * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
      * Default value is 100.
      */
+    @RequiresPlugin(id = 'PrioritySorter')
     void priority(int value) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = new Node(project / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
@@ -299,6 +304,7 @@ abstract class Job extends Item {
     /**
      * Configures the Notification Plugin.
      */
+    @RequiresPlugin(id = 'notification')
     void notifications(@DslContext(NotificationContext) Closure notificationClosure) {
         NotificationContext notificationContext = new NotificationContext(jobManagement)
         ContextHelper.executeInContext(notificationClosure, notificationContext)
@@ -310,6 +316,7 @@ abstract class Job extends Item {
         }
     }
 
+    @RequiresPlugin(id = 'batch-task')
     void batchTask(String name, String script) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node batchTaskProperty = project / 'properties' / 'hudson.plugins.batch__task.BatchTaskProperty'
@@ -320,6 +327,7 @@ abstract class Job extends Item {
         }
     }
 
+    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineConfiguration(String stageName, String taskName = null) {
         if (stageName || taskName) {
             withXmlActions << WithXmlAction.create { Node project ->
@@ -335,6 +343,7 @@ abstract class Job extends Item {
         }
     }
 
+    @RequiresPlugin(id = 'matrix-auth')
     void authorization(@DslContext(AuthorizationContext) Closure closure) {
         AuthorizationContext context = new AuthorizationContext()
         ContextHelper.executeInContext(closure, context)
@@ -402,6 +411,7 @@ abstract class Job extends Item {
         }
     }
 
+    @RequiresPlugin(id = 'multiple-scms')
     void multiscm(@DslContext(ScmContext) Closure closure) {
         ScmContext context = new ScmContext(true, withXmlActions, jobManagement)
         ContextHelper.executeInContext(closure, context)
@@ -464,17 +474,6 @@ abstract class Job extends Item {
         withXmlActions << WithXmlAction.create { Node project ->
             context.publisherNodes.each {
                 project / 'publishers' << it
-            }
-        }
-    }
-
-    void providedSettings(String settingsName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
-        Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
-
-        withXmlActions << WithXmlAction.create { Node project ->
-            project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
-                settingsConfigId(settingsId)
             }
         }
     }

@@ -21,6 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import org.jvnet.hudson.test.recipes.WithPlugin
 import spock.lang.Specification
 
 import static hudson.model.Result.SUCCESS
@@ -493,6 +494,7 @@ class ExecuteDslScriptsSpec extends Specification {
                 SeedJobAction).isConfigChanged()
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def createJobInFolder() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
@@ -508,6 +510,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getItemByFullName('folder-a/test-job') instanceof FreeStyleProject
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def updateJobInFolder() {
         setup:
         jenkinsRule.instance.createProject(Folder, 'folder-a').createProject(FreeStyleProject, 'test-job')
@@ -567,6 +570,7 @@ class ExecuteDslScriptsSpec extends Specification {
         action.views.contains(jenkinsRule.instance.getView('test-view'))
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def createViewInFolder() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
@@ -604,6 +608,7 @@ class ExecuteDslScriptsSpec extends Specification {
         view.description == 'lorem ipsum'
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def updateViewInFolder() {
         setup:
         jenkinsRule.instance.createProject(Folder, 'folder-a').addView(new ListView('test-view'))
@@ -752,6 +757,7 @@ class ExecuteDslScriptsSpec extends Specification {
         folder.getView('test-view') == null
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def createFolder() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
@@ -790,6 +796,7 @@ class ExecuteDslScriptsSpec extends Specification {
         action.items.contains(jenkinsRule.instance.getItem('test-folder'))
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def createFolderInFolder() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
@@ -805,6 +812,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getItemByFullName('folder-a/folder-b') instanceof Folder
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def updateFolder() {
         setup:
         jenkinsRule.instance.createProject(Folder, 'test-folder')
@@ -826,6 +834,7 @@ class ExecuteDslScriptsSpec extends Specification {
         item.description == 'lorem ipsum'
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def updateFolderInFolder() {
         setup:
         jenkinsRule.instance.createProject(Folder, 'folder-a').createProject(Folder, 'folder-b')
@@ -847,6 +856,7 @@ class ExecuteDslScriptsSpec extends Specification {
         item.description == 'lorem ipsum'
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def updateFolderIgnoreChanges() {
         setup:
         jenkinsRule.instance.createProject(Folder, 'test-folder')
@@ -870,6 +880,7 @@ class ExecuteDslScriptsSpec extends Specification {
         item.description == null
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
     def removeFolder() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')

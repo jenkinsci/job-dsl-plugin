@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.jobs
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
@@ -201,6 +202,17 @@ class MavenJob extends Job {
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'mavenName'(name)
+        }
+    }
+
+    void providedSettings(String settingsName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
+        Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
+                settingsConfigId(settingsId)
+            }
         }
     }
 }

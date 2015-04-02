@@ -163,6 +163,7 @@ class JobSpec extends Specification {
         permissions.size() == 2
         permissions[0].text() == 'hudson.model.Item.Configure:jill'
         permissions[1].text() == 'hudson.model.Item.Configure:jack'
+        _ * jobManagement.requirePlugin('matrix-auth')
     }
 
     def 'call permission'() {
@@ -177,6 +178,7 @@ class JobSpec extends Specification {
         permissions[0].text() == 'hudson.model.Item.Configure:jill'
         permissions[1].text() == 'hudson.model.Item.Read:jack'
         permissions[2].text() == 'hudson.model.Run.Update:joe'
+        _ * jobManagement.requirePlugin('matrix-auth')
     }
 
     def 'call parameters via helper'() {
@@ -215,6 +217,7 @@ class JobSpec extends Specification {
         then:
         noExceptionThrown()
         job.node.scm[0].scms[0].scm.size() == 2
+        _ * jobManagement.requirePlugin('multiple-scms')
     }
 
     def 'call wrappers'() {
@@ -284,6 +287,7 @@ class JobSpec extends Specification {
         then:
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
+        _ * jobManagement.requirePlugin('envinject')
     }
 
     def 'environments work with context'() {
@@ -297,6 +301,7 @@ class JobSpec extends Specification {
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
+        _ * jobManagement.requirePlugin('envinject')
     }
 
     def 'environments work with combination'() {
@@ -308,6 +313,7 @@ class JobSpec extends Specification {
         then:
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key4=val4')
+        _ * jobManagement.requirePlugin('envinject')
     }
 
     def 'environment from groovy script'() {
@@ -318,6 +324,7 @@ class JobSpec extends Specification {
 
         then:
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+        _ * jobManagement.requirePlugin('envinject')
     }
 
     def 'environment from map and groovy script'() {
@@ -333,6 +340,7 @@ class JobSpec extends Specification {
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+        _ * jobManagement.requirePlugin('envinject')
     }
 
     @Unroll
@@ -344,6 +352,7 @@ class JobSpec extends Specification {
 
         then:
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0]."$xmlElement"[0].value() == content
+        _ * jobManagement.requirePlugin('envinject')
 
         where:
         content          || method               || xmlElement
@@ -362,6 +371,7 @@ class JobSpec extends Specification {
 
         then:
         job.node.properties[0].'EnvInjectJobProperty'[0]."${xmlElement}"[0].value() == content
+        _ * jobManagement.requirePlugin('envinject')
 
         where:
         method                   || content || xmlElement
@@ -386,6 +396,8 @@ class JobSpec extends Specification {
         contributors.children().size() == 1
         contributors.'org.jenkinsci.plugins.sharedobjects.ToolInstallationJobProperty'
             .'populateToolInstallation'[0].value() == true
+        _ * jobManagement.requirePlugin('envinject')
+        _ * jobManagement.requireMinimumPluginVersion('shared-objects', '0.1')
     }
 
     def 'throttle concurrents enabled as project alone'() {
@@ -403,6 +415,7 @@ class JobSpec extends Specification {
         throttleNode.throttleEnabled[0].value() == 'true'
         throttleNode.throttleOption[0].value() == 'project'
         throttleNode.categories[0].children().size() == 0
+        _ * jobManagement.requirePlugin('throttle-concurrents')
     }
 
     def 'throttle concurrents disabled'() {
@@ -414,6 +427,7 @@ class JobSpec extends Specification {
         then:
         def throttleNode = job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
         throttleNode.throttleEnabled[0].value() == 'false'
+        _ * jobManagement.requirePlugin('throttle-concurrents')
     }
 
     def 'throttle concurrents enabled as part of categories'() {
@@ -433,6 +447,7 @@ class JobSpec extends Specification {
         throttleNode.categories[0].children().size() == 2
         throttleNode.categories[0].string[0].value() == 'cat-1'
         throttleNode.categories[0].string[1].value() == 'cat-2'
+        _ * jobManagement.requirePlugin('throttle-concurrents')
     }
 
     def 'disable defaults to true'() {
@@ -481,6 +496,7 @@ class JobSpec extends Specification {
             resourceNumber.size() == 0
             resourceNames[0].value() == 'lock-resource'
         }
+        _ * jobManagement.requirePlugin('lockable-resources')
     }
 
     def 'lockable resources with all parameters'() {
@@ -500,6 +516,7 @@ class JobSpec extends Specification {
             resourceNamesVar[0].value() == 'RESOURCES'
             resourceNumber[0].value() == 1
         }
+        _ * jobManagement.requirePlugin('lockable-resources')
     }
 
     def 'log rotate xml'() {
@@ -520,6 +537,7 @@ class JobSpec extends Specification {
             useBuildBlocker[0].value() == 'true'
             blockingJobs[0].value() == 'MyProject'
         }
+        _ * jobManagement.requirePlugin('build-blocker-plugin')
     }
 
     def 'can run jdk'() {
@@ -551,6 +569,7 @@ class JobSpec extends Specification {
 
         then:
         job.node.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
+        _ * jobManagement.requirePlugin('PrioritySorter')
     }
 
     def 'add a quiet period'() {
@@ -657,6 +676,7 @@ class JobSpec extends Specification {
             tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'name'[0].value() == 'Hello World'
             tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'script'[0].value() == 'echo Hello World'
         }
+        _ * jobManagement.requirePlugin('batch-task')
     }
 
     def 'add two batch tasks'() {
@@ -677,6 +697,7 @@ class JobSpec extends Specification {
             tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'name'[0].value() == 'foo'
             tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'script'[0].value() == 'echo bar'
         }
+        _ * jobManagement.requirePlugin('batch-task')
     }
 
     def 'delivery pipeline configuration with stage and task names'() {
@@ -691,6 +712,7 @@ class JobSpec extends Specification {
             taskName[0].value() == 'integration-tests'
             stageName[0].value() == 'qa'
         }
+        _ * jobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'delivery pipeline configuration with stage name'() {
@@ -704,6 +726,7 @@ class JobSpec extends Specification {
             children().size() == 1
             stageName[0].value() == 'qa'
         }
+        _ * jobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'delivery pipeline configuration with task name'() {
@@ -717,6 +740,7 @@ class JobSpec extends Specification {
             children().size() == 1
             taskName[0].value() == 'integration-tests'
         }
+        _ * jobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'set notification with default properties'() {
@@ -733,6 +757,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
         }
+        _ * jobManagement.requirePlugin('notification')
     }
 
     def 'set notification with all required properties'() {
@@ -749,6 +774,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'TCP'
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'XML'
         }
+        _ * jobManagement.requirePlugin('notification')
     }
 
     def 'set notification with invalid parameters'(String url, String protocol, String format, String event) {
@@ -761,6 +787,7 @@ class JobSpec extends Specification {
                 delegate.event(event)
             }
         }
+        _ * jobManagement.requirePlugin('notification')
 
         then:
         thrown(IllegalArgumentException)
@@ -802,6 +829,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'started'
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
         }
+        _ * jobManagement.requirePlugin('notification')
     }
 
     def 'set notification with all required properties and using a closure'() {
@@ -826,6 +854,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'started'
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
         }
+        _ * jobManagement.requirePlugin('notification')
     }
 
     def 'set notification with multiple endpoints'() {
@@ -856,5 +885,6 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].event[0].text() == 'all'
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].timeout[0].value() == 30000
         }
+        _ * jobManagement.requirePlugin('notification')
     }
 }
