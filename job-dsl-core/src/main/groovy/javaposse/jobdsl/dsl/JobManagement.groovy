@@ -138,4 +138,6 @@ interface JobManagement {
      *         be found
      */
     String getConfigFileId(ConfigFileType type, String name)
+
+    Set<String> getPermissions(String authorizationMatrixPropertyClassName)
 }

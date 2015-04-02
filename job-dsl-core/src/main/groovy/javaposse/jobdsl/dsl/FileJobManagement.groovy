@@ -101,4 +101,9 @@ class FileJobManagement extends AbstractJobManagement {
     String getConfigFileId(ConfigFileType type, String name) {
         null
     }
+
+    @Override
+    Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
+        []
+    }
 }

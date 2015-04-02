@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+@Deprecated
 enum Permissions {
     ItemDelete('hudson.model.Item.Delete'),
     ItemConfigure('hudson.model.Item.Configure'),

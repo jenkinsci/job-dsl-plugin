@@ -51,6 +51,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -329,6 +330,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         } else if (matchingJobs.size() > 1) {
             throw new DslException(format(Messages.RenameJobMatching_MultipleJobsFound(), matchingJobs));
         }
+    }
+
+    @Override
+    public Set<String> getPermissions(String descriptorId) {
+        return PermissionsHelper.getPermissions(descriptorId);
     }
 
     private void markBuildAsUnstable(String message) {

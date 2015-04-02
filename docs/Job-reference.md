@@ -37,8 +37,8 @@ freeStyleJob(String name) { // since 1.30
     throttleConcurrentBuilds(Closure throttleClosure)
     authorization {
         permission(String permission)
-        permission(String permEnumName, String user)
-        permission(Permissions perm, String user)
+        permission(String permission, String user)
+        permission(Permissions perm, String user) // deprecated since 1.31
         permissionAll(String user)
     }
     parameters {
@@ -560,36 +560,39 @@ job('example-3') {
 job {
     authorization {
         permission(String)
-        permission(String permEnumName, String user)
-        permission(Permissions perm, String user)
+        permission(String permission, String user)
         permissionAll(String user)
+        permission(Permissions perm, String user) // deprecated since 1.31
     }
 }
 ```
 
-Creates permission records. The first form adds a specific permission, e.g. 'hudson.model.Item.Workspace:authenticated', as seen in the config.xml. The second form simply breaks apart the permission from the user name, to make scripting easier. The third uses a helper Enum called [Permissions] (https://github.com/jenkinsci/job-dsl-plugin/blob/master/job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/helpers/Permissions.groovy) to hide some of the names of permissions. It is available by importing javaposse.jobdsl.dsl.helpers.Permissions. By using the enum you get some basic type checking. A flaw with this system is that Jenkins plugins can create their own permissions, and the job-dsl plugin doesn't necessarily know about them. The last form will take everything in the Permissions enum and gives them to the user, this method also suffers from the problem that not all permissions from every plugin are included.
+Creates permission records. Requires the
+[Matrix Authorization Strategy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Authorization+Strategy+Plugin).
 
-The permissions as of the latest version can be found in [the Permissions enum](https://github.com/jenkinsci/job-dsl-plugin/blob/master/job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/helpers/Permissions.groovy). For illustration, [Permissions](https://github.com/jenkinsci/job-dsl-plugin/blob/master/job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/helpers/Permissions.groovy) here are a couple of examples:
+The first form adds a specific permission, e.g. `'hudson.model.Item.Workspace:authenticated'`, as seen in config.xml.
+The second form breaks apart the permission from the user name, to make scripting easier. The third form will add all
+available permission for the user.
 
 ```groovy
-// Gives permission for the special authenticated group to see the workspace of the job
+// add a permission for the special authenticated group to see the workspace of the job
 job('example-1') {
     authorization {
         permission('hudson.model.Item.Workspace:authenticated')
     }
 }
 
-// Gives discover permission for the special anonymous user
+// adds the build permission for the special anonymous user
 job('example-2') {
     authorization {
-        permission(Permissions.ItemDiscover, 'anonymous')
+        permission('hudson.model.Item.Build', 'anonymous')
     }
 }
 
-// Gives all permissions found in the Permissions enum to the special authenticated group
+// add all permissions for user joe
 job('example-3') {
     authorization {
-        permissionAll('authenticated')
+        permissionAll('joe')
     }
 }
 ```

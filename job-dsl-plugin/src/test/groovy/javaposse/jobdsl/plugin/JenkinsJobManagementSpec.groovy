@@ -410,4 +410,46 @@ class JenkinsJobManagementSpec extends Specification {
         Exception e = thrown(IllegalStateException)
         e.message.contains(fileName)
     }
+
+    def 'get all job permissions'() {
+        setup:
+        String propertyName = 'hudson.security.AuthorizationMatrixProperty'
+
+        when:
+        Set<String> permissions = jobManagement.getPermissions(propertyName)
+
+        then:
+        'hudson.model.Item.Delete' in permissions
+        'hudson.model.Item.Configure' in permissions
+        'hudson.model.Item.Read' in permissions
+        'hudson.model.Item.Discover' in permissions
+        'hudson.model.Item.Build' in permissions
+        'hudson.model.Item.Workspace' in permissions
+        'hudson.model.Item.Cancel' in permissions
+        'hudson.model.Item.Move' in permissions
+        'hudson.model.Run.Delete' in permissions
+        'hudson.model.Run.Update' in permissions
+        'hudson.scm.SCM.Tag' in permissions
+    }
+
+    def 'get all folder permissions'() {
+        setup:
+        String propertyName = 'com.cloudbees.hudson.plugins.folder.properties.AuthorizationMatrixProperty'
+
+        when:
+        Set<String> permissions = jobManagement.getPermissions(propertyName)
+
+        then:
+        'hudson.model.Item.Create' in permissions
+        'hudson.model.Item.Delete' in permissions
+        'hudson.model.Item.Configure' in permissions
+        'hudson.model.Item.Read' in permissions
+        'hudson.model.Item.Discover' in permissions
+        'hudson.model.Item.Build' in permissions
+        'hudson.model.Item.Workspace' in permissions
+        'hudson.model.Item.Cancel' in permissions
+        'hudson.model.Item.Move' in permissions
+        'hudson.model.Run.Delete' in permissions
+        'hudson.model.Run.Update' in permissions
+    }
 }

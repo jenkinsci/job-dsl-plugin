@@ -246,12 +246,6 @@ job {
     scm {
         git(gitUrl)
     }
-    // No Trigger
-    authorization {
-        // Limit builds to just jack and jill
-        permission('ItemBuild', 'jill')
-        permission('ItemBuild', 'jack')
-    }
     steps {
         maven('release')
         shell('cleanup.sh')

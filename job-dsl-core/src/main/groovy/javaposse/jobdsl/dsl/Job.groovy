@@ -345,7 +345,7 @@ abstract class Job extends Item {
 
     @RequiresPlugin(id = 'matrix-auth')
     void authorization(@DslContext(AuthorizationContext) Closure closure) {
-        AuthorizationContext context = new AuthorizationContext()
+        AuthorizationContext context = new AuthorizationContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
