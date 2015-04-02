@@ -106,6 +106,11 @@ class MemoryJobManagement extends AbstractJobManagement {
         configFile == null ? null : createConfigFileId(configFile)
     }
 
+    @Override
+    Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
+        []
+    }
+
     private static String createConfigFileId(ConfigFile configFile) {
         DigestUtils.md5Hex(configFile.name)
     }

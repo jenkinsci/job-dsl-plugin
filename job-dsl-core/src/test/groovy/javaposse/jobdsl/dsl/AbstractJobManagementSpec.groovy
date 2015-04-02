@@ -184,6 +184,11 @@ class AbstractJobManagementSpec extends Specification {
             null
         }
 
+        @Override
+        Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
+            []
+        }
+
         void testMethod() {
             logDeprecationWarning()
         }

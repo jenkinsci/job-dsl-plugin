@@ -1,30 +1,64 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class AuthorizationContextSpec extends Specification {
-    AuthorizationContext context = new AuthorizationContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    AuthorizationContext context = new AuthorizationContext(jobManagement)
 
     def 'call permission methods'() {
+        setup:
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+                'hudson.model.Item.Read',
+                'hudson.model.Run.Update'
+        ]
+
         when:
         context.permission('hudson.model.Item.Configure:jill')
 
         then:
         context.permissions.size() == 1
-        context.permissions[0] == 'hudson.model.Item.Configure:jill'
+        context.permissions.contains('hudson.model.Item.Configure:jill')
 
         when:
         context.permission(Permissions.ItemRead, 'jack')
 
         then:
         context.permissions.size() == 2
-        context.permissions[1] == 'hudson.model.Item.Read:jack'
+        context.permissions.contains('hudson.model.Item.Read:jack')
 
         when:
         context.permission('RunUpdate', 'joe')
 
         then:
         context.permissions.size() == 3
-        context.permissions[2] == 'hudson.model.Run.Update:joe'
+        context.permissions.contains('hudson.model.Run.Update:joe')
+
+        when:
+        context.permission('hudson.model.Run.Update', 'john')
+
+        then:
+        context.permissions.size() == 4
+        context.permissions.contains('hudson.model.Run.Update:john')
+    }
+
+    def 'call permissionAll method'() {
+        setup:
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+                'hudson.model.Item.Read',
+                'hudson.model.Run.Update'
+        ]
+
+        when:
+        context.permissionAll('jill')
+
+        then:
+        context.permissions.size() == 3
+        context.permissions.contains('hudson.model.Item.Configure:jill')
+        context.permissions.contains('hudson.model.Item.Read:jill')
+        context.permissions.contains('hudson.model.Run.Update:jill')
     }
 }

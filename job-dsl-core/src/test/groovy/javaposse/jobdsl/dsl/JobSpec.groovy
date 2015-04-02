@@ -152,6 +152,11 @@ class JobSpec extends Specification {
     }
 
     def 'call authorization'() {
+        setup:
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+        ]
+
         when:
         job.authorization {
             permission('hudson.model.Item.Configure:jill')
@@ -167,6 +172,13 @@ class JobSpec extends Specification {
     }
 
     def 'call permission'() {
+        setup:
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+                'hudson.model.Item.Read',
+                'hudson.model.Run.Update',
+        ]
+
         when:
         job.permission('hudson.model.Item.Configure:jill')
         job.permission(Permissions.ItemRead, 'jack')

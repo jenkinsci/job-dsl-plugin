@@ -69,6 +69,28 @@ job {
 }
 ```
 
+### Permissions
+
+The Permissions enum has been deprecated because it can not reflect all permissions that are available at runtime.
+
+DSL prior to 1.31
+```groovy
+job {
+    permission(Permissions.ItemRead, 'jill')
+    permission('RunUpdate', 'joe')
+}
+```
+
+DSL since 1.31
+```groovy
+job {
+    authorization {
+        permission('hudson.model.Item.Read', 'jill')
+        permission('hudson.model.Run.Update', 'joe')
+    }
+}
+```
+
 ## Migrating to 1.30
 
 ### Factory and Name Methods
