@@ -3215,7 +3215,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 6
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'xml'
-                    label[0].value() == ''
+                    label[0].value().empty
                     nodeTypeString[0].value() == 'NODESET'
                     url[0].value() == ''
                     xpathString[0].value() == ''
@@ -3258,7 +3258,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 6
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'xml'
-                    label[0].value() == ''
+                    label[0].value().empty
                     nodeTypeString[0].value() == 'NODE'
                     url[0].value() == 'http://somewhere'
                     xpathString[0].value() == 'an xpath string'
@@ -3297,7 +3297,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 7
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'OFF'
                     exclusionValues[0].value() == ''
                     url[0].value() == ''
@@ -3340,7 +3340,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 7
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'OFF'
                     exclusionValues[0].value() == ''
                     url[0].value() == 'http://somewhere'
@@ -3351,12 +3351,12 @@ class PublisherContextSpec extends Specification {
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using single includeColumn(str)'() {
+    def 'call plotPlugin with csv series using single includeColumns(str)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    includeColumn('foo')
+                    includeColumns('foo')
                 }
             }
         }
@@ -3382,7 +3382,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo'
                     url[0].value() == ''
@@ -3397,14 +3397,13 @@ class PublisherContextSpec extends Specification {
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using multiple includeColumn(str)'() {
+    def 'call plotPlugin with csv series using multiple includeColumns(str)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    includeColumn('foo')
-                    includeColumn('bar')
-                    includeColumn('woo')
+                    includeColumns('foo')
+                    includeColumns('bar', 'woo')
                 }
             }
         }
@@ -3430,7 +3429,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo,bar,woo'
                     url[0].value() == ''
@@ -3447,12 +3446,12 @@ class PublisherContextSpec extends Specification {
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using single excludeColumn(str)'() {
+    def 'call plotPlugin with csv series using single excludeColumns(str)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    excludeColumn('foo')
+                    excludeColumns('foo')
                 }
             }
         }
@@ -3478,7 +3477,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'EXCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo'
                     url[0].value() == ''
@@ -3493,14 +3492,13 @@ class PublisherContextSpec extends Specification {
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using multiple excludeColumn(str)'() {
+    def 'call plotPlugin with csv series using multiple excludeColumns(str)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    excludeColumn('foo')
-                    excludeColumn('bar')
-                    excludeColumn('woo')
+                    excludeColumns('foo')
+                    excludeColumns('bar', 'woo')
                 }
             }
         }
@@ -3526,7 +3524,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'EXCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo,bar,woo'
                     url[0].value() == ''
@@ -3543,12 +3541,12 @@ class PublisherContextSpec extends Specification {
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using single includeColumn(int)'() {
+    def 'call plotPlugin with csv series using single includeColumns(int)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    includeColumn(1)
+                    includeColumns(1)
                 }
             }
         }
@@ -3574,7 +3572,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'INCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1'
                     url[0].value() == ''
@@ -3582,21 +3580,20 @@ class PublisherContextSpec extends Specification {
                     with(colExclusionSet[0]) {
                         children().size() == 1
                     }
-                    colExclusionSet[0].'int'[0].value() == 1
+                    colExclusionSet[0].'int'[0].value() == '1'
                 }
             }
         }
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using multiple includeColumn(int)'() {
+    def 'call plotPlugin with csv series using multiple includeColumns(int)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    includeColumn(1)
-                    includeColumn(3)
-                    includeColumn(6)
+                    includeColumns(1)
+                    includeColumns(3, 6)
                 }
             }
         }
@@ -3622,7 +3619,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'INCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1,3,6'
                     url[0].value() == ''
@@ -3630,21 +3627,21 @@ class PublisherContextSpec extends Specification {
                     with(colExclusionSet[0]) {
                         children().size() == 3
                     }
-                    colExclusionSet[0].'int'[0].value() == 1
-                    colExclusionSet[0].'int'[1].value() == 3
-                    colExclusionSet[0].'int'[2].value() == 6
+                    colExclusionSet[0].'int'[0].value() == '1'
+                    colExclusionSet[0].'int'[1].value() == '3'
+                    colExclusionSet[0].'int'[2].value() == '6'
                 }
             }
         }
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using single excludeColumn(int)'() {
+    def 'call plotPlugin with csv series using single excludeColumns(int)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    excludeColumn(1)
+                    excludeColumns(1)
                 }
             }
         }
@@ -3670,7 +3667,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'EXCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1'
                     url[0].value() == ''
@@ -3678,21 +3675,20 @@ class PublisherContextSpec extends Specification {
                     with(colExclusionSet[0]) {
                         children().size() == 1
                     }
-                    colExclusionSet[0].'int'[0].value() == 1
+                    colExclusionSet[0].'int'[0].value() == '1'
                 }
             }
         }
         _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
-    def 'call plotPlugin with csv series using multiple excludeColumn(int)'() {
+    def 'call plotPlugin with csv series using multiple excludeColumns(int)'() {
         when:
         context.plotBuildData {
             plot('my group', 'some.csv') {
                 csvFile('data.prop') {
-                    excludeColumn(1)
-                    excludeColumn(3)
-                    excludeColumn(6)
+                    excludeColumns(1)
+                    excludeColumns(3, 6)
                 }
             }
         }
@@ -3718,7 +3714,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value() == ''
+                    label[0].value().empty
                     inclusionFlag[0].value() == 'EXCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1,3,6'
                     url[0].value() == ''
@@ -3726,9 +3722,9 @@ class PublisherContextSpec extends Specification {
                     with(colExclusionSet[0]) {
                         children().size() == 3
                     }
-                    colExclusionSet[0].'int'[0].value() == 1
-                    colExclusionSet[0].'int'[1].value() == 3
-                    colExclusionSet[0].'int'[2].value() == 6
+                    colExclusionSet[0].'int'[0].value() == '1'
+                    colExclusionSet[0].'int'[1].value() == '3'
+                    colExclusionSet[0].'int'[2].value() == '6'
                 }
             }
         }
@@ -3750,15 +3746,15 @@ class PublisherContextSpec extends Specification {
         thrown(IllegalArgumentException)
 
         where:
-        type0           | data0  | type1           | data1
-        'includeColumn' | 0      | 'includeColumn' | 'foo'
-        'includeColumn' | 'foo'  | 'includeColumn' | 0
-        'excludeColumn' | 0      | 'excludeColumn' | 'foo'
-        'excludeColumn' | 'foo'  | 'excludeColumn' | 0
-        'includeColumn' | 0      | 'excludeColumn' | 0
-        'excludeColumn' | 0      | 'includeColumn' | 0
-        'includeColumn' | 'foo'  | 'excludeColumn' | 'foo'
-        'excludeColumn' | 'foo'  | 'includeColumn' | 'foo'
+        type0            | data0 | type1            | data1
+        'includeColumns' | 0     | 'includeColumns' | 'foo'
+        'includeColumns' | 'foo' | 'includeColumns' | 0
+        'excludeColumns' | 0     | 'excludeColumns' | 'foo'
+        'excludeColumns' | 'foo' | 'excludeColumns' | 0
+        'includeColumns' | 0     | 'excludeColumns' | 0
+        'excludeColumns' | 0     | 'includeColumns' | 0
+        'includeColumns' | 'foo' | 'excludeColumns' | 'foo'
+        'excludeColumns' | 'foo' | 'includeColumns' | 'foo'
     }
 
     def 'call plotPlugin without group'() {

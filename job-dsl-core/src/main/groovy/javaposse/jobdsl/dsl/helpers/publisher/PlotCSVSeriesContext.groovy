@@ -4,8 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument
 
 class PlotCSVSeriesContext extends PlotSeriesContext {
     String inclusionFlag = 'OFF'
-    List <Integer> colExclusionSet = []
-    List <String> strExclusionSet = []
+    List<String> exclusionSet = []
     String url
     boolean showTable
 
@@ -21,39 +20,29 @@ class PlotCSVSeriesContext extends PlotSeriesContext {
         this.showTable = showTable
     }
 
-    void includeColumn(String columnName) {
-        String inclusionFlag = 'INCLUDE_BY_STRING'
-        checkArgument(['OFF', inclusionFlag].contains(this.inclusionFlag),
-            'Unable to mix includeColumns/excludeColumns arguments or columnName/columnIndex types.')
-
-        this.inclusionFlag = inclusionFlag
-        this.strExclusionSet.add(columnName)
+    void includeColumns(String... columnNames) {
+        includeExcludeColumn('INCLUDE_BY_STRING', columnNames)
     }
 
-    void excludeColumn(String columnName) {
-        String inclusionFlag = 'EXCLUDE_BY_STRING'
-        checkArgument(['OFF', inclusionFlag].contains(this.inclusionFlag),
-            'Unable to mix includeColumns/excludeColumns arguments or columnName/columnIndex types.')
-
-        this.inclusionFlag = inclusionFlag
-        this.strExclusionSet.add(columnName)
+    void excludeColumns(String... columnNames) {
+        includeExcludeColumn('EXCLUDE_BY_STRING', columnNames)
     }
 
-    void includeColumn(Integer columnIndex) {
-        String inclusionFlag = 'INCLUDE_BY_COLUMN'
-        checkArgument(['OFF', inclusionFlag].contains(this.inclusionFlag),
-            'Unable to mix includeColumns/excludeColumns arguments or columnName/columnIndex types.')
-
-        this.inclusionFlag = inclusionFlag
-        this.colExclusionSet.add(columnIndex)
+    void includeColumns(int... columnIndexes) {
+        includeExcludeColumn('INCLUDE_BY_COLUMN', columnIndexes as String[])
     }
 
-    void excludeColumn(Integer columnIndex) {
-        String inclusionFlag = 'EXCLUDE_BY_COLUMN'
-        checkArgument(['OFF', inclusionFlag].contains(this.inclusionFlag),
-            'Unable to mix includeColumns/excludeColumns arguments or columnName/columnIndex types.')
+    void excludeColumns(int... columnIndexes) {
+        includeExcludeColumn('EXCLUDE_BY_COLUMN', columnIndexes as String[])
+    }
+
+    private void includeExcludeColumn(String inclusionFlag, String... columnNames) {
+        checkArgument(
+                this.inclusionFlag in ['OFF', inclusionFlag],
+                'Unable to mix includeColumns/excludeColumns arguments or columnName/columnIndex types.'
+        )
 
         this.inclusionFlag = inclusionFlag
-        this.colExclusionSet.add(columnIndex)
+        this.exclusionSet.addAll(columnNames)
     }
 }

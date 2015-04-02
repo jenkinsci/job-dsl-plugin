@@ -220,34 +220,30 @@ class PublisherContext implements Context {
                                         label(data.label ?: '')
                                     }
                                     if (data instanceof PlotCSVSeriesContext) {
-                                        label('')
+                                        label()
                                         inclusionFlag(data.inclusionFlag)
+                                        exclusionValues(data.exclusionSet.join(','))
                                         switch (data.inclusionFlag) {
-                                            case 'OFF':
-                                                exclusionValues('')
-                                                break
                                             case ['INCLUDE_BY_STRING', 'EXCLUDE_BY_STRING']:
                                                 strExclusionSet {
-                                                    data.strExclusionSet.each { String exclusion ->
+                                                    data.exclusionSet.each { String exclusion ->
                                                         string(exclusion)
                                                     }
                                                 }
-                                                exclusionValues(data.strExclusionSet.join(','))
                                                 break
                                             case ['INCLUDE_BY_COLUMN', 'EXCLUDE_BY_COLUMN']:
                                                 colExclusionSet {
-                                                    data.colExclusionSet.each { Integer exclusion ->
+                                                    data.exclusionSet.each { String exclusion ->
                                                         'int'(exclusion)
                                                     }
                                                 }
-                                                exclusionValues(data.colExclusionSet.join(','))
                                                 break
                                         }
                                         url(data.url ?: '')
                                         displayTableFlag(data.showTable)
                                     }
                                     if (data instanceof PlotXMLSeriesContext) {
-                                        label('')
+                                        label()
                                         xpathString(data.xpath ?: '')
                                         url(data.url ?: '')
                                         nodeTypeString(data.nodeType)

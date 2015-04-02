@@ -3963,16 +3963,16 @@ job {
                 excludeZero(boolean excludeZero = true)         // defaults to false
                 keepRecords(boolean keepRecords = true)         // defaults to false
                 logarithmic(boolean logarithmic = true)         // defaults to false
-                csvFile(String fileName) {
-                    includeColumn(String columnName)
-                    excludeColumn(String columnName)
-                    includeColumn(int columnIndex)
-                    excludeColumn(int columnIndex)
-                    showTable(boolean showTable = true)         // defaults to false
-                    url(String url)
-                }
                 propertiesFile(String fileName) {
                     label(String label)
+                }
+                csvFile(String fileName) {
+                    includeColumns(String... columnNames)
+                    excludeColumns(String... columnNames)
+                    includeColumns(int... columnIndexes)
+                    excludeColumns(int... columnIndexes)
+                    url(String url)
+                    showTable(boolean showTable = true)         // defaults to false
                 }
                 xmlFile(String fileName) {
                     nodeType(String nodeType)                   // defaults to 'NODESET'
@@ -3997,10 +3997,11 @@ The `style` option can be one of `'area'`, `'bar'`, `'bar3d'`, `'line'` (default
 
 The `nodeType` option can be one of `'NODESET'`, `'NODE'`, `'STRING'`, `'BOOLEAN'`, `'NUMBER'`.
 
-When using `csvFile`, it is not possible to mix `includeColumn()` and `excludeColumn()` or use both `String` and `int` arguments.
+When using `csvFile`, it is not possible to mix `includeColumn` and `excludeColumn` or use both `String` and `int`
+arguments.
 
 ```groovy
-job {
+job('example-1') {
     publishers {
         plotBuildData {
             plot('Important Plot', 'my_data_store.csv') {
@@ -4010,7 +4011,7 @@ job {
     }
 }
 
-job {
+job('example-2') {
     publishers {
         plotBuildData {
             plot('Bar Charts', 'bar_chart_data_store.csv') {
@@ -4023,7 +4024,7 @@ job {
     }
 }
 
-job {
+job('example-3') {
     publishers {
         plotBuildData {
             plot('Exciting plots', 'excitment.csv') {
@@ -4042,15 +4043,13 @@ job {
     }
 }
 
-job {
+job('example-4') {
     publishers {
         plotBuildData {
             plot('Other charts', '123012992213.csv') {
                 style('line3d')
                 csvFile('my_data.properties') {
-                    includeColumn(1)
-                    includeColumn(8)
-                    includeColumn(14)
+                    includeColumns(1, 8, 14)
                     showTable()
                 }
             }
