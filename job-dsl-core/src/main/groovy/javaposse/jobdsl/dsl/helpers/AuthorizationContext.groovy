@@ -10,11 +10,13 @@ import static com.google.common.base.Preconditions.checkArgument
  * Builds up perms in a closure. So that it be used to build a withXml block
  */
 class AuthorizationContext implements Context {
-    private final JobManagement jobManagement
-    Set<String> permissions = []
+    private final String authorizationMatrixPropertyClassName
+    protected final JobManagement jobManagement
+    Set<String> permissions = new LinkedHashSet<String>()
 
-    AuthorizationContext(JobManagement jobManagement) {
+    AuthorizationContext(JobManagement jobManagement, String authorizationMatrixPropertyClassName) {
         this.jobManagement = jobManagement
+        this.authorizationMatrixPropertyClassName = authorizationMatrixPropertyClassName
     }
 
     void permissionAll(String user) {
@@ -31,14 +33,7 @@ class AuthorizationContext implements Context {
         this.permission(permissionAndUser[0], permissionAndUser[1])
     }
 
-    @Deprecated
-    void permission(Permissions permission, String user) {
-        jobManagement.logDeprecationWarning()
-        addPermission(permission.longForm, user)
-    }
-
-    void permission(String permissionEnumName, String user) {
-        String permission = getPermissionFromEnumValue(permissionEnumName)
+    void permission(String permission, String user) {
         checkArgument(
                 availablePermissions.contains(permission),
                 "permission must be one of ${availablePermissions.join(',')}"
@@ -46,22 +41,11 @@ class AuthorizationContext implements Context {
         addPermission(permission, user)
     }
 
-    private void addPermission(String permission, String user) {
+    protected void addPermission(String permission, String user) {
         permissions << "${permission}:${user}".toString()
     }
 
-    private String getPermissionFromEnumValue(String permissionOrEnumValue) {
-        String permission
-        try {
-            permission = Permissions.valueOf(permissionOrEnumValue).longForm
-            jobManagement.logDeprecationWarning('using the permission enum values')
-        } catch (IllegalArgumentException ignore) {
-            permission = permissionOrEnumValue
-        }
-        permission
-    }
-
-    private Set<String> getAvailablePermissions() {
-        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty')
+    protected Set<String> getAvailablePermissions() {
+        jobManagement.getPermissions(authorizationMatrixPropertyClassName)
     }
 }

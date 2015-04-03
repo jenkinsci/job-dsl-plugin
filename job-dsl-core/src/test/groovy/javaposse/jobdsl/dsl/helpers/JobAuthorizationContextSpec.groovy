@@ -3,9 +3,9 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
-class AuthorizationContextSpec extends Specification {
+class JobAuthorizationContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    AuthorizationContext context = new AuthorizationContext(jobManagement)
+    JobAuthorizationContext context = new JobAuthorizationContext(jobManagement)
 
     def 'call permission methods'() {
         setup:

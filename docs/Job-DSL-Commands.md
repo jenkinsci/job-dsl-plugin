@@ -91,7 +91,7 @@ buildMonitorView(String name, Closure closure = null)     // since 1.30
 
 The view methods behaves like the [job](#job) methods and will return a view object.
 
-See the [[View Reference]] pages for details about view options.
+See the [[View Reference]] page for details about view options.
 
 For compatibility with previous releases, a generic `view` method exists which has an optional `type` attribute to
 specify the type of view to be created. The `type` attribute can have a value of `ListView`, `BuildPipelineView`,
@@ -108,28 +108,16 @@ When the [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/
 installed, the DSL can be used to create folders.
 
 ```groovy
-folder(String name) { // since 1.30
-    name(String name) // deprecated since 1.30
+folder(String name, Closure closure = null) // since 1.30
 
-    // DSL specific methods
-    configure(Closure configBlock)
-
-    // common options
-    displayName(String displayName)
-}
-
-folder(Closure folderClosure) // since 1.23, deprecated since 1.30
+folder(Closure folderClosure)               // since 1.23, deprecated since 1.30
 ```
 
 The `folder` methods behaves like the [job](#job) methods and will return a folder object.
 
-Folders will be created before jobs and views to ensure that a folder exists before entries are created.
+See the [[Folder Reference]] page for details about folder options.
 
-```groovy
-folder('project-a') {
-  displayName('Project A')
-}
-```
+Folders will be created before jobs and views to ensure that a folder exists before entries are created.
 
 Items can be created within folders by using the full path as job name.
 
