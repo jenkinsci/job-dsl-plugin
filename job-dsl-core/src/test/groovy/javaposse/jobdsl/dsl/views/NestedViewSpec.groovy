@@ -221,7 +221,7 @@ class NestedViewSpec extends Specification {
         view.node.views[0].children()[0].name() == 'hudson.plugins.nested__view.NestedView'
     }
 
-    def 'should add categorized jobs view'() {
+    def 'nested categorized jobs view'() {
         when:
         View categorizedView
         view.views {
@@ -237,7 +237,7 @@ class NestedViewSpec extends Specification {
         view.node.views[0].children()[0].description[0].text() == 'foo'
     }
 
-    def 'should add categorized jobs view without closure'() {
+    def 'nested categorized jobs view without closure'() {
         when:
         View categorizedView
         view.views {

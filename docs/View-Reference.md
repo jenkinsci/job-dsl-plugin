@@ -41,6 +41,7 @@ listView(String name) { // since 1.30
         configureProject() // since 1.31, requires the Extra Columns Plugin
         claim()            // since 1.29, requires the Claim Plugin
         lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
+        categorizedJob()   // since 1.31, requires the Categorized Jobs View Plugin
     }
     recurse(boolean shouldRecurse = true) // since 1.31
 }
@@ -335,15 +336,10 @@ categorizedJobsView(String name) {  // since 1.31
 
     // list view options
     // ... (all of them)
-    
+
     // categorized jobs view options
     categorizationCriteria {
-        groupingRule {
-            groupRegex(String groupRegex)
-            namingRule(String namingRule)
-        }
-        // short alias for groupingRule
-        byRegexWithNaming(String groupRegex, String namingRule)
+        regexGroupingRule(String groupRegex, String namingRule = null)
     }
 }
 ```
@@ -353,18 +349,18 @@ categorize them according to regular expressions.
 Requires the [Categorized Jobs View](https://wiki.jenkins-ci.org/display/JENKINS/Categorized+Jobs+View).
 
 ```groovy
-categorizedJobsView("Configuration") {
+categorizedJobsView('Configuration') {
     jobs {
-        regex("configuration_.*")
+        regex(/configuration_.*/)
     }
 
     categorizationCriteria {
-        byRegexWithNaming('^configuration_([^_]+).*$', '$1')
+        regexGroupingRule(/^configuration_([^_]+).*$/)
     }
 
     columns {
         status()
-        name()
+        categorizedJob()
         buildButton()
     }
 }
@@ -527,6 +523,7 @@ columns {
     configureProject() // since 1.31, requires the Extra Columns Plugin
     claim()            // since 1.29, requires the Claim Plugin
     lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
+    categorizedJob()   // since 1.31, requires the Categorized Jobs View Plugin
 }
 ```
 
@@ -956,22 +953,22 @@ See [Jobs](#jobs) in the [List View Options](#list-view-options) above.
 
 ## Categorized Jobs View Options
 
-### Categorization criteria
+### Categorization Criteria
 
-Contains list of grouping rules in full or short form
 ```groovy
-categorizationCriteria {
-      groupingRule {
-          groupRegex('^configuration_([^_]+).*$')
-          namingRule('$1')
-      }
-      // short alias for groupingRule (same effect)
-      byRegexWithNaming('^configuration_([^_]+).*$', '$1')
+categorizedJobsView {
+    categorizationCriteria {
+        regexGroupingRule(String groupRegex, String namingRule = null)
     }
+}
 ```
-### Grouping rule (alias *byRegexWithNaming*)
 
-Adds a rule to categorize your jobs. Contains parameters: 
-- `groupRegex` - rule on how to group jobs (can use regex groups e.g. `some_(.*)_end`)
-- `namingRule` - how to name grouped jobs section (can use groups from `groupRegex` field, e.g. `$1`)
+Contains list of grouping rules. Currently only a rule for groups jobs using a regular expression is available.
 
+```groovy
+categorizedJobsView('example') {
+    categorizationCriteria {
+        regexGroupingRule(/^configuration_([^_]+).*$/)
+    }
+}
+```

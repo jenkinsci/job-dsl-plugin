@@ -126,7 +126,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     @Override
-    @RequiresPlugin(id = 'categorized-view')
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
         processView(name, CategorizedJobsView, closure)
     }

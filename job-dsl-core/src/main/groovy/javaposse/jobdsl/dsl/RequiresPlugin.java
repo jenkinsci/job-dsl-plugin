@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Documented
-@interface RequiresPlugin {
+public @interface RequiresPlugin {
     /**
      * The Plugin ID or short name of the required plugin.
      */
