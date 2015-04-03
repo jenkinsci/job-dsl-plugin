@@ -221,6 +221,35 @@ class NestedViewSpec extends Specification {
         view.node.views[0].children()[0].name() == 'hudson.plugins.nested__view.NestedView'
     }
 
+    def 'nested categorized jobs view'() {
+        when:
+        View categorizedView
+        view.views {
+            categorizedView = delegate.categorizedJobsView('test') {
+                description('foo')
+            }
+        }
+
+        then:
+        categorizedView.name == 'test'
+        categorizedView instanceof CategorizedJobsView
+        view.node.views[0].children()[0].name() == 'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
+        view.node.views[0].children()[0].description[0].text() == 'foo'
+    }
+
+    def 'nested categorized jobs view without closure'() {
+        when:
+        View categorizedView
+        view.views {
+            categorizedView = delegate.categorizedJobsView('test')
+        }
+
+        then:
+        categorizedView.name == 'test'
+        categorizedView instanceof CategorizedJobsView
+        view.node.views[0].children()[0].name() == 'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
+    }
+
     def 'nested delivery pipeline view'() {
         when:
         View nestedView

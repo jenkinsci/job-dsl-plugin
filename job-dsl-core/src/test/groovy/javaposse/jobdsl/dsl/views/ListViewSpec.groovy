@@ -206,12 +206,13 @@ class ListViewSpec extends Specification {
             buildButton()
             claim()
             lastBuildNode()
+            categorizedJob()
         }
 
         then:
         Node root = view.node
         root.columns.size() == 1
-        root.columns[0].value().size() == 9
+        root.columns[0].value().size() == 10
         root.columns[0].value()[0].name() == 'hudson.views.StatusColumn'
         root.columns[0].value()[1].name() == 'hudson.views.WeatherColumn'
         root.columns[0].value()[2].name() == 'hudson.views.JobColumn'
@@ -221,7 +222,9 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[6].name() == 'hudson.views.BuildButtonColumn'
         root.columns[0].value()[7].name() == 'hudson.plugins.claim.ClaimColumn'
         root.columns[0].value()[8].name() == 'org.jenkins.plugins.column.LastBuildNodeColumn'
+        root.columns[0].value()[9].name() == 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn'
         _ * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
+        _ * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
     def 'call columns twice'() {

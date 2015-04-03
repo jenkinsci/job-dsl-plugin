@@ -11,6 +11,7 @@ import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
+import javaposse.jobdsl.dsl.views.CategorizedJobsView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -122,6 +123,12 @@ abstract class JobParent extends Script implements DslFactory {
     @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
+    }
+
+    @Override
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
+    CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
+        processView(name, CategorizedJobsView, closure)
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263

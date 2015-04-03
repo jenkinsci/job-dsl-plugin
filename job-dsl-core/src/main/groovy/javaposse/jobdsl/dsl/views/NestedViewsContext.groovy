@@ -5,6 +5,7 @@ import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
 import javaposse.jobdsl.dsl.ViewFactory
 import javaposse.jobdsl.dsl.ViewType
@@ -70,6 +71,12 @@ class NestedViewsContext implements Context, ViewFactory {
     @Override
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
+    }
+
+    @Override
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
+    CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
+        processView(name, CategorizedJobsView, closure)
     }
 
     private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {

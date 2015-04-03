@@ -87,6 +87,8 @@ deliveryPipelineView(String name, Closure closure = null) // since 1.30
 buildPipelineView(String name, Closure closure = null)    // since 1.30
 
 buildMonitorView(String name, Closure closure = null)     // since 1.30
+
+categorizedJobsView(String name, Closure closure = null)  // since 1.31
 ```
 
 The view methods behaves like the [job](#job) methods and will return a view object.

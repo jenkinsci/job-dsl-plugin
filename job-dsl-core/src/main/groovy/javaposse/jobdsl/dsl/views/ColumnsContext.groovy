@@ -56,4 +56,9 @@ class ColumnsContext implements Context {
     void lastBuildNode() {
         columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
     }
+
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
+    void categorizedJob() {
+        columnNodes << new Node(null, 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn')
+    }
 }

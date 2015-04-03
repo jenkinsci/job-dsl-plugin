@@ -41,6 +41,7 @@ listView(String name) { // since 1.30
         configureProject() // since 1.31, requires the Extra Columns Plugin
         claim()            // since 1.29, requires the Claim Plugin
         lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
+        categorizedJob()   // since 1.31, requires the Categorized Jobs View Plugin
     }
     recurse(boolean shouldRecurse = true) // since 1.31
 }
@@ -201,6 +202,7 @@ nestedView(String name) { // since 1.30
         deliveryPipelineView(String name, Closure closure = null) // since 1.30
         buildPipelineView(String name, Closure closure = null)    // since 1.30
         buildMonitorView(String name, Closure closure = null)     // since 1.30
+        categorizedJobsView(String name, Closure closure = null)  // since 1.31
         view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30, deprecated since 1.31
         view(Map<String, Object> arguments = [:], Closure viewClosure) // deprecated since 1.30
     }
@@ -318,6 +320,48 @@ buildMonitorView('project-A') {
     jobs {
         name('release-projectA')
         regex('project-A-.+')
+    }
+}
+```
+
+## Categorized Jobs View
+
+```groovy
+categorizedJobsView(String name) {  // since 1.31
+    // common options
+    description(String description)
+    filterBuildQueue(boolean filterBuildQueue = true)
+    filterExecutors(boolean filterExecutors = true)
+    configure(Closure configureBlock)
+
+    // list view options
+    // ... (all of them)
+
+    // categorized jobs view options
+    categorizationCriteria {
+        regexGroupingRule(String groupRegex, String namingRule = null)
+    }
+}
+```
+
+Creates a new view that is very similar to the standard Jenkins List Views, but where you can group jobs and 
+categorize them according to regular expressions.
+Requires the [Categorized Jobs View](https://wiki.jenkins-ci.org/display/JENKINS/Categorized+Jobs+View).
+
+```groovy
+categorizedJobsView('Configuration') {
+    jobs {
+        regex(/configuration_.*/)
+    }
+
+    categorizationCriteria {
+        regexGroupingRule(/^configuration_([^_]+).*$/)
+    }
+
+    columns {
+        status()
+        categorizedJob()
+        buildButton()
     }
 }
 ```
@@ -479,6 +523,7 @@ columns {
     configureProject() // since 1.31, requires the Extra Columns Plugin
     claim()            // since 1.29, requires the Claim Plugin
     lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
+    categorizedJob()   // since 1.31, requires the Categorized Jobs View Plugin
 }
 ```
 
@@ -904,3 +949,26 @@ See [Status Filter](#status-filter) in the [List View Options](#list-view-option
 ### Jobs
 
 See [Jobs](#jobs) in the [List View Options](#list-view-options) above.
+
+
+## Categorized Jobs View Options
+
+### Categorization Criteria
+
+```groovy
+categorizedJobsView {
+    categorizationCriteria {
+        regexGroupingRule(String groupRegex, String namingRule = null)
+    }
+}
+```
+
+Contains list of grouping rules. Currently only a rule for groups jobs using a regular expression is available.
+
+```groovy
+categorizedJobsView('example') {
+    categorizationCriteria {
+        regexGroupingRule(/^configuration_([^_]+).*$/)
+    }
+}
+```
