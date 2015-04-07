@@ -199,4 +199,16 @@ class MavenJobSpec extends Specification {
         then:
         job.node.publishers[0].children()[0].name() == 'hudson.maven.RedeployPublisher'
     }
+
+    def 'call inherited publishers which use JobManagement, JENKINS-27767'() {
+        when:
+        job.publishers {
+            publishHtml {
+                report('target/sonar/issues-report/')
+            }
+        }
+
+        then:
+        noExceptionThrown()
+    }
 }
