@@ -34,10 +34,13 @@ class StepContext implements Context {
         }
     }
 
-    void powerShell(String commandStr) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        stepNodes << nodeBuilder.'hudson.plugins.powershell.PowerShell' {
-            'command' commandStr
+    /**
+     * @since 1.32
+     */
+    @RequiresPlugin(id = 'powershell', minimumVersion = '1.2')
+    void powerShell(String command) {
+        stepNodes << new NodeBuilder().'hudson.plugins.powershell.PowerShell' {
+            delegate.command(command)
         }
     }
 

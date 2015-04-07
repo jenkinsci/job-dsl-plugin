@@ -17,6 +17,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.32 (unreleased)
+ * Added support for [PowerShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PowerShell+Plugin)
+   ([JENKINS-27820](https://issues.jenkins-ci.org/browse/JENKINS-27820))
 * 1.31 (April 04 2015)
  * Added support for [Categorized Jobs View](https://wiki.jenkins-ci.org/display/JENKINS/Categorized+Jobs+View)
  * Added support for [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin)

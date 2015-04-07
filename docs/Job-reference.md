@@ -166,7 +166,7 @@ freeStyleJob(String name) { // since 1.30
         phase(Closure phaseClosure)
         phase(String name, Closure phaseClosure = null)
         phase(String name, String continuationConditionArg, Closure phaseClosure)
-        powerShell(String command)
+        powerShell(String command) // since 1.32
         prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
         publishOverSsh(Closure publishOverSshClosure) // since 1.28
         rake(Closure rakeClosure = null) // since 1.25
@@ -2546,11 +2546,27 @@ sbt(/*standard parameters here*/) {
 ```
 
 ### PowerShell
+
 ```groovy
-powerShell(String commandStr)
+job {
+    steps {
+        powerShell(String command)
+    }
+}
 ```
 
-Supports running a Windows PowerShell command as a build step.
+Supports running a Windows PowerShell command as a build step. Requires the
+[PowerShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PowerShell+Plugin).
+
+```groovy
+job('example') {
+    steps {
+        powerShell('New-Item C:\\test')
+    }
+}
+```
+
+(since 1.32)
 
 ### Publish Over SSH
 

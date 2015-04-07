@@ -39,14 +39,15 @@ class StepContextSpec extends Specification {
 
     def 'call powerShell method'() {
         when:
-        context.powerShell('New-Item c:\testBuilds')
+        context.powerShell('New-Item c:\\testBuilds')
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def shellStep = context.stepNodes[0]
-        shellStep.name() == 'hudson.plugins.powershell.PowerShell'
-        shellStep.command[0].value() == 'New-Item c:\testBuilds'
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.powershell.PowerShell'
+            children().size() == 1
+            command[0].value() == 'New-Item c:\\testBuilds'
+        }
+        _ * jobManagement.requireMinimumPluginVersion('powershell', '1.2')
     }
 
     def 'call buildDescription method with all options'() {
