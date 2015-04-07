@@ -34,6 +34,13 @@ class StepContext implements Context {
         }
     }
 
+    void powerShell(String commandStr) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+        stepNodes << nodeBuilder.'hudson.plugins.powershell.PowerShell' {
+            'command' commandStr
+        }
+    }
+
     @RequiresPlugin(id = 'description-setter', minimumVersion = '1.9')
     void buildDescription(String regexp, String description = null) {
         stepNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterBuilder' {

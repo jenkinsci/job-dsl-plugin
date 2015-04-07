@@ -166,6 +166,7 @@ freeStyleJob(String name) { // since 1.30
         phase(Closure phaseClosure)
         phase(String name, Closure phaseClosure = null)
         phase(String name, String continuationConditionArg, Closure phaseClosure)
+        powerShell(String command)
         prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
         publishOverSsh(Closure publishOverSshClosure) // since 1.28
         rake(Closure rakeClosure = null) // since 1.25
@@ -2543,6 +2544,13 @@ sbt(/*standard parameters here*/) {
     newParameter 'foo'
 }
 ```
+
+### PowerShell
+```groovy
+powerShell(String commandStr)
+```
+
+Supports running a Windows PowerShell command as a build step.
 
 ### Publish Over SSH
 
