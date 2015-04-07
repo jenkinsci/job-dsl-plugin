@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
 class PublisherContext implements Context {
-    private final JobManagement jobManagement
+    protected final JobManagement jobManagement
 
     List<Node> publisherNodes = []
 
