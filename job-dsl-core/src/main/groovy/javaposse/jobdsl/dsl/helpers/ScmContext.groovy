@@ -4,6 +4,7 @@ import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
@@ -43,6 +44,7 @@ class ScmContext implements Context {
     /**
      * Generate configuration for Mercurial.
      */
+    @RequiresPlugin(id = 'mercurial')
     void hg(String url, String branch = null, Closure configure = null) {
         validateMulti()
         checkNotNull(url)
@@ -65,6 +67,7 @@ class ScmContext implements Context {
         scmNodes << scmNode
     }
 
+    @RequiresPlugin(id = 'git')
     void git(@DslContext(GitContext) Closure gitClosure) {
         validateMulti()
 
@@ -203,6 +206,7 @@ class ScmContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'subversion')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
         validateMulti()
 
@@ -237,6 +241,7 @@ class ScmContext implements Context {
         p4(viewspec, user, '', configure)
     }
 
+    @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, String user, String password, Closure configure = null) {
         checkNotNull(viewspec)
         validateMulti()
@@ -286,6 +291,7 @@ class ScmContext implements Context {
         scmNodes << p4Node
     }
 
+    @RequiresPlugin(id = 'clone-workspace-scm')
     void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
         checkNotNull(parentProject)
         checkArgument(validCloneWorkspaceCriteria.contains(criteriaArg),
@@ -301,6 +307,7 @@ class ScmContext implements Context {
     /**
      * See http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin
      */
+    @RequiresPlugin(id = 'clearcase')
     void baseClearCase(@DslContext(ClearCaseContext) Closure closure = null) {
         validateMulti()
 
@@ -338,6 +345,7 @@ class ScmContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'teamconcert')
     void rtc(@DslContext(RTCContext) Closure closure) {
         validateMulti()
 

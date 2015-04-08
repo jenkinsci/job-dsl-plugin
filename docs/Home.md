@@ -16,7 +16,12 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
-* 1.32 (unreleased)
+* 1.33 (unreleased)
+* 1.32 (April 07 2015)
+ * Added support for [PowerShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PowerShell+Plugin)
+   ([JENKINS-27820](https://issues.jenkins-ci.org/browse/JENKINS-27820))
+ * Fixed problem with publishers in Maven jobs
+   ([JENKINS-27767](https://issues.jenkins-ci.org/browse/JENKINS-27767))
 * 1.31 (April 04 2015)
  * Added support for [Categorized Jobs View](https://wiki.jenkins-ci.org/display/JENKINS/Categorized+Jobs+View)
  * Added support for [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin)

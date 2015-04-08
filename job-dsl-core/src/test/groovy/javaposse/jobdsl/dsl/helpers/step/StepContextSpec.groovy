@@ -37,6 +37,19 @@ class StepContextSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello from Windows"'
     }
 
+    def 'call powerShell method'() {
+        when:
+        context.powerShell('New-Item c:\\testBuilds')
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.powershell.PowerShell'
+            children().size() == 1
+            command[0].value() == 'New-Item c:\\testBuilds'
+        }
+        _ * jobManagement.requireMinimumPluginVersion('powershell', '1.2')
+    }
+
     def 'call buildDescription method with all options'() {
         when:
         context.buildDescription('[version] (.*)', 'foo \\1')

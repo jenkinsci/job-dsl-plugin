@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
@@ -22,6 +23,7 @@ class TriggerContext implements Context {
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
      */
+    @RequiresPlugin(id = 'urltrigger')
     void urlTrigger(String crontab = null, @DslContext(UrlTriggerContext) Closure contextClosure) {
         UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
         ContextHelper.executeInContext(contextClosure, urlTriggerContext)
@@ -104,6 +106,7 @@ class TriggerContext implements Context {
     /**
      * Trigger that runs jobs on push notifications from GitHub.
      */
+    @RequiresPlugin(id = 'github')
     void githubPush() {
         triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
             spec ''
@@ -113,6 +116,7 @@ class TriggerContext implements Context {
     /**
      *  Configures the Jenkins GitHub pull request builder plugin.
      */
+    @RequiresPlugin(id = 'ghprb')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
@@ -132,6 +136,7 @@ class TriggerContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'gerrit-trigger')
     void gerrit(@DslContext(GerritContext) Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
         GerritContext gerritContext = new GerritContext()
