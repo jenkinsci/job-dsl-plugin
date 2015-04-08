@@ -138,8 +138,12 @@ freeStyleJob(String name) { // since 1.30
         copyArtifacts(String jobName, String includeGlob, String targetPath = '',
                       boolean flattenFiles, Closure copyArtifactClosure)
         copyArtifacts(String jobName, String includeGlob, String targetPath = '',
-                      boolean flattenFiles, boolean optionalAllowed,
+                      boolean flattenFiles, boolean optionalAllowed, 
                       Closure copyArtifactClosure)
+        copyArtifacts(String jobName, String includeGlob, String targetPath = '',
+                      boolean flattenFiles, boolean optionalAllowed, String excludeGlob,
+                      Closure copyArtifactClosure)
+        copyArtifacts(Map args, Closure copyArtifactClosure)
         criticalBlock(Closure stepClosure) // since 1.24
         debianPackage(String path, Closure debianClosure = null) // since 1.31
         downstreamParameterized(Closure downstreamClosure)
@@ -2757,7 +2761,17 @@ job('example-3') {
 ### Copy Artifacts
 
 ```groovy
-copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles = false, boolean optionalAllowed = false, Closure copyArtifactClosure) {
+copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles = false, boolean optionalAllowed = false, String excludeGlob, Closure copyArtifactClosure) {
+    upstreamBuild(boolean fallback = false) // Upstream build that triggered this job
+    latestSuccessful(boolean stable = false) // Latest successful build
+    latestSaved() // Latest saved build (marked "keep forever")
+    permalink(String linkName) // Specified by permalink: lastBuild, lastStableBuild
+    buildNumber(int buildNumber) // Specific Build
+    buildNumber(String buildNumber) // Specific Build
+    workspace() // Copy from WORKSPACE of latest completed build
+    buildParameter(String parameterName) // Specified by build parameter
+}
+copyArtifacts(Map args, Closure copyArtifactClosure) {
     upstreamBuild(boolean fallback = false) // Upstream build that triggered this job
     latestSuccessful(boolean stable = false) // Latest successful build
     latestSaved() // Latest saved build (marked "keep forever")
@@ -2770,6 +2784,8 @@ copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolea
 ```
 
 Supports the version 1.26 or later of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin). As per the plugin, the input glob is for files in the workspace. The methods in the closure are considered the selectors, of which only one can be used.
+
+The second form takes a map of args, the names of which are the parameters from the first and allow optional parameters to be more easily left out.
 
 ### Groovy
 ```groovy
