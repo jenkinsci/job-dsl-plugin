@@ -751,6 +751,44 @@ class StepContextSpec extends Specification {
         selectorNode.fallbackToLastSuccessful[0].value() == 'true'
     }
 
+    def 'call copyArtifacts with excludes'() {
+        when:
+        context.copyArtifacts('upstream', '**/*.xml', 'target/', true, true, '**/bah.xml') {
+            upstreamBuild(true)
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        context.stepNodes.size() == 1
+        def copyEmptyNode = context.stepNodes[0]
+        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
+        copyEmptyNode.flatten[0].value() == 'true'
+        copyEmptyNode.optional[0].value() == 'true'
+        copyEmptyNode.target[0].value() == 'target/'
+        copyEmptyNode.excludes[0].value() == '**/bah.xml'
+        Node selectorNode = copyEmptyNode.selector[0]
+        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+        selectorNode.fallbackToLastSuccessful[0].value() == 'true'
+    }
+
+    def 'call copyArtifacts map form'() {
+        when:
+        context.copyArtifacts(jobName: 'upstream', includeGlob: '**/*.xml', excludeGlob: '**/bah.xml') {
+            upstreamBuild(true)
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        context.stepNodes.size() == 1
+        def copyEmptyNode = context.stepNodes[0]
+        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
+        copyEmptyNode.target[0].value() == ''
+        copyEmptyNode.excludes[0].value() == '**/bah.xml'
+        Node selectorNode = copyEmptyNode.selector[0]
+        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+        selectorNode.fallbackToLastSuccessful[0].value() == 'true'
+    }
+
     def 'call copyArtifacts selector variants'() {
         when:
         context.copyArtifacts('upstream', '**/*.xml') {

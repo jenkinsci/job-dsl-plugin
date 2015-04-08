@@ -350,9 +350,26 @@ class StepContext implements Context {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        boolean optionalAllowed,
+                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+        copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, optionalAllowed, '', copyArtifactClosure)
+    }
+
+    void copyArtifacts(Map args, @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+	copyArtifacts(
+	    args.jobName,
+	    args.includeGlob,
+	    args.targetPath,
+	    args.flattenFiles ?: false,
+	    args.optionalAllowed ?: false,
+	    args.excludeGlob,
+	    copyArtifactClosure)
+    }
+
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
+    void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
+                       boolean optionalAllowed, String excludeGlob,
                        @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
@@ -384,6 +401,8 @@ class StepContext implements Context {
                     parameterName copyArtifactContext.parameterName
                 }
             }
+
+            excludes excludeGlob ?: ''
 
             if (flattenFiles) {
                 flatten 'true'
