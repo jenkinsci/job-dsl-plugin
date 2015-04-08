@@ -517,4 +517,47 @@ class TriggerContextSpec extends Specification {
         }
         _ * mockJobManagement.requirePlugin('gerrit-trigger')
     }
+
+    def 'call upstream trigger methods'() {
+        when:
+        context.upstream('THE-JOB')
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def upstreamTrigger = context.triggerNodes[0]
+        upstreamTrigger.name() == 'jenkins.triggers.ReverseBuildTrigger'
+        upstreamTrigger.upstreamProjects[0].value() == 'THE-JOB'
+        with(upstreamTrigger.threshold[0]) {
+          name[0].value() == 'SUCCESS'
+          ordinal[0].value() == 0
+          color[0].value() == 'BLUE'
+        }
+    }
+
+    def 'call upstream trigger methods with threshold'() {
+        when:
+        context.upstream('THE-JOB', 'UNSTABLE')
+
+        then:
+        context.triggerNodes != null
+        context.triggerNodes.size() == 1
+        def upstreamTrigger = context.triggerNodes[0]
+        upstreamTrigger.name() == 'jenkins.triggers.ReverseBuildTrigger'
+        upstreamTrigger.upstreamProjects[0].value() == 'THE-JOB'
+        with(upstreamTrigger.threshold[0]) {
+          name[0].value() == 'UNSTABLE'
+          ordinal[0].value() == 1
+          color[0].value() == 'YELLOW'
+        }
+    }
+
+    def 'call upstream trigger methods with bad args'() {
+        when:
+        context.upstream('THE-JOB', 'BAD')
+
+        then:
+        thrown(AssertionError)
+    }
 }
+
