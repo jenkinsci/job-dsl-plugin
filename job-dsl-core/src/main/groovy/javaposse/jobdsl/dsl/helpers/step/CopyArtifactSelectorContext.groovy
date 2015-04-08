@@ -3,17 +3,10 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.Context
 
 class CopyArtifactSelectorContext implements Context {
-    String selectedSelector
-    boolean fallback
-    boolean stable
-    String permalinkName
-    String buildNumber
-    String parameterName
+    Node selector
 
-    private void ensureFirst() {
-        if (selectedSelector != null) {
-            throw new IllegalStateException('Only one selector can be chosen')
-        }
+    CopyArtifactSelectorContext() {
+        latestSuccessful()
     }
 
     /**
@@ -22,26 +15,29 @@ class CopyArtifactSelectorContext implements Context {
      * @param fallback Use "Last successful build" as fallback
      */
     void upstreamBuild(boolean fallback = false) {
-        ensureFirst()
-        this.fallback = fallback
-        selectedSelector = 'TriggeredBuild'
+        createSelectorNode('TriggeredBuild') {
+            if (fallback) {
+                fallbackToLastSuccessful(true)
+            }
+        }
     }
 
     /**
      * Latest successful build.
      */
     void latestSuccessful(boolean stable = false) {
-        ensureFirst()
-        this.stable = stable
-        selectedSelector = 'StatusBuild'
+        createSelectorNode('StatusBuild') {
+            if (stable) {
+                delegate.stable(true)
+            }
+        }
     }
 
     /**
      * Latest saved build (marked "keep forever").
      */
     void latestSaved() {
-        ensureFirst()
-        selectedSelector = 'SavedBuild'
+        createSelectorNode('SavedBuild')
     }
 
     /**
@@ -50,38 +46,41 @@ class CopyArtifactSelectorContext implements Context {
      * @param linkName Values like lastBuild, lastStableBuild
      */
     void permalink(String linkName) {
-        ensureFirst()
-        selectedSelector = 'PermalinkBuild'
-        permalinkName = linkName
+        createSelectorNode('PermalinkBuild') {
+            id(linkName)
+        }
     }
 
     /**
-     * Specific Build.
+     * Specific build.
      */
     void buildNumber(int buildNumber) {
         this.buildNumber(Integer.toString(buildNumber))
     }
 
     void buildNumber(String buildNumber) {
-        ensureFirst()
-        selectedSelector = 'SpecificBuild'
-        this.buildNumber = buildNumber
+        createSelectorNode('SpecificBuild') {
+            delegate.buildNumber(buildNumber)
+        }
     }
 
     /**
-     * Copy from WORKSPACE of latest completed build.
+     * Copy from workspace of latest completed build.
      */
     void workspace() {
-        ensureFirst()
-        selectedSelector = 'Workspace'
+        createSelectorNode('Workspace')
     }
 
     /**
      * Specified by build parameter.
      */
     void buildParameter(String parameterName) {
-        ensureFirst()
-        selectedSelector = 'ParameterizedBuild'
-        this.parameterName = parameterName
+        createSelectorNode('ParameterizedBuild') {
+            delegate.parameterName(parameterName)
+        }
+    }
+
+    private void createSelectorNode(String type, Closure nodeBuilder = null) {
+        selector = new NodeBuilder().'selector'(class: "hudson.plugins.copyartifact.${type}Selector", nodeBuilder)
     }
 }

@@ -1,3 +1,70 @@
+## Migrating to 1.33
+
+### Copy Artifacts
+
+Support for versions 1.30 and earlier of the Copy Artifact Plugin is [[deprecated|Deprecation-Policy]] and will be
+removed.
+
+All variants of `copyArtifacts` with more than two parameters have been replaced by a nested context and are deprecated.
+
+DSL prior to 1.33
+```groovy
+job('example') {
+    steps {
+        copyArtifacts('other-1', '*.xml') {
+            latestSaved()
+        }
+        copyArtifacts('other-2', '*.txt', 'files') {
+            buildNumber(5)
+        }
+        copyArtifacts('other-3', '*.csv', 'target', true) {
+            latestSuccessful(true)
+        }
+        copyArtifacts('other-4', 'build/*.jar', 'libs', true, true) {
+            upstreamBuild()
+        }
+    }
+}
+```
+
+DSL since 1.33
+```groovy
+job('example') {
+    steps {
+        copyArtifacts('other-1') {
+            includePatterns('*.xml')
+            buildSelector {
+                latestSaved()
+            }
+        }
+        copyArtifacts('other-2') {
+            includePatterns('*.txt')
+            targetDirectory('files')
+            buildSelector {
+                buildNumber(5)
+            }
+        }
+        copyArtifacts('other-3') {
+            includePatterns('*.csv')
+            targetDirectory('target')
+            flatten()
+            buildSelector {
+                latestSuccessful(true)
+            }
+        }
+        copyArtifacts('other-4') {
+            includePatterns('build/*.jar')
+            targetDirectory('libs')
+            flatten()
+            optional()
+            buildSelector {
+                upstreamBuild()
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.31
 
 ### Nested Views
