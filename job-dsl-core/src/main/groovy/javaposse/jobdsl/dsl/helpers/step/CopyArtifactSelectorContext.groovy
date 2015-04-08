@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
 
-class CopyArtifactContext implements Context {
+class CopyArtifactSelectorContext implements Context {
     String selectedSelector
     boolean fallback
     boolean stable

@@ -336,25 +336,25 @@ class StepContext implements Context {
     }
 
     void copyArtifacts(String jobName, String includeGlob,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
     }
 
     void copyArtifacts(String jobName, String includeGlob, String targetPath,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
     }
 
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
     @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        boolean optionalAllowed,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
-        CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
+        CopyArtifactSelectorContext copyArtifactContext = new CopyArtifactSelectorContext()
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
         if (!copyArtifactContext.selectedSelector) {
