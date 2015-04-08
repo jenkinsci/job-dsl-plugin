@@ -17,6 +17,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.33 (unreleased)
+ * Increased minimum supported Jenkins core version to 1.565.1
 * 1.32 (April 07 2015)
  * Added support for [PowerShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PowerShell+Plugin)
    ([JENKINS-27820](https://issues.jenkins-ci.org/browse/JENKINS-27820))
