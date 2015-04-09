@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -335,66 +336,66 @@ class StepContext implements Context {
         stepNodes << grailsNode
     }
 
+    @Deprecated
     void copyArtifacts(String jobName, String includeGlob,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
     }
 
+    @Deprecated
     void copyArtifacts(String jobName, String includeGlob, String targetPath,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
     }
 
+    @Deprecated
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
+    @Deprecated
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        boolean optionalAllowed,
-                       @DslContext(CopyArtifactContext) Closure copyArtifactClosure) {
-        CopyArtifactContext copyArtifactContext = new CopyArtifactContext()
+                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
+        jobManagement.logDeprecationWarning()
+        copyArtifacts(jobName) {
+            delegate.includePatterns(includeGlob)
+            delegate.targetDirectory(targetPath)
+            delegate.flatten(flattenFiles)
+            delegate.optional(optionalAllowed)
+            delegate.buildSelector(copyArtifactClosure)
+        }
+    }
+
+    /**
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
+    void copyArtifacts(String jobName, @DslContext(CopyArtifactContext) Closure copyArtifactClosure = null) {
+        CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement)
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
-        if (!copyArtifactContext.selectedSelector) {
-            throw new IllegalArgumentException('A selector has to be select in the closure argument')
+        if (jobManagement.getPluginVersion('copyartifact')?.isOlderThan(new VersionNumber('1.31'))) {
+            jobManagement.logDeprecationWarning('support for Copy Artifact plugin versions 1.30 and earlier')
         }
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node copyArtifactNode = nodeBuilder.'hudson.plugins.copyartifact.CopyArtifact' {
-            project jobName
-            filter includeGlob
-            target targetPath ?: ''
-
-            selector(class: "hudson.plugins.copyartifact.${copyArtifactContext.selectedSelector}Selector") {
-                if (copyArtifactContext.selectedSelector == 'TriggeredBuild' && copyArtifactContext.fallback) {
-                    fallbackToLastSuccessful 'true'
-                }
-                if (copyArtifactContext.selectedSelector == 'StatusBuild' && copyArtifactContext.stable) {
-                    stable 'true'
-                }
-                if (copyArtifactContext.selectedSelector == 'PermalinkBuild') {
-                    id copyArtifactContext.permalinkName
-                }
-                if (copyArtifactContext.selectedSelector == 'SpecificBuild') {
-                    buildNumber copyArtifactContext.buildNumber
-                }
-                if (copyArtifactContext.selectedSelector == 'ParameterizedBuild') {
-                    parameterName copyArtifactContext.parameterName
-                }
+        Node copyArtifactNode = new NodeBuilder().'hudson.plugins.copyartifact.CopyArtifact' {
+            project(jobName)
+            filter(copyArtifactContext.includePatterns.join(', '))
+            target(copyArtifactContext.targetDirectory ?: '')
+            if (copyArtifactContext.excludePatterns) {
+                excludes(copyArtifactContext.excludePatterns.join(', '))
             }
-
-            if (flattenFiles) {
-                flatten 'true'
+            if (copyArtifactContext.flatten) {
+                flatten(true)
             }
-            if (optionalAllowed) {
-                optional 'true'
+            if (copyArtifactContext.optional) {
+                optional(true)
             }
         }
-
+        copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode
-
     }
 
     void resolveArtifacts(@DslContext(RepositoryConnectorContext) Closure repositoryConnectorClosure) {
