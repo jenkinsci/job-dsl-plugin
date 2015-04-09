@@ -711,14 +711,15 @@ class StepContextSpec extends Specification {
         acmeScriptSourceNode.scriptFile[0].value() == 'acme.groovy'
     }
 
-    def 'call minimal copyArtifacts'() {
-        when: 'Least arguments'
+    def 'call minimal deprecated copyArtifacts'() {
+        when:
         context.copyArtifacts('upstream', '**/*.xml') {
             upstreamBuild()
         }
 
         then:
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        1 * jobManagement.logDeprecationWarning()
         context.stepNodes.size() == 1
         def copyEmptyNode = context.stepNodes[0]
         copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
@@ -732,7 +733,7 @@ class StepContextSpec extends Specification {
         selectorNode.children().size() == 0
     }
 
-    def 'call copyArtifacts all args'() {
+    def 'call deprecated copyArtifacts all args'() {
         when:
         context.copyArtifacts('upstream', '**/*.xml', 'target/', true, true) {
             upstreamBuild(true)
@@ -740,18 +741,19 @@ class StepContextSpec extends Specification {
 
         then:
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        1 * jobManagement.logDeprecationWarning()
         context.stepNodes.size() == 1
         def copyEmptyNode = context.stepNodes[0]
         copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
-        copyEmptyNode.flatten[0].value() == 'true'
-        copyEmptyNode.optional[0].value() == 'true'
+        copyEmptyNode.flatten[0].value() == true
+        copyEmptyNode.optional[0].value() == true
         copyEmptyNode.target[0].value() == 'target/'
         Node selectorNode = copyEmptyNode.selector[0]
         selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
-        selectorNode.fallbackToLastSuccessful[0].value() == 'true'
+        selectorNode.fallbackToLastSuccessful[0].value() == true
     }
 
-    def 'call copyArtifacts selector variants'() {
+    def 'call deprecated copyArtifacts selector variants'() {
         when:
         context.copyArtifacts('upstream', '**/*.xml') {
             latestSuccessful()
@@ -831,8 +833,58 @@ class StepContextSpec extends Specification {
         Node selectorNode8 = context.stepNodes[7].selector[0]
         selectorNode8.attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
         selectorNode8.children().size() == 1
-        selectorNode8.stable[0].value() == 'true'
+        selectorNode8.stable[0].value() == true
+    }
 
+    def 'call minimal copyArtifacts'() {
+        when:
+        context.copyArtifacts('upstream')
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.copyartifact.CopyArtifact'
+            children().size() == 4
+            project[0].value() == 'upstream'
+            filter[0].value() == ''
+            target[0].value() == ''
+            with(selector[0]) {
+                attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
+                children().size() == 0
+            }
+        }
+    }
+
+    def 'call copyArtifacts all options'() {
+        when:
+        context.copyArtifacts('upstream') {
+            includePatterns('*.xml', '*.txt')
+            excludePatterns('foo.xml', 'foo.txt')
+            targetDirectory('target/')
+            flatten()
+            optional()
+            buildSelector {
+                upstreamBuild(true)
+            }
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.copyartifact.CopyArtifact'
+            children().size() == 7
+            project[0].value() == 'upstream'
+            filter[0].value() == '*.xml, *.txt'
+            excludes[0].value() == 'foo.xml, foo.txt'
+            flatten[0].value() == true
+            optional[0].value() == true
+            target[0].value() == 'target/'
+            with(selector[0]) {
+                attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+                fallbackToLastSuccessful[0].value() == true
+            }
+        }
     }
 
     def 'call resolveArtifacts with minimal arguments'() {

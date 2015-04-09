@@ -133,14 +133,17 @@ freeStyleJob(String name) { // since 1.30
         batchFile(String command)
         buildDescription(String regexp, String description = null) // since 1.31
         conditionalSteps(Closure conditionalClosure)
-        copyArtifacts(String jobName, String includeGlob, Closure copyArtifactClosure)
+        copyArtifacts(String jobName, String includeGlob,
+                      Closure buildSelectorClosure)  // deprecated since 1.33
         copyArtifacts(String jobName, String includeGlob, String targetPath,
-                      Closure copyArtifactClosure)
+                      Closure buildSelectorClosure)  // deprecated since 1.33
         copyArtifacts(String jobName, String includeGlob, String targetPath = '',
-                      boolean flattenFiles, Closure copyArtifactClosure)
+                      boolean flattenFiles,
+                      Closure buildSelectorClosure)  // deprecated since 1.33
         copyArtifacts(String jobName, String includeGlob, String targetPath = '',
                       boolean flattenFiles, boolean optionalAllowed,
-                      Closure copyArtifactClosure)
+                      Closure buildSelectorClosure) // deprecated since 1.33
+        copyArtifacts(String jobName, Closure copyArtifactClosure = null) // since 1.33
         criticalBlock(Closure stepClosure) // since 1.24
         debianPackage(String path, Closure debianClosure = null) // since 1.31
         downstreamParameterized(Closure downstreamClosure)
@@ -2772,19 +2775,58 @@ job('example-3') {
 ### Copy Artifacts
 
 ```groovy
-copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles = false, boolean optionalAllowed = false, Closure copyArtifactClosure) {
-    upstreamBuild(boolean fallback = false) // Upstream build that triggered this job
-    latestSuccessful(boolean stable = false) // Latest successful build
-    latestSaved() // Latest saved build (marked "keep forever")
-    permalink(String linkName) // Specified by permalink: lastBuild, lastStableBuild
-    buildNumber(int buildNumber) // Specific Build
-    buildNumber(String buildNumber) // Specific Build
-    workspace() // Copy from WORKSPACE of latest completed build
-    buildParameter(String parameterName) // Specified by build parameter
+job {
+    steps {
+        copyArtifacts(String jobName) { // since 1.33
+            includePatterns(String... includes)
+            excludePatterns(String... excludes)
+            targetDirectory(String targetDirectory)
+            flatten(boolean flatten = true)
+            optional(boolean optional = true)
+            buildSelector {
+                upstreamBuild(boolean fallback = false)
+                latestSuccessful(boolean stable = false) // default
+                latestSaved()
+                permalink(String linkName)
+                buildNumber(int buildNumber)
+                buildNumber(String buildNumber)
+                workspace()
+                buildParameter(String parameterName)
+            }
+        }
+        copyArtifacts(String jobName, String includeGlob,
+                      Closure buildSelectorClosure)      // deprecated since 1.33
+        copyArtifacts(String jobName, String includeGlob, String targetPath,
+                      Closure buildSelectorClosure)      // deprecated since 1.33
+        copyArtifacts(String jobName, String includeGlob, String targetPath = '',
+                      boolean flattenFiles,
+                      Closure buildSelectorClosure)      // deprecated since 1.33
+        copyArtifacts(String jobName, String includeGlob, String targetPath = '',
+                      boolean flattenFiles, boolean optionalAllowed,
+                      Closure buildSelectorClosure)      // deprecated since 1.33
+    }
 }
 ```
 
-Supports the version 1.26 or later of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin). As per the plugin, the input glob is for files in the workspace. The methods in the closure are considered the selectors, of which only one can be used.
+A build step to copy artifacts from another project. Requires version 1.26 or later of the
+[Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin).
+
+```groovy
+job('example') {
+    steps {
+        copyArtifacts('upstream') {
+            includePatterns('*.xml', '*.properties')
+            excludePatterns('test.xml', 'test.properties')
+            targetDirectory('files')
+            flatten()
+            optional()
+            buildSelector {
+                latestSuccessful(true)
+            }
+        }
+    }
+}
+```
 
 ### Groovy
 ```groovy

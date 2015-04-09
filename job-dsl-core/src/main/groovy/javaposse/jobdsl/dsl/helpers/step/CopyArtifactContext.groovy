@@ -1,87 +1,45 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class CopyArtifactContext implements Context {
-    String selectedSelector
-    boolean fallback
-    boolean stable
-    String permalinkName
-    String buildNumber
-    String parameterName
+    private final JobManagement jobManagement
+    final List<String> includePatterns = []
+    final List<String> excludePatterns = []
+    String targetDirectory
+    boolean flatten
+    boolean optional
+    final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext()
 
-    private void ensureFirst() {
-        if (selectedSelector != null) {
-            throw new IllegalStateException('Only one selector can be chosen')
-        }
+    CopyArtifactContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
     }
 
-    /**
-     * Upstream build that triggered this job.
-     *
-     * @param fallback Use "Last successful build" as fallback
-     */
-    void upstreamBuild(boolean fallback = false) {
-        ensureFirst()
-        this.fallback = fallback
-        selectedSelector = 'TriggeredBuild'
+    void includePatterns(String... includePatterns) {
+        this.includePatterns.addAll(includePatterns)
     }
 
-    /**
-     * Latest successful build.
-     */
-    void latestSuccessful(boolean stable = false) {
-        ensureFirst()
-        this.stable = stable
-        selectedSelector = 'StatusBuild'
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.31')
+    void excludePatterns(String... excludePatterns) {
+        this.excludePatterns.addAll(excludePatterns)
     }
 
-    /**
-     * Latest saved build (marked "keep forever").
-     */
-    void latestSaved() {
-        ensureFirst()
-        selectedSelector = 'SavedBuild'
+    void targetDirectory(String targetDirectory) {
+        this.targetDirectory = targetDirectory
     }
 
-    /**
-     * Specified by permalink.
-     *
-     * @param linkName Values like lastBuild, lastStableBuild
-     */
-    void permalink(String linkName) {
-        ensureFirst()
-        selectedSelector = 'PermalinkBuild'
-        permalinkName = linkName
+    void flatten(boolean flatten = true) {
+        this.flatten = flatten
     }
 
-    /**
-     * Specific Build.
-     */
-    void buildNumber(int buildNumber) {
-        this.buildNumber(Integer.toString(buildNumber))
+    void optional(boolean optional = true) {
+        this.optional = optional
     }
 
-    void buildNumber(String buildNumber) {
-        ensureFirst()
-        selectedSelector = 'SpecificBuild'
-        this.buildNumber = buildNumber
-    }
-
-    /**
-     * Copy from WORKSPACE of latest completed build.
-     */
-    void workspace() {
-        ensureFirst()
-        selectedSelector = 'Workspace'
-    }
-
-    /**
-     * Specified by build parameter.
-     */
-    void buildParameter(String parameterName) {
-        ensureFirst()
-        selectedSelector = 'ParameterizedBuild'
-        this.parameterName = parameterName
+    void buildSelector(@javaposse.jobdsl.dsl.DslContext(CopyArtifactSelectorContext) Closure selectorClosure) {
+        ContextHelper.executeInContext(selectorClosure, selectorContext)
     }
 }
