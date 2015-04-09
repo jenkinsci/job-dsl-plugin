@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
+import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
 class TriggerContext implements Context {
@@ -223,5 +225,27 @@ class TriggerContext implements Context {
         }
 
         triggerNodes << gerritNode
+    }
+
+    /**
+     * @since 1.33
+     */
+    void upstream(String projects, String threshold = 'SUCCESS') {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(projects), 'projects must be specified')
+        Preconditions.checkArgument(
+                DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(threshold),
+                "threshold must be one of ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(', ')}"
+        )
+
+        triggerNodes << new NodeBuilder().'jenkins.triggers.ReverseBuildTrigger' {
+            spec()
+            upstreamProjects(projects)
+            delegate.threshold {
+                name(threshold)
+                ordinal(DownstreamContext.THRESHOLD_ORDINAL_MAP[threshold])
+                color(DownstreamContext.THRESHOLD_COLOR_MAP[threshold])
+                completeBuild(true)
+            }
+        }
     }
 }

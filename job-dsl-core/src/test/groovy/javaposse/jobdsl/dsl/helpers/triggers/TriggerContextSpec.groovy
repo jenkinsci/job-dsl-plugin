@@ -517,4 +517,64 @@ class TriggerContextSpec extends Specification {
         }
         _ * mockJobManagement.requirePlugin('gerrit-trigger')
     }
+
+    def 'call upstream trigger methods'() {
+        when:
+        context.upstream('THE-JOB')
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'jenkins.triggers.ReverseBuildTrigger'
+            children().size() == 3
+            spec[0].value().empty
+            upstreamProjects[0].value() == 'THE-JOB'
+            with(threshold[0]) {
+                children().size() == 4
+                name[0].value() == 'SUCCESS'
+                ordinal[0].value() == 0
+                color[0].value() == 'BLUE'
+                completeBuild[0].value() == true
+            }
+        }
+    }
+
+    def 'call upstream trigger methods with threshold'() {
+        when:
+        context.upstream('THE-JOB', thresholdValue)
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'jenkins.triggers.ReverseBuildTrigger'
+            children().size() == 3
+            spec[0].value().empty
+            upstreamProjects[0].value() == 'THE-JOB'
+            with(threshold[0]) {
+                children().size() == 4
+                name[0].value() == thresholdValue
+                ordinal[0].value() == ordinalValue
+                color[0].value() == colorValue
+                completeBuild[0].value() == true
+            }
+        }
+
+        where:
+        thresholdValue | ordinalValue | colorValue
+        'SUCCESS'      | 0            | 'BLUE'
+        'UNSTABLE'     | 1            | 'YELLOW'
+        'FAILURE'      | 2            | 'RED'
+    }
+
+    def 'call upstream trigger methods with bad args'() {
+        when:
+        context.upstream(projects, threshold)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        projects | threshold
+        'foo'    | 'bar'
+        ''       | 'SUCCESS'
+        null     | 'UNSTABLE'
+    }
 }
