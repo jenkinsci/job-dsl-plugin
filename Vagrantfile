@@ -15,6 +15,8 @@ SCRIPT
 Vagrant.configure("2") do |config|
     config.vm.box = "chef/centos-7.0"
 
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+
     config.vm.define "master", primary: true do |master|
       master.vm.network "forwarded_port", guest: 8080, host: 8081
       master.vm.provision "shell", inline: $script

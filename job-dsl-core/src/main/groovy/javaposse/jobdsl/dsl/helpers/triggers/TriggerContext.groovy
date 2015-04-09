@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
+import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
 class TriggerContext implements Context {
@@ -226,38 +228,24 @@ class TriggerContext implements Context {
     }
 
     /**
-     * Upstream build
-     *
-     <jenkins.triggers.ReverseBuildTrigger>
-     <spec/>
-     <upstreamProjects>DSL-Tutorial-1-Test</upstreamProjects>
-     <threshold>
-         <name>SUCCESS</name>
-         <ordinal>0</ordinal>
-         <color>BLUE</color>
-         <completeBuild>true</completeBuild>
-     </threshold>
-     </jenkins.triggers.ReverseBuildTrigger>
-    */
-    void upstream(String projectName, String thresholdName = 'SUCCESS') {
-        Preconditions.checkNotNull(projectName)
+     * @since 1.33
+     */
+    void upstream(String projects, String threshold = 'SUCCESS') {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(projects), 'projects must be specified')
+        Preconditions.checkArgument(
+                DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(threshold),
+                "threshold must be one of ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(', ')}"
+        )
 
-        assert UpstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
-                "thresholdName must be one of these values ${UpstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
-
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        Node triggerNode = nodeBuilder.'jenkins.triggers.ReverseBuildTrigger' {
-           spec ''
-           upstreamProjects projectName
-           threshold {
-             delegate.createNode('name', thresholdName)
-             ordinal UpstreamContext.THRESHOLD_ORDINAL_MAP[thresholdName]
-             color UpstreamContext.THRESHOLD_COLOR_MAP[thresholdName]
-             completeBuild true
-           }
+        triggerNodes << new NodeBuilder().'jenkins.triggers.ReverseBuildTrigger' {
+            spec()
+            upstreamProjects(projects)
+            delegate.threshold {
+                name(threshold)
+                ordinal(DownstreamContext.THRESHOLD_ORDINAL_MAP[threshold])
+                color(DownstreamContext.THRESHOLD_COLOR_MAP[threshold])
+                completeBuild(true)
+            }
         }
-
-        triggerNodes << triggerNode
     }
 }

@@ -523,41 +523,58 @@ class TriggerContextSpec extends Specification {
         context.upstream('THE-JOB')
 
         then:
-        context.triggerNodes != null
-        context.triggerNodes.size() == 1
-        def upstreamTrigger = context.triggerNodes[0]
-        upstreamTrigger.name() == 'jenkins.triggers.ReverseBuildTrigger'
-        upstreamTrigger.upstreamProjects[0].value() == 'THE-JOB'
-        with(upstreamTrigger.threshold[0]) {
-          name[0].value() == 'SUCCESS'
-          ordinal[0].value() == 0
-          color[0].value() == 'BLUE'
+        with(context.triggerNodes[0]) {
+            name() == 'jenkins.triggers.ReverseBuildTrigger'
+            children().size() == 3
+            spec[0].value().empty
+            upstreamProjects[0].value() == 'THE-JOB'
+            with(threshold[0]) {
+                children().size() == 4
+                name[0].value() == 'SUCCESS'
+                ordinal[0].value() == 0
+                color[0].value() == 'BLUE'
+                completeBuild[0].value() == true
+            }
         }
     }
 
     def 'call upstream trigger methods with threshold'() {
         when:
-        context.upstream('THE-JOB', 'UNSTABLE')
+        context.upstream('THE-JOB', thresholdValue)
 
         then:
-        context.triggerNodes != null
-        context.triggerNodes.size() == 1
-        def upstreamTrigger = context.triggerNodes[0]
-        upstreamTrigger.name() == 'jenkins.triggers.ReverseBuildTrigger'
-        upstreamTrigger.upstreamProjects[0].value() == 'THE-JOB'
-        with(upstreamTrigger.threshold[0]) {
-          name[0].value() == 'UNSTABLE'
-          ordinal[0].value() == 1
-          color[0].value() == 'YELLOW'
+        with(context.triggerNodes[0]) {
+            name() == 'jenkins.triggers.ReverseBuildTrigger'
+            children().size() == 3
+            spec[0].value().empty
+            upstreamProjects[0].value() == 'THE-JOB'
+            with(threshold[0]) {
+                children().size() == 4
+                name[0].value() == thresholdValue
+                ordinal[0].value() == ordinalValue
+                color[0].value() == colorValue
+                completeBuild[0].value() == true
+            }
         }
+
+        where:
+        thresholdValue | ordinalValue | colorValue
+        'SUCCESS'      | 0            | 'BLUE'
+        'UNSTABLE'     | 1            | 'YELLOW'
+        'FAILURE'      | 2            | 'RED'
     }
 
     def 'call upstream trigger methods with bad args'() {
         when:
-        context.upstream('THE-JOB', 'BAD')
+        context.upstream(projects, threshold)
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
+
+        where:
+        projects | threshold
+        'foo'    | 'bar'
+        ''       | 'SUCCESS'
+        null     | 'UNSTABLE'
     }
 }
-
