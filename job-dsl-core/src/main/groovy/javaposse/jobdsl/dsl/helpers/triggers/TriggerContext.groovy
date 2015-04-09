@@ -224,4 +224,40 @@ class TriggerContext implements Context {
 
         triggerNodes << gerritNode
     }
+
+    /**
+     * Upstream build
+     *
+     <jenkins.triggers.ReverseBuildTrigger>
+     <spec/>
+     <upstreamProjects>DSL-Tutorial-1-Test</upstreamProjects>
+     <threshold>
+         <name>SUCCESS</name>
+         <ordinal>0</ordinal>
+         <color>BLUE</color>
+         <completeBuild>true</completeBuild>
+     </threshold>
+     </jenkins.triggers.ReverseBuildTrigger>
+    */
+    void upstream(String projectName, String thresholdName = 'SUCCESS') {
+        Preconditions.checkNotNull(projectName)
+
+        assert UpstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
+                "thresholdName must be one of these values ${UpstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
+
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        Node triggerNode = nodeBuilder.'jenkins.triggers.ReverseBuildTrigger' {
+           spec ''
+           upstreamProjects projectName
+           threshold {
+             delegate.createNode('name', thresholdName)
+             ordinal UpstreamContext.THRESHOLD_ORDINAL_MAP[thresholdName]
+             color UpstreamContext.THRESHOLD_COLOR_MAP[thresholdName]
+             completeBuild true
+           }
+        }
+
+        triggerNodes << triggerNode
+    }
 }
