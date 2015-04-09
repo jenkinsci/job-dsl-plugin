@@ -15,12 +15,12 @@ class WrapperContextSpec extends Specification {
 
         then:
         context.wrapperNodes?.size() == 1
-
         def timestampWrapper = context.wrapperNodes[0]
         timestampWrapper.name() == 'hudson.plugins.timestamper.TimestamperBuildWrapper'
+        1 * mockJobManagement.requirePlugin('timestamper')
     }
 
-    def 'run on same node' () {
+    def 'run on same node'() {
         when:
         context.runOnSameNodeAs('testJob')
 
@@ -29,9 +29,10 @@ class WrapperContextSpec extends Specification {
         wrapper.name() == 'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
         wrapper.job[0].value() == 'testJob'
         wrapper.shareWorkspace[0].value() == false
+        1 * mockJobManagement.requirePlugin('job-node-stalker')
     }
 
-    def 'run on same node and use same workspace' () {
+    def 'run on same node and use same workspace'() {
         when:
         context.runOnSameNodeAs('testJob', true)
 
@@ -40,6 +41,7 @@ class WrapperContextSpec extends Specification {
         wrapper.name() == 'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper'
         wrapper.job[0].value() == 'testJob'
         wrapper.shareWorkspace[0].value() == true
+        1 * mockJobManagement.requirePlugin('job-node-stalker')
     }
 
     def 'add rbenv-controlled ruby version'() {
@@ -82,6 +84,7 @@ class WrapperContextSpec extends Specification {
             ruby__build__revision[0].'@pluginid' == 'rbenv'
             ruby__build__revision[0].'@ruby-class' == 'String'
         }
+        1 * mockJobManagement.requirePlugin('rbenv')
     }
 
     def 'add rbenv-controlled override defaults'() {
@@ -108,6 +111,7 @@ class WrapperContextSpec extends Specification {
             ruby__build__repository[0].value() == 'foobar'
             ruby__build__revision[0].value() == '1.0'
         }
+        1 * mockJobManagement.requirePlugin('rbenv')
     }
 
     def 'add rvm-controlled ruby version'() {
@@ -117,9 +121,10 @@ class WrapperContextSpec extends Specification {
         then:
         context.wrapperNodes[0].name() == 'ruby-proxy-object'
         context.wrapperNodes[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
+        1 * mockJobManagement.requirePlugin('rvm')
     }
 
-    def 'default timeout works' () {
+    def 'default timeout works'() {
         when:
         context.timeout()
 
@@ -134,7 +139,7 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
-    def 'absolute timeout configuration working' () {
+    def 'absolute timeout configuration working'() {
         when:
         context.timeout {
             absolute(5)
@@ -148,9 +153,10 @@ class WrapperContextSpec extends Specification {
             strategy[0].timeoutMinutes[0].value() == 5
             operationList[0].children().size() == 0
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
-    def 'elastic timeout configuration working' () {
+    def 'elastic timeout configuration working'() {
         when:
         context.timeout {
             elastic(200, 3, 15)
@@ -166,6 +172,7 @@ class WrapperContextSpec extends Specification {
             strategy[0].timeoutMinutesElasticDefault[0].value() == 15
             operationList[0].children().size() == 0
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
     def 'no activity timeout configuration working'() {
@@ -202,6 +209,7 @@ class WrapperContextSpec extends Specification {
                 description[0].value() == 'desc'
             }
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
     def 'default timeout will fail the build'() {
@@ -218,6 +226,7 @@ class WrapperContextSpec extends Specification {
             operationList[0].children().size() == 1
             operationList[0].children()[0].name() == 'hudson.plugins.build__timeout.operations.FailOperation'
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
     def 'default timeout will not fail the build'() {
@@ -234,6 +243,7 @@ class WrapperContextSpec extends Specification {
             strategy[0].timeoutMinutes[0].value() == 3
             operationList[0].children().size() == 0
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
     def 'default timeout will abort the build'() {
@@ -250,9 +260,10 @@ class WrapperContextSpec extends Specification {
             operationList[0].children().size() == 1
             operationList[0].children()[0].name() == 'hudson.plugins.build__timeout.operations.AbortOperation'
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
-    def 'likelyStuck timeout configuration working' () {
+    def 'likelyStuck timeout configuration working'() {
         when:
         context.timeout {
             likelyStuck()
@@ -265,6 +276,7 @@ class WrapperContextSpec extends Specification {
             strategy[0].@class == 'hudson.plugins.build_timeout.impl.LikelyStuckTimeOutStrategy'
             operationList[0].children().size() == 0
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
     def 'port allocator string list'() {
@@ -276,6 +288,7 @@ class WrapperContextSpec extends Specification {
         def ports = context.wrapperNodes[0].ports
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
+        1 * mockJobManagement.requirePlugin('port-allocator')
     }
 
     def 'port allocator closure'() {
@@ -292,18 +305,10 @@ class WrapperContextSpec extends Specification {
         def ports = context.wrapperNodes[0].ports
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
-
-        /*def glassfish  = ports['org.jvnet.hudson.plugins.port__allocator.GlassfishJmxPortType']
-        glassfish.name[0].value()== '1234'
-        glassfish.userName[0].value()== 'username'
-        glassfish.password[0].value()== 'password'
-
-        def tomcat = ports.'org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType'
-        tomcat.name[0].value()== '1234'
-        tomcat.password[0].value()== 'password' */
+        1 * mockJobManagement.requirePlugin('port-allocator')
     }
 
-    def 'sshAgent without credentials' () {
+    def 'sshAgent without credentials'() {
         when:
         context.sshAgent(null)
 
@@ -311,7 +316,7 @@ class WrapperContextSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def 'sshAgent with invalid credentials' () {
+    def 'sshAgent with invalid credentials'() {
         setup:
         mockJobManagement.getCredentialsId('foo') >> null
 
@@ -322,7 +327,7 @@ class WrapperContextSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def 'sshAgent' () {
+    def 'sshAgent'() {
         setup:
         mockJobManagement.getCredentialsId('acme') >> '4711'
 
@@ -332,27 +337,30 @@ class WrapperContextSpec extends Specification {
         then:
         context.wrapperNodes[0].name() == 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
         context.wrapperNodes[0].user[0].value() == '4711'
+        1 * mockJobManagement.requirePlugin('ssh-agent')
     }
 
-    def 'ansiColor with map' () {
+    def 'ansiColor with map'() {
         when:
         context.colorizeOutput('foo')
 
         then:
         context.wrapperNodes[0].name() == 'hudson.plugins.ansicolor.AnsiColorBuildWrapper'
         context.wrapperNodes[0].'colorMapName'[0].value() == 'foo'
+        1 * mockJobManagement.requirePlugin('ansicolor')
     }
 
-    def 'ansiColor without map should fall back to default xterm' () {
+    def 'ansiColor without map should fall back to default xterm'() {
         when:
         context.colorizeOutput()
 
         then:
         context.wrapperNodes[0].name() == 'hudson.plugins.ansicolor.AnsiColorBuildWrapper'
         context.wrapperNodes[0].'colorMapName'[0].value() == 'xterm'
+        1 * mockJobManagement.requirePlugin('ansicolor')
     }
 
-    def 'xvnc' () {
+    def 'xvnc'() {
         setup:
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
 
@@ -365,9 +373,10 @@ class WrapperContextSpec extends Specification {
         wrapper.children().size() == 2
         wrapper.takeScreenshot[0].value() == false
         wrapper.useXauthority[0].value() == true
+        1 * mockJobManagement.requirePlugin('xvnc')
     }
 
-    def 'xvnc with closure' () {
+    def 'xvnc with closure'() {
         setup:
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
 
@@ -382,9 +391,10 @@ class WrapperContextSpec extends Specification {
         wrapper.children().size() == 2
         wrapper.takeScreenshot[0].value() == false
         wrapper.useXauthority[0].value() == false
+        1 * mockJobManagement.requirePlugin('xvnc')
     }
 
-    def 'xvnc with older plugin' () {
+    def 'xvnc with older plugin'() {
         setup:
         mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.15')
 
@@ -396,6 +406,7 @@ class WrapperContextSpec extends Specification {
         def wrapper = context.wrapperNodes[0]
         wrapper.children().size() == 1
         wrapper.takeScreenshot[0].value() == false
+        1 * mockJobManagement.requirePlugin('xvnc')
     }
 
     def 'xvfb with minimal options'() {
@@ -415,6 +426,7 @@ class WrapperContextSpec extends Specification {
             autoDisplayName[0].value() == false
             parallelBuild[0].value() == false
         }
+        1 * mockJobManagement.requirePlugin('xvfb')
     }
 
     def 'xvfb with all options'() {
@@ -444,6 +456,7 @@ class WrapperContextSpec extends Specification {
             assignedLabels[0].value() == 'test'
             parallelBuild[0].value() == true
         }
+        1 * mockJobManagement.requirePlugin('xvfb')
     }
 
     def 'xvfb without installation'() {
@@ -457,13 +470,14 @@ class WrapperContextSpec extends Specification {
         installation << [null, '']
     }
 
-    def 'toolenv' () {
+    def 'toolenv'() {
         when:
         context.toolenv('Ant 1.8.2', 'Maven 3')
 
         then:
         context.wrapperNodes[0].name() == 'hudson.plugins.toolenv.ToolEnvBuildWrapper'
         context.wrapperNodes[0].'vars'[0].value() == 'ANT_1_8_2_HOME,MAVEN_3_HOME'
+        1 * mockJobManagement.requirePlugin('toolenv')
     }
 
     def 'environmentVariables are added'() {
@@ -488,9 +502,10 @@ class WrapperContextSpec extends Specification {
         infoNode.scriptContent[0].value() == 'echo Test'
         infoNode.groovyScriptContent[0].value() == 'println "Hello"'
         infoNode.loadFilesFromMaster[0].value() == false
+        1 * mockJobManagement.requirePlugin('envinject')
     }
 
-    def 'release plugin simple' () {
+    def 'release plugin simple'() {
         when:
         context.release {
             parameters {
@@ -508,9 +523,10 @@ class WrapperContextSpec extends Specification {
         wrapper.'preBuildSteps'[0].value()[0].name() == 'hudson.tasks.Shell'
         wrapper.'preBuildSteps'[0].value()[0].value()[0].name() == 'command'
         wrapper.'preBuildSteps'[0].value()[0].value()[0].value() == 'echo hello;'
+        1 * mockJobManagement.requirePlugin('release')
     }
 
-    def 'release plugin extended' () {
+    def 'release plugin extended'() {
         when:
         context.release {
             releaseVersionTemplate('templatename')
@@ -559,9 +575,11 @@ class WrapperContextSpec extends Specification {
         stepsPostFailed[0].value()[0].name() == 'hudson.tasks.Shell'
         stepsPostFailed[0].value()[0].value()[0].name() == 'command'
         stepsPostFailed[0].value()[0].value()[0].value() == 'echo postfailed;'
+
+        1 * mockJobManagement.requirePlugin('release')
     }
 
-    def 'release plugin configure' () {
+    def 'release plugin configure'() {
         when:
         context.release {
             configure { project ->
@@ -577,9 +595,10 @@ class WrapperContextSpec extends Specification {
         def params = context.wrapperNodes[0].'testCommand'
         params[0].value()[0].name() == 'custom'
         params[0].value()[0].value() == 'value'
+        1 * mockJobManagement.requirePlugin('release')
     }
 
-    def 'call preBuildCleanup with minimal options' () {
+    def 'call preBuildCleanup with minimal options'() {
         when:
         context.preBuildCleanup()
 
@@ -592,9 +611,10 @@ class WrapperContextSpec extends Specification {
             cleanupParameter[0].value() == ''
             externalDelete[0].value() == ''
         }
+        1 * mockJobManagement.requirePlugin('ws-cleanup')
     }
 
-    def 'call preBuildCleanup with all options' () {
+    def 'call preBuildCleanup with all options'() {
         when:
         context.preBuildCleanup {
             includePattern('**/test/**')
@@ -619,6 +639,7 @@ class WrapperContextSpec extends Specification {
             cleanupParameter[0].value() == 'TEST'
             externalDelete[0].value() == 'test'
         }
+        1 * mockJobManagement.requirePlugin('ws-cleanup')
     }
 
     def 'logSizeChecker with default configuration'() {
@@ -632,6 +653,7 @@ class WrapperContextSpec extends Specification {
             maxLogSize[0].value() == 0
             failBuild[0].value() == false
         }
+        1 * mockJobManagement.requirePlugin('logfilesizechecker')
     }
 
     def 'logSizeChecker with configuration for all parameters'() {
@@ -648,6 +670,7 @@ class WrapperContextSpec extends Specification {
             maxLogSize[0].value() == 10
             failBuild[0].value() == true
         }
+        1 * mockJobManagement.requirePlugin('logfilesizechecker')
     }
 
     def 'logSizeChecker with configuration for all parameters using defaults for boolean parameter'() {
@@ -664,6 +687,7 @@ class WrapperContextSpec extends Specification {
             maxLogSize[0].value() == 10
             failBuild[0].value() == true
         }
+        1 * mockJobManagement.requirePlugin('logfilesizechecker')
     }
 
     def 'logSizeChecker with invalid maxSize'() {
@@ -687,18 +711,20 @@ class WrapperContextSpec extends Specification {
             children()[0].name() == 'injectGlobalPasswords'
             children()[0].value() == true
         }
+        1 * mockJobManagement.requirePlugin('envinject')
     }
 
-    def 'call buildName' () {
+    def 'call buildName'() {
         when:
         context.buildName('#${BUILD_NUMBER} && <test>')
 
         then:
         context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.buildnamesetter.BuildNameSetter'
         context.wrapperNodes[0].template[0].value() == '#${BUILD_NUMBER} && <test>'
+        1 * mockJobManagement.requirePlugin('build-name-setter')
     }
 
-    def 'call buildName with null parameter' () {
+    def 'call buildName with null parameter'() {
         when:
         context.buildName(null)
 
@@ -718,6 +744,7 @@ class WrapperContextSpec extends Specification {
             deleteKeychainsAfterBuild[0].value() == false
             overwriteExistingKeychains[0].value() == false
         }
+        1 * mockJobManagement.requirePlugin('kpp-management-plugin')
     }
 
     def 'call codeSigning with minimal args'() {
@@ -736,6 +763,7 @@ class WrapperContextSpec extends Specification {
             deleteKeychainsAfterBuild[0].value() == false
             overwriteExistingKeychains[0].value() == false
         }
+        1 * mockJobManagement.requirePlugin('kpp-management-plugin')
     }
 
     def 'call codeSigning with all args'() {
@@ -764,6 +792,7 @@ class WrapperContextSpec extends Specification {
             deleteKeychainsAfterBuild[0].value() == true
             overwriteExistingKeychains[0].value() == true
         }
+        1 * mockJobManagement.requirePlugin('kpp-management-plugin')
     }
 
     def 'call configFile closure'() {
@@ -794,6 +823,7 @@ class WrapperContextSpec extends Specification {
                 variable[0].value() == configVariable
             }
         }
+        1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
     def 'call configFile'() {
@@ -819,6 +849,7 @@ class WrapperContextSpec extends Specification {
                 variable[0].value() == ''
             }
         }
+        1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
     def 'call configFile with two files'() {
@@ -854,6 +885,7 @@ class WrapperContextSpec extends Specification {
                 variable[0].value() == ''
             }
         }
+        1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
     def 'call configFile with unknown fileName'() {
@@ -879,6 +911,7 @@ class WrapperContextSpec extends Specification {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
         }
+        1 * mockJobManagement.requirePlugin('Exclusion')
     }
 
     def 'call exclusion with multiple args'() {
@@ -892,6 +925,7 @@ class WrapperContextSpec extends Specification {
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[1].name[0].value() == 'second'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[2].name[0].value() == 'third'
         }
+        1 * mockJobManagement.requirePlugin('Exclusion')
     }
 
     def 'set delivery pipeline version'() {
@@ -906,6 +940,7 @@ class WrapperContextSpec extends Specification {
             versionTemplate[0].value() == '1.0.${BUILD_NUMBER}'
             updateDisplayName[0].value() == false
         }
+        1 * mockJobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'set delivery pipeline version and display name'() {
@@ -920,6 +955,7 @@ class WrapperContextSpec extends Specification {
             versionTemplate[0].value() == '1.0.${BUILD_NUMBER}'
             updateDisplayName[0].value() == true
         }
+        1 * mockJobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'call mask passwords'() {
@@ -929,6 +965,7 @@ class WrapperContextSpec extends Specification {
         then:
         context.wrapperNodes.size() == 1
         context.wrapperNodes[0].name() == 'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
+        1 * mockJobManagement.requirePlugin('mask-passwords')
     }
 
     def 'call build user vars'() {
@@ -938,6 +975,7 @@ class WrapperContextSpec extends Specification {
         then:
         context.wrapperNodes.size() == 1
         context.wrapperNodes[0].name() == 'org.jenkinsci.plugins.builduser.BuildUser'
+        1 * mockJobManagement.requirePlugin('build-user-vars-plugin')
     }
 
     def 'call nodejs'() {
@@ -951,6 +989,7 @@ class WrapperContextSpec extends Specification {
             children().size() == 1
             nodeJSInstallationName[0].value() == 'NodeJS 0.10.26'
         }
+        1 * mockJobManagement.requirePlugin('nodejs')
     }
 
     def 'call golang'() {
@@ -963,6 +1002,7 @@ class WrapperContextSpec extends Specification {
             name() == 'org.jenkinsci.plugins.golang.GolangBuildWrapper'
             goVersion[0].value() == 'Go 1.3.3'
         }
+        1 * mockJobManagement.requirePlugin('golang')
     }
 
     def 'call credentials binding'() {
@@ -1007,6 +1047,7 @@ class WrapperContextSpec extends Specification {
                 credentialsId[0].value() == 'foobarbaz'
             }
         }
+        1 * mockJobManagement.requirePlugin('credentials-binding')
     }
 
     def 'call credentials binding with username password multi binding'() {
@@ -1031,6 +1072,7 @@ class WrapperContextSpec extends Specification {
                 credentialsId[0].value() == 'bar'
             }
         }
+        1 * mockJobManagement.requirePlugin('credentials-binding')
         1 * mockJobManagement.requireMinimumPluginVersion('credentials-binding', '1.3')
     }
 
@@ -1055,6 +1097,7 @@ class WrapperContextSpec extends Specification {
                 name[0].value() == 'bar'
             }
         }
+        1 * mockJobManagement.requirePlugin('custom-tools-plugin')
     }
 
     def 'call custom tools with closure'() {
@@ -1081,6 +1124,7 @@ class WrapperContextSpec extends Specification {
                 name[0].value() == 'baz'
             }
         }
+        1 * mockJobManagement.requirePlugin('custom-tools-plugin')
     }
 
     def 'pre SCM build steps with minimal options'() {
@@ -1095,6 +1139,7 @@ class WrapperContextSpec extends Specification {
             buildSteps[0].children().size() == 0
             failOnError[0].value() == false
         }
+        1 * mockJobManagement.requirePlugin('preSCMbuildstep')
     }
 
     def 'pre SCM build steps with all options'() {
@@ -1116,5 +1161,6 @@ class WrapperContextSpec extends Specification {
             buildSteps[0].children()[1].name() == 'hudson.tasks.BatchFile'
             failOnError[0].value() == true
         }
+        1 * mockJobManagement.requirePlugin('preSCMbuildstep')
     }
 }
