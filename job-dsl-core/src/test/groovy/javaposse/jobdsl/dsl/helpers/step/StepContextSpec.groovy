@@ -47,7 +47,7 @@ class StepContextSpec extends Specification {
             children().size() == 1
             command[0].value() == 'New-Item c:\\testBuilds'
         }
-        _ * jobManagement.requireMinimumPluginVersion('powershell', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('powershell', '1.2')
     }
 
     def 'call buildDescription method with all options'() {
@@ -61,7 +61,7 @@ class StepContextSpec extends Specification {
             regexp[0].value() == '[version] (.*)'
             description[0].value() == 'foo \\1'
         }
-        _ * jobManagement.requireMinimumPluginVersion('description-setter', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('description-setter', '1.9')
     }
 
     def 'call buildDescription method with minimum options'() {
@@ -75,7 +75,7 @@ class StepContextSpec extends Specification {
             regexp[0].value() == '[version] (.*)'
             description[0].value() == ''
         }
-        _ * jobManagement.requireMinimumPluginVersion('description-setter', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('description-setter', '1.9')
     }
 
     def 'call gradle methods'() {
@@ -2364,7 +2364,7 @@ still-another-dsl.groovy'''
             signPackage[0].value() == true
             buildEvenWhenThereAreNoChanges[0].value() == false
         }
-        _ * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
+        1 * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
     }
 
     def 'call debian package with all options'() {
@@ -2384,6 +2384,6 @@ still-another-dsl.groovy'''
             signPackage[0].value() == false
             buildEvenWhenThereAreNoChanges[0].value() == true
         }
-        _ * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
+        1 * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
     }
 }

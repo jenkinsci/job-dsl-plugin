@@ -96,7 +96,7 @@ class JobParentSpec extends Specification {
         view instanceof BuildPipelineView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        _ * jobManagement.requirePlugin('build-pipeline-plugin')
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'build pipeline view without closure'() {
@@ -107,7 +107,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof BuildPipelineView
         parent.referencedViews.contains(view)
-        _ * jobManagement.requirePlugin('build-pipeline-plugin')
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'build monitor view deprecated variant'() {
@@ -134,7 +134,7 @@ class JobParentSpec extends Specification {
         view instanceof BuildMonitorView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        _ * jobManagement.requirePlugin('build-monitor-plugin')
+        1 * jobManagement.requirePlugin('build-monitor-plugin')
     }
 
     def 'build monitor view without closure'() {
@@ -145,7 +145,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof BuildMonitorView
         parent.referencedViews.contains(view)
-        _ * jobManagement.requirePlugin('build-monitor-plugin')
+        1 * jobManagement.requirePlugin('build-monitor-plugin')
     }
 
     def 'sectioned view deprecated variant'() {
@@ -172,7 +172,7 @@ class JobParentSpec extends Specification {
         view instanceof SectionedView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        _ * jobManagement.requirePlugin('sectioned-view')
+        1 * jobManagement.requirePlugin('sectioned-view')
     }
 
     def 'sectioned view without closure'() {
@@ -183,7 +183,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof SectionedView
         parent.referencedViews.contains(view)
-        _ * jobManagement.requirePlugin('sectioned-view')
+        1 * jobManagement.requirePlugin('sectioned-view')
     }
 
     def 'nested view deprecated variant'() {
@@ -210,7 +210,7 @@ class JobParentSpec extends Specification {
         view instanceof NestedView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        _ * jobManagement.requirePlugin('nested-view')
+        1 * jobManagement.requirePlugin('nested-view')
     }
 
     def 'nested view without closure'() {
@@ -221,7 +221,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof NestedView
         parent.referencedViews.contains(view)
-        _ * jobManagement.requirePlugin('nested-view')
+        1 * jobManagement.requirePlugin('nested-view')
     }
 
     def 'delivery pipeline view deprecated variant'() {
@@ -248,7 +248,7 @@ class JobParentSpec extends Specification {
         view instanceof DeliveryPipelineView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        _ * jobManagement.requirePlugin('delivery-pipeline-plugin')
+        1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'delivery pipeline view without closure'() {
@@ -259,7 +259,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof DeliveryPipelineView
         parent.referencedViews.contains(view)
-        _ * jobManagement.requirePlugin('delivery-pipeline-plugin')
+        1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'should add categorized jobs view'() {
@@ -273,7 +273,7 @@ class JobParentSpec extends Specification {
         view instanceof CategorizedJobsView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        _ * jobManagement.requirePlugin('categorized-view')
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
     def 'should add categorized jobs view without closure'() {
@@ -284,7 +284,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof CategorizedJobsView
         parent.referencedViews.contains(view)
-        _ * jobManagement.requirePlugin('categorized-view')
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
     def 'folder deprecated variant'() {
@@ -297,7 +297,7 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         2 * jobManagement.logDeprecationWarning()
-        _ * jobManagement.requirePlugin('cloudbees-folder')
+        1 * jobManagement.requirePlugin('cloudbees-folder')
     }
 
     def 'folder'() {
@@ -310,7 +310,7 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         folder.node.displayName[0].text() == 'foo'
-        _ * jobManagement.requirePlugin('cloudbees-folder')
+        1 * jobManagement.requirePlugin('cloudbees-folder')
     }
 
     def 'folder without closure'() {
@@ -320,7 +320,7 @@ class JobParentSpec extends Specification {
         then:
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
-        _ * jobManagement.requirePlugin('cloudbees-folder')
+        1 * jobManagement.requirePlugin('cloudbees-folder')
     }
 
     def 'default config file deprecated variant'() {
@@ -334,7 +334,7 @@ class JobParentSpec extends Specification {
         configFile.type == ConfigFileType.Custom
         parent.referencedConfigFiles.contains(configFile)
         2 * jobManagement.logDeprecationWarning()
-        _ * jobManagement.requirePlugin('config-file-provider')
+        1 * jobManagement.requirePlugin('config-file-provider')
     }
 
     def 'custom config file deprecated variant'() {
@@ -348,7 +348,7 @@ class JobParentSpec extends Specification {
         configFile.type == ConfigFileType.Custom
         parent.referencedConfigFiles.contains(configFile)
         2 * jobManagement.logDeprecationWarning()
-        _ * jobManagement.requirePlugin('config-file-provider')
+        1 * jobManagement.requirePlugin('config-file-provider')
     }
 
     def 'custom config file'() {
@@ -362,7 +362,7 @@ class JobParentSpec extends Specification {
         configFile.type == ConfigFileType.Custom
         configFile.comment == 'foo'
         parent.referencedConfigFiles.contains(configFile)
-        _ * jobManagement.requirePlugin('config-file-provider')
+        1 * jobManagement.requirePlugin('config-file-provider')
     }
 
     def 'custom config file without closure'() {
@@ -373,7 +373,7 @@ class JobParentSpec extends Specification {
         configFile.name == 'test'
         configFile.type == ConfigFileType.Custom
         parent.referencedConfigFiles.contains(configFile)
-        _ * jobManagement.requirePlugin('config-file-provider')
+        1 * jobManagement.requirePlugin('config-file-provider')
     }
 
     def 'Maven settings config file deprecated variant'() {
@@ -387,7 +387,7 @@ class JobParentSpec extends Specification {
         configFile.type == ConfigFileType.MavenSettings
         parent.referencedConfigFiles.contains(configFile)
         2 * jobManagement.logDeprecationWarning()
-        _ * jobManagement.requirePlugin('config-file-provider')
+        1 * jobManagement.requirePlugin('config-file-provider')
     }
 
     def 'Maven settings config file'() {
@@ -401,7 +401,7 @@ class JobParentSpec extends Specification {
         configFile.type == ConfigFileType.MavenSettings
         configFile.comment == 'foo'
         parent.referencedConfigFiles.contains(configFile)
-        _ * jobManagement.requirePlugin('config-file-provider')
+        1 * jobManagement.requirePlugin('config-file-provider')
     }
 
     def 'Maven settings config file without closure'() {
@@ -412,7 +412,7 @@ class JobParentSpec extends Specification {
         configFile.name == 'test'
         configFile.type == ConfigFileType.MavenSettings
         parent.referencedConfigFiles.contains(configFile)
-        _ * jobManagement.requirePlugin('config-file-provider')
+        1 * jobManagement.requirePlugin('config-file-provider')
     }
 
     def 'readFileInWorkspace from seed job'() {
@@ -546,7 +546,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        _ * jobManagement.requirePlugin('build-flow-plugin')
+        1 * jobManagement.requirePlugin('build-flow-plugin')
     }
 
     def 'matrixJob deprecated variant'() {
@@ -591,7 +591,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        _ * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.requirePlugin('maven-plugin')
     }
 
     def 'multiJob deprecated variant'() {
@@ -614,7 +614,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        _ * jobManagement.requirePlugin('jenkins-multijob-plugin')
+        1 * jobManagement.requirePlugin('jenkins-multijob-plugin')
     }
 
     def 'workflow deprecated variant'() {
@@ -637,6 +637,6 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        _ * jobManagement.requirePlugin('workflow-aggregator')
+        1 * jobManagement.requirePlugin('workflow-aggregator')
     }
 }
