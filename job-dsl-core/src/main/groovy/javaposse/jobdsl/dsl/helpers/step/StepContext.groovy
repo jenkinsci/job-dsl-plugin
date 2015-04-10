@@ -53,6 +53,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'gradle')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()
         ContextHelper.executeInContext(gradleClosure, gradleContext)
@@ -92,6 +93,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'sbt')
     void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null,
             String subdirPathArg=null, Closure configure = null) {
 
@@ -161,6 +163,7 @@ class StepContext implements Context {
         ant(targetsStr, buildFileStr, null, antClosure)
     }
 
+    @RequiresPlugin(id = 'ant')
     void ant(String targetsArg, String buildFileArg, String antInstallation,
              @DslContext(AntContext) Closure antClosure = null) {
         AntContext antContext = new AntContext()
@@ -227,6 +230,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'groovy')
     protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
         GroovyContext groovyContext = new GroovyContext()
         ContextHelper.executeInContext(groovyClosure, groovyContext)
@@ -252,6 +256,7 @@ class StepContext implements Context {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
 
+    @RequiresPlugin(id = 'groovy')
     protected systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
         SystemGroovyContext systemGroovyContext = new SystemGroovyContext()
         ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
@@ -265,6 +270,7 @@ class StepContext implements Context {
         stepNodes << systemGroovyNode
     }
 
+    @RequiresPlugin(id = 'maven-plugin')
     void maven(@DslContext(MavenContext) Closure closure) {
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
@@ -312,6 +318,7 @@ class StepContext implements Context {
         grails targetsArg, false, grailsClosure
     }
 
+    @RequiresPlugin(id = 'grails')
     void grails(String targetsArg = null, boolean useWrapperArg = false,
                 @DslContext(GrailsContext) Closure grailsClosure = null) {
         GrailsContext grailsContext = new GrailsContext(
@@ -398,6 +405,7 @@ class StepContext implements Context {
         stepNodes << copyArtifactNode
     }
 
+    @RequiresPlugin(id = 'repository-connector')
     void resolveArtifacts(@DslContext(RepositoryConnectorContext) Closure repositoryConnectorClosure) {
         RepositoryConnectorContext context = new RepositoryConnectorContext()
         ContextHelper.executeInContext(repositoryConnectorClosure, context)
@@ -414,6 +422,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'prereq-buildstep')
     void prerequisite(String projectList = '', boolean warningOnlyBool = false) {
         NodeBuilder nodeBuilder = new NodeBuilder()
         Node preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
@@ -424,6 +433,7 @@ class StepContext implements Context {
         stepNodes << preReqNode
     }
 
+    @RequiresPlugin(id = 'publish-over-ssh')
     void publishOverSsh(@DslContext(PublishOverSshContext) Closure publishOverSshClosure) {
         PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
         ContextHelper.executeInContext(publishOverSshClosure, publishOverSshContext)
@@ -499,6 +509,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext()
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
@@ -507,6 +518,7 @@ class StepContext implements Context {
         stepNodes << stepNode
     }
 
+    @RequiresPlugin(id = 'conditional-buildstep')
     void conditionalSteps(@DslContext(ConditionalStepsContext) Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)
         ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
@@ -518,6 +530,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(StepEnvironmentVariableContext) Closure envClosure) {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
@@ -529,6 +542,7 @@ class StepContext implements Context {
         stepNodes << envNode
     }
 
+    @RequiresPlugin(id = 'Parameterized-Remote-Trigger')
     void remoteTrigger(String remoteJenkins, String jobName,
                        @DslContext(ParameterizedRemoteTriggerContext) Closure closure = null) {
         Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), 'remoteJenkins must be specified')
@@ -571,6 +585,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'Exclusion')
     void criticalBlock(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(closure, stepContext)
@@ -584,6 +599,7 @@ class StepContext implements Context {
         rake(null, rakeClosure)
     }
 
+    @RequiresPlugin(id = 'rake')
     void rake(String tasksArg, @DslContext(RakeContext) Closure rakeClosure = null) {
         RakeContext rakeContext = new RakeContext()
 
@@ -626,6 +642,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'vsphere-cloud')
     private vSphereBuildStep(String server, String builder, Closure configuration) {
         int hash = Preconditions.checkNotNull(
                 jobManagement.getVSphereCloudHash(server),
@@ -638,6 +655,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'http_request')
     void httpRequest(String requestUrl, @DslContext(HttpRequestContext) Closure closure = null) {
         HttpRequestContext context = new HttpRequestContext()
         ContextHelper.executeInContext(closure, context)
@@ -659,6 +677,7 @@ class StepContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'nodejs')
     void nodejsCommand(String commandScript, String installation) {
         stepNodes << new NodeBuilder().'jenkins.plugins.nodejs.NodeJsCommandInterpreter' {
             command(commandScript)
