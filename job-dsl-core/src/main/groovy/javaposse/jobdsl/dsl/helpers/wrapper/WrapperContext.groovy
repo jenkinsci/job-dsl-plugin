@@ -18,6 +18,7 @@ class WrapperContext implements Context {
         this.jobManagement = jobManagement
     }
 
+    @RequiresPlugin(id = 'timestamper')
     void timestamps() {
         NodeBuilder nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.timestamper.TimestamperBuildWrapper'()
@@ -29,6 +30,7 @@ class WrapperContext implements Context {
      * @param jobName name of the job
      * @param useSameWorkspace set to <code>true</code> to share the workspace with the given job
      */
+    @RequiresPlugin(id = 'job-node-stalker')
     void runOnSameNodeAs(String jobName, boolean useSameWorkspace = false) {
         Preconditions.checkNotNull(jobName, 'Job name must not be null')
         NodeBuilder nodeBuilder = new NodeBuilder()
@@ -38,6 +40,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'rbenv')
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
@@ -68,6 +71,7 @@ class WrapperContext implements Context {
      *                          optionally containing a gemset
      *                          (i.e. ruby-1.9.3, ruby-2.0.0@gemset-foo)
      */
+    @RequiresPlugin(id = 'rvm')
     void rvm(String rubySpecification) {
         Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
         NodeBuilder nodeBuilder = new NodeBuilder()
@@ -112,6 +116,7 @@ class WrapperContext implements Context {
         wrapperNodes << node
     }
 
+    @RequiresPlugin(id = 'port-allocator')
     void allocatePorts(String[] portsArg, @DslContext(PortsContext) Closure closure = null) {
         PortsContext portContext = new PortsContext()
         ContextHelper.executeInContext(closure, portContext)
@@ -160,6 +165,7 @@ class WrapperContext implements Context {
      *
      * @param credentials name of the credentials to use
      */
+    @RequiresPlugin(id = 'ssh-agent')
     void sshAgent(String credentials) {
         Preconditions.checkNotNull(credentials, 'credentials must not be null')
         String id = jobManagement.getCredentialsId(credentials)
@@ -175,6 +181,7 @@ class WrapperContext implements Context {
      *
      * @param colorMap name of colormap to use (eg: xterm)
      */
+    @RequiresPlugin(id = 'ansicolor')
     void colorizeOutput(String colorMap = 'xterm') {
         wrapperNodes << new NodeBuilder().'hudson.plugins.ansicolor.AnsiColorBuildWrapper' {
             colorMapName(colorMap)
@@ -184,6 +191,7 @@ class WrapperContext implements Context {
     /**
      * Runs build under XVNC.
      */
+    @RequiresPlugin(id = 'xvnc')
     void xvnc(@DslContext(XvncContext) Closure xvncClosure = null) {
         XvncContext xvncContext = new XvncContext(jobManagement)
         ContextHelper.executeInContext(xvncClosure, xvncContext)
@@ -196,6 +204,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'xvfb')
     void xvfb(String installation, @DslContext(XvfbContext) Closure closure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(installation), 'installation must not be null or empty')
 
@@ -225,6 +234,7 @@ class WrapperContext implements Context {
      * @param tools Tool names to import into the environment. They will be transformed
      *   according to the rules used by the toolenv plugin.
      */
+    @RequiresPlugin(id = 'toolenv')
     void toolenv(String... tools) {
         NodeBuilder nodeBuilder = new NodeBuilder()
         wrapperNodes << nodeBuilder.'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
@@ -232,6 +242,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(WrapperEnvironmentVariableContext) Closure envClosure) {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
@@ -246,6 +257,7 @@ class WrapperContext implements Context {
     /**
      * Injects global passwords into the job
      */
+    @RequiresPlugin(id = 'envinject')
     void injectPasswords() {
         wrapperNodes << new NodeBuilder().'EnvInjectPasswordWrapper' {
             'injectGlobalPasswords'(true)
@@ -258,6 +270,7 @@ class WrapperContext implements Context {
      *
      * @param releaseClosure attributes and steps used by the plugin
      */
+    @RequiresPlugin(id = 'release')
     void release(@DslContext(ReleaseContext) Closure releaseClosure) {
         ReleaseContext releaseContext = new ReleaseContext(jobManagement)
         ContextHelper.executeInContext(releaseClosure, releaseContext)
@@ -285,6 +298,7 @@ class WrapperContext implements Context {
         wrapperNodes << releaseNode
     }
 
+    @RequiresPlugin(id = 'ws-cleanup')
     void preBuildCleanup(@DslContext(PreBuildCleanupContext) Closure closure = null) {
         PreBuildCleanupContext context = new PreBuildCleanupContext()
         ContextHelper.executeInContext(closure, context)
@@ -301,6 +315,7 @@ class WrapperContext implements Context {
      * Configures the configuration for the Log File Size Checker build wrapper.
      * See https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin
      */
+    @RequiresPlugin(id = 'logfilesizechecker')
     void logSizeChecker(@DslContext(LogFileSizeCheckerContext) Closure closure = null) {
         LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
         ContextHelper.executeInContext(closure, context)
@@ -319,6 +334,7 @@ class WrapperContext implements Context {
      * @param nameTemplate template defining the build name. Tokens expansion
      *   mechanism is provided by the Token Macro Plugin.
      */
+    @RequiresPlugin(id = 'build-name-setter')
     void buildName(String nameTemplate) {
         Preconditions.checkNotNull(nameTemplate, 'Name template must not be null')
 
@@ -327,6 +343,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'kpp-management-plugin')
     void keychains(@DslContext(KeychainsContext) Closure keychainsClosure) {
         KeychainsContext keychainsContext = new KeychainsContext()
         ContextHelper.executeInContext(keychainsClosure, keychainsContext)
@@ -338,6 +355,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'config-file-provider')
     void configFiles(@DslContext(ConfigFilesContext) Closure configFilesClosure) {
         ConfigFilesContext configFilesContext = new ConfigFilesContext(jobManagement)
         ContextHelper.executeInContext(configFilesClosure, configFilesContext)
@@ -359,6 +377,7 @@ class WrapperContext implements Context {
         exclusionResources(resourceNames.toList())
     }
 
+    @RequiresPlugin(id = 'Exclusion')
     void exclusionResources(Iterable<String> resourceNames) {
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.IdAllocator' {
             ids {
@@ -371,6 +390,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineVersion(String template, boolean setDisplayName = false) {
         wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
             versionTemplate(template)
@@ -378,26 +398,31 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'mask-passwords')
     void maskPasswords() {
         wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
     }
 
+    @RequiresPlugin(id = 'build-user-vars-plugin')
     void buildUserVars() {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
 
+    @RequiresPlugin(id = 'nodejs')
     void nodejs(String installation) {
         wrapperNodes << new NodeBuilder().'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper' {
             nodeJSInstallationName(installation)
         }
     }
 
+    @RequiresPlugin(id = 'golang')
     void golang(String version) {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.golang.GolangBuildWrapper' {
             goVersion(version)
         }
     }
 
+    @RequiresPlugin(id = 'credentials-binding')
     void credentialsBinding(@DslContext(CredentialsBindingContext) Closure closure) {
         CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
@@ -407,6 +432,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'custom-tools-plugin')
     void customTools(Iterable<String> tools, @DslContext(CustomToolsContext) Closure closure = null) {
         Preconditions.checkNotNull(tools, 'Please specify some tool names')
 
@@ -428,6 +454,7 @@ class WrapperContext implements Context {
         }
     }
 
+    @RequiresPlugin(id = 'preSCMbuildstep')
     void preScmSteps(@DslContext(PreScmStepsContext) Closure closure) {
         PreScmStepsContext context = new PreScmStepsContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
