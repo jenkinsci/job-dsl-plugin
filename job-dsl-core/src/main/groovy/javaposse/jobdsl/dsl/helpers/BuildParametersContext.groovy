@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
@@ -22,6 +23,7 @@ class BuildParametersContext implements Context {
         simpleParam('hudson.model.BooleanParameterDefinition', parameterName, defaultValue, description)
     }
 
+    @RequiresPlugin(id = 'subversion')
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
                       String description = null) {
@@ -107,6 +109,7 @@ class BuildParametersContext implements Context {
         buildParameterNodes[parameterName] = definitionNode
     }
 
+    @RequiresPlugin(id = 'nodelabelparameter')
     void labelParam(String parameterName, @DslContext(LabelParamContext) Closure labelParamClosure = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         checkNotNull(parameterName, 'parameterName cannot be null')
@@ -126,6 +129,7 @@ class BuildParametersContext implements Context {
                 }
     }
 
+    @RequiresPlugin(id = 'nodelabelparameter')
     void nodeParam(String parameterName, @DslContext(NodeParamContext) Closure nodeParamClosure = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         checkNotNull(parameterName, 'parameterName cannot be null')
@@ -152,9 +156,8 @@ class BuildParametersContext implements Context {
                 }
     }
 
+    @RequiresPlugin(id = 'git-parameter', minimumVersion = '0.4.0')
     void gitParam(String parameterName, @DslContext(GitParamContext) Closure closure = null) {
-        jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
-
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         checkNotNull(parameterName, 'parameterName cannot be null')
         checkArgument(parameterName.length() > 0)

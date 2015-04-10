@@ -108,6 +108,7 @@ class BuildParametersContextSpec extends Specification {
             maxTags.text() == 'maximumNumberOfTagsToDisplay'
             description.text() == 'myListTagsParameterDescription'
         }
+        1 * jobManagement.requirePlugin('subversion')
     }
 
     def 'simplified listTagsParam usage'() {
@@ -127,6 +128,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'true'
             maxTags.text() == 'all'
         }
+        1 * jobManagement.requirePlugin('subversion')
     }
 
     def 'simplest listTagsParam usage'() {
@@ -145,6 +147,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
         }
+        1 * jobManagement.requirePlugin('subversion')
     }
 
     def 'listTagsParam name argument cant be null'() {
@@ -195,6 +198,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
         }
+        1 * jobManagement.requirePlugin('subversion')
 
         where:
         filter << [null, '']
@@ -568,6 +572,7 @@ class BuildParametersContextSpec extends Specification {
             triggerConcurrentBuilds[0].value() == false
             ignoreOfflineNodes[0].value() == false
         }
+        1 * jobManagement.requirePlugin('nodelabelparameter')
     }
 
     def 'nodeParam fullest usage'() {
@@ -600,6 +605,7 @@ class BuildParametersContextSpec extends Specification {
             triggerConcurrentBuilds[0].value() == false
             ignoreOfflineNodes[0].value() == false
         }
+        1 * jobManagement.requirePlugin('nodelabelparameter')
     }
 
     def 'nodeParam name argument cant be null'() {
@@ -664,6 +670,7 @@ class BuildParametersContextSpec extends Specification {
             nodeEligibility.size() == 1
             nodeEligibility[0].@class == 'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
         }
+        1 * jobManagement.requirePlugin('nodelabelparameter')
     }
 
     def 'labelParam simplest usage'() {
@@ -684,6 +691,7 @@ class BuildParametersContextSpec extends Specification {
             nodeEligibility.size() == 1
             nodeEligibility[0].@class == 'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
         }
+        1 * jobManagement.requirePlugin('nodelabelparameter')
     }
 
     def 'labelParam run on all nodes'() {
@@ -706,6 +714,7 @@ class BuildParametersContextSpec extends Specification {
             nodeEligibility.size() == 1
             nodeEligibility[0].@class == 'org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility'
         }
+        1 * jobManagement.requirePlugin('nodelabelparameter')
     }
 
     def 'labelParam allNodes accepts valid values only'(String trigger, String eligibility) {
@@ -746,6 +755,7 @@ class BuildParametersContextSpec extends Specification {
             nodeEligibility[0].@class ==
                     'org.jvnet.jenkins.plugins.nodelabelparameter.node.IgnoreOfflineNodeEligibility'
         }
+        1 * jobManagement.requirePlugin('nodelabelparameter')
     }
 
     def 'labelParam name argument cant be null'() {
