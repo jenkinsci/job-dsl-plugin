@@ -223,8 +223,8 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[7].name() == 'hudson.plugins.claim.ClaimColumn'
         root.columns[0].value()[8].name() == 'org.jenkins.plugins.column.LastBuildNodeColumn'
         root.columns[0].value()[9].name() == 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn'
-        _ * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
-        _ * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
+        1 * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
     def 'call columns twice'() {

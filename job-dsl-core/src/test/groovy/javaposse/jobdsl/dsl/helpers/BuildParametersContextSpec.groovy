@@ -817,7 +817,7 @@ class BuildParametersContextSpec extends Specification {
             sortMode[0].value() == 'NONE'
             defaultValue[0].value() == ''
         }
-        _ * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
+        1 * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
     }
 
     def 'gitParam all options'() {
@@ -846,7 +846,7 @@ class BuildParametersContextSpec extends Specification {
             sortMode[0].value() == 'ASCENDING_SMART'
             defaultValue[0].value() == 'foo'
         }
-        _ * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
+        1 * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
     }
 
     def 'multiple mixed Param types is just fine'() {

@@ -3098,7 +3098,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with all args'() {
@@ -3141,7 +3141,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with all chart styles'() {
@@ -3180,7 +3180,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
 
         where:
         chart << ['area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall']
@@ -3222,7 +3222,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with full xml series'() {
@@ -3265,7 +3265,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with a csv series'() {
@@ -3305,7 +3305,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with full csv series'() {
@@ -3348,7 +3348,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using single includeColumns(str)'() {
@@ -3394,7 +3394,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using multiple includeColumns(str)'() {
@@ -3443,7 +3443,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using single excludeColumns(str)'() {
@@ -3489,7 +3489,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using multiple excludeColumns(str)'() {
@@ -3538,7 +3538,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using single includeColumns(int)'() {
@@ -3584,7 +3584,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using multiple includeColumns(int)'() {
@@ -3633,7 +3633,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using single excludeColumns(int)'() {
@@ -3679,7 +3679,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series using multiple excludeColumns(int)'() {
@@ -3728,7 +3728,7 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        _ * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
     def 'call plotPlugin with csv series mixing exclude types'() {

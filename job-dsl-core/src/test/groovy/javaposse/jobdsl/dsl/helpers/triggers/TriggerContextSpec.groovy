@@ -17,7 +17,7 @@ class TriggerContextSpec extends Specification {
         def githubPushTrigger = context.triggerNodes[0]
         githubPushTrigger.name() == 'com.cloudbees.jenkins.GitHubPushTrigger'
         githubPushTrigger.spec[0].value() == ''
-        _ * mockJobManagement.requirePlugin('github')
+        1 * mockJobManagement.requirePlugin('github')
     }
 
     def 'call urltrigger with proxy, etag and last modified check'() {
@@ -33,7 +33,7 @@ class TriggerContextSpec extends Specification {
         then:
         context.triggerNodes != null
         context.triggerNodes.size() == 1
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger with inspection for content change'() {
@@ -57,7 +57,7 @@ class TriggerContextSpec extends Specification {
         entry.contentTypes != null
         entry.contentTypes.size() == 1
         entry.contentTypes[0].'org.jenkinsci.plugins.urltrigger.content.SimpleContentType' != null
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger with JSON path inspection'() {
@@ -93,7 +93,7 @@ class TriggerContextSpec extends Specification {
         contentEntries[0].jsonPath[0].value() == '/foo/bar'
         contentEntries[1].jsonPath != null
         contentEntries[1].jsonPath[0].value() == '/*/baz'
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger with XML path inspection'() {
@@ -126,7 +126,7 @@ class TriggerContextSpec extends Specification {
         contentEntries.size() == 1
         contentEntries[0].xPath != null
         contentEntries[0].xPath[0].value() == '//*[@name="foo"]'
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger with TEXT regex inspection'() {
@@ -159,7 +159,7 @@ class TriggerContextSpec extends Specification {
         contentEntries.size() == 1
         contentEntries[0].regEx != null
         contentEntries[0].regEx[0].value() == '_(foo|bar).+'
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger methods with defaults and check for response status'() {
@@ -187,7 +187,7 @@ class TriggerContextSpec extends Specification {
         entry.statusCode[0].value() == 200
         entry.timeout[0].value() == 300
         entry.checkStatus[0].value() == true
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger methods with non-default status code and timeout'() {
@@ -211,7 +211,7 @@ class TriggerContextSpec extends Specification {
         entry.url[0].value() == 'http://www.example.com/some/url'
         entry.statusCode[0].value() == 404
         entry.timeout[0].value() == 6000
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger methods with non-default cron'() {
@@ -226,7 +226,7 @@ class TriggerContextSpec extends Specification {
         context.triggerNodes.size() == 1
         def utc = context.triggerNodes[0]
         utc.spec[0].value() == '* 0 * 0 *'
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call urltrigger methods with label restriction'() {
@@ -242,7 +242,7 @@ class TriggerContextSpec extends Specification {
         def utc = context.triggerNodes[0]
         utc.labelRestriction[0].value() == true
         utc.triggerLabel[0].value() == 'foo'
-        _ * mockJobManagement.requirePlugin('urltrigger')
+        1 * mockJobManagement.requirePlugin('urltrigger')
     }
 
     def 'call cron trigger methods'() {
@@ -304,7 +304,7 @@ class TriggerContextSpec extends Specification {
             orgslist[0].value() == ''
             commentFilePath[0].value() == ''
         }
-        _ * mockJobManagement.requirePlugin('ghprb')
+        1 * mockJobManagement.requirePlugin('ghprb')
     }
 
     def 'call pull request trigger with multiple admins and orgs'() {
@@ -322,7 +322,7 @@ class TriggerContextSpec extends Specification {
             whitelist[0].value() == 'test1\ntest2'
             orgslist[0].value() == 'test1\ntest2'
         }
-        _ * mockJobManagement.requirePlugin('ghprb')
+        1 * mockJobManagement.requirePlugin('ghprb')
     }
 
     def 'call pull request trigger with all args'() {
@@ -356,7 +356,7 @@ class TriggerContextSpec extends Specification {
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
         }
-        _ * mockJobManagement.requirePlugin('ghprb')
+        1 * mockJobManagement.requirePlugin('ghprb')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.14')
     }
 
@@ -371,7 +371,7 @@ class TriggerContextSpec extends Specification {
         def gerritTrigger = context.triggerNodes[0]
         gerritTrigger.name().contains('GerritTrigger')
         !gerritTrigger.buildStartMessage.isEmpty()
-        _ * mockJobManagement.requirePlugin('gerrit-trigger')
+        1 * mockJobManagement.requirePlugin('gerrit-trigger')
     }
 
     def 'call advanced gerrit trigger methods'() {
@@ -416,7 +416,7 @@ class TriggerContextSpec extends Specification {
                 }
             }
         }
-        _ * mockJobManagement.requirePlugin('gerrit-trigger')
+        1 * mockJobManagement.requirePlugin('gerrit-trigger')
     }
 
     def 'call gerrit trigger with events'(String event) {
@@ -434,7 +434,7 @@ class TriggerContextSpec extends Specification {
             children()[0].name() ==
                     "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${xmlEvent}Event"
         }
-        _ * mockJobManagement.requirePlugin('gerrit-trigger')
+        1 * mockJobManagement.requirePlugin('gerrit-trigger')
 
         where:
         event << [
@@ -463,7 +463,7 @@ class TriggerContextSpec extends Specification {
             gerritBuildUnstableVerifiedValue.size() == 0
             gerritBuildUnstableCodeReviewValue.size() == 0
         }
-        _ * mockJobManagement.requirePlugin('gerrit-trigger')
+        1 * mockJobManagement.requirePlugin('gerrit-trigger')
     }
 
     def 'call gerrit trigger and verify build status value methods'() {
@@ -515,6 +515,66 @@ class TriggerContextSpec extends Specification {
             gerritBuildStartedCodeReviewValue.size() == 1
             gerritBuildStartedCodeReviewValue[0].value() == 55
         }
-        _ * mockJobManagement.requirePlugin('gerrit-trigger')
+        1 * mockJobManagement.requirePlugin('gerrit-trigger')
+    }
+
+    def 'call upstream trigger methods'() {
+        when:
+        context.upstream('THE-JOB')
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'jenkins.triggers.ReverseBuildTrigger'
+            children().size() == 3
+            spec[0].value().empty
+            upstreamProjects[0].value() == 'THE-JOB'
+            with(threshold[0]) {
+                children().size() == 4
+                name[0].value() == 'SUCCESS'
+                ordinal[0].value() == 0
+                color[0].value() == 'BLUE'
+                completeBuild[0].value() == true
+            }
+        }
+    }
+
+    def 'call upstream trigger methods with threshold'() {
+        when:
+        context.upstream('THE-JOB', thresholdValue)
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'jenkins.triggers.ReverseBuildTrigger'
+            children().size() == 3
+            spec[0].value().empty
+            upstreamProjects[0].value() == 'THE-JOB'
+            with(threshold[0]) {
+                children().size() == 4
+                name[0].value() == thresholdValue
+                ordinal[0].value() == ordinalValue
+                color[0].value() == colorValue
+                completeBuild[0].value() == true
+            }
+        }
+
+        where:
+        thresholdValue | ordinalValue | colorValue
+        'SUCCESS'      | 0            | 'BLUE'
+        'UNSTABLE'     | 1            | 'YELLOW'
+        'FAILURE'      | 2            | 'RED'
+    }
+
+    def 'call upstream trigger methods with bad args'() {
+        when:
+        context.upstream(projects, threshold)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        projects | threshold
+        'foo'    | 'bar'
+        ''       | 'SUCCESS'
+        null     | 'UNSTABLE'
     }
 }

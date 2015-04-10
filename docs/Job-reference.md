@@ -89,6 +89,7 @@ freeStyleJob(String name) { // since 1.30
         scm(String cron, Closure scmTriggerClosure) // since 1.31
         snapshotDependencies(boolean checkSnapshotDependencies)
         urlTrigger(String cronString = null, Closure urlTriggerClosure)
+        upstream(String projects, String threshold = 'SUCCESS') // since 1.33
     }
     wrappers { // since 1.19, before that the methods were on top level
         allocatePorts(Closure closure = null)
@@ -1509,6 +1510,30 @@ snapshotDependencies(boolean checkSnapshotDependencies)
 ```
 
 When enabling the snapshot dependencies trigger, Jenkins will check the snapshot dependencies from the  '\<dependency\>', '\<plugin\>' and '\<extension\>' elements used in Maven POMs and setup a job relationship to the jobs building the snapshots. This can only be used in jobs with type 'maven'.
+
+### Upstream
+
+```groovy
+job {
+    triggers {
+        upstream(String project, String threshold = 'SUCCESS')
+    }
+}
+```
+
+Starts a build on completion of an upstream job, i.e. adds the "Build after other projects are built" trigger.
+
+Possible values for `threshold` are `'SUCCESS'`, `'UNSTABLE'` or `'FAILURE'`. 
+
+```groovy
+job('example') {
+    triggers {
+        upstream('other', 'UNSTABLE')
+    }
+}
+```
+
+(since 1.33)
 
 # Build Environment (Build Wrappers)
 
