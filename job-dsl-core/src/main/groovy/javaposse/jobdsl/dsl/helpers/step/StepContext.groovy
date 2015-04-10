@@ -393,6 +393,9 @@ class StepContext implements Context {
             if (copyArtifactContext.optional) {
                 optional(true)
             }
+            if (!copyArtifactContext.fingerprint) {
+                doNotFingerprintArtifacts(true)
+            }
         }
         copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode
