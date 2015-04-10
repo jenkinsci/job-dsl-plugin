@@ -3320,7 +3320,7 @@ steps {
             stringsMatch('${SOME_PARAMETER}', 'pants', false)
         }
         runner("Fail")
-        shell("echo 'just one step')
+        shell("echo 'just one step'")
     }
 }
 ```
@@ -3332,7 +3332,7 @@ steps {
             time(9, 0, 13, 0, false)
         }
         runner("Unstable")
-        shell("echo 'a first step')
+        shell("echo 'a first step'")
         ant('build') {
             target 'test'
         }
@@ -3353,7 +3353,7 @@ steps {
             }
         }
         runner("Unstable")
-        shell("echo 'a first step')
+        shell("echo 'a first step'")
         ant('build') {
             target 'test'
         }
