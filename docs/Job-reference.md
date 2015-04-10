@@ -953,6 +953,8 @@ git {
         ancestry(int maxAgeInDays, String commit)
         gerritTrigger()
     }
+    ignoreNotifyCommit(boolean ignoreNotifyCommit = true) // since 1.33, this repository will be ignored when the notifyCommit-URL is accessed regardless of if the repository matches or not, defaults to false
+
     configure(Closure configure) // optional configure block, the GitSCM node is passed in
 }
 

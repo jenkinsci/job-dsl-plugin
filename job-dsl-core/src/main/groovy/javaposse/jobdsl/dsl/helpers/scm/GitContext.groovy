@@ -21,6 +21,7 @@ class GitContext implements Context {
     boolean remotePoll = false
     boolean shallowClone = false
     boolean pruneBranches = false
+    boolean ignoreNotifyCommit = false
     String localBranch
     String relativeTargetDir
     String reference = ''
@@ -130,6 +131,10 @@ class GitContext implements Context {
 
     void browser(@DslContext(GitBrowserContext) Closure gitBrowserClosure) {
         executeInContext(gitBrowserClosure, gitBrowserContext)
+    }
+
+    void ignoreNotifyCommit(boolean ignoreNotifyCommit = true) {
+        this.ignoreNotifyCommit = ignoreNotifyCommit
     }
 
     void configure(Closure withXmlClosure) {

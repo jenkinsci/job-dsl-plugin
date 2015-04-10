@@ -110,7 +110,7 @@ class ScmContext implements Context {
             wipeOutWorkspace gitContext.wipeOutWorkspace
             pruneBranches gitContext.pruneBranches
             remotePoll gitContext.remotePoll
-            ignoreNotifyCommit 'false'
+            ignoreNotifyCommit gitContext.ignoreNotifyCommit
             gitTool 'Default'
             if (gitContext.relativeTargetDir) {
                 relativeTargetDir gitContext.relativeTargetDir

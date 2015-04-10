@@ -23,6 +23,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Support for the older versions of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) is deprecated, see [[Migration]]
  * Variants of `copyArtifacts` with more than two parameters have been replaced and are deprecated, see [[Migration]]
  * Increased minimum supported Jenkins core version to 1.565.1
+ * Added support for "Don't trigger a build on commit notifications" for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([JENKINS-27891](https://issues.jenkins-ci.org/browse/JENKINS-27891))
 * 1.32 (April 07 2015)
  * Added support for [PowerShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PowerShell+Plugin)
    ([JENKINS-27820](https://issues.jenkins-ci.org/browse/JENKINS-27820))

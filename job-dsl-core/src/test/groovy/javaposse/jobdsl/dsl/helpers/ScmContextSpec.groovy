@@ -860,6 +860,55 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('git')
     }
 
+    def 'call git scm with ignoreNotifyCommit'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            ignoreNotifyCommit(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.ignoreNotifyCommit.size() == 1
+        context.scmNode.ignoreNotifyCommit[0].text() == 'true'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with ignoreNotifyCommit, no argument'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            ignoreNotifyCommit()
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.ignoreNotifyCommit.size() == 1
+        context.scmNode.ignoreNotifyCommit[0].text() == 'true'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with second ignoreNotifyCommit'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            ignoreNotifyCommit(false)
+            ignoreNotifyCommit(true)
+        }
+
+        then:
+        context.scmNode != null
+        context.scmNode.ignoreNotifyCommit.size() == 1
+        context.scmNode.ignoreNotifyCommit[0].text() == 'true'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
     def 'call git scm with configure appending'() {
         when:
         context.git(GIT_REPO_URL, null) { Node gitNode ->
