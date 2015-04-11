@@ -2818,6 +2818,7 @@ job {
             targetDirectory(String targetDirectory)
             flatten(boolean flatten = true)
             optional(boolean optional = true)
+            fingerprintArtifacts(boolean fingerprint = true)
             buildSelector {
                 upstreamBuild(boolean fallback = false)
                 latestSuccessful(boolean stable = false) // default

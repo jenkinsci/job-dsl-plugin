@@ -12,6 +12,7 @@ class CopyArtifactContext implements Context {
     String targetDirectory
     boolean flatten
     boolean optional
+    boolean fingerprint = true
     final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext()
 
     CopyArtifactContext(JobManagement jobManagement) {
@@ -37,6 +38,11 @@ class CopyArtifactContext implements Context {
 
     void optional(boolean optional = true) {
         this.optional = optional
+    }
+
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.29')
+    void fingerprintArtifacts(boolean fingerprint = true) {
+        this.fingerprint = fingerprint
     }
 
     void buildSelector(@javaposse.jobdsl.dsl.DslContext(CopyArtifactSelectorContext) Closure selectorClosure) {

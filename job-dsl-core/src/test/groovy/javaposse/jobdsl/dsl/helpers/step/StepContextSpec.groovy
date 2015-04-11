@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
@@ -868,6 +869,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call minimal copyArtifacts'() {
+        setup:
+        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.26')
+
         when:
         context.copyArtifacts('upstream')
 
@@ -887,6 +891,47 @@ class StepContextSpec extends Specification {
     }
 
     def 'call copyArtifacts all options'() {
+        setup:
+        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.29')
+
+        when:
+        context.copyArtifacts('upstream') {
+            includePatterns('*.xml', '*.txt')
+            excludePatterns('foo.xml', 'foo.txt')
+            targetDirectory('target/')
+            flatten()
+            optional()
+            fingerprintArtifacts(false)
+            buildSelector {
+                upstreamBuild(true)
+            }
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.29')
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.copyartifact.CopyArtifact'
+            children().size() == 8
+            project[0].value() == 'upstream'
+            filter[0].value() == '*.xml, *.txt'
+            excludes[0].value() == 'foo.xml, foo.txt'
+            flatten[0].value() == true
+            optional[0].value() == true
+            target[0].value() == 'target/'
+            doNotFingerprintArtifacts[0].value() == true
+            with(selector[0]) {
+                attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+                fallbackToLastSuccessful[0].value() == true
+            }
+        }
+    }
+
+    def 'call copyArtifacts all options no fingerprint'() {
+        setup:
+        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.31')
+
         when:
         context.copyArtifacts('upstream') {
             includePatterns('*.xml', '*.txt')
@@ -904,13 +949,14 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 7
+            children().size() == 8
             project[0].value() == 'upstream'
             filter[0].value() == '*.xml, *.txt'
             excludes[0].value() == 'foo.xml, foo.txt'
             flatten[0].value() == true
             optional[0].value() == true
             target[0].value() == 'target/'
+            doNotFingerprintArtifacts[0].value() == false
             with(selector[0]) {
                 attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
                 fallbackToLastSuccessful[0].value() == true

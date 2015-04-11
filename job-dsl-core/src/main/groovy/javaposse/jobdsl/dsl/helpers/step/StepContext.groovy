@@ -400,6 +400,9 @@ class StepContext implements Context {
             if (copyArtifactContext.optional) {
                 optional(true)
             }
+            if (!jobManagement.getPluginVersion('copyartifact')?.isOlderThan(new VersionNumber('1.29'))) {
+                doNotFingerprintArtifacts(!copyArtifactContext.fingerprint)
+            }
         }
         copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode
