@@ -7,6 +7,22 @@ import hudson.util.VersionNumber
  */
 abstract class MockJobManagement extends AbstractJobManagement {
     final Map<String, String> parameters = [:]
+    final Map<String, List<String>> permissions = [
+            'hudson.security.AuthorizationMatrixProperty': [
+                    'hudson.model.Item.Delete',
+                    'hudson.model.Item.Configure',
+                    'hudson.model.Item.Read',
+                    'hudson.model.Item.Discover',
+                    'hudson.model.Item.Build',
+                    'hudson.model.Item.Workspace',
+                    'hudson.model.Item.Cancel',
+                    'hudson.model.Item.Release',
+                    'hudson.model.Item.ExtendedRead',
+                    'hudson.model.Run.Delete',
+                    'hudson.model.Run.Update',
+                    'hudson.scm.SCM.Tag'
+            ]
+    ]
 
     protected MockJobManagement() {
         super(System.out)
@@ -65,6 +81,6 @@ abstract class MockJobManagement extends AbstractJobManagement {
 
     @Override
     Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
-        []
+        permissions[authorizationMatrixPropertyClassName]
     }
 }
