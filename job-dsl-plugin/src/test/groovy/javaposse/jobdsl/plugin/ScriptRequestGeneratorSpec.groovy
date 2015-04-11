@@ -5,19 +5,45 @@ import hudson.model.AbstractBuild
 import hudson.model.FreeStyleProject
 import hudson.model.Label
 import javaposse.jobdsl.dsl.ScriptRequest
-import org.junit.Rule
+import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
+import spock.lang.Shared
 import spock.lang.Specification
 
 class ScriptRequestGeneratorSpec extends Specification {
     private static final String SCRIPT = 'my script'
 
-    @Rule
+    @Shared
+    @ClassRule
     JenkinsRule jenkinsRule = new JenkinsRule()
+
+    @Shared
+    AbstractBuild build
+
+    @Shared
+    AbstractBuild remoteBuild
+
+    def setupSpec() {
+        build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
+        build.workspace.child('classes').mkdirs()
+        build.workspace.child('test/classes').mkdirs()
+        build.workspace.child('output').mkdirs()
+        build.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
+        build.workspace.child('b.groovy').write(SCRIPT, 'UTF-8')
+        build.workspace.child('lib/a.jar').write(SCRIPT, 'UTF-8')
+        build.workspace.child('lib/b.jar').write(SCRIPT, 'UTF-8')
+
+        jenkinsRule.createSlave('label1', null)
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('remote-foo')
+        job.assignedLabel = Label.get('label1')
+        remoteBuild = jenkinsRule.buildAndAssertSuccess(job)
+        remoteBuild.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
+        remoteBuild.workspace.child('lib/a.jar').write(SCRIPT, 'UTF-8')
+        remoteBuild.workspace.child('lib/b.jar').write(SCRIPT, 'UTF-8')
+    }
 
     def 'script text'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -35,7 +61,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'script text ignore existing'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -53,8 +78,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'script text with additional classpath entry'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('classes').mkdirs()
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -73,8 +96,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'script text with additional classpath entry with variable expansion'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('test/classes').mkdirs()
         EnvVars env = new EnvVars([FOO: 'test'])
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -93,9 +114,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'script text with additional classpath entries'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('classes').mkdirs()
-        build.workspace.child('output').mkdirs()
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -117,17 +135,15 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'single target'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('test.groovy').write(SCRIPT, 'UTF-8')
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('test.groovy', false, null, false, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, false, null).toList()
 
         then:
         requests.size() == 1
-        requests[0].location == 'test.groovy'
+        requests[0].location == 'a.groovy'
         requests[0].body == null
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
@@ -136,9 +152,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'single target with variable'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('test.groovy').write(SCRIPT, 'UTF-8')
-        EnvVars env = new EnvVars([FOO: 'test'])
+        EnvVars env = new EnvVars([FOO: 'a'])
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
         when:
@@ -146,7 +160,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == 'test.groovy'
+        requests[0].location == 'a.groovy'
         requests[0].body == null
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
@@ -155,17 +169,15 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'single target ignore existing'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('test.groovy').write(SCRIPT, 'UTF-8')
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('test.groovy', false, null, true, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, true, null).toList()
 
         then:
         requests.size() == 1
-        requests[0].location == 'test.groovy'
+        requests[0].location == 'a.groovy'
         requests[0].body == null
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
@@ -174,9 +186,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'multiple target'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
-        build.workspace.child('b.groovy').write(SCRIPT, 'UTF-8')
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -201,9 +210,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'multiple target with wildcard'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
-        build.workspace.child('b.groovy').write(SCRIPT, 'UTF-8')
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -226,11 +232,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'multiple target with additional classpath entries'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
-        build.workspace.child('b.groovy').write(SCRIPT, 'UTF-8')
-        build.workspace.child('classes').mkdirs()
-        build.workspace.child('output').mkdirs()
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
@@ -259,16 +260,12 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'additional classpath entries with pattern'() {
         setup:
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))
-        build.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
-        build.workspace.child('lib/a.jar').write(SCRIPT, 'UTF-8')
-        build.workspace.child('lib/b.jar').write(SCRIPT, 'UTF-8')
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                'a.groovy\nb.groovy', false, null, false, 'lib/*.jar'
+                'a.groovy', false, null, false, 'lib/*.jar'
         ).toList()
 
         then:
@@ -284,15 +281,8 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     def 'additional classpath entries with pattern building on remote'() {
         setup:
-        jenkinsRule.createSlave('label1', null)
-        FreeStyleProject job = jenkinsRule.createFreeStyleProject('foo')
-        job.assignedLabel = Label.get('label1')
-        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(job)
-        build.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
-        build.workspace.child('lib/a.jar').write(SCRIPT, 'UTF-8')
-        build.workspace.child('lib/b.jar').write(SCRIPT, 'UTF-8')
         EnvVars env = new EnvVars()
-        ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(remoteBuild, env)
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
@@ -304,7 +294,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].location == 'a.groovy'
         requests[0].body == null
         requests[0].urlRoots.length == 3
-        requests[0].urlRoots[0].toString() == 'workspace://foo/'
+        requests[0].urlRoots[0].toString() == 'workspace://remote-foo/'
         URL tempDirUrl = new File(System.getProperty('java.io.tmpdir')).toURI().toURL()
         requests[0].urlRoots[1] =~ "${tempDirUrl}jobdsl.*\\.jar"
         requests[0].urlRoots[2] =~ "${tempDirUrl}jobdsl.*\\.jar"

@@ -4,22 +4,27 @@ import com.cloudbees.hudson.plugins.folder.Folder
 import hudson.model.FreeStyleProject
 import hudson.model.Item
 import hudson.model.ItemGroup
-import org.junit.Rule
+import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import spock.lang.Shared
 import spock.lang.Specification
 
 import static javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
 import static javaposse.jobdsl.plugin.LookupStrategy.SEED_JOB
 
 class LookupStrategySpec extends Specification {
-    @Rule
-    public JenkinsRule jenkinsRule = new JenkinsRule()
+    @Shared
+    @ClassRule
+    JenkinsRule jenkinsRule = new JenkinsRule()
 
-    private Folder folder
-    private Item seedJob
+    @Shared
+    Folder folder
 
-    private createItems() {
+    @Shared
+    Item seedJob
+
+    def setupSpec() {
         folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
         seedJob = folder.createProject(FreeStyleProject, 'seed')
         folder.createProject(FreeStyleProject, 'job')
@@ -42,9 +47,6 @@ class LookupStrategySpec extends Specification {
     }
 
     def 'getItem'(LookupStrategy lookupStrategy, String expectedFullName) {
-        setup:
-        createItems()
-
         when:
         Item result = lookupStrategy.getItem(seedJob, 'job', Item)
 
@@ -58,9 +60,6 @@ class LookupStrategySpec extends Specification {
     }
 
     def 'getContext'(LookupStrategy lookupStrategy, String expectedFullName) {
-        setup:
-        createItems()
-
         when:
         ItemGroup result = lookupStrategy.getContext(seedJob)
 
@@ -74,9 +73,6 @@ class LookupStrategySpec extends Specification {
     }
 
     def 'getParent'(LookupStrategy lookupStrategy, String path, String expectedFullName) {
-        setup:
-        createItems()
-
         when:
         ItemGroup result = lookupStrategy.getParent(seedJob, path)
 
