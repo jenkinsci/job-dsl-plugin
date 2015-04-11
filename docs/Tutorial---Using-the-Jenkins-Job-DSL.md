@@ -9,13 +9,13 @@ The first step is to create this Job.
 
 * From the Jenkins main page, select either the "New Job" or "Create new Jobs" link. A new job creation page will be displayed.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/newjob.png|center|frame]]
+[[images/newjob.png|center|frame]]
 
 * Fill in the name field, e.g. "tutorial-job-dsl-1"
 * Select the "Build a free-style software project" radio button.
 * Click the OK button
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/createjob.png|center|frame]]
+[[images/createjob.png|center|frame]]
 
 ## 2. Adding a DSL Script
 
@@ -23,11 +23,11 @@ Now that we have created our empty Seed Job we need to configure it. We're going
 
 * On the configure screen, scroll down to the "Build: Add build step" pull down menu
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/AddBuildStep.png|center|frame]]
+[[images/AddBuildStep.png|center|frame]]
 
 * From the pull down menu, select "Process Job DSLs". You should be presented with two radio buttons. The default will be "Use the provided DSL script" and a text input box will be displayed below it.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/AddBuildStepSelected.png|center|frame]]
+[[images/AddBuildStepSelected.png|center|frame]]
 
 * Copy the following DSL Script block into the input box. (Note: The job resulting from this will be called DSL-Tutorial-1-Test. It'll check a GitHub repo every 15 minutes, then run 'clean test' if there's any changes found.)
 
@@ -45,11 +45,11 @@ job('DSL-Tutorial-1-Test') {
 }
 ```
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/DslBuildStep.png|center|frame]]
+[[images/DslBuildStep.png|center|frame]]
 
 * Click the "Save" button.  You'll be shown the overview page for the new Seed job you just created.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/EmptySeed.png|center|frame]]
+[[images/EmptySeed.png|center|frame]]
 
 ## 3. Run the Seed Job and Generate the new Jobs from the Script
 
@@ -61,7 +61,7 @@ Let's just run it ourselves manually.
 
 * Click the "Build Now" link/button on the tutorial-job-dsl-1 overview page. It should only take a second to run.
 
-[[https://github.com/JavaPosseRoundup/job-dsl-plugin/raw/master/images/Build1.png|center|frame]]
+[[images/Build1.png|center|frame]]
 
 * Look at the build result to see a link to the new Job which has been created by the running of your DSL script in the Seed Job. You should see this in the section called "Generated Jobs". (If you don't see it, you probably have Auto-Refresh disabled.  Enable it, or just refresh the page and then you'll see the new job.)
 
