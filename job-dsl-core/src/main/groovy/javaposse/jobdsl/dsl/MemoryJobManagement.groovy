@@ -1,19 +1,17 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
 import org.apache.commons.codec.digest.DigestUtils
 
 /**
  * In-memory JobManagement for testing.
  */
-class MemoryJobManagement extends AbstractJobManagement {
+class MemoryJobManagement extends MockJobManagement {
     final Map<String, String> availableConfigs = [:]
     final Map<String, String> savedConfigs = [:]
     final Map<String, String> savedViews = [:]
     final Set<ConfigFile> savedConfigFiles = []
     final Map<String, String> availableFiles = [:]
 
-    final Map<String, String> parameters = [:]
     final List<String> scheduledJobs = []
 
     MemoryJobManagement() {
@@ -55,10 +53,6 @@ class MemoryJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    void renameJobMatching(String previousNames, String destination) throws IOException {
-    }
-
-    @Override
     void queueJob(String jobName) throws NameNotProvidedException {
         scheduledJobs << jobName
     }
@@ -78,37 +72,9 @@ class MemoryJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    void requirePlugin(String pluginShortName) {
-    }
-
-    @Override
-    void requireMinimumPluginVersion(String pluginShortName, String version) {
-    }
-
-    @Override
-    String getCredentialsId(String credentialsDescription) {
-        null
-    }
-
-    @Override
-    VersionNumber getPluginVersion(String pluginShortName) {
-        null
-    }
-
-    @Override
-    Integer getVSphereCloudHash(String name) {
-        null
-    }
-
-    @Override
     String getConfigFileId(ConfigFileType type, String name) {
         ConfigFile configFile = savedConfigFiles.find { it.type == type && it.name == name }
         configFile == null ? null : createConfigFileId(configFile)
-    }
-
-    @Override
-    Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
-        []
     }
 
     private static String createConfigFileId(ConfigFile configFile) {

@@ -79,7 +79,7 @@ interface JobManagement {
     PrintStream getOutputStream()
 
     /**
-     * Map if variables that should be available to the script.
+     * Map of variables that should be available to the script.
      */
     Map<String, String> getParameters()
 

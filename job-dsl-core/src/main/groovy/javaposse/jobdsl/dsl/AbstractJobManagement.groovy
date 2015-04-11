@@ -4,37 +4,13 @@ import static java.lang.Thread.currentThread
 import static org.codehaus.groovy.runtime.StackTraceUtils.isApplicationClass
 
 /**
- * Abstract version of JobManagement to minimize impact on future API changes.
+ * Abstract base class providing common functionality for all {@link JobManagement} implementations.
  */
 abstract class AbstractJobManagement implements JobManagement {
     final PrintStream outputStream
 
     protected AbstractJobManagement(PrintStream out) {
         this.outputStream = out
-    }
-
-    protected AbstractJobManagement() {
-        this(System.out)
-    }
-
-    @Override
-    void queueJob(String jobName) throws NameNotProvidedException {
-        validateNameArg(jobName)
-    }
-
-    @Override
-    InputStream streamFileInWorkspace(String filePath) throws IOException {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String readFileInWorkspace(String filePath) throws IOException {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String readFileInWorkspace(String jobName, String filePath) throws IOException {
-        throw new UnsupportedOperationException()
     }
 
     @Override
