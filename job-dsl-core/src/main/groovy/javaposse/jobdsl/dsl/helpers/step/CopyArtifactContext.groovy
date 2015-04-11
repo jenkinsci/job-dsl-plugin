@@ -40,6 +40,7 @@ class CopyArtifactContext implements Context {
         this.optional = optional
     }
 
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.29')
     void fingerprintArtifacts(boolean fingerprint = true) {
         this.fingerprint = fingerprint
     }
