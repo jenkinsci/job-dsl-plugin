@@ -921,54 +921,66 @@ hg('http://scm') { node ->
 ```
 
 ### Git
+
 ```groovy
-git {
-    // since 1.20
-    remote { // can be repeated to add multiple remotes
-        name(String name) // optional
-        url(String url) // use either url or github
-        github(String ownerAndProject, String protocol = "https", String host = "github.com") // will also set the browser
-                                                                                              // and GitHub property
-        refspec(String refspec) // optional
-        credentials(String credentialsId) // optional
+job {
+    scm {
+        git {
+            // since 1.20
+            remote { // can be repeated to add multiple remotes
+                name(String name) // optional
+                url(String url) // use either url or github
+                github(String ownerAndProject, String protocol = 'https',
+                       String host = 'github.com')
+                refspec(String refspec) // optional
+                credentials(String credentialsId) // optional
+            }
+            branch(String name) // calls are accumulated, defaults to '**'
+            branches(String... names)
+            mergeOptions(String remote = null, String branch)
+            createTag(boolean createTag = true) // defaults to false
+            clean(boolean clean = true) // defaults to false
+            wipeOutWorkspace(boolean wipeOut = true) // defaults to false
+            remotePoll(boolean remotePoll = true) // defaults to false
+            shallowClone(boolean shallowClone = true) // defaults to false
+            pruneBranches(boolean pruneBranches = true) // defaults to false
+            localBranch(String branch) // check out to specific local branch
+            relativeTargetDir(String directory)
+            reference(String reference) // path to a reference repository
+            cloneTimeout(int timeout) // since 1.28, timeout in minutes
+            ignoreNotifyCommit(boolean value = true) // since 1.33
+            browser { // since 1.26
+                stash(String url) // URL to the Stash repository, optional
+            }
+            strategy { // since 1.30
+                inverse()
+                ancestry(int maxAgeInDays, String commit)
+                gerritTrigger()
+            }
+        
+            configure(Closure configure) // optional configure block
+        }
+        
+        git(String url, String branch = null, Closure configure = null)
+        
+        github(String ownerAndProject, String branch = null,
+               String protocol = 'https', String host = 'github.com',
+               Closure configure = null)
     }
-    branch(String name) // the branches to build, multiple calls are accumulated, defaults to **
-    branches(String... names)
-    mergeOptions(String remote = null, String branch) // merge a branch before building, optional
-    createTag(boolean createTag = true) // create a tag for every build, optional, defaults to false
-    clean(boolean clean = true) // clean after checkout, optional, defaults to false
-    wipeOutWorkspace(boolean wipeOutWorkspace = true) // wipe out workspace and force clone, optional, defaults to false
-    remotePoll(boolean remotePoll = true) // force polling using workspace, optional, defaults to false
-    shallowClone(boolean shallowClone = true) // perform shallow clone, optional, defaults to false
-    pruneBranches(boolean pruneBranches = true) // prune obsolete local branches, optional, defaults to false
-    localBranch(String branch) // check out to specific local branch
-    relativeTargetDir(String relativeTargetDir) // checkout to a sub-directory, optional
-    reference(String reference) // path to a reference repository, optional
-    cloneTimeout(int timeout) // since 1.28, timeout (in minutes) for clone and fetch operations
-    browser { // since 1.26
-        stash(String url) // URL to the Stash repository, optional
-    }
-    strategy { // since 1.30
-        inverse()
-        ancestry(int maxAgeInDays, String commit)
-        gerritTrigger()
-    }
-    ignoreNotifyCommit(boolean ignoreNotifyCommit = true) // since 1.33, this repository will be ignored when the notifyCommit-URL is accessed regardless of if the repository matches or not, defaults to false
-
-    configure(Closure configure) // optional configure block, the GitSCM node is passed in
 }
-
-git(String url, String branch = null, Closure configure = null)
-
-github(String ownerAndProject, String branch = null, String protocol = 'https',
-       String host = 'github.com', Closure configure = null)
 ```
 
-Adds a Git SCM source. The first variant can be used for advanced configuration (since 1.20), the other two variants are shortcuts for simpler Git SCM configurations.
+Adds a Git SCM source. The first variant can be used for advanced configuration (since 1.20), the other two variants are
+shortcuts for simpler Git SCM configurations. Requires the
+[Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin).
 
-The GitHub variants will derive the Git URL from the ownerAndProject, protocol and host parameters. Valid protocols are `https`, `ssh` and `git`. They also configure the source browser to point to GitHub.
+The `github` methods will derive the Git URL from the `ownerAndProject`, `protocol` and `host` parameters. Valid
+protocols are `'https'`, `'ssh'` and `'git'`. They also configure the source browser to point to GitHub and set the
+GitHub project URL.
 
-The Git plugin has a lot of configurable options, which are currently not all supported by the DSL. A  configure block can be used to add more options.
+The Git plugin has a lot of configurable options, which are currently not all supported by the DSL. A
+[[configure block|The-Configure-Block]] can be used to add more options. The `GitSCM` node is passed into the configure
+block.
 
 Version 2.0 or later of the Git Plugin is required to use `cloneTimeout` or Jenkins managed credentials for Git
 authentication. The argument for the `credentials` method can either be the ID of the credentials or its description.
@@ -976,55 +988,66 @@ Note that finding credentials by description has been [[deprecated|Deprecation-P
 
 When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch.
 
-Examples:
-
 ```groovy
 // checkout repo1 to a sub directory and clean the workspace after checkout
-git {
-    remote {
-        name('remoteB')
-        url('git@server:account/repo1.git')
+job('example-1') {
+    scm {
+        git {
+            remote {
+                name('remoteB')
+                url('git@server:account/repo1.git')
+            }
+            clean()
+            relativeTargetDir('repo1')
+        }
     }
-    clean()
-    relativeTargetDir('repo1')
 }
-```
 
-```groovy
-// add the upstream repo as second remote and merge branch featureA with master
-git {
-    remote {
-        name('origin')
-        url('git@serverA:account/repo1.git')
+// add the upstream repository as second remote and
+// merge branch featureA with master
+job('example-2') {
+    scm {
+        git {
+            remote {
+                name('origin')
+                url('git@serverA:account/repo1.git')
+            }
+            remote {
+                name('upstream')
+                url('git@serverB:account/repo1.git')
+            }
+            branch('featureA')
+            mergeOptions('upstream', 'master')
+        }
     }
-    remote {
-        name('upstream')
-        url('git@serverB:account/repo1.git')
-    }
-    branch('featureA')
-    mergeOptions('upstream', 'master')
 }
-```
-
-```groovy
+        
 // add user name and email options
-git('git@git') { node -> // is hudson.plugins.git.GitSCM
-    node / gitConfigName('DSL User')
-    node / gitConfigEmail('me@me.com')
+job('example-3') {
+    scm {
+        git('git@git') { node -> // is hudson.plugins.git.GitSCM
+            node / gitConfigName('DSL User')
+            node / gitConfigEmail('me@me.com')
+        }
+    }
 }
-```
-
-```groovy
-// add a Git SCM for the GitHub repository job-dsl-plugin of GitHub user jenkinsci
-github('jenkinsci/job-dsl-plugin')
-```
-
-```groovy
-// add a Git SCM for a GitHub repository and use the given credentials for authentication
-git {
-    remote {
-        github('account/repo', 'ssh')
-        credentials('github-ci-key')
+        
+// add Git SCM for GitHub repository job-dsl-plugin of GitHub user jenkinsci
+job('example-4') {
+    scm {
+        github('jenkinsci/job-dsl-plugin')
+    }
+}
+        
+// add Git SCM for a GitHub repository with authentication
+job('example-5') {
+    scm {
+        git {
+            remote {
+                github('account/repo', 'ssh')
+                credentials('github-ci-key')
+            }
+        }
     }
 }
 ```

@@ -133,6 +133,9 @@ class GitContext implements Context {
         executeInContext(gitBrowserClosure, gitBrowserContext)
     }
 
+    /**
+     * @since 1.33
+     */
     void ignoreNotifyCommit(boolean ignoreNotifyCommit = true) {
         this.ignoreNotifyCommit = ignoreNotifyCommit
     }
