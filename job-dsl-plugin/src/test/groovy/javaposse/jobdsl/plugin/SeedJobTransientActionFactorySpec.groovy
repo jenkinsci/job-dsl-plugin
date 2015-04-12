@@ -2,13 +2,15 @@ package javaposse.jobdsl.plugin
 
 import hudson.model.Action
 import hudson.model.Item
-import org.junit.Rule
+import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import spock.lang.Shared
 import spock.lang.Specification
 
 class SeedJobTransientActionFactorySpec extends Specification {
-    @Rule
+    @Shared
+    @ClassRule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
     @WithoutJenkins
@@ -33,7 +35,7 @@ class SeedJobTransientActionFactorySpec extends Specification {
 
     def 'with SeedReference'() {
         setup:
-        Item targetJob = jenkinsRule.createFreeStyleProject('target')
+        Item targetJob = jenkinsRule.createFreeStyleProject('generated-target')
         Item seedJob = jenkinsRule.createFreeStyleProject('seed')
         Item templateJob = jenkinsRule.createFreeStyleProject('template')
         jenkinsRule.jenkins.getDescriptorByType(DescriptorImpl).generatedJobMap[targetJob.fullName] =
