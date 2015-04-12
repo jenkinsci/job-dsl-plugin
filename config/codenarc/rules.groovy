@@ -16,6 +16,8 @@ ruleset {
         // we don't care
         exclude 'BuilderMethodWithSideEffects'
         // we don't care
+        exclude 'EmptyMethodInAbstractClass'
+        // we don't care
         exclude 'Instanceof'
     }
 

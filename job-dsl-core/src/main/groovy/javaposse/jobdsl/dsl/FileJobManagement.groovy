@@ -1,8 +1,6 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
-
-class FileJobManagement extends AbstractJobManagement {
+class FileJobManagement extends MockJobManagement {
     /**
      * Root of where to look for job config files
      */
@@ -12,12 +10,6 @@ class FileJobManagement extends AbstractJobManagement {
      * Extension to append to job name when looking at the filesystem
      */
     String ext = '.xml'
-
-    /**
-     * map to store job parameters from System properties and
-     * Environment variables.
-     */
-    final Map<String, String> parameters = [:]
 
     FileJobManagement(File root) {
         this.root = root
@@ -56,15 +48,6 @@ class FileJobManagement extends AbstractJobManagement {
         new File(viewName + ext).write(config)
     }
 
-    @Override
-    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    void renameJobMatching(String previousNames, String destination) throws IOException {
-    }
-
     InputStream streamFileInWorkspace(String filePath) {
         new FileInputStream(new File(root, filePath))
     }
@@ -72,38 +55,5 @@ class FileJobManagement extends AbstractJobManagement {
     @Override
     String readFileInWorkspace(String filePath) {
         new File(root, filePath).text
-    }
-
-    @Override
-    void requirePlugin(String pluginShortName) {
-    }
-
-    @Override
-    void requireMinimumPluginVersion(String pluginShortName, String version) {
-    }
-
-    @Override
-    String getCredentialsId(String credentialsDescription) {
-        null
-    }
-
-    @Override
-    VersionNumber getPluginVersion(String pluginShortName) {
-        null
-    }
-
-    @Override
-    Integer getVSphereCloudHash(String name) {
-        null
-    }
-
-    @Override
-    String getConfigFileId(ConfigFileType type, String name) {
-        null
-    }
-
-    @Override
-    Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
-        []
     }
 }
