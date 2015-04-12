@@ -3,12 +3,18 @@ package javaposse.jobdsl.dsl.helpers.common
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 
 class DownstreamContext implements Context {
     public static final THRESHOLD_COLOR_MAP = ['SUCCESS': 'BLUE', 'UNSTABLE': 'YELLOW', 'FAILURE': 'RED']
     public static final THRESHOLD_ORDINAL_MAP = ['SUCCESS': 0, 'UNSTABLE': 1, 'FAILURE': 2]
 
     private final List<DownstreamTriggerContext> triggers = []
+    protected final JobManagement jobManagement
+
+    DownstreamContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
 
     void trigger(String projects, @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
         trigger(projects, null, downstreamTriggerClosure)
@@ -27,7 +33,7 @@ class DownstreamContext implements Context {
     void trigger(String projects, String condition, boolean triggerWithNoParameters,
                  Map<String, String> blockingThresholds,
                  @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext()
+        DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext(jobManagement)
         downstreamTriggerContext.projects = projects
         downstreamTriggerContext.condition = condition ?: 'SUCCESS'
         downstreamTriggerContext.triggerWithNoParameters = triggerWithNoParameters

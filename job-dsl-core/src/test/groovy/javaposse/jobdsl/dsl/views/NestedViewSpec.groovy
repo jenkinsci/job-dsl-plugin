@@ -119,6 +119,7 @@ class NestedViewSpec extends Specification {
         nestedView instanceof BuildPipelineView
         view.node.views[0].children()[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView'
         view.node.views[0].children()[0].description[0].text() == 'foo'
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'nested build pipeline view without closure'() {
@@ -132,6 +133,7 @@ class NestedViewSpec extends Specification {
         nestedView.name == 'test'
         nestedView instanceof BuildPipelineView
         view.node.views[0].children()[0].name() == 'au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView'
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'nested build monitor view'() {
@@ -148,6 +150,7 @@ class NestedViewSpec extends Specification {
         nestedView instanceof BuildMonitorView
         view.node.views[0].children()[0].name() == 'com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView'
         view.node.views[0].children()[0].description[0].text() == 'foo'
+        1 * jobManagement.requirePlugin('build-monitor-plugin')
     }
 
     def 'nested build monitor view without closure'() {
@@ -161,6 +164,7 @@ class NestedViewSpec extends Specification {
         nestedView.name == 'test'
         nestedView instanceof BuildMonitorView
         view.node.views[0].children()[0].name() == 'com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView'
+        1 * jobManagement.requirePlugin('build-monitor-plugin')
     }
 
     def 'nested sectioned view'() {
@@ -177,6 +181,7 @@ class NestedViewSpec extends Specification {
         nestedView instanceof SectionedView
         view.node.views[0].children()[0].name() == 'hudson.plugins.sectioned__view.SectionedView'
         view.node.views[0].children()[0].description[0].text() == 'foo'
+        1 * jobManagement.requirePlugin('sectioned-view')
     }
 
     def 'nested sectioned view without closure'() {
@@ -190,6 +195,7 @@ class NestedViewSpec extends Specification {
         nestedView.name == 'test'
         nestedView instanceof SectionedView
         view.node.views[0].children()[0].name() == 'hudson.plugins.sectioned__view.SectionedView'
+        1 * jobManagement.requirePlugin('sectioned-view')
     }
 
     def 'nested nested view'() {
@@ -235,6 +241,7 @@ class NestedViewSpec extends Specification {
         categorizedView instanceof CategorizedJobsView
         view.node.views[0].children()[0].name() == 'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
         view.node.views[0].children()[0].description[0].text() == 'foo'
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
     def 'nested categorized jobs view without closure'() {
@@ -248,6 +255,7 @@ class NestedViewSpec extends Specification {
         categorizedView.name == 'test'
         categorizedView instanceof CategorizedJobsView
         view.node.views[0].children()[0].name() == 'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
     def 'nested delivery pipeline view'() {
@@ -264,6 +272,7 @@ class NestedViewSpec extends Specification {
         nestedView instanceof DeliveryPipelineView
         view.node.views[0].children()[0].name() == 'se.diabol.jenkins.pipeline.DeliveryPipelineView'
         view.node.views[0].children()[0].description[0].text() == 'foo'
+        1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def 'nested delivery pipeline view without closure'() {
@@ -277,6 +286,7 @@ class NestedViewSpec extends Specification {
         nestedView.name == 'test'
         nestedView instanceof DeliveryPipelineView
         view.node.views[0].children()[0].name() == 'se.diabol.jenkins.pipeline.DeliveryPipelineView'
+        1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
     }
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>

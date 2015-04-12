@@ -14,7 +14,7 @@ class PhaseJobContext implements Context {
     String jobName
     boolean currentJobParameters = true
     boolean exposedScm = true
-    DownstreamTriggerContext paramTrigger = new DownstreamTriggerContext()
+    DownstreamTriggerContext paramTrigger = new DownstreamTriggerContext(jobManagement)
     Map<String, Boolean> boolParams = [:]
     String fileParam
     boolean failTriggerOnMissing

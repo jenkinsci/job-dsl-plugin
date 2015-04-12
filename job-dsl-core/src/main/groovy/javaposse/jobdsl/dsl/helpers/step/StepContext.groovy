@@ -514,7 +514,7 @@ class StepContext implements Context {
 
     @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
-        DownstreamContext downstreamContext = new DownstreamContext()
+        DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         Node stepNode = downstreamContext.createDownstreamNode(true)

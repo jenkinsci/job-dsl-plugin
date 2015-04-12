@@ -1628,6 +1628,8 @@ still-another-dsl.groovy'''
             block.isEmpty()
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requirePlugin('git')
+        1 * jobManagement.requirePlugin('nodelabelparameter')
 
         when:
         context.downstreamParameterized {

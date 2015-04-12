@@ -225,6 +225,7 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[9].name() == 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn'
         1 * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
         1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
+        1 * jobManagement.requirePlugin('claim')
     }
 
     def 'call columns twice'() {
@@ -255,6 +256,7 @@ class ListViewSpec extends Specification {
         root.columns.size() == 1
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildConsoleColumn'
+        1 * jobManagement.requirePlugin('extra-columns')
     }
 
     def 'configureProject column'() {
@@ -268,6 +270,7 @@ class ListViewSpec extends Specification {
         root.columns.size() == 1
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.ConfigureProjectColumn'
+        1 * jobManagement.requirePlugin('extra-columns')
     }
 
     def 'statusFilter'(Closure filter, Map children) {

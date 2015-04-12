@@ -49,6 +49,7 @@ class NestedViewsContext implements Context, ViewFactory {
     }
 
     @Override
+    @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
@@ -59,16 +60,19 @@ class NestedViewsContext implements Context, ViewFactory {
     }
 
     @Override
+    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         processView(name, DeliveryPipelineView, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
 
     @Override
+    @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
     }

@@ -457,7 +457,7 @@ class PublisherContext implements Context {
      */
     @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
-        DownstreamContext downstreamContext = new DownstreamContext()
+        DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         Node publishNode = downstreamContext.createDownstreamNode(false)
@@ -777,7 +777,7 @@ class PublisherContext implements Context {
      */
     @RequiresPlugin(id = 'build-pipeline-plugin')
     void buildPipelineTrigger(String downstreamProjectNames, @DslContext(BuildPipelineContext) Closure closure = null) {
-        BuildPipelineContext buildPipelineContext = new BuildPipelineContext()
+        BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement)
         ContextHelper.executeInContext(closure, buildPipelineContext)
 
         NodeBuilder nodeBuilder = NodeBuilder.newInstance()
