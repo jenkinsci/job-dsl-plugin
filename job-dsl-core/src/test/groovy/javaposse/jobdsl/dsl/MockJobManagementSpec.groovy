@@ -2,8 +2,6 @@ package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
 
-import static org.codehaus.groovy.runtime.InvokerHelper.createScript
-
 class MockJobManagementSpec extends Specification {
     MockJobManagement mockJobManagement = Spy(MockJobManagement)
 
