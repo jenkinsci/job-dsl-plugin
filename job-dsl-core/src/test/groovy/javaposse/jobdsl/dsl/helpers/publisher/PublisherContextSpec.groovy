@@ -103,6 +103,7 @@ class PublisherContextSpec extends Specification {
         mailerPublisher.recipients[0].value() as String == 'recipient'
         mailerPublisher.dontNotifyEveryUnstableBuild[0].value() as Boolean == false
         mailerPublisher.sendToIndividuals[0].value() as Boolean == false
+        1 * jobManagement.requirePlugin('mailer')
     }
 
     def 'call standard mailer method with all args'() {
@@ -117,6 +118,7 @@ class PublisherContextSpec extends Specification {
         mailerPublisher.recipients[0].value() as String == 'recipient2'
         mailerPublisher.dontNotifyEveryUnstableBuild[0].value() as Boolean == true
         mailerPublisher.sendToIndividuals[0].value() as Boolean == true
+        1 * jobManagement.requirePlugin('mailer')
     }
 
     def 'call archive artifacts with all args'() {
@@ -246,6 +248,8 @@ class PublisherContextSpec extends Specification {
         skippedThresholds.unstableNewThreshold[0].value() == 0
         skippedThresholds.failureThreshold[0].value() == 0
         skippedThresholds.failureNewThreshold[0].value() == 0
+
+        1 * jobManagement.requirePlugin('xunit')
     }
 
     def 'call archiveXUnit with some basic args'() {
@@ -281,6 +285,8 @@ class PublisherContextSpec extends Specification {
         skippedThresholds.unstableNewThreshold[0].value() == 0
         skippedThresholds.failureThreshold[0].value() == 0
         skippedThresholds.failureNewThreshold[0].value() == 9
+
+        1 * jobManagement.requirePlugin('xunit')
     }
 
     def 'call archiveXUnit with all basic args'() {
@@ -319,6 +325,8 @@ class PublisherContextSpec extends Specification {
         skippedThresholds.unstableNewThreshold[0].value() == 6
         skippedThresholds.failureThreshold[0].value() == 7
         skippedThresholds.failureNewThreshold[0].value() == 8
+
+        1 * jobManagement.requirePlugin('xunit')
     }
 
     def 'call archiveXUnit with all valid thresholdMode values'() {
@@ -345,6 +353,8 @@ class PublisherContextSpec extends Specification {
         skippedThresholds.failureThreshold[0].value() == 0
         skippedThresholds.failureNewThreshold[0].value() == 0
 
+        1 * jobManagement.requirePlugin('xunit')
+
         where:
         input                 | output
         ThresholdMode.NUMBER  | 1
@@ -365,6 +375,8 @@ class PublisherContextSpec extends Specification {
 
         def resultFile = xUnitNode.types[0]."${output}"[0]
         resultFile.pattern[0].value() == 'some_pattern'
+
+        1 * jobManagement.requirePlugin('xunit')
 
         where:
         input        | output
@@ -493,6 +505,8 @@ class PublisherContextSpec extends Specification {
         skippedThresholds.unstableNewThreshold[0].value() == 6
         skippedThresholds.failureThreshold[0].value() == 7
         skippedThresholds.failureNewThreshold[0].value() == 8
+
+        1 * jobManagement.requirePlugin('xunit')
     }
 
     def 'call jacoco code coverage with no args'() {
@@ -506,6 +520,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
         jacocoNode.minimumInstructionCoverage[0].value() == '0'
         jacocoNode.changeBuildStatus[0] == null
+        1 * jobManagement.requirePlugin('jacoco')
     }
 
     def 'call jacoco code coverage with closure, set changeBuildStatus'(change) {
@@ -519,6 +534,7 @@ class PublisherContextSpec extends Specification {
         Node jacocoNode = context.publisherNodes[0]
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.changeBuildStatus[0].value() == change ? 'true' : 'false'
+        1 * jobManagement.requirePlugin('jacoco')
 
         where:
         change << [true, false]
@@ -537,6 +553,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
         jacocoNode.minimumInstructionCoverage[0].value() == '0'
         jacocoNode.changeBuildStatus[0].value() == 'true'
+        1 * jobManagement.requirePlugin('jacoco')
     }
 
     def 'call jacoco code coverage with all args'() {
@@ -583,6 +600,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.maximumMethodCoverage[0].value() == '11'
         jacocoNode.maximumClassCoverage[0].value() == '12'
         jacocoNode.changeBuildStatus[0].value() == 'true'
+        1 * jobManagement.requirePlugin('jacoco')
     }
 
     def 'calling minimal html publisher closure'() {
@@ -604,6 +622,7 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == false
         target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+        1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
     def 'calling minimal html publisher closure, plugin version older than 1.3'() {
@@ -627,6 +646,7 @@ class PublisherContextSpec extends Specification {
         target.reportFiles[0].value() == 'index.html'
         target.keepAll[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+        1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
     def 'calling html publisher closure with all options'() {
@@ -653,6 +673,7 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == true
         target.allowMissing[0].value() == true
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+        1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
     def 'calling minimal html publisher'() {
@@ -673,6 +694,7 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == false
         target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+        1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
     def 'calling html publisher with a few args'() {
@@ -693,6 +715,7 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == true
         target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+        1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
     def 'calling html publisher with map syntax without all args'() {
@@ -713,6 +736,7 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == false
         target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
+        1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
     def 'calling html publisher with multiple reports'() {
@@ -733,6 +757,8 @@ class PublisherContextSpec extends Specification {
         def target2 = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[1]
         target2.reportName[0].value() == 'Test Report'
         target2.reportDir[0].value() == 'test/*'
+
+        1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
     def 'call Jabber publish with minimal args'() {
@@ -755,6 +781,7 @@ class PublisherContextSpec extends Specification {
         buildToNode.attributes().containsKey('class')
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
         publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        1 * jobManagement.requirePlugin('jabber')
     }
 
     def 'call Jabber publish with all args'() {
@@ -779,6 +806,8 @@ class PublisherContextSpec extends Specification {
         Node buildToNode = publisherNode.buildToChatNotifier[0]
         buildToNode.attributes().containsKey('class')
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
+
+        1 * jobManagement.requirePlugin('jabber')
     }
 
     def 'call Jabber publish with closure args'() {
@@ -809,6 +838,7 @@ class PublisherContextSpec extends Specification {
         buildToNode.attributes().containsKey('class')
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
         publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        1 * jobManagement.requirePlugin('jabber')
     }
 
     def 'call Jabber publish to get exceptions'() {
@@ -837,6 +867,7 @@ class PublisherContextSpec extends Specification {
         publisherNode.criteria[0].value() == 'Any'
         publisherNode.archiveMethod[0].value() == 'TAR'
         publisherNode.overrideDefaultExcludes[0].value() == false
+        1 * jobManagement.requirePlugin('clone-workspace-scm')
     }
 
     def 'call Clone Workspace publish with all args'() {
@@ -851,6 +882,7 @@ class PublisherContextSpec extends Specification {
         publisherNode.criteria[0].value() == 'Not Failed'
         publisherNode.archiveMethod[0].value() == 'ZIP'
         publisherNode.overrideDefaultExcludes[0].value() == true
+        1 * jobManagement.requirePlugin('clone-workspace-scm')
     }
 
     def 'call Clone Workspace publish to get exceptions'() {
@@ -884,6 +916,7 @@ class PublisherContextSpec extends Specification {
         publisherNode.criteria[0].value() == 'Not Failed'
         publisherNode.archiveMethod[0].value() == 'ZIP'
         publisherNode.overrideDefaultExcludes[0].value() == true
+        1 * jobManagement.requirePlugin('clone-workspace-scm')
     }
 
     def 'call scp publish with not enough entries'() {
@@ -908,6 +941,7 @@ class PublisherContextSpec extends Specification {
         entryNode.filePath[0].value() == ''
         entryNode.sourceFile[0].value() == 'api-sdk/**/*'
         entryNode.keepHierarchy[0].value() == 'false'
+        1 * jobManagement.requirePlugin('scp')
 
         when:
         context.publishScp('javadoc') {
@@ -922,6 +956,7 @@ class PublisherContextSpec extends Specification {
         entryNode2.filePath[0].value() == 'javadoc'
         entryNode2.sourceFile[0].value() == 'build/javadocs/**/*'
         entryNode2.keepHierarchy[0].value() == 'true'
+        1 * jobManagement.requirePlugin('scp')
     }
 
     def 'call scp publish with collection of sources'() {
@@ -945,6 +980,7 @@ class PublisherContextSpec extends Specification {
             sourceFile[0].value() == 'docs/**/*'
             keepHierarchy[0].value() == 'false'
         }
+        1 * jobManagement.requirePlugin('scp')
 
         when:
         context.publishScp('javadoc') {
@@ -966,6 +1002,7 @@ class PublisherContextSpec extends Specification {
             sourceFile[0].value() == 'build/groovydoc/**/*'
             keepHierarchy[0].value() == 'true'
         }
+        1 * jobManagement.requirePlugin('scp')
     }
 
     def 'call trigger downstream without args'() {
@@ -1074,6 +1111,8 @@ class PublisherContextSpec extends Specification {
         second.triggerWithNoParameters[0].value() == 'false'
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+
         when:
         context.downstreamParameterized {
             trigger('Project3') {
@@ -1086,6 +1125,7 @@ class PublisherContextSpec extends Specification {
         third.condition[0].value() == 'SUCCESS'
         third.triggerWithNoParameters[0].value() == 'false'
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        1 * jobManagement.requirePlugin('parameterized-trigger')
 
         when:
         context.downstreamParameterized {
@@ -1117,6 +1157,7 @@ class PublisherContextSpec extends Specification {
         typeConfigNode.unstable[0].value() == '999'
         typeConfigNode.usePattern[0].value() == 'false'
         typeConfigNode.pattern[0].value() == ''
+        1 * jobManagement.requirePlugin('violations')
     }
 
     def 'call violations plugin with all args'() {
@@ -1170,6 +1211,7 @@ class PublisherContextSpec extends Specification {
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '999'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'false'
         jslintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == ''
+        1 * jobManagement.requirePlugin('violations')
     }
 
     def 'call violations plugin with bad types'() {
@@ -1191,6 +1233,7 @@ class PublisherContextSpec extends Specification {
         publisherNode.name() == 'hudson.plugins.chucknorris.CordellWalkerRecorder'
         publisherNode.value()[0].name() == 'factGenerator'
         publisherNode.value()[0].value() == ''
+        1 * jobManagement.requirePlugin('chucknorris')
     }
 
     def 'irc channels are added'() {
@@ -1212,6 +1255,7 @@ class PublisherContextSpec extends Specification {
         targets.value()[1].name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
         targets.value()[1].value()[0].name() == 'name'
         targets.value()[1].value()[0].value() == '#c2'
+        1 * jobManagement.requirePlugin('ircbot')
     }
 
     def 'irc notification strategy is set'() {
@@ -1222,6 +1266,7 @@ class PublisherContextSpec extends Specification {
 
         then:
         context.publisherNodes[0].strategy[0].value() == 'STATECHANGE_ONLY'
+        1 * jobManagement.requirePlugin('ircbot')
     }
 
     def 'irc notification invalid strategy triggers exception'() {
@@ -1242,6 +1287,7 @@ class PublisherContextSpec extends Specification {
 
         then:
         context.publisherNodes[0].notifyFixers[0].value() == 'true'
+        1 * jobManagement.requirePlugin('ircbot')
     }
 
     def 'irc notification message is set'() {
@@ -1257,6 +1303,7 @@ class PublisherContextSpec extends Specification {
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
         ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
                 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
+        1 * jobManagement.requirePlugin('ircbot')
     }
 
     def 'default notification message is set if not specified'() {
@@ -1271,6 +1318,7 @@ class PublisherContextSpec extends Specification {
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
         ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
                 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+        1 * jobManagement.requirePlugin('ircbot')
     }
 
     def 'default notification strategy is set if not specified'() {
@@ -1282,6 +1330,7 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].strategy[0].value() == 'ALL'
+        1 * jobManagement.requirePlugin('ircbot')
     }
 
     def 'given the required cobertura report file name all defaults are set for your pleasure'() {
@@ -1309,6 +1358,7 @@ class PublisherContextSpec extends Specification {
         assertTarget('failingTarget', 1, 'LINE', '0')
         assertTarget('failingTarget', 2, 'CONDITIONAL', '0')
         context.publisherNodes[0].sourceEncoding[0].value() == 'ASCII'
+        1 * jobManagement.requirePlugin('cobertura')
     }
 
     private void assertTarget(String targetName, int position, String type, String value) {
@@ -1340,6 +1390,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].autoUpdateStability[0].value() == true
         context.publisherNodes[0].zoomCoverageChart[0].value() == true
         context.publisherNodes[0].failNoReports[0].value() == false
+        1 * jobManagement.requirePlugin('cobertura')
     }
 
     def 'overriding cobertura default targets'() {
@@ -1362,6 +1413,7 @@ class PublisherContextSpec extends Specification {
         assertTarget('healthyTarget', 2, 'CONDITIONAL', '700000')
         assertTarget('unhealthyTarget', 2, 'CONDITIONAL', '800000')
         assertTarget('failingTarget', 2, 'CONDITIONAL', '900000')
+        1 * jobManagement.requirePlugin('cobertura')
     }
 
     def 'adding cobertura extra targets'() {
@@ -1384,6 +1436,7 @@ class PublisherContextSpec extends Specification {
         assertTarget('healthyTarget', 5, 'CLASSES', '700000')
         assertTarget('unhealthyTarget', 5, 'CLASSES', '800000')
         assertTarget('failingTarget', 5, 'CLASSES', '900000')
+        1 * jobManagement.requirePlugin('cobertura')
     }
 
     def 'checking for invalid cobertura target type'() {
@@ -1439,6 +1492,7 @@ class PublisherContextSpec extends Specification {
         }
         then:
         context.publisherNodes[0].sourceEncoding[0].value() == 'UTF-8'
+        1 * jobManagement.requirePlugin('cobertura')
     }
 
     def 'call allowBrokenBuildClaiming'() {
@@ -1448,6 +1502,7 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.claim.ClaimPublisher'
+        1 * jobManagement.requirePlugin('claim')
     }
 
     def 'add fingerprinting'(targets, recordArtifacts) {
@@ -1479,6 +1534,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].regexp[0].value() == 'success'
         context.publisherNodes[0].regexpForFailed[0].value() == ''
         context.publisherNodes[0].setForMatrix[0].value() == false
+        1 * jobManagement.requirePlugin('description-setter')
     }
 
     def 'call buildDescription with two arguments'() {
@@ -1493,6 +1549,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].regexpForFailed[0].value() == ''
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
         context.publisherNodes[0].setForMatrix[0].value() == false
+        1 * jobManagement.requirePlugin('description-setter')
     }
 
     def 'call buildDescription with three arguments'() {
@@ -1507,6 +1564,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].regexpForFailed[0].value() == 'failed'
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
         context.publisherNodes[0].setForMatrix[0].value() == false
+        1 * jobManagement.requirePlugin('description-setter')
     }
 
     def 'call buildDescription with four arguments'() {
@@ -1522,6 +1580,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
         context.publisherNodes[0].descriptionForFailed[0].value() == 'NOES!'
         context.publisherNodes[0].setForMatrix[0].value() == false
+        1 * jobManagement.requirePlugin('description-setter')
     }
 
     def 'call buildDescription with five arguments'() {
@@ -1537,6 +1596,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].description[0].value() == 'AWSUM!'
         context.publisherNodes[0].descriptionForFailed[0].value() == 'NOES!'
         context.publisherNodes[0].setForMatrix[0].value() == true
+        1 * jobManagement.requirePlugin('description-setter')
     }
 
     def 'call textFinder with one argument'() {
@@ -1551,6 +1611,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == false
         context.publisherNodes[0].succeedIfFound[0].value() == false
         context.publisherNodes[0].unstableIfFound[0].value() == false
+        1 * jobManagement.requirePlugin('text-finder')
     }
 
     def 'call textFinder with two arguments'() {
@@ -1565,6 +1626,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == false
         context.publisherNodes[0].succeedIfFound[0].value() == false
         context.publisherNodes[0].unstableIfFound[0].value() == false
+        1 * jobManagement.requirePlugin('text-finder')
     }
 
     def 'call textFinder with three arguments'() {
@@ -1579,6 +1641,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
         context.publisherNodes[0].succeedIfFound[0].value() == false
         context.publisherNodes[0].unstableIfFound[0].value() == false
+        1 * jobManagement.requirePlugin('text-finder')
     }
 
     def 'call textFinder with four arguments'() {
@@ -1593,6 +1656,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
         context.publisherNodes[0].succeedIfFound[0].value() == true
         context.publisherNodes[0].unstableIfFound[0].value() == false
+        1 * jobManagement.requirePlugin('text-finder')
     }
 
     def 'call textFinder with five arguments'() {
@@ -1607,6 +1671,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].alsoCheckConsoleOutput[0].value() == true
         context.publisherNodes[0].succeedIfFound[0].value() == true
         context.publisherNodes[0].unstableIfFound[0].value() == true
+        1 * jobManagement.requirePlugin('text-finder')
     }
 
     def 'call postBuildTask with two arguments'() {
@@ -1625,6 +1690,7 @@ class PublisherContextSpec extends Specification {
             RunIfJobSuccessful[0].value() == false
             script[0].value() == 'git clean -fdx'
         }
+        1 * jobManagement.requirePlugin('postbuild-task')
     }
 
     def 'call postBuildTask with two tasks'() {
@@ -1651,6 +1717,7 @@ class PublisherContextSpec extends Specification {
             RunIfJobSuccessful[0].value() == true
             script[0].value() == 'git gc'
         }
+        1 * jobManagement.requirePlugin('postbuild-task')
     }
 
     def 'call aggregate downstream test results with no args'() {
@@ -1706,6 +1773,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
         context.publisherNodes[0].groovyScript[0].value() == 'foo'
         context.publisherNodes[0].behavior[0].value() == 0
+        1 * jobManagement.requirePlugin('groovy-postbuild')
     }
 
     def 'call groovyPostBuild with overriden failure behavior'() {
@@ -1717,6 +1785,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
         context.publisherNodes[0].groovyScript[0].value() == 'foo'
         context.publisherNodes[0].behavior[0].value() == 1
+        1 * jobManagement.requirePlugin('groovy-postbuild')
     }
 
     def 'call javadoc archiver with no args'() {
@@ -1728,6 +1797,7 @@ class PublisherContextSpec extends Specification {
         javadocNode.name() == 'hudson.tasks.JavadocArchiver'
         javadocNode.javadocDir[0].value() == ''
         javadocNode.keepAll[0].value() == false
+        1 * jobManagement.requirePlugin('javadoc')
     }
 
     def 'call javadoc archiver with all args'() {
@@ -1742,6 +1812,7 @@ class PublisherContextSpec extends Specification {
         javadocNode.name() == 'hudson.tasks.JavadocArchiver'
         javadocNode.javadocDir[0].value() == 'build/javadoc'
         javadocNode.keepAll[0].value() == true
+        1 * jobManagement.requirePlugin('javadoc')
     }
 
     def 'call associated files with normal args'() {
@@ -1752,6 +1823,7 @@ class PublisherContextSpec extends Specification {
         Node associatedFilesNode = context.publisherNodes[0]
         associatedFilesNode.name() == 'org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher'
         associatedFilesNode.associatedFiles[0].value() == '/foo/file/${VARIABLE}'
+        1 * jobManagement.requirePlugin('associated-files')
     }
 
     def 'call emma with one argument'() {
@@ -1772,6 +1844,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].healthReports[0].maxLine[0].value() == 80
         context.publisherNodes[0].healthReports[0].minCondition[0].value() == 0
         context.publisherNodes[0].healthReports[0].maxCondition[0].value() == 80
+        1 * jobManagement.requirePlugin('emma')
     }
 
     def 'call emma with range thresholds'() {
@@ -1798,6 +1871,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].healthReports[0].maxLine[0].value() == 70
         context.publisherNodes[0].healthReports[0].minCondition[0].value() == 25
         context.publisherNodes[0].healthReports[0].maxCondition[0].value() == 65
+        1 * jobManagement.requirePlugin('emma')
     }
 
     def 'call emma with individual thresholds'() {
@@ -1829,6 +1903,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].healthReports[0].maxLine[0].value() == 70
         context.publisherNodes[0].healthReports[0].minCondition[0].value() == 25
         context.publisherNodes[0].healthReports[0].maxCondition[0].value() == 65
+        1 * jobManagement.requirePlugin('emma')
     }
 
     def 'call emma with bad range values'() {
@@ -1895,6 +1970,7 @@ class PublisherContextSpec extends Specification {
         node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
         node.logFileName[0].value() == RobotFrameworkContext.DEFAULT_LOG_FILE_NAME
         node.outputFileName[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_FILE_NAME
+        1 * jobManagement.requirePlugin('robot')
     }
 
     def 'publish Robot framework report using specific value for outputPath'() {
@@ -1905,6 +1981,7 @@ class PublisherContextSpec extends Specification {
         Node node = context.publisherNodes[0]
         node.name() == 'hudson.plugins.robot.RobotPublisher'
         node.outputPath[0].value() == '/path/to/foo'
+        1 * jobManagement.requirePlugin('robot')
     }
 
     def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
@@ -1919,6 +1996,7 @@ class PublisherContextSpec extends Specification {
         node.name() == 'hudson.plugins.robot.RobotPublisher'
         node.passThreshold[0].value() == 100.0
         node.unstableThreshold[0].value() == 10.0
+        1 * jobManagement.requirePlugin('robot')
     }
 
     def 'publish Robot framework report using specific value for onlyCritical'() {
@@ -1931,6 +2009,7 @@ class PublisherContextSpec extends Specification {
         node.passThreshold[0].value() == 100.0
         node.unstableThreshold[0].value() == 0.0
         node.onlyCritical[0].value() == true
+        1 * jobManagement.requirePlugin('robot')
     }
 
     def 'publish Robot framework report using a configure closure'() {
@@ -1949,6 +2028,7 @@ class PublisherContextSpec extends Specification {
         node.outputPath[0].value() == '/path/to/foo'
         node.onlyCritical[0].value() == false
         node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
+        1 * jobManagement.requirePlugin('robot')
     }
 
     def 'call buildPipelineTrigger'() {
@@ -1964,6 +2044,7 @@ class PublisherContextSpec extends Specification {
             configs.size() == 1
             configs[0].value().empty
         }
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'call buildPipelineTrigger with empty parameters'() {
@@ -1982,6 +2063,7 @@ class PublisherContextSpec extends Specification {
             configs.size() == 1
             configs[0].value().empty
         }
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'call buildPipelineTrigger with parameters'() {
@@ -2008,6 +2090,7 @@ class PublisherContextSpec extends Specification {
             configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                     'key1=value1'
         }
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'call buildPipelineTrigger with null argument'() {
@@ -2023,6 +2106,7 @@ class PublisherContextSpec extends Specification {
             configs.size() == 1
             configs[0].value().empty
         }
+        1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
 
     def 'call github commit notifier methods'() {
@@ -2034,6 +2118,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         def githubCommitNotifier = context.publisherNodes[0]
         githubCommitNotifier.name() == 'com.cloudbees.jenkins.GitHubCommitNotifier'
+        1 * jobManagement.requirePlugin('github')
     }
 
     def 'call git with minimal options'() {
@@ -2049,6 +2134,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         context.publisherNodes[0].forcePush[0].value() == false
+        1 * jobManagement.requirePlugin('git')
     }
 
     def 'call git with minimal options pre 2.2.6'() {
@@ -2066,6 +2152,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].configVersion[0].value() == 2
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
+        1 * jobManagement.requirePlugin('git')
     }
 
     def 'call git with all options'() {
@@ -2106,6 +2193,7 @@ class PublisherContextSpec extends Specification {
                 branchName[0].value() == 'master'
             }
         }
+        1 * jobManagement.requirePlugin('git')
     }
 
     def 'call git with minimal tag options'() {
@@ -2132,6 +2220,7 @@ class PublisherContextSpec extends Specification {
                 updateTag[0].value() == false
             }
         }
+        1 * jobManagement.requirePlugin('git')
     }
 
     def 'call git without tag targetRepoName'() {
@@ -2240,6 +2329,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == false
             }
         }
+        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with some overridden notification settings'() {
@@ -2279,6 +2369,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == false
             }
         }
+        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock trigger methods with no args defaults their value to true'() {
@@ -2322,6 +2413,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == true
             }
         }
+        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with all non-default args set'() {
@@ -2366,6 +2458,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == true
             }
         }
+        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with tags'() {
@@ -2403,6 +2496,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == false
             }
         }
+        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with multiple tag calls'() {
@@ -2441,6 +2535,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == false
             }
         }
+        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with empty tag'() {
@@ -2487,6 +2582,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == false
             }
         }
+        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with no tokens'() {
@@ -2514,6 +2610,7 @@ class PublisherContextSpec extends Specification {
             commitSha1[0].value() == ''
             includeBuildNumberInKey[0].value() == false
         }
+        1 * jobManagement.requirePlugin('stashNotifier')
     }
 
     def 'stashNotifier with configuration of all parameters'() {
@@ -2535,6 +2632,7 @@ class PublisherContextSpec extends Specification {
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
         }
+        1 * jobManagement.requirePlugin('stashNotifier')
     }
 
     def 'stashNotifier with configuration of all parameters using defaults for boolean parameter'() {
@@ -2556,6 +2654,7 @@ class PublisherContextSpec extends Specification {
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
         }
+        1 * jobManagement.requirePlugin('stashNotifier')
     }
 
     def 'mavenDeploymentLinker with regex'() {
@@ -2568,6 +2667,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.mavendeploymentlinker.MavenDeploymentLinkerRecorder'
             regexp[0].value() == '.*.tar.gz'
         }
+        1 * jobManagement.requirePlugin('maven-deployment-linker')
     }
 
     def 'wsCleanup with configuration of all parameters'() {
@@ -2611,6 +2711,7 @@ class PublisherContextSpec extends Specification {
             notFailBuild[0].value() == true
             externalDelete[0].value() == 'rm'
         }
+        1 * jobManagement.requirePlugin('ws-cleanup')
     }
 
     def 'wsCleanup with default configuration'() {
@@ -2633,6 +2734,7 @@ class PublisherContextSpec extends Specification {
             notFailBuild[0].value() == false
             externalDelete[0].value() == ''
         }
+        1 * jobManagement.requirePlugin('ws-cleanup')
     }
 
     def 'wsCleanup with configuration of all parameters using defaults for boolean parameter'() {
@@ -2676,6 +2778,7 @@ class PublisherContextSpec extends Specification {
             notFailBuild[0].value() == false
             externalDelete[0].value() == 'rm'
         }
+        1 * jobManagement.requirePlugin('ws-cleanup')
     }
 
     def 'call rundeck with all args should create valid rundeck node'() {
@@ -2701,6 +2804,7 @@ class PublisherContextSpec extends Specification {
         rundeckNode.tag[0].value() == 'tag'
         rundeckNode.shouldWaitForRundeckJob[0].value() == true
         rundeckNode.shouldFailTheBuild[0].value() == false
+        1 * jobManagement.requirePlugin('rundeck')
     }
 
     def 'call rundeck with invalid jobId should fail'() {
@@ -2728,6 +2832,7 @@ class PublisherContextSpec extends Specification {
         rundeckNode.tag[0].value() == ''
         rundeckNode.shouldWaitForRundeckJob[0].value() == false
         rundeckNode.shouldFailTheBuild[0].value() == false
+        1 * jobManagement.requirePlugin('rundeck')
     }
 
     def 'call s3 without profile'(String profile) {
@@ -2808,6 +2913,7 @@ class PublisherContextSpec extends Specification {
                 value[0].value() == 'value'
             }
         }
+        1 * jobManagement.requirePlugin('s3')
     }
 
     def 'call s3 with more options'() {
@@ -2855,6 +2961,7 @@ class PublisherContextSpec extends Specification {
                 value[0].value() == 'value'
             }
         }
+        1 * jobManagement.requirePlugin('s3')
     }
 
     def 'call flexible publish'() {
@@ -2884,6 +2991,7 @@ class PublisherContextSpec extends Specification {
                 publisher[0].recipients[0].value() == 'test@test.com'
             }
         }
+        1 * jobManagement.requirePlugin('flexible-publish')
     }
 
     def 'call flexible publish and test escaping'() {
@@ -2913,6 +3021,7 @@ class PublisherContextSpec extends Specification {
                 publisher[0].children().size() > 0
             }
         }
+        1 * jobManagement.requirePlugin('flexible-publish')
     }
 
     def 'call flexible publish with build step'() {
@@ -2942,6 +3051,7 @@ class PublisherContextSpec extends Specification {
                 publisher[0].command[0].value() == 'echo hello'
             }
         }
+        1 * jobManagement.requirePlugin('flexible-publish')
     }
 
     def 'call flexible publish without condition'() {
@@ -2966,6 +3076,7 @@ class PublisherContextSpec extends Specification {
                 publisher[0].command[0].value() == 'echo hello'
             }
         }
+        1 * jobManagement.requirePlugin('flexible-publish')
     }
 
     def 'call flexible publish without action'() {
@@ -2989,6 +3100,7 @@ class PublisherContextSpec extends Specification {
             buildSteps[0].children().size == 0
             scriptOnlyIfSuccess[0].value() == true
         }
+        1 * jobManagement.requirePlugin('postbuildscript')
     }
 
     def 'call post build scripts with all options'() {
@@ -3008,6 +3120,7 @@ class PublisherContextSpec extends Specification {
             buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
             scriptOnlyIfSuccess[0].value() == false
         }
+        1 * jobManagement.requirePlugin('postbuildscript')
     }
 
     def 'call sonar with no options'() {
@@ -3031,6 +3144,7 @@ class PublisherContextSpec extends Specification {
             globalSettings[0].@class == 'jenkins.mvn.DefaultGlobalSettingsProvider'
             usePrivateRepository[0].value() == false
         }
+        1 * jobManagement.requirePlugin('sonar')
     }
 
     def 'call sonar with all options'() {
@@ -3063,6 +3177,7 @@ class PublisherContextSpec extends Specification {
             triggers[0].skipUpstreamCause[0].value() == false
             triggers[0].envVar[0].value() == 'FOO'
         }
+        1 * jobManagement.requirePlugin('sonar')
     }
 
     def 'call plotPlugin with some basic args'() {
