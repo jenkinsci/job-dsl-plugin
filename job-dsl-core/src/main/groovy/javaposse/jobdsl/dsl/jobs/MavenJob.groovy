@@ -154,6 +154,7 @@ class MavenJob extends Job {
      * Set to use isolated local Maven repositories.
      *
      * @param location the local repository to use for isolation
+     * @since 1.17
      */
     @Deprecated
     void localRepository(MavenContext.LocalRepositoryLocation location) {

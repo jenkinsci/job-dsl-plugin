@@ -100,6 +100,7 @@ interface JobManagement {
      *
      * @param credentialsDescription the description of the credentials to lookup
      * @return id of Credentials or <code>null</code> if no credentials could be found
+     * @since 1.17
      */
     String getCredentialsId(String credentialsDescription)
 

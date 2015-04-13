@@ -291,6 +291,8 @@ abstract class Job extends Item {
 
     /**
      * Configures the keep Dependencies Flag which can be set in the Fingerprinting action.
+     *
+     * @since 1.17
      */
     void keepDependencies(boolean keep = true) {
         withXmlActions << WithXmlAction.create { Node project ->

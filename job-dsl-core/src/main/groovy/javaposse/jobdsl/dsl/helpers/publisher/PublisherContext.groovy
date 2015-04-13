@@ -81,6 +81,9 @@ class PublisherContext implements Context {
         publisherNodes << emailNode
     }
 
+    /**
+     * @since 1.17
+     */
     @RequiresPlugin(id = 'mailer')
     void mailer(String mailRecipients, Boolean dontNotifyEveryUnstableBuildBoolean = false,
                Boolean sendToIndividualsBoolean = false) {
@@ -178,6 +181,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.17
+     */
     @RequiresPlugin(id = 'jacoco')
     void jacocoCodeCoverage(@DslContext(JacocoContext) Closure jacocoClosure = null) {
         JacocoContext jacocoContext = new JacocoContext()
@@ -587,6 +593,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.17
+     */
     @RequiresPlugin(id = 'claim')
     void allowBrokenBuildClaiming() {
         publisherNodes << NodeBuilder.newInstance().'hudson.plugins.claim.ClaimPublisher'()
@@ -594,6 +603,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures Fingerprinting.
+     *
+     * @since 1.17
      */
     void fingerprint(String targets, boolean recordBuildArtifacts = false) {
         publisherNodes << NodeBuilder.newInstance().'hudson.tasks.Fingerprinter' {
@@ -604,6 +615,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Description Setter Plugin.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'description-setter')
     void buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '',
@@ -1022,6 +1035,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the findbugs publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'findbugs')
     void findbugs(String pattern, boolean isRankActivated = false,
@@ -1037,6 +1052,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the PMD Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'pmd')
     void pmd(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
@@ -1049,6 +1066,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Checkstyle Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'checkstyle')
     void checkstyle(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
@@ -1076,6 +1095,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the DRY Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'dry')
     void dry(String pattern, highThreshold = 50, normalThreshold = 25,
@@ -1092,6 +1113,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Task Scanner Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'tasks')
     void tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false,
@@ -1111,6 +1134,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the CCM Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'ccm')
     void ccm(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
@@ -1123,6 +1148,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Android Lint Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'android-lint')
     void androidLint(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
@@ -1135,6 +1162,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the OWASP Dependency-Check Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'dependency-check-jenkins-plugin')
     void dependencyCheck(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
@@ -1147,6 +1176,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Compiler Warnings Publisher.
+     *
+     * @since 1.17
      */
     @RequiresPlugin(id = 'warnings', minimumVersion = '4.0')
     void warnings(List consoleParsers, Map parserConfigurations = [:],
