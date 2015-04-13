@@ -273,6 +273,20 @@ class ListViewSpec extends Specification {
         1 * jobManagement.requirePlugin('extra-columns')
     }
 
+    def 'robotResults column'() {
+        when:
+        view.columns {
+            robotResults()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.robot.view.RobotListViewColumn'
+        1 * jobManagement.requireMinimumPluginVersion('robot', '1.6.0')
+    }
+
     def 'statusFilter'(Closure filter, Map children) {
         when:
         view.jobFilters(filter)
