@@ -533,6 +533,9 @@ class PublisherContext implements Context {
         publisherNodes << publishNode
     }
 
+    /**
+     * @since 1.15
+     */
     @RequiresPlugin(id = 'ircbot')
     void irc(@DslContext(IrcContext) Closure ircClosure) {
         IrcContext ircContext = new IrcContext()

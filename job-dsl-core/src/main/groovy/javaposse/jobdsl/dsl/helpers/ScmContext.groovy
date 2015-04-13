@@ -174,10 +174,16 @@ class ScmContext implements Context {
         }
     }
 
+    /**
+     * @since 1.15
+     */
     void github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
         github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
 
+    /**
+     * @since 1.15
+     */
     void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
                Closure closure = null) {
         git {

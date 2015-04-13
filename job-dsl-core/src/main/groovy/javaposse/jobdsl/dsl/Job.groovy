@@ -209,9 +209,10 @@ abstract class Job extends Item {
     }
 
     /**
-     * Priority of this job. Requires the
-     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
+     * Priority of this job.
      * Default value is 100.
+     *
+     * @since 1.15
      */
     @RequiresPlugin(id = 'PrioritySorter')
     void priority(int value) {
@@ -409,6 +410,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.15
+     */
     void parameters(@DslContext(BuildParametersContext) Closure closure) {
         BuildParametersContext context = new BuildParametersContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
