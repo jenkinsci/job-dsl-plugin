@@ -127,6 +127,9 @@ class GitContext implements Context {
         this.reference = reference
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'git', minimumVersion = '2.0.0')
     void cloneTimeout(int cloneTimeout) {
         this.cloneTimeout = cloneTimeout

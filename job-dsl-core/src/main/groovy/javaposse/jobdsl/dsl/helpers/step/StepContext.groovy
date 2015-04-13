@@ -442,6 +442,9 @@ class StepContext implements Context {
         stepNodes << preReqNode
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'publish-over-ssh')
     void publishOverSsh(@DslContext(PublishOverSshContext) Closure publishOverSshClosure) {
         PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
@@ -664,6 +667,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'http_request')
     void httpRequest(String requestUrl, @DslContext(HttpRequestContext) Closure closure = null) {
         HttpRequestContext context = new HttpRequestContext()

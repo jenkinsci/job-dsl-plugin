@@ -358,6 +358,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'config-file-provider')
     void configFiles(@DslContext(ConfigFilesContext) Closure configFilesClosure) {
         ConfigFilesContext configFilesContext = new ConfigFilesContext(jobManagement)
@@ -425,6 +428,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'credentials-binding')
     void credentialsBinding(@DslContext(CredentialsBindingContext) Closure closure) {
         CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)

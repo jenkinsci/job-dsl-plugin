@@ -348,6 +348,9 @@ class ScmContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'teamconcert')
     void rtc(@DslContext(RTCContext) Closure closure) {
         validateMulti()
