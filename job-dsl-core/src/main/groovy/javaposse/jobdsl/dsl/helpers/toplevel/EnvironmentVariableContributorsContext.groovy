@@ -1,15 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class EnvironmentVariableContributorsContext implements Context {
+class EnvironmentVariableContributorsContext extends AbstractContext {
     List<Node> contributors = []
-    private final JobManagement jobManagement
 
     EnvironmentVariableContributorsContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     @RequiresPlugin(id = 'shared-objects', minimumVersion = '0.1')

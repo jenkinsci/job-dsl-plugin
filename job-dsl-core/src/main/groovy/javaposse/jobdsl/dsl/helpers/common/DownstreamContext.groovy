@@ -1,19 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.common
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
-class DownstreamContext implements Context {
+class DownstreamContext extends AbstractContext {
     public static final THRESHOLD_COLOR_MAP = ['SUCCESS': 'BLUE', 'UNSTABLE': 'YELLOW', 'FAILURE': 'RED']
     public static final THRESHOLD_ORDINAL_MAP = ['SUCCESS': 0, 'UNSTABLE': 1, 'FAILURE': 2]
 
     private final List<DownstreamTriggerContext> triggers = []
-    protected final JobManagement jobManagement
 
     DownstreamContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void trigger(String projects, @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {

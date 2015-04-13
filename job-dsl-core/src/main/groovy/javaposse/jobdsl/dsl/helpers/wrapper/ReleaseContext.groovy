@@ -1,15 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 
-class ReleaseContext implements Context {
-    private final JobManagement jobManagement
-
+class ReleaseContext extends AbstractContext {
     String releaseVersionTemplate
     boolean doNotKeepLog
     boolean overrideBuildParameters
@@ -21,7 +19,7 @@ class ReleaseContext implements Context {
     Closure configureBlock
 
     ReleaseContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void preBuildSteps(@DslContext(StepContext) Closure closure) {

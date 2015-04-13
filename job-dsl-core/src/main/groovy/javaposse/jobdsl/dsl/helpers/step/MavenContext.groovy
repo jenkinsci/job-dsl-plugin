@@ -1,14 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ConfigFileType
-import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 
-class MavenContext implements Context {
-    private final JobManagement jobManagement
-
+class MavenContext extends AbstractContext {
     String rootPOM
     List<String> goals = []
     List<String> mavenOpts = []
@@ -19,7 +17,7 @@ class MavenContext implements Context {
     String providedSettingsId
 
     MavenContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     /**

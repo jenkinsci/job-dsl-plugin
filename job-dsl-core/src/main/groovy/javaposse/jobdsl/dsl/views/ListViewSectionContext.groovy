@@ -1,17 +1,16 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 import static com.google.common.base.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class ListViewSectionContext implements Context {
+class ListViewSectionContext extends AbstractContext {
     private static final List<String> VALID_WIDTHS = ['FULL', 'HALF', 'THIRD', 'TWO_THIRDS']
     private static final List<String> VALID_ALIGNMENTS = ['CENTER', 'LEFT', 'RIGHT']
 
-    private final JobManagement jobManagement
     String name
     String width = 'FULL'
     String alignment = 'CENTER'
@@ -20,7 +19,7 @@ class ListViewSectionContext implements Context {
     ColumnsContext columnsContext = new ColumnsContext(jobManagement)
 
     ListViewSectionContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void name(String name) {

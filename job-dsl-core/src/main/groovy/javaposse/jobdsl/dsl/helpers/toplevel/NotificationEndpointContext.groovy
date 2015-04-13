@@ -1,21 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static com.google.common.base.Preconditions.checkArgument
 
-class NotificationEndpointContext implements Context {
+class NotificationEndpointContext extends AbstractContext {
     private static final List<String> EVENTS = ['all', 'started', 'completed', 'finalized']
-
-    private final JobManagement jobManagement
 
     String event = 'all'
     int timeout = 30000
 
     NotificationEndpointContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     @RequiresPlugin(id = 'notification', minimumVersion = '1.6')

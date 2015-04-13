@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -9,9 +9,8 @@ import javaposse.jobdsl.dsl.WithXmlAction
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class GitContext implements Context {
+class GitContext extends AbstractContext {
     private final List<WithXmlAction> withXmlActions
-    private final JobManagement jobManagement
 
     List<Node> remoteConfigs = []
     List<String> branches = []
@@ -33,7 +32,7 @@ class GitContext implements Context {
     final StrategyContext strategyContext = new StrategyContext(jobManagement)
 
     GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
         this.withXmlActions = withXmlActions
     }
 

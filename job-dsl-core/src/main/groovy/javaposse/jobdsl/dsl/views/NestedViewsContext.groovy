@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.views
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -10,13 +10,11 @@ import javaposse.jobdsl.dsl.View
 import javaposse.jobdsl.dsl.ViewFactory
 import javaposse.jobdsl.dsl.ViewType
 
-class NestedViewsContext implements Context, ViewFactory {
-    private final JobManagement jobManagement
-
+class NestedViewsContext extends AbstractContext implements ViewFactory {
     List<View> views = []
 
     NestedViewsContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     @Deprecated

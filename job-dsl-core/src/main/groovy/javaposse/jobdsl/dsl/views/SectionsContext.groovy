@@ -1,18 +1,17 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class SectionsContext implements Context {
-    private final JobManagement jobManagement
+class SectionsContext extends AbstractContext {
     List<Node> sectionNodes = []
 
     SectionsContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void listView(@DslContext(ListViewSectionContext) Closure listViewSectionClosure) {

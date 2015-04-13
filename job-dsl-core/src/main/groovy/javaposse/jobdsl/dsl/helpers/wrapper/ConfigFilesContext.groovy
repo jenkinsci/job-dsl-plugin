@@ -1,19 +1,17 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import com.google.common.base.Preconditions
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ConfigFileType
-import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
-class ConfigFilesContext implements Context {
-    private final JobManagement jobManagement
-
+class ConfigFilesContext extends AbstractContext {
     List<ConfigFileContext> configFiles = []
 
     ConfigFilesContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void file(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {

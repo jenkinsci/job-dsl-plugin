@@ -1,15 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.common
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static DownstreamContext.THRESHOLD_COLOR_MAP
 
-class DownstreamTriggerContext implements Context {
-    protected final JobManagement jobManagement
-
+class DownstreamTriggerContext extends AbstractContext {
     Set<String> blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
 
     List<BlockingThreshold> blockingThresholds = []
@@ -36,7 +34,7 @@ class DownstreamTriggerContext implements Context {
     boolean sameNode = false
 
     DownstreamTriggerContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void currentBuild() {

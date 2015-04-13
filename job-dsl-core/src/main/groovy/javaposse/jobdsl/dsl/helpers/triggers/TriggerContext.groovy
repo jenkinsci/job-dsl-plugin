@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
@@ -11,12 +11,11 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
-class TriggerContext implements Context {
-    protected final JobManagement jobManagement
+class TriggerContext extends AbstractContext {
     final List<Node> triggerNodes = []
 
     TriggerContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     /**

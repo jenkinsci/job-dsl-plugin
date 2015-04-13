@@ -10,10 +10,9 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     boolean keepBuildVariables = true
     boolean overrideBuildParameters = false
     EnvironmentVariableContributorsContext contributorsContext
-    private final JobManagement jobManagement
 
     EnvironmentVariableContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
         this.contributorsContext = new EnvironmentVariableContributorsContext(jobManagement)
     }
 

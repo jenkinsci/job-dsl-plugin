@@ -1,20 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
-class PhaseContext implements Context {
-    private final JobManagement jobManagement
-
+class PhaseContext extends AbstractContext {
     String phaseName
     String continuationCondition
 
     List<PhaseJobContext> jobsInPhase = []
 
     PhaseContext(JobManagement jobManagement, String phaseName, String continuationCondition) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
         this.phaseName = phaseName
         this.continuationCondition = continuationCondition
     }

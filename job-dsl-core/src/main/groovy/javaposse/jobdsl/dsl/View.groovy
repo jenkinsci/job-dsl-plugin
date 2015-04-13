@@ -3,15 +3,13 @@ package javaposse.jobdsl.dsl
 /**
  * DSL element representing a Jenkins view.
  */
-abstract class View implements Context {
+abstract class View extends AbstractContext {
     private final List<WithXmlAction> withXmlActions = []
-
-    protected final JobManagement jobManagement
 
     String name
 
     protected View(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     @Deprecated

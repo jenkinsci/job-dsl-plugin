@@ -1,12 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
-class SvnContext implements Context {
-    private final JobManagement jobManagement
+class SvnContext extends AbstractContext {
     List<Node> locations = []
     SvnCheckoutStrategy checkoutStrategy = SvnCheckoutStrategy.UPDATE
     List<String> excludedRegions = []
@@ -17,7 +16,7 @@ class SvnContext implements Context {
     Closure configureClosure
 
     SvnContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     /**

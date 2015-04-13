@@ -1,15 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 
 /**
  * DSL context for the
  * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Team+Concert+Plugin">Team Concert Plugin</a>.
  */
-class RTCContext implements Context {
-    private final JobManagement jobManagement
-
+class RTCContext extends AbstractContext {
     String buildType
     String buildDefinition
     String buildWorkspace
@@ -20,7 +18,7 @@ class RTCContext implements Context {
     String serverURI
 
     RTCContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void buildDefinition(String buildDefinition) {

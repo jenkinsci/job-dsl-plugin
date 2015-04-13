@@ -1,15 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class TestDataPublishersContext implements Context {
-    private final JobManagement jobManagement
+class TestDataPublishersContext extends AbstractContext {
     final List<Node> testDataPublishers = []
 
     TestDataPublishersContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     @RequiresPlugin(id = 'claim', minimumVersion = '2.0')

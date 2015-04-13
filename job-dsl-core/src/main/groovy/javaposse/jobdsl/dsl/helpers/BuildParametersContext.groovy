@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
@@ -10,13 +10,11 @@ import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
 import static java.util.UUID.randomUUID
 
-class BuildParametersContext implements Context {
-    private final JobManagement jobManagement
-
+class BuildParametersContext extends AbstractContext {
     Map<String, Node> buildParameterNodes = [:]
 
     BuildParametersContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void booleanParam(String parameterName, boolean defaultValue = false, String description = null) {

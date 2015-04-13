@@ -1,19 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
 /**
  * Context to configure build timeouts.
  */
-class TimeoutContext implements Context {
-    private final JobManagement jobManagement
+class TimeoutContext extends AbstractContext {
     Node strategy
     List<Node> operations = []
 
     TimeoutContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
 
         // apply defaults
         absolute()

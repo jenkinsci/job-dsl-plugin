@@ -1,16 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class CredentialsBindingContext implements Context {
-    private final JobManagement jobManagement
-
+class CredentialsBindingContext extends AbstractContext {
     final List<Node> nodes = []
 
     CredentialsBindingContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void file(String variable, String credentials) {

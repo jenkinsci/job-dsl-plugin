@@ -1,12 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class PullRequestBuilderContext implements Context {
-    private final JobManagement jobManagement
-
+class PullRequestBuilderContext extends AbstractContext {
     List admins = []
     List userWhitelist = []
     List orgWhitelist = []
@@ -19,7 +17,7 @@ class PullRequestBuilderContext implements Context {
     String commentFilePath
 
     PullRequestBuilderContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void admin(String admin) {
