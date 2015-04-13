@@ -204,6 +204,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'xvfb')
     void xvfb(String installation, @DslContext(XvfbContext) Closure closure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(installation), 'installation must not be null or empty')
@@ -454,6 +457,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'preSCMbuildstep')
     void preScmSteps(@DslContext(PreScmStepsContext) Closure closure) {
         PreScmStepsContext context = new PreScmStepsContext(jobManagement)

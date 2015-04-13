@@ -9,6 +9,9 @@ class MavenPublisherContext extends PublisherContext {
         super(jobManagement)
     }
 
+    /**
+     * @since 1.31
+     */
     void deployArtifacts(@DslContext(DeployArtifactsContext) Closure closure = null) {
         DeployArtifactsContext context = new DeployArtifactsContext()
         ContextHelper.executeInContext(closure, context)

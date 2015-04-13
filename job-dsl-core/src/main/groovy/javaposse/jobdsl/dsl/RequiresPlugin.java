@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 /**
  * Indicates that a plugin must be installed to use the features provided by the annotated DSL method. A minimum
  * version can be specified as a lower bound for the version of the required plugin.
+ *
+ * @since 1.31
  */
 @Target(ElementType.METHOD)
 @Documented

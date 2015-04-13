@@ -45,6 +45,9 @@ class ColumnsContext implements Context {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildConsoleColumn')
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'extra-columns')
     void configureProject() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.ConfigureProjectColumn')
@@ -55,11 +58,17 @@ class ColumnsContext implements Context {
         columnNodes << new Node(null, 'hudson.plugins.claim.ClaimColumn')
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'build-node-column', minimumVersion = '0.1')
     void lastBuildNode() {
         columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     void categorizedJob() {
         columnNodes << new Node(null, 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn')

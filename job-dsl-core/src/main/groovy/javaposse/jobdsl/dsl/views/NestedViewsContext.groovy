@@ -43,40 +43,61 @@ class NestedViewsContext implements Context, ViewFactory {
         views << view
     }
 
+    /**
+     * @since 1.31
+     */
     @Override
     ListView listView(String name, @DslContext(ListView) Closure closure = null) {
         processView(name, ListView, closure)
     }
 
+    /**
+     * @since 1.31
+     */
     @Override
     @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
 
+    /**
+     * @since 1.31
+     */
     @Override
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure = null) {
         processView(name, NestedView, closure)
     }
 
+    /**
+     * @since 1.31
+     */
     @Override
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         processView(name, DeliveryPipelineView, closure)
     }
 
+    /**
+     * @since 1.31
+     */
     @Override
     @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
 
+    /**
+     * @since 1.31
+     */
     @Override
     @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
     }
 
+    /**
+     * @since 1.31
+     */
     @Override
     @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {

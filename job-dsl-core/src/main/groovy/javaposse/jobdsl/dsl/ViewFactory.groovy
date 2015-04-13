@@ -8,6 +8,9 @@ import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.SectionedView
 
+/**
+ * @since 1.31
+ */
 interface ViewFactory {
     @Deprecated
     View view(@DslContext(View) Closure closure)

@@ -45,6 +45,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'description-setter', minimumVersion = '1.9')
     void buildDescription(String regexp, String description = null) {
         stepNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterBuilder' {
@@ -680,6 +683,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'nodejs')
     void nodejsCommand(String commandScript, String installation) {
         stepNodes << new NodeBuilder().'jenkins.plugins.nodejs.NodeJsCommandInterpreter' {
@@ -688,6 +694,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.6')
     void debianPackage(String path, @DslContext(DebianContext) Closure closure = null) {
         Preconditions.checkArgument(!isNullOrEmpty(path), 'path must be specified')

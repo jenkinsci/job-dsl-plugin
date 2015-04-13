@@ -68,6 +68,9 @@ class ListView extends View {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     void recurse(boolean shouldRecurse = true) {
         execute {
             it / 'recurse' << shouldRecurse

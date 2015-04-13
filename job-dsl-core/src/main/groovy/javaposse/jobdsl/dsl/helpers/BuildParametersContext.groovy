@@ -156,6 +156,9 @@ class BuildParametersContext implements Context {
                 }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'git-parameter', minimumVersion = '0.4.0')
     void gitParam(String parameterName, @DslContext(GitParamContext) Closure closure = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')

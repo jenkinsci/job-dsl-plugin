@@ -56,6 +56,9 @@ class PullRequestBuilderContext implements Context {
         this.cron = cron
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
     void commentFilePath(String commentFilePath) {
         this.commentFilePath = commentFilePath

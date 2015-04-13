@@ -25,6 +25,9 @@ class CredentialsBindingContext implements Context {
         addSimpleBinding('UsernamePassword', variable, credentials)
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'credentials-binding', minimumVersion = '1.3')
     void usernamePassword(String userVariableName, String passwordVariableName, String credentials) {
         nodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding' {

@@ -59,6 +59,7 @@ class MavenContext implements Context {
      * Set to use isolated local Maven repositories.
      *
      * @param location the local repository to use for isolation
+     * @since 1.31
      */
     void localRepository(LocalRepositoryLocation location) {
         this.localRepositoryLocation = location

@@ -108,6 +108,8 @@ interface JobManagement {
 
     /**
      * Logs a warning and sets the build status to unstable if given plugin is not installed.
+     *
+     * @since 1.31
      */
     void requirePlugin(String pluginShortName)
 
@@ -139,5 +141,12 @@ interface JobManagement {
      */
     String getConfigFileId(ConfigFileType type, String name)
 
+    /**
+     * Return all applicable permissions for the given authorization matrix property.
+     *
+     * @param authorizationMatrixPropertyClassName class name of the authorization matrix property
+     * @return all applicable permissions for the given authorization matrix property
+     * @since 1.31
+     */
     Set<String> getPermissions(String authorizationMatrixPropertyClassName)
 }

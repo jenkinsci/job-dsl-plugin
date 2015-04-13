@@ -202,6 +202,9 @@ class PublisherContext implements Context {
         publisherNodes << jacocoNode
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'plot', minimumVersion = '1.9')
     void plotBuildData(@DslContext(PlotsContext) Closure plotsClosure) {
         PlotsContext plotsContext = new PlotsContext()
@@ -1152,6 +1155,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'postbuildscript')
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
         PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement)
@@ -1163,6 +1169,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.31
+     */
     @RequiresPlugin(id = 'sonar')
     void sonar(@DslContext(SonarContext) Closure sonarClosure = null) {
         SonarContext sonarContext = new SonarContext()

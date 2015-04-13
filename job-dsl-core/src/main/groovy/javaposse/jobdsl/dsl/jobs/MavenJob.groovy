@@ -165,6 +165,7 @@ class MavenJob extends Job {
      * Set to use isolated local Maven repositories.
      *
      * @param location the local repository to use for isolation
+     * @since 1.31
      */
     void localRepository(LocalRepositoryLocation location) {
         Preconditions.checkNotNull(location, 'localRepository can not be null')
