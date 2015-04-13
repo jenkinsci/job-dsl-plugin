@@ -62,8 +62,11 @@ class ColumnsContext implements Context {
         columnNodes << new Node(null, 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn')
     }
 
+    /**
+     * @since 1.33
+     */
     @RequiresPlugin(id = 'robot', minimumVersion = '1.6.0')
-    void robotListView() {
+    void robotResults() {
         columnNodes << new Node(null, 'hudson.plugins.robot.view.RobotListViewColumn')
     }
 }
