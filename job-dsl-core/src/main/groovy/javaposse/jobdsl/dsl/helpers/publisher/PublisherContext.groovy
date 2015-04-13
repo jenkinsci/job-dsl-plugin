@@ -1171,6 +1171,25 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'naginator', minimumVersion = '1.15')
+    void retryBuild(@DslContext(NaginatorContext) Closure naginatorClosure = null) {
+        NaginatorContext naginatorContext = new NaginatorContext()
+        ContextHelper.executeInContext(naginatorClosure, naginatorContext)
+
+        Node naginatorNode = new NodeBuilder().'com.chikli.hudson.plugin.naginator.NaginatorPublisher' {
+            regexpForRerun()
+            rerunIfUnstable(naginatorContext.rerunIfUnstable)
+            rerunMatrixPart(false)
+            checkRegexp(false)
+            maxSchedule(naginatorContext.retryLimit)
+        }
+        naginatorNode.append(naginatorContext.delay)
+        publisherNodes << naginatorNode
+    }
+
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()

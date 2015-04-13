@@ -3929,4 +3929,49 @@ class PublisherContextSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+
+    def 'retryBuild with no options'() {
+        when:
+        context.retryBuild()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.chikli.hudson.plugin.naginator.NaginatorPublisher'
+            children().size() == 6
+            regexpForRerun[0].value().empty
+            rerunIfUnstable[0].value() == false
+            rerunMatrixPart[0].value() == false
+            checkRegexp[0].value() == false
+            maxSchedule[0].value() == 0
+            delay[0].@class == 'com.chikli.hudson.plugin.naginator.ProgressiveDelay'
+            delay[0].children().size() == 2
+            delay[0].increment[0].value() == 300
+            delay[0].max[0].value() == 10800
+        }
+        1 * jobManagement.requireMinimumPluginVersion('naginator', '1.15')
+    }
+
+    def 'retryBuild with all options'() {
+        when:
+        context.retryBuild {
+            rerunIfUnstable()
+            retryLimit(3)
+            fixedDelay(30)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.chikli.hudson.plugin.naginator.NaginatorPublisher'
+            children().size() == 6
+            regexpForRerun[0].value().empty
+            rerunIfUnstable[0].value() == true
+            rerunMatrixPart[0].value() == false
+            checkRegexp[0].value() == false
+            maxSchedule[0].value() == 3
+            delay[0].@class == 'com.chikli.hudson.plugin.naginator.FixedDelay'
+            delay[0].children().size() == 1
+            delay[0].delay[0].value() == 30
+        }
+        1 * jobManagement.requireMinimumPluginVersion('naginator', '1.15')
+    }
 }
