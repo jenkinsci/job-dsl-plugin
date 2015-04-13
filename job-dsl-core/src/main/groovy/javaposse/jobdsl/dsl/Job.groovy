@@ -107,6 +107,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'throttle-concurrents')
     void throttleConcurrentBuilds(@DslContext(ThrottleConcurrentBuildsContext) Closure throttleClosure) {
         ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()

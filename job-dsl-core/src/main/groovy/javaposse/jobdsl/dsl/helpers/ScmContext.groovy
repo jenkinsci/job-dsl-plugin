@@ -67,6 +67,9 @@ class ScmContext implements Context {
         scmNodes << scmNode
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'git')
     void git(@DslContext(GitContext) Closure gitClosure) {
         validateMulti()

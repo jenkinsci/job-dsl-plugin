@@ -276,6 +276,9 @@ class StepContext implements Context {
         stepNodes << systemGroovyNode
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'maven-plugin')
     void maven(@DslContext(MavenContext) Closure closure) {
         MavenContext mavenContext = new MavenContext(jobManagement)
@@ -524,6 +527,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
@@ -533,6 +539,9 @@ class StepContext implements Context {
         stepNodes << stepNode
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'conditional-buildstep')
     void conditionalSteps(@DslContext(ConditionalStepsContext) Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)

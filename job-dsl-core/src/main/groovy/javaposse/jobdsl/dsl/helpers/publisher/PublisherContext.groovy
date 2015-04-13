@@ -93,6 +93,9 @@ class PublisherContext implements Context {
         publisherNodes << mailerNode
     }
 
+    /**
+     * @since 1.20
+     */
     void archiveArtifacts(@DslContext(ArchiveArtifactsContext) Closure artifactsClosure) {
         ArchiveArtifactsContext artifactsContext = new ArchiveArtifactsContext()
         ContextHelper.executeInContext(artifactsClosure, artifactsContext)
@@ -723,7 +726,7 @@ class PublisherContext implements Context {
      * Configures the Associated Files plugin to associate archived files from
      * outside Jenkins proper.
      *
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Associated+Files+Plugin
+     * @since 1.20
      */
     @RequiresPlugin(id = 'associated-files')
     void associatedFiles(String files = null) {
@@ -734,6 +737,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Emma Code Coverage plugin.
+     *
+     * @since 1.20
      */
     @RequiresPlugin(id = 'emma')
     void emma(String fileSet = '', @DslContext(EmmaContext) Closure emmaClosure = null) {
@@ -1048,6 +1053,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the JsHint checkstyle Publisher.
+     *
+     * @since 1.20
      */
     @RequiresPlugin(id = 'jshint-checkstyle')
     void jshint(String pattern,

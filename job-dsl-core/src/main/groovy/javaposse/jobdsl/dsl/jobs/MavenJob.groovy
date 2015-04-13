@@ -176,6 +176,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     void preBuildSteps(@DslContext(StepContext) Closure preBuildClosure) {
         StepContext preBuildContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(preBuildClosure, preBuildContext)
@@ -187,6 +190,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     void postBuildSteps(@DslContext(StepContext) Closure postBuildClosure) {
         StepContext postBuildContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
@@ -198,6 +204,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     void mavenInstallation(String name) {
         Preconditions.checkNotNull(name, 'name can not be null')
 
