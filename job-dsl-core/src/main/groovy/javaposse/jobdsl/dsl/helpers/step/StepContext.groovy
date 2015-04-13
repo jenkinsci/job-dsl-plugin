@@ -56,6 +56,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'gradle')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()

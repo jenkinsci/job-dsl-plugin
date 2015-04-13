@@ -40,6 +40,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'rbenv')
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
@@ -414,6 +417,9 @@ class WrapperContext implements Context {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'nodejs')
     void nodejs(String installation) {
         wrapperNodes << new NodeBuilder().'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper' {
@@ -421,6 +427,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'golang')
     void golang(String version) {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.golang.GolangBuildWrapper' {

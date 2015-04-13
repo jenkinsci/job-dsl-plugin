@@ -29,6 +29,9 @@ class GitPublisherContext implements Context {
         this.pushMerge = pushMerge
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void forcePush(boolean forcePush = true) {
         this.forcePush = forcePush

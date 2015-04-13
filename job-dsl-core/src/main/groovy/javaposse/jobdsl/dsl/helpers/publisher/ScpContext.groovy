@@ -9,6 +9,9 @@ class ScpContext implements Context {
         entries << new ScpEntry(source: source, destination: destination, keepHierarchy: keepHierarchy)
     }
 
+    /**
+     * @since 1.27
+     */
     void entries(Iterable<String> sources, String destination = '', boolean keepHierarchy = false) {
         sources.each { source ->
             entry(source, destination, keepHierarchy)
