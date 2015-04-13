@@ -42,6 +42,7 @@ listView(String name) { // since 1.30
         claim()            // since 1.29, requires the Claim Plugin
         lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
         categorizedJob()   // since 1.31, requires the Categorized Jobs View Plugin
+        robotListView()    // since 1.3x, requires the Robot Framework Plugin
     }
     recurse(boolean shouldRecurse = true) // since 1.31
 }
@@ -524,6 +525,7 @@ columns {
     claim()            // since 1.29, requires the Claim Plugin
     lastBuildNode()    // since 1.31, requires the Build Node Column Plugin
     categorizedJob()   // since 1.31, requires the Categorized Jobs View Plugin
+    robotListView()    // since 1.3x, requires the Robot Framework Plugin
 }
 ```
 
