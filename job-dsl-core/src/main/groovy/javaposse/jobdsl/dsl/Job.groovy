@@ -225,6 +225,7 @@ abstract class Job extends Item {
      * Adds a quiet period to the project.
      *
      * @param seconds number of seconds to wait
+     * @since 1.16
      */
     void quietPeriod(int seconds = 5) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -237,6 +238,7 @@ abstract class Job extends Item {
      * Sets the number of times the SCM checkout is retried on errors.
      *
      * @param times number of attempts
+     * @since 1.16
      */
     void checkoutRetryCount(int times = 3) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -249,6 +251,7 @@ abstract class Job extends Item {
      * Sets a display name for the project.
      *
      * @param displayName name to display
+     * @since 1.16
      */
     void displayName(String displayName) {
         Preconditions.checkNotNull(displayName, 'Display name must not be null.')
@@ -262,6 +265,7 @@ abstract class Job extends Item {
      * Configures a custom workspace for the project.
      *
      * @param workspacePath workspace path to use
+     * @since 1.16
      */
     void customWorkspace(String workspacePath) {
         Preconditions.checkNotNull(workspacePath, 'Workspace path must not be null')
@@ -273,6 +277,7 @@ abstract class Job extends Item {
 
     /**
      * Configures the job to block when upstream projects are building.
+     * @since 1.16
      */
     void blockOnUpstreamProjects() {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -282,6 +287,7 @@ abstract class Job extends Item {
 
     /**
      * Configures the job to block when downstream projects are building.
+     * @since 1.16
      */
     void blockOnDownstreamProjects() {
         withXmlActions << WithXmlAction.create { Node project ->

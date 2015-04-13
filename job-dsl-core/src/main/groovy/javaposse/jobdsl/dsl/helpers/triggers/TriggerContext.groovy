@@ -24,6 +24,7 @@ class TriggerContext implements Context {
      *
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
+     * @since 1.16
      */
     @RequiresPlugin(id = 'urltrigger')
     void urlTrigger(String crontab = null, @DslContext(UrlTriggerContext) Closure contextClosure) {
@@ -107,6 +108,8 @@ class TriggerContext implements Context {
 
     /**
      * Trigger that runs jobs on push notifications from GitHub.
+     *
+     * @since 1.16
      */
     @RequiresPlugin(id = 'github')
     void githubPush() {

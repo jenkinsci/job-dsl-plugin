@@ -99,6 +99,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.16
+     */
     @RequiresPlugin(id = 'sbt')
     void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null,
             String subdirPathArg=null, Closure configure = null) {
@@ -123,6 +126,9 @@ class StepContext implements Context {
 
     }
 
+    /**
+     * @since 1.16
+     */
     void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure configure) {
         javaposse.jobdsl.dsl.helpers.step.DslContext context = new javaposse.jobdsl.dsl.helpers.step.DslContext()
         ContextHelper.executeInContext(configure, context)
@@ -137,6 +143,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.16
+     */
     void dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
         dsl {
             text(scriptText)
@@ -147,6 +156,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.16
+     */
     void dsl(Iterable<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
         dsl {
             external(externalScripts)

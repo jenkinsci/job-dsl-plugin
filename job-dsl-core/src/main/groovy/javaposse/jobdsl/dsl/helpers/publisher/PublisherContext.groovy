@@ -563,6 +563,9 @@ class PublisherContext implements Context {
         publisherNodes << publishNode
     }
 
+    /**
+     * @since 1.16
+     */
     @RequiresPlugin(id = 'cobertura')
     void cobertura(String reportFile, @DslContext(CoberturaContext) Closure coberturaClosure = null) {
         CoberturaContext coberturaContext = new CoberturaContext()

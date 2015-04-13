@@ -297,6 +297,9 @@ class ScmContext implements Context {
         scmNodes << p4Node
     }
 
+    /**
+     * @since 1.16
+     */
     @RequiresPlugin(id = 'clone-workspace-scm')
     void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
         checkNotNull(parentProject)

@@ -67,11 +67,29 @@ interface JobManagement {
 
     /**
      * Queue a job to run. Useful for running jobs after they've been created.
+     *
+     * @since 1.16
      */
     void queueJob(String jobName) throws NameNotProvidedException
 
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     * @return content of the file
+     * @throws IOException if the file could not be read
+     * @since 1.16
+     */
     InputStream streamFileInWorkspace(String filePath) throws IOException
 
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     * @return content of the file
+     * @throws IOException if the file could not be read
+     * @since 1.16
+     */
     String readFileInWorkspace(String filePath) throws IOException
 
     /**

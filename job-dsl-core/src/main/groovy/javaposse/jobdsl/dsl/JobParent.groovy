@@ -280,23 +280,35 @@ abstract class JobParent extends Script implements DslFactory {
         configFile
     }
 
+    /**
+     * @since 1.16
+     */
     @Override
     void queue(String jobName) {
         queueToBuild << jobName
     }
 
+    /**
+     * @since 1.16
+     */
     @Override
     void queue(Job job) {
         Preconditions.checkArgument(job.name as Boolean)
         queueToBuild << job.name
     }
 
+    /**
+     * @since 1.16
+     */
     @Override
     InputStream streamFileFromWorkspace(String filePath) {
         Preconditions.checkArgument(filePath as Boolean)
         jm.streamFileInWorkspace(filePath)
     }
 
+    /**
+     * @since 1.16
+     */
     @Override
     String readFileFromWorkspace(String filePath) {
         Preconditions.checkArgument(filePath as Boolean)
