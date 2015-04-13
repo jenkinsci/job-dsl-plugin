@@ -116,7 +116,9 @@ class TriggerContext implements Context {
     }
 
     /**
-     *  Configures the Jenkins GitHub pull request builder plugin.
+     * Configures the Jenkins GitHub pull request builder plugin.
+     *
+     * @since 1.22
      */
     @RequiresPlugin(id = 'ghprb')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {

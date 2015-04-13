@@ -58,6 +58,9 @@ class CopyArtifactSelectorContext implements Context {
         this.buildNumber(Integer.toString(buildNumber))
     }
 
+    /**
+     * @since 1.22
+     */
     void buildNumber(String buildNumber) {
         createSelectorNode('SpecificBuild') {
             delegate.buildNumber(buildNumber)

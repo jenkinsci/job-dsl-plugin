@@ -280,6 +280,7 @@ class WrapperContext implements Context {
      * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
      *
      * @param releaseClosure attributes and steps used by the plugin
+     * @since 1.22
      */
     @RequiresPlugin(id = 'release')
     void release(@DslContext(ReleaseContext) Closure releaseClosure) {
@@ -309,6 +310,9 @@ class WrapperContext implements Context {
         wrapperNodes << releaseNode
     }
 
+    /**
+     * @since 1.22
+     */
     @RequiresPlugin(id = 'ws-cleanup')
     void preBuildCleanup(@DslContext(PreBuildCleanupContext) Closure closure = null) {
         PreBuildCleanupContext context = new PreBuildCleanupContext()

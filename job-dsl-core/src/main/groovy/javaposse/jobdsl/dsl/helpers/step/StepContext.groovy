@@ -557,6 +557,9 @@ class StepContext implements Context {
         stepNodes << envNode
     }
 
+    /**
+     * @since 1.22
+     */
     @RequiresPlugin(id = 'Parameterized-Remote-Trigger')
     void remoteTrigger(String remoteJenkins, String jobName,
                        @DslContext(ParameterizedRemoteTriggerContext) Closure closure = null) {

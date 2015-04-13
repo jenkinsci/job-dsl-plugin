@@ -804,6 +804,9 @@ class PublisherContext implements Context {
         publisherNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubCommitNotifier'()
     }
 
+    /**
+     * @since 1.22
+     */
     @RequiresPlugin(id = 'git')
     void git(@DslContext(GitPublisherContext) Closure gitPublisherClosure) {
         GitPublisherContext context = new GitPublisherContext(jobManagement)
