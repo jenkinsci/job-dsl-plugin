@@ -2,10 +2,14 @@ package javaposse.jobdsl.dsl.helpers.common
 
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static DownstreamContext.THRESHOLD_COLOR_MAP
 
 class DownstreamTriggerContext implements Context {
+    protected final JobManagement jobManagement
+
     Set<String> blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
 
     List<BlockingThreshold> blockingThresholds = []
@@ -31,6 +35,10 @@ class DownstreamTriggerContext implements Context {
     boolean usingNodeLabel = false
     boolean sameNode = false
 
+    DownstreamTriggerContext(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+    }
+
     void currentBuild() {
         usingCurrentBuild = true
     }
@@ -41,6 +49,7 @@ class DownstreamTriggerContext implements Context {
         this.propFile = propFile
     }
 
+    @RequiresPlugin(id = 'git')
     void gitRevision(boolean combineQueuedCommits = false) {
         usingGitRevision = true
         this.combineQueuedCommits = combineQueuedCommits
@@ -80,6 +89,7 @@ class DownstreamTriggerContext implements Context {
         this.sameNode = sameNode
     }
 
+    @RequiresPlugin(id = 'nodelabelparameter')
     void nodeLabel(String paramName, String nodeLabel) {
         usingNodeLabel = true
         this.nodeLabelParam = paramName
