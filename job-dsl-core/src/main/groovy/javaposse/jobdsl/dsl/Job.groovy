@@ -54,6 +54,8 @@ abstract class Job extends Item {
      * Renames jobs matching the regular expression (fullName) to the name of
      * this job before the configuration is updated.
      * This can be useful to keep the build history.
+     *
+     * @since 1.29
      */
     void previousNames(String regex) {
         this.previousNamesRegex = regex

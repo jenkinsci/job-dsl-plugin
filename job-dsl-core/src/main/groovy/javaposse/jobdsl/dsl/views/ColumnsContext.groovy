@@ -53,6 +53,9 @@ class ColumnsContext implements Context {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.ConfigureProjectColumn')
     }
 
+    /**
+     * @since 1.29
+     */
     @RequiresPlugin(id = 'claim')
     void claim() {
         columnNodes << new Node(null, 'hudson.plugins.claim.ClaimColumn')

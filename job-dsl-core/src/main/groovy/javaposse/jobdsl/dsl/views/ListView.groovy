@@ -57,6 +57,9 @@ class ListView extends View {
         }
     }
 
+    /**
+     * @since 1.29
+     */
     void jobFilters(@DslContext(JobFiltersContext) Closure jobFiltersClosure) {
         JobFiltersContext context = new JobFiltersContext()
         executeInContext(jobFiltersClosure, context)

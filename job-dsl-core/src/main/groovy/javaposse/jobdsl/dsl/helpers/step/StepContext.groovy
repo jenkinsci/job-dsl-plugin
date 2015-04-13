@@ -411,6 +411,9 @@ class StepContext implements Context {
         stepNodes << copyArtifactNode
     }
 
+    /**
+     * @since 1.29
+     */
     @RequiresPlugin(id = 'repository-connector')
     void resolveArtifacts(@DslContext(RepositoryConnectorContext) Closure repositoryConnectorClosure) {
         RepositoryConnectorContext context = new RepositoryConnectorContext()

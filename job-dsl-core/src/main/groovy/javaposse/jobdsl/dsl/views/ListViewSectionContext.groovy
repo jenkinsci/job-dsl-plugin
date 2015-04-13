@@ -41,6 +41,9 @@ class ListViewSectionContext implements Context {
         executeInContext(jobsClosure, jobsContext)
     }
 
+    /**
+     * @since 1.29
+     */
     void jobFilters(@DslContext(JobFiltersContext) Closure jobFiltersClosure) {
         executeInContext(jobFiltersClosure, jobFiltersContext)
     }

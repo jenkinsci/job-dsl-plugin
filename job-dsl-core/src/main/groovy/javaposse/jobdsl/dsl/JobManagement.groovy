@@ -59,6 +59,7 @@ interface JobManagement {
      * @param destination the new name of the job
      * @throws IOException if renaming failed
      * @throws IllegalArgumentException if there are multiple jobs matching the previousNames
+     * @since 1.29
      */
     void renameJobMatching(String previousNames, String destination) throws IOException
 
@@ -105,6 +106,7 @@ interface JobManagement {
 
     /**
      * Logs a deprecation warning for the given subject and source position.
+     * @since 1.29
      */
     void logDeprecationWarning(String subject, String scriptName, int lineNumber)
 
