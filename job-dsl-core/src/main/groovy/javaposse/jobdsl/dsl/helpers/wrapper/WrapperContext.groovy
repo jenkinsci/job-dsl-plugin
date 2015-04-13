@@ -264,7 +264,9 @@ class WrapperContext implements Context {
     }
 
     /**
-     * Injects global passwords into the job
+     * Injects global passwords into the job.
+     *
+     * @since 1.23
      */
     @RequiresPlugin(id = 'envinject')
     void injectPasswords() {
@@ -322,7 +324,8 @@ class WrapperContext implements Context {
 
     /**
      * Configures the configuration for the Log File Size Checker build wrapper.
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin
+     *
+     * @since 1.23
      */
     @RequiresPlugin(id = 'logfilesizechecker')
     void logSizeChecker(@DslContext(LogFileSizeCheckerContext) Closure closure = null) {

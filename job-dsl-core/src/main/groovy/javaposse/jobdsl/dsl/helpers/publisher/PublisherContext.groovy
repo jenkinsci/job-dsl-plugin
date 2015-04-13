@@ -821,6 +821,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.23
+     */
     @RequiresPlugin(id = 'jenkins-flowdock-plugin')
     void flowdock(String token, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
         FlowdockPublisherContext context = new FlowdockPublisherContext()
@@ -865,6 +868,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.23
+     */
     void flowdock(String[] tokens, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
         // Validate values
         assert tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token'
@@ -874,7 +880,7 @@ class PublisherContext implements Context {
     /**
      * Configures the StashNotifier plugin.
      *
-     * See https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin
+     * @since 1.23
      */
     @RequiresPlugin(id = 'stashNotifier')
     void stashNotifier(@DslContext(StashNotifierContext) Closure stashNotifierClosure = null) {
@@ -923,7 +929,7 @@ class PublisherContext implements Context {
      *
      * Configures the Maven Deployment Linker plugin.
      *
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Maven+Deployment+Linker
+     * @since 1.23
      */
     @RequiresPlugin(id = 'maven-deployment-linker')
     void mavenDeploymentLinker(String regex) {
@@ -935,7 +941,7 @@ class PublisherContext implements Context {
     /**
      * Configures the post build action of the Workspace Cleanup Plugin to delete the workspace.
      *
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
+     * @since 1.23
      */
     @RequiresPlugin(id = 'ws-cleanup')
     void wsCleanup(@DslContext(PostBuildCleanupContext) Closure closure = null) {

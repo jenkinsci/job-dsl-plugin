@@ -40,6 +40,9 @@ class ColumnsContext implements Context {
         columnNodes << new Node(null, 'hudson.views.BuildButtonColumn')
     }
 
+    /**
+     * @since 1.23
+     */
     @RequiresPlugin(id = 'extra-columns')
     void lastBuildConsole() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildConsoleColumn')

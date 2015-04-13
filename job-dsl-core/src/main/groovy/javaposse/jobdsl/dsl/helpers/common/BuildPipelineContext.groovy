@@ -13,6 +13,9 @@ class BuildPipelineContext implements Context {
         this.jobManagement = jobManagement
     }
 
+    /**
+     * @since 1.23
+     */
     void parameters(@DslContext(DownstreamTriggerContext) Closure closure) {
         DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext(jobManagement)
         ContextHelper.executeInContext(closure, downstreamTriggerContext)

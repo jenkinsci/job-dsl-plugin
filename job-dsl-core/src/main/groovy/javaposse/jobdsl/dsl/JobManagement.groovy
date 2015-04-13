@@ -104,6 +104,8 @@ interface JobManagement {
 
     /**
      * Logs a deprecation warning for the calling method.
+     *
+     * @since 1.23
      */
     void logDeprecationWarning()
 

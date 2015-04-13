@@ -199,6 +199,9 @@ abstract class JobParent extends Script implements DslFactory {
         view
     }
 
+    /**
+     * @since 1.23
+     */
     @Override
     @Deprecated
     @RequiresPlugin(id = 'cloudbees-folder')

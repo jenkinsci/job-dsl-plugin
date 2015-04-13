@@ -64,27 +64,45 @@ class RunConditionContext implements Context {
         this.condition = new StatusCondition(worstResult, bestResult)
     }
 
+    /**
+     * @since 1.23
+     */
     void shell(String command) {
         this.condition = new SimpleCondition(name: 'Shell', subPackage: 'contributed', args: [command: command])
     }
 
+    /**
+     * @since 1.23
+     */
     void batch(String command) {
         this.condition = new SimpleCondition(name: 'BatchFile', subPackage: 'contributed', args: [command: command])
     }
 
+    /**
+     * @since 1.23
+     */
     void fileExists(String file, BaseDir baseDir) {
         condition = new FileExistsCondition(file, baseDir)
     }
 
+    /**
+     * @since 1.23
+     */
     void not(@DslContext(RunConditionContext) Closure conditionClosure) {
         this.condition = new NotCondition(RunConditionFactory.of(conditionClosure))
     }
 
+    /**
+     * @since 1.23
+     */
     void and(@DslContext(RunConditionContext) Closure... conditionClosures) {
         List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('And', conditions)
     }
 
+    /**
+     * @since 1.23
+     */
     void or(@DslContext(RunConditionContext) Closure... conditionClosures) {
         List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
         this.condition = new BinaryLogicOperation('Or', conditions)
