@@ -195,14 +195,14 @@ class StepContextSpec extends Specification {
         def grailsStep0 = context.stepNodes[0]
         grailsStep0.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep0.targets[0].value() == 'compile'
-        grailsStep0.useWrapper[0].value() == 'false'
+        grailsStep0.useWrapper[0].value() == false
         grailsStep0.grailsWorkDir[0].value() == ''
         grailsStep0.projectWorkDir[0].value() == ''
         grailsStep0.projectBaseDir[0].value() == ''
         grailsStep0.serverPort[0].value() == ''
         grailsStep0.'properties'[0].value() == ''
-        grailsStep0.forceUpgrade[0].value() == 'false'
-        grailsStep0.nonInteractive[0].value() == 'true'
+        grailsStep0.forceUpgrade[0].value() == false
+        grailsStep0.nonInteractive[0].value() == true
         1 * jobManagement.requirePlugin('grails')
 
         when:
@@ -213,14 +213,14 @@ class StepContextSpec extends Specification {
         def grailsStep1 = context.stepNodes[1]
         grailsStep1.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep1.targets[0].value() == 'compile'
-        grailsStep1.useWrapper[0].value() == 'true'
+        grailsStep1.useWrapper[0].value() == true
         grailsStep1.grailsWorkDir[0].value() == ''
         grailsStep1.projectWorkDir[0].value() == ''
         grailsStep1.projectBaseDir[0].value() == ''
         grailsStep1.serverPort[0].value() == ''
         grailsStep1.'properties'[0].value() == ''
-        grailsStep1.forceUpgrade[0].value() == 'false'
-        grailsStep1.nonInteractive[0].value() == 'true'
+        grailsStep1.forceUpgrade[0].value() == false
+        grailsStep1.nonInteractive[0].value() == true
         1 * jobManagement.requirePlugin('grails')
 
         when:
@@ -234,14 +234,14 @@ class StepContextSpec extends Specification {
         def grailsStep2 = context.stepNodes[2]
         grailsStep2.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep2.targets[0].value() == 'compile'
-        grailsStep2.useWrapper[0].value() == 'false'
+        grailsStep2.useWrapper[0].value() == false
         grailsStep2.grailsWorkDir[0].value() == 'work1'
         grailsStep2.projectWorkDir[0].value() == ''
         grailsStep2.projectBaseDir[0].value() == ''
         grailsStep2.serverPort[0].value() == ''
         grailsStep2.'properties'[0].value() == ''
-        grailsStep2.forceUpgrade[0].value() == 'false'
-        grailsStep2.nonInteractive[0].value() == 'false'
+        grailsStep2.forceUpgrade[0].value() == false
+        grailsStep2.nonInteractive[0].value() == false
         1 * jobManagement.requirePlugin('grails')
 
         when:
@@ -264,14 +264,14 @@ class StepContextSpec extends Specification {
         def grailsStep3 = context.stepNodes[3]
         grailsStep3.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep3.targets[0].value() == 'clean compile test-app'
-        grailsStep3.useWrapper[0].value() == 'true'
+        grailsStep3.useWrapper[0].value() == true
         grailsStep3.grailsWorkDir[0].value() == 'work'
         grailsStep3.projectWorkDir[0].value() == 'project'
         grailsStep3.projectBaseDir[0].value() == 'base'
         grailsStep3.serverPort[0].value() == '1111'
         grailsStep3.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
-        grailsStep3.forceUpgrade[0].value() == 'true'
-        grailsStep3.nonInteractive[0].value() == 'false'
+        grailsStep3.forceUpgrade[0].value() == true
+        grailsStep3.nonInteractive[0].value() == false
         1 * jobManagement.requirePlugin('grails')
 
         when:
@@ -290,14 +290,14 @@ class StepContextSpec extends Specification {
         def grailsStep4 = context.stepNodes[4]
         grailsStep4.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep4.targets[0].value() == '"test-app --stacktrace"'
-        grailsStep4.useWrapper[0].value() == 'true'
+        grailsStep4.useWrapper[0].value() == true
         grailsStep4.grailsWorkDir[0].value() == 'work'
         grailsStep4.projectWorkDir[0].value() == 'project'
         grailsStep4.projectBaseDir[0].value() == 'base'
         grailsStep4.serverPort[0].value() == '8080'
         grailsStep4.'properties'[0].value() == ''
-        grailsStep4.forceUpgrade[0].value() == 'true'
-        grailsStep4.nonInteractive[0].value() == 'false'
+        grailsStep4.forceUpgrade[0].value() == true
+        grailsStep4.nonInteractive[0].value() == false
         1 * jobManagement.requirePlugin('grails')
 
         when:
@@ -309,14 +309,14 @@ class StepContextSpec extends Specification {
         def grailsStep5 = context.stepNodes[5]
         grailsStep5.name() == 'com.g2one.hudson.grails.GrailsBuilder'
         grailsStep5.targets[0].value() == ''
-        grailsStep5.useWrapper[0].value() == 'false'
+        grailsStep5.useWrapper[0].value() == false
         grailsStep5.grailsWorkDir[0].value() == ''
         grailsStep5.projectWorkDir[0].value() == ''
         grailsStep5.projectBaseDir[0].value() == ''
         grailsStep5.serverPort[0].value() == ''
         grailsStep5.'properties'[0].value() == ''
-        grailsStep5.forceUpgrade[0].value() == 'false'
-        grailsStep5.nonInteractive[0].value() == 'true'
+        grailsStep5.forceUpgrade[0].value() == false
+        grailsStep5.nonInteractive[0].value() == true
         1 * jobManagement.requirePlugin('grails')
     }
 

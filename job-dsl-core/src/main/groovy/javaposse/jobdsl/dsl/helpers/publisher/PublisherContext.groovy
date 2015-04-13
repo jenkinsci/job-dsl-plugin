@@ -47,8 +47,7 @@ class PublisherContext implements Context {
         }
 
         // Now that the context has what we need
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node emailNode = nodeBuilder.'hudson.plugins.emailext.ExtendedEmailPublisher' {
+        Node emailNode = new NodeBuilder().'hudson.plugins.emailext.ExtendedEmailPublisher' {
             recipientList recipients != null ? recipients : '$DEFAULT_RECIPIENTS'
             contentType 'default'
             defaultSubject subjectTemplate ?: '$DEFAULT_SUBJECT'
@@ -84,13 +83,11 @@ class PublisherContext implements Context {
     @RequiresPlugin(id = 'mailer')
     void mailer(String mailRecipients, Boolean dontNotifyEveryUnstableBuildBoolean = false,
                Boolean sendToIndividualsBoolean = false) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        Node mailerNode = nodeBuilder.'hudson.tasks.Mailer' {
+        publisherNodes << new NodeBuilder().'hudson.tasks.Mailer' {
             recipients(mailRecipients)
             dontNotifyEveryUnstableBuild(dontNotifyEveryUnstableBuildBoolean)
             sendToIndividuals(sendToIndividualsBoolean)
         }
-        publisherNodes << mailerNode
     }
 
     void archiveArtifacts(@DslContext(ArchiveArtifactsContext) Closure artifactsClosure) {
@@ -133,7 +130,7 @@ class PublisherContext implements Context {
         ArchiveXUnitContext xUnitContext = new ArchiveXUnitContext()
         ContextHelper.executeInContext(xUnitClosure, xUnitContext)
 
-        publisherNodes << NodeBuilder.newInstance().'xunit' {
+        publisherNodes << new NodeBuilder().'xunit' {
             types {
                 xUnitContext.resultFiles.each { ArchiveXUnitResultFileContext resultFile ->
                     "${resultFile.type}" {
@@ -174,9 +171,7 @@ class PublisherContext implements Context {
         JacocoContext jacocoContext = new JacocoContext()
         ContextHelper.executeInContext(jacocoClosure, jacocoContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-
-        Node jacocoNode = nodeBuilder.'hudson.plugins.jacoco.JacocoPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.jacoco.JacocoPublisher' {
             execPattern jacocoContext.execPattern
             classPattern jacocoContext.classPattern
             sourcePattern jacocoContext.sourcePattern
@@ -195,11 +190,9 @@ class PublisherContext implements Context {
             maximumMethodCoverage jacocoContext.maximumMethodCoverage
             maximumClassCoverage jacocoContext.maximumClassCoverage
             if (jacocoContext.changeBuildStatus != null) {
-                changeBuildStatus Boolean.toString(jacocoContext.changeBuildStatus)
+                changeBuildStatus jacocoContext.changeBuildStatus
             }
         }
-
-        publisherNodes << jacocoNode
     }
 
     /**
@@ -210,7 +203,7 @@ class PublisherContext implements Context {
         PlotsContext plotsContext = new PlotsContext()
         ContextHelper.executeInContext(plotsClosure, plotsContext)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.plot.PlotPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.plot.PlotPublisher' {
             plots {
                 plotsContext.plots.each { PlotContext plot ->
                     'hudson.plugins.plot.Plot' {
@@ -276,7 +269,7 @@ class PublisherContext implements Context {
         HtmlReportContext reportContext = new HtmlReportContext(jobManagement)
         ContextHelper.executeInContext(htmlReportContext, reportContext)
 
-        publisherNodes << NodeBuilder.newInstance().'htmlpublisher.HtmlPublisher' {
+        publisherNodes << new NodeBuilder().'htmlpublisher.HtmlPublisher' {
             reportTargets {
                 reportContext.targets.each { HtmlReportTargetContext target ->
                     'htmlpublisher.HtmlPublisherTarget' {
@@ -327,7 +320,7 @@ class PublisherContext implements Context {
                         validJabberChannelNotificationNames.join(',')
         )
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.jabber.im.transport.JabberPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.jabber.im.transport.JabberPublisher' {
             targets {
                 targetsArg.split().each { target ->
                     boolean isGroup = target.startsWith('*')
@@ -370,7 +363,7 @@ class PublisherContext implements Context {
         // Validate values
         assert !scpContext.entries.empty, 'Scp publish requires at least one entry'
 
-        publisherNodes << NodeBuilder.newInstance().'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
+        publisherNodes << new NodeBuilder().'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
             entries {
                 scpContext.entries.each { ScpContext.ScpEntry entry ->
@@ -421,15 +414,13 @@ class PublisherContext implements Context {
                 'Clone Workspace Archive Method needs to be one of these values: ' +
                         validCloneWorkspaceArchiveMethods.join(',')
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node publishNode = nodeBuilder.'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
             workspaceGlob workspaceGlobArg
             workspaceExcludeGlob cloneWorkspaceContext.workspaceExcludeGlob
             criteria cloneWorkspaceContext.criteria
             archiveMethod cloneWorkspaceContext.archiveMethod
             overrideDefaultExcludes cloneWorkspaceContext.overrideDefaultExcludes
         }
-        publisherNodes << publishNode
     }
 
     static List<String> validCloneWorkspaceCriteria = ['Any', 'Not Failed', 'Successful']
@@ -442,8 +433,7 @@ class PublisherContext implements Context {
         assert DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
                 "thresholdName must be one of these values ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        Node publishNode = nodeBuilder.'hudson.tasks.BuildTrigger' {
+        publisherNodes << new NodeBuilder().'hudson.tasks.BuildTrigger' {
             childProjects projectName
             threshold {
                 delegate.createNode('name', thresholdName)
@@ -451,8 +441,6 @@ class PublisherContext implements Context {
                 color DownstreamContext.THRESHOLD_COLOR_MAP[thresholdName]
             }
         }
-
-        publisherNodes << publishNode
     }
 
     /**
@@ -463,8 +451,7 @@ class PublisherContext implements Context {
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
-        Node publishNode = downstreamContext.createDownstreamNode(false)
-        publisherNodes << publishNode
+        publisherNodes << downstreamContext.createDownstreamNode(false)
     }
 
     void violations(@DslContext(ViolationsContext) Closure violationsClosure = null) {
@@ -477,8 +464,7 @@ class PublisherContext implements Context {
         violationsContext.perFileDisplayLimit = perFileDisplayLimit
         ContextHelper.executeInContext(violationsClosure, violationsContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node publishNode = nodeBuilder.'hudson.plugins.violations.ViolationsPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.violations.ViolationsPublisher' {
             config {
                 suppressions(class: 'tree-set') {
                     'no-comparator'()
@@ -506,16 +492,13 @@ class PublisherContext implements Context {
                 encoding(violationsContext.sourceEncoding ?: 'default')
             }
         }
-        publisherNodes << publishNode
     }
 
     @RequiresPlugin(id = 'chucknorris')
     void chucknorris() {
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node publishNode = nodeBuilder.'hudson.plugins.chucknorris.CordellWalkerRecorder' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.chucknorris.CordellWalkerRecorder' {
             'factGenerator' ''
         }
-        publisherNodes << publishNode
     }
 
     @RequiresPlugin(id = 'ircbot')
@@ -523,8 +506,7 @@ class PublisherContext implements Context {
         IrcContext ircContext = new IrcContext()
         ContextHelper.executeInContext(ircClosure, ircContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node publishNode = nodeBuilder.'hudson.plugins.ircbot.IrcPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.ircbot.IrcPublisher' {
             targets {
                 ircContext.channels.each { IrcContext.IrcPublisherChannel channel ->
                     'hudson.plugins.im.GroupChatIMMessageTarget' {
@@ -544,8 +526,6 @@ class PublisherContext implements Context {
             String className = "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
             buildToChatNotifier(class: className)
         }
-
-        publisherNodes << publishNode
     }
 
     @RequiresPlugin(id = 'cobertura')
@@ -553,7 +533,7 @@ class PublisherContext implements Context {
         CoberturaContext coberturaContext = new CoberturaContext()
         ContextHelper.executeInContext(coberturaClosure, coberturaContext)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.cobertura.CoberturaPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.cobertura.CoberturaPublisher' {
             coberturaReportFile(reportFile)
             onlyStable(coberturaContext.onlyStable)
             failUnhealthy(coberturaContext.failUnhealthy)
@@ -580,14 +560,14 @@ class PublisherContext implements Context {
 
     @RequiresPlugin(id = 'claim')
     void allowBrokenBuildClaiming() {
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.claim.ClaimPublisher'()
+        publisherNodes << new NodeBuilder().'hudson.plugins.claim.ClaimPublisher'()
     }
 
     /**
      * Configures Fingerprinting.
      */
     void fingerprint(String targets, boolean recordBuildArtifacts = false) {
-        publisherNodes << NodeBuilder.newInstance().'hudson.tasks.Fingerprinter' {
+        publisherNodes << new NodeBuilder().'hudson.tasks.Fingerprinter' {
             delegate.targets(targets ?: '')
             delegate.recordBuildArtifacts(recordBuildArtifacts)
         }
@@ -599,7 +579,7 @@ class PublisherContext implements Context {
     @RequiresPlugin(id = 'description-setter')
     void buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '',
                          String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
             regexp(regularExpression)
             regexpForFailed(regularExpressionForFailed)
             if (description) {
@@ -618,7 +598,7 @@ class PublisherContext implements Context {
     @RequiresPlugin(id = 'text-finder')
     void textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false,
                    boolean succeedIfFound = false, unstableIfFound = false) {
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.textfinder.TextFinderPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.textfinder.TextFinderPublisher' {
             if (fileSet) {
                 delegate.fileSet(fileSet)
             }
@@ -637,7 +617,7 @@ class PublisherContext implements Context {
         PostBuildTaskContext postBuildContext = new PostBuildTaskContext()
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.postbuildtask.PostbuildTask' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.postbuildtask.PostbuildTask' {
             tasks {
                 postBuildContext.tasks.each { PostBuildTaskContext.PostBuildTask task ->
                     'hudson.plugins.postbuildtask.TaskProperties' {
@@ -662,7 +642,7 @@ class PublisherContext implements Context {
      * Second argument is optional and sets whether failed builds are included.
      */
     void aggregateDownstreamTestResults(String jobs = null, boolean includeFailedBuilds = false) {
-        publisherNodes << NodeBuilder.newInstance().'hudson.tasks.test.AggregatedTestResultPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.tasks.test.AggregatedTestResultPublisher' {
             if (jobs) {
                 delegate.jobs(jobs)
             }
@@ -687,7 +667,7 @@ class PublisherContext implements Context {
      */
     @RequiresPlugin(id = 'groovy-postbuild')
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
-        publisherNodes << NodeBuilder.newInstance().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
+        publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
             delegate.groovyScript(script)
             delegate.behavior(behavior.value)
         }
@@ -703,14 +683,10 @@ class PublisherContext implements Context {
         JavadocContext javadocContext = new JavadocContext()
         ContextHelper.executeInContext(javadocClosure, javadocContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-
-        Node javadocNode = nodeBuilder.'hudson.tasks.JavadocArchiver' {
+        publisherNodes << new NodeBuilder().'hudson.tasks.JavadocArchiver' {
             javadocDir javadocContext.javadocDir
             keepAll javadocContext.keepAll
         }
-
-        publisherNodes << javadocNode
     }
 
     /**
@@ -721,7 +697,7 @@ class PublisherContext implements Context {
      */
     @RequiresPlugin(id = 'associated-files')
     void associatedFiles(String files = null) {
-        publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher' {
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.associatedfiles.AssociatedFilesPublisher' {
             delegate.associatedFiles(files)
         }
     }
@@ -734,7 +710,7 @@ class PublisherContext implements Context {
         EmmaContext emmaContext = new EmmaContext()
         ContextHelper.executeInContext(emmaClosure, emmaContext)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.emma.EmmaPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.emma.EmmaPublisher' {
             includes(fileSet)
             healthReports {
                 minClass(emmaContext.classRange.from)
@@ -761,8 +737,7 @@ class PublisherContext implements Context {
         RobotFrameworkContext context = new RobotFrameworkContext()
         ContextHelper.executeInContext(robotClosure, context)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node robotNode = nodeBuilder.'hudson.plugins.robot.RobotPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.robot.RobotPublisher' {
             passThreshold context.passThreshold
             unstableThreshold context.unstableThreshold
             outputPath context.outputPath
@@ -771,8 +746,6 @@ class PublisherContext implements Context {
             logFileName context.logFileName
             outputFileName context.outputFileName
         }
-
-        publisherNodes << robotNode
     }
 
     /**
@@ -783,7 +756,7 @@ class PublisherContext implements Context {
         BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement)
         ContextHelper.executeInContext(closure, buildPipelineContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+        NodeBuilder nodeBuilder = new NodeBuilder()
         publisherNodes << nodeBuilder.'au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger' {
             delegate.downstreamProjectNames(downstreamProjectNames ?: '')
             configs(buildPipelineContext.parameterNodes)
@@ -803,7 +776,7 @@ class PublisherContext implements Context {
         GitPublisherContext context = new GitPublisherContext(jobManagement)
         ContextHelper.executeInContext(gitPublisherClosure, context)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.git.GitPublisher' {
             configVersion(2)
             pushMerge(context.pushMerge)
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
@@ -820,7 +793,7 @@ class PublisherContext implements Context {
         FlowdockPublisherContext context = new FlowdockPublisherContext()
         ContextHelper.executeInContext(flowdockPublisherClosure, context)
 
-        publisherNodes << NodeBuilder.newInstance().'com.flowdock.jenkins.FlowdockNotifier' {
+        publisherNodes << new NodeBuilder().'com.flowdock.jenkins.FlowdockNotifier' {
             flowToken(token)
             notificationTags(context.notificationTags.join(','))
             chatNotification(context.chat)
@@ -874,7 +847,8 @@ class PublisherContext implements Context {
     void stashNotifier(@DslContext(StashNotifierContext) Closure stashNotifierClosure = null) {
         StashNotifierContext context = new StashNotifierContext()
         ContextHelper.executeInContext(stashNotifierClosure, context)
-        publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
             stashServerBaseUrl()
             stashUserName()
             stashUserPassword()
@@ -956,7 +930,7 @@ class PublisherContext implements Context {
         RundeckContext rundeckContext = new RundeckContext()
         ContextHelper.executeInContext(rundeckClosure, rundeckContext)
 
-        publisherNodes << NodeBuilder.newInstance().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
             jobId jobIdentifier
             options rundeckContext.options.collect { key, value -> "${key}=${value}" }.join('\n')
             nodeFilters rundeckContext.nodeFilters.collect { key, value -> "${key}=${value}" }.join('\n')
@@ -973,7 +947,7 @@ class PublisherContext implements Context {
         S3BucketPublisherContext context = new S3BucketPublisherContext()
         ContextHelper.executeInContext(s3PublisherClosure, context)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.s3.S3BucketPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.s3.S3BucketPublisher' {
             profileName(profile)
             entries(context.entries)
             userMetadata(context.metadata)
@@ -989,7 +963,7 @@ class PublisherContext implements Context {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.findbugs.FindBugsPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.findbugs.FindBugsPublisher' {
             addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
             delegate.isRankActivated(isRankActivated)
         }
@@ -1041,7 +1015,7 @@ class PublisherContext implements Context {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.dry.DryPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.dry.DryPublisher' {
             addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
             delegate.highThreshold(highThreshold)
             delegate.normalThreshold(normalThreshold)
@@ -1057,7 +1031,7 @@ class PublisherContext implements Context {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
-        publisherNodes << NodeBuilder.newInstance().'hudson.plugins.tasks.TasksPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.tasks.TasksPublisher' {
             addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
             delegate.high(high)
             delegate.normal(normal)
@@ -1112,7 +1086,7 @@ class PublisherContext implements Context {
         WarningsContext warningsContext = new WarningsContext()
         ContextHelper.executeInContext(warningsClosure,  warningsContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+        NodeBuilder nodeBuilder = new NodeBuilder()
         publisherNodes << nodeBuilder.'hudson.plugins.warnings.WarningsPublisher' {
             addStaticAnalysisContext(delegate,  warningsContext)
             includePattern(warningsContext.includePattern)
@@ -1143,8 +1117,7 @@ class PublisherContext implements Context {
         AnalysisCollectorContext analysisCollectorContext = new AnalysisCollectorContext()
         ContextHelper.executeInContext(analysisCollectorClosure,  analysisCollectorContext)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        publisherNodes << nodeBuilder.'hudson.plugins.analysis.collector.AnalysisPublisher' {
+        publisherNodes << new NodeBuilder().'hudson.plugins.analysis.collector.AnalysisPublisher' {
             addStaticAnalysisContext(delegate, analysisCollectorContext)
             isCheckStyleDeactivated(!analysisCollectorContext.includeCheckstyle)
             isDryDeactivated(!analysisCollectorContext.includeDry)
@@ -1203,7 +1176,7 @@ class PublisherContext implements Context {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 
-        NodeBuilder.newInstance()."${publisherClassName}" {
+        new NodeBuilder()."${publisherClassName}" {
             addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
         }
     }

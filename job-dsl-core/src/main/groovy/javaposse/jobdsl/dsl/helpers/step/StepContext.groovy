@@ -22,15 +22,13 @@ class StepContext implements Context {
     }
 
     void shell(String commandStr) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        stepNodes << nodeBuilder.'hudson.tasks.Shell' {
+        stepNodes << new NodeBuilder().'hudson.tasks.Shell' {
             'command' commandStr
         }
     }
 
     void batchFile(String commandStr) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        stepNodes << nodeBuilder.'hudson.tasks.BatchFile' {
+        stepNodes << new NodeBuilder().'hudson.tasks.BatchFile' {
             'command' commandStr
         }
     }
@@ -97,12 +95,9 @@ class StepContext implements Context {
     }
 
     @RequiresPlugin(id = 'sbt')
-    void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg=null,  String jvmFlagsArg=null,
-            String subdirPathArg=null, Closure configure = null) {
-
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        Node sbtNode = nodeBuilder.'org.jvnet.hudson.plugins.SbtPluginBuilder' {
+    void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg = null, String jvmFlagsArg = null,
+             String subdirPathArg = null, Closure configure = null) {
+        Node sbtNode = new NodeBuilder().'org.jvnet.hudson.plugins.SbtPluginBuilder' {
             name Preconditions.checkNotNull(sbtNameArg, 'Please provide the name of the SBT to use' as Object)
             jvmFlags jvmFlagsArg ?: ''
             sbtFlags sbtFlagsArg ?: ''
@@ -110,14 +105,12 @@ class StepContext implements Context {
             subdirPath subdirPathArg ?: ''
         }
 
-        // Apply Context
         if (configure) {
             WithXmlAction action = new WithXmlAction(configure)
             action.execute(sbtNode)
         }
 
         stepNodes << sbtNode
-
     }
 
     void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure configure) {
@@ -184,8 +177,7 @@ class StepContext implements Context {
         List<String> propertiesList = []
         propertiesList += antContext.props
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node antNode = nodeBuilder.'hudson.tasks.Ant' {
+        Node antNode = new NodeBuilder().'hudson.tasks.Ant' {
             targets targetList.join(' ')
 
             antName antInstallation ?: antContext.antName ?: '(Default)'
@@ -223,8 +215,7 @@ class StepContext implements Context {
     }
 
     protected groovyScriptSource(String commandOrFileName, boolean isCommand) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        nodeBuilder.scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
+        new NodeBuilder().scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
             if (isCommand) {
                 command commandOrFileName
             } else {
@@ -238,7 +229,7 @@ class StepContext implements Context {
         GroovyContext groovyContext = new GroovyContext()
         ContextHelper.executeInContext(groovyClosure, groovyContext)
 
-        Node groovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.Groovy' {
+        Node groovyNode = new NodeBuilder().'hudson.plugins.groovy.Groovy' {
             groovyName groovyInstallation ?: groovyContext.groovyInstallation ?: '(Default)'
             parameters groovyContext.groovyParams.join('\n')
             scriptParameters groovyContext.scriptParams.join('\n')
@@ -264,7 +255,7 @@ class StepContext implements Context {
         SystemGroovyContext systemGroovyContext = new SystemGroovyContext()
         ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
-        Node systemGroovyNode = NodeBuilder.newInstance().'hudson.plugins.groovy.SystemGroovy' {
+        Node systemGroovyNode = new NodeBuilder().'hudson.plugins.groovy.SystemGroovy' {
             bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
             classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
         }
@@ -325,12 +316,11 @@ class StepContext implements Context {
     void grails(String targetsArg = null, boolean useWrapperArg = false,
                 @DslContext(GrailsContext) Closure grailsClosure = null) {
         GrailsContext grailsContext = new GrailsContext(
-            useWrapper: useWrapperArg
+                useWrapper: useWrapperArg
         )
         ContextHelper.executeInContext(grailsClosure, grailsContext)
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        Node grailsNode = nodeBuilder.'com.g2one.hudson.grails.GrailsBuilder' {
+        stepNodes << new NodeBuilder().'com.g2one.hudson.grails.GrailsBuilder' {
             targets targetsArg ?: grailsContext.targetsString
             name grailsContext.name
             grailsWorkDir grailsContext.grailsWorkDir
@@ -338,12 +328,10 @@ class StepContext implements Context {
             projectBaseDir grailsContext.projectBaseDir
             serverPort grailsContext.serverPort
             'properties' grailsContext.propertiesString
-            forceUpgrade grailsContext.forceUpgrade.toString()
-            nonInteractive grailsContext.nonInteractive.toString()
-            useWrapper grailsContext.useWrapper.toString()
+            forceUpgrade grailsContext.forceUpgrade
+            nonInteractive grailsContext.nonInteractive
+            useWrapper grailsContext.useWrapper
         }
-
-        stepNodes << grailsNode
     }
 
     @Deprecated
@@ -430,13 +418,11 @@ class StepContext implements Context {
 
     @RequiresPlugin(id = 'prereq-buildstep')
     void prerequisite(String projectList = '', boolean warningOnlyBool = false) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        Node preReqNode = nodeBuilder.'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
-             // Important that there are no spaces for comma delimited values, plugin doesn't trim, so we will
+        stepNodes << new NodeBuilder().'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
+            // Important that there are no spaces for comma delimited values, plugin doesn't trim, so we will
             projects(projectList.tokenize(',')*.trim().join(','))
             warningOnly(warningOnlyBool)
         }
-        stepNodes << preReqNode
     }
 
     @RequiresPlugin(id = 'publish-over-ssh')
@@ -520,8 +506,7 @@ class StepContext implements Context {
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
-        Node stepNode = downstreamContext.createDownstreamNode(true)
-        stepNodes << stepNode
+        stepNodes << downstreamContext.createDownstreamNode(true)
     }
 
     @RequiresPlugin(id = 'conditional-buildstep')
@@ -541,11 +526,9 @@ class StepContext implements Context {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
 
-        Node envNode = new NodeBuilder().'EnvInjectBuilder' {
+        stepNodes << new NodeBuilder().'EnvInjectBuilder' {
             envContext.addInfoToBuilder(delegate)
         }
-
-        stepNodes << envNode
     }
 
     @RequiresPlugin(id = 'Parameterized-Remote-Trigger')

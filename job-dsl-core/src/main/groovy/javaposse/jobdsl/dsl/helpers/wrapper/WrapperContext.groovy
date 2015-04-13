@@ -20,8 +20,7 @@ class WrapperContext implements Context {
 
     @RequiresPlugin(id = 'timestamper')
     void timestamps() {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'hudson.plugins.timestamper.TimestamperBuildWrapper'()
+        wrapperNodes << new NodeBuilder().'hudson.plugins.timestamper.TimestamperBuildWrapper'()
     }
 
     /**
@@ -33,8 +32,8 @@ class WrapperContext implements Context {
     @RequiresPlugin(id = 'job-node-stalker')
     void runOnSameNodeAs(String jobName, boolean useSameWorkspace = false) {
         Preconditions.checkNotNull(jobName, 'Job name must not be null')
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper' {
+
+        wrapperNodes << new NodeBuilder().'com.datalex.jenkins.plugins.nodestalker.wrapper.NodeStalkerBuildWrapper' {
             job jobName
             shareWorkspace useSameWorkspace
         }
@@ -74,8 +73,8 @@ class WrapperContext implements Context {
     @RequiresPlugin(id = 'rvm')
     void rvm(String rubySpecification) {
         Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'ruby-proxy-object' {
+
+        wrapperNodes << new NodeBuilder().'ruby-proxy-object' {
             'ruby-object'('ruby-class': 'Jenkins::Plugin::Proxies::BuildWrapper', pluginid: 'rvm') {
 
                 pluginid('rvm', [pluginid: 'rvm', 'ruby-class': 'String'])
@@ -121,8 +120,7 @@ class WrapperContext implements Context {
         PortsContext portContext = new PortsContext()
         ContextHelper.executeInContext(closure, portContext)
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'org.jvnet.hudson.plugins.port__allocator.PortAllocator' {
+        wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.port__allocator.PortAllocator' {
             ports {
                 if (portsArg) {
                     for (p in portsArg) {
@@ -131,13 +129,11 @@ class WrapperContext implements Context {
                         }
                     }
                 }
-
                 for (p in portContext.simplePorts) {
                     'org.jvnet.hudson.plugins.port__allocator.DefaultPortType' {
                         name p.port
                     }
                 }
-
                 for (p in portContext.glassfishPorts) {
                     'org.jvnet.hudson.plugins.port__allocator.GlassFishJmxPortType' {
                         name p.port
@@ -145,7 +141,6 @@ class WrapperContext implements Context {
                         password p.password
                     }
                 }
-
                 for (p in portContext.tomcatPorts) {
                     'org.jvnet.hudson.plugins.port__allocator.TomcatShutdownPortType' {
                         name p.port
@@ -170,8 +165,8 @@ class WrapperContext implements Context {
         Preconditions.checkNotNull(credentials, 'credentials must not be null')
         String id = jobManagement.getCredentialsId(credentials)
         Preconditions.checkNotNull(id, 'credentials not found')
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
+
+        wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
             user id
         }
     }
@@ -239,8 +234,7 @@ class WrapperContext implements Context {
      */
     @RequiresPlugin(id = 'toolenv')
     void toolenv(String... tools) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-        wrapperNodes << nodeBuilder.'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
+        wrapperNodes << new NodeBuilder().'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
             vars(tools.collect { "${it.replaceAll(/[^a-zA-Z0-9_]/, '_').toUpperCase()}_HOME" }.join(','))
         }
     }
@@ -250,11 +244,9 @@ class WrapperContext implements Context {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
         ContextHelper.executeInContext(envClosure, envContext)
 
-        Node envNode = new NodeBuilder().'EnvInjectBuildWrapper' {
+        wrapperNodes << new NodeBuilder().'EnvInjectBuildWrapper' {
             envContext.addInfoToBuilder(delegate)
         }
-
-        wrapperNodes << envNode
     }
 
     /**
@@ -278,10 +270,8 @@ class WrapperContext implements Context {
         ReleaseContext releaseContext = new ReleaseContext(jobManagement)
         ContextHelper.executeInContext(releaseClosure, releaseContext)
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
         // plugin properties
-        Node releaseNode = nodeBuilder.'hudson.plugins.release.ReleaseWrapper' {
+        Node releaseNode = new NodeBuilder().'hudson.plugins.release.ReleaseWrapper' {
             releaseVersionTemplate(releaseContext.releaseVersionTemplate ?: '')
             doNotKeepLog(releaseContext.doNotKeepLog)
             overrideBuildParameters(releaseContext.overrideBuildParameters)

@@ -552,7 +552,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.execPattern[0].value() == '**/target/**.exec'
         jacocoNode.minimumInstructionCoverage[0].value() == '0'
-        jacocoNode.changeBuildStatus[0].value() == 'true'
+        jacocoNode.changeBuildStatus[0].value() == true
         1 * jobManagement.requirePlugin('jacoco')
     }
 
@@ -599,7 +599,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.maximumLineCoverage[0].value() == '10'
         jacocoNode.maximumMethodCoverage[0].value() == '11'
         jacocoNode.maximumClassCoverage[0].value() == '12'
-        jacocoNode.changeBuildStatus[0].value() == 'true'
+        jacocoNode.changeBuildStatus[0].value() == true
         1 * jobManagement.requirePlugin('jacoco')
     }
 

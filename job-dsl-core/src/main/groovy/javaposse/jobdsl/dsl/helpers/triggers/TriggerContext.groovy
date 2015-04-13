@@ -88,6 +88,7 @@ class TriggerContext implements Context {
 
     void cron(String cronString) {
         Preconditions.checkNotNull(cronString)
+
         triggerNodes << new NodeBuilder().'hudson.triggers.TimerTrigger' {
             spec cronString
         }

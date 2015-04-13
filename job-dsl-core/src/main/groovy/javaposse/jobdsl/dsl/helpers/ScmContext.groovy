@@ -19,6 +19,8 @@ import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
 class ScmContext implements Context {
+    private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
+
     private final boolean multiEnabled
     final List<Node> scmNodes = []
     private final List<WithXmlAction> withXmlActions
@@ -47,11 +49,10 @@ class ScmContext implements Context {
     @RequiresPlugin(id = 'mercurial')
     void hg(String url, String branch = null, Closure configure = null) {
         validateMulti()
+
         checkNotNull(url)
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
+        Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
             source url
             modules ''
             clean false
@@ -78,11 +79,9 @@ class ScmContext implements Context {
             gitContext.branches << '**'
         }
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
         if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
             if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
-                gitContext.extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.CloneOption' {
+                gitContext.extensions << new NodeBuilder().'hudson.plugins.git.extensions.impl.CloneOption' {
                     shallow gitContext.shallowClone
                     reference gitContext.reference
                     if (gitContext.cloneTimeout) {
@@ -92,7 +91,7 @@ class ScmContext implements Context {
             }
         }
 
-        Node gitNode = nodeBuilder.scm(class: 'hudson.plugins.git.GitSCM') {
+        Node gitNode = new NodeBuilder().scm(class: 'hudson.plugins.git.GitSCM') {
             userRemoteConfigs(gitContext.remoteConfigs)
             branches {
                 gitContext.branches.each { String branch ->
@@ -243,16 +242,13 @@ class ScmContext implements Context {
 
     @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, String user, String password, Closure configure = null) {
-        checkNotNull(viewspec)
         validateMulti()
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
+        checkNotNull(viewspec)
 
-        PerforcePasswordEncryptor encryptor = new PerforcePasswordEncryptor()
-
-        Node p4Node = nodeBuilder.scm(class: 'hudson.plugins.perforce.PerforceSCM') {
+        Node p4Node = new NodeBuilder().scm(class: 'hudson.plugins.perforce.PerforceSCM') {
             p4User user
-            p4Passwd encryptor.isEncrypted(password) ? password : encryptor.encrypt(password)
+            p4Passwd PERFORCE_ENCRYPTOR.isEncrypted(password) ? password : PERFORCE_ENCRYPTOR.encrypt(password)
             p4Port 'perforce:1666'
             p4Client 'builds-${JOB_NAME}'
             projectPath "${viewspec}"
@@ -293,12 +289,13 @@ class ScmContext implements Context {
 
     @RequiresPlugin(id = 'clone-workspace-scm')
     void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
+        validateMulti()
+
         checkNotNull(parentProject)
         checkArgument(validCloneWorkspaceCriteria.contains(criteriaArg),
                 "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}")
-        validateMulti()
 
-        scmNodes << NodeBuilder.newInstance().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
+        scmNodes << new NodeBuilder().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
             parentJobName(parentProject)
             criteria(criteriaArg)
         }
@@ -314,7 +311,7 @@ class ScmContext implements Context {
         ClearCaseContext context = new ClearCaseContext()
         executeInContext(closure, context)
 
-        scmNodes << NodeBuilder.newInstance().scm(class: 'hudson.plugins.clearcase.ClearCaseSCM') {
+        scmNodes << new NodeBuilder().scm(class: 'hudson.plugins.clearcase.ClearCaseSCM') {
             changeset('BRANCH')
             createDynView(false)
             excludedRegions('')
@@ -354,7 +351,7 @@ class ScmContext implements Context {
 
         checkArgument(context.buildType != null, 'Either buildDefinition or buildWorkspace must be specified')
 
-        scmNodes << NodeBuilder.newInstance().scm(class: 'com.ibm.team.build.internal.hjplugin.RTCScm') {
+        scmNodes << new NodeBuilder().scm(class: 'com.ibm.team.build.internal.hjplugin.RTCScm') {
             overrideGlobal(context.overrideGlobal)
             timeout(context.timeout)
             if (context.overrideGlobal) {
