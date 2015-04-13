@@ -111,11 +111,17 @@ class PhaseJobContext implements Context {
                 gitRevision != null || !props.isEmpty() || nodeLabelParam
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void disableJob(boolean disableJob = true) {
         this.disableJob = disableJob
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void killPhaseCondition(String killPhaseCondition) {
         Preconditions.checkArgument(

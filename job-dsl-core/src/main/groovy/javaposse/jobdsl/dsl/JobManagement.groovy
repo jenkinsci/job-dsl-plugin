@@ -46,6 +46,7 @@ interface JobManagement {
      * @param configFile the config file to create or update
      * @param ignoreExisting do not update existing config files
      * @return the id of the created or updated config file
+     * @since 1.25
      */
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting)
 
@@ -72,6 +73,15 @@ interface JobManagement {
 
     String readFileInWorkspace(String filePath) throws IOException
 
+    /**
+     * Reads a file from the workspace of a job.
+     *
+     * @param jobName the job from which to read a file
+     * @param filePath path of the file relative to the workspace root
+     * @return content of the file
+     * @throws IOException if the file could not be read
+     * @since 1.25
+     */
     String readFileInWorkspace(String jobName, String filePath) throws IOException
 
     /**
@@ -132,6 +142,7 @@ interface JobManagement {
      * Return the hash of the vSphere cloud with the given name.
      * @param name name of the vSphere cloud
      * @return hash of the vSphere cloud or <code>null</code> if a cloud with the given name does not exist
+     * @since 1.25
      */
     Integer getVSphereCloudHash(String name)
 
@@ -142,6 +153,7 @@ interface JobManagement {
      * @param name name of the config file
      * @return the config ID of the config file or <code>null</code> if no config file with the given type and name can
      *         be found
+     * @since 1.25
      */
     String getConfigFileId(ConfigFileType type, String name)
 

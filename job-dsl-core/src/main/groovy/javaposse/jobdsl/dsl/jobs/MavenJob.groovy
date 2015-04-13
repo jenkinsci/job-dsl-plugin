@@ -206,6 +206,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")

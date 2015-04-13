@@ -610,10 +610,16 @@ class StepContext implements Context {
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'()
     }
 
+    /**
+     * @since 1.25
+     */
     void rake(@DslContext(RakeContext) Closure rakeClosure = null) {
         rake(null, rakeClosure)
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'rake')
     void rake(String tasksArg, @DslContext(RakeContext) Closure rakeClosure = null) {
         RakeContext rakeContext = new RakeContext()
@@ -635,6 +641,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void vSpherePowerOff(String server, String vm) {
         vSphereBuildStep(server, 'PowerOff') {
             delegate.vm vm
@@ -643,6 +652,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void vSpherePowerOn(String server, String vm) {
         vSphereBuildStep(server, 'PowerOn') {
             delegate.vm vm
@@ -650,6 +662,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void vSphereRevertToSnapshot(String server, String vm, String snapshot) {
         vSphereBuildStep(server, 'RevertToSnapshot') {
             delegate.vm vm

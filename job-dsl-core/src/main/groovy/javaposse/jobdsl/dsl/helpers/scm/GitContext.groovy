@@ -115,6 +115,9 @@ class GitContext implements Context {
         this.pruneBranches = pruneBranches
     }
 
+    /**
+     * @since 1.25
+     */
     void localBranch(String localBranch) {
         this.localBranch = localBranch
     }

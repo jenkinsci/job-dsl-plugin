@@ -78,6 +78,7 @@ class MavenContext implements Context {
      * Specifies the managed Maven settings to be used.
      *
      * @param settings name of the managed Maven settings
+     * @since 1.25
      */
     void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)

@@ -131,6 +131,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'lockable-resources')
     void lockableResources(String resources, @DslContext(LockableResourcesContext) Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()

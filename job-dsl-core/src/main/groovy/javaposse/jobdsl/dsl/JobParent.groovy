@@ -244,6 +244,9 @@ abstract class JobParent extends Script implements DslFactory {
         processConfigFile(name, ConfigFileType.MavenSettings, closure)
     }
 
+    /**
+     * @since 1.25
+     */
     @Override
     @Deprecated
     @RequiresPlugin(id = 'config-file-provider')
@@ -294,6 +297,9 @@ abstract class JobParent extends Script implements DslFactory {
         jm.readFileInWorkspace(filePath)
     }
 
+    /**
+     * @since 1.25
+     */
     @Override
     String readFileFromWorkspace(String jobName, String filePath) {
         Preconditions.checkArgument(jobName as Boolean)
