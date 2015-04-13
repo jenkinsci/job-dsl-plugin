@@ -132,6 +132,9 @@ class BuildParametersContext implements Context {
                 }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'nodelabelparameter')
     void nodeParam(String parameterName, @DslContext(NodeParamContext) Closure nodeParamClosure = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')

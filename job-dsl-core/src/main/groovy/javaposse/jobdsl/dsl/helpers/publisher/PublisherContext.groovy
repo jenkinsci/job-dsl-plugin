@@ -117,6 +117,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     void archiveJunit(String glob, @DslContext(ArchiveJUnitContext) Closure junitClosure = null) {
         ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         ContextHelper.executeInContext(junitClosure, junitContext)
@@ -887,7 +890,7 @@ class PublisherContext implements Context {
     /**
      * Configures the FlexiblePublish plugin.
      *
-     * https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin
+     * @since 1.26
      */
     @RequiresPlugin(id = 'flexible-publish')
     void flexiblePublish(@DslContext(FlexiblePublisherContext) Closure flexiblePublishClosure) {
@@ -966,6 +969,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 's3')
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
         checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
@@ -1137,6 +1143,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Analysis Collector Publisher.
+     *
+     * @since 1.26
      */
     @RequiresPlugin(id = 'analysis-collector')
     void analysisCollector(@DslContext(AnalysisCollectorContext) Closure analysisCollectorClosure = null) {

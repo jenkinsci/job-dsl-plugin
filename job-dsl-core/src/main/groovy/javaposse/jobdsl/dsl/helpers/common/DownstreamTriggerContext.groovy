@@ -89,6 +89,9 @@ class DownstreamTriggerContext implements Context {
         this.sameNode = sameNode
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'nodelabelparameter')
     void nodeLabel(String paramName, String nodeLabel) {
         usingNodeLabel = true

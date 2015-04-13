@@ -305,6 +305,8 @@ abstract class Job extends Item {
 
     /**
      * Configures the Notification Plugin.
+     *
+     * @since 1.26
      */
     @RequiresPlugin(id = 'notification')
     void notifications(@DslContext(NotificationContext) Closure notificationClosure) {
@@ -329,6 +331,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineConfiguration(String stageName, String taskName = null) {
         if (stageName || taskName) {

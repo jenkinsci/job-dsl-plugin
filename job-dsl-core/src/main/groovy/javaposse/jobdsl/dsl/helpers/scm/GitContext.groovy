@@ -135,6 +135,9 @@ class GitContext implements Context {
         this.cloneTimeout = cloneTimeout
     }
 
+    /**
+     * @since 1.26
+     */
     void browser(@DslContext(GitBrowserContext) Closure gitBrowserClosure) {
         executeInContext(gitBrowserClosure, gitBrowserContext)
     }

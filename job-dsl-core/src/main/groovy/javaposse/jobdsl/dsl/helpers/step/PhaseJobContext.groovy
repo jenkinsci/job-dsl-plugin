@@ -93,6 +93,9 @@ class PhaseJobContext implements Context {
         paramTrigger.predefinedProps(map)
     }
 
+    /**
+     * @since 1.26
+     */
     void nodeLabel(String paramName, String nodeLabel)  {
         Preconditions.checkState(!this.nodeLabelParam, "nodeLabel parameter already set with ${this.nodeLabelParam}")
         this.nodeLabelParam = paramName

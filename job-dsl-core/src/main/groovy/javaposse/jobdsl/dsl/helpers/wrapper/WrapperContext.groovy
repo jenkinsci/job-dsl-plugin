@@ -193,6 +193,8 @@ class WrapperContext implements Context {
 
     /**
      * Runs build under XVNC.
+     *
+     * @since 1.26
      */
     @RequiresPlugin(id = 'xvnc')
     void xvnc(@DslContext(XvncContext) Closure xvncClosure = null) {
@@ -399,6 +401,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineVersion(String template, boolean setDisplayName = false) {
         wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
@@ -407,11 +412,17 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'mask-passwords')
     void maskPasswords() {
         wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'build-user-vars-plugin')
     void buildUserVars() {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
