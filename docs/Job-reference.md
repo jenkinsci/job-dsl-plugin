@@ -260,6 +260,7 @@ freeStyleJob(String name) { // since 1.30
                       Closure jabberClosure = null) // deprecated since 1.30
         publishRobotFrameworkReports(Closure closure = null) // since 1.21
         publishScp(String site, Closure scpClosure)
+        retryBuild(Closure naginatorClosure = null) // since 1.33
         rundeck(String jobId, Closure rundeckClosure = null) // since 1.24
         s3(String profile, Closure s3Closure) // since 1.26
         sonar(Closure sonarClosure = null) // since 1.31
@@ -5201,6 +5202,41 @@ job('example-2') {
 ```
 
 (since 1.26)
+
+### Retry Build After Failure
+
+```groovy
+job {
+    publishers {
+        retryBuild {
+            rerunIfUnstable(boolean rerun = true)    // defaults to false
+            retryLimit(int limit)                    // defaults to 0
+            progressiveDelay(int increment, int max)
+            fixedDelay(int delay)
+        }
+    }
+}
+```
+
+Allows to automatically reschedule a build after a failure. Requires version 1.15 or later of the
+[Naginator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Naginator+Plugin).
+
+The parameters for `progressiveDelay` and `fixedDelay` must be specified in seconds. By default a progressive delay with
+an increment of 5 minutes and a maximum of 3 hours is used.
+
+```groovy
+job('example') {
+    publishers {
+        retryBuild {
+            rerunIfUnstable()
+            retryLimit(3)
+            progressiveDelay(60, 600)
+        }
+    }
+}
+```
+
+(since 1.33)
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
