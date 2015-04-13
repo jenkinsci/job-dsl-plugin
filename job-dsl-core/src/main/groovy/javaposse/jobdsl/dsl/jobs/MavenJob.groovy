@@ -41,6 +41,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.19
+     */
     @Override
     void wrappers(@DslContext(MavenWrapperContext) Closure closure) {
         WrapperContext context = new MavenWrapperContext(jobManagement)

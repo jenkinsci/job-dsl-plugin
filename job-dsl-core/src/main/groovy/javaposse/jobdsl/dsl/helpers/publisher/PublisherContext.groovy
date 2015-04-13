@@ -623,6 +623,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Jenkins Text Finder plugin.
+     *
+     * @since 1.19
      */
     @RequiresPlugin(id = 'text-finder')
     void textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false,
@@ -640,6 +642,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Jenkins Post Build Task plugin.
+     *
+     * @since 1.19
      */
     @RequiresPlugin(id = 'postbuild-task')
     void postBuildTask(@DslContext(PostBuildTaskContext) Closure postBuildClosure) {
@@ -669,6 +673,8 @@ class PublisherContext implements Context {
      * Configures Aggregate Downstream Test Results. Pass no args or null for jobs (first arg) to automatically
      * aggregate downstream test results. Pass in comma-delimited list for first arg to manually choose jobs.
      * Second argument is optional and sets whether failed builds are included.
+     *
+     * @since 1.19
      */
     void aggregateDownstreamTestResults(String jobs = null, boolean includeFailedBuilds = false) {
         publisherNodes << NodeBuilder.newInstance().'hudson.tasks.test.AggregatedTestResultPublisher' {
@@ -693,6 +699,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures the Groovy Postbuild script plugin.
+     *
+     * @since 1.19
      */
     @RequiresPlugin(id = 'groovy-postbuild')
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
@@ -705,7 +713,7 @@ class PublisherContext implements Context {
     /**
      * Configures the Javadoc Plugin, used to archive Javadoc artifacts.
      *
-     * Uses the Jenkins Javadoc Plugin: https://wiki.jenkins-ci.org/display/JENKINS/Javadoc+Plugin
+     * @since 1.19
      */
     @RequiresPlugin(id = 'javadoc')
     void archiveJavadoc(@DslContext(JavadocContext) Closure javadocClosure = null) {

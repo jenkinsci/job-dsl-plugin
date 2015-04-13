@@ -437,6 +437,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.19
+     */
     @RequiresPlugin(id = 'prereq-buildstep')
     void prerequisite(String projectList = '', boolean warningOnlyBool = false) {
         NodeBuilder nodeBuilder = new NodeBuilder()

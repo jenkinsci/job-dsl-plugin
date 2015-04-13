@@ -463,6 +463,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.19
+     */
     void wrappers(@DslContext(WrapperContext) Closure closure) {
         WrapperContext context = new WrapperContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
