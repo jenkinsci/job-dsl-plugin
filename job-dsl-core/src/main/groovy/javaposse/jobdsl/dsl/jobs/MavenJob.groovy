@@ -41,6 +41,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.19
+     */
     @Override
     void wrappers(@DslContext(MavenWrapperContext) Closure closure) {
         WrapperContext context = new MavenWrapperContext(jobManagement)
@@ -151,6 +154,7 @@ class MavenJob extends Job {
      * Set to use isolated local Maven repositories.
      *
      * @param location the local repository to use for isolation
+     * @since 1.17
      */
     @Deprecated
     void localRepository(MavenContext.LocalRepositoryLocation location) {
@@ -176,6 +180,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     void preBuildSteps(@DslContext(StepContext) Closure preBuildClosure) {
         StepContext preBuildContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(preBuildClosure, preBuildContext)
@@ -187,6 +194,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     void postBuildSteps(@DslContext(StepContext) Closure postBuildClosure) {
         StepContext postBuildContext = new StepContext(jobManagement)
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
@@ -198,6 +208,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     void mavenInstallation(String name) {
         Preconditions.checkNotNull(name, 'name can not be null')
 
@@ -206,6 +219,9 @@ class MavenJob extends Job {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")

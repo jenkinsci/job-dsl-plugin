@@ -54,6 +54,8 @@ abstract class Job extends Item {
      * Renames jobs matching the regular expression (fullName) to the name of
      * this job before the configuration is updated.
      * This can be useful to keep the build history.
+     *
+     * @since 1.29
      */
     void previousNames(String regex) {
         this.previousNamesRegex = regex
@@ -105,6 +107,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'throttle-concurrents')
     void throttleConcurrentBuilds(@DslContext(ThrottleConcurrentBuildsContext) Closure throttleClosure) {
         ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
@@ -129,6 +134,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'lockable-resources')
     void lockableResources(String resources, @DslContext(LockableResourcesContext) Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()
@@ -201,9 +209,10 @@ abstract class Job extends Item {
     }
 
     /**
-     * Priority of this job. Requires the
-     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin">Priority Sorter Plugin</a>.
+     * Priority of this job.
      * Default value is 100.
+     *
+     * @since 1.15
      */
     @RequiresPlugin(id = 'PrioritySorter')
     void priority(int value) {
@@ -217,6 +226,7 @@ abstract class Job extends Item {
      * Adds a quiet period to the project.
      *
      * @param seconds number of seconds to wait
+     * @since 1.16
      */
     void quietPeriod(int seconds = 5) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -229,6 +239,7 @@ abstract class Job extends Item {
      * Sets the number of times the SCM checkout is retried on errors.
      *
      * @param times number of attempts
+     * @since 1.16
      */
     void checkoutRetryCount(int times = 3) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -241,6 +252,7 @@ abstract class Job extends Item {
      * Sets a display name for the project.
      *
      * @param displayName name to display
+     * @since 1.16
      */
     void displayName(String displayName) {
         Preconditions.checkNotNull(displayName, 'Display name must not be null.')
@@ -254,6 +266,7 @@ abstract class Job extends Item {
      * Configures a custom workspace for the project.
      *
      * @param workspacePath workspace path to use
+     * @since 1.16
      */
     void customWorkspace(String workspacePath) {
         Preconditions.checkNotNull(workspacePath, 'Workspace path must not be null')
@@ -265,6 +278,7 @@ abstract class Job extends Item {
 
     /**
      * Configures the job to block when upstream projects are building.
+     * @since 1.16
      */
     void blockOnUpstreamProjects() {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -274,6 +288,7 @@ abstract class Job extends Item {
 
     /**
      * Configures the job to block when downstream projects are building.
+     * @since 1.16
      */
     void blockOnDownstreamProjects() {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -283,6 +298,8 @@ abstract class Job extends Item {
 
     /**
      * Configures the keep Dependencies Flag which can be set in the Fingerprinting action.
+     *
+     * @since 1.17
      */
     void keepDependencies(boolean keep = true) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -293,6 +310,8 @@ abstract class Job extends Item {
 
     /**
      * Configures the 'Execute concurrent builds if necessary' flag.
+     *
+     * @since 1.21
      */
     void concurrentBuild(boolean allowConcurrentBuild = true) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -303,6 +322,8 @@ abstract class Job extends Item {
 
     /**
      * Configures the Notification Plugin.
+     *
+     * @since 1.26
      */
     @RequiresPlugin(id = 'notification')
     void notifications(@DslContext(NotificationContext) Closure notificationClosure) {
@@ -316,6 +337,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'batch-task')
     void batchTask(String name, String script) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -327,6 +351,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineConfiguration(String stageName, String taskName = null) {
         if (stageName || taskName) {
@@ -383,6 +410,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.15
+     */
     void parameters(@DslContext(BuildParametersContext) Closure closure) {
         BuildParametersContext context = new BuildParametersContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
@@ -445,6 +475,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.19
+     */
     void wrappers(@DslContext(WrapperContext) Closure closure) {
         WrapperContext context = new WrapperContext(jobManagement)
         ContextHelper.executeInContext(closure, context)

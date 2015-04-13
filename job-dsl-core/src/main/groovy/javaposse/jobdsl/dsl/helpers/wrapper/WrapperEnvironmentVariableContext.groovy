@@ -16,6 +16,9 @@ class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
         this.scriptFilePath = scriptFilePath
     }
 
+    /**
+     * @since 1.30
+     */
     void groovy(String script) {
         groovyScript = script
     }

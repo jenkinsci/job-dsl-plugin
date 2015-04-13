@@ -36,6 +36,7 @@ interface JobManagement {
      * @param ignoreExisting do not update existing view
      * @throws NameNotProvidedException if the viewName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
+     * @since 1.21
      */
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException
@@ -46,6 +47,7 @@ interface JobManagement {
      * @param configFile the config file to create or update
      * @param ignoreExisting do not update existing config files
      * @return the id of the created or updated config file
+     * @since 1.25
      */
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting)
 
@@ -59,18 +61,46 @@ interface JobManagement {
      * @param destination the new name of the job
      * @throws IOException if renaming failed
      * @throws IllegalArgumentException if there are multiple jobs matching the previousNames
+     * @since 1.29
      */
     void renameJobMatching(String previousNames, String destination) throws IOException
 
     /**
      * Queue a job to run. Useful for running jobs after they've been created.
+     *
+     * @since 1.16
      */
     void queueJob(String jobName) throws NameNotProvidedException
 
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     * @return content of the file
+     * @throws IOException if the file could not be read
+     * @since 1.16
+     */
     InputStream streamFileInWorkspace(String filePath) throws IOException
 
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     * @return content of the file
+     * @throws IOException if the file could not be read
+     * @since 1.16
+     */
     String readFileInWorkspace(String filePath) throws IOException
 
+    /**
+     * Reads a file from the workspace of a job.
+     *
+     * @param jobName the job from which to read a file
+     * @param filePath path of the file relative to the workspace root
+     * @return content of the file
+     * @throws IOException if the file could not be read
+     * @since 1.25
+     */
     String readFileInWorkspace(String jobName, String filePath) throws IOException
 
     /**
@@ -88,21 +118,27 @@ interface JobManagement {
      *
      * @param credentialsDescription the description of the credentials to lookup
      * @return id of Credentials or <code>null</code> if no credentials could be found
+     * @since 1.17
      */
     String getCredentialsId(String credentialsDescription)
 
     /**
      * Logs a deprecation warning for the calling method.
+     *
+     * @since 1.23
      */
     void logDeprecationWarning()
 
     /**
      * Logs a deprecation warning for the calling method with the given subject.
+     *
+     * @since 1.30
      */
     void logDeprecationWarning(String subject)
 
     /**
      * Logs a deprecation warning for the given subject and source position.
+     * @since 1.29
      */
     void logDeprecationWarning(String subject, String scriptName, int lineNumber)
 
@@ -128,6 +164,7 @@ interface JobManagement {
      * Return the hash of the vSphere cloud with the given name.
      * @param name name of the vSphere cloud
      * @return hash of the vSphere cloud or <code>null</code> if a cloud with the given name does not exist
+     * @since 1.25
      */
     Integer getVSphereCloudHash(String name)
 
@@ -138,6 +175,7 @@ interface JobManagement {
      * @param name name of the config file
      * @return the config ID of the config file or <code>null</code> if no config file with the given type and name can
      *         be found
+     * @since 1.25
      */
     String getConfigFileId(ConfigFileType type, String name)
 

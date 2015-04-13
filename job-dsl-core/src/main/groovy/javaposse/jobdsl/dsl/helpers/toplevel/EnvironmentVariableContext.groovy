@@ -17,22 +17,37 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
         this.contributorsContext = new EnvironmentVariableContributorsContext(jobManagement)
     }
 
+    /**
+     * @since 1.21
+     */
     void loadFilesFromMaster(boolean loadFilesFromMaster) {
         this.loadFilesFromMaster = loadFilesFromMaster
     }
 
+    /**
+     * @since 1.21
+     */
     void keepSystemVariables(boolean keepSystemVariables) {
         this.keepSystemVariables = keepSystemVariables
     }
 
+    /**
+     * @since 1.21
+     */
     void keepBuildVariables(boolean keepBuildVariables) {
         this.keepBuildVariables = keepBuildVariables
     }
 
+    /**
+     * @since 1.30
+     */
     void overrideBuildParameters(boolean overrideBuildParameters = true) {
         this.overrideBuildParameters = overrideBuildParameters
     }
 
+    /**
+     * @since 1.30
+     */
     void contributors(@DslContext(EnvironmentVariableContributorsContext) Closure contributorsClosure) {
         ContextHelper.executeInContext(contributorsClosure, contributorsContext)
     }

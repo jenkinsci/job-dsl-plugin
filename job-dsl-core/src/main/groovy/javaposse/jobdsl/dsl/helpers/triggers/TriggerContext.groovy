@@ -24,6 +24,7 @@ class TriggerContext implements Context {
      *
      * @param crontab crontab execution spec
      * @param contextClosure closure for configuring the context
+     * @since 1.16
      */
     @RequiresPlugin(id = 'urltrigger')
     void urlTrigger(String crontab = null, @DslContext(UrlTriggerContext) Closure contextClosure) {
@@ -108,6 +109,8 @@ class TriggerContext implements Context {
 
     /**
      * Trigger that runs jobs on push notifications from GitHub.
+     *
+     * @since 1.16
      */
     @RequiresPlugin(id = 'github')
     void githubPush() {
@@ -117,7 +120,9 @@ class TriggerContext implements Context {
     }
 
     /**
-     *  Configures the Jenkins GitHub pull request builder plugin.
+     * Configures the Jenkins GitHub pull request builder plugin.
+     *
+     * @since 1.22
      */
     @RequiresPlugin(id = 'ghprb')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {

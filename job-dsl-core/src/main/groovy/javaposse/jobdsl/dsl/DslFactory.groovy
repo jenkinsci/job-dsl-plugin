@@ -14,39 +14,87 @@ interface DslFactory extends ViewFactory {
     @Deprecated
     Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     FreeStyleJob job(String name)
 
+    /**
+     * @since 1.31
+     */
     FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     FreeStyleJob freeStyleJob(String name)
 
+    /**
+     * @since 1.31
+     */
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     BuildFlowJob buildFlowJob(String name)
 
+    /**
+     * @since 1.31
+     */
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     MatrixJob matrixJob(String name)
 
+    /**
+     * @since 1.31
+     */
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     MavenJob mavenJob(String name)
 
+    /**
+     * @since 1.31
+     */
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     MultiJob multiJob(String name)
 
+    /**
+     * @since 1.31
+     */
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     WorkflowJob workflowJob(String name)
 
+    /**
+     * @since 1.31
+     */
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
     @Deprecated
     Folder folder(@DslContext(Folder) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     Folder folder(String name)
 
+    /**
+     * @since 1.31
+     */
     Folder folder(String name, @DslContext(Folder) Closure closure)
 
     @Deprecated
@@ -55,12 +103,24 @@ interface DslFactory extends ViewFactory {
     @Deprecated
     ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     ConfigFile customConfigFile(String name)
 
+    /**
+     * @since 1.31
+     */
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
+    /**
+     * @since 1.30
+     */
     ConfigFile mavenSettingsConfigFile(String name)
 
+    /**
+     * @since 1.31
+     */
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**

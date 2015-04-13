@@ -54,6 +54,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'gradle')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
         GradleContext gradleContext = new GradleContext()
@@ -94,6 +97,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.16
+     */
     @RequiresPlugin(id = 'sbt')
     void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg = null, String jvmFlagsArg = null,
              String subdirPathArg = null, Closure configure = null) {
@@ -113,6 +119,9 @@ class StepContext implements Context {
         stepNodes << sbtNode
     }
 
+    /**
+     * @since 1.16
+     */
     void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure configure) {
         javaposse.jobdsl.dsl.helpers.step.DslContext context = new javaposse.jobdsl.dsl.helpers.step.DslContext()
         ContextHelper.executeInContext(configure, context)
@@ -127,6 +136,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.16
+     */
     void dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
         dsl {
             text(scriptText)
@@ -137,6 +149,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.16
+     */
     void dsl(Iterable<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
         dsl {
             external(externalScripts)
@@ -264,6 +279,9 @@ class StepContext implements Context {
         stepNodes << systemGroovyNode
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'maven-plugin')
     void maven(@DslContext(MavenContext) Closure closure) {
         MavenContext mavenContext = new MavenContext(jobManagement)
@@ -399,6 +417,9 @@ class StepContext implements Context {
         stepNodes << copyArtifactNode
     }
 
+    /**
+     * @since 1.29
+     */
     @RequiresPlugin(id = 'repository-connector')
     void resolveArtifacts(@DslContext(RepositoryConnectorContext) Closure repositoryConnectorClosure) {
         RepositoryConnectorContext context = new RepositoryConnectorContext()
@@ -416,6 +437,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.19
+     */
     @RequiresPlugin(id = 'prereq-buildstep')
     void prerequisite(String projectList = '', boolean warningOnlyBool = false) {
         stepNodes << new NodeBuilder().'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
@@ -425,6 +449,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'publish-over-ssh')
     void publishOverSsh(@DslContext(PublishOverSshContext) Closure publishOverSshClosure) {
         PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
@@ -501,6 +528,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
@@ -509,6 +539,9 @@ class StepContext implements Context {
         stepNodes << downstreamContext.createDownstreamNode(true)
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'conditional-buildstep')
     void conditionalSteps(@DslContext(ConditionalStepsContext) Closure conditionalStepsClosure) {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)
@@ -521,6 +554,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.21
+     */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(StepEnvironmentVariableContext) Closure envClosure) {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
@@ -531,6 +567,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.22
+     */
     @RequiresPlugin(id = 'Parameterized-Remote-Trigger')
     void remoteTrigger(String remoteJenkins, String jobName,
                        @DslContext(ParameterizedRemoteTriggerContext) Closure closure = null) {
@@ -574,6 +613,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'Exclusion')
     void criticalBlock(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement)
@@ -584,10 +626,16 @@ class StepContext implements Context {
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'()
     }
 
+    /**
+     * @since 1.25
+     */
     void rake(@DslContext(RakeContext) Closure rakeClosure = null) {
         rake(null, rakeClosure)
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'rake')
     void rake(String tasksArg, @DslContext(RakeContext) Closure rakeClosure = null) {
         RakeContext rakeContext = new RakeContext()
@@ -609,6 +657,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void vSpherePowerOff(String server, String vm) {
         vSphereBuildStep(server, 'PowerOff') {
             delegate.vm vm
@@ -617,6 +668,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void vSpherePowerOn(String server, String vm) {
         vSphereBuildStep(server, 'PowerOn') {
             delegate.vm vm
@@ -624,6 +678,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.25
+     */
     void vSphereRevertToSnapshot(String server, String vm, String snapshot) {
         vSphereBuildStep(server, 'RevertToSnapshot') {
             delegate.vm vm
@@ -644,6 +701,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'http_request')
     void httpRequest(String requestUrl, @DslContext(HttpRequestContext) Closure closure = null) {
         HttpRequestContext context = new HttpRequestContext()

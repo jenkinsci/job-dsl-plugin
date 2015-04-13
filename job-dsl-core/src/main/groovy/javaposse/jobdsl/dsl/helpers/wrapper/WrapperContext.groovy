@@ -39,6 +39,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'rbenv')
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
@@ -103,6 +106,7 @@ class WrapperContext implements Context {
      * Add a timeout to the build job.
      *
      * @param timeoutClosure optional closure for configuring the timeout
+     * @since 1.24
      */
     @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.12')
     void timeout(@DslContext(TimeoutContext) Closure timeoutClosure = null) {
@@ -185,6 +189,8 @@ class WrapperContext implements Context {
 
     /**
      * Runs build under XVNC.
+     *
+     * @since 1.26
      */
     @RequiresPlugin(id = 'xvnc')
     void xvnc(@DslContext(XvncContext) Closure xvncClosure = null) {
@@ -230,7 +236,8 @@ class WrapperContext implements Context {
      * Note that we do not check for validity of tool names.
      *
      * @param tools Tool names to import into the environment. They will be transformed
-     *   according to the rules used by the toolenv plugin.
+     *              according to the rules used by the toolenv plugin.
+     * @since 1.21
      */
     @RequiresPlugin(id = 'toolenv')
     void toolenv(String... tools) {
@@ -239,6 +246,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.21
+     */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(WrapperEnvironmentVariableContext) Closure envClosure) {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
@@ -250,7 +260,9 @@ class WrapperContext implements Context {
     }
 
     /**
-     * Injects global passwords into the job
+     * Injects global passwords into the job.
+     *
+     * @since 1.23
      */
     @RequiresPlugin(id = 'envinject')
     void injectPasswords() {
@@ -264,6 +276,7 @@ class WrapperContext implements Context {
      * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
      *
      * @param releaseClosure attributes and steps used by the plugin
+     * @since 1.22
      */
     @RequiresPlugin(id = 'release')
     void release(@DslContext(ReleaseContext) Closure releaseClosure) {
@@ -291,6 +304,9 @@ class WrapperContext implements Context {
         wrapperNodes << releaseNode
     }
 
+    /**
+     * @since 1.22
+     */
     @RequiresPlugin(id = 'ws-cleanup')
     void preBuildCleanup(@DslContext(PreBuildCleanupContext) Closure closure = null) {
         PreBuildCleanupContext context = new PreBuildCleanupContext()
@@ -306,7 +322,8 @@ class WrapperContext implements Context {
 
     /**
      * Configures the configuration for the Log File Size Checker build wrapper.
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Logfilesizechecker+Plugin
+     *
+     * @since 1.23
      */
     @RequiresPlugin(id = 'logfilesizechecker')
     void logSizeChecker(@DslContext(LogFileSizeCheckerContext) Closure closure = null) {
@@ -322,10 +339,9 @@ class WrapperContext implements Context {
 
     /**
      * Enables the "Build Name Setter Plugin" build wrapper.
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin
      *
-     * @param nameTemplate template defining the build name. Tokens expansion
-     *   mechanism is provided by the Token Macro Plugin.
+     * @param nameTemplate template defining the build name
+     * @since 1.24
      */
     @RequiresPlugin(id = 'build-name-setter')
     void buildName(String nameTemplate) {
@@ -336,6 +352,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'kpp-management-plugin')
     void keychains(@DslContext(KeychainsContext) Closure keychainsClosure) {
         KeychainsContext keychainsContext = new KeychainsContext()
@@ -348,6 +367,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'config-file-provider')
     void configFiles(@DslContext(ConfigFilesContext) Closure configFilesClosure) {
         ConfigFilesContext configFilesContext = new ConfigFilesContext(jobManagement)
@@ -366,10 +388,16 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     void exclusionResources(String... resourceNames) {
         exclusionResources(resourceNames.toList())
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'Exclusion')
     void exclusionResources(Iterable<String> resourceNames) {
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.IdAllocator' {
@@ -383,6 +411,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineVersion(String template, boolean setDisplayName = false) {
         wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
@@ -391,16 +422,25 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'mask-passwords')
     void maskPasswords() {
         wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'build-user-vars-plugin')
     void buildUserVars() {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'nodejs')
     void nodejs(String installation) {
         wrapperNodes << new NodeBuilder().'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper' {
@@ -408,6 +448,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.27
+     */
     @RequiresPlugin(id = 'golang')
     void golang(String version) {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.golang.GolangBuildWrapper' {
@@ -415,6 +458,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'credentials-binding')
     void credentialsBinding(@DslContext(CredentialsBindingContext) Closure closure) {
         CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)
@@ -425,6 +471,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'custom-tools-plugin')
     void customTools(Iterable<String> tools, @DslContext(CustomToolsContext) Closure closure = null) {
         Preconditions.checkNotNull(tools, 'Please specify some tool names')

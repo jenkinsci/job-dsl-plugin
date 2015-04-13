@@ -78,6 +78,7 @@ class MavenContext implements Context {
      * Specifies the managed Maven settings to be used.
      *
      * @param settings name of the managed Maven settings
+     * @since 1.25
      */
     void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
@@ -90,10 +91,16 @@ class MavenContext implements Context {
         this.configureBlock = closure
     }
 
+    /**
+     * @since 1.21
+     */
     void properties(Map props) {
         properties = properties + props
     }
 
+    /**
+     * @since 1.21
+     */
     void property(String key, String value) {
         properties = properties + [(key): value]
     }

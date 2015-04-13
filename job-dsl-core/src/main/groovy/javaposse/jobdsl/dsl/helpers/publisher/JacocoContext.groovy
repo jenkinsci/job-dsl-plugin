@@ -90,6 +90,9 @@ class JacocoContext implements Context {
         this.maximumClassCoverage = maximumClassCoverage
     }
 
+    /**
+     * @since 1.22
+     */
     void changeBuildStatus(boolean change = true) {
         this.changeBuildStatus = change
     }

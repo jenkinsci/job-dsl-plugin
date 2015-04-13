@@ -109,6 +109,9 @@ class BuildParametersContext implements Context {
         buildParameterNodes[parameterName] = definitionNode
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'nodelabelparameter')
     void labelParam(String parameterName, @DslContext(LabelParamContext) Closure labelParamClosure = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
@@ -129,6 +132,9 @@ class BuildParametersContext implements Context {
                 }
     }
 
+    /**
+     * @since 1.26
+     */
     @RequiresPlugin(id = 'nodelabelparameter')
     void nodeParam(String parameterName, @DslContext(NodeParamContext) Closure nodeParamClosure = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')

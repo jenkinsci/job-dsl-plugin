@@ -20,6 +20,9 @@ class DslContext implements Context {
         externalScripts.addAll(dslScripts)
     }
 
+    /**
+     * @since 1.29
+     */
     void external(Iterable<String> dslScripts) {
         dslScripts.each { externalScripts << it }
     }
@@ -36,6 +39,9 @@ class DslContext implements Context {
         this.removedJobAction = action
     }
 
+    /**
+     * @since 1.29
+     */
     void additionalClasspath(String classpath) {
         this.additionalClasspath = classpath
     }

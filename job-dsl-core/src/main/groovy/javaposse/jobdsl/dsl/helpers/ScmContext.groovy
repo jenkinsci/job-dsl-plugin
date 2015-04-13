@@ -68,6 +68,9 @@ class ScmContext implements Context {
         scmNodes << scmNode
     }
 
+    /**
+     * @since 1.20
+     */
     @RequiresPlugin(id = 'git')
     void git(@DslContext(GitContext) Closure gitClosure) {
         validateMulti()
@@ -170,10 +173,16 @@ class ScmContext implements Context {
         }
     }
 
+    /**
+     * @since 1.15
+     */
     void github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
         github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
 
+    /**
+     * @since 1.15
+     */
     void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
                Closure closure = null) {
         git {
@@ -205,6 +214,9 @@ class ScmContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'subversion')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
         validateMulti()
@@ -287,6 +299,9 @@ class ScmContext implements Context {
         scmNodes << p4Node
     }
 
+    /**
+     * @since 1.16
+     */
     @RequiresPlugin(id = 'clone-workspace-scm')
     void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
         validateMulti()
@@ -302,7 +317,7 @@ class ScmContext implements Context {
     }
 
     /**
-     * See http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin
+     * @since 1.24
      */
     @RequiresPlugin(id = 'clearcase')
     void baseClearCase(@DslContext(ClearCaseContext) Closure closure = null) {
@@ -342,6 +357,9 @@ class ScmContext implements Context {
         }
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'teamconcert')
     void rtc(@DslContext(RTCContext) Closure closure) {
         validateMulti()

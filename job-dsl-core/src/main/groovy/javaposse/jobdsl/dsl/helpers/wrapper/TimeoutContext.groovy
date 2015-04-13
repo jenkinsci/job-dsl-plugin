@@ -19,6 +19,9 @@ class TimeoutContext implements Context {
         absolute()
     }
 
+    /**
+     * @since 1.24
+     */
     void elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60) {
         setStrategy('Elastic') {
             timeoutPercentage(percentage)
@@ -27,6 +30,9 @@ class TimeoutContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.13')
     void noActivity(int seconds = 180) {
         setStrategy('NoActivity') {
@@ -34,16 +40,25 @@ class TimeoutContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     void absolute(int minutes = 3) {
         setStrategy('Absolute') {
             timeoutMinutes(minutes)
         }
     }
 
+    /**
+     * @since 1.24
+     */
     void likelyStuck() {
         setStrategy('LikelyStuck')
     }
 
+    /**
+     * @since 1.24
+     */
     void failBuild() {
         addOperation('Fail')
     }
@@ -59,11 +74,17 @@ class TimeoutContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.13')
     void abortBuild() {
         addOperation('Abort')
     }
 
+    /**
+     * @since 1.24
+     */
     void writeDescription(String description) {
         addOperation('WriteDescription') {
             delegate.description(description)

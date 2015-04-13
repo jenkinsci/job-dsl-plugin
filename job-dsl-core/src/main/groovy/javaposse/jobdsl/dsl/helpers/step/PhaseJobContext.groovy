@@ -93,6 +93,9 @@ class PhaseJobContext implements Context {
         paramTrigger.predefinedProps(map)
     }
 
+    /**
+     * @since 1.26
+     */
     void nodeLabel(String paramName, String nodeLabel)  {
         Preconditions.checkState(!this.nodeLabelParam, "nodeLabel parameter already set with ${this.nodeLabelParam}")
         this.nodeLabelParam = paramName
@@ -108,11 +111,17 @@ class PhaseJobContext implements Context {
                 gitRevision != null || !props.isEmpty() || nodeLabelParam
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void disableJob(boolean disableJob = true) {
         this.disableJob = disableJob
     }
 
+    /**
+     * @since 1.25
+     */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void killPhaseCondition(String killPhaseCondition) {
         Preconditions.checkArgument(
@@ -123,6 +132,9 @@ class PhaseJobContext implements Context {
         this.killPhaseCondition = killPhaseCondition
     }
 
+    /**
+     * @since 1.30
+     */
     void configure(Closure configureClosure) {
         this.configureClosure = configureClosure
     }

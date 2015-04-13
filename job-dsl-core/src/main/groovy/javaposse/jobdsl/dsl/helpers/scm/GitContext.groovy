@@ -59,6 +59,9 @@ class GitContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     void strategy(@DslContext(StrategyContext) Closure strategyClosure) {
         executeInContext(strategyClosure, strategyContext)
     }
@@ -112,6 +115,9 @@ class GitContext implements Context {
         this.pruneBranches = pruneBranches
     }
 
+    /**
+     * @since 1.25
+     */
     void localBranch(String localBranch) {
         this.localBranch = localBranch
     }
@@ -124,11 +130,17 @@ class GitContext implements Context {
         this.reference = reference
     }
 
+    /**
+     * @since 1.28
+     */
     @RequiresPlugin(id = 'git', minimumVersion = '2.0.0')
     void cloneTimeout(int cloneTimeout) {
         this.cloneTimeout = cloneTimeout
     }
 
+    /**
+     * @since 1.26
+     */
     void browser(@DslContext(GitBrowserContext) Closure gitBrowserClosure) {
         executeInContext(gitBrowserClosure, gitBrowserContext)
     }
