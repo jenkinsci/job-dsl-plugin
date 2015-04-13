@@ -98,6 +98,8 @@ interface JobManagement {
 
     /**
      * Logs a deprecation warning for the calling method with the given subject.
+     *
+     * @since 1.30
      */
     void logDeprecationWarning(String subject)
 

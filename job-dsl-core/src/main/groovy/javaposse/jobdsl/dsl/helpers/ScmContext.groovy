@@ -206,6 +206,9 @@ class ScmContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'subversion')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
         validateMulti()

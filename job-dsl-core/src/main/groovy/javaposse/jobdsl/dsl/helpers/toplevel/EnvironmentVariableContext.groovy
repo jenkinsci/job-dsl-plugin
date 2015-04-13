@@ -29,10 +29,16 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
         this.keepBuildVariables = keepBuildVariables
     }
 
+    /**
+     * @since 1.30
+     */
     void overrideBuildParameters(boolean overrideBuildParameters = true) {
         this.overrideBuildParameters = overrideBuildParameters
     }
 
+    /**
+     * @since 1.30
+     */
     void contributors(@DslContext(EnvironmentVariableContributorsContext) Closure contributorsClosure) {
         ContextHelper.executeInContext(contributorsClosure, contributorsContext)
     }

@@ -59,6 +59,9 @@ class GitContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     void strategy(@DslContext(StrategyContext) Closure strategyClosure) {
         executeInContext(strategyClosure, strategyContext)
     }

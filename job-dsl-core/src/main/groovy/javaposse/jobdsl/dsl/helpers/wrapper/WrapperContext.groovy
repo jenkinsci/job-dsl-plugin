@@ -435,6 +435,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'custom-tools-plugin')
     void customTools(Iterable<String> tools, @DslContext(CustomToolsContext) Closure closure = null) {
         Preconditions.checkNotNull(tools, 'Please specify some tool names')

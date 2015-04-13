@@ -123,6 +123,9 @@ class PhaseJobContext implements Context {
         this.killPhaseCondition = killPhaseCondition
     }
 
+    /**
+     * @since 1.30
+     */
     void configure(Closure configureClosure) {
         this.configureClosure = configureClosure
     }

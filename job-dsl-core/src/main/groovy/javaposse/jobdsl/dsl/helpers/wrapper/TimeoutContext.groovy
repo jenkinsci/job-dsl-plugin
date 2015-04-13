@@ -59,6 +59,9 @@ class TimeoutContext implements Context {
         }
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.13')
     void abortBuild() {
         addOperation('Abort')

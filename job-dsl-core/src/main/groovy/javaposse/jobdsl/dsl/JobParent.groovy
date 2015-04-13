@@ -24,39 +24,60 @@ abstract class JobParent extends Script implements DslFactory {
     Set<ConfigFile> referencedConfigFiles = Sets.newLinkedHashSet()
     List<String> queueToBuild = []
 
+    /**
+     * @since 1.30
+     */
     @Override
     FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure = null) {
         freeStyleJob(name, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure = null) {
         processJob(name, FreeStyleJob, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
         processJob(name, BuildFlowJob, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure = null) {
         processJob(name, MatrixJob, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure = null) {
         processJob(name, MavenJob, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
         processJob(name, MultiJob, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
@@ -90,35 +111,53 @@ abstract class JobParent extends Script implements DslFactory {
         job
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     ListView listView(String name, @DslContext(ListView) Closure closure = null) {
         processView(name, ListView, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'nested-view')
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure = null) {
         processView(name, NestedView, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         processView(name, DeliveryPipelineView, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
@@ -172,6 +211,9 @@ abstract class JobParent extends Script implements DslFactory {
         folder
     }
 
+    /**
+     * @since 1.30
+     */
     @Override
     @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
@@ -186,11 +228,17 @@ abstract class JobParent extends Script implements DslFactory {
         folder
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'config-file-provider')
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.Custom, closure)
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'config-file-provider')
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.MavenSettings, closure)

@@ -27,6 +27,9 @@ class TestDataPublishersContext implements Context {
         testDataPublishers << new NodeBuilder().'de.esailors.jenkins.teststability.StabilityTestDataPublisher'()
     }
 
+    /**
+     * @since 1.30
+     */
     @RequiresPlugin(id = 'flaky-test-handler', minimumVersion = '1.0.0')
     void publishFlakyTestsReport() {
         testDataPublishers << new NodeBuilder().
