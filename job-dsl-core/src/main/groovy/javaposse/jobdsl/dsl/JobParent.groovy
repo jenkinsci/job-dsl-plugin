@@ -186,6 +186,9 @@ abstract class JobParent extends Script implements DslFactory {
         view
     }
 
+    /**
+     * @since 1.21
+     */
     @Override
     @Deprecated
     View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {

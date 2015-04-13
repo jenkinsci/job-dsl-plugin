@@ -17,14 +17,23 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
         this.contributorsContext = new EnvironmentVariableContributorsContext(jobManagement)
     }
 
+    /**
+     * @since 1.21
+     */
     void loadFilesFromMaster(boolean loadFilesFromMaster) {
         this.loadFilesFromMaster = loadFilesFromMaster
     }
 
+    /**
+     * @since 1.21
+     */
     void keepSystemVariables(boolean keepSystemVariables) {
         this.keepSystemVariables = keepSystemVariables
     }
 
+    /**
+     * @since 1.21
+     */
     void keepBuildVariables(boolean keepBuildVariables) {
         this.keepBuildVariables = keepBuildVariables
     }

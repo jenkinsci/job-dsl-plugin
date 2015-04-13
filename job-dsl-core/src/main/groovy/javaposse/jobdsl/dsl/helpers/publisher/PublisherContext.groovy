@@ -761,6 +761,8 @@ class PublisherContext implements Context {
      * Configures Jenkins job to publish Robot Framework reports.
      * By default the following values are applied. If an instance of a
      * closure is provided, the values from the closure will take effect.
+     *
+     * @since 1.21
      */
     @RequiresPlugin(id = 'robot')
     void publishRobotFrameworkReports(@DslContext(RobotFrameworkContext) Closure robotClosure = null) {
@@ -783,6 +785,8 @@ class PublisherContext implements Context {
 
     /**
      * Configures a Build Pipeline Trigger.
+     *
+     * @since 1.21
      */
     @RequiresPlugin(id = 'build-pipeline-plugin')
     void buildPipelineTrigger(String downstreamProjectNames, @DslContext(BuildPipelineContext) Closure closure = null) {
@@ -798,6 +802,8 @@ class PublisherContext implements Context {
 
     /**
      * Create commit status notifications on the commits based on the outcome of the build.
+     *
+     * @since 1.21
      */
     @RequiresPlugin(id = 'github')
     void githubCommitNotifier() {

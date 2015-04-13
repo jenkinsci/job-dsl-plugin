@@ -298,6 +298,8 @@ abstract class Job extends Item {
 
     /**
      * Configures the 'Execute concurrent builds if necessary' flag.
+     *
+     * @since 1.21
      */
     void concurrentBuild(boolean allowConcurrentBuild = true) {
         withXmlActions << WithXmlAction.create { Node project ->

@@ -91,10 +91,16 @@ class MavenContext implements Context {
         this.configureBlock = closure
     }
 
+    /**
+     * @since 1.21
+     */
     void properties(Map props) {
         properties = properties + props
     }
 
+    /**
+     * @since 1.21
+     */
     void property(String key, String value) {
         properties = properties + [(key): value]
     }

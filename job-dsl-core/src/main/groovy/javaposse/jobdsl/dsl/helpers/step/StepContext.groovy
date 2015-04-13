@@ -545,6 +545,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.21
+     */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(StepEnvironmentVariableContext) Closure envClosure) {
         StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()

@@ -241,7 +241,8 @@ class WrapperContext implements Context {
      * Note that we do not check for validity of tool names.
      *
      * @param tools Tool names to import into the environment. They will be transformed
-     *   according to the rules used by the toolenv plugin.
+     *              according to the rules used by the toolenv plugin.
+     * @since 1.21
      */
     @RequiresPlugin(id = 'toolenv')
     void toolenv(String... tools) {
@@ -251,6 +252,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.21
+     */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(WrapperEnvironmentVariableContext) Closure envClosure) {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
