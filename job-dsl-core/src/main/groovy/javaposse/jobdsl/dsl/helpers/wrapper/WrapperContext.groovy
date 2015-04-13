@@ -107,6 +107,7 @@ class WrapperContext implements Context {
      * Add a timeout to the build job.
      *
      * @param timeoutClosure optional closure for configuring the timeout
+     * @since 1.24
      */
     @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.12')
     void timeout(@DslContext(TimeoutContext) Closure timeoutClosure = null) {
@@ -337,10 +338,9 @@ class WrapperContext implements Context {
 
     /**
      * Enables the "Build Name Setter Plugin" build wrapper.
-     * See https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin
      *
-     * @param nameTemplate template defining the build name. Tokens expansion
-     *   mechanism is provided by the Token Macro Plugin.
+     * @param nameTemplate template defining the build name
+     * @since 1.24
      */
     @RequiresPlugin(id = 'build-name-setter')
     void buildName(String nameTemplate) {
@@ -351,6 +351,9 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'kpp-management-plugin')
     void keychains(@DslContext(KeychainsContext) Closure keychainsClosure) {
         KeychainsContext keychainsContext = new KeychainsContext()
@@ -384,10 +387,16 @@ class WrapperContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     void exclusionResources(String... resourceNames) {
         exclusionResources(resourceNames.toList())
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'Exclusion')
     void exclusionResources(Iterable<String> resourceNames) {
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.IdAllocator' {

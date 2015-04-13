@@ -308,7 +308,7 @@ class ScmContext implements Context {
     }
 
     /**
-     * See http://wiki.jenkins-ci.org/display/JENKINS/ClearCase+Plugin
+     * @since 1.24
      */
     @RequiresPlugin(id = 'clearcase')
     void baseClearCase(@DslContext(ClearCaseContext) Closure closure = null) {

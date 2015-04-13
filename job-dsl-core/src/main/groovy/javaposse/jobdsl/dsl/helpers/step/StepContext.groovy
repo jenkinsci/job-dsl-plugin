@@ -600,6 +600,9 @@ class StepContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'Exclusion')
     void criticalBlock(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement)

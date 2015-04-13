@@ -323,6 +323,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'batch-task')
     void batchTask(String name, String script) {
         withXmlActions << WithXmlAction.create { Node project ->

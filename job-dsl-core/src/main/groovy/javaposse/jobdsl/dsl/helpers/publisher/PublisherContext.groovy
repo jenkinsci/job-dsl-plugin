@@ -131,6 +131,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'xunit')
     void archiveXUnit(@DslContext(ArchiveXUnitContext) Closure xUnitClosure) {
         ArchiveXUnitContext xUnitContext = new ArchiveXUnitContext()
@@ -952,6 +955,9 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * @since 1.24
+     */
     @RequiresPlugin(id = 'rundeck')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(jobIdentifier), 'jobIdentifier cannot be null or empty')
