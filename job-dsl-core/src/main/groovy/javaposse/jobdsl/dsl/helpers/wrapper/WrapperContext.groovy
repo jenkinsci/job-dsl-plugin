@@ -3,19 +3,18 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 
-class WrapperContext implements Context {
+class WrapperContext extends AbstractContext {
     List<Node> wrapperNodes = []
-    JobManagement jobManagement
 
     WrapperContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     @RequiresPlugin(id = 'timestamper')
@@ -251,7 +250,7 @@ class WrapperContext implements Context {
      */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(WrapperEnvironmentVariableContext) Closure envClosure) {
-        WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext()
+        WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext(jobManagement)
         ContextHelper.executeInContext(envClosure, envContext)
 
         wrapperNodes << new NodeBuilder().'EnvInjectBuildWrapper' {

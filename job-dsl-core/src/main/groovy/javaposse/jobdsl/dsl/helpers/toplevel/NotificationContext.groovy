@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
@@ -9,15 +9,14 @@ import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class NotificationContext implements Context {
+class NotificationContext extends AbstractContext {
     private static final List<String> PROTOCOLS = ['UDP', 'TCP', 'HTTP']
     private static final List<String> FORMATS = ['JSON', 'XML']
 
-    private final JobManagement jobManagement
     final List<Node> endpoints = []
 
     NotificationContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void endpoint(String url, String protocol = 'HTTP', String format = 'JSON') {

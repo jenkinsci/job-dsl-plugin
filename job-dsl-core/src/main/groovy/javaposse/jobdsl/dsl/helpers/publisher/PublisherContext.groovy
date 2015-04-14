@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
@@ -16,13 +16,11 @@ import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
-class PublisherContext implements Context {
-    protected final JobManagement jobManagement
-
+class PublisherContext extends AbstractContext {
     List<Node> publisherNodes = []
 
     PublisherContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {

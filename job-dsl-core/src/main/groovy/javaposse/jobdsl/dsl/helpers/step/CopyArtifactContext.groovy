@@ -1,12 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class CopyArtifactContext implements Context {
-    private final JobManagement jobManagement
+class CopyArtifactContext extends AbstractContext {
     final List<String> includePatterns = []
     final List<String> excludePatterns = []
     String targetDirectory
@@ -16,7 +15,7 @@ class CopyArtifactContext implements Context {
     final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext()
 
     CopyArtifactContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void includePatterns(String... includePatterns) {

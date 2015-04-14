@@ -1,11 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class HtmlReportTargetContext implements Context {
-    private final JobManagement jobManagement
+class HtmlReportTargetContext extends AbstractContext {
     final String reportDir
 
     String reportName = ''
@@ -14,7 +13,7 @@ class HtmlReportTargetContext implements Context {
     boolean allowMissing
 
     HtmlReportTargetContext(JobManagement jobManagement, String reportDir) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
         this.reportDir = reportDir
     }
 

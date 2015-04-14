@@ -1,17 +1,16 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class SvnLocationContext implements Context {
-    private final JobManagement jobManagement
+class SvnLocationContext extends AbstractContext {
     String directory = '.'
     String credentials
     SvnDepth depth = SvnDepth.INFINITY
 
     SvnLocationContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void directory(String directory) {

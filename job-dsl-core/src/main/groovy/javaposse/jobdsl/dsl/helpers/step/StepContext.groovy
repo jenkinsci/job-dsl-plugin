@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -13,12 +14,11 @@ import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
 
-class StepContext implements Context {
+class StepContext extends AbstractContext {
     final List<Node> stepNodes = []
-    protected final JobManagement jobManagement
 
     StepContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void shell(String commandStr) {
@@ -559,7 +559,7 @@ class StepContext implements Context {
      */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(StepEnvironmentVariableContext) Closure envClosure) {
-        StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext()
+        StepEnvironmentVariableContext envContext = new StepEnvironmentVariableContext(jobManagement)
         ContextHelper.executeInContext(envClosure, envContext)
 
         stepNodes << new NodeBuilder().'EnvInjectBuilder' {

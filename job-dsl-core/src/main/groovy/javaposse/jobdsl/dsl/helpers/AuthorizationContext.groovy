@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Strings
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -9,13 +9,12 @@ import static com.google.common.base.Preconditions.checkArgument
 /**
  * Builds up perms in a closure. So that it be used to build a withXml block
  */
-class AuthorizationContext implements Context {
+class AuthorizationContext extends AbstractContext {
     private final String authorizationMatrixPropertyClassName
-    protected final JobManagement jobManagement
     Set<String> permissions = new LinkedHashSet<String>()
 
     AuthorizationContext(JobManagement jobManagement, String authorizationMatrixPropertyClassName) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
         this.authorizationMatrixPropertyClassName = authorizationMatrixPropertyClassName
     }
 

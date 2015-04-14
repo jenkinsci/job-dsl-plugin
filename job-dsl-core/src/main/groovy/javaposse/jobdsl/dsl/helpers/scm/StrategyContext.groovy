@@ -1,16 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class StrategyContext implements Context {
-    private final JobManagement jobManagement
-
+class StrategyContext extends AbstractContext {
     Node buildChooser
 
     StrategyContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     @RequiresPlugin(id = 'gerrit-trigger', minimumVersion = '2.0')

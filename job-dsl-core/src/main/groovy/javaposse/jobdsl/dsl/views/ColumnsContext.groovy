@@ -1,15 +1,14 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class ColumnsContext implements Context {
-    private final JobManagement jobManagement
+class ColumnsContext extends AbstractContext {
     List<Node> columnNodes = []
 
     ColumnsContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
+        super(jobManagement)
     }
 
     void status() {

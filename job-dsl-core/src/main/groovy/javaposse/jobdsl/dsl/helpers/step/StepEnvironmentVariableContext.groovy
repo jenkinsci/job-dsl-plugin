@@ -1,10 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
 
-class StepEnvironmentVariableContext implements Context {
+class StepEnvironmentVariableContext extends AbstractContext {
     List<String> props = []
     String propertiesFilePath = ''
+
+    StepEnvironmentVariableContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     void env(Object key, Object value) {
         props << "${key}=${value}"

@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -18,18 +18,17 @@ import static com.google.common.base.Preconditions.checkState
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
-class ScmContext implements Context {
+class ScmContext extends AbstractContext {
     private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
 
     private final boolean multiEnabled
     final List<Node> scmNodes = []
     private final List<WithXmlAction> withXmlActions
-    private final JobManagement jobManagement
 
     ScmContext(boolean multiEnabled, List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
+        super(jobManagement)
         this.multiEnabled = multiEnabled
         this.withXmlActions = withXmlActions
-        this.jobManagement = jobManagement
     }
 
     /**
