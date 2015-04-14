@@ -2154,7 +2154,7 @@ job('example') {
 
 ### Maven Release
 
-```groovy {
+```groovy
 job(type: Maven) {
     wrappers {
         mavenRelease {
