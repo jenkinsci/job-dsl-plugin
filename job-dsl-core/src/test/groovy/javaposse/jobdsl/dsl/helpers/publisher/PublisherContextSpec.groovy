@@ -3974,4 +3974,39 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('naginator', '1.15')
     }
+
+    def 'empty call pullRequest publisher'() {
+        when:
+        context.pullRequest()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        Node pullRequestPublisher = context.publisherNodes[0]
+        pullRequestPublisher.name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
+        pullRequestPublisher.mergeComment[0].value() == ''
+        pullRequestPublisher.onlyTriggerPhrase[0].value() == false
+        pullRequestPublisher.onlyAdminsMerge[0].value() == false
+        pullRequestPublisher.disallowOwnCode[0].value() == false
+    }
+
+    def 'call pullRequest publisher whit args'() {
+        when:
+        context.pullRequest {
+            mergeComment  'Test comment'
+            onlyTriggerPhrase true
+            onlyAdminsMerge true
+            disallowMerginOwnCode true
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        Node pullRequestPublisher = context.publisherNodes[0]
+        pullRequestPublisher.name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
+        pullRequestPublisher.mergeComment[0].value() == 'Test comment'
+        pullRequestPublisher.onlyTriggerPhrase[0].value() == true
+        pullRequestPublisher.onlyAdminsMerge[0].value() == true
+        pullRequestPublisher.disallowOwnCode[0].value() == true
+    }
 }

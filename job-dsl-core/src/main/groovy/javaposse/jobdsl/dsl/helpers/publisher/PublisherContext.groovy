@@ -1304,6 +1304,25 @@ class PublisherContext implements Context {
         }
     }
 
+    /**
+     * Configures the Jenkins GitHub pull request builder plugin to perform an automatic request after a succeful
+     * build.
+     *
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'ghprb')
+    void pullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure) {
+        PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext(jobManagement)
+        ContextHelper.executeInContext(contextClosure, pullRequestPublisherContext)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge' {
+            onlyAdminsMerge pullRequestPublisherContext.onlyAdminsMerge
+            disallowOwnCode pullRequestPublisherContext.disallowMerginOwnCode
+            onlyTriggerPhrase pullRequestPublisherContext.onlyTriggerPhrase
+            mergeComment pullRequestPublisherContext.mergeComment()
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisPattern(def nodeBuilder, String pattern) {
         nodeBuilder.pattern(pattern)
@@ -1314,4 +1333,5 @@ class PublisherContext implements Context {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }
+
 }
