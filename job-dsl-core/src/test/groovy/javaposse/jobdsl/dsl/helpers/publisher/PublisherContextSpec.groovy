@@ -3975,38 +3975,38 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('naginator', '1.15')
     }
 
-    def 'empty call pullRequest publisher'() {
+    def 'mergePullRequest with no options'() {
         when:
-        context.pullRequest()
+        context.mergePullRequest()
 
         then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
-        Node pullRequestPublisher = context.publisherNodes[0]
-        pullRequestPublisher.name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
-        pullRequestPublisher.mergeComment[0].value() == ''
-        pullRequestPublisher.onlyTriggerPhrase[0].value() == false
-        pullRequestPublisher.onlyAdminsMerge[0].value() == false
-        pullRequestPublisher.disallowOwnCode[0].value() == false
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
+            children().size() == 4
+            mergeComment[0].value() == ''
+            onlyTriggerPhrase[0].value() == false
+            onlyAdminsMerge[0].value() == false
+            disallowOwnCode[0].value() == false
+        }
     }
 
-    def 'call pullRequest publisher whit args'() {
+    def 'mergePullRequest with all options'() {
         when:
-        context.pullRequest {
-            mergeComment  'Test comment'
-            onlyTriggerPhrase true
-            onlyAdminsMerge true
-            disallowMerginOwnCode true
+        context.mergePullRequest {
+            mergeComment('Test comment')
+            onlyTriggerPhrase()
+            onlyAdminsMerge()
+            disallowOwnCode()
         }
 
         then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
-        Node pullRequestPublisher = context.publisherNodes[0]
-        pullRequestPublisher.name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
-        pullRequestPublisher.mergeComment[0].value() == 'Test comment'
-        pullRequestPublisher.onlyTriggerPhrase[0].value() == true
-        pullRequestPublisher.onlyAdminsMerge[0].value() == true
-        pullRequestPublisher.disallowOwnCode[0].value() == true
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
+            children().size() == 4
+            mergeComment[0].value() == 'Test comment'
+            onlyTriggerPhrase[0].value() == true
+            onlyAdminsMerge[0].value() == true
+            disallowOwnCode[0].value() == true
+        }
     }
 }

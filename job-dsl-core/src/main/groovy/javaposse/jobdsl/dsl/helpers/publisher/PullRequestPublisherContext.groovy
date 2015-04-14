@@ -1,54 +1,26 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
-import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class PullRequestPublisherContext implements Context {
-    private final JobManagement jobManagement
-
     String mergeComment
     boolean onlyTriggerPhrase
     boolean onlyAdminsMerge
-    boolean disallowMerginOwnCode
+    boolean disallowOwnCode
 
-    PullRequestPublisherContext(JobManagement jobManagement) {
-        this.jobManagement = jobManagement
-    }
-
-    String mergeComment() {
-        mergeComment != null ? mergeComment : ''
-    }
-
-    /**
-     * @since 1.33
-     */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
     void mergeComment(String mergeComment) {
         this.mergeComment = mergeComment
     }
 
-    /**
-     * @since 1.33
-     */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
-    void onlyTriggerPhrase(boolean onlyTriggerPhrase) {
+    void onlyTriggerPhrase(boolean onlyTriggerPhrase = true) {
         this.onlyTriggerPhrase = onlyTriggerPhrase
     }
 
-    /**
-     * @since 1.33
-     */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
-    void onlyAdminsMerge(boolean onlyAdminsMerge) {
+    void onlyAdminsMerge(boolean onlyAdminsMerge = true) {
         this.onlyAdminsMerge = onlyAdminsMerge
     }
 
-    /**
-     * @since 1.33
-     */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
-    void disallowMerginOwnCode(boolean disallowMerginOwnCode) {
-        this.disallowMerginOwnCode = disallowMerginOwnCode
+    void disallowOwnCode(boolean disallowOwnCode = true) {
+        this.disallowOwnCode = disallowOwnCode
     }
 }

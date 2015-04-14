@@ -238,6 +238,7 @@ freeStyleJob(String name) { // since 1.30
         mailer(String recipients, Boolean dontNotifyEveryUnstableBuild = false,
                Boolean sendToIndividuals = false)
         mavenDeploymentLinker(String regex) // since 1.23
+        mergePullRequest(Closure pullRequestClosure = null) // since 1.33
         plotBuildData(Closure closure) // since 1.31
         pmd(String pattern, Closure staticAnalysisClosure = null)
         postBuildScripts(Closure postBuildScriptsClosure) // since 1.31
@@ -276,7 +277,6 @@ freeStyleJob(String name) { // since 1.30
         warnings(List consoleParsers, Map parserConfigurations = [:],
                  Closure warningsClosure = null)
         wsCleanup(Closure wsCleanupClosure = null) // since 1.23
-		pullRequestMerge(Closure pullRequestClosure) // since 1.33
     }
 }
 
@@ -5239,24 +5239,36 @@ job('example') {
 
 (since 1.33)
 
-### Pull Request Merge Publisher
+### GitHub Pull Request Merger
 
 ```groovy
 job {
     publishers {
-        pullRequest {
-            mergeComment(String comment)          // defaults to ''
-            onlyTriggerPhrase(boolean enable)     // defaults to false
-            onlyAdminsMerge(boolean enable)       // defaults to false
-            disallowOwnCode(boolean enable)       // defaults to false
+        mergePullRequest {
+            mergeComment(String comment)             // empty by default
+            onlyTriggerPhrase(boolean enable = true) // defaults to false
+            onlyAdminsMerge(boolean enable = true)   // defaults to false
+            disallowOwnCode(boolean enable = true)   // defaults to false
         }
     }
 }
 ```
 
-Allows to merge the pull request if the build was successful. 
+Allows to merge the pull request if the build was successful. Requires version 1.17 or later of the
+[GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin).
 
-(Since 1.33)
+```groovy
+job('example') {
+    publishers {
+        mergePullRequest {
+            mergeComment('merged by Jenkins')
+            disallowOwnCode()
+        }
+    }
+}
+```
+
+(since 1.33)
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
