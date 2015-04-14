@@ -696,7 +696,7 @@ Examples:
 Triple-quote can be used for retaining Groovy style in the embedded DSL.
 
 ```groovy
-job('example-1', type: BuildFlow) {
+buildFlowJob('example-1') {
     buildFlow("""
         build("job1")
     """)
@@ -707,7 +707,7 @@ Using job variables in build flow text block. The new job will have a build flow
 
 ```groovy
 CUSTOM_VARIABLE = "hello-there"
-job('example-2', type: BuildFlow) {
+buildFlowJob('example-2') {
     buildFlow('build("${CUSTOM_VARIABLE}")')
 }
 ```
@@ -715,7 +715,7 @@ job('example-2', type: BuildFlow) {
 The build flow text can also be stored in a file and set in the new job when it's created.
 
 ```groovy
-job('example-3', type: BuildFlow) {
+buildFlowJob('example-3') {
     buildFlow(readFileFromWorkspace("my-build-flow-text.groovy"))
 }
 ```
@@ -728,15 +728,21 @@ The `rootPOM`, `goals`, `mavenOpts`, `mavenInstallation`, `perModuleEmail`, `arc
  `preBuildSteps`, `postBuildSteps` and `providedSettings` methods can only be used in jobs with type `Maven`.
 
 ### Root POM
+
 ```groovy
-rootPOM(String rootPOM)
+mavenJob {
+    rootPOM(String rootPOM)
+}
 ```
 
 To use a different `pom.xml` in some other directory than the workspace root.
 
 ### Goals
+
 ```groovy
-goals(String goals)
+mavenJob {
+    goals(String goals)
+}
 ```
 
 The Maven goals to execute including other command line options.
@@ -744,27 +750,37 @@ The Maven goals to execute including other command line options.
 When specified multiple times, the goals and options will be concatenated, e.g.
 
 ```groovy
-goals("clean")
-goals("install")
-goals("-DskipTests")
+mavenJob('example-1') {
+    goals('clean')
+    goals('install')
+    goals('-DskipTests')
+}
 ```
 
 is equivalent to
 
 ```groovy
-goals("clean install -DskipTests")
+mavenJob('example-1') {
+    goals('clean install -DskipTests')
+}
 ```
 
 ### MAVEN_OPTS
+
 ```groovy
-mavenOpts(String mavenOpts)
+mavenJob {
+    mavenOpts(String mavenOpts)
+}
 ```
 
 The JVM options to be used when starting Maven. When specified multiple times, the options will be concatenated.
 
 ### Maven Installation
+
 ```groovy
-mavenInstallation(String name)
+mavenJob {
+    mavenInstallation(String name)
+}
 ```
 
 Refers to the pull down box in the UI to select which installation of Maven to use, specify the exact string seen in the UI. The last call will be the one used.
@@ -774,7 +790,9 @@ Refers to the pull down box in the UI to select which installation of Maven to u
 ### Isolated Local Maven Repository
 
 ```groovy
-localRepository(LocalRepositoryLocation location)
+mavenJob {
+    localRepository(LocalRepositoryLocation location)
+}
 ```
 
 Possible values for `localRepository` are `LocalRepositoryLocation.LOCAL_TO_WORKSPACE` and
@@ -782,43 +800,56 @@ Possible values for `localRepository` are `LocalRepositoryLocation.LOCAL_TO_WORK
 1.31.
 
 ```groovy
-localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+mavenJob {
+    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+}
 ```
 
 (Since 1.17)
 
 ### Email Per Module
+
 ```groovy
-perModuleEmail(boolean shouldSendEmailPerModule) // deprecated since 1.29
+mavenJob {
+    perModuleEmail(boolean sendEmailPerModule) // deprecated since 1.29
+}
 ```
 
 Enable or disable email notifications for each Maven module.
 
 ### Disable Artifact Archiving
+
 ```groovy
-archivingDisabled(boolean shouldDisableArchiving)
+mavenJob {
+    archivingDisabled(boolean shouldDisableArchiving)
+}
 ```
 
 Disables automatic Maven artifact archiving. Artifact archiving is enabled by default.
 
 ### Run Headless
+
 ```groovy
-runHeadless(boolean shouldRunHeadless)
+mavenJob {
+    runHeadless(boolean shouldRunHeadless)
+}
 ```
 
 Specifiy this to run the build in headless mode if desktop access is not required. Headless mode is not enabled by default.
 
 ### Maven Pre and Post Build Steps
+
 ```groovy
-preBuildSteps(Closure mavenPreBuildClosure)
-postBuildSteps(Closure mavenPostBuildClosure)
+mavenJob {
+    preBuildSteps(Closure mavenPreBuildClosure)
+    postBuildSteps(Closure mavenPostBuildClosure)
+}
 ```
 
 For Maven jobs, you can also run arbitrary build steps before and after the Maven execution. Note that this can only be used with Maven jobs.
 
-Examples:
 ```groovy
-job('example', type: Maven) {
+mavenJob('example') {
   preBuildSteps {
     shell("echo 'run before Maven'")
   }
@@ -833,7 +864,7 @@ job('example', type: Maven) {
 ### Maven Settings
 
 ```groovy
-job(type: Maven) {
+mavenJob {
     providedSettings(String mavenSettingsName)
 }
 ```
@@ -841,10 +872,8 @@ job(type: Maven) {
 Use managed Maven settings. Requires the
 [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
 
-Example:
-
 ```groovy
-job('example', type: Maven) {
+mavenJob('example') {
     providedSettings('central-mirror')
 }
 ```
@@ -2155,7 +2184,7 @@ job('example') {
 ### Maven Release
 
 ```groovy
-job(type: Maven) {
+mavenJob {
     wrappers {
         mavenRelease {
             scmUserEnvVar(String scmUserEnvVar) // empty by default
@@ -2178,7 +2207,7 @@ the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+P
 Example:
 
 ```groovy
-job('example', type: Maven) {
+mavenJob('example') {
     wrappers {
         mavenRelease {
             scmUserEnvVar('MY_USER_ENV')
@@ -3023,7 +3052,7 @@ job('example') {
 # Multijob Phase
 
 ```
-job(type: Multijob) {
+multiJob {
     steps {
         phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phaseClosure = null) {
             phaseName(String phaseName)
@@ -3060,7 +3089,7 @@ The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
 
 ```
-job('example', type: Multijob) {
+multiJob('example') {
     steps {
         phase() {
             phaseName 'Second'
@@ -3106,7 +3135,7 @@ See also [Building a matrix project](https://wiki.jenkins-ci.org/display/JENKINS
 ### Axes
 
 ```groovy
-job(type: Matrix) {
+matrixJob {
     axes {
         text(String name, String... values)
         text(String name, Iterable<String> values)
@@ -3130,7 +3159,7 @@ passed into the configure block.
 Example:
 
 ```groovy
-job('example', type: Matrix) {
+matrixJob('example') {
     axes {
         label('label', 'linux', 'windows')
         jdk('jdk6', 'jdk7')
@@ -3144,7 +3173,7 @@ job('example', type: Matrix) {
 ### Run Sequentially
 
 ```groovy
-job(type: Matrix) {
+matrixJob {
     runSequentially(boolean runSequentially = true)
 }
 ```
@@ -3154,7 +3183,7 @@ Run each matrix combination in sequence. If omitted, Jenkins will try to build t
 Example:
 
 ```groovy
-job('example', type: Matrix) {
+matrixJob('example') {
     sequential()
 }
 ```
@@ -3162,7 +3191,7 @@ job('example', type: Matrix) {
 ### Touchstone Builds
 
 ```groovy
-job(type: Matrix) {
+matrixJob(type) {
     touchStoneFilter(String expression, boolean continueOnFailure = false)
 }
 ```
@@ -3172,7 +3201,7 @@ An expression of which combination to run first, the second parameter controls i
 Example:
 
 ```groovy
-job('example', type: Matrix) {
+matrixJob('example') {
     touchStoneFilter('label=="linux"')
 }
 ```
@@ -3180,7 +3209,7 @@ job('example', type: Matrix) {
 ### Combination Filter
 
 ```groovy
-job(type: Matrix) {
+matrixJob(type) {
     combinationFilter(String expression)
 }
 ```
@@ -3190,7 +3219,7 @@ An expression to limit which combinations can be run.
 Example:
 
 ```groovy
-job('example', type: Matrix) {
+matrixJob('example') {
     combinationFilter('jdk=="jdk-6" || label=="linux"')
 }
 ```
@@ -5493,7 +5522,7 @@ job('example') {
 ### Groovy CPS DSL
 
 ```
-job(type: Workflow) {
+workflowJob {
     definition {
         cps {
             script(String script)
@@ -5511,7 +5540,7 @@ def flow = '''node {
   def mvnHome = tool 'M3'
   sh "${mvnHome}/bin/mvn -B verify"
 }'''
-job('example-1', type: Workflow) {
+workflowJob('example-1') {
     definition {
         cps {
             script(flow)
@@ -5519,7 +5548,7 @@ job('example-1', type: Workflow) {
     }
 }
 
-job('example-2', type: Workflow) {
+workflowJob('example-2') {
     definition {
         cps {
             script(readFileFromWorkspace('project-a-workflow.groovy'))
