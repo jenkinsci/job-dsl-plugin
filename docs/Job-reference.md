@@ -276,6 +276,7 @@ freeStyleJob(String name) { // since 1.30
         warnings(List consoleParsers, Map parserConfigurations = [:],
                  Closure warningsClosure = null)
         wsCleanup(Closure wsCleanupClosure = null) // since 1.23
+		pullRequestMerge(Closure pullRequestClosure) // since 1.33
     }
 }
 
@@ -5237,6 +5238,25 @@ job('example') {
 ```
 
 (since 1.33)
+
+### Pull Request Merge Publisher
+
+```groovy
+job {
+    publishers {
+        pullRequest {
+            mergeComment(String comment)          // defaults to ''
+            onlyTriggerPhrase(boolean enable)     // defaults to false
+            onlyAdminsMerge(boolean enable)       // defaults to false
+            disallowOwnCode(boolean enable)       // defaults to false
+        }
+    }
+}
+```
+
+Allows to merge the pull request if the build was successful. 
+
+(Since 1.33)
 
 # Parameters
 **Note: In all cases apart from File Parameter the parameterName argument can't be null or empty**
