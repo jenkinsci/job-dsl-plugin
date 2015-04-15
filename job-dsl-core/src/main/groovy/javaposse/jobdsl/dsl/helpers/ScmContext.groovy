@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import com.google.common.base.Strings
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
@@ -48,63 +49,69 @@ class ScmContext extends AbstractContext {
      */
     @RequiresPlugin(id = 'mercurial')
     void hg(String url, String branch = null, Closure configure = null) {
-        validateMulti()
+        if (jobManagement.getPluginVersion('mercurial')?.isOlderThan(new VersionNumber('1.50.1'))) {
+            jobManagement.logDeprecationWarning('support for Mercurial plugin versions older than 1.50.1')
 
-        checkNotNull(url)
+            validateMulti()
 
-        Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
-            source url
-            modules ''
-            clean false
+            checkNotNull(url)
+
+            Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
+                source url
+                modules ''
+                clean false
+            }
+            scmNode.appendNode('branch', branch ?: '')
+
+            // Apply Context
+            if (configure) {
+                WithXmlAction action = new WithXmlAction(configure)
+                action.execute(scmNode)
+            }
+
+            scmNodes << scmNode
+        } else {
+            hg(url) {
+                delegate.branch(branch)
+                delegate.configure(configure)
+            }
         }
-        scmNode.appendNode('branch', branch ?: '')
-
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(scmNode)
-        }
-
-        scmNodes << scmNode
     }
 
     /**
+     * Generate configuration for Mercurial.
+     *
      * @since 1.33
      */
-    @RequiresPlugin(id = 'mercurial')
-    void hg(@DslContext(HgContext) Closure hgClosure) {
+    @RequiresPlugin(id = 'mercurial', minimumVersion = '1.50.1')
+    void hg(String url, @DslContext(HgContext) Closure hgClosure) {
         validateMulti()
 
-        HgContext hgContext = new HgContext(withXmlActions, jobManagement)
+        HgContext hgContext = new HgContext(jobManagement)
         executeInContext(hgClosure, hgContext)
 
-        checkNotNull(hgContext.url)
-        checkArgument(!(hgContext.tag && hgContext.branch), 'Eihter tag or branch should be used, not both')
+        checkArgument(!Strings.isNullOrEmpty(url), 'url must be specified')
+        checkArgument(!(hgContext.tag && hgContext.branch), 'either tag or branch should be used, not both')
 
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        Node scmNode = nodeBuilder.scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
-            source hgContext.url
-            modules hgContext.modules.join(' ')
-            revisionType hgContext.tag ? 'TAG' : 'BRANCH'
-            revision hgContext.tag ?: hgContext.branch ?: 'default'
-            clean hgContext.clean
-            credentialsId hgContext.credentialsId ?: ''
-            disableChangeLog hgContext.disableChangeLog
+        Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
+            source(url)
+            modules(hgContext.modules.join(' '))
+            revisionType(hgContext.tag ? 'TAG' : 'BRANCH')
+            revision(hgContext.tag ?: hgContext.branch ?: 'default')
+            clean(hgContext.clean)
+            credentialsId(hgContext.credentialsId ?: '')
+            disableChangeLog(hgContext.disableChangeLog)
         }
         if (hgContext.installation) {
             scmNode.appendNode('installation', hgContext.installation)
         }
-        if (hgContext.subDirectory) {
-            scmNode.appendNode('subdir', hgContext.subDirectory)
+        if (hgContext.subdirectory) {
+            scmNode.appendNode('subdir', hgContext.subdirectory)
         }
-
-        // Apply Context
         if (hgContext.withXmlClosure) {
             WithXmlAction action = new WithXmlAction(hgContext.withXmlClosure)
             action.execute(scmNode)
         }
-
         scmNodes << scmNode
     }
 

@@ -71,7 +71,7 @@ freeStyleJob(String name) { // since 1.30
         github(String ownerAndProject, String branch = null, String protocol = 'https',
                String host = 'github.com', Closure configure = null)
         hg(String url, String branch = null, Closure configure = null)
-        hg(Closure hgClosure) // since 1.33
+        hg(String url, Closure hgClosure) // since 1.33
         p4(String viewspec, Closure configure = null)
         p4(String viewspec, String user, Closure configure = null)
         p4(String viewspec, String user, String password, Closure configure = null)
@@ -941,40 +941,51 @@ The parameterless invocation sets a default retry count of three (3) times. To s
 ### Mercurial
 
 ```groovy
-hg {
-    // since 1.30
-    installation(String installation) // optional, if you want to use a special Mercurial-installation defined in the global Jenkins-settings
-    url(String url) // repository url
-    modul(String modul) // checkout only specified modules, optional
-    modules(String... modules) // checkout only specified modules, optional
-    subDirectory(String subDirectory) // checkout into this subdirectory, optional
-    branch (String branch) // checkout selected branch, optional
-    tag (String tag) // checkout selected tag, optional
-    credentials(String credentials) // use one of the pre-defined credentials, optional
-    clean(boolean clean=true) // perform a clean checkout, optional, defaults to false
-    disableChangeLog(boolean disableChangeLog=true) // optional, defaults to false
-    configure(Closure configure) // optional configure block
-}
+job {
+    scm {
+        hg(String url) { // since 1.33
+            installation(String installation)  // use a specific installation
+            credentials(String credentialsId)  // use pre-defined credentials
+            branch(String branch)              // checkout selected branch
+            tag(String tag)                    // checkout selected tag
+            modules(String... modules)         // checkout selected modules
+            clean(boolean clean = true)        // defaults to false
+            subdirectory(String subdirectory)  // checkout into subdirectory
+            disableChangeLog(boolean disable = true) // defaults to false
+            configure(Closure configure)       // optional configure block
+        }
 
-hg(String url, String branch = null, Closure configure = null)
+        hg(String url, String branch = null, Closure configure = null)
+    }
+}
 ```
 
-Add Mercurial SCM source. The first variant can be used for advanced configuration (since 1.30), the other variant is a shortcut for simpler Mercurial SCM configuration.
+Adds a Mercurial SCM source. Requires the
+[Mercurial Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mercurial+Plugin). The first variant can be used for
+advanced configuration (since 1.33) and requires version 1.50.1 or later of the Mercurial plugin, the other variant is a
+shortcut for simpler Mercurial SCM configuration. Support for versions older than 1.50.1 is deprecated and will be
+removed.
 
-Examples:
+A [[configure block|The-Configure-Block]] can be used to add more options. The `scm` node is passed into the configure
+block.
 
 ```groovy
 // checkout feature_branch1
-hg('http://scm','feature_branch1')
-```
+job('example-1') {
+    scm {
+        hg('http://scm', 'feature_branch1')
+    }
+}
 
-```groovy
-// clean checkout modul1 from feature_branch1
-hg {
-    url('http://scm')
-    branch('feature_branch1')
-    modul('modul1')
-    clean(true)
+// clean checkout module1 from feature_branch1
+job('example-2') {
+    scm {
+        hg('http://scm') {
+            branch('feature_branch1')
+            modules('module1')
+            clean(true)
+        }
+    }
 }
 ```
 

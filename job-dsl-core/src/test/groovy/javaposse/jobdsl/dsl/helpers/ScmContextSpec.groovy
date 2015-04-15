@@ -10,57 +10,120 @@ import spock.lang.Unroll
 
 class ScmContextSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
-    private static final String HG_REPO_URL = 'http://selenic.com/repo/hello'
 
     JobManagement mockJobManagement = Mock(JobManagement)
     ScmContext context = new ScmContext(false, [], mockJobManagement)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
-    def 'call hg simple configuration'() {
+    def 'call hg simple configuration with deprecated plugin version'() {
+        setup:
+        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50')
+
         when:
-        context.hg(HG_REPO_URL)
+        context.hg('http://selenic.com/repo/hello')
 
         then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.modules[0].text() == ''
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 4
+            source[0].text() == 'http://selenic.com/repo/hello'
+            modules[0].text() == ''
+            clean[0].text() == 'false'
+            branch[0].text() == ''
+        }
         1 * mockJobManagement.requirePlugin('mercurial')
+        1 * mockJobManagement.logDeprecationWarning('support for Mercurial plugin versions older than 1.50.1')
+    }
+
+    def 'call hg simple with branch and deprecated plugin version'() {
+        setup:
+        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50')
+
+        when:
+        context.hg('http://selenic.com/repo/hello', 'not-default')
+
+        then:
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 4
+            source[0].text() == 'http://selenic.com/repo/hello'
+            modules[0].text() == ''
+            branch[0].text() == 'not-default'
+            clean[0].text() == 'false'
+        }
+        1 * mockJobManagement.requirePlugin('mercurial')
+        1 * mockJobManagement.logDeprecationWarning('support for Mercurial plugin versions older than 1.50.1')
+    }
+
+    def 'call hg simple configuration'() {
+        setup:
+        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50.1')
+
+        when:
+        context.hg('http://selenic.com/repo/hello')
+
+        then:
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 7
+            source[0].text() == 'http://selenic.com/repo/hello'
+            modules[0].text() == ''
+            revisionType[0].text() == 'BRANCH'
+            revision[0].text() == 'default'
+            clean[0].text() == 'false'
+            credentialsId[0].text() == ''
+            disableChangeLog[0].text() == 'false'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
     def 'call hg simple with branch'() {
-        String branch = 'not-default'
+        setup:
+        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50.1')
 
         when:
-        context.hg(HG_REPO_URL, branch)
+        context.hg('http://selenic.com/repo/hello', 'not-default')
 
         then:
-        context.scmNode.branch[0].text() == branch
-        1 * mockJobManagement.requirePlugin('mercurial')
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 7
+            source[0].text() == 'http://selenic.com/repo/hello'
+            modules[0].text() == ''
+            revisionType[0].text() == 'BRANCH'
+            revision[0].text() == 'not-default'
+            clean[0].text() == 'false'
+            credentialsId[0].text() == ''
+            disableChangeLog[0].text() == 'false'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
     def 'duplicate scm calls disallowed hg'() {
         when:
-        context.hg(HG_REPO_URL)
-        context.hg(HG_REPO_URL)
+        context.hg('http://selenic.com/repo/hello')
+        context.hg('http://selenic.com/repo/hello')
 
         then:
-        thrown(RuntimeException)
+        thrown(IllegalStateException)
     }
 
     def 'call hg without url disallowed'() {
         when:
-        context.hg {
-            url(null)
+        context.hg(null) {
         }
 
         then:
-        thrown(NullPointerException)
+        thrown(IllegalArgumentException)
     }
 
     def 'call hg branch and tag disallowed'() {
         when:
-        context.hg {
-            url(HG_REPO_URL)
+        context.hg('http://selenic.com/repo/hello') {
             branch('branch')
             tag('tag')
         }
@@ -69,144 +132,105 @@ class ScmContextSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'call hg with installation'() {
-        String valueInstallation  = 'companyMercurial'
-
-        when:
-        context.hg {
-            installation(valueInstallation)
-            url(HG_REPO_URL)
-        }
-
-        then:
-        context.scmNode != null
-        context.scmNode.installation[0].text() == valueInstallation
-        context.scmNode.source[0].text() == HG_REPO_URL
-    }
-
     def 'call hg with branch'() {
-        String valueBranch = 'not-default'
-
         when:
-        context.hg {
-            url(HG_REPO_URL)
-            branch(valueBranch)
+        context.hg('http://selenic.com/repo/hello') {
+            branch('not-default')
         }
 
         then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.revisionType[0].text() == 'BRANCH'
-        context.scmNode.revision[0].text() == valueBranch
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 7
+            source[0].text() == 'http://selenic.com/repo/hello'
+            modules[0].text() == ''
+            revisionType[0].text() == 'BRANCH'
+            revision[0].text() == 'not-default'
+            clean[0].text() == 'false'
+            credentialsId[0].text() == ''
+            disableChangeLog[0].text() == 'false'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
     def 'call hg with tag'() {
-        String valueTag = 'not-default'
-
         when:
-        context.hg {
-            url(HG_REPO_URL)
-            tag(valueTag)
+        context.hg('http://selenic.com/repo/hello') {
+            tag('not-default')
         }
 
         then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.revisionType[0].text() == 'TAG'
-        context.scmNode.revision[0].text() == valueTag
-    }
-
-    def 'call hg with modules'() {
-        when:
-        context.hg {
-            url(HG_REPO_URL)
-            modul('modul-1')
-            modules('modul-2', 'modul-3')
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 7
+            source[0].text() == 'http://selenic.com/repo/hello'
+            modules[0].text() == ''
+            revisionType[0].text() == 'TAG'
+            revision[0].text() == 'not-default'
+            clean[0].text() == 'false'
+            credentialsId[0].text() == ''
+            disableChangeLog[0].text() == 'false'
         }
-
-        then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.modules[0].text() == 'modul-1 modul-2 modul-3'
+        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
-    def 'call hg with credentials'() {
-        String valueUser = 'user1'
-        String valueCredentialsId = 'user1-credentials'
-
+    def 'call hg with all options'() {
         setup:
-        mockJobManagement.getCredentialsId(valueUser) >> valueCredentialsId
+        mockJobManagement.getCredentialsId('user1') >> 'user1-credentials'
 
         when:
-        context.hg {
-            url(HG_REPO_URL)
-            credentials(valueUser)
+        context.hg('http://selenic.com/repo/hello') {
+            installation('companyMercurial')
+            credentials('user1')
+            modules('module-2', 'module-3')
+            clean()
+            disableChangeLog()
+            subdirectory('/foo/bar')
+            configure {
+                it << foo('bar')
+            }
         }
 
         then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.credentialsId[0].text() == valueCredentialsId
-    }
-
-    def 'call hg with subdirectory'() {
-        String valueSubDirectory = '/foo/bar'
-
-        when:
-        context.hg {
-            url(HG_REPO_URL)
-            subDirectory(valueSubDirectory)
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 10
+            source[0].text() == 'http://selenic.com/repo/hello'
+            installation[0].text() == 'companyMercurial'
+            modules[0].text() == 'module-2 module-3'
+            revisionType[0].text() == 'BRANCH'
+            revision[0].text() == 'default'
+            clean[0].text() == 'true'
+            credentialsId[0].text() == 'user1-credentials'
+            disableChangeLog[0].text() == 'true'
+            subdir[0].text() == '/foo/bar'
+            foo[0].text() == 'bar'
         }
-
-        then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.subdir[0].text() == valueSubDirectory
-    }
-
-    def 'call hg with clean'() {
-        when:
-        context.hg {
-            url(HG_REPO_URL)
-            clean(true)
-        }
-
-        then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.clean[0].text() == 'true'
-    }
-
-    def 'call hg with disableChangeLog'() {
-        when:
-        context.hg {
-            url(HG_REPO_URL)
-            disableChangeLog(true)
-        }
-
-        then:
-        context.scmNode != null
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.disableChangeLog[0].text() == 'true'
+        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
     def 'call hg with default values'() {
         when:
-        context.hg {
-            url(HG_REPO_URL)
+        context.hg('http://selenic.com/repo/hello') {
         }
 
         then:
-        context.scmNode != null
-        context.scmNode.installation.size() == 0
-        context.scmNode.source[0].text() == HG_REPO_URL
-        context.scmNode.modules[0].text() == ''
-        context.scmNode.revisionType[0].text() == 'BRANCH'
-        context.scmNode.revision[0].text() == 'default'
-        context.scmNode.subdir.size() == 0
-        context.scmNode.clean[0].text() == 'false'
-        context.scmNode.credentialsId[0].text() == ''
-        context.scmNode.disableChangeLog[0].text() == 'false'
+        context.scmNode.@class == 'hudson.plugins.mercurial.MercurialSCM'
+        with(context.scmNode) {
+            name() == 'scm'
+            children().size() == 7
+            source[0].text() == 'http://selenic.com/repo/hello'
+            modules[0].text() == ''
+            revisionType[0].text() == 'BRANCH'
+            revision[0].text() == 'default'
+            clean[0].text() == 'false'
+            credentialsId[0].text() == ''
+            disableChangeLog[0].text() == 'false'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
     def 'duplicate scm calls disallowed git'() {

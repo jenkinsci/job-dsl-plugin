@@ -1,47 +1,33 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 
-class HgContext implements Context {
-    private final List<WithXmlAction> withXmlActions
-    private final JobManagement jobManagement
-
+class HgContext extends AbstractContext {
     String installation
-    String url
     List<String> modules = []
-    String subDirectory
+    String subdirectory
     String branch
     String tag
     String credentialsId
-    boolean clean = false
-    boolean disableChangeLog = false
+    boolean clean
+    boolean disableChangeLog
     Closure withXmlClosure
 
-    HgContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
-        this.jobManagement = jobManagement
-        this.withXmlActions = withXmlActions
+    HgContext(JobManagement jobManagement) {
+        super(jobManagement)
     }
 
     void installation(String installation) {
         this.installation = installation
     }
 
-    void url(String url) {
-        this.url = url
-    }
-
-    void modul(String modul) {
-        this.modules.add(modul)
-    }
-
     void modules(String... modules) {
         this.modules.addAll(modules)
     }
 
-    void subDirectory(String subDirectory) {
-        this.subDirectory = subDirectory
+    void subdirectory(String subdirectory) {
+        this.subdirectory = subdirectory
     }
 
     void branch(String branch) {
