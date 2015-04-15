@@ -65,6 +65,11 @@ job('example') {
 }
 ```
 
+### Mercurial
+
+Support for versions older than 1.50.1 of the Mercurial Plugin is [[deprecated|Deprecation-Policy]] and will be
+removed.
+
 ## Migrating to 1.31
 
 ### Nested Views
