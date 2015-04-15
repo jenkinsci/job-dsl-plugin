@@ -536,6 +536,7 @@ class TriggerContextSpec extends Specification {
                 completeBuild[0].value() == true
             }
         }
+        1 * mockJobManagement.requireMinimumCoreVersion('1.560')
     }
 
     def 'call upstream trigger methods with threshold'() {
@@ -556,6 +557,7 @@ class TriggerContextSpec extends Specification {
                 completeBuild[0].value() == true
             }
         }
+        1 * mockJobManagement.requireMinimumCoreVersion('1.560')
 
         where:
         thresholdValue | ordinalValue | colorValue

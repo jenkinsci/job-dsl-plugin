@@ -1615,7 +1615,8 @@ job {
 }
 ```
 
-Starts a build on completion of an upstream job, i.e. adds the "Build after other projects are built" trigger.
+Starts a build on completion of an upstream job, i.e. adds the "Build after other projects are built" trigger. Requires
+Jenkins 1.560 or later.
 
 Possible values for `threshold` are `'SUCCESS'`, `'UNSTABLE'` or `'FAILURE'`. 
 
