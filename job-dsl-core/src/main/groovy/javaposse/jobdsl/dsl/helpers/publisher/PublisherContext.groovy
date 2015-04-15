@@ -101,11 +101,18 @@ class PublisherContext extends AbstractContext {
         publisherNodes << new NodeBuilder().'hudson.tasks.ArtifactArchiver' {
             artifacts artifactsContext.patterns.join(',')
             latestOnly artifactsContext.latestOnlyValue
+            defaultExcludes artifactsContext.defaultExcludesValue
             if (artifactsContext.allowEmptyValue != null) {
                 allowEmptyArchive artifactsContext.allowEmptyValue
             }
             if (artifactsContext.excludesValue) {
                 excludes artifactsContext.excludesValue
+            }
+            if (artifactsContext.fingerprintValue) {
+                fingerprint artifactsContext.fingerprintValue
+            }
+            if (artifactsContext.onlyIfSuccessfulValue) {
+                onlyIfSuccessful artifactsContext.onlyIfSuccessfulValue
             }
         }
     }

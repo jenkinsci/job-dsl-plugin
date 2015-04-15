@@ -154,6 +154,9 @@ class PublisherContextSpec extends Specification {
             exclude 'exclude/*'
             allowEmpty()
             latestOnly()
+            fingerprint()
+            onlyIfSuccessful()
+            defaultExcludes()
         }
 
         then:
@@ -163,6 +166,9 @@ class PublisherContextSpec extends Specification {
         archiveNode.excludes[0].value() == 'exclude/*'
         archiveNode.latestOnly[0].value() == true
         archiveNode.allowEmptyArchive[0].value() == true
+        archiveNode.fingerprint[0].value() == true
+        archiveNode.onlyIfSuccessful[0].value() == true
+        archiveNode.defaultExcludes[0].value() == true
     }
 
     def 'call archive artifacts with multiple patterns'() {
