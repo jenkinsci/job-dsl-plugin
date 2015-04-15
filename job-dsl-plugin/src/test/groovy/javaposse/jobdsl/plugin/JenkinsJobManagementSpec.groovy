@@ -102,6 +102,24 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
+    def 'requireMinimumCoreVersion success'() {
+        when:
+        jobManagement.requireMinimumCoreVersion('1.480')
+
+        then:
+        0 * build.setResult(UNSTABLE)
+        buffer.size() == 0
+    }
+
+    def 'requireMinimumCoreVersion failed'() {
+        when:
+        jobManagement.requireMinimumCoreVersion('1.600')
+
+        then:
+        1 * build.setResult(UNSTABLE)
+        buffer.size() > 0
+    }
+
     def 'create job with nonexisting parent'() {
         when:
         jobManagement.createOrUpdateConfig(

@@ -60,6 +60,10 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    void requireMinimumCoreVersion(String version) {
+    }
+
+    @Override
     String getCredentialsId(String credentialsDescription) {
         null
     }

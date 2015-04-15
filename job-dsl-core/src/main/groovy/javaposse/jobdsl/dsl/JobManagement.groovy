@@ -156,6 +156,14 @@ interface JobManagement {
     void requireMinimumPluginVersion(String pluginShortName, String version)
 
     /**
+     * Logs a warning and sets the build status to unstable if the version of Jenkins core is older than the given
+     * version.
+     *
+     * @since 1.33
+     */
+    void requireMinimumCoreVersion(String version)
+
+    /**
      * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
      */
     VersionNumber getPluginVersion(String pluginShortName)
