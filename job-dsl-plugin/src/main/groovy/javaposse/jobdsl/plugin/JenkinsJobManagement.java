@@ -295,6 +295,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    public VersionNumber getJenkinsVersion() {
+        return Jenkins.getVersion();
+    }
+
+    @Override
     public Integer getVSphereCloudHash(String name) {
         Jenkins jenkins = Jenkins.getInstance();
         if (jenkins.getPlugin("vsphere-cloud") != null) {

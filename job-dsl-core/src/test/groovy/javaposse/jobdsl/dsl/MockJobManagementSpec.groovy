@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
 import spock.lang.Specification
 
 class MockJobManagementSpec extends Specification {
@@ -34,5 +35,13 @@ class MockJobManagementSpec extends Specification {
 
         where:
         name << ['', null]
+    }
+
+    def 'getJenkinsVersion returns a version'() {
+        when:
+        VersionNumber versionNumber = mockJobManagement.jenkinsVersion
+
+        then:
+        versionNumber != null
     }
 }

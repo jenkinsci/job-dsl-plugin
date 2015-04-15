@@ -1,5 +1,47 @@
 ## Migrating to 1.33
 
+### Archive Artifacts
+
+The `latestOnly` option is deprecated in newer versions of Jenkins and therefore it's also
+[[deprecated|Deprecation-Policy]] in the DSL and will be removed. Use `logRotator` to configure which artifacts to keep.
+
+DSL prior to 1.33
+```groovy
+job('example-1') {
+    publishers {
+        archiveArtifacts('*.xml', null, true)
+    }
+}
+
+job('example-2') {
+    publishers {
+        archiveArtifacts {
+            pattern('*.xml')
+            latestOnly()
+        }
+    }
+}
+```
+
+DSL since 1.33
+```groovy
+job('example-1') {
+    logRotator(-1, -1, -1, 1)
+    publishers {
+        archiveArtifacts('*.xml')
+    }
+}
+
+job('example-2') {
+    logRotator(-1, -1, -1, 1)
+    publishers {
+        archiveArtifacts {
+            pattern('*.xml')
+        }
+    }
+}
+```
+
 ### Copy Artifacts
 
 Support for versions 1.30 and earlier of the Copy Artifact Plugin is [[deprecated|Deprecation-Policy]] and will be

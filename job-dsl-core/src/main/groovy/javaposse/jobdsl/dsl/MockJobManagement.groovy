@@ -74,6 +74,11 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    VersionNumber getJenkinsVersion() {
+        new VersionNumber('1.554.2')
+    }
+
+    @Override
     Integer getVSphereCloudHash(String name) {
         null
     }

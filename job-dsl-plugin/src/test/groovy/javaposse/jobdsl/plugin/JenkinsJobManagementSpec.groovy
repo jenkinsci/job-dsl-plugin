@@ -268,6 +268,14 @@ class JenkinsJobManagementSpec extends Specification {
         version == null
     }
 
+    def 'getJenkinsVersion returns a version'() {
+        when:
+        VersionNumber versionNumber = jobManagement.jenkinsVersion
+
+        then:
+        versionNumber != null
+    }
+
     def 'get vSphere cloud hash without vSphere cloud plugin'() {
         when:
         Integer hash = jobManagement.getVSphereCloudHash('test')

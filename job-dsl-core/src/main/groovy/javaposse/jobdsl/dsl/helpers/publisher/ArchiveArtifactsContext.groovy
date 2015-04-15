@@ -1,41 +1,61 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresCore
 
-class ArchiveArtifactsContext implements Context {
+class ArchiveArtifactsContext extends AbstractContext {
     final List<String> patterns = []
-    String excludesValue = null
-    Boolean latestOnlyValue = false
-    Boolean allowEmptyValue = null
-    Boolean fingerprintValue = false
-    Boolean onlyIfSuccessfulValue = false
-    Boolean defaultExcludesValue = true
+    String excludes
+    boolean latestOnly
+    boolean allowEmpty
+    boolean fingerprint
+    boolean onlyIfSuccessful
+    boolean defaultExcludes = true
+
+    ArchiveArtifactsContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     void pattern(String glob) {
         patterns << glob
     }
 
     void exclude(String glob) {
-        excludesValue = glob
+        excludes = glob
     }
 
-    void latestOnly(Boolean val = true) {
-        latestOnlyValue = val
+    @Deprecated
+    void latestOnly(boolean latestOnly = true) {
+        jobManagement.logDeprecationWarning()
+        this.latestOnly = latestOnly
     }
 
-    void allowEmpty(Boolean val = true) {
-        allowEmptyValue = val
+    void allowEmpty(boolean allowEmpty = true) {
+        this.allowEmpty = allowEmpty
     }
 
-    void fingerprint(Boolean val = true) {
-        fingerprintValue = val
+    /**
+     * @since 1.33
+     */
+    @RequiresCore(minimumVersion = '1.571')
+    void fingerprint(boolean fingerprint = true) {
+        this.fingerprint = fingerprint
     }
 
-    void onlyIfSuccessful(Boolean val = true) {
-        onlyIfSuccessfulValue = val
+    /**
+     * @since 1.33
+     */
+    @RequiresCore(minimumVersion = '1.567')
+    void onlyIfSuccessful(boolean onlyIfSuccessful = true) {
+        this.onlyIfSuccessful = onlyIfSuccessful
     }
 
-    void defaultExcludes(Boolean val = true) {
-        defaultExcludesValue = val
+    /**
+     * @since 1.33
+     */
+    @RequiresCore(minimumVersion = '1.575')
+    void defaultExcludes(boolean defaultExcludes = true) {
+        this.defaultExcludes = defaultExcludes
     }
 }

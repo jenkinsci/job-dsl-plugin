@@ -3645,13 +3645,27 @@ publishers {
 ```groovy
 job {
     publishers {
-        archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false)
+        archiveArtifacts(String glob, String excludeGlob = null)
         archiveArtifacts { // since 1.20
             pattern(String pattern) // can be called multiple since 1.27
             exclude(String excludePattern)
-            latestOnly(Boolean latestOnly = true) // defaults to false if not called
-            allowEmpty(Boolean allowEmpty = true) // defaults to false if not called
+            allowEmpty(boolean allowEmpty = true) // defaults to false
+
+            // since 1.33, defaults to true, requires Jenkins 1.575
+            defaultExcludes(boolean defaultExcludes = true)
+
+            // since 1.33, defaults to false, requires Jenkins 1.571
+            fingerprint(boolean fingerprint = true)
+
+            // since 1.33, defaults to false, requires Jenkins 1.567
+            onlyIfSuccessful(boolean onlyIfSuccessful = true)
+
+            // deprecated since 1.33, defaults to false
+            latestOnly(boolean latestOnly = true)
         }
+
+        // deprecated since 1.33
+        archiveArtifacts(String glob, String excludeGlob, boolean latestOnly)
     }
 }
 ```
@@ -3672,7 +3686,7 @@ job('example-2') {
         archiveArtifacts {
             pattern('build/test-output/**/*.html')
             pattern('build/test-output/**/*.xml')
-            latestOnly()
+            onlyIfSuccessful()
         }
     }
 }

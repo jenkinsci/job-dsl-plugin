@@ -95,33 +95,43 @@ class PublisherContext extends AbstractContext {
      * @since 1.20
      */
     void archiveArtifacts(@DslContext(ArchiveArtifactsContext) Closure artifactsClosure) {
-        ArchiveArtifactsContext artifactsContext = new ArchiveArtifactsContext()
+        ArchiveArtifactsContext artifactsContext = new ArchiveArtifactsContext(jobManagement)
         ContextHelper.executeInContext(artifactsClosure, artifactsContext)
 
         publisherNodes << new NodeBuilder().'hudson.tasks.ArtifactArchiver' {
-            artifacts artifactsContext.patterns.join(',')
-            latestOnly artifactsContext.latestOnlyValue
-            defaultExcludes artifactsContext.defaultExcludesValue
-            if (artifactsContext.allowEmptyValue != null) {
-                allowEmptyArchive artifactsContext.allowEmptyValue
+            artifacts(artifactsContext.patterns.join(','))
+            if (artifactsContext.excludes) {
+                excludes(artifactsContext.excludes)
             }
-            if (artifactsContext.excludesValue) {
-                excludes artifactsContext.excludesValue
+            latestOnly(artifactsContext.latestOnly)
+            allowEmptyArchive(artifactsContext.allowEmpty)
+            if (!jobManagement.jenkinsVersion.isOlderThan(new VersionNumber('1.575'))) {
+                defaultExcludes(artifactsContext.defaultExcludes)
             }
-            if (artifactsContext.fingerprintValue) {
-                fingerprint artifactsContext.fingerprintValue
+            if (!jobManagement.jenkinsVersion.isOlderThan(new VersionNumber('1.571'))) {
+                delegate.fingerprint(artifactsContext.fingerprint)
             }
-            if (artifactsContext.onlyIfSuccessfulValue) {
-                onlyIfSuccessful artifactsContext.onlyIfSuccessfulValue
+            if (!jobManagement.jenkinsVersion.isOlderThan(new VersionNumber('1.567'))) {
+                onlyIfSuccessful(artifactsContext.onlyIfSuccessful)
             }
         }
     }
 
-    void archiveArtifacts(String glob, String excludeGlob = null, Boolean latestOnlyBoolean = false) {
+    void archiveArtifacts(String glob, String excludeGlob = null) {
         archiveArtifacts {
-            pattern glob
-            exclude excludeGlob
-            latestOnly latestOnlyBoolean
+            pattern(glob)
+            exclude(excludeGlob)
+        }
+    }
+
+    @Deprecated
+    void archiveArtifacts(String glob, String excludeGlob, boolean latestOnly) {
+        jobManagement.logDeprecationWarning()
+
+        archiveArtifacts {
+            pattern(glob)
+            exclude(excludeGlob)
+            delegate.latestOnly(latestOnly)
         }
     }
 

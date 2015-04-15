@@ -169,6 +169,13 @@ interface JobManagement {
     VersionNumber getPluginVersion(String pluginShortName)
 
     /**
+     * Returns the version of Jenkins.
+     *
+     * @since 1.33
+     */
+    VersionNumber getJenkinsVersion()
+
+    /**
      * Return the hash of the vSphere cloud with the given name.
      * @param name name of the vSphere cloud
      * @return hash of the vSphere cloud or <code>null</code> if a cloud with the given name does not exist

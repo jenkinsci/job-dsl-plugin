@@ -19,6 +19,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 * 1.33 (unreleased)
  * Added support for the [Naginator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Naginator+Plugin)
  * Added support for "Build after other projects are built" trigger
+ * Added more options for `archiveArtifacts`
+ * The `latestOnly` option of `archiveArtifacts` is deprecated, see [[Migration]]
  * Enhanced support for the [Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin)
  * Enhanced support for the [Mercurial Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mercurial+Plugin)
  * Support for the older versions of the [Mercurial Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mercurial+Plugin) is deprecated, see [[Migration]]
