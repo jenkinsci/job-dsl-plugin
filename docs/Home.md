@@ -22,6 +22,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced support for the [Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin)
  * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
    ([JENKINS-27838](https://issues.jenkins-ci.org/browse/JENKINS-27838), [JENKINS-27894](https://issues.jenkins-ci.org/browse/JENKINS-27894))
+ * Enhanced support for the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
+   ([JENKINS-27932](https://issues.jenkins-ci.org/browse/JENKINS-27932))
  * Support for the older versions of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) is deprecated, see [[Migration]]
  * Variants of `copyArtifacts` with more than two parameters have been replaced and are deprecated, see [[Migration]]
  * Increased minimum supported Jenkins core version to 1.565.1

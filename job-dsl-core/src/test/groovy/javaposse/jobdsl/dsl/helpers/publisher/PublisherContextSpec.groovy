@@ -3980,4 +3980,39 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('naginator', '1.15')
     }
+
+    def 'mergePullRequest with no options'() {
+        when:
+        context.mergePullRequest()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
+            children().size() == 4
+            mergeComment[0].value() == ''
+            onlyTriggerPhrase[0].value() == false
+            onlyAdminsMerge[0].value() == false
+            disallowOwnCode[0].value() == false
+        }
+    }
+
+    def 'mergePullRequest with all options'() {
+        when:
+        context.mergePullRequest {
+            mergeComment('Test comment')
+            onlyTriggerPhrase()
+            onlyAdminsMerge()
+            disallowOwnCode()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
+            children().size() == 4
+            mergeComment[0].value() == 'Test comment'
+            onlyTriggerPhrase[0].value() == true
+            onlyAdminsMerge[0].value() == true
+            disallowOwnCode[0].value() == true
+        }
+    }
 }

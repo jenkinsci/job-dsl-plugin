@@ -238,6 +238,7 @@ freeStyleJob(String name) { // since 1.30
         mailer(String recipients, Boolean dontNotifyEveryUnstableBuild = false,
                Boolean sendToIndividuals = false)
         mavenDeploymentLinker(String regex) // since 1.23
+        mergePullRequest(Closure pullRequestClosure = null) // since 1.33
         plotBuildData(Closure closure) // since 1.31
         pmd(String pattern, Closure staticAnalysisClosure = null)
         postBuildScripts(Closure postBuildScriptsClosure) // since 1.31
@@ -5260,6 +5261,37 @@ job('example') {
             rerunIfUnstable()
             retryLimit(3)
             progressiveDelay(60, 600)
+        }
+    }
+}
+```
+
+(since 1.33)
+
+### GitHub Pull Request Merger
+
+```groovy
+job {
+    publishers {
+        mergePullRequest {
+            mergeComment(String comment)             // empty by default
+            onlyTriggerPhrase(boolean enable = true) // defaults to false
+            onlyAdminsMerge(boolean enable = true)   // defaults to false
+            disallowOwnCode(boolean enable = true)   // defaults to false
+        }
+    }
+}
+```
+
+Allows to merge the pull request if the build was successful. Requires version 1.17 or later of the
+[GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin).
+
+```groovy
+job('example') {
+    publishers {
+        mergePullRequest {
+            mergeComment('merged by Jenkins')
+            disallowOwnCode()
         }
     }
 }

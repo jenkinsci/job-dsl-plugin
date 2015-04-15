@@ -1276,6 +1276,24 @@ class PublisherContext extends AbstractContext {
         publisherNodes << naginatorNode
     }
 
+    /**
+     * Configures the GitHub pull request builder plugin to perform an automatic request after a successful build.
+     *
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.17')
+    void mergePullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure = null) {
+        PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext()
+        ContextHelper.executeInContext(contextClosure, pullRequestPublisherContext)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge' {
+            onlyAdminsMerge(pullRequestPublisherContext.onlyAdminsMerge)
+            disallowOwnCode(pullRequestPublisherContext.disallowOwnCode)
+            onlyTriggerPhrase(pullRequestPublisherContext.onlyTriggerPhrase)
+            mergeComment(pullRequestPublisherContext.mergeComment ?: '')
+        }
+    }
+
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
@@ -1319,4 +1337,5 @@ class PublisherContext extends AbstractContext {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }
+
 }
