@@ -20,7 +20,7 @@ f.radioBlock(name: 'scriptLocation', value: 'false', title: 'Look on Filesystem'
     }
 }
 
-f.entry(title: 'Action for existings jobs:', field: 'ignoreExisting') {
+f.entry(title: 'Action for existing jobs:', field: 'ignoreExisting') {
     f.checkbox(name: 'ignoreExisting', title: 'Ignore changes', checked: instance.ignoreExisting,
 		description: 'What to do with previously generated jobs when generated config is not the same?')
 }
