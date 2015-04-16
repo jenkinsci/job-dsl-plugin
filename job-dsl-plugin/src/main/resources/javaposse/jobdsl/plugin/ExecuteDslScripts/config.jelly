@@ -13,7 +13,7 @@
             <f:expandableTextbox/>
         </f:entry>
     </f:radioBlock>
-    <f:entry title="Action for existings jobs and views:" field="ignoreExisting">
+    <f:entry title="Action for existing jobs and views:" field="ignoreExisting">
         <f:checkbox name="ignoreExisting" title="Ignore changes" checked="${instance.ignoreExisting}"
                     description="What to do with previously generated jobs and views when generated config is not the same?"/>
     </f:entry>
