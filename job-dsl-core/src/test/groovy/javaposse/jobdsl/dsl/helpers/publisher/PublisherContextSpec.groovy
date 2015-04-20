@@ -2025,6 +2025,7 @@ class PublisherContextSpec extends Specification {
         node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
         node.logFileName[0].value() == RobotFrameworkContext.DEFAULT_LOG_FILE_NAME
         node.outputFileName[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_FILE_NAME
+        node.disableArchiveOutput[0].value() == false
         1 * jobManagement.requirePlugin('robot')
     }
 
@@ -2056,7 +2057,9 @@ class PublisherContextSpec extends Specification {
 
     def 'publish Robot framework report using specific value for onlyCritical'() {
         when:
-        context.publishRobotFrameworkReports { onlyCritical(true) }
+        context.publishRobotFrameworkReports {
+            onlyCritical()
+        }
 
         then:
         Node node = context.publisherNodes[0]
@@ -2064,6 +2067,34 @@ class PublisherContextSpec extends Specification {
         node.passThreshold[0].value() == 100.0
         node.unstableThreshold[0].value() == 0.0
         node.onlyCritical[0].value() == true
+        1 * jobManagement.requirePlugin('robot')
+    }
+
+    def 'publish Robot framework report using disableArchiveOutput'() {
+        when:
+        context.publishRobotFrameworkReports {
+            disableArchiveOutput()
+        }
+
+        then:
+        Node node = context.publisherNodes[0]
+        node.name() == 'hudson.plugins.robot.RobotPublisher'
+        node.disableArchiveOutput[0].value() == true
+        1 * jobManagement.requirePlugin('robot')
+    }
+
+    def 'publish Robot framework report using otherFiles'() {
+        when:
+        context.publishRobotFrameworkReports {
+            otherFiles('screenshot-1.png', 'screenshot-2.png', 'screenshot-3.png')
+        }
+
+        then:
+        Node node = context.publisherNodes[0]
+        node.name() == 'hudson.plugins.robot.RobotPublisher'
+        node.otherFiles[0].string[0].value() == 'screenshot-1.png'
+        node.otherFiles[0].string[1].value() == 'screenshot-2.png'
+        node.otherFiles[0].string[2].value() == 'screenshot-3.png'
         1 * jobManagement.requirePlugin('robot')
     }
 

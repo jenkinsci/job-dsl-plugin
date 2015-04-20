@@ -806,6 +806,16 @@ class PublisherContext extends AbstractExtensibleContext {
             reportFileName context.reportFileName
             logFileName context.logFileName
             outputFileName context.outputFileName
+            disableArchiveOutput context.disableArchiveOutput
+            if (context.otherFiles) {
+                if (context.otherFiles) {
+                    otherFiles {
+                        context.otherFiles.each { file ->
+                            string file
+                        }
+                    }
+                }
+            }
         }
     }
 

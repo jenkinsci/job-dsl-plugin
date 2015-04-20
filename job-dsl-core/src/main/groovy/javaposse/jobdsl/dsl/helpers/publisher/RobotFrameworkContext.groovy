@@ -17,10 +17,12 @@ class RobotFrameworkContext implements Context {
     double passThreshold = 100.0
     double unstableThreshold = 0.0
     boolean onlyCritical = false
+    boolean disableArchiveOutput = false
     String outputPath = DEFAULT_OUTPUT_PATH
     String reportFileName = DEFAULT_REPORT_FILE_NAME
     String logFileName = DEFAULT_LOG_FILE_NAME
     String outputFileName = DEFAULT_OUTPUT_FILE_NAME
+    List<String> otherFiles = []
 
     void passThreshold(double passThreshold) {
         Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0,
@@ -34,7 +36,8 @@ class RobotFrameworkContext implements Context {
         this.unstableThreshold = unstableThreshold
     }
 
-    void onlyCritical(boolean onlyCritical) {
+    void onlyCritical(boolean onlyCritical = true) {
+        Preconditions.checkNotNull(onlyCritical, 'onlyCritical cannot be null')
         this.onlyCritical = onlyCritical
     }
 
@@ -57,4 +60,16 @@ class RobotFrameworkContext implements Context {
         Preconditions.checkNotNull(outputFileName, 'outputFileName cannot be null')
         this.outputFileName = outputFileName
     }
+
+    void disableArchiveOutput(boolean disableArchiveOutput = true) {
+        this.disableArchiveOutput = disableArchiveOutput
+    }
+
+    void otherFiles(String... files) {
+        for (String file : files) {
+            Preconditions.checkNotNull(file, 'file cannot be null')
+        }
+        this.otherFiles.addAll(files)
+    }
+
 }

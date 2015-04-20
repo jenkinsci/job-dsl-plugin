@@ -1051,7 +1051,7 @@ shortcuts for simpler Git SCM configurations. Requires the
 [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin).
 
 The closure parameter of the shortcut variants expects a [[configure block|The-Configure-Block]] closure.
- 
+
 The `github` methods will derive the Git URL from the `ownerAndProject`, `protocol` and `host` parameters. Valid
 protocols are `'https'`, `'ssh'` and `'git'`. They also configure the source browser to point to GitHub and set the
 GitHub project URL.
@@ -4800,13 +4800,15 @@ If no `closure` is provided, default values will be used that are based on [Jenk
 
 ```groovy
 publishRobotFrameworkReports {
-    passThreshold(double)     // A double value in range (0.0, 100.0). The default is 100.0.
-    unstableThreshold(double) // A double value in range (0.0, 100.0). The default is 0.0.
-    onlyCritical(boolean)     // A boolean value. The default is false
-    outputPath(String)        // The path to the reports. The default is 'target/robotframework-reports'.
-    reportFileName(String)    // The name of the report file. The default is 'report.html'.
-    logFileName(String)       // The name of the log file. The default is 'log.html'.
-    outputFileName(String)    // The name of the output file. The default is 'output.xml'.
+    passThreshold(double)         // A double value in range (0.0, 100.0). The default is 100.0.
+    unstableThreshold(double)     // A double value in range (0.0, 100.0). The default is 0.0.
+    onlyCritical(boolean)         // A boolean value. The default is false.
+    outputPath(String)            // The path to the reports. The default is 'target/robotframework-reports'.
+    reportFileName(String)        // The name of the report file. The default is 'report.html'.
+    logFileName(String)           // The name of the log file. The default is 'log.html'.
+    outputFileName(String)        // The name of the output file. The default is 'output.xml'.
+    disableArchiveOutput(boolean) // A boolean value. The default is false.
+    otherFiles(String ...)        // List of test related artifacts for saving in robot directory. Screenshots linked to robot logs have to be explicitly defined here for storage.
 }
 ```
 
@@ -4815,7 +4817,7 @@ For example, to mark a build status with more relaxed threshold values and only 
 ```groovy
 publishRobotFrameworkReports {
     passThreshold(90.0)
-    onlyCritical(true)
+    onlyCritical()
 }
 ```
 
