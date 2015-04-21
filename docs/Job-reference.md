@@ -213,7 +213,7 @@ freeStyleJob(String name) { // since 1.30
         chucknorris()
         cobertura(String coberturaReportFilePattern, Closure coberturaClosure = null)
         dependencyCheck(String pattern, Closure staticAnalysisClosure = null)
-        deployArtifacts(Closure deployArtifactsClosure = null) // since 1.31 
+        deployArtifacts(Closure deployArtifactsClosure = null) // since 1.31
         downstream(String projectName, String thresholdName = 'SUCCESS')
         downstreamParameterized(Closure downstreamClosure)
         dry(String pattern, highThreshold = 50, normalThreshold = 25,
@@ -244,6 +244,7 @@ freeStyleJob(String name) { // since 1.30
         pmd(String pattern, Closure staticAnalysisClosure = null)
         postBuildScripts(Closure postBuildScriptsClosure) // since 1.31
         postBuildTask(Closure closure) // since 1.19
+        publishBuild(boolean publishUnstable, boolean publishFailed, Closure closure) // since 1.33
         publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure)
         publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
                               Closure cloneWorkspaceClosure)
@@ -1026,12 +1027,12 @@ job {
                 ancestry(int maxAgeInDays, String commit)
                 gerritTrigger()
             }
-        
+
             configure(Closure configure) // optional configure block
         }
-        
+
         git(String url, String branch = null, Closure configure = null)
-        
+
         github(String ownerAndProject, String branch = null,
                String protocol = 'https', String host = 'github.com',
                Closure configure = null)
@@ -1090,7 +1091,7 @@ job('example-2') {
         }
     }
 }
-        
+
 // add user name and email options
 job('example-3') {
     scm {
@@ -1100,14 +1101,14 @@ job('example-3') {
         }
     }
 }
-        
+
 // add Git SCM for GitHub repository job-dsl-plugin of GitHub user jenkinsci
 job('example-4') {
     scm {
         github('jenkinsci/job-dsl-plugin')
     }
 }
-        
+
 // add Git SCM for a GitHub repository with authentication
 job('example-5') {
     scm {
@@ -1618,7 +1619,7 @@ job {
 Starts a build on completion of an upstream job, i.e. adds the "Build after other projects are built" trigger. Requires
 Jenkins 1.560 or later.
 
-Possible values for `threshold` are `'SUCCESS'`, `'UNSTABLE'` or `'FAILURE'`. 
+Possible values for `threshold` are `'SUCCESS'`, `'UNSTABLE'` or `'FAILURE'`.
 
 ```groovy
 job('example') {
@@ -3895,6 +3896,24 @@ job('example') {
 }
 ```
 
+### Build Publisher
+```groovy
+publishBuild(boolean publishUnstable, boolean publishFailed, Closure closure = null)
+```
+
+Supports the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Build+Publisher+Plugin">Build Publisher Plugin</a>
+
+The optional closure method is discardOldBuilds(int daysToKeep, int numToKeep) to enable the log rotator build discard process
+
+Examples:
+```groovy
+publishers {
+    publishBuild(true, true) {
+        discardOldBuilds(7, 10)
+    }
+```
+Publishes all builds (stable, unstable and failed) and configures builds to be discarded after 7 days or 10 builds.
+
 ### CloneWorkspace Publisher
 ```groovy
 publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob = '', String criteria = 'Any', String archiveMethod = 'TAR', boolean overrideDefaultExcludes = false, Closure cloneWorkspaceClosure = null) {}
@@ -4408,8 +4427,8 @@ job('example') {
 job {
     publishers {
         deployArtifacts {
-            uniqueVersion(boolean uniqueVersion = true)   // defaults to true 
-            evenIfUnstable(boolean evenIfUnstable = true) // defaults to false 
+            uniqueVersion(boolean uniqueVersion = true)   // defaults to true
+            evenIfUnstable(boolean evenIfUnstable = true) // defaults to false
         }
     }
 }

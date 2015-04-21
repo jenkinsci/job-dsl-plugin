@@ -4062,4 +4062,63 @@ class PublisherContextSpec extends Specification {
             disallowOwnCode[0].value() == true
         }
     }
+
+    def 'publishBuild no unstable no failed'() {
+        when:
+        context.publishBuild(false, false)
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.build__publisher.BuildPublisher'
+            children().size() == 2
+            publishUnstableBuilds[0].value() == false
+            publishFailedBuilds[0].value() == false
+        }
+    }
+
+    def 'publishBuild unstable no failed'() {
+        when:
+        context.publishBuild(true, false)
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.build__publisher.BuildPublisher'
+            children().size() == 2
+            publishUnstableBuilds[0].value() == true
+            publishFailedBuilds[0].value() == false
+        }
+    }
+
+    def 'publishBuild unstable and failed'() {
+        when:
+        context.publishBuild(true, true)
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.build__publisher.BuildPublisher'
+            children().size() == 2
+            publishUnstableBuilds[0].value() == true
+            publishFailedBuilds[0].value() == true
+        }
+    }
+
+    def 'publishBuild unstable and failed discard old'() {
+        when:
+        context.publishBuild(true, true) {
+            discardOldBuilds(5, 3)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.build__publisher.BuildPublisher'
+            children().size() == 3
+            publishUnstableBuilds[0].value() == true
+            publishFailedBuilds[0].value() == true
+            logRotator[0].children().size() == 4
+            logRotator[0].daysToKeep[0].value() == 5
+            logRotator[0].numToKeep[0].value() == 3
+            logRotator[0].artifactDaysToKeep[0].value() == -1
+            logRotator[0].artifactNumToKeep[0].value() == -1
+        }
+    }
 }
