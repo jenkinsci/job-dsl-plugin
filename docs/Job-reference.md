@@ -233,6 +233,7 @@ freeStyleJob(String name) { // since 1.30
         git(Closure gitPublisherClosure) // since 1.22
         githubCommitNotifier() // since 1.21
         groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) // since 1.19
+        hipchat(Closure hipchatClosure) // since 1.33
         irc(Closure ircClosure)
         jacocoCodeCoverage(Closure jacocoClosure)
         jshint(String pattern, Closure staticAnalysisClosure = null)
@@ -3788,6 +3789,33 @@ job('example') {
     }
 }
 ```
+
+### Hipchat Publisher
+
+```groovy
+job {
+    publishers {
+        hipchat {
+            room(String... rooms)                // uses global settings if omitted
+            token(String)                        // uses global token if omitted
+            startNotification(boolean = true)    // defaults to false if omitted
+            notifySuccess(boolean = true)        // defaults to false if omitted
+            notifyAborted(boolean = true)        // defaults to false if omitted
+            notifyNotBuilt(boolean = true)       // defaults to false if omitted
+            notifyUnstable(boolean = true)       // defaults to false if omitted
+            notifyFailure(boolean = true)        // defaults to false if omitted
+            notifyBackToNormal(boolean = true)   // defaults to false if omitted
+            startJobMessage(String message)      // uses default message if omitted
+            completeJobMessage(String message)   // uses default message if omitted
+        }
+    }
+}
+```
+
+Allows notifications to be set to hipchat using the Hipchat API. Requires the
+[HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin).
+
+(since 1.33)
 
 ### HTML Publisher
 

@@ -4062,4 +4062,56 @@ class PublisherContextSpec extends Specification {
             disallowOwnCode[0].value() == true
         }
     }
+
+    def 'hipchat notification with no options'() {
+        when:
+        context.hipchat()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.hipchat.HipChatNotifier'
+            children().size() == 7
+            startNotification[0].value() == false
+            notifySuccess[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyUnstable[0].value() == false
+            notifyFailure[0].value() == false
+            notifyBackToNormal[0].value() == false
+        }
+    }
+
+    def 'hipchat notification with all options'() {
+        when:
+        context.hipchat {
+            room 'foo', 'bar'
+            token 'abcd'
+            startNotification()
+            notifySuccess()
+            notifyAborted()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyFailure()
+            notifyBackToNormal()
+            startJobMessage 'JOB AT $URL'
+            completeJobMessage 'JOB DONE! $URL'
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.hipchat.HipChatNotifier'
+            children().size() == 11
+            token[0].value() == 'abcd'
+            room[0].value() == 'foo,bar'
+            startNotification[0].value() == true
+            notifySuccess[0].value() == true
+            notifyAborted[0].value() == true
+            notifyNotBuilt[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyFailure[0].value() == true
+            notifyBackToNormal[0].value() == true
+            startJobMessage[0].value() == 'JOB AT $URL'
+            completeJobMessage[0].value() == 'JOB DONE! $URL'
+        }
+    }
 }

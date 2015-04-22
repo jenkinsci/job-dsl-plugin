@@ -1304,6 +1304,33 @@ class PublisherContext extends AbstractContext {
         }
     }
 
+    void hipchat(@DslContext(HipchatPublisherContext) Closure hipchatClosure = null) {
+        HipchatPublisherContext hipchatContext = new HipchatPublisherContext()
+        ContextHelper.executeInContext(hipchatClosure, hipchatContext)
+
+        publisherNodes << new NodeBuilder().'jenkins.plugins.hipchat.HipChatNotifier' {
+            if (hipchatContext.token) {
+                token(hipchatContext.token)
+            }
+            if (hipchatContext.rooms.size() > 0) {
+                room(hipchatContext.rooms.join(','))
+            }
+            startNotification(hipchatContext.startNotification)
+            notifySuccess(hipchatContext.notifySuccess)
+            notifyAborted(hipchatContext.notifyAborted)
+            notifyNotBuilt(hipchatContext.notifyNotBuilt)
+            notifyUnstable(hipchatContext.notifyUnstable)
+            notifyFailure(hipchatContext.notifyFailure)
+            notifyBackToNormal(hipchatContext.notifyBackToNormal)
+            if (hipchatContext.startJobMessage) {
+                startJobMessage(hipchatContext.startJobMessage)
+            }
+            if (hipchatContext.completeJobMessage) {
+                completeJobMessage(hipchatContext.completeJobMessage)
+            }
+        }
+    }
+
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
