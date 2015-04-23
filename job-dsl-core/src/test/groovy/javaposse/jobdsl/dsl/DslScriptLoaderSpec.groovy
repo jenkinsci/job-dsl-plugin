@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl
 import com.google.common.collect.Iterables
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Ignore
+import spock.lang.Issue
 import spock.lang.Specification
 
 class DslScriptLoaderSpec extends Specification {
@@ -317,5 +318,29 @@ folder {
 
         then:
         thrown UnsupportedOperationException
+    }
+
+    @Issue('JENKINS-28048')
+    def 'using variables in the script'() {
+        setup:
+        String script = '''counter.inc()'''
+        Counter counter = new Counter()
+        ScriptRequest request = new ScriptRequest(null, script, [resourcesDir] as URL[], false, ['counter': counter])
+
+        when:
+        DslScriptLoader.runDslEngine request, jm
+
+        then:
+        counter.value == 1
+    }
+
+    static class Counter {
+        private int count = 0
+        int inc() {
+            count++
+        }
+        int getValue() {
+            count
+        }
     }
 }

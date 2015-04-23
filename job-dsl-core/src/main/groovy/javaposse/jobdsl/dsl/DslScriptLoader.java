@@ -51,6 +51,14 @@ public class DslScriptLoader {
 
         Binding binding = createBinding(jobManagement);
 
+        // Additional variables
+        Map<String, Object> variables = scriptRequest.getVariables();
+        if (variables != null) {
+            for (Map.Entry<String, Object> v : variables.entrySet()) {
+                binding.setVariable(v.getKey(), v.getValue());
+            }
+        }
+
         JobParent jp;
         try {
             Script script;
