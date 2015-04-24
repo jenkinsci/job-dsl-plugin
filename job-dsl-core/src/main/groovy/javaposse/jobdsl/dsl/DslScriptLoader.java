@@ -31,7 +31,14 @@ public class DslScriptLoader {
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator();
 
     public static JobParent runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        ClassLoader parentClassLoader = DslScriptLoader.class.getClassLoader();
+        return runDslEngineForParent(scriptRequest, jobManagement, getDefaultClassLoader());
+    }
+
+    public static ClassLoader getDefaultClassLoader() {
+        return DslScriptLoader.class.getClassLoader();
+    }
+
+    public static JobParent runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement, ClassLoader parentClassLoader) throws IOException {
         CompilerConfiguration config = createCompilerConfiguration(jobManagement);
 
         // Otherwise baseScript won't take effect
@@ -97,7 +104,11 @@ public class DslScriptLoader {
     }
 
     public static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        JobParent jp = runDslEngineForParent(scriptRequest, jobManagement);
+        return runDslEngine(scriptRequest, jobManagement, getDefaultClassLoader());
+    }
+
+    public static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement, ClassLoader parentClassLoader) throws IOException {
+        JobParent jp = runDslEngineForParent(scriptRequest, jobManagement, parentClassLoader);
         LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
 
         GeneratedItems generatedItems = new GeneratedItems();
