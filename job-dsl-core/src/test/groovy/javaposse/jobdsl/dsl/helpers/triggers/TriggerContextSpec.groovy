@@ -579,4 +579,44 @@ class TriggerContextSpec extends Specification {
         ''       | 'SUCCESS'
         null     | 'UNSTABLE'
     }
+
+    def 'call rundeck trigger with default options'() {
+        when:
+        context.rundeck()
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckTrigger'
+            children().size() == 2
+            spec[0].value().empty
+            filterJobs[0].value() == false
+        }
+    }
+
+    def 'call rundeck trigger with all options'() {
+        when:
+        context.rundeck {
+            filterJobs()
+            jobsIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f', 'my-project-name:main-group/sub-group/my-job-name')
+            executionStatuses('FAILED', 'ABORTED')
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckTrigger'
+            children().size() == 4
+            spec[0].value().empty
+            filterJobs[0].value() == true
+            with(jobsIdentifiers[0]) {
+                children().size() == 2
+                string[0].value() == '2027ce89-7924-4ecf-a963-30090ada834f'
+                string[1].value() == 'my-project-name:main-group/sub-group/my-job-name'
+            }
+            with(executionStatuses[0]) {
+                children().size() == 2
+                string[0].value() == 'FAILED'
+                string[1].value() == 'ABORTED'
+            }
+        }
+    }
 }

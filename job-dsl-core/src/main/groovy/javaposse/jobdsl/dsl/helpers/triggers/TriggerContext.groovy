@@ -255,4 +255,29 @@ class TriggerContext extends AbstractContext {
             }
         }
     }
+
+    @RequiresPlugin(id = 'rundeck')
+    void rundeck(@DslContext(RundeckTriggerContext) Closure closure = null) {
+        RundeckTriggerContext context = new RundeckTriggerContext()
+        ContextHelper.executeInContext(closure, context)
+
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckTrigger' {
+            spec()
+            filterJobs context.filterJobs
+            if (context.jobsIdentifiers) {
+                jobsIdentifiers {
+                    context.jobsIdentifiers.each { jobsIdentifier ->
+                        string jobsIdentifier
+                    }
+                }
+            }
+            if (context.executionStatuses) {
+                executionStatuses {
+                    context.executionStatuses.each { status ->
+                        string status
+                    }
+                }
+            }
+        }
+    }
 }
