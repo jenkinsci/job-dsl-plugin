@@ -16,6 +16,8 @@ import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
+import javaposse.jobdsl.dsl.helpers.step.StepContext
+import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
@@ -118,6 +120,55 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         1 * build.setResult(UNSTABLE)
         buffer.size() > 0
+    }
+
+    def 'callExtension not found'() {
+        when:
+        Node result = jobManagement.callExtension('foo', StepContext)
+
+        then:
+        result == null
+    }
+
+    def 'callExtension with no args'() {
+        when:
+        Node result = jobManagement.callExtension('test', StepContext)
+
+        then:
+        isXmlIdentical('extension.xml', result)
+    }
+
+    def 'callExtension defined twice'() {
+        when:
+        jobManagement.callExtension('twice', StepContext)
+
+        then:
+        Exception e = thrown(DslException)
+        e.message.contains(TestContextExtensionPoint.name)
+        e.message.contains(TestContextExtensionPoint2.name)
+    }
+
+    def 'callExtension with object result'() {
+        when:
+        Node result = jobManagement.callExtension('testComplexObject', StepContext, 'foo', 42, true)
+
+        then:
+        isXmlIdentical('extension.xml', result)
+    }
+
+    def 'callExtension with closure'() {
+        setup:
+        Closure closure = {
+            value1('foo')
+            value2(42)
+            value3(true)
+        }
+
+        when:
+        Node result = jobManagement.callExtension('withNestedContext', StepContext, closure)
+
+        then:
+        isXmlIdentical('extension.xml', result)
     }
 
     def 'create job with nonexisting parent'() {
@@ -477,5 +528,20 @@ class JenkinsJobManagementSpec extends Specification {
         'hudson.model.Item.Move' in permissions
         'hudson.model.Run.Delete' in permissions
         'hudson.model.Run.Update' in permissions
+    }
+
+    private static boolean isXmlIdentical(String expected, Node actual) throws Exception {
+        XMLUnit.ignoreWhitespace = true
+        XMLUnit.compareXML(loadResource(expected), nodeToString(actual)).identical()
+    }
+
+    private static String nodeToString(Node node) {
+        StringWriter writer = new StringWriter()
+        new XmlNodePrinter(new PrintWriter(writer)).print(node)
+        writer.toString()
+    }
+
+    private static String loadResource(String resourceName) {
+        Resources.toString(getResource(resourceName), UTF_8)
     }
 }

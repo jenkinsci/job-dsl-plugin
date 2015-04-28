@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 import hudson.util.VersionNumber
 
 /**
@@ -202,4 +203,16 @@ interface JobManagement {
      * @since 1.31
      */
     Set<String> getPermissions(String authorizationMatrixPropertyClassName)
+
+    /**
+     * Tries to find and call an DSL extension method for the given context and returns a node object which will be
+     * appended to the given context.
+     *
+     * @param name name of the DSL extension method to be called
+     * @param contextType type of the context which is extended by the method to be called
+     * @param args arguments for the method to be called
+     * @return a node to be appended to the given context or <code>null</code> if no extension has been found
+     * @since 1.33
+     */
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args)
 }

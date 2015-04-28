@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 /**
  * Abstract base class for all non-Jenkins implementations of {@link JobManagement}.
@@ -91,5 +92,10 @@ abstract class MockJobManagement extends AbstractJobManagement {
     @Override
     Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
         permissions[authorizationMatrixPropertyClassName]
+    }
+
+    @Override
+    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+        null
     }
 }

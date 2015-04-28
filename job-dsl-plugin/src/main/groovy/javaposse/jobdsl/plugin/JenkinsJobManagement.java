@@ -5,6 +5,8 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import groovy.util.Node;
+import groovy.util.XmlParser;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Plugin;
@@ -29,12 +31,15 @@ import javaposse.jobdsl.dsl.ConfigFile;
 import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.ConfigurationMissingException;
 import javaposse.jobdsl.dsl.DslException;
+import javaposse.jobdsl.dsl.DslExtensionMethod;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
@@ -49,7 +54,10 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -62,6 +70,7 @@ import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
+import static org.apache.commons.lang.reflect.MethodUtils.getMatchingAccessibleMethod;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -349,6 +358,34 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return PermissionsHelper.getPermissions(descriptorId);
     }
 
+    @Override
+    public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+        Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
+        if (candidates.isEmpty()) {
+            LOGGER.fine(
+                    "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
+            );
+            return null;
+        } else if (candidates.size() > 1) {
+            throw new DslException(format(
+                    Messages.CallExtension_MultipleCandidates(),
+                    name,
+                    Arrays.toString(args),
+                    Arrays.toString(ClassUtils.toClass(candidates.keySet().toArray()))
+            ));
+        }
+
+        try {
+            Map.Entry<ContextExtensionPoint, Method> candidate = candidates.entrySet().iterator().next();
+            ContextExtensionPoint extensionPoint = candidate.getKey();
+            Method method = candidate.getValue();
+            Object result = method.invoke(extensionPoint, args);
+            return new XmlParser().parseText(Items.XSTREAM2.toXML(result));
+        } catch (Exception e) {
+            throw new RuntimeException("Error calling extension", e);
+        }
+    }
+
     private void markBuildAsUnstable(String message) {
         getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
         build.setResult(UNSTABLE);
@@ -454,6 +491,26 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             }
         }
         from.renameTo(FilenameUtils.getName(to));
+    }
+
+    private static Map<ContextExtensionPoint, Method> findExtensionPoints(String name,
+                                                                          Class<? extends ExtensibleContext> contextType,
+                                                                          Object... args) {
+        Class[] parameterTypes = ClassUtils.toClass(args);
+        Map<ContextExtensionPoint, Method> candidates = new HashMap<ContextExtensionPoint, Method>();
+
+        // Find extensions that match any @DslMethod annotated method with the given name and parameters
+        for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
+            Method candidateMethod = getMatchingAccessibleMethod(extensionPoint.getClass(), name, parameterTypes);
+            if (candidateMethod != null) {
+                DslExtensionMethod annotation = candidateMethod.getAnnotation(DslExtensionMethod.class);
+                if (annotation != null && annotation.context().isAssignableFrom(contextType)) {
+                    candidates.put(extensionPoint, candidateMethod);
+                }
+            }
+        }
+
+        return candidates;
     }
 
     @SuppressWarnings("unchecked")

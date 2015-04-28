@@ -1,0 +1,5 @@
+<javaposse.jobdsl.plugin.TestContextExtensionPoint_-SomeValueObject>
+    <value1>foo</value1>
+    <value2>42</value2>
+    <value3>true</value3>
+</javaposse.jobdsl.plugin.TestContextExtensionPoint_-SomeValueObject>
