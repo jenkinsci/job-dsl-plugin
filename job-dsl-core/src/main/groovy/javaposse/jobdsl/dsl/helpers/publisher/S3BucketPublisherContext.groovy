@@ -9,8 +9,8 @@ import static com.google.common.base.Strings.isNullOrEmpty
 
 class S3BucketPublisherContext implements Context {
     private static final List<String> REGIONS = [
-            'GovCloud', 'US_EAST_1', 'US_WEST_1', 'US_WEST_2', 'EU_WEST_1', 'AP_SOUTHEAST_1', 'AP_SOUTHEAST_2',
-            'AP_NORTHEAST_1', 'SA_EAST_1', 'CN_NORTH_1'
+            'GovCloud', 'us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', 'ap-southeast-1', 'ap-southeast-2',
+            'ap-northeast-1', 'sa-east-1', 'cn-north-1'
     ]
 
     List<Node> entries = []
