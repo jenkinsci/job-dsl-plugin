@@ -4,23 +4,28 @@ import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
 
-class PublisherContext extends AbstractContext {
+class PublisherContext extends AbstractExtensibleContext {
     List<Node> publisherNodes = []
 
     PublisherContext(JobManagement jobManagement) {
         super(jobManagement)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        publisherNodes << node
     }
 
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {

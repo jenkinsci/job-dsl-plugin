@@ -3,18 +3,23 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 
-class WrapperContext extends AbstractContext {
+class WrapperContext extends AbstractExtensibleContext {
     List<Node> wrapperNodes = []
 
     WrapperContext(JobManagement jobManagement) {
         super(jobManagement)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        wrapperNodes << node
     }
 
     @RequiresPlugin(id = 'timestamper')
