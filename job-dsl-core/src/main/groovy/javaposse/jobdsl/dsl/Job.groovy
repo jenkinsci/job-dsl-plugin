@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.JobAuthorizationContext
 import javaposse.jobdsl.dsl.helpers.Permissions
+import javaposse.jobdsl.dsl.helpers.PropertiesContext
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -485,6 +486,17 @@ abstract class Job extends Item {
         withXmlActions << WithXmlAction.create { Node project ->
             context.wrapperNodes.each {
                 project / 'buildWrappers' << it
+            }
+        }
+    }
+
+    void properties(@DslContext(PropertiesContext) Closure closure) {
+        PropertiesContext context = new PropertiesContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.propertiesNodes.each {
+                project / 'properties' << it
             }
         }
     }
