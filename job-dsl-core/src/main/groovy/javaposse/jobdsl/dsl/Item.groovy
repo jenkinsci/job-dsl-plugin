@@ -28,6 +28,21 @@ abstract class Item extends AbstractContext {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )
     }
 
+    void with(Closure closure) {
+        boolean sessionStarted = false
+        if (name) {
+            jobManagement.startSession(name)
+            sessionStarted = true
+        }
+        try {
+            super.with(closure)
+        } finally {
+            if (sessionStarted) {
+                jobManagement.stopSession()
+            }
+        }
+    }
+
     /**
      * Postpone all xml processing until someone actually asks for the xml. That lets us execute everything in order,
      * even if the user didn't specify them in order.

@@ -60,6 +60,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,6 +71,8 @@ import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
+import static javaposse.jobdsl.plugin.DslSession.clearCurrentSession;
+import static javaposse.jobdsl.plugin.DslSession.setCurrentSession;
 import static org.apache.commons.lang.reflect.MethodUtils.getMatchingAccessibleMethod;
 
 /**
@@ -81,6 +84,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private final EnvVars envVars;
     private final AbstractBuild<?, ?> build;
     private final LookupStrategy lookupStrategy;
+    private final Map<String, DslSession> sessions = new HashMap<String, DslSession>();
+    private final Stack<DslSession> sessionStack = new Stack<DslSession>();
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build,
                                 LookupStrategy lookupStrategy) {
@@ -386,6 +391,23 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
+    @Override
+    public void startSession(String name) {
+        if (DslSession.hasCurrentSession()) {
+            sessionStack.push(DslSession.getCurrentSession());
+        }
+        DslSession.setCurrentSession(getSession(name));
+    }
+
+    @Override
+    public void stopSession() {
+        if (sessionStack.empty()) {
+            DslSession.clearCurrentSession();
+        } else {
+            DslSession.setCurrentSession(sessionStack.pop());
+        }
+    }
+
     private void markBuildAsUnstable(String message) {
         getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
         build.setResult(UNSTABLE);
@@ -439,6 +461,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Source streamSource = new StreamSource(new StringReader(config));
         try {
             item.updateByXml(streamSource);
+
+            setCurrentSession(getSession(item.getFullName())); // todo: fail if no session exists?
+            for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
+                extensionPoint.notifyItemUpdated(item); // todo: rely on Jenkins events?
+            }
+            clearCurrentSession();
+
             created = true;
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, format("Error writing updated item to file."), e);
@@ -457,7 +486,14 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
             String itemName = FilenameUtils.getName(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
-                ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+                Item project = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+
+                setCurrentSession(getSession(path)); // todo: fail if no session exists?
+                for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
+                    extensionPoint.notifyItemCreated(project); // todo: rely on Jenkins events?
+                }
+                clearCurrentSession();
+
                 created = true;
             } else if (parent == null) {
                 throw new DslException(format(Messages.CreateItem_UnknownParent(), path));
@@ -470,6 +506,15 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.log(Level.WARNING, format("Error writing config for new item %s.", path), e);
         }
         return created;
+    }
+
+    private DslSession getSession(String name) {
+        DslSession session = sessions.get(name);
+        if (session == null) {
+            session = new DslSession();
+            sessions.put(name, session);
+        }
+        return session;
     }
 
     private void renameJob(Job from, String to) throws IOException {

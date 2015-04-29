@@ -215,4 +215,8 @@ interface JobManagement {
      * @since 1.33
      */
     Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args)
+
+    void startSession(String name) // TODO item name vs view name?!?
+
+    void stopSession()
 }

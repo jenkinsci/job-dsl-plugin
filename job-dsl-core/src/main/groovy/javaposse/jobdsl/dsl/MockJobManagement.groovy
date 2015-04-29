@@ -98,4 +98,12 @@ abstract class MockJobManagement extends AbstractJobManagement {
     Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
         null
     }
+
+    @Override
+    void startSession(String name) {
+    }
+
+    @Override
+    void stopSession() {
+    }
 }

@@ -171,6 +171,20 @@ class JenkinsJobManagementSpec extends Specification {
         isXmlIdentical('extension.xml', result)
     }
 
+    def 'extension is being notified'() {
+        when:
+        jobManagement.createOrUpdateConfig('test-123', loadResource('config.xml'), true)
+
+        then:
+        ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemCreated('test-123')
+
+        when:
+        jobManagement.createOrUpdateConfig('test-123', loadResource('config2.xml'), false)
+
+        then:
+        ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemUpdated('test-123')
+    }
+
     def 'create job with nonexisting parent'() {
         when:
         jobManagement.createOrUpdateConfig(
