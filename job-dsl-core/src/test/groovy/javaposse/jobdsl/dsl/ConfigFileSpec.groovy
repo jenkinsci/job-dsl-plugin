@@ -20,6 +20,15 @@ class ConfigFileSpec extends Specification {
         1 * jobManagement.logDeprecationWarning()
     }
 
+    def 'set name twice '() {
+        when:
+        configFile.name('foo')
+        configFile.name('bar')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
     def 'set comment'() {
         when:
         configFile.comment('lorem ipsum')

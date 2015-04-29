@@ -17,6 +17,15 @@ class ViewSpec extends Specification {
         1 * jobManagement.logDeprecationWarning()
     }
 
+    def 'set name twice '() {
+        when:
+        view.name('foo')
+        view.name('bar')
+
+        then:
+        thrown(IllegalStateException)
+    }
+
     def 'description'() {
         when:
         view.description('test view')

@@ -1,5 +1,8 @@
 package javaposse.jobdsl.dsl
 
+import com.google.common.base.Preconditions
+import com.google.common.base.Strings
+
 abstract class Item extends AbstractContext {
     String name
 
@@ -12,6 +15,9 @@ abstract class Item extends AbstractContext {
     @Deprecated
     void name(String name) {
         jobManagement.logDeprecationWarning()
+        if (this.name) {
+            Preconditions.checkState(Strings.isNullOrEmpty(name), 'name can only be set once')
+        }
         this.name = name
     }
 
