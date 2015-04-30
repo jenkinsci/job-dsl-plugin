@@ -5,12 +5,14 @@ import javaposse.jobdsl.dsl.Context
 
 class DslContext implements Context {
     private static final Set<String> REMOVE_JOB_ACTIONS = ['IGNORE', 'DISABLE', 'DELETE']
+    private static final Set<String> LOOKUP_STRATEGIES = ['JENKINS_ROOT', 'SEED_JOB']
 
     String scriptText
     String removedJobAction = 'IGNORE'
     List<String> externalScripts = []
     boolean ignoreExisting = false
     String additionalClasspath
+    String lookupStrategy = 'JENKINS_ROOT'
 
     void text(String text) {
         this.scriptText = Preconditions.checkNotNull(text)
@@ -44,5 +46,16 @@ class DslContext implements Context {
      */
     void additionalClasspath(String classpath) {
         this.additionalClasspath = classpath
+    }
+
+    /**
+     * @since 1.33
+     */
+    void lookupStrategy(String lookupStrategy) {
+        Preconditions.checkArgument(
+                LOOKUP_STRATEGIES.contains(lookupStrategy),
+                "lookupStrategy must be one of: ${LOOKUP_STRATEGIES.join(', ')}"
+        )
+        this.lookupStrategy = lookupStrategy
     }
 }

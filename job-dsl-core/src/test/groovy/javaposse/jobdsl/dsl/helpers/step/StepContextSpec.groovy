@@ -1116,7 +1116,38 @@ class StepContextSpec extends Specification {
         dslStep.ignoreExisting[0].value() ==  false
         dslStep.removedJobAction[0].value() == 'IGNORE'
         dslStep.scriptText[0].value() == ''
+        dslStep.lookupStrategy[0].value() == 'JENKINS_ROOT'
         dslStep.additionalClasspath[0].value() == ''
+    }
+
+    def 'call dsl lookup strategy' () {
+        when:
+        context.dsl {
+            lookupStrategy 'SEED_JOB'
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def dslStep = context.stepNodes[0]
+        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+        dslStep.targets[0].value() == ''
+        dslStep.usingScriptText[0].value() == false
+        dslStep.ignoreExisting[0].value() ==  false
+        dslStep.removedJobAction[0].value() == 'IGNORE'
+        dslStep.scriptText[0].value() == ''
+        dslStep.lookupStrategy[0].value() == 'SEED_JOB'
+        dslStep.additionalClasspath[0].value() == ''
+    }
+
+    def 'call dsl lookup strategy wrong' () {
+        when:
+        context.dsl {
+            lookupStrategy 'XXX'
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'call dsl method external script ignoring existing' () {

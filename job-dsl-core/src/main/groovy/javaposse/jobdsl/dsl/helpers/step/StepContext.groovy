@@ -136,6 +136,7 @@ class StepContext extends AbstractExtensibleContext {
             scriptText context.scriptText ?: ''
             ignoreExisting context.ignoreExisting
             removedJobAction context.removedJobAction
+            lookupStrategy context.lookupStrategy
             additionalClasspath context.additionalClasspath ?: ''
         }
     }
