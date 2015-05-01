@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkState
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
-class ScmContext extends AbstractContext {
+class ScmContext extends AbstractExtensibleContext {
     private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
 
     private final boolean multiEnabled
@@ -33,6 +33,10 @@ class ScmContext extends AbstractContext {
         this.withXmlActions = withXmlActions
     }
 
+    @Override
+    protected void addExtensionNode(Node node) {
+        scmNodes << node
+    }
     /**
      * Helper method for dealing with a single scm node
      */
