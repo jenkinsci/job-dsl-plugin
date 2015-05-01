@@ -888,6 +888,54 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
+    def 'call configFiles with type arg'() {
+        setup:
+        String configName = 'myCustomConfig'
+        String configId = 'CustomConfig1417476679249'
+        String configTarget = 'myTargetLocation'
+        String configVariable = '$CONFIG_FILE_LOCATION'
+        mockJobManagement.getConfigFileId(ConfigFileType.MavenSettings, configName) >> configId
+
+        when:
+        context.configFiles {
+            file(configName, ConfigFileType.MavenSettings) {
+                targetLocation configTarget
+                variable configVariable
+            }
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == configTarget
+                variable[0].value() == configVariable
+            }
+        }
+        1 * mockJobManagement.requirePlugin('config-file-provider')
+    }
+
+    def 'call configFile with null file type'() {
+        setup:
+        String configName = 'lala'
+
+        when:
+        context.configFiles {
+            file(configName, null) {
+                variable "CONFIG_FILE_LOCATION"
+            }
+        }
+
+        then:
+        Exception e = thrown(NullPointerException)
+        e.message.contains("Config file type must be specified")
+    }
+
+
     def 'call configFile with unknown fileName'() {
         setup:
         String configName = 'lala'

@@ -1923,6 +1923,7 @@ job {
                 targetLocation(String targetLocation) // optional
                 variable(String variable)             // optional
             }
+            file(String fileName, ConfigFileType type, Closure closure) // since 1.33
         }
     }
 }
@@ -1931,12 +1932,19 @@ job {
 Makes an existing custom config file available to builds. Requires
 the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
 
+Possible values for `type` are `ConfigFileType.Custom` and `ConfigFileType.MavenSettings`. If not specified type is `ConfigFileType.Custom`.
+
 ```groovy
 job('example') {
     wrappers {
         configFiles {
+        	// defaults to ConfigFileType.Custom
             file('myCustomConfigFile') {
                 variable('CONFIG_FILE')
+            }
+            // since 1.33
+            file('myJenkinsSettingsFile', ConfigFileType.MAVEN_SETTINGS) {
+                variable('JENKINS_SETTINGS_FILE')
             }
         }
     }
