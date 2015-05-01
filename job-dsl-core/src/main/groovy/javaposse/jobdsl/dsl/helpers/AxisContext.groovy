@@ -1,10 +1,21 @@
 package javaposse.jobdsl.dsl.helpers
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 
-class AxisContext implements Context {
+
+class AxisContext extends AbstractExtensibleContext {
     List<Node> axisNodes = []
     List<Closure> configureBlocks = []
+
+    AxisContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        axisNodes << node
+    }
 
     void text(String axisName, String... axisValues) {
         text(axisName, axisValues.toList())
