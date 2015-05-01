@@ -20,6 +20,7 @@ build
 generated
 /out
 /classes
+.DS_Store
 
 #Jenkins specific out
 *.hpi
