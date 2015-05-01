@@ -15,7 +15,7 @@ class ConfigFilesContext extends AbstractContext {
     }
 
     void file(String fileName, ConfigFileType type, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        Preconditions.checkNotNull(type, "Config file type must be specified")
+        Preconditions.checkNotNull(type, 'Config file type must be specified')
         String configFileId = jobManagement.getConfigFileId(type, fileName)
         Preconditions.checkNotNull(configFileId, "${type} config file with name '${fileName}' not found")
 

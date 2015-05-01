@@ -926,15 +926,14 @@ class WrapperContextSpec extends Specification {
         when:
         context.configFiles {
             file(configName, null) {
-                variable "CONFIG_FILE_LOCATION"
+                variable 'CONFIG_FILE_LOCATION'
             }
         }
 
         then:
         Exception e = thrown(NullPointerException)
-        e.message.contains("Config file type must be specified")
+        e.message.contains('Config file type must be specified')
     }
-
 
     def 'call configFile with unknown fileName'() {
         setup:
