@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import spock.lang.Specification
@@ -12,7 +13,8 @@ import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.Ba
 
 class StepContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    StepContext context = new StepContext(jobManagement)
+    Item item = Mock(Item)
+    StepContext context = new StepContext(jobManagement, item)
 
     def 'call shell method'() {
         when:

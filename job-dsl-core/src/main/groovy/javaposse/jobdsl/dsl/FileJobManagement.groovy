@@ -33,8 +33,11 @@ class FileJobManagement extends MockJobManagement {
         }
     }
 
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
-        throws NameNotProvidedException, ConfigurationMissingException {
+    @Override
+    boolean createOrUpdateConfig(Item item, boolean ignoreExisting) throws NameNotProvidedException {
+        String jobName = item.name
+        String config = item.xml
+
         validateUpdateArgs(jobName, config)
 
         new File(jobName + ext).write(config)

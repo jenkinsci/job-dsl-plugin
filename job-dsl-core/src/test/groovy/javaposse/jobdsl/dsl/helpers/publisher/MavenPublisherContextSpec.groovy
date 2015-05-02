@@ -1,11 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class MavenPublisherContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    MavenPublisherContext context = new MavenPublisherContext(jobManagement)
+    Item item = Mock(Item)
+    MavenPublisherContext context = new MavenPublisherContext(jobManagement, item)
 
     def 'call deployArtifacts with no options'() {
         when:

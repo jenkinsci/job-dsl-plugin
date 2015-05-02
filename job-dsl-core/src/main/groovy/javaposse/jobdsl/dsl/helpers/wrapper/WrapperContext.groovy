@@ -5,6 +5,7 @@ import com.google.common.base.Strings
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -13,8 +14,8 @@ import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 class WrapperContext extends AbstractExtensibleContext {
     List<Node> wrapperNodes = []
 
-    WrapperContext(JobManagement jobManagement) {
-        super(jobManagement)
+    WrapperContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     @Override
@@ -284,7 +285,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'release')
     void release(@DslContext(ReleaseContext) Closure releaseClosure) {
-        ReleaseContext releaseContext = new ReleaseContext(jobManagement)
+        ReleaseContext releaseContext = new ReleaseContext(jobManagement, item)
         ContextHelper.executeInContext(releaseClosure, releaseContext)
 
         // plugin properties
@@ -505,7 +506,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'preSCMbuildstep')
     void preScmSteps(@DslContext(PreScmStepsContext) Closure closure) {
-        PreScmStepsContext context = new PreScmStepsContext(jobManagement)
+        PreScmStepsContext context = new PreScmStepsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper' {

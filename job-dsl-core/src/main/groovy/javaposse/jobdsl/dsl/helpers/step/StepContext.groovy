@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -16,8 +17,8 @@ import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORK
 class StepContext extends AbstractExtensibleContext {
     final List<Node> stepNodes = []
 
-    StepContext(JobManagement jobManagement) {
-        super(jobManagement)
+    StepContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     @Override
@@ -548,7 +549,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'conditional-buildstep')
     void conditionalSteps(@DslContext(ConditionalStepsContext) Closure conditionalStepsClosure) {
-        ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement)
+        ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement, item)
         ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
         if (conditionalStepsContext.stepNodes.size() > 1) {
@@ -622,7 +623,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'Exclusion')
     void criticalBlock(@DslContext(StepContext) Closure closure) {
-        StepContext stepContext = new StepContext(jobManagement)
+        StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
 
         stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'()

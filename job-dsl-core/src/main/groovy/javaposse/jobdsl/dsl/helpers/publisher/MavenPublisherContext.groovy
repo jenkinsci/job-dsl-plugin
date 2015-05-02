@@ -2,11 +2,12 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
 class MavenPublisherContext extends PublisherContext {
-    MavenPublisherContext(JobManagement jobManagement) {
-        super(jobManagement)
+    MavenPublisherContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     /**

@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
@@ -9,7 +10,8 @@ import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.M
 
 class PublisherContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    PublisherContext context = new PublisherContext(jobManagement)
+    Item item = Mock(Item)
+    PublisherContext context = new PublisherContext(jobManagement, item)
 
     def 'empty call extended email method'() {
         when:

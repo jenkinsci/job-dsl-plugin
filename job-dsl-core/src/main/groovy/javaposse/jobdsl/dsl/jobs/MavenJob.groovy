@@ -46,7 +46,7 @@ class MavenJob extends Job {
      */
     @Override
     void wrappers(@DslContext(MavenWrapperContext) Closure closure) {
-        WrapperContext context = new MavenWrapperContext(jobManagement)
+        WrapperContext context = new MavenWrapperContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -58,7 +58,7 @@ class MavenJob extends Job {
 
     @Override
     void publishers(@DslContext(MavenPublisherContext) Closure closure) {
-        MavenPublisherContext context = new MavenPublisherContext(jobManagement)
+        MavenPublisherContext context = new MavenPublisherContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -184,7 +184,7 @@ class MavenJob extends Job {
      * @since 1.20
      */
     void preBuildSteps(@DslContext(StepContext) Closure preBuildClosure) {
-        StepContext preBuildContext = new StepContext(jobManagement)
+        StepContext preBuildContext = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(preBuildClosure, preBuildContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -198,7 +198,7 @@ class MavenJob extends Job {
      * @since 1.20
      */
     void postBuildSteps(@DslContext(StepContext) Closure postBuildClosure) {
-        StepContext postBuildContext = new StepContext(jobManagement)
+        StepContext postBuildContext = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
         withXmlActions << WithXmlAction.create { Node project ->

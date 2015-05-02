@@ -4,14 +4,15 @@ import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class MultiJobStepContext extends StepContext {
     private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
 
-    MultiJobStepContext(JobManagement jobManagement) {
-        super(jobManagement)
+    MultiJobStepContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     /**

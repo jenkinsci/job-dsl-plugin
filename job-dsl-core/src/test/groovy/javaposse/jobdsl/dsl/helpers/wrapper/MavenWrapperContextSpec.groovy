@@ -1,11 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class MavenWrapperContextSpec extends Specification {
     JobManagement mockJobManagement = Mock(JobManagement)
-    MavenWrapperContext context = new MavenWrapperContext(mockJobManagement)
+    Item item = Mock(Item)
+    MavenWrapperContext context = new MavenWrapperContext(mockJobManagement, item)
 
     def 'configure m2release plugin with least args'() {
         when:

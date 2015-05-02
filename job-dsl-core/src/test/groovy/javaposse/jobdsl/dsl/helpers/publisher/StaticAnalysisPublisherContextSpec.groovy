@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class StaticAnalysisPublisherContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    PublisherContext context = new PublisherContext(jobManagement)
+    Item item = Mock(Item)
+    PublisherContext context = new PublisherContext(jobManagement, item)
 
     @Unroll
     def 'add #analysisTool with default values'(String analysisTool, Map extraNodes, String pluginId) {

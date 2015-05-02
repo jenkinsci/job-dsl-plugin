@@ -14,6 +14,7 @@ import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.DslException
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -124,7 +125,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension not found'() {
         when:
-        Node result = jobManagement.callExtension('foo', StepContext)
+        Node result = jobManagement.callExtension('foo', Mock(Item), StepContext)
 
         then:
         result == null
@@ -132,7 +133,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension with no args'() {
         when:
-        Node result = jobManagement.callExtension('test', StepContext)
+        Node result = jobManagement.callExtension('test', Mock(Item), StepContext)
 
         then:
         isXmlIdentical('extension.xml', result)
@@ -140,7 +141,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension defined twice'() {
         when:
-        jobManagement.callExtension('twice', StepContext)
+        jobManagement.callExtension('twice', Mock(Item), StepContext)
 
         then:
         Exception e = thrown(DslException)
@@ -150,7 +151,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'callExtension with object result'() {
         when:
-        Node result = jobManagement.callExtension('testComplexObject', StepContext, 'foo', 42, true)
+        Node result = jobManagement.callExtension('testComplexObject', Mock(Item), StepContext, 'foo', 42, true)
 
         then:
         isXmlIdentical('extension.xml', result)
@@ -165,10 +166,32 @@ class JenkinsJobManagementSpec extends Specification {
         }
 
         when:
-        Node result = jobManagement.callExtension('withNestedContext', StepContext, closure)
+        Node result = jobManagement.callExtension('withNestedContext', Mock(Item), StepContext, closure)
 
         then:
         isXmlIdentical('extension.xml', result)
+    }
+
+    def 'callExtension with environment'() {
+        when:
+        Node result = jobManagement.callExtension('withEnvironment', Mock(Item), StepContext, 'foo', 42, true)
+
+        then:
+        isXmlIdentical('extension.xml', result)
+    }
+
+    def 'extension is being notified'() {
+        when:
+        jobManagement.createOrUpdateConfig('test-123', loadResource('config.xml'), true)
+
+        then:
+        ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemCreated('test-123')
+
+        when:
+        jobManagement.createOrUpdateConfig('test-123', loadResource('config2.xml'), false)
+
+        then:
+        ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemUpdated('test-123')
     }
 
     def 'create job with nonexisting parent'() {

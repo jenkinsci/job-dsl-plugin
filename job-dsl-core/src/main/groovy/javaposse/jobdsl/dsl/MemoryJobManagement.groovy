@@ -30,8 +30,10 @@ class MemoryJobManagement extends MockJobManagement {
     }
 
     @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
-            throws NameNotProvidedException, ConfigurationMissingException {
+    boolean createOrUpdateConfig(Item item, boolean ignoreExisting) throws NameNotProvidedException {
+        String jobName = item.name
+        String config = item.xml
+
         validateUpdateArgs(jobName, config)
 
         savedConfigs[jobName] = config

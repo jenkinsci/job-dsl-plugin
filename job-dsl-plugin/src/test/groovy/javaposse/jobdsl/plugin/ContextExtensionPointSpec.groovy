@@ -47,8 +47,9 @@ class ContextExtensionPointSpec extends Specification {
         ExtensionList<ContextExtensionPoint> all = ContextExtensionPoint.all()
 
         then:
-        all.size() == 2
+        all.size() == 3
         all.any { it instanceof TestContextExtensionPoint }
         all.any { it instanceof TestContextExtensionPoint2 }
+        all.any { it instanceof ExampleJobDslExtension }
     }
 }

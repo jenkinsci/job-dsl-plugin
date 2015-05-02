@@ -25,9 +25,22 @@ interface JobManagement {
      * @param ignoreExisting do not update existing jobs
      * @throws NameNotProvidedException if the jobName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
+     * @deprecated use {@link #createOrUpdateConfig(javaposse.jobdsl.dsl.Item, boolean)} instead
      */
+    @Deprecated
     boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
             throws NameNotProvidedException, ConfigurationMissingException
+
+    /**
+     * Creates or updates the Jenkins job or folder with the provided configuration.
+     *
+     * @param item the item to create or update
+     * @param ignoreExisting do not update existing jobs
+     * @throws NameNotProvidedException if the jobName is null or blank
+     * @throws ConfigurationMissingException if the config xml is null or blank
+     * @since 1.33
+     */
+    boolean createOrUpdateConfig(Item item, boolean ignoreExisting) throws NameNotProvidedException
 
     /**
      * Creates or updates the view config for the named Jenkins view with the config provided.
@@ -209,10 +222,11 @@ interface JobManagement {
      * appended to the given context.
      *
      * @param name name of the DSL extension method to be called
+     * @param item the {@link Item} which is being built
      * @param contextType type of the context which is extended by the method to be called
      * @param args arguments for the method to be called
      * @return a node to be appended to the given context or <code>null</code> if no extension has been found
      * @since 1.33
      */
-    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args)
+    Node callExtension(String name, Item item, Class<? extends ExtensibleContext> contextType, Object... args)
 }

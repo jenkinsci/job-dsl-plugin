@@ -95,7 +95,8 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
+    Node callExtension(String name, Item item, Class<? extends ExtensibleContext> contextType,
+                       Object... args) {
         null
     }
 }

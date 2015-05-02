@@ -106,7 +106,7 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
-        boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) {
+        boolean createOrUpdateConfig(Item item, boolean ignoreExisting) throws NameNotProvidedException {
             throw new UnsupportedOperationException()
         }
 

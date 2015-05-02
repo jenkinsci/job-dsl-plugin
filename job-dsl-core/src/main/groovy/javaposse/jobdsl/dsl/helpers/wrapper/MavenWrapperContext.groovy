@@ -2,11 +2,12 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
 class MavenWrapperContext extends WrapperContext {
-    MavenWrapperContext(JobManagement jobManagement) {
-        super(jobManagement)
+    MavenWrapperContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     /**

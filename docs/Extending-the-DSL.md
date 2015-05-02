@@ -45,6 +45,7 @@ implementing `javaposse.jobdsl.dsl.helpers.ExtensibleContext` can be extended, w
 contexts:
 
 * `javaposse.jobdsl.dsl.helpers.step.StepsContext` for the `steps` context
+* `javaposse.jobdsl.dsl.helpers.PropertiesContext` for the `properties` context
 * `javaposse.jobdsl.dsl.helpers.publisher.PublisherContext` for the `publisher` context
 * `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext` for the `wrappers` context
 * `javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext` for the `publishers` context, but only for Maven jobs
@@ -74,9 +75,9 @@ signature. The method must return a pre-configured `ExampleBuilder`.
     package org.jenkinsci.plugins.example;
     
     import hudson.Extension;
-    import javaposse.jobdsl.dsl.DslExtensionMethod;
     import javaposse.jobdsl.dsl.helpers.step.StepContext;
     import javaposse.jobdsl.plugin.ContextExtensionPoint;
+    import javaposse.jobdsl.plugin.DslExtensionMethod;
     
     @Extension(optional = true)
     public class ExampleJobDslExtension extends ContextExtensionPoint {
@@ -131,9 +132,9 @@ the nested context.
     package org.jenkinsci.plugins.example;
     
     import hudson.Extension;
-    import javaposse.jobdsl.dsl.DslExtensionMethod;
     import javaposse.jobdsl.dsl.helpers.step.StepContext;
     import javaposse.jobdsl.plugin.ContextExtensionPoint;
+    import javaposse.jobdsl.plugin.DslExtensionMethod;
     
     @Extension(optional = true)
     public class ExampleJobDslExtension extends ContextExtensionPoint {
@@ -145,3 +146,85 @@ the nested context.
             return new ExampleBuilder(context.optionA, context.optionB);
         }
     }
+
+In cases where it's necessary to perform additional actions after a job has been created or updated, the
+`ContextExtensionPoint` can act as a listener. Subclasses can override the `notifyItemCreated` and `notifyItemUpdated`
+methods to be notified about job creation or update events. The created or updated job is passed into the methods as
+`Item` along with a `DslEnvironment`. The `DslEnvironment` can be used to transfer state from a `@DslExtensionMethod`
+to the listener methods, which is useful when the listener methods needs access to the parameters of the
+`@DslExtensionMethod`. The `@DslExtensionMethod` needs to declare the `DslEnvironment` as one of it's parameters to get
+access to the `DslEnvironment`. The `DslEnvironment` parameter will not be exposed to the DSL.
+
+`DslEnvironment` implements a `java.util.Map<String, Object>` interface and can store arbitrary data. Each job has a
+separate `DslEnvironment` and the `DslEnvironment` for a job will be shared between all `ContextExtensionPoint`
+instances, so a `ContextExtensionPoint` instance is able to see values stored by other instances. Subclasses of
+`ContextExtensionPoint` should choose unique keys to avoid collisions with other extensions.
+
+The following example will show how to use the `DslEnvironment` to create an additional configuration file in the job's
+directory. The `readFileFromWorkspace` DSL method is used to read the content of the configuration file from
+the workspace of the seed job.
+
+    job('example') {
+        steps {
+            example('foo', readFileFromWorkspace('example-1.json'))
+            example('bar', readFileFromWorkspace('example-2.json'))
+        }
+    }
+    
+The `@DslExtensionMethod` uses the environment to store the content of the config file, so that is can be retrieved in
+the listener methods and be written to a file. The implementation does not need to distinguish between creation and
+update, so it delegates the creation event to `notifyItemUpdated`. A unique key for the `DslEnvironment` must be chosen
+because build steps can be added multiple times.  
+ 
+    package org.jenkinsci.plugins.example;
+    
+    import hudson.Extension;
+    import hudson.model.Item;
+    import javaposse.jobdsl.dsl.helpers.step.StepContext;
+    import javaposse.jobdsl.plugin.ContextExtensionPoint;
+    import javaposse.jobdsl.plugin.DslEnvironment;
+    import javaposse.jobdsl.plugin.DslExtensionMethod;
+    import org.apache.commons.io.FileUtils;
+
+    import java.io.File;
+    import java.io.IOException;
+    import java.util.Map;
+    
+    @Extension(optional = true)
+    public class ExampleJobDslExtension extends ContextExtensionPoint {
+        private static final String PREFIX = "example.";
+
+        @DslExtensionMethod(context = StepContext.class)
+        public Object example(String optionA, String configJson,
+                              DslEnvironment dslEnvironment) {
+            dslEnvironment.put(PREFIX + optionA, configJson);
+            return new ExampleBuilder(optionA);
+        }
+
+        @Override
+        public void notifyItemCreated(Item item,
+                                      DslEnvironment dslEnvironment) {
+            notifyItemUpdated(item, dslEnvironment);
+        }
+
+        @Override
+        public void notifyItemUpdated(Item item,
+                                      DslEnvironment dslEnvironment) {
+            for (Map.Entry<String, Object> entry : dslEnvironment.entrySet()) {
+                String key = entry.getKey();  
+                if (key.startsWith(PREFIX)) {
+                    String fileName = key.substring(PREFIX.length()) + ".json";
+                    File configFile = new File(item.getRootDir(), fileName);
+                    try {
+                        FileUtils.write(configFile, (String) entry.getValue());
+                    } catch (IOException e) {
+                        // handle exception
+                    }
+                }
+            }
+        }
+    }
+
+Instances of `ContextExtensionPoint` must be thread-safe. Each subclass will be instantiated only once and reused for
+all seed jobs. Since multiple seed jobs can run in parallel, any `@DslExtensionMethod` and the listener methods can be
+called in parallel.
