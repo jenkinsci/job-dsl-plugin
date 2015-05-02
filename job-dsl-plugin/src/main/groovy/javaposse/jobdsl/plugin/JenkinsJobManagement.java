@@ -441,7 +441,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             item.updateByXml(streamSource);
             created = true;
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, format("Error writing updated item to file."), e);
+            LOGGER.log(Level.WARNING, "Error writing updated item to file.", e);
             created = false;
         }
         return created;
