@@ -4099,4 +4099,62 @@ class PublisherContextSpec extends Specification {
             logRotator[0].artifactNumToKeep[0].value() == -1
         }
     }
+
+    def 'hipChat notification with no options'() {
+        when:
+        context.hipChat()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.hipchat.HipChatNotifier'
+            children().size() == 11
+            token[0].value() == ''
+            room[0].value() == ''
+            startNotification[0].value() == false
+            notifySuccess[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyUnstable[0].value() == false
+            notifyFailure[0].value() == false
+            notifyBackToNormal[0].value() == false
+            startJobMessage[0].value() == ''
+            completeJobMessage[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
+    }
+
+    def 'hipChat notification with all options'() {
+        when:
+        context.hipChat {
+            rooms('foo', 'bar')
+            token('abcd')
+            notifyBuildStart()
+            notifySuccess()
+            notifyAborted()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyFailure()
+            notifyBackToNormal()
+            startJobMessage('JOB AT $URL')
+            completeJobMessage('JOB DONE! $URL')
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.hipchat.HipChatNotifier'
+            children().size() == 11
+            token[0].value() == 'abcd'
+            room[0].value() == 'foo,bar'
+            startNotification[0].value() == true
+            notifySuccess[0].value() == true
+            notifyAborted[0].value() == true
+            notifyNotBuilt[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyFailure[0].value() == true
+            notifyBackToNormal[0].value() == true
+            startJobMessage[0].value() == 'JOB AT $URL'
+            completeJobMessage[0].value() == 'JOB DONE! $URL'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
+    }
 }
