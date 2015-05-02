@@ -232,6 +232,17 @@ class JobSpec extends Specification {
         1 * jobManagement.requirePlugin('multiple-scms')
     }
 
+    def 'duplicate scm calls not allowed'() {
+        when:
+        job.scm {
+            git('git://github.com/jenkinsci/jenkins.git')
+            git('git://github.com/jenkinsci/job-dsl-plugin.git')
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
     def 'call wrappers'() {
         when:
         job.wrappers {

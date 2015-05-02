@@ -1,15 +1,14 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
-
 
 class AxisContext extends AbstractExtensibleContext {
     List<Node> axisNodes = []
     List<Closure> configureBlocks = []
 
-    AxisContext(JobManagement jobManagement) {
-        super(jobManagement)
+    AxisContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     @Override

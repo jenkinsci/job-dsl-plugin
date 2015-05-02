@@ -2,8 +2,8 @@ package javaposse.jobdsl.dsl.helpers
 
 import com.google.common.base.Strings
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -23,29 +23,17 @@ import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validClone
 class ScmContext extends AbstractExtensibleContext {
     private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
 
-    private final boolean multiEnabled
     final List<Node> scmNodes = []
     private final List<WithXmlAction> withXmlActions
 
-    ScmContext(boolean multiEnabled, List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
-        super(jobManagement)
-        this.multiEnabled = multiEnabled
+    ScmContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
         this.withXmlActions = withXmlActions
     }
 
     @Override
     protected void addExtensionNode(Node node) {
         scmNodes << node
-    }
-    /**
-     * Helper method for dealing with a single scm node
-     */
-    Node getScmNode() {
-        scmNodes[0]
-    }
-
-    private validateMulti() {
-        checkState(multiEnabled || scmNodes.size() < 1, 'Outside "multiscm", only one SCM can be specified')
     }
 
     /**
@@ -55,8 +43,6 @@ class ScmContext extends AbstractExtensibleContext {
     void hg(String url, String branch = null, Closure configure = null) {
         if (jobManagement.getPluginVersion('mercurial')?.isOlderThan(new VersionNumber('1.50.1'))) {
             jobManagement.logDeprecationWarning('support for Mercurial plugin versions older than 1.50.1')
-
-            validateMulti()
 
             checkNotNull(url)
 
@@ -89,8 +75,6 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'mercurial', minimumVersion = '1.50.1')
     void hg(String url, @DslContext(HgContext) Closure hgClosure) {
-        validateMulti()
-
         HgContext hgContext = new HgContext(jobManagement)
         executeInContext(hgClosure, hgContext)
 
@@ -124,8 +108,6 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'git')
     void git(@DslContext(GitContext) Closure gitClosure) {
-        validateMulti()
-
         GitContext gitContext = new GitContext(withXmlActions, jobManagement)
         executeInContext(gitClosure, gitContext)
 
@@ -270,8 +252,6 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'subversion')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
-        validateMulti()
-
         SvnContext svnContext = new SvnContext(jobManagement)
         executeInContext(svnClosure, svnContext)
 
@@ -305,8 +285,6 @@ class ScmContext extends AbstractExtensibleContext {
 
     @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, String user, String password, Closure configure = null) {
-        validateMulti()
-
         checkNotNull(viewspec)
 
         Node p4Node = new NodeBuilder().scm(class: 'hudson.plugins.perforce.PerforceSCM') {
@@ -355,8 +333,6 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'clone-workspace-scm')
     void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
-        validateMulti()
-
         checkNotNull(parentProject)
         checkArgument(validCloneWorkspaceCriteria.contains(criteriaArg),
                 "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}")
@@ -372,8 +348,6 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'clearcase')
     void baseClearCase(@DslContext(ClearCaseContext) Closure closure = null) {
-        validateMulti()
-
         ClearCaseContext context = new ClearCaseContext()
         executeInContext(closure, context)
 
@@ -413,8 +387,6 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'teamconcert')
     void rtc(@DslContext(RTCContext) Closure closure) {
-        validateMulti()
-
         RTCContext context = new RTCContext(jobManagement)
         executeInContext(closure, context)
 

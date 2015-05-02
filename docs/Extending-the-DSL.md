@@ -44,12 +44,14 @@ context attribute of the annotation specifies which DSL context should provide t
 implementing `javaposse.jobdsl.dsl.helpers.ExtensibleContext` can be extended, which includes the following classes and
 contexts:
 
+* `javaposse.jobdsl.dsl.helpers.step.ScmContext` for the `scm` and `multiscm` contexts
 * `javaposse.jobdsl.dsl.helpers.step.StepsContext` for the `steps` context
 * `javaposse.jobdsl.dsl.helpers.PropertiesContext` for the `properties` context
 * `javaposse.jobdsl.dsl.helpers.publisher.PublisherContext` for the `publisher` context
 * `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext` for the `wrappers` context
 * `javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext` for the `publishers` context, but only for Maven jobs
 * `javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext` for the `wrappers` context, but only for Maven jobs 
+* `javaposse.jobdsl.dsl.helpers.AxisContext` for the `axes` context of matrix jobs
 
 The parameters of the `@DslExtensionMethod` annotated method are the same parameters that will be available in the DSL.
 Have a look at the [DSL Design](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md#dsl-design)

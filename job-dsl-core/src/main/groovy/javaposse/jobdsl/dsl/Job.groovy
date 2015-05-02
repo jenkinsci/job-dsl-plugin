@@ -427,24 +427,28 @@ abstract class Job extends Item {
     }
 
     void scm(@DslContext(ScmContext) Closure closure) {
-        ScmContext context = new ScmContext(false, withXmlActions, jobManagement)
+        ScmContext context = new ScmContext(withXmlActions, jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
-            Node scm = project / scm
-            if (scm) {
-                // There can only be only one SCM, so remove if there
-                project.remove(scm)
-            }
+        if (!context.scmNodes.empty) {
+            Preconditions.checkState(context.scmNodes.size() == 1, 'Outside "multiscm", only one SCM can be specified')
 
-            // Assuming append the only child
-            project << context.scmNode
+            withXmlActions << WithXmlAction.create { Node project ->
+                Node scm = project / scm
+                if (scm) {
+                    // There can only be only one SCM, so remove if there
+                    project.remove(scm)
+                }
+
+                // Assuming append the only child
+                project << context.scmNodes[0]
+            }
         }
     }
 
     @RequiresPlugin(id = 'multiple-scms')
     void multiscm(@DslContext(ScmContext) Closure closure) {
-        ScmContext context = new ScmContext(true, withXmlActions, jobManagement)
+        ScmContext context = new ScmContext(withXmlActions, jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

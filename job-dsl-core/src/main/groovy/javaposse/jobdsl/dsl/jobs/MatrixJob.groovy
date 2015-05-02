@@ -13,7 +13,7 @@ class MatrixJob extends Job {
     }
 
     void axes(@DslContext(AxisContext) Closure closure) {
-        AxisContext context = new AxisContext()
+        AxisContext context = new AxisContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
