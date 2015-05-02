@@ -1103,134 +1103,167 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('sbt')
     }
 
-    def 'call dsl method defaults' () {
+    def 'call dsl method defaults'() {
         when:
         context.dsl {
         }
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == ''
-        dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == 'IGNORE'
-        dslStep.scriptText[0].value() == ''
-        dslStep.additionalClasspath[0].value() == ''
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == ''
+            usingScriptText[0].value() == false
+            ignoreExisting[0].value() == false
+            removedJobAction[0].value() == 'IGNORE'
+            scriptText[0].value() == ''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
-    def 'call dsl method external script ignoring existing' () {
+    def 'call dsl lookup strategy'() {
         when:
         context.dsl {
-            removeAction 'DISABLE'
-            external 'some-dsl.groovy', 'some-other-dsl.groovy'
-            external 'still-another-dsl.groovy'
+            lookupStrategy('SEED_JOB')
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == ''
+            usingScriptText[0].value() == false
+            ignoreExisting[0].value() == false
+            removedJobAction[0].value() == 'IGNORE'
+            scriptText[0].value() == ''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'SEED_JOB'
+        }
+    }
+
+    def 'call dsl with invalid lookup strategy'() {
+        when:
+        context.dsl {
+            lookupStrategy('XXX')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'call dsl method external script ignoring existing'() {
+        when:
+        context.dsl {
+            removeAction('DISABLE')
+            external('some-dsl.groovy', 'some-other-dsl.groovy')
+            external('still-another-dsl.groovy')
             ignoreExisting()
         }
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == '''some-dsl.groovy
-some-other-dsl.groovy
-still-another-dsl.groovy'''
-        dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  true
-        dslStep.removedJobAction[0].value() == 'DISABLE'
-        dslStep.scriptText[0].value() == ''
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
+            usingScriptText[0].value() == false
+            ignoreExisting[0].value() == true
+            removedJobAction[0].value() == 'DISABLE'
+            scriptText[0].value() == ''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
-    def 'call dsl method external script' () {
+    def 'call dsl method external script'() {
         when:
         context.dsl {
-            removeAction 'DISABLE'
-            external 'some-dsl.groovy', 'some-other-dsl.groovy'
-            external 'still-another-dsl.groovy'
+            removeAction('DISABLE')
+            external('some-dsl.groovy', 'some-other-dsl.groovy')
+            external('still-another-dsl.groovy')
         }
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == '''some-dsl.groovy
-some-other-dsl.groovy
-still-another-dsl.groovy'''
-        dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == 'DISABLE'
-        dslStep.scriptText[0].value() == ''
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
+            usingScriptText[0].value() == false
+            ignoreExisting[0].value() == false
+            removedJobAction[0].value() == 'DISABLE'
+            scriptText[0].value() == ''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
-    def 'call dsl method with script text' () {
+    def 'call dsl method with script text'() {
         when:
         context.dsl {
             removeAction('DELETE')
-            text '''job {
+            text('''job {
   foo()
   bar {
     baz()
   }
 }
-'''
+''')
         }
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == ''
-        dslStep.usingScriptText[0].value() == true
-        dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == 'DELETE'
-        dslStep.scriptText[0].value() == '''job {
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == ''
+            usingScriptText[0].value() == true
+            ignoreExisting[0].value() == false
+            removedJobAction[0].value() == 'DELETE'
+            scriptText[0].value() == '''job {
   foo()
   bar {
     baz()
   }
 }
 '''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
-    def 'call dsl method external script as parameters' () {
+    def 'call dsl method external script as parameters'() {
         when:
         context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE')
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == '''some-dsl.groovy
-some-other-dsl.groovy
-still-another-dsl.groovy'''
-        dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == 'DISABLE'
-        dslStep.scriptText[0].value() == ''
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
+            usingScriptText[0].value() == false
+            ignoreExisting[0].value() == false
+            removedJobAction[0].value() == 'DISABLE'
+            scriptText[0].value() == ''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
-    def 'call dsl method external script as parameters full' () {
+    def 'call dsl method external script as parameters full'() {
         when:
         context.dsl(['some-dsl.groovy', 'some-other-dsl.groovy', 'still-another-dsl.groovy'], 'DISABLE', true)
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == '''some-dsl.groovy
-some-other-dsl.groovy
-still-another-dsl.groovy'''
-        dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  true
-        dslStep.removedJobAction[0].value() == 'DISABLE'
-        dslStep.scriptText[0].value() == ''
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
+            usingScriptText[0].value() == false
+            ignoreExisting[0].value() == true
+            removedJobAction[0].value() == 'DISABLE'
+            scriptText[0].value() == ''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
     def 'call dsl method with script text as parameters'() {
@@ -1244,41 +1277,43 @@ still-another-dsl.groovy'''
 ''', 'DELETE')
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == ''
-        dslStep.usingScriptText[0].value() == true
-        dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == 'DELETE'
-        dslStep.scriptText[0].value() == '''job {
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            children().size() == 7
+            targets[0].value() == ''
+            usingScriptText[0].value() == true
+            ignoreExisting[0].value() == false
+            removedJobAction[0].value() == 'DELETE'
+            scriptText[0].value() == '''job {
   foo()
   bar {
     baz()
   }
 }
 '''
+            additionalClasspath[0].value() == ''
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
-    def 'call dsl method with additional classpath' () {
+    def 'call dsl method with additional classpath'() {
         when:
         context.dsl {
-            external 'some-dsl.groovy'
-            additionalClasspath 'some/path'
+            external('some-dsl.groovy')
+            additionalClasspath('some/path')
         }
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def dslStep = context.stepNodes[0]
-        dslStep.name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-        dslStep.targets[0].value() == 'some-dsl.groovy'
-        dslStep.usingScriptText[0].value() == false
-        dslStep.ignoreExisting[0].value() ==  false
-        dslStep.removedJobAction[0].value() == 'IGNORE'
-        dslStep.scriptText[0].value() == ''
-        dslStep.additionalClasspath[0].value() == 'some/path'
+        with(context.stepNodes[0]) {
+            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
+            targets[0].value() == 'some-dsl.groovy'
+            usingScriptText[0].value() == false
+            ignoreExisting[0].value() == false
+            removedJobAction[0].value() == 'IGNORE'
+            scriptText[0].value() == ''
+            additionalClasspath[0].value() == 'some/path'
+            lookupStrategy[0].value() == 'JENKINS_ROOT'
+        }
     }
 
     def 'call prerequisite method with single project'() {
