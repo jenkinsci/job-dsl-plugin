@@ -4076,6 +4076,7 @@ class PublisherContextSpec extends Specification {
             publishUnstableBuilds[0].value() == true
             publishFailedBuilds[0].value() == true
         }
+        1 * jobManagement.requireMinimumPluginVersion('build-publisher', '1.20')
     }
 
     def 'publishBuild with all options'() {
@@ -4098,6 +4099,7 @@ class PublisherContextSpec extends Specification {
             logRotator[0].artifactDaysToKeep[0].value() == -1
             logRotator[0].artifactNumToKeep[0].value() == -1
         }
+        1 * jobManagement.requireMinimumPluginVersion('build-publisher', '1.20')
     }
 
     def 'hipChat notification with no options'() {
