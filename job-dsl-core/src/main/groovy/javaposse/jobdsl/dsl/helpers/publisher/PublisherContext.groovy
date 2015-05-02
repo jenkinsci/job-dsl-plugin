@@ -1305,25 +1305,24 @@ class PublisherContext extends AbstractContext {
     }
 
     /**
-     * Configures the Build Publisher plugin to publish builds to a 'public' Jenkins server
+     * Configures the Build Publisher plugin to publish builds to a 'public' Jenkins server.
      *
      * @since 1.33
      */
     @RequiresPlugin(id = 'build-publisher', minimumVersion = '1.20')
-    void publishBuild(boolean publishUnstable, boolean publishFailed,
-                      @DslContext(PublishBuildContext) Closure contextClosure = null) {
+    void publishBuild(@DslContext(PublishBuildContext) Closure contextClosure = null) {
         PublishBuildContext publishBuildContext = new PublishBuildContext()
         ContextHelper.executeInContext(contextClosure, publishBuildContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.build__publisher.BuildPublisher' {
-            publishUnstableBuilds(publishUnstable)
-            publishFailedBuilds(publishFailed)
+            publishUnstableBuilds(publishBuildContext.publishUnstable)
+            publishFailedBuilds(publishBuildContext.publishFailed)
             if (publishBuildContext.discardOldBuilds) {
                 logRotator {
                     daysToKeep(publishBuildContext.daysToKeep)
                     numToKeep(publishBuildContext.numToKeep)
-                    artifactDaysToKeep(-1)
-                    artifactNumToKeep(-1)
+                    artifactDaysToKeep(publishBuildContext.artifactDaysToKeep)
+                    artifactNumToKeep(publishBuildContext.artifactNumToKeep)
                 }
             }
         }

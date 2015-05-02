@@ -244,7 +244,7 @@ freeStyleJob(String name) { // since 1.30
         pmd(String pattern, Closure staticAnalysisClosure = null)
         postBuildScripts(Closure postBuildScriptsClosure) // since 1.31
         postBuildTask(Closure closure) // since 1.19
-        publishBuild(boolean publishUnstable, boolean publishFailed, Closure closure) // since 1.33
+        publishBuild(Closure closure = null) // since 1.33
         publishCloneWorkspace(String workspaceGlob, Closure cloneWorkspaceClosure)
         publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
                               Closure cloneWorkspaceClosure)
@@ -3897,22 +3897,37 @@ job('example') {
 ```
 
 ### Build Publisher
+
 ```groovy
-publishBuild(boolean publishUnstable, boolean publishFailed, Closure closure = null)
-```
-
-Supports the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Build+Publisher+Plugin">Build Publisher Plugin</a>
-
-The optional closure method is discardOldBuilds(int daysToKeep, int numToKeep) to enable the log rotator build discard process
-
-Examples:
-```groovy
-publishers {
-    publishBuild(true, true) {
-        discardOldBuilds(7, 10)
+job {
+    publishers {
+        publishBuild {
+            publishUnstable(boolean publishUnstable = true)
+            publishFailed(boolean publishFailed = true)
+            discardOldBuilds(int daysToKeep = -1, int numToKeep = -1,
+                             int artifactDaysToKeep = -1,
+                             int artifactNumToKeep = -1)
+        }
     }
+}
 ```
-Publishes all builds (stable, unstable and failed) and configures builds to be discarded after 7 days or 10 builds.
+
+Allows to publish records from one Jenkins to another. Requires the
+[Build Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Publisher+Plugin).
+
+The `publishUnstable` and `publishFailed` options are enabled by default.
+
+```groovy
+job('example') {
+    publishers {
+        publishBuild {
+            discardOldBuilds(7, 10)
+        }
+    }
+}
+```
+
+(since 1.33)
 
 ### CloneWorkspace Publisher
 ```groovy
