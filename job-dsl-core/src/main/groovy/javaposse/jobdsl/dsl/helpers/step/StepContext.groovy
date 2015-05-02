@@ -131,13 +131,13 @@ class StepContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(configure, context)
 
         stepNodes << new NodeBuilder().'javaposse.jobdsl.plugin.ExecuteDslScripts' {
-            targets context.externalScripts.join('\n')
-            usingScriptText !isNullOrEmpty(context.scriptText)
-            scriptText context.scriptText ?: ''
-            ignoreExisting context.ignoreExisting
-            removedJobAction context.removedJobAction
-            lookupStrategy context.lookupStrategy
-            additionalClasspath context.additionalClasspath ?: ''
+            targets(context.externalScripts.join('\n'))
+            usingScriptText(!isNullOrEmpty(context.scriptText))
+            scriptText(context.scriptText ?: '')
+            ignoreExisting(context.ignoreExisting)
+            removedJobAction(context.removedJobAction)
+            lookupStrategy(context.lookupStrategy)
+            additionalClasspath(context.additionalClasspath ?: '')
         }
     }
 

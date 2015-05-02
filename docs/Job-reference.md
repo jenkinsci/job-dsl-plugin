@@ -2831,20 +2831,26 @@ job('example') {
 ```groovy
 job {
     steps {
-        dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false)
-        dsl(Iterable<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false)
+        dsl(String scriptText, String removedJobAction = null,
+            boolean ignoreExisting = false)
+        dsl(Iterable<String> externalScripts, String removedJobAction = null,
+            boolean ignoreExisting = false)
         dsl {
-            removeAction(String removeAction)             // one of: 'DISABLE', 'IGNORE', 'DELETE'
-            external(String... dslFileNames)              // file names of Job DSL scripts in the workspace
-            external(Iterable<String> dslFileNames)       // file names of Job DSL scripts in the workspace
-            text(String dslSpecification)                 // direct specification of Job DSL scripts as string
-            ignoreExisting(boolean ignoreExisting = true) // flag if to ignore existing jobs
+            removeAction(String removeAction)
+            external(String... dslFileNames)
+            external(Iterable<String> dslFileNames)
+            text(String dslSpecification)
+            ignoreExisting(boolean ignoreExisting = true) // false by default
             additionalClasspath(String classpath)         // since 1.29
+            lookupStrategy(String lookupStrategy)         // since 1.33
         }
     }
 }
 
 Allows the programmatic creation of jobs, folders and views using the Job DSL.
+
+Valid values for `removeAction` are `'IGNORE'` (default), `'DISABLE'` and `'DELETE'`. Valid values for `lookupStrategy`
+are `'JENKINS_ROOT'` (default) and ` 'SEED_JOB'`.
 
 ```groovy
 job('example-1') {
