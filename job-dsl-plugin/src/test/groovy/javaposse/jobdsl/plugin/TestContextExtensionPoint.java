@@ -1,12 +1,19 @@
 package javaposse.jobdsl.plugin;
 
 import hudson.Extension;
+import hudson.model.Item;
 import javaposse.jobdsl.dsl.Context;
-import javaposse.jobdsl.dsl.DslExtensionMethod;
 import javaposse.jobdsl.dsl.helpers.step.StepContext;
+import org.spockframework.util.Assert;
 
-@Extension
+import java.util.ArrayList;
+import java.util.List;
+
+@Extension(optional = true)
 public class TestContextExtensionPoint extends ContextExtensionPoint {
+    private List<String> createdItems = new ArrayList<String>();
+    private List<String> updatedItems = new ArrayList<String>();
+
     @DslExtensionMethod(context = StepContext.class)
     public Object test() {
         return new SomeValueObject("foo", 42, true);
@@ -28,6 +35,30 @@ public class TestContextExtensionPoint extends ContextExtensionPoint {
         executeInContext(closure, context);
 
         return new SomeValueObject(context.value1, context.value2, context.value3);
+    }
+
+    @DslExtensionMethod(context = StepContext.class)
+    public Object withEnvironment(DslEnvironment environment, String arg1, int arg2, boolean arg3) {
+        Assert.that(environment != null);
+        return new SomeValueObject(arg1, arg2, arg3);
+    }
+
+    @Override
+    public void notifyItemCreated(Item item, DslEnvironment dslEnvironment) {
+        createdItems.add(item.getFullName());
+    }
+
+    @Override
+    public void notifyItemUpdated(Item item, DslEnvironment dslEnvironment) {
+        updatedItems.add(item.getFullName());
+    }
+
+    boolean isItemCreated(String name) {
+        return createdItems.contains(name);
+    }
+
+    boolean isItemUpdated(String name) {
+        return updatedItems.contains(name);
     }
 
     public static class SomeValueObject {

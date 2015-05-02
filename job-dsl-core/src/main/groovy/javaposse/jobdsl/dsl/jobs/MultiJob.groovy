@@ -18,7 +18,7 @@ class MultiJob extends Job {
     }
 
     void steps(@DslContext(MultiJobStepContext) Closure closure) {
-        MultiJobStepContext context = new MultiJobStepContext(jobManagement)
+        MultiJobStepContext context = new MultiJobStepContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

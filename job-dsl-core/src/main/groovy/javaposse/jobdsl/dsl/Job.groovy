@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.JobAuthorizationContext
 import javaposse.jobdsl.dsl.helpers.Permissions
+import javaposse.jobdsl.dsl.helpers.PropertiesContext
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -479,7 +480,7 @@ abstract class Job extends Item {
      * @since 1.19
      */
     void wrappers(@DslContext(WrapperContext) Closure closure) {
-        WrapperContext context = new WrapperContext(jobManagement)
+        WrapperContext context = new WrapperContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -489,8 +490,19 @@ abstract class Job extends Item {
         }
     }
 
+    void properties(@DslContext(PropertiesContext) Closure closure) {
+        PropertiesContext context = new PropertiesContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.propertiesNodes.each {
+                project / 'properties' << it
+            }
+        }
+    }
+
     void steps(@DslContext(StepContext) Closure closure) {
-        StepContext context = new StepContext(jobManagement)
+        StepContext context = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
@@ -501,7 +513,7 @@ abstract class Job extends Item {
     }
 
     void publishers(@DslContext(PublisherContext) Closure closure) {
-        PublisherContext context = new PublisherContext(jobManagement)
+        PublisherContext context = new PublisherContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

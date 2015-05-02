@@ -5,6 +5,7 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import groovy.util.Node;
 import groovy.util.XmlParser;
 import hudson.EnvVars;
@@ -29,17 +30,15 @@ import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
 import javaposse.jobdsl.dsl.ConfigFile;
 import javaposse.jobdsl.dsl.ConfigFileType;
-import javaposse.jobdsl.dsl.ConfigurationMissingException;
 import javaposse.jobdsl.dsl.DslException;
-import javaposse.jobdsl.dsl.DslExtensionMethod;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
+import javaposse.jobdsl.plugin.ExtensionPointHelper.ExtensionPointMethod;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.ClassUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
@@ -54,7 +53,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,7 +68,6 @@ import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
-import static org.apache.commons.lang.reflect.MethodUtils.getMatchingAccessibleMethod;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -81,6 +78,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private final EnvVars envVars;
     private final AbstractBuild<?, ?> build;
     private final LookupStrategy lookupStrategy;
+    private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
+            new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
 
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build,
                                 LookupStrategy lookupStrategy) {
@@ -115,8 +114,10 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public boolean createOrUpdateConfig(String path, String config, boolean ignoreExisting)
-            throws NameNotProvidedException, ConfigurationMissingException {
+    public boolean createOrUpdateConfig(javaposse.jobdsl.dsl.Item dslItem, boolean ignoreExisting)
+            throws NameNotProvidedException {
+        String path = dslItem.getName();
+        String config = dslItem.getXml();
 
         LOGGER.log(Level.INFO, format("createOrUpdateConfig for %s", path));
         boolean created = false;
@@ -128,9 +129,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Jenkins.checkGoodName(jobName);
 
         if (item == null) {
-            created = createNewItem(path, config);
+            created = createNewItem(path, dslItem);
         } else if (!ignoreExisting) {
-            created = updateExistingItem(item, config);
+            created = updateExistingItem(item, dslItem);
         }
         return created;
     }
@@ -359,8 +360,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public Node callExtension(String name, Class<? extends ExtensibleContext> contextType, Object... args) {
-        Map<ContextExtensionPoint, Method> candidates = findExtensionPoints(name, contextType, args);
+    public Node callExtension(String name, javaposse.jobdsl.dsl.Item item,
+                              Class<? extends ExtensibleContext> contextType, Object... args) {
+        Set<ExtensionPointMethod> candidates = ExtensionPointHelper.findExtensionPoints(name, contextType, args);
         if (candidates.isEmpty()) {
             LOGGER.fine(
                     "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
@@ -371,15 +373,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                     Messages.CallExtension_MultipleCandidates(),
                     name,
                     Arrays.toString(args),
-                    Arrays.toString(ClassUtils.toClass(candidates.keySet().toArray()))
+                    Arrays.toString(candidates.toArray())
             ));
         }
 
         try {
-            Map.Entry<ContextExtensionPoint, Method> candidate = candidates.entrySet().iterator().next();
-            ContextExtensionPoint extensionPoint = candidate.getKey();
-            Method method = candidate.getValue();
-            Object result = method.invoke(extensionPoint, args);
+            Object result = Iterables.getOnlyElement(candidates).call(getSession(item), args);
             return new XmlParser().parseText(Items.XSTREAM2.toXML(result));
         } catch (Exception e) {
             throw new RuntimeException("Error calling extension", e);
@@ -418,7 +417,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    private boolean updateExistingItem(AbstractItem item, String config) {
+    private boolean updateExistingItem(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
+        String config = dslItem.getXml();
         boolean created;
 
         // Leverage XMLUnit to perform diffs
@@ -428,6 +428,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             diff = XMLUnit.compareXML(oldJob, config);
             if (diff.similar()) {
                 LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
+                notifyItemUpdated(item, dslItem);
                 return false;
             }
         } catch (Exception e) {
@@ -439,6 +440,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         Source streamSource = new StreamSource(new StringReader(config));
         try {
             item.updateByXml(streamSource);
+            notifyItemUpdated(item, dslItem);
             created = true;
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Error writing updated item to file.", e);
@@ -447,7 +449,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         return created;
     }
 
-    private boolean createNewItem(String path, String config) {
+    private boolean createNewItem(String path, javaposse.jobdsl.dsl.Item dslItem) {
+        String config = dslItem.getXml();
         LOGGER.log(Level.FINE, format("Creating item as %s", config));
         boolean created = false;
 
@@ -457,7 +460,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
             String itemName = FilenameUtils.getName(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
-                ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+                Item project = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+                notifyItemCreated(project, dslItem);
                 created = true;
             } else if (parent == null) {
                 throw new DslException(format(Messages.CreateItem_UnknownParent(), path));
@@ -470,6 +474,29 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.log(Level.WARNING, format("Error writing config for new item %s.", path), e);
         }
         return created;
+    }
+
+    private void notifyItemCreated(Item item, javaposse.jobdsl.dsl.Item dslItem) {
+        DslEnvironment session = getSession(dslItem);
+        for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
+            extensionPoint.notifyItemCreated(item, session);
+        }
+    }
+
+    private void notifyItemUpdated(Item item, javaposse.jobdsl.dsl.Item dslItem) {
+        DslEnvironment session = getSession(dslItem);
+        for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
+            extensionPoint.notifyItemUpdated(item, session);
+        }
+    }
+
+    private DslEnvironment getSession(javaposse.jobdsl.dsl.Item item) {
+        DslEnvironment session = environments.get(item);
+        if (session == null) {
+            session = new DslEnvironmentImpl();
+            environments.put(item, session);
+        }
+        return session;
     }
 
     private void renameJob(Job from, String to) throws IOException {
@@ -491,26 +518,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             }
         }
         from.renameTo(FilenameUtils.getName(to));
-    }
-
-    private static Map<ContextExtensionPoint, Method> findExtensionPoints(String name,
-                                                                          Class<? extends ExtensibleContext> contextType,
-                                                                          Object... args) {
-        Class[] parameterTypes = ClassUtils.toClass(args);
-        Map<ContextExtensionPoint, Method> candidates = new HashMap<ContextExtensionPoint, Method>();
-
-        // Find extensions that match any @DslMethod annotated method with the given name and parameters
-        for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
-            Method candidateMethod = getMatchingAccessibleMethod(extensionPoint.getClass(), name, parameterTypes);
-            if (candidateMethod != null) {
-                DslExtensionMethod annotation = candidateMethod.getAnnotation(DslExtensionMethod.class);
-                if (annotation != null && annotation.context().isAssignableFrom(contextType)) {
-                    candidates.put(extensionPoint, candidateMethod);
-                }
-            }
-        }
-
-        return candidates;
     }
 
     @SuppressWarnings("unchecked")

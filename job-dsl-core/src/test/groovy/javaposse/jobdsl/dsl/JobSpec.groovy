@@ -243,6 +243,16 @@ class JobSpec extends Specification {
             'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
     }
 
+    def 'call properties'() {
+        when:
+        job.properties {
+            propertiesNodes << new Node(null, 'hack')
+        }
+
+        then:
+        job.node.properties[0].children()[0].name() == 'hack'
+    }
+
     def 'call triggers'() {
         when:
         job.triggers {

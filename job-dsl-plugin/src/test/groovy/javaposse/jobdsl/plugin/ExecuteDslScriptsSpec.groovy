@@ -962,8 +962,36 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getItem('test-job') instanceof FreeStyleProject
     }
 
+    def 'extension is used'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, EXTENSION_SCRIPT), true, RemovedJobAction.IGNORE
+        ))
+
+        when:
+        FreeStyleBuild freeStyleBuild = seedJob.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        FreeStyleProject job = jenkinsRule.instance.getItem('example-extension') as FreeStyleProject
+        job != null
+        ExampleJobDslExtension.SomeValueObject jobProperty = job.getProperty(ExampleJobDslExtension.SomeValueObject)
+        jobProperty != null
+        jobProperty.value == 'foo'
+        File testFile = new File(job.rootDir, 'foo.json')
+        testFile.exists()
+        testFile.text == 'bar'
+    }
+
     private static final String SCRIPT = """job {
     name('test-job')
+}"""
+
+    private static final String EXTENSION_SCRIPT = """job('example-extension') {
+    properties {
+        example('foo', 'bar')
+    }
 }"""
 
     private static final String UTIL_SCRIPT = '''import util.Util

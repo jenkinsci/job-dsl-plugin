@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
@@ -19,8 +20,8 @@ import static com.google.common.base.Strings.isNullOrEmpty
 class PublisherContext extends AbstractExtensibleContext {
     List<Node> publisherNodes = []
 
-    PublisherContext(JobManagement jobManagement) {
-        super(jobManagement)
+    PublisherContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     @Override
@@ -938,7 +939,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'flexible-publish')
     void flexiblePublish(@DslContext(FlexiblePublisherContext) Closure flexiblePublishClosure) {
-        FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement)
+        FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement, item)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
 
         Node action = context.action
@@ -1234,7 +1235,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'postbuildscript')
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
-        PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement)
+        PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {

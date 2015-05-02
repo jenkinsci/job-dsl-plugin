@@ -2,12 +2,14 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class WrapperContextSpec extends Specification {
     JobManagement mockJobManagement = Mock(JobManagement)
-    WrapperContext context = new WrapperContext(mockJobManagement)
+    Item item = Mock(Item)
+    WrapperContext context = new WrapperContext(mockJobManagement, item)
 
     def 'call timestamps method'() {
         when:

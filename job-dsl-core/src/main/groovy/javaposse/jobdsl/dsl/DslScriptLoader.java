@@ -117,7 +117,7 @@ public class DslScriptLoader {
                         jp.getJm().renameJobMatching(job.getPreviousNamesRegex(), job.getName());
                     }
                 }
-                jp.getJm().createOrUpdateConfig(item.getName(), xml, ignoreExisting);
+                jp.getJm().createOrUpdateConfig(item, ignoreExisting);
                 String templateName = item instanceof Job ? ((Job) item).getTemplateName() : null;
                 generatedJobs.add(new GeneratedJob(templateName, item.getName()));
             }
