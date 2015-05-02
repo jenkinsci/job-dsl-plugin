@@ -2,10 +2,10 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 
-class HipchatPublisherContext implements Context {
+class HipChatPublisherContext implements Context {
     String token
     List<String> rooms = []
-    boolean startNotification
+    boolean notifyBuildStart
     boolean notifySuccess
     boolean notifyAborted
     boolean notifyNotBuilt
@@ -19,12 +19,12 @@ class HipchatPublisherContext implements Context {
         this.token = token
     }
 
-    void room(String... rooms) {
+    void rooms(String... rooms) {
         this.rooms.addAll(rooms)
     }
 
-    void startNotification(boolean startNotification = true) {
-        this.startNotification = startNotification
+    void notifyBuildStart(boolean notifyBuildStart = true) {
+        this.notifyBuildStart = notifyBuildStart
     }
 
     void notifySuccess(boolean notifySuccess = true) {

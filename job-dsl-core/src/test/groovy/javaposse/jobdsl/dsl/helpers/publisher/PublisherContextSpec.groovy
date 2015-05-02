@@ -4063,14 +4063,16 @@ class PublisherContextSpec extends Specification {
         }
     }
 
-    def 'hipchat notification with no options'() {
+    def 'hipChat notification with no options'() {
         when:
-        context.hipchat()
+        context.hipChat()
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'jenkins.plugins.hipchat.HipChatNotifier'
-            children().size() == 7
+            children().size() == 11
+            token[0].value() == ''
+            room[0].value() == ''
             startNotification[0].value() == false
             notifySuccess[0].value() == false
             notifyAborted[0].value() == false
@@ -4078,23 +4080,26 @@ class PublisherContextSpec extends Specification {
             notifyUnstable[0].value() == false
             notifyFailure[0].value() == false
             notifyBackToNormal[0].value() == false
+            startJobMessage[0].value() == ''
+            completeJobMessage[0].value() == ''
         }
+        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
     }
 
-    def 'hipchat notification with all options'() {
+    def 'hipChat notification with all options'() {
         when:
-        context.hipchat {
-            room 'foo', 'bar'
-            token 'abcd'
-            startNotification()
+        context.hipChat {
+            rooms('foo', 'bar')
+            token('abcd')
+            notifyBuildStart()
             notifySuccess()
             notifyAborted()
             notifyNotBuilt()
             notifyUnstable()
             notifyFailure()
             notifyBackToNormal()
-            startJobMessage 'JOB AT $URL'
-            completeJobMessage 'JOB DONE! $URL'
+            startJobMessage('JOB AT $URL')
+            completeJobMessage('JOB DONE! $URL')
         }
 
         then:
@@ -4113,5 +4118,6 @@ class PublisherContextSpec extends Specification {
             startJobMessage[0].value() == 'JOB AT $URL'
             completeJobMessage[0].value() == 'JOB DONE! $URL'
         }
+        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
     }
 }

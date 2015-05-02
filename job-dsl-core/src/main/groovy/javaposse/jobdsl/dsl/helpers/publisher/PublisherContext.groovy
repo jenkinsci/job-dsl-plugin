@@ -1304,30 +1304,23 @@ class PublisherContext extends AbstractContext {
         }
     }
 
-    void hipchat(@DslContext(HipchatPublisherContext) Closure hipchatClosure = null) {
-        HipchatPublisherContext hipchatContext = new HipchatPublisherContext()
-        ContextHelper.executeInContext(hipchatClosure, hipchatContext)
+    @RequiresPlugin(id = 'hipchat', minimumVersion = '0.1.9')
+    void hipChat(@DslContext(HipChatPublisherContext) Closure hipChatClosure = null) {
+        HipChatPublisherContext hipChatContext = new HipChatPublisherContext()
+        ContextHelper.executeInContext(hipChatClosure, hipChatContext)
 
         publisherNodes << new NodeBuilder().'jenkins.plugins.hipchat.HipChatNotifier' {
-            if (hipchatContext.token) {
-                token(hipchatContext.token)
-            }
-            if (hipchatContext.rooms.size() > 0) {
-                room(hipchatContext.rooms.join(','))
-            }
-            startNotification(hipchatContext.startNotification)
-            notifySuccess(hipchatContext.notifySuccess)
-            notifyAborted(hipchatContext.notifyAborted)
-            notifyNotBuilt(hipchatContext.notifyNotBuilt)
-            notifyUnstable(hipchatContext.notifyUnstable)
-            notifyFailure(hipchatContext.notifyFailure)
-            notifyBackToNormal(hipchatContext.notifyBackToNormal)
-            if (hipchatContext.startJobMessage) {
-                startJobMessage(hipchatContext.startJobMessage)
-            }
-            if (hipchatContext.completeJobMessage) {
-                completeJobMessage(hipchatContext.completeJobMessage)
-            }
+            token(hipChatContext.token ?: '')
+            room(hipChatContext.rooms.join(','))
+            startNotification(hipChatContext.notifyBuildStart)
+            notifySuccess(hipChatContext.notifySuccess)
+            notifyAborted(hipChatContext.notifyAborted)
+            notifyNotBuilt(hipChatContext.notifyNotBuilt)
+            notifyUnstable(hipChatContext.notifyUnstable)
+            notifyFailure(hipChatContext.notifyFailure)
+            notifyBackToNormal(hipChatContext.notifyBackToNormal)
+            startJobMessage(hipChatContext.startJobMessage ?: '')
+            completeJobMessage(hipChatContext.completeJobMessage ?: '')
         }
     }
 

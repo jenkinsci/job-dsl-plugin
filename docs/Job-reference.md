@@ -233,7 +233,7 @@ freeStyleJob(String name) { // since 1.30
         git(Closure gitPublisherClosure) // since 1.22
         githubCommitNotifier() // since 1.21
         groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) // since 1.19
-        hipchat(Closure hipchatClosure) // since 1.33
+        hipChat(Closure hipChatClosure = null) // since 1.33
         irc(Closure ircClosure)
         jacocoCodeCoverage(Closure jacocoClosure)
         jshint(String pattern, Closure staticAnalysisClosure = null)
@@ -3790,30 +3790,45 @@ job('example') {
 }
 ```
 
-### Hipchat Publisher
+### HipChat Publisher
 
 ```groovy
 job {
     publishers {
-        hipchat {
-            room(String... rooms)                // uses global settings if omitted
-            token(String)                        // uses global token if omitted
-            startNotification(boolean = true)    // defaults to false if omitted
-            notifySuccess(boolean = true)        // defaults to false if omitted
-            notifyAborted(boolean = true)        // defaults to false if omitted
-            notifyNotBuilt(boolean = true)       // defaults to false if omitted
-            notifyUnstable(boolean = true)       // defaults to false if omitted
-            notifyFailure(boolean = true)        // defaults to false if omitted
-            notifyBackToNormal(boolean = true)   // defaults to false if omitted
-            startJobMessage(String message)      // uses default message if omitted
-            completeJobMessage(String message)   // uses default message if omitted
+        hipChat {
+            rooms(String... rooms)      // uses global settings if omitted
+            token(String token)         // uses global settings if omitted
+            notifyBuildStart(boolean notify = true)   // defaults to false
+            notifySuccess(boolean notify = true)      // defaults to false
+            notifyAborted(boolean notify = true)      // defaults to false
+            notifyNotBuilt(boolean notify = true)     // defaults to false
+            notifyUnstable(boolean notify = true)     // defaults to false
+            notifyFailure(boolean notify = true)      // defaults to false
+            notifyBackToNormal(boolean notify = true) // defaults to false
+            startJobMessage(String message)     // uses default if omitted
+            completeJobMessage(String message)  // uses default if omitted
         }
     }
 }
 ```
 
-Allows notifications to be set to hipchat using the Hipchat API. Requires the
+Allows notifications to be set to HipChat. Requires the
 [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin).
+
+```groovy
+job('example') {
+    publishers {
+        hipChat {
+            rooms('Dev Team A', 'QA')
+            notifyAborted()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyFailure()
+            notifyBackToNormal()
+        }
+    }
+}
+```
 
 (since 1.33)
 
