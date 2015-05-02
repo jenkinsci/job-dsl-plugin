@@ -4064,4 +4064,39 @@ class PublisherContextSpec extends Specification {
             disallowOwnCode[0].value() == true
         }
     }
+
+    def 'publishBuild with no options'() {
+        when:
+        context.publishBuild()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.build__publisher.BuildPublisher'
+            children().size() == 2
+            publishUnstableBuilds[0].value() == true
+            publishFailedBuilds[0].value() == true
+        }
+    }
+
+    def 'publishBuild with all options'() {
+        when:
+        context.publishBuild {
+            publishUnstable(false)
+            publishFailed(false)
+            discardOldBuilds(5, 3)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.build__publisher.BuildPublisher'
+            children().size() == 3
+            publishUnstableBuilds[0].value() == false
+            publishFailedBuilds[0].value() == false
+            logRotator[0].children().size() == 4
+            logRotator[0].daysToKeep[0].value() == 5
+            logRotator[0].numToKeep[0].value() == 3
+            logRotator[0].artifactDaysToKeep[0].value() == -1
+            logRotator[0].artifactNumToKeep[0].value() == -1
+        }
+    }
 }

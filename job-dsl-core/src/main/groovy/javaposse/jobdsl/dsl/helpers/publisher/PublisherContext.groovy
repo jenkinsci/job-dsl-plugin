@@ -1310,6 +1310,30 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Configures the Build Publisher plugin to publish builds to a 'public' Jenkins server.
+     *
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'build-publisher', minimumVersion = '1.20')
+    void publishBuild(@DslContext(PublishBuildContext) Closure contextClosure = null) {
+        PublishBuildContext publishBuildContext = new PublishBuildContext()
+        ContextHelper.executeInContext(contextClosure, publishBuildContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.build__publisher.BuildPublisher' {
+            publishUnstableBuilds(publishBuildContext.publishUnstable)
+            publishFailedBuilds(publishBuildContext.publishFailed)
+            if (publishBuildContext.discardOldBuilds) {
+                logRotator {
+                    daysToKeep(publishBuildContext.daysToKeep)
+                    numToKeep(publishBuildContext.numToKeep)
+                    artifactDaysToKeep(publishBuildContext.artifactDaysToKeep)
+                    artifactNumToKeep(publishBuildContext.artifactNumToKeep)
+                }
+            }
+        }
+    }
+
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
