@@ -18,7 +18,6 @@ import hudson.tasks.Shell
 import javaposse.jobdsl.dsl.GeneratedJob
 import javaposse.jobdsl.dsl.GeneratedView
 import org.junit.Rule
-import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
 import org.jvnet.hudson.test.recipes.WithPlugin
@@ -938,7 +937,6 @@ class ExecuteDslScriptsSpec extends Specification {
         mavenJob.postbuilders.get(0) instanceof Shell
     }
 
-    @Test
     def 'allow empty archive'() {
         setup:
         String emptyArchiveScript = """job {
