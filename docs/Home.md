@@ -23,6 +23,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added more options for `archiveArtifacts`
  * The `latestOnly` option of `archiveArtifacts` is deprecated, see [[Migration]]
  * Enhanced support for the [Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin)
+ * Enhanced support for [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
  * Enhanced support for the [Mercurial Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mercurial+Plugin)
  * Support for the older versions of the [Mercurial Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mercurial+Plugin) is deprecated, see [[Migration]]
  * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)

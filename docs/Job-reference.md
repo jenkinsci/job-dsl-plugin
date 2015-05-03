@@ -86,6 +86,7 @@ freeStyleJob(String name) { // since 1.30
         gerrit(Closure gerritClosure = null)
         githubPush()
         pullRequest(Closure pullRequestClosure) // since 1.22
+        rundeck(Closure rundeckTriggerClosure = null) // since 1.33
         scm(String cron)
         scm(String cron, Closure scmTriggerClosure) // since 1.31
         snapshotDependencies(boolean checkSnapshotDependencies)
@@ -1626,6 +1627,39 @@ Possible values for `threshold` are `'SUCCESS'`, `'UNSTABLE'` or `'FAILURE'`.
 job('example') {
     triggers {
         upstream('other', 'UNSTABLE')
+    }
+}
+```
+
+(since 1.33)
+
+### Rundeck
+
+```groovy
+job {
+    triggers {
+        rundeck {
+            jobIdentifiers(String... jobIdentifiers)
+            executionStatuses(String... executionStatuses)
+        }
+    }
+}
+```
+
+Allows to schedule a build on Jenkins after a job execution on RunDeck. Requires the
+[RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
+
+Possible values for `executionStatuses` are `'SUCCEEDED'`, `'FAILED'` and `'ABORTED'`. Both `jobIdentifiers` and
+`executionStatuses` are empty by default.
+
+```groovy
+job('example') {
+    triggers {
+        rundeck {
+            jobIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f',
+                           'my-project-name:main-group/sub-group/my-job')
+            executionStatuses('FAILED', 'ABORTED')
+        }
     }
 }
 ```
