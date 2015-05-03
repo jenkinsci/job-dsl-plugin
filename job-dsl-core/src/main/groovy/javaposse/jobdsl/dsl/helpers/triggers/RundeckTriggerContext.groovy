@@ -9,22 +9,21 @@ class RundeckTriggerContext implements Context {
         'SUCCEEDED', 'FAILED', 'ABORTED'
     ]
 
-    boolean filterJobs = false
-    List<String> jobsIdentifiers = []
-    List<String> executionStatuses = []
+    boolean filterJobs
+    List<String> jobIdentifiers = []
+    Set<String> executionStatuses = []
 
-    void filterJobs(boolean filterJobs = true) {
-        this.filterJobs = filterJobs
-    }
-
-    void jobsIdentifiers(String... jobsIdentifiers) {
-        this.jobsIdentifiers.addAll(jobsIdentifiers)
+    void jobIdentifiers(String... jobIdentifiers) {
+        this.filterJobs = true
+        this.jobIdentifiers.addAll(jobIdentifiers)
     }
 
     void executionStatuses(String... executionStatuses) {
-        for (String status : executionStatuses) {
-            checkArgument(VALID_EXECUTION_STATUSES.contains(status),
-                "executionStatus must be one of ${VALID_EXECUTION_STATUSES.join(', ')}")
+        executionStatuses.each { String status ->
+            checkArgument(
+                    VALID_EXECUTION_STATUSES.contains(status),
+                    "executionStatuses must be one of ${VALID_EXECUTION_STATUSES.join(', ')}"
+            )
             this.executionStatuses.add(status)
         }
     }

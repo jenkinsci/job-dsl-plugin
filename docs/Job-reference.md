@@ -86,7 +86,7 @@ freeStyleJob(String name) { // since 1.30
         gerrit(Closure gerritClosure = null)
         githubPush()
         pullRequest(Closure pullRequestClosure) // since 1.22
-        rundeck(Closure closure = null) // since 1.3x
+        rundeck(Closure rundeckTriggerClosure = null) // since 1.33
         scm(String cron)
         scm(String cron, Closure scmTriggerClosure) // since 1.31
         snapshotDependencies(boolean checkSnapshotDependencies)
@@ -1632,35 +1632,37 @@ job('example') {
 (since 1.33)
 
 ### Rundeck
+
 ```groovy
 job {
-  triggers {
-    rundeck {
-      filterJobs(boolean filterJobs)                 // false by default
-      jobsIdentifiers(String... jobsIdentifiers)     // empty by default
-      executionStatuses(String... executionStatuses) // empty by default
+    triggers {
+        rundeck {
+            jobIdentifiers(String... jobIdentifiers)
+            executionStatuses(String... executionStatuses)
+        }
     }
-  }
 }
 ```
 
-The goal is to continue the deployment pipeline after a successful deployment : RunDeck deploys your application, and triggers a build on Jenkins to run some integration tests (using Selenium for example). Requires the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
+Allows to schedule a build on Jenkins after a job execution on RunDeck. Requires the
+[RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin).
 
-Possible values for `executionStatuses` are `SUCCEEDED`, `FAILED` and `ABORTED`.
+Possible values for `executionStatuses` are `'SUCCEEDED'`, `'FAILED'` and `'ABORTED'`. Both `jobIdentifiers` and
+`executionStatuses` are empty by default.
 
 ```groovy
 job('example') {
-  triggers {
-    rundeck {
-      filterJobs()
-      jobsIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f', 'my-project-name:main-group/sub-group/my-job-name')
-      executionStatuses('FAILED', 'ABORTED')
+    triggers {
+        rundeck {
+            jobIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f',
+                           'my-project-name:main-group/sub-group/my-job')
+            executionStatuses('FAILED', 'ABORTED')
+        }
     }
-  }
 }
 ```
 
-(since 1.3x)
+(since 1.33)
 
 # Build Environment (Build Wrappers)
 

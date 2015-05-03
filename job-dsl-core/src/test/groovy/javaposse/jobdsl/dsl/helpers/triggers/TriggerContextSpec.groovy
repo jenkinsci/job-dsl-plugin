@@ -587,17 +587,19 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.rundeck.RundeckTrigger'
-            children().size() == 2
+            children().size() == 4
             spec[0].value().empty
             filterJobs[0].value() == false
+            jobsIdentifiers[0].value().empty
+            executionStatuses[0].value().empty
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.4')
     }
 
     def 'call rundeck trigger with all options'() {
         when:
         context.rundeck {
-            filterJobs()
-            jobsIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f', 'my-project-name:main-group/sub-group/my-job-name')
+            jobIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f', 'my-project-name:main-group/sub-group/my-job-name')
             executionStatuses('FAILED', 'ABORTED')
         }
 
@@ -614,9 +616,20 @@ class TriggerContextSpec extends Specification {
             }
             with(executionStatuses[0]) {
                 children().size() == 2
-                string[0].value() == 'FAILED'
-                string[1].value() == 'ABORTED'
+                children().any { it.name() == 'string' && it.value() == 'FAILED' }
+                children().any { it.name() == 'string' && it.value() == 'ABORTED' }
             }
         }
+        1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.4')
+    }
+
+    def 'call rundeck trigger with invalid execution status'() {
+        when:
+        context.rundeck {
+            executionStatuses('FOO')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
     }
 }

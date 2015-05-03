@@ -256,26 +256,27 @@ class TriggerContext extends AbstractContext {
         }
     }
 
-    @RequiresPlugin(id = 'rundeck')
+    /**
+     * Allows to schedule a build on Jenkins after a job execution on RunDeck.
+     *
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
     void rundeck(@DslContext(RundeckTriggerContext) Closure closure = null) {
         RundeckTriggerContext context = new RundeckTriggerContext()
         ContextHelper.executeInContext(closure, context)
 
         triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckTrigger' {
             spec()
-            filterJobs context.filterJobs
-            if (context.jobsIdentifiers) {
-                jobsIdentifiers {
-                    context.jobsIdentifiers.each { jobsIdentifier ->
-                        string jobsIdentifier
-                    }
+            filterJobs(context.filterJobs)
+            jobsIdentifiers {
+                context.jobIdentifiers.each { String jobsIdentifier ->
+                    string(jobsIdentifier)
                 }
             }
-            if (context.executionStatuses) {
-                executionStatuses {
-                    context.executionStatuses.each { status ->
-                        string status
-                    }
+            executionStatuses {
+                context.executionStatuses.each { String status ->
+                    string(status)
                 }
             }
         }
