@@ -5232,7 +5232,7 @@ job {
             nUnit { ... }                                   // see aUnit closure above
             phpUnit { ... }                                 // see aUnit closure above
             qTestLib { ... }                                // see aUnit closure above
-            unitTestvalgrind { ... }                        // see aUnit closure above
+            valgrind { ... }                                // see aUnit closure above
             customTool {
                 // all options from the aUnit closure above, plus
                 stylesheet(String url)                      // empty by default
