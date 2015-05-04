@@ -125,7 +125,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call archive artifacts with all args'() {
         setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.554.2')
+        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
 
         when:
         context.archiveArtifacts('include/*', 'exclude/*', true)
@@ -144,7 +144,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call archive artifacts least args'() {
         setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.554.2')
+        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
 
         when:
         context.archiveArtifacts('include/*')
@@ -161,7 +161,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call archive artifacts with closure'() {
         setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.554.2')
+        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
 
         when:
         context.archiveArtifacts {
@@ -218,7 +218,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call archive artifacts with multiple patterns'() {
         setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.554.2')
+        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
 
         when:
         context.archiveArtifacts {

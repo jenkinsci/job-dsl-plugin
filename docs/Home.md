@@ -36,6 +36,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-27891](https://issues.jenkins-ci.org/browse/JENKINS-27891))
  * Added a Jenkins extension point for adding DSL methods
  * Added support for [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin]
+ * Increased the minimum supported Jenkins version to 1.565
+   ([JENKINS-28167](https://issues.jenkins-ci.org/browse/JENKINS-28167))
 * 1.32 (April 07 2015)
  * Added support for [PowerShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PowerShell+Plugin)
    ([JENKINS-27820](https://issues.jenkins-ci.org/browse/JENKINS-27820))

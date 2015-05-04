@@ -76,7 +76,7 @@ abstract class MockJobManagement extends AbstractJobManagement {
 
     @Override
     VersionNumber getJenkinsVersion() {
-        new VersionNumber('1.554.2')
+        new VersionNumber('1.565')
     }
 
     @Override
