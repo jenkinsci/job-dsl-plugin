@@ -126,6 +126,9 @@ freeStyleJob(String name) { // since 1.30
         xvnc(boolean takeScreenshot) // deprecated
         xvnc(Closure xvncClosure = null) // since 1.26
     }
+    properties { // since 1.33
+        sidebarLinks(Closure sidebarLinkClosure)
+    }
     steps {
         ant(Closure antClosure = null)
         ant(String targets, Closure antClosure = null)
@@ -5718,6 +5721,36 @@ job('example') {
 ```
 
 (since 1.31)
+
+# Job Properties
+
+### Sidebar Links
+
+```groovy
+job {
+    properties {
+        sidebarLinks {
+            link(String url, String text, String icon = null)
+        }
+    }
+}
+```
+
+Add links in the sidebar of the project page. Requires the
+[Sidebar-Link Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sidebar-Link+Plugin).
+
+```groovy
+job {
+    properties {
+        sidebarLinks {
+            link('https://jira.acme.org/', 'JIRA', 'notepad.png')
+            link('https://sonar.acme.org/', 'SonarQube', 'health-00to19.png')
+        }
+    }
+}
+```
+
+(since 1.33)
 
 # Workflow Definitions
 
