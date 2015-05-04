@@ -1,7 +1,8 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl.helpers.properties
 
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 
 class PropertiesContext extends AbstractExtensibleContext {
     List<Node> propertiesNodes = []
