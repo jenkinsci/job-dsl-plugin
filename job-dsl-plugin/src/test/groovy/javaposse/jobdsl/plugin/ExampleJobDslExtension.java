@@ -3,7 +3,7 @@ package javaposse.jobdsl.plugin;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.JobProperty;
-import javaposse.jobdsl.dsl.helpers.PropertiesContext;
+import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
