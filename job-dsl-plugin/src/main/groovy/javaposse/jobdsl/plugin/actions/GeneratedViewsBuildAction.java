@@ -1,10 +1,11 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.actions;
 
 import com.google.common.collect.Sets;
 import hudson.model.ItemGroup;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import javaposse.jobdsl.dsl.GeneratedView;
+import javaposse.jobdsl.plugin.LookupStrategy;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.Collection;

@@ -1,8 +1,9 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.actions;
 
 import com.google.common.collect.Sets;
 import hudson.model.Item;
 import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.plugin.LookupStrategy;
 
 import java.util.Collection;
 import java.util.Set;

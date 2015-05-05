@@ -1,6 +1,7 @@
-package javaposse.jobdsl.plugin
+package javaposse.jobdsl.plugin.actions
 
 import javaposse.jobdsl.dsl.GeneratedView
+import javaposse.jobdsl.plugin.LookupStrategy
 import spock.lang.Specification
 
 class GeneratedViewsBuildActionSpec extends Specification {

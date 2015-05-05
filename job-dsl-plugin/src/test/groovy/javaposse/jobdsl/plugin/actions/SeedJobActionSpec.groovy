@@ -1,8 +1,9 @@
-package javaposse.jobdsl.plugin
+package javaposse.jobdsl.plugin.actions
 
 import hudson.Util
 import hudson.model.AbstractItem
 import hudson.model.Item
+import javaposse.jobdsl.plugin.SeedReference
 import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins

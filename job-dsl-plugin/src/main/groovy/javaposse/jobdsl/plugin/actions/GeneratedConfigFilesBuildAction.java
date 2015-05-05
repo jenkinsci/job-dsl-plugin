@@ -1,4 +1,4 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.actions;
 
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 

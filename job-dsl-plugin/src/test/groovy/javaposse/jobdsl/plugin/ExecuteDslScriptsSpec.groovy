@@ -17,6 +17,13 @@ import hudson.slaves.DumbSlave
 import hudson.tasks.Shell
 import javaposse.jobdsl.dsl.GeneratedJob
 import javaposse.jobdsl.dsl.GeneratedView
+import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction
+import javaposse.jobdsl.plugin.actions.GeneratedJobsAction
+import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction
+import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction
+import javaposse.jobdsl.plugin.actions.GeneratedViewsAction
+import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction
+import javaposse.jobdsl.plugin.actions.SeedJobAction
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins

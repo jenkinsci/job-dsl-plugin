@@ -28,6 +28,14 @@ import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedUserContent;
 import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.ScriptRequest;
+import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
+import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedJobsAction;
+import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction;
+import javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
+import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -42,7 +50,7 @@ import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static javaposse.jobdsl.plugin.GeneratedObjectsAction.extractGeneratedObjects;
+import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGeneratedObjects;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /

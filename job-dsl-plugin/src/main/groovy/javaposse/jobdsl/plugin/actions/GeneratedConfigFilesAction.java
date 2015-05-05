@@ -1,9 +1,7 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.actions;
 
 import hudson.model.AbstractProject;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
-
-import java.util.Set;
 
 public class GeneratedConfigFilesAction
         extends GeneratedObjectsAction<GeneratedConfigFile, GeneratedConfigFilesBuildAction> {
