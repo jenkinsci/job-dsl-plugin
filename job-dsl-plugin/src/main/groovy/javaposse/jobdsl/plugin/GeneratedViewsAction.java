@@ -43,21 +43,6 @@ public class GeneratedViewsAction implements Action {
         return newLinkedHashSet();
     }
 
-    /**
-     * Search for all jobs which were created by the child builds
-     */
-    @Deprecated
-    public Set<GeneratedView> findAllGeneratedViews() {
-        Set<GeneratedView> allGeneratedViews = newLinkedHashSet();
-        for (AbstractBuild build : project.getBuilds()) {
-            GeneratedViewsBuildAction action = build.getAction(GeneratedViewsBuildAction.class);
-            if (action != null) {
-                allGeneratedViews.addAll(action.getModifiedViews());
-            }
-        }
-        return allGeneratedViews;
-    }
-
     public Set<View> getViews() {
         Set<View> result = newLinkedHashSet();
         for (AbstractBuild build : project.getBuilds()) {

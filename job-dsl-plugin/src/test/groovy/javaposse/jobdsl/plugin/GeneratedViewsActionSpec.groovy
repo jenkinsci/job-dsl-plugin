@@ -2,6 +2,7 @@ package javaposse.jobdsl.plugin
 
 import hudson.model.AbstractBuild
 import hudson.model.AbstractProject
+import hudson.model.View
 import javaposse.jobdsl.dsl.GeneratedView
 import spock.lang.Specification
 
@@ -13,6 +14,7 @@ class GeneratedViewsActionSpec extends Specification {
     AbstractBuild build2 = Mock(AbstractBuild)
     AbstractProject project = Mock(AbstractProject)
     Collection<GeneratedView> modifiedViews = [Mock(GeneratedView), Mock(GeneratedView)]
+    Collection<View> views = [Mock(View), Mock(View)]
 
     def 'interface methods'() {
         when:
@@ -74,44 +76,44 @@ class GeneratedViewsActionSpec extends Specification {
         views.containsAll(modifiedViews)
     }
 
-    def 'findAllGeneratedViews no builds'() {
+    def 'getViews no builds'() {
         setup:
         project.builds >> fromRuns([])
 
         when:
-        Set<GeneratedView> views = new GeneratedViewsAction(project).findAllGeneratedViews()
+        Set<View> views = new GeneratedViewsAction(project).views
 
         then:
         views != null
         views.isEmpty()
     }
 
-    def 'findAllGeneratedViews no build action'() {
+    def 'getViews no build action'() {
         setup:
         build1.getAction(GeneratedViewsBuildAction) >> null
         project.builds >> fromRuns([build1])
 
         when:
-        Set<GeneratedView> views = new GeneratedViewsAction(project).findAllGeneratedViews()
+        Set<View> views = new GeneratedViewsAction(project).views
 
         then:
         views != null
         views.isEmpty()
     }
 
-    def 'findAllGeneratedViews'() {
+    def 'getViews'() {
         setup:
-        buildAction.modifiedViews >> modifiedViews
+        buildAction.views >> views
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
         build2.getAction(GeneratedViewsBuildAction) >> buildAction
         project.builds >> fromRuns([build1, build2])
 
         when:
-        Set<GeneratedView> views = new GeneratedViewsAction(project).findAllGeneratedViews()
+        Set<View> views = new GeneratedViewsAction(project).views
 
         then:
         views != null
-        views.size() == modifiedViews.size()
-        views.containsAll(modifiedViews)
+        views.size() == this.views.size()
+        views.containsAll(this.views)
     }
 }

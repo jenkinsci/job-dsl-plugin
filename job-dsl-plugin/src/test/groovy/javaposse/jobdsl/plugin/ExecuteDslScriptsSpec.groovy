@@ -562,9 +562,6 @@ class ExecuteDslScriptsSpec extends Specification {
         action.findLastGeneratedViews() != null
         action.findLastGeneratedViews().size() == 1
         action.findLastGeneratedViews().contains(new GeneratedView('test-view'))
-        action.findAllGeneratedViews() != null
-        action.findAllGeneratedViews().size() == 1
-        action.findAllGeneratedViews().contains(new GeneratedView('test-view'))
         action.views != null
         action.views.size() == 1
         action.views.contains(jenkinsRule.instance.getView('test-view'))
@@ -788,9 +785,6 @@ class ExecuteDslScriptsSpec extends Specification {
         action.findLastGeneratedJobs() != null
         action.findLastGeneratedJobs().size() == 1
         action.findLastGeneratedJobs().contains(new GeneratedJob(null, 'test-folder'))
-        action.findAllGeneratedJobs() != null
-        action.findAllGeneratedJobs().size() == 1
-        action.findAllGeneratedJobs().contains(new GeneratedJob(null, 'test-folder'))
         action.items != null
         action.items.size() == 1
         action.items.contains(jenkinsRule.instance.getItem('test-folder'))

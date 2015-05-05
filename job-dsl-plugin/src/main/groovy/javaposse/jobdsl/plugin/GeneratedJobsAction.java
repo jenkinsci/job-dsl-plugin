@@ -42,21 +42,6 @@ public class GeneratedJobsAction implements Action {
         return Sets.newLinkedHashSet();
     }
 
-    /**
-     * Search for all jobs which were created by the child builds
-     */
-    @Deprecated
-    public Set<GeneratedJob> findAllGeneratedJobs() {
-        Set<GeneratedJob> allGeneratedJobs = Sets.newLinkedHashSet();
-        for (AbstractBuild build : project.getBuilds()) {
-            GeneratedJobsBuildAction ret = build.getAction(GeneratedJobsBuildAction.class);
-            if (ret != null && ret.getModifiedJobs() != null) {
-                allGeneratedJobs.addAll(ret.getModifiedJobs());
-            }
-        }
-        return allGeneratedJobs;
-    }
-
     public Set<Item> getItems() {
         Set<Item> result = Sets.newLinkedHashSet();
         for (AbstractBuild build : project.getBuilds()) {
