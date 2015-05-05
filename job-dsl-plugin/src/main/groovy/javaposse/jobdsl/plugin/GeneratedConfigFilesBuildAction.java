@@ -1,21 +1,16 @@
 package javaposse.jobdsl.plugin;
 
-import com.google.common.collect.Sets;
-import hudson.model.Action;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 
 import java.util.Collection;
 import java.util.Set;
 
-public class GeneratedConfigFilesBuildAction implements Action {
-    public final Set<GeneratedConfigFile> modifiedConfigFiles;
+public class GeneratedConfigFilesBuildAction extends GeneratedObjectsBuildAction<GeneratedConfigFile> {
+    @SuppressWarnings("unused")
+    private transient Set<GeneratedConfigFile> modifiedConfigFiles;
 
     public GeneratedConfigFilesBuildAction(Collection<GeneratedConfigFile> modifiedConfigFiles) {
-        this.modifiedConfigFiles = Sets.newLinkedHashSet(modifiedConfigFiles);
-    }
-
-    public String getIconFileName() {
-        return null;
+        super(modifiedConfigFiles);
     }
 
     public String getDisplayName() {
@@ -26,7 +21,8 @@ public class GeneratedConfigFilesBuildAction implements Action {
         return "generatedConfigFiles";
     }
 
-    public Collection<GeneratedConfigFile> getModifiedConfigFiles() {
-        return modifiedConfigFiles;
+    @SuppressWarnings("unused")
+    private Object readResolve() {
+        return modifiedConfigFiles == null ? this : new GeneratedConfigFilesBuildAction(modifiedConfigFiles);
     }
 }
