@@ -42,10 +42,11 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         actions != null
-        actions.size() == 3
+        actions.size() == 4
         actions[0] instanceof GeneratedJobsAction
         actions[1] instanceof GeneratedViewsAction
         actions[2] instanceof GeneratedConfigFilesAction
+        actions[3] instanceof GeneratedUserContentsAction
     }
 
     def scheduleBuildOnMasterUsingScriptText() {
@@ -982,6 +983,22 @@ class ExecuteDslScriptsSpec extends Specification {
         File testFile = new File(job.rootDir, 'foo.json')
         testFile.exists()
         testFile.text == 'bar'
+    }
+
+    def 'user content is created'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.scheduleBuild2(0).get() // run a build to create a workspace
+        seedJob.someWorkspace.child('foo.txt').write('lorem ipsum', 'UTF-8')
+        seedJob.buildersList.add(new ExecuteDslScripts("userContent('foo.txt', streamFileFromWorkspace('foo.txt'))"))
+
+        when:
+        FreeStyleBuild freeStyleBuild = seedJob.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString().trim() == 'lorem ipsum'
     }
 
     private static final String SCRIPT = """job {

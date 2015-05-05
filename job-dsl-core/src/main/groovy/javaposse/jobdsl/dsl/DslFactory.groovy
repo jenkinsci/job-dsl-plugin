@@ -124,6 +124,15 @@ interface DslFactory extends ViewFactory {
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
+     * Upload the stream as <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
+     *
+     * @param path relative destination path within the Jenkins userContent directory
+     * @param content stream of the content to upload
+     * @since 1.33
+     */
+    void userContent(String path, InputStream content)
+
+    /**
      * Schedule a job to be run later. Validation of the job name isn't done until after the DSL has run.
      *
      * @param jobName the name of the job to be queued

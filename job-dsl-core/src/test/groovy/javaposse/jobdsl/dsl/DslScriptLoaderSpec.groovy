@@ -300,6 +300,18 @@ folder {
         files[0].name == 'foo'
     }
 
+    def 'generate user contents'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('userContent.dsl', null, resourcesDir, false)
+
+        when:
+        List<GeneratedUserContent> userContents = DslScriptLoader.runDslEngine(request, jm).userContents.toList()
+
+        then:
+        userContents.size() == 1
+        userContents[0].path == 'foo.txt'
+    }
+
     def 'getProperties throws exception'() { // JENKINS-22708
         setup:
         String script = '''
