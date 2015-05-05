@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
     <j:if test="${it.seedJob != null || it.templateJob != null}">
         <table style="margin-top: 1em; margin-left:1em;">

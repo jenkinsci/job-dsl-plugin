@@ -1,4 +1,4 @@
-package javaposse.jobdsl.plugin
+package javaposse.jobdsl.plugin.actions
 
 import hudson.model.AbstractBuild
 import hudson.model.AbstractProject
@@ -23,53 +23,53 @@ class GeneratedViewsActionSpec extends Specification {
         then:
         action.iconFileName == null
         action.displayName == null
-        action.urlName == 'generatedViews'
+        action.urlName == null
     }
 
-    def 'findLastGeneratedViews no build'() {
+    def 'findLastGeneratedObjects no build'() {
         when:
-        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
+        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedObjects()
 
         then:
         views.empty
     }
 
-    def 'findLastGeneratedViews no build action'() {
+    def 'findLastGeneratedObjects no build action'() {
         setup:
         build1.getAction(GeneratedViewsBuildAction) >> null
         project.lastBuild >> build1
 
         when:
-        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
+        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedObjects()
 
         then:
         views.empty
     }
 
-    def 'findLastGeneratedViews from last build'() {
+    def 'findLastGeneratedObjects from last build'() {
         setup:
-        buildAction.modifiedViews >> modifiedViews
+        buildAction.modifiedObjects >> modifiedViews
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
         project.lastBuild >> build1
 
         when:
-        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
+        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedObjects()
 
         then:
         views.size() == modifiedViews.size()
         views.containsAll(modifiedViews)
     }
 
-    def 'findLastGeneratedViews from last but one build'() {
+    def 'findLastGeneratedObjects from last but one build'() {
         setup:
-        buildAction.modifiedViews >> modifiedViews
+        buildAction.modifiedObjects >> modifiedViews
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
         build2.getAction(GeneratedViewsBuildAction) >> null
         build2.previousBuild >> build1
         project.lastBuild >> build2
 
         when:
-        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedViews()
+        Set<GeneratedView> views = new GeneratedViewsAction(project).findLastGeneratedObjects()
 
         then:
         views.size() == modifiedViews.size()

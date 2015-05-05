@@ -1,8 +1,9 @@
-package javaposse.jobdsl.plugin
+package javaposse.jobdsl.plugin.actions
 
 import hudson.Util
 import hudson.model.AbstractItem
 import hudson.model.Item
+import javaposse.jobdsl.plugin.SeedReference
 import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
@@ -46,7 +47,7 @@ class SeedJobActionSpec extends Specification {
         String displayName = new SeedJobAction(item, seedReference).displayName
 
         then:
-        displayName == 'Seed job:'
+        displayName == null
     }
 
     @WithoutJenkins
@@ -55,7 +56,7 @@ class SeedJobActionSpec extends Specification {
         String urlName = new SeedJobAction(item, seedReference).urlName
 
         then:
-        urlName == 'seedJob'
+        urlName == null
     }
 
     def 'no template'() {

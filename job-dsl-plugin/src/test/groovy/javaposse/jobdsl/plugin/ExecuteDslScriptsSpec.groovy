@@ -17,6 +17,13 @@ import hudson.slaves.DumbSlave
 import hudson.tasks.Shell
 import javaposse.jobdsl.dsl.GeneratedJob
 import javaposse.jobdsl.dsl.GeneratedView
+import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction
+import javaposse.jobdsl.plugin.actions.GeneratedJobsAction
+import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction
+import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction
+import javaposse.jobdsl.plugin.actions.GeneratedViewsAction
+import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction
+import javaposse.jobdsl.plugin.actions.SeedJobAction
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
@@ -550,18 +557,18 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         buildAction != null
-        buildAction.modifiedViews != null
-        buildAction.modifiedViews.size() == 1
-        buildAction.modifiedViews.contains(new GeneratedView('test-view'))
+        buildAction.modifiedObjects != null
+        buildAction.modifiedObjects.size() == 1
+        buildAction.modifiedObjects.contains(new GeneratedView('test-view'))
 
         when:
         GeneratedViewsAction action = job.getAction(GeneratedViewsAction)
 
         then:
         action != null
-        action.findLastGeneratedViews() != null
-        action.findLastGeneratedViews().size() == 1
-        action.findLastGeneratedViews().contains(new GeneratedView('test-view'))
+        action.findLastGeneratedObjects() != null
+        action.findLastGeneratedObjects().size() == 1
+        action.findLastGeneratedObjects().contains(new GeneratedView('test-view'))
         action.views != null
         action.views.size() == 1
         action.views.contains(jenkinsRule.instance.getView('test-view'))
@@ -773,18 +780,18 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         buildAction != null
-        buildAction.modifiedJobs != null
-        buildAction.modifiedJobs.size() == 1
-        buildAction.modifiedJobs.contains(new GeneratedJob(null, 'test-folder'))
+        buildAction.modifiedObjects != null
+        buildAction.modifiedObjects.size() == 1
+        buildAction.modifiedObjects.contains(new GeneratedJob(null, 'test-folder'))
 
         when:
         GeneratedJobsAction action = job.getAction(GeneratedJobsAction)
 
         then:
         action != null
-        action.findLastGeneratedJobs() != null
-        action.findLastGeneratedJobs().size() == 1
-        action.findLastGeneratedJobs().contains(new GeneratedJob(null, 'test-folder'))
+        action.findLastGeneratedObjects() != null
+        action.findLastGeneratedObjects().size() == 1
+        action.findLastGeneratedObjects().contains(new GeneratedJob(null, 'test-folder'))
         action.items != null
         action.items.size() == 1
         action.items.contains(jenkinsRule.instance.getItem('test-folder'))

@@ -1,6 +1,7 @@
-package javaposse.jobdsl.plugin
+package javaposse.jobdsl.plugin.actions
 
 import javaposse.jobdsl.dsl.GeneratedView
+import javaposse.jobdsl.plugin.LookupStrategy
 import spock.lang.Specification
 
 class GeneratedViewsBuildActionSpec extends Specification {
@@ -12,10 +13,10 @@ class GeneratedViewsBuildActionSpec extends Specification {
 
         then:
         action.iconFileName == null
-        action.displayName == 'Generated Views'
-        action.urlName == 'generatedViews'
-        action.modifiedViews != null
-        action.modifiedViews.size() == modifiedViews.size()
-        action.modifiedViews.containsAll(modifiedViews)
+        action.displayName == null
+        action.urlName == null
+        action.modifiedObjects != null
+        action.modifiedObjects.size() == modifiedViews.size()
+        action.modifiedObjects.containsAll(modifiedViews)
     }
 }

@@ -1,9 +1,10 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.actions;
 
 import hudson.Util;
 import hudson.model.Action;
 import hudson.model.Item;
 import hudson.model.Items;
+import javaposse.jobdsl.plugin.SeedReference;
 import jenkins.model.Jenkins;
 
 import java.io.IOException;
@@ -24,12 +25,12 @@ public class SeedJobAction implements Action {
 
     @Override
     public String getDisplayName() {
-        return "Seed job:";
+        return null;
     }
 
     @Override
     public String getUrlName() {
-        return "seedJob";
+        return null;
     }
 
     public Item getItem() {

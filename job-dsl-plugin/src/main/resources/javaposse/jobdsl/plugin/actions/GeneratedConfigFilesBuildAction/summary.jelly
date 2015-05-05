@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
-    <j:set var="allConfigFiles" value="${it.modifiedConfigFiles}"/>
+    <j:set var="allConfigFiles" value="${it.modifiedObjects}"/>
     <j:if test="${!allConfigFiles.isEmpty()}">
         <t:summary icon="../../plugin/config-file-provider/images/cfg_logo.png">
             Generated Config Files:

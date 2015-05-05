@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
-    <j:set var="allUserContents" value="${it.modifiedUserContents}"/>
+    <j:set var="allUserContents" value="${it.modifiedObjects}"/>
     <j:if test="${!allUserContents.isEmpty()}">
         <t:summary icon="folder.png">
             Generated User Content:

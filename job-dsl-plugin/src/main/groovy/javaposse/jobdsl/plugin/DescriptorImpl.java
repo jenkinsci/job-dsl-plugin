@@ -4,12 +4,18 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import hudson.Extension;
+import hudson.init.InitMilestone;
+import hudson.init.Initializer;
 import hudson.model.AbstractProject;
 import hudson.model.Item;
+import hudson.model.Run;
 import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
+import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
 
@@ -76,6 +82,19 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     @Override
     public boolean isApplicable(Class<? extends AbstractProject> jobType) {
         return true;
+    }
+
+    @Initializer(before = InitMilestone.PLUGINS_STARTED)
+    public static void addAliases() {
+        Run.XSTREAM2.addCompatibilityAlias(
+                "javaposse.jobdsl.plugin.GeneratedConfigFilesBuildAction", GeneratedConfigFilesBuildAction.class
+        );
+        Run.XSTREAM2.addCompatibilityAlias(
+                "javaposse.jobdsl.plugin.GeneratedJobsBuildAction", GeneratedJobsBuildAction.class
+        );
+        Run.XSTREAM2.addCompatibilityAlias(
+                "javaposse.jobdsl.plugin.GeneratedViewsBuildAction", GeneratedViewsBuildAction.class
+        );
     }
 
     private static void removeSeedReference(String key) {
