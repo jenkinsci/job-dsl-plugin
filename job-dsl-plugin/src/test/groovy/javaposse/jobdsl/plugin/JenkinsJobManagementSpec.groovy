@@ -17,6 +17,7 @@ import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
+import javaposse.jobdsl.dsl.UserContent
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
@@ -551,6 +552,47 @@ class JenkinsJobManagementSpec extends Specification {
         'hudson.model.Item.Move' in permissions
         'hudson.model.Run.Delete' in permissions
         'hudson.model.Run.Update' in permissions
+    }
+
+    def 'upload user content'(boolean ignoreExisting) {
+        setup:
+        UserContent userContent = new UserContent('foo.txt', new ByteArrayInputStream('foo'.bytes))
+
+        when:
+        jobManagement.createOrUpdateUserContent(userContent, ignoreExisting)
+
+        then:
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString() == 'foo'
+
+        where:
+        ignoreExisting << [true, false]
+    }
+
+    def 'update user content'() {
+        setup:
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').write('lorem ipsum', 'UTF-8')
+        UserContent userContent = new UserContent('foo.txt', new ByteArrayInputStream('foo'.bytes))
+
+        when:
+        jobManagement.createOrUpdateUserContent(userContent, false)
+
+        then:
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString() == 'foo'
+    }
+
+    def 'do not update existing user content'() {
+        setup:
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').write('lorem ipsum', 'UTF-8')
+        UserContent userContent = new UserContent('foo.txt', new ByteArrayInputStream('foo'.bytes))
+
+        when:
+        jobManagement.createOrUpdateUserContent(userContent, true)
+
+        then:
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString() == 'lorem ipsum'
     }
 
     private static boolean isXmlIdentical(String expected, Node actual) throws Exception {

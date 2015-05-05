@@ -96,6 +96,7 @@ public class DslScriptLoader {
         generatedItems.setConfigFiles(extractGeneratedConfigFiles(jp, scriptRequest.getIgnoreExisting()));
         generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.getIgnoreExisting()));
         generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.getIgnoreExisting()));
+        generatedItems.setUserContents(extractGeneratedUserContents(jp, scriptRequest.getIgnoreExisting()));
 
         scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
 
@@ -145,6 +146,16 @@ public class DslScriptLoader {
             generatedConfigFiles.add(new GeneratedConfigFile(id, configFile.getName()));
         }
         return generatedConfigFiles;
+    }
+
+    private static Set<GeneratedUserContent> extractGeneratedUserContents(JobParent jp, boolean ignoreExisting) {
+        Set<GeneratedUserContent> generatedUserContents = Sets.newLinkedHashSet();
+        for (UserContent userContent : jp.getReferencedUserContents()) {
+            LOGGER.log(Level.FINE, String.format("Saving user content %s", userContent.getPath()));
+            jp.getJm().createOrUpdateUserContent(userContent, ignoreExisting);
+            generatedUserContents.add(new GeneratedUserContent(userContent.getPath()));
+        }
+        return generatedUserContents;
     }
 
     static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {

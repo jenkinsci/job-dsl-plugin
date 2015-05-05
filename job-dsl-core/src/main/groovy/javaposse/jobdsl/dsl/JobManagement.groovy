@@ -66,6 +66,15 @@ interface JobManagement {
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting)
 
     /**
+     * Uploads the given <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
+     *
+     * @param userContent the user content to be uploaded
+     * @param ignoreExisting do not update existing user content
+     * @since 1.33
+     */
+    void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting)
+
+    /**
      * Renames a Job with name matching previousNames to the destination name.
      *
      * If destination matches the currently found job name, then nothing happens.

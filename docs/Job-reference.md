@@ -5739,12 +5739,21 @@ job {
 Add links in the sidebar of the project page. Requires the
 [Sidebar-Link Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sidebar-Link+Plugin).
 
+The icon may be a plain filename of an image in Jenkins' `images/24x24` directory (such as `help.gif`, `document.gif` or
+`refresh.gif`), or `/userContent/filename.ext` for a custom icon placed in the `JENKINS_HOME/userContent` directory.
+User content can also be uploaded by using the `userContent` DSL method, see
+[[Job-DSL-Commands#uploading-user-content]].
+
 ```groovy
-job {
+userContent('wiki.png', streamFileFromWorkspace('images/wiki.png'))
+
+job('example') {
     properties {
         sidebarLinks {
+            // use built-in image
             link('https://jira.acme.org/', 'JIRA', 'notepad.png')
-            link('https://sonar.acme.org/', 'SonarQube', 'health-00to19.png')
+            // use uploaded image
+            link('https://wiki.acme.org/', 'Wiki', '/userContent/wiki.png')
         }
     }
 }

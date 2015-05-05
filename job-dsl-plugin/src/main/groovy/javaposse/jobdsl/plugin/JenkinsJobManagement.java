@@ -33,6 +33,7 @@ import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
+import javaposse.jobdsl.dsl.UserContent;
 import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
 import javaposse.jobdsl.plugin.ExtensionPointHelper.ExtensionPointMethod;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
@@ -204,6 +205,22 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         configProvider.save(config);
         return config.id;
+    }
+
+    @Override
+    public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
+        try {
+            FilePath file = Jenkins.getInstance().getRootPath().child("userContent").child(userContent.getPath());
+            if (!(file.exists() && ignoreExisting)) {
+                file.getParent().mkdirs();
+                file.copyFrom(userContent.getContent());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DslException(
+                    format(Messages.CreateOrUpdateUserContent_Exception(), userContent.getPath(), e.getMessage())
+            );
+        }
     }
 
     @Override

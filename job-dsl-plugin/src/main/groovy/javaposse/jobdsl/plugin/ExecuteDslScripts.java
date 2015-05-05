@@ -25,6 +25,7 @@ import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
+import javaposse.jobdsl.dsl.GeneratedUserContent;
 import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.model.Jenkins;
@@ -170,7 +171,8 @@ public class ExecuteDslScripts extends Builder {
         return asList(
                 new GeneratedJobsAction(project),
                 new GeneratedViewsAction(project),
-                new GeneratedConfigFilesAction(project)
+                new GeneratedConfigFilesAction(project),
+                new GeneratedUserContentsAction(project)
         );
     }
 
@@ -197,6 +199,7 @@ public class ExecuteDslScripts extends Builder {
                 Set<GeneratedJob> freshJobs = Sets.newLinkedHashSet();
                 Set<GeneratedView> freshViews = Sets.newLinkedHashSet();
                 Set<GeneratedConfigFile> freshConfigFiles = Sets.newLinkedHashSet();
+                Set<GeneratedUserContent> freshUserContents = Sets.newLinkedHashSet();
                 for (ScriptRequest request : scriptRequests) {
                     LOGGER.log(Level.FINE, String.format("Request for %s", request.getLocation()));
 
@@ -204,17 +207,20 @@ public class ExecuteDslScripts extends Builder {
                     freshJobs.addAll(generatedItems.getJobs());
                     freshViews.addAll(generatedItems.getViews());
                     freshConfigFiles.addAll(generatedItems.getConfigFiles());
+                    freshUserContents.addAll(generatedItems.getUserContents());
                 }
 
                 updateTemplates(build, listener, freshJobs);
                 updateGeneratedJobs(build, listener, freshJobs);
                 updateGeneratedViews(build, listener, freshViews);
                 updateGeneratedConfigFiles(build, listener, freshConfigFiles);
+                updateGeneratedUserContents(build, listener, freshUserContents);
 
                 // Save onto Builder, which belongs to a Project.
                 build.addAction(new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
                 build.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
                 build.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
+                build.addAction(new GeneratedUserContentsBuildAction(freshUserContents));
 
                 // Hint that our new jobs might have really shaken things up
                 Jenkins.getInstance().rebuildDependencyGraph();
@@ -432,6 +438,27 @@ public class ExecuteDslScripts extends Builder {
             return Sets.newLinkedHashSet();
         } else {
             return gja.findLastGeneratedConfigFiles();
+        }
+    }
+
+    private void updateGeneratedUserContents(AbstractBuild<?, ?> build, BuildListener listener,
+                                             Set<GeneratedUserContent> freshUserContents) {
+        Set<GeneratedUserContent> generatedUserContents = extractGeneratedUserContents(build.getProject());
+        Set<GeneratedUserContent> added = Sets.difference(freshUserContents, generatedUserContents);
+        Set<GeneratedUserContent> existing = Sets.intersection(generatedUserContents, freshUserContents);
+        Set<GeneratedUserContent> removed = Sets.difference(generatedUserContents, freshUserContents);
+
+        logItems(listener, "Adding user content", added);
+        logItems(listener, "Existing user content", existing);
+        logItems(listener, "Removing user content", removed);
+    }
+
+    private Set<GeneratedUserContent> extractGeneratedUserContents(AbstractProject<?, ?> project) {
+        GeneratedUserContentsAction gja = project.getAction(GeneratedUserContentsAction.class);
+        if (gja == null) {
+            return Sets.newLinkedHashSet();
+        } else {
+            return gja.findLastGeneratedUserContents();
         }
     }
 

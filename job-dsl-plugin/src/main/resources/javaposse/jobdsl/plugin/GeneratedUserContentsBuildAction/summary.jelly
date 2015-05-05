@@ -1,0 +1,18 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
+    <j:set var="allUserContents" value="${it.modifiedUserContents}"/>
+    <j:if test="${!allUserContents.isEmpty()}">
+        <t:summary icon="folder.png">
+            Generated User Content:
+            <ul class="folderList">
+                <j:forEach items="${allUserContents}" var="userContent">
+                    <li>
+                        <a href="${rootURL}/userContent/${userContent.path}" class="tl-tr">
+                            ${userContent.path}
+                        </a>
+                    </li>
+                </j:forEach>
+            </ul>
+        </t:summary>
+    </j:if>
+</j:jelly>

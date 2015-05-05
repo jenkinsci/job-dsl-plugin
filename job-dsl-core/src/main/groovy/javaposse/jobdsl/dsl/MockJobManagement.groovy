@@ -99,4 +99,8 @@ abstract class MockJobManagement extends AbstractJobManagement {
                        Object... args) {
         null
     }
+
+    @Override
+    void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
+    }
 }

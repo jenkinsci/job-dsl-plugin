@@ -209,6 +209,25 @@ job('acme-tests') {
 
 (since 1.15)
 
+# Uploading User Content
+
+Jenkins has a mechanism called [User Content](https://wiki.jenkins-ci.org/display/JENKINS/User+Content), which allows
+arbitrary files to be served from `http://yourhost/jenkins/userContent`.
+
+User content can be uploaded to Jenkins with the `userContent` DSL method.
+
+```groovy
+userContent(String path, InputStream content)
+```
+
+In conjunction with `streamFileFromWorkspace`, any content can be upload from the seed job's workspace.
+
+```groovy
+userContent('acme.png', streamFileFromWorkspace('images/acme.png'))
+```
+
+(since 1.33)
+
 # Grab
 
 **WARNING:** Grab support is deprecated, see [[Migration]]

@@ -22,6 +22,7 @@ abstract class JobParent extends Script implements DslFactory {
     Set<Item> referencedJobs = Sets.newLinkedHashSet()
     Set<View> referencedViews = Sets.newLinkedHashSet()
     Set<ConfigFile> referencedConfigFiles = Sets.newLinkedHashSet()
+    Set<UserContent> referencedUserContents = Sets.newLinkedHashSet()
     List<String> queueToBuild = []
 
     /**
@@ -278,6 +279,11 @@ abstract class JobParent extends Script implements DslFactory {
         }
         referencedConfigFiles << configFile
         configFile
+    }
+
+    @Override
+    void userContent(String path, InputStream content) {
+        referencedUserContents << new UserContent(path, content)
     }
 
     /**
