@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class PropertiesContextSpec extends Specification {
-    JobManagement mockJobManagement = Mock(JobManagement)
+    JobManagement jobManagement = Mock(JobManagement)
     Item item = Mock(Item)
-    PropertiesContext context = new PropertiesContext(mockJobManagement, item)
+    PropertiesContext context = new PropertiesContext(jobManagement, item)
 
     def 'sideBarLinks with no options'() {
         when:
@@ -68,5 +68,29 @@ class PropertiesContextSpec extends Specification {
         ''     | 'test'
         'test' | null
         'test' | ''
+    }
+
+    def 'set custom icon'() {
+        when:
+        context.customIcon('myfancyicon.png')
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'jenkins.plugins.jobicon.CustomIconProperty'
+            children().size() == 1
+            iconfile[0].value() == 'myfancyicon.png'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('custom-job-icon', '0.2')
+    }
+
+    def 'set custom icon with invalid options'(String fileName) {
+        when:
+        context.customIcon(fileName)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        fileName << [null, '']
     }
 }

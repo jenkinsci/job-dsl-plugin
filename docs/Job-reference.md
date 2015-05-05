@@ -127,6 +127,7 @@ freeStyleJob(String name) { // since 1.30
         xvnc(Closure xvncClosure = null) // since 1.26
     }
     properties { // since 1.33
+        customIcon(String iconFileName)
         sidebarLinks(Closure sidebarLinkClosure)
     }
     steps {
@@ -729,25 +730,6 @@ buildFlowJob('example-3') {
 ```
 
 Since 1.21.
-
-## Custom Icon
-
-```groovy
-job {
-    customIcon(String iconFileName)
-}
-```
-
-Sets the custom icon to be used for this job. Requires the
-[Custom Job Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Job+Icon+Plugin).
-
-```groovy
-job {
-    customIcon('myFancyIcon.png')
-}
-```
-
-(since 1.29)
 
 # Maven
 
@@ -5774,6 +5756,34 @@ job('example') {
             // use uploaded image
             link('https://wiki.acme.org/', 'Wiki', '/userContent/wiki.png')
         }
+    }
+}
+```
+
+(since 1.33)
+
+### Custom Icon
+
+```groovy
+job {
+    properties {
+        customIcon(String iconFileName)
+    }
+}
+```
+
+Allows to configure a custom icon for each job. Requires the
+[Custom Job Icon Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Job+Icon+Plugin).
+
+The `iconFileName` must point to a custom icon placed in the `JENKINS_HOME/userContent/customIcon` directory. User
+content can be uploaded by using the `userContent` DSL method, see [[Job-DSL-Commands#uploading-user-content]].
+
+```groovy
+userContent('customIcon/job.png', streamFileFromWorkspace('icons/job.png'))
+
+job('example') {
+    properties {
+        customIcon('job.png')
     }
 }
 ```

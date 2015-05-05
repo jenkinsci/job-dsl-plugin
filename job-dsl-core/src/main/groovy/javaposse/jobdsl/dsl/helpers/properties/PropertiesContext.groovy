@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.properties
 
+import com.google.common.base.Preconditions
+import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -31,6 +33,20 @@ class PropertiesContext extends AbstractExtensibleContext {
 
         propertiesNodes << new NodeBuilder().'hudson.plugins.sidebar__link.ProjectLinks' {
             links(sidebarLinkContext.links)
+        }
+    }
+
+    /**
+     * Allows to configure a custom icon for each job.
+     *
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'custom-job-icon', minimumVersion = '0.2')
+    void customIcon(String iconFileName) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(iconFileName), 'iconFileName must be specified')
+
+        propertiesNodes << new NodeBuilder().'jenkins.plugins.jobicon.CustomIconProperty' {
+            iconfile(iconFileName)
         }
     }
 }

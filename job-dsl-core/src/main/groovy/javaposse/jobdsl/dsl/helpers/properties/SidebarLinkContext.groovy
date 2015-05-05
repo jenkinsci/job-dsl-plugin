@@ -9,7 +9,7 @@ class SidebarLinkContext implements Context {
 
     void link(String url, String text, String icon = null) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(url), 'url must be specified')
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(text), 'url must be specified')
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(text), 'text must be specified')
 
         links << new NodeBuilder().'hudson.plugins.sidebar__link.LinkAction' {
             delegate.url(url)

@@ -407,6 +407,7 @@ class ListViewSpec extends Specification {
         root.columns.size() == 1
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.jobicon.CustomIconColumn'
+        1 * jobManagement.requireMinimumPluginVersion('custom-job-icon', '0.2')
     }
 
     protected String getDefaultXml() {

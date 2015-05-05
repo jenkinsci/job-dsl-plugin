@@ -87,6 +87,10 @@ class ColumnsContext extends AbstractContext {
         columnNodes << new Node(null, 'hudson.plugins.robot.view.RobotListViewColumn')
     }
 
+    /**
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'custom-job-icon', minimumVersion = '0.2')
     void customIcon() {
         columnNodes << new Node(null, 'jenkins.plugins.jobicon.CustomIconColumn')
     }
