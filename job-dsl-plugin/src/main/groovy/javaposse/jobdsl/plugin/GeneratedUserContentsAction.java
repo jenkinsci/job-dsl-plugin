@@ -8,8 +8,4 @@ public class GeneratedUserContentsAction
     public GeneratedUserContentsAction(AbstractProject<?, ?> project) {
         super(project, GeneratedUserContentsBuildAction.class);
     }
-
-    public String getUrlName() {
-        return "generatedUserContents";
-    }
 }

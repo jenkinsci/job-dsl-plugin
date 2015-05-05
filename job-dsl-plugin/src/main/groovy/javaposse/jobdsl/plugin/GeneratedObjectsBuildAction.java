@@ -13,7 +13,18 @@ public abstract class GeneratedObjectsBuildAction<T> implements Action {
         this.modifiedObjects = Sets.newLinkedHashSet(modifiedObjects);
     }
 
+    @Override
     public String getIconFileName() {
+        return null;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return null;
+    }
+
+    @Override
+    public String getUrlName() {
         return null;
     }
 

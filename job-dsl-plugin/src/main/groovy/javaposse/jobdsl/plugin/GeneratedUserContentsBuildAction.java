@@ -8,12 +8,4 @@ public class GeneratedUserContentsBuildAction extends GeneratedObjectsBuildActio
     public GeneratedUserContentsBuildAction(Collection<GeneratedUserContent> modifiedUserContents) {
         super(modifiedUserContents);
     }
-
-    public String getDisplayName() {
-        return "Generated User Content";
-    }
-
-    public String getUrlName() {
-        return "generatedUserContent";
-    }
 }

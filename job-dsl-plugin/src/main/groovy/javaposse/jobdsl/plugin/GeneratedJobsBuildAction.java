@@ -18,14 +18,6 @@ public class GeneratedJobsBuildAction extends GeneratedObjectsBuildRunAction<Gen
         this.lookupStrategy = lookupStrategy;
     }
 
-    public String getDisplayName() {
-        return "Generated Items";
-    }
-
-    public String getUrlName() {
-        return "generatedJobs";
-    }
-
     public LookupStrategy getLookupStrategy() {
         return lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
     }

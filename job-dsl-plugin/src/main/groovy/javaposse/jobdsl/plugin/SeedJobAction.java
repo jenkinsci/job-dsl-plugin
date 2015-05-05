@@ -24,12 +24,12 @@ public class SeedJobAction implements Action {
 
     @Override
     public String getDisplayName() {
-        return "Seed job:";
+        return null;
     }
 
     @Override
     public String getUrlName() {
-        return "seedJob";
+        return null;
     }
 
     public Item getItem() {

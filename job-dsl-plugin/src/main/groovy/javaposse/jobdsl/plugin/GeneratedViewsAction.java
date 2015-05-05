@@ -14,10 +14,6 @@ public class GeneratedViewsAction extends GeneratedObjectsAction<GeneratedView, 
         super(project, GeneratedViewsBuildAction.class);
     }
 
-    public String getUrlName() {
-        return "generatedViews";
-    }
-
     public Set<View> getViews() {
         Set<View> result = newLinkedHashSet();
         for (AbstractBuild build : project.getBuilds()) {

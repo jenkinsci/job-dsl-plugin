@@ -10,8 +10,4 @@ public class GeneratedConfigFilesAction
     public GeneratedConfigFilesAction(AbstractProject<?, ?> project) {
         super(project, GeneratedConfigFilesBuildAction.class);
     }
-
-    public String getUrlName() {
-        return "generatedConfigFiles";
-    }
 }

@@ -18,11 +18,18 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
         this.buildActionClass = buildActionClass;
     }
 
+    @Override
     public String getIconFileName() {
         return null;
     }
 
+    @Override
     public String getDisplayName() {
+        return null;
+    }
+
+    @Override
+    public String getUrlName() {
         return null;
     }
 

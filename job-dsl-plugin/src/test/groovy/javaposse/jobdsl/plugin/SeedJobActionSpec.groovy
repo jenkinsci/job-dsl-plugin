@@ -46,7 +46,7 @@ class SeedJobActionSpec extends Specification {
         String displayName = new SeedJobAction(item, seedReference).displayName
 
         then:
-        displayName == 'Seed job:'
+        displayName == null
     }
 
     @WithoutJenkins
@@ -55,7 +55,7 @@ class SeedJobActionSpec extends Specification {
         String urlName = new SeedJobAction(item, seedReference).urlName
 
         then:
-        urlName == 'seedJob'
+        urlName == null
     }
 
     def 'no template'() {

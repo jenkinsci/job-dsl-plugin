@@ -23,7 +23,7 @@ class GeneratedViewsActionSpec extends Specification {
         then:
         action.iconFileName == null
         action.displayName == null
-        action.urlName == 'generatedViews'
+        action.urlName == null
     }
 
     def 'findLastGeneratedObjects no build'() {

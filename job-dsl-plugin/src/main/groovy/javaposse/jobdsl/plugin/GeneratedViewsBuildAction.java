@@ -21,14 +21,6 @@ public class GeneratedViewsBuildAction extends GeneratedObjectsBuildRunAction<Ge
         this.lookupStrategy = lookupStrategy;
     }
 
-    public String getDisplayName() {
-        return "Generated Views";
-    }
-
-    public String getUrlName() {
-        return "generatedViews";
-    }
-
     public LookupStrategy getLookupStrategy() {
         return lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
     }

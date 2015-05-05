@@ -13,10 +13,6 @@ public class GeneratedJobsAction extends GeneratedObjectsAction<GeneratedJob, Ge
         super(project, GeneratedJobsBuildAction.class);
     }
 
-    public String getUrlName() {
-        return "generatedJobs";
-    }
-
     public Set<Item> getItems() {
         Set<Item> result = Sets.newLinkedHashSet();
         for (AbstractBuild build : project.getBuilds()) {
