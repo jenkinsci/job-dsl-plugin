@@ -1050,6 +1050,8 @@ Adds a Git SCM source. The first variant can be used for advanced configuration 
 shortcuts for simpler Git SCM configurations. Requires the
 [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin).
 
+The closure parameter of the shortcut variants expects a [[configure block|The-Configure-Block]] closure.
+ 
 The `github` methods will derive the Git URL from the `ownerAndProject`, `protocol` and `host` parameters. Valid
 protocols are `'https'`, `'ssh'` and `'git'`. They also configure the source browser to point to GitHub and set the
 GitHub project URL.
