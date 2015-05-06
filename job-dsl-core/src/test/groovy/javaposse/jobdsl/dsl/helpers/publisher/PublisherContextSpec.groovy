@@ -3020,6 +3020,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call flexible publish'() {
+        setup:
+        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
+
         when:
         context.flexiblePublish {
             condition {
@@ -3050,6 +3053,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call flexible publish and test escaping'() {
+        setup:
+        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
+
         when:
         context.flexiblePublish {
             condition {
@@ -3080,6 +3086,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call flexible publish with build step'() {
+        setup:
+        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
+
         when:
         context.flexiblePublish {
             condition {
@@ -3107,9 +3116,53 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requirePlugin('flexible-publish')
+        1 * jobManagement.requirePlugin('any-buildstep')
+    }
+
+    def 'call flexible publish with multiple actions'() {
+        setup:
+        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.13')
+
+        when:
+        context.flexiblePublish {
+            condition {
+                stringsMatch('foo', 'bar', false)
+            }
+            step {
+                shell('echo hello')
+            }
+            publisher {
+                wsCleanup()
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                publisherList[0].children().size() == 2
+                with(publisherList[0]) {
+                    children()[0].name() == 'hudson.tasks.Shell'
+                    children()[1].name() == 'hudson.plugins.ws__cleanup.WsCleanup'
+                }
+            }
+        }
+        1 * jobManagement.requirePlugin('flexible-publish')
+        1 * jobManagement.requirePlugin('any-buildstep')
     }
 
     def 'call flexible publish without condition'() {
+        setup:
+        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
+
         when:
         context.flexiblePublish {
             step {
