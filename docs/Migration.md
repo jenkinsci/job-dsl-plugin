@@ -107,6 +107,12 @@ job('example') {
 }
 ```
 
+### Robot Framework
+
+Support for versions older than 1.4.3 of the
+[Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### Mercurial
 
 Support for versions older than 1.50.1 of the

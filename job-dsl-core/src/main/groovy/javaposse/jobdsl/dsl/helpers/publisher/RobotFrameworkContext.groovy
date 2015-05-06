@@ -1,26 +1,24 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import com.google.common.base.Preconditions
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-/**
- * A Job DSL context for Robot Framework. Specifically,
- * take a look at
- * https://github.com/jenkinsci/robot-plugin/blob/master/src/main/java/hudson/plugins/robot/RobotPublisher.java
- */
-class RobotFrameworkContext implements Context {
-    static final String DEFAULT_OUTPUT_PATH = 'target/robotframework-reports'
-    static final String DEFAULT_REPORT_FILE_NAME = 'report.html'
-    static final String DEFAULT_OUTPUT_FILE_NAME = 'output.xml'
-    static final String DEFAULT_LOG_FILE_NAME = 'log.html'
-
+class RobotFrameworkContext extends AbstractContext {
     double passThreshold = 100.0
     double unstableThreshold = 0.0
     boolean onlyCritical = false
-    String outputPath = DEFAULT_OUTPUT_PATH
-    String reportFileName = DEFAULT_REPORT_FILE_NAME
-    String logFileName = DEFAULT_LOG_FILE_NAME
-    String outputFileName = DEFAULT_OUTPUT_FILE_NAME
+    boolean disableArchiveOutput = false
+    String outputPath = 'target/robotframework-reports'
+    String reportFileName = 'report.html'
+    String logFileName = 'log.html'
+    String outputFileName = 'output.xml'
+    List<String> otherFiles = []
+
+    RobotFrameworkContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     void passThreshold(double passThreshold) {
         Preconditions.checkArgument(passThreshold >= 0.0 && passThreshold <= 100.0,
@@ -34,7 +32,7 @@ class RobotFrameworkContext implements Context {
         this.unstableThreshold = unstableThreshold
     }
 
-    void onlyCritical(boolean onlyCritical) {
+    void onlyCritical(boolean onlyCritical = true) {
         this.onlyCritical = onlyCritical
     }
 
@@ -56,5 +54,18 @@ class RobotFrameworkContext implements Context {
     void outputFileName(String outputFileName) {
         Preconditions.checkNotNull(outputFileName, 'outputFileName cannot be null')
         this.outputFileName = outputFileName
+    }
+
+    @RequiresPlugin(id = 'robot', minimumVersion = '1.4.3')
+    void disableArchiveOutput(boolean disableArchiveOutput = true) {
+        this.disableArchiveOutput = disableArchiveOutput
+    }
+
+    @RequiresPlugin(id = 'robot', minimumVersion = '1.2.1')
+    void otherFiles(String... files) {
+        for (String file : files) {
+            Preconditions.checkNotNull(file, 'file cannot be null')
+        }
+        this.otherFiles.addAll(files)
     }
 }

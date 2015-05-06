@@ -2016,74 +2016,101 @@ class PublisherContextSpec extends Specification {
         context.publishRobotFrameworkReports()
 
         then:
-        Node node = context.publisherNodes[0]
-        node.name() == 'hudson.plugins.robot.RobotPublisher'
-        node.outputPath[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_PATH
-        node.passThreshold[0].value() == 100.0
-        node.unstableThreshold[0].value() == 0.0
-        node.onlyCritical[0].value() == false
-        node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
-        node.logFileName[0].value() == RobotFrameworkContext.DEFAULT_LOG_FILE_NAME
-        node.outputFileName[0].value() == RobotFrameworkContext.DEFAULT_OUTPUT_FILE_NAME
-        1 * jobManagement.requirePlugin('robot')
-    }
-
-    def 'publish Robot framework report using specific value for outputPath'() {
-        when:
-        context.publishRobotFrameworkReports { outputPath('/path/to/foo') }
-
-        then:
-        Node node = context.publisherNodes[0]
-        node.name() == 'hudson.plugins.robot.RobotPublisher'
-        node.outputPath[0].value() == '/path/to/foo'
-        1 * jobManagement.requirePlugin('robot')
-    }
-
-    def 'publish Robot framework report using specific values for passThreshold and unstableThreshold'() {
-        when:
-        context.publishRobotFrameworkReports {
-            passThreshold(100.0)
-            unstableThreshold(10.0)
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.robot.RobotPublisher'
+            children().size() == 9
+            outputPath[0].value() == 'target/robotframework-reports'
+            passThreshold[0].value() == 100.0
+            unstableThreshold[0].value() == 0.0
+            onlyCritical[0].value() == false
+            reportFileName[0].value() == 'report.html'
+            logFileName[0].value() == 'log.html'
+            outputFileName[0].value() == 'output.xml'
+            disableArchiveOutput[0].value() == false
+            otherFiles[0].value().empty
         }
-
-        then:
-        Node node = context.publisherNodes[0]
-        node.name() == 'hudson.plugins.robot.RobotPublisher'
-        node.passThreshold[0].value() == 100.0
-        node.unstableThreshold[0].value() == 10.0
         1 * jobManagement.requirePlugin('robot')
     }
 
-    def 'publish Robot framework report using specific value for onlyCritical'() {
+    def 'publish Robot framework report using default values and older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('robot') >> new VersionNumber('1.4.2')
+
         when:
-        context.publishRobotFrameworkReports { onlyCritical(true) }
+        context.publishRobotFrameworkReports()
 
         then:
-        Node node = context.publisherNodes[0]
-        node.name() == 'hudson.plugins.robot.RobotPublisher'
-        node.passThreshold[0].value() == 100.0
-        node.unstableThreshold[0].value() == 0.0
-        node.onlyCritical[0].value() == true
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.robot.RobotPublisher'
+            children().size() == 8
+            outputPath[0].value() == 'target/robotframework-reports'
+            passThreshold[0].value() == 100.0
+            unstableThreshold[0].value() == 0.0
+            onlyCritical[0].value() == false
+            reportFileName[0].value() == 'report.html'
+            logFileName[0].value() == 'log.html'
+            outputFileName[0].value() == 'output.xml'
+            otherFiles[0].value().empty
+        }
         1 * jobManagement.requirePlugin('robot')
+        1 * jobManagement.logDeprecationWarning(_)
     }
 
-    def 'publish Robot framework report using a configure closure'() {
+    def 'publish Robot framework report using default values and very old plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('robot') >> new VersionNumber('1.2.0')
+
+        when:
+        context.publishRobotFrameworkReports()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.robot.RobotPublisher'
+            children().size() == 7
+            outputPath[0].value() == 'target/robotframework-reports'
+            passThreshold[0].value() == 100.0
+            unstableThreshold[0].value() == 0.0
+            onlyCritical[0].value() == false
+            reportFileName[0].value() == 'report.html'
+            logFileName[0].value() == 'log.html'
+            outputFileName[0].value() == 'output.xml'
+        }
+        1 * jobManagement.requirePlugin('robot')
+        1 * jobManagement.logDeprecationWarning(_)
+    }
+
+    def 'publish Robot framework report using all options'() {
         when:
         context.publishRobotFrameworkReports {
-            passThreshold(50.0)
-            unstableThreshold(10.0)
             outputPath('/path/to/foo')
+            passThreshold(90.0)
+            unstableThreshold(10.0)
+            onlyCritical()
+            reportFileName('project.html')
+            logFileName('out.html')
+            outputFileName('out.xml')
+            disableArchiveOutput()
+            otherFiles('screenshot-1.png', 'screenshot-2.png')
         }
 
         then:
-        Node node = context.publisherNodes[0]
-        node.name() == 'hudson.plugins.robot.RobotPublisher'
-        node.passThreshold[0].value() == 50.0
-        node.unstableThreshold[0].value() == 10.0
-        node.outputPath[0].value() == '/path/to/foo'
-        node.onlyCritical[0].value() == false
-        node.reportFileName[0].value() == RobotFrameworkContext.DEFAULT_REPORT_FILE_NAME
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.robot.RobotPublisher'
+            children().size() == 9
+            outputPath[0].value() == '/path/to/foo'
+            passThreshold[0].value() == 90.0
+            unstableThreshold[0].value() == 10.0
+            onlyCritical[0].value() == true
+            reportFileName[0].value() == 'project.html'
+            logFileName[0].value() == 'out.html'
+            outputFileName[0].value() == 'out.xml'
+            disableArchiveOutput[0].value() == true
+            otherFiles[0].string[0].value() == 'screenshot-1.png'
+            otherFiles[0].string[1].value() == 'screenshot-2.png'
+        }
         1 * jobManagement.requirePlugin('robot')
+        1 * jobManagement.requireMinimumPluginVersion('robot', '1.2.1')
+        1 * jobManagement.requireMinimumPluginVersion('robot', '1.4.3')
     }
 
     def 'call buildPipelineTrigger'() {
