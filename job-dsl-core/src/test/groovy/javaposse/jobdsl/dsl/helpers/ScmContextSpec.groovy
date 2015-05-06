@@ -1089,6 +1089,51 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('git')
     }
 
+    def 'call git scm with recursiveSubmodules with default true'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            recursiveSubmodules()
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].recursiveSubmodules.text() == 'true'
+        }
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with recursiveSubmodules with param'(boolean param, String result) {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            recursiveSubmodules(param)
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].recursiveSubmodules.text() == result
+        }
+        1 * mockJobManagement.requirePlugin('git')
+
+        where:
+        param        | result
+        true         | 'true'
+        false        | 'false'
+    }
+
     def 'call git scm with configure appending'() {
         when:
         context.git(GIT_REPO_URL, null) { Node gitNode ->

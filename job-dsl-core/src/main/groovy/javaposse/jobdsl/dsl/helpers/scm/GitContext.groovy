@@ -110,6 +110,16 @@ class GitContext extends AbstractContext {
         this.shallowClone = shallowClone
     }
 
+    /**
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'git', minimumVersion = '2.0.0')
+    void recursiveSubmodules(boolean recursive = true) {
+        extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.SubmoduleOption' {
+            delegate.recursiveSubmodules(recursive)
+        }
+    }
+
     void pruneBranches(boolean pruneBranches = true) {
         this.pruneBranches = pruneBranches
     }
