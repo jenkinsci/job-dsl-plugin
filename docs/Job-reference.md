@@ -5357,9 +5357,9 @@ job('example') {
 job {
     publishers {
         flexiblePublish {
-            condition(Closure runConditionClosure) // any run condition closure, see conditionalSteps above
-            publisher(Closure publishersClosure)   // publishers closure containing a single publisher
-            step(Closure stepsClosure)             // steps closure containing a single build step
+            condition(Closure runConditionClosure) // see conditionalSteps
+            publisher(Closure publishersClosure)
+            step(Closure stepsClosure)
         }
     }
 }
@@ -5367,11 +5367,10 @@ job {
 
 Configures a conditional publisher action. Requires the
 [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin).
-If the
-[Any Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
-is installed, then a build step can be used instead of a publisher. Note that
-in any case, only one build step or one publisher can be given (this is a
-limitation of the Flexible Publish Plugin).
+
+If the [Any Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin) is installed, then
+build steps can be used together with publishers. When using versions older then 0.13 of the Flexible Publish Plugin,
+only one build step or one publisher can be used.
 
 Examples:
 

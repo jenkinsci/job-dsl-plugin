@@ -939,11 +939,14 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'flexible-publish')
     void flexiblePublish(@DslContext(FlexiblePublisherContext) Closure flexiblePublishClosure) {
+        if (jobManagement.getPluginVersion('flexible-publish')?.isOlderThan(new VersionNumber('0.13'))) {
+            jobManagement.logDeprecationWarning('support for Flexible Publish plugin versions older than 0.13')
+        }
+
         FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement, item)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
 
-        Node action = context.action
-        Preconditions.checkArgument(action != null, 'no publisher or build step specified')
+        Preconditions.checkArgument(!context.actions.empty, 'no publisher or build step specified')
 
         publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
             delegate.publishers {
@@ -951,10 +954,14 @@ class PublisherContext extends AbstractExtensibleContext {
                     condition(class: context.condition.conditionClass) {
                         context.condition.addArgs(delegate)
                     }
-                    publisher(
-                            class: new XmlFriendlyNameCoder().decodeAttribute(action.name().toString()),
-                            action.value()
-                    )
+                    if (jobManagement.getPluginVersion('flexible-publish')?.isOlderThan(new VersionNumber('0.13'))) {
+                        publisher(
+                                class: new XmlFriendlyNameCoder().decodeAttribute(context.actions[0].name().toString()),
+                                context.actions[0].value()
+                        )
+                    } else {
+                        publisherList(context.actions)
+                    }
                     runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                 }
             }

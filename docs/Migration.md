@@ -109,8 +109,15 @@ job('example') {
 
 ### Mercurial
 
-Support for versions older than 1.50.1 of the Mercurial Plugin is [[deprecated|Deprecation-Policy]] and will be
-removed.
+Support for versions older than 1.50.1 of the
+[Mercurial Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mercurial+Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
+### Flexible Publish
+
+Support for versions older than 0.13 of the
+[Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
 
 ## Migrating to 1.31
 
