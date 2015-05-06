@@ -4790,44 +4790,48 @@ associatedFiles(String associatedFilesPattern)
 
 ### Robot Framework Reports
 
-Supports [Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin) to publish the reports from Robot Framework execution:
-
 ```groovy
-publishRobotFrameworkReports(Closure closure = null)
-```
-
-If no `closure` is provided, default values will be used that are based on [Jenkins Robot Framework plugin](https://github.com/jenkinsci/robot-plugin/blob/master/src/main/java/hudson/plugins/robot/RobotPublisher.java). The following properties can configured using the closure:
-
-```groovy
-publishRobotFrameworkReports {
-    passThreshold(double)         // A double value in range (0.0, 100.0). The default is 100.0.
-    unstableThreshold(double)     // A double value in range (0.0, 100.0). The default is 0.0.
-    onlyCritical(boolean)         // A boolean value. The default is false.
-    outputPath(String)            // The path to the reports. The default is 'target/robotframework-reports'.
-    reportFileName(String)        // The name of the report file. The default is 'report.html'.
-    logFileName(String)           // The name of the log file. The default is 'log.html'.
-    outputFileName(String)        // The name of the output file. The default is 'output.xml'.
-    disableArchiveOutput(boolean) // A boolean value. The default is false.
-    otherFiles(String ...)        // List of test related artifacts for saving in robot directory. Screenshots linked to robot logs have to be explicitly defined here for storage.
+job {
+    publishers {
+        publishRobotFrameworkReports {
+            passThreshold(double threshold)
+            unstableThreshold(double threshold)
+            onlyCritical(boolean value = true)
+            outputPath(String path)
+            reportFileName(String fileName)
+            logFileName(String fileName)
+            outputFileName(String fileName)
+            disableArchiveOutput(boolean value = true)
+            otherFiles(String... files)
+        }
+    }
 }
 ```
 
-For example, to mark a build status with more relaxed threshold values and only on the critical test cases from Robot Framework:
+Collects and publishes Robot Framework test results. Requires the
+[Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin).
+
+The default values for all options are shown in the example below.
 
 ```groovy
-publishRobotFrameworkReports {
-    passThreshold(90.0)
-    onlyCritical()
+job('example') {
+    publishers {
+        publishRobotFrameworkReports {
+            passThreshold(100.0)
+            unstableThreshold(0.0)
+            onlyCritical(false)
+            outputPath('target/robotframework-reports')
+            reportFileName('report.html')
+            logFileName('log.html')
+            outputFileName('output.xml')
+            disableArchiveOutput(false)
+            otherFiles()
+        }
+    }
 }
 ```
 
-Or to use the default configurations with the plugin:
-
-```groovy
-publishRobotFrameworkReports()
-```
-
-(Since 1.21)
+(since 1.21)
 
 ### Build Pipeline Trigger
 

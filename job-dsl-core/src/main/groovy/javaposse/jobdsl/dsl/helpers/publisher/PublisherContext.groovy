@@ -795,24 +795,28 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'robot')
     void publishRobotFrameworkReports(@DslContext(RobotFrameworkContext) Closure robotClosure = null) {
-        RobotFrameworkContext context = new RobotFrameworkContext()
+        if (jobManagement.getPluginVersion('robot')?.isOlderThan(new VersionNumber('1.4.3'))) {
+            jobManagement.logDeprecationWarning('support for Robot Framework plugin versions older than 1.4.3')
+        }
+
+        RobotFrameworkContext context = new RobotFrameworkContext(jobManagement)
         ContextHelper.executeInContext(robotClosure, context)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.robot.RobotPublisher' {
-            passThreshold context.passThreshold
-            unstableThreshold context.unstableThreshold
-            outputPath context.outputPath
-            onlyCritical context.onlyCritical
-            reportFileName context.reportFileName
-            logFileName context.logFileName
-            outputFileName context.outputFileName
-            disableArchiveOutput context.disableArchiveOutput
-            if (context.otherFiles) {
-                if (context.otherFiles) {
-                    otherFiles {
-                        context.otherFiles.each { file ->
-                            string file
-                        }
+            passThreshold(context.passThreshold)
+            unstableThreshold(context.unstableThreshold)
+            outputPath(context.outputPath)
+            onlyCritical(context.onlyCritical)
+            reportFileName(context.reportFileName)
+            logFileName(context.logFileName)
+            outputFileName(context.outputFileName)
+            if (!jobManagement.getPluginVersion('robot')?.isOlderThan(new VersionNumber('1.4.3'))) {
+                disableArchiveOutput(context.disableArchiveOutput)
+            }
+            if (!jobManagement.getPluginVersion('robot')?.isOlderThan(new VersionNumber('1.2.1'))) {
+                otherFiles {
+                    context.otherFiles.each { String file ->
+                        string(file)
                     }
                 }
             }
