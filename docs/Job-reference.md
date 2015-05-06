@@ -4801,8 +4801,8 @@ job {
             reportFileName(String fileName)
             logFileName(String fileName)
             outputFileName(String fileName)
-            disableArchiveOutput(boolean value = true)
-            otherFiles(String... files)
+            disableArchiveOutput(boolean value = true) // since 1.33
+            otherFiles(String... files)                // since 1.33
         }
     }
 }

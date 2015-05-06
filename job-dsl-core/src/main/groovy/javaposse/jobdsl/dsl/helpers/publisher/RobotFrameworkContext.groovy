@@ -56,11 +56,17 @@ class RobotFrameworkContext extends AbstractContext {
         this.outputFileName = outputFileName
     }
 
+    /**
+     * @since 1.33
+     */
     @RequiresPlugin(id = 'robot', minimumVersion = '1.4.3')
     void disableArchiveOutput(boolean disableArchiveOutput = true) {
         this.disableArchiveOutput = disableArchiveOutput
     }
 
+    /**
+     * @since 1.33
+     */
     @RequiresPlugin(id = 'robot', minimumVersion = '1.2.1')
     void otherFiles(String... files) {
         for (String file : files) {
