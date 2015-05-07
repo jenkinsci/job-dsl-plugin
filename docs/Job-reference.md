@@ -1019,7 +1019,7 @@ job {
             wipeOutWorkspace(boolean wipeOut = true) // defaults to false
             remotePoll(boolean remotePoll = true) // defaults to false
             shallowClone(boolean shallowClone = true) // defaults to false
-            recursiveSubmodules(boolean recursive = true) // "Recursively update submodules" additional behaviour, defaults to false
+            recursiveSubmodules(boolean recursive = true) // since 1.33
             pruneBranches(boolean pruneBranches = true) // defaults to false
             localBranch(String branch) // check out to specific local branch
             relativeTargetDir(String directory)

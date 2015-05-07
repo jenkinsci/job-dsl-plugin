@@ -18,7 +18,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 ## Release Notes
 * 1.33 (unreleased)
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-   ([JENKINS-28264](https://issues.jenkins-ci.org/browse/JENKINS-28264))
+   ([JENKINS-27891](https://issues.jenkins-ci.org/browse/JENKINS-27891), [JENKINS-28264](https://issues.jenkins-ci.org/browse/JENKINS-28264))
  * Added support for the [Build Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Publisher+Plugin)
  * Added support for the [Naginator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Naginator+Plugin)
  * Added support for the [Sidebar-Link Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sidebar-Link+Plugin)
@@ -36,8 +36,6 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-27932](https://issues.jenkins-ci.org/browse/JENKINS-27932))
  * Support for the older versions of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) is deprecated, see [[Migration]]
  * Variants of `copyArtifacts` with more than two parameters have been replaced and are deprecated, see [[Migration]]
- * Added support for "Don't trigger a build on commit notifications" for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-   ([JENKINS-27891](https://issues.jenkins-ci.org/browse/JENKINS-27891))
  * Added a Jenkins extension point for adding DSL methods
  * Added support for [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin]
  * Added support for uploading [user conent](https://wiki.jenkins-ci.org/display/JENKINS/User+Content)

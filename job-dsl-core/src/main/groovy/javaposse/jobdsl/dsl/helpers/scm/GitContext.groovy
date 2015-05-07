@@ -21,6 +21,7 @@ class GitContext extends AbstractContext {
     boolean shallowClone = false
     boolean pruneBranches = false
     boolean ignoreNotifyCommit = false
+    boolean recursiveSubmodules = false
     String localBranch
     String relativeTargetDir
     String reference = ''
@@ -113,11 +114,8 @@ class GitContext extends AbstractContext {
     /**
      * @since 1.33
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.0.0')
     void recursiveSubmodules(boolean recursive = true) {
-        extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.SubmoduleOption' {
-            delegate.recursiveSubmodules(recursive)
-        }
+        this.recursiveSubmodules = recursive
     }
 
     void pruneBranches(boolean pruneBranches = true) {

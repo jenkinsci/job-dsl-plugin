@@ -1099,39 +1099,29 @@ class ScmContextSpec extends Specification {
         }
 
         then:
-        context.scmNodes[0] != null
         with(context.scmNodes[0]) {
-            extensions.size() == 1
-            extensions[0].children().size() == 1
-            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].children().size() == 1
-            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].recursiveSubmodules.text() == 'true'
+            recursiveSubmodules[0].value() == true
         }
         1 * mockJobManagement.requirePlugin('git')
     }
 
-    def 'call git scm with recursiveSubmodules with param'(boolean param, String result) {
+    def 'call git scm with recursiveSubmodules with param'(boolean value) {
         when:
         context.git {
             remote {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
-            recursiveSubmodules(param)
+            recursiveSubmodules(value)
         }
 
         then:
-        context.scmNodes[0] != null
         with(context.scmNodes[0]) {
-            extensions.size() == 1
-            extensions[0].children().size() == 1
-            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].children().size() == 1
-            extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0].recursiveSubmodules.text() == result
+            recursiveSubmodules[0].value() == value
         }
         1 * mockJobManagement.requirePlugin('git')
 
         where:
-        param        | result
-        true         | 'true'
-        false        | 'false'
+        value << [true, false]
     }
 
     def 'call git scm with configure appending'() {
