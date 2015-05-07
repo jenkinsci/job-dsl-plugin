@@ -13,6 +13,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
+import javaposse.jobdsl.dsl.helpers.step.PublishOverSshContext
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Strings.isNullOrEmpty
@@ -1377,6 +1378,22 @@ class PublisherContext extends AbstractExtensibleContext {
             notifyBackToNormal(hipChatContext.notifyBackToNormal)
             startJobMessage(hipChatContext.startJobMessage ?: '')
             completeJobMessage(hipChatContext.completeJobMessage ?: '')
+        }
+    }
+
+    /**
+     * @since 1.34
+     */
+    @RequiresPlugin(id = 'publish-over-ssh', minimumVersion = '1.12')
+    void publishOverSsh(@DslContext(PublishOverSshContext) Closure publishOverSshClosure) {
+        PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
+        ContextHelper.executeInContext(publishOverSshClosure, publishOverSshContext)
+
+        Preconditions.checkArgument(!publishOverSshContext.servers.empty, 'At least 1 server must be configured')
+
+        publisherNodes << new NodeBuilder().'jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin' {
+            consolePrefix('SSH: ')
+            currentNode.append(publishOverSshContext.node)
         }
     }
 
