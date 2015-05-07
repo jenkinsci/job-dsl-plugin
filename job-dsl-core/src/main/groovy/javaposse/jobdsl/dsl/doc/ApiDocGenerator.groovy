@@ -3,9 +3,11 @@ package javaposse.jobdsl.dsl.doc
 import groovy.json.JsonBuilder
 import javaposse.jobdsl.dsl.JobParent
 import javaposse.jobdsl.dsl.RequiresPlugin
-import org.codehaus.groovy.groovydoc.*
+import org.codehaus.groovy.groovydoc.GroovyAnnotationRef
+import org.codehaus.groovy.groovydoc.GroovyClassDoc
+import org.codehaus.groovy.groovydoc.GroovyMethodDoc
+import org.codehaus.groovy.groovydoc.GroovyParameter
 import org.codehaus.groovy.tools.groovydoc.ArrayClassDocWrapper
-import org.codehaus.groovy.tools.groovydoc.SimpleGroovyDoc
 import org.pegdown.Extensions
 import org.pegdown.PegDownProcessor
 
@@ -33,7 +35,6 @@ class ApiDocGenerator {
         File file = new File(outputPath)
         file.parentFile.mkdirs()
 
-        println "writing to: $file.absolutePath"
         file.withWriter { it << builder.toPrettyString() }
     }
 
@@ -105,9 +106,7 @@ class ApiDocGenerator {
 
         methodDocs.each { GroovyMethodDoc methodDoc ->
             Method method = GroovyDocHelper.getMethodFromGroovyMethodDoc(methodDoc, clazz)
-            if (!method) {
-                println "couldnt find matching method for: ${clazz.name}"
-            } else {
+            if (method) {
                 Map signature = processMethod(method, methodDoc)
                 methodMap.signatures << signature
 
@@ -142,7 +141,7 @@ class ApiDocGenerator {
                 if (comment) {
                     int defListIndex = comment.indexOf('<DL>')
                     if (defListIndex != -1) {
-                        comment = comment.substring(0, defListIndex)
+                        comment = comment[0..<defListIndex]
                     }
                     if (comment) {
                         methodMap.html = comment
@@ -151,7 +150,7 @@ class ApiDocGenerator {
                     String firstSentenceCommentText = methodDoc.firstSentenceCommentText()
                     int annotationIndex = firstSentenceCommentText.indexOf('@')
                     if (annotationIndex != -1) {
-                        firstSentenceCommentText = firstSentenceCommentText.substring(0, annotationIndex)
+                        firstSentenceCommentText = firstSentenceCommentText[0..<annotationIndex]
                     }
                     if (firstSentenceCommentText) {
                         methodMap.firstSentenceCommentText = firstSentenceCommentText
@@ -254,7 +253,7 @@ class ApiDocGenerator {
         ]
         for (String prefix in prefixes) {
             if (name.startsWith(prefix)) {
-                name = name.substring(prefix.length())
+                name = name[prefix.length()..-1]
                 break
             }
         }

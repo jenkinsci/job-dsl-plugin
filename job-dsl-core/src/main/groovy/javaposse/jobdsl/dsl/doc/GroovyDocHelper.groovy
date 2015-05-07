@@ -48,7 +48,7 @@ class GroovyDocHelper {
             List docParamNames = methodDoc.parameters().collect {
                 String name = it.type()?.qualifiedTypeName() ?: it.typeName()
                 if (name.startsWith('.')) {
-                    name = name.substring(1)
+                    name = name[1..-1]
                 }
 
                 if (it.type() && it.type() instanceof ArrayClassDocWrapper) {
@@ -71,7 +71,7 @@ class GroovyDocHelper {
                         return primitiveToArrayName[name]
                     }
                     return "[L$name;"
-                } else if(name == 'def') {
+                } else if (name == 'def') {
                     return 'java.lang.Object'
                 } else {
                     return name
@@ -79,7 +79,7 @@ class GroovyDocHelper {
             }
             docParamNames == method.parameterTypes*.name ||
                 docParamNames == method.parameterTypes*.canonicalName ||
-                docParamNames == method.parameterTypes.collect { it.enum ? it.simpleName : it.name}
+                docParamNames == method.parameterTypes.collect { it.enum ? it.simpleName : it.name }
         }
 
         method
