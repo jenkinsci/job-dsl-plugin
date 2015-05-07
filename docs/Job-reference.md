@@ -267,6 +267,7 @@ freeStyleJob(String name) { // since 1.30
                       Closure jabberClosure = null) // deprecated since 1.30
         publishJabber(String target, String strategyName, String channelNotificationName,
                       Closure jabberClosure = null) // deprecated since 1.30
+        publishOverSsh(Closure publishOverSshClosure) // since 1.34
         publishRobotFrameworkReports(Closure closure = null) // since 1.21
         publishScp(String site, Closure scpClosure)
         retryBuild(Closure naginatorClosure = null) // since 1.33
@@ -2758,7 +2759,7 @@ job {
                     noDefaultExcludes(boolean noDefaultExcludes = true)
                     makeEmptyDirs(boolean makeEmptyDirs = true)
                     flattenFiles(boolean flattenFiles = true)
-                    remoteDirIsDateFormat(boolean remoteDirIsDateFormat = true)
+                    remoteDirIsDateFormat(boolean value = true)
                     execTimeout(long execTimeout)
                     execInPty(boolean execInPty = true)
                 }
@@ -2768,6 +2769,9 @@ job {
             alwaysPublishFromMaster(boolean alwaysPublishFromMaster = true)
             parameterizedPublishing(String parameterName)
         }
+    }
+    publishers {
+        publishOverSsh(Closure publishOverSshClosure) // since 1.34
     }
 }
 ```
@@ -2780,8 +2784,8 @@ Encrypted keys are currently not supported on job level, use the global configur
 Examples:
 
 ```groovy
-// Basic step
-job('example') {
+// basic step
+job('example-1') {
     steps {
         publishOverSsh {
             server('server-name') {
@@ -2793,9 +2797,9 @@ job('example') {
     }
 }
 
-// Using parameter to match server label
-job('example') {
-    steps {
+// post-build step, using parameter to match server label
+job('example-2') {
+    publishers {
         publishOverSsh {
             server('my-server-01') {
                 credentials('user01') {

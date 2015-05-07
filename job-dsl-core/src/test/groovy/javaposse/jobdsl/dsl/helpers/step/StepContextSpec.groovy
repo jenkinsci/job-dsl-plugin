@@ -1419,7 +1419,6 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin'
             with(delegate.delegate[0]) {
-
                 consolePrefix[0].value() == 'SSH: '
                 with(delegate.delegate[0]) {
                     with(publishers[0]) {
