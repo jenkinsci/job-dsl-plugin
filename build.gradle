@@ -77,6 +77,7 @@ project(':job-dsl-core') {
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile 'org.jenkins-ci:version-number:1.1'
         compile 'org.jvnet.hudson:xstream:1.4.7-jenkins-1'
+        compile 'org.pegdown:pegdown:1.4.2'
     }
 
     jar {
@@ -103,6 +104,12 @@ project(':job-dsl-core') {
 
     task oneJar(type: OneJar) {
         mainClass = project.mainClassName
+    }
+
+    task generateApiDoc (dependsOn: 'classes', type: JavaExec) {
+        main = 'javaposse.jobdsl.dsl.doc.ApiDocGenerator'
+        classpath = sourceSets.main.runtimeClasspath
+        args = [version]
     }
 
     run {
@@ -168,10 +175,27 @@ apply plugin: 'org.ajoberstar.github-pages'
 
 githubPages {
     commitMessage = "updated wiki for $version"
-    repoUri = 'git@github.com:jenkinsci/job-dsl-plugin.wiki.git'
+    repoUri = "git@github.com:$githubUser/job-dsl-plugin.wiki.git"
     targetBranch = 'master'
     workingPath = "$buildDir/wiki"
     pages {
         from 'docs'
+    }
+}
+
+project(':job-dsl-api-viewer') {
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'org.ajoberstar.github-pages'
+
+    githubPages {
+        commitMessage = "updated gh-pages for $version"
+        repoUri = "git@github.com:$githubUser/job-dsl-plugin.git"
+        pages {
+            from '.'
+        }
     }
 }

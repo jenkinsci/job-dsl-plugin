@@ -131,29 +131,24 @@ class FooContext {
 
 ## Documentation
 * Add an entry to the [Release Notes](docs/Home.md#release-notes).
-* Update the [DSL Overview](docs/Job-DSL-Commands.md#dsl-methods) if necessary.
-* Make sure that the Job Reference page contains a formal reference, a short description including a link to the plugin, at least one example and the version which added the feature.
+* Make sure the DSL methods are annotated with @RequiresPlugin, including the plugin ID and a minimum version, if applicable.
+* Make sure the DSL methods are given a @since <version> in their GroovyDoc.
+* For each DSL method that you add...
+   * annotate with @RequiresPlugin, including the plugin ID and a minimum version, if applicable.
+   * add a @since <version> in the GroovyDoc.
+   * add a short description in the JavaDoc. Alternatively, if the description is longer, you can create a markdown 
+     file in `job-dsl-core/api-docs/`.
+ 
+```groovy
 
-```
-    ## Foo
 
-    ```groovy
-    job {
-        wrappers {
-            foo(String option) // optional
-        }
-    }
-    ```
+    /**
+     * Generate configuration for Mercurial.
+     *
+     * @since 1.33
+     */
+    @RequiresPlugin(id = 'mercurial', minimumVersion = '1.50.1')
+    void hg(String url, @DslContext(HgContext) Closure hgClosure) {
+    }`
 
-    Does some foo. Requires the [Foo Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Foo).
-
-    ```groovy
-    job {
-        wrappers {
-            foo('bar')
-        }
-    }
-    ```
-
-    (Since 1.15)
 ```

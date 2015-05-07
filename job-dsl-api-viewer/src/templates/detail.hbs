@@ -1,0 +1,82 @@
+<div class="detail">
+    {{#if ancestors}}
+        <ol class="breadcrumb">
+            {{#each ancestors}}
+                <li><a href="#path/{{id}}">{{text}}</a></li>
+            {{/each}}
+            <li class="active">{{name}}</li>
+        </ol>
+    {{/if}}
+    <div class="method-detail">
+        <h2>
+            {{name}}
+            {{#if methodNode.plugin}}<a href="{{methodNode.plugin.wiki}}"><span class="glyphicon glyphicon-new-window"></span> {{methodNode.plugin.title}}</a>{{/if}}
+        </h2>
+        <div class="signatures">
+            {{#each signatures}}
+                {{#if availableSince}}
+                    <span class="label label-info">Available since {{availableSince}}</span>
+                {{/if}}
+                {{#if deprecatedSince}}
+                    <span class="label label-warning">Deprecated since {{deprecatedSince}}</span>
+                {{else}}
+                    {{#if deprecated}}
+                        <span class="label label-warning">Deprecated</span>
+                    {{/if}}
+                {{/if}}
+                <div class="signature">
+                    {{#if context}}
+                        <i class="glyphicon glyphicon-triangle-right"></i>
+                    {{/if}}
+                    <pre class="highlight groovy">{{text}}</pre>
+                </div>
+            {{/each}}
+        </div>
+
+        {{#if methodNode.html}}
+            <div class="method-doc">{{{methodNode.html}}}</div>
+        {{/if}}
+
+        {{#if contextMethods}}
+            <h3 class="section-header">Context Methods</h3>
+            <div class="context-methods-section {{#if isRoot}}root{{/if}}">
+                {{#unless isRoot}}
+                <pre><code>{{name}} {</code></pre>
+                {{/unless}}
+                <ul class="context-methods">
+                    {{#each contextMethods}}
+                        <li>
+                            <div class="method-name {{#if method.deprecated}}deprecated{{/if}}">
+                                <span class="method-link-wrapper">
+                                    <a href="{{href}}" title="{{method.name}}">{{method.name}}</a>
+                                </span>
+                                {{# if method.firstSentenceCommentText}}
+                                    <span class="firstSentenceCommentText">
+                                    // {{method.firstSentenceCommentText}}
+                                    </span>
+                                {{/if}}
+                            </div>
+                        </li>
+                    {{/each}}
+                </ul>
+                {{#unless isRoot}}
+                <pre><code>}</code></pre>
+                {{/unless}}
+            </div>
+        {{/if}}
+
+        {{#if usages}}
+            <h3 class="section-header">Usages</h3>
+            <ul class="usages">
+                {{#each usages}}
+                    <li>
+                        <div class="method-name {{#if method.deprecated}}deprecated{{/if}}">
+                            <a href="#method/{{context.type}}.{{method.name}}" title="{{method.name}}">{{method.name}}</a>
+                            : <span class="simple-class-name">{{context.simpleClassName}}</span>
+                        </div>
+                    </li>
+                {{/each}}
+            </ul>
+        {{/if}}
+    </div>
+</div>

@@ -1,0 +1,63 @@
+.code-block,.context-methods-section,pre.highlight{background-color:#f5f5f5;border:1px solid #ccc;border-radius:0}
+.text-ellipsis{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-section{padding:10px;border-bottom:1px solid #aaa}
+.search-section .form-group{position:relative;margin-bottom:0}
+.tree-body i.jstree-icon{color:#666}
+.tree-body.jstree-proton .jstree-wholerow{height:30px}
+.tree-body.jstree-proton .jstree-node{min-height:30px;line-height:30px;margin-left:31px;min-width:43px;border-left:1px solid #ddd}
+.tree-body.jstree-proton .jstree-icon:empty{width:30px;height:30px;line-height:30px}
+.tree-body.jstree-proton .jstree-anchor{line-height:30px;height:30px;margin:0}
+.layout-container,body{height:100%}
+.tree-body.jstree-proton>.jstree-no-dots .jstree-closed>.jstree-ocl,.tree-body.jstree-proton>.jstree-no-dots .jstree-open>.jstree-ocl{background:0 0}
+.tree-body.jstree-proton>.jstree-container-ul>.jstree-node{margin-left:3px;border-left:none}
+.detail-wrapper{overflow:auto}
+.title{background-color:#13262f}
+.title .navbar{border:none}
+.title .navbar-header .navbar-brand{color:#ddd;font-size:17px;padding:15px 10px}
+.title .navbar-brand,.title .navbar-nav>li>a{text-shadow:none}
+.title .nav>li>a:focus,.title .nav>li>a:hover{color:#fff;background-color:#13262f}
+.title .navbar-nav a{color:#ddd}
+.title .navbar-nav li.active a{background-color:#000;color:#fff}
+.title .form-control.version-select{width:auto;float:right;margin-top:8px;margin-right:10px}
+.plugins{padding:10px;border-top:1px solid #ddd;border-bottom:1px solid #ddd}
+body .breadcrumb{margin-bottom:0;border-radius:0}
+body .breadcrumb>li+li:before{padding:0 5px;color:#ccc;content:"\2192\00a0"}
+.detail p{margin:0 0 20px;line-height:22px}
+.method-detail{padding:15px}
+.method-detail h2{margin:5px 0 15px}
+.method-detail h2 a{font-size:15px;float:right;line-height:33px;font-weight:400}
+.method-detail h3{font-size:16px;border-bottom:1px solid #666;padding-bottom:5px}
+.method-detail .section-header{margin:20px 0 7px;padding:0;color:#13262f;border-bottom:none}
+.search-results ul li a,.sidebar-head,ul.usages li{border-bottom:1px solid #ccc}
+.method-doc,.signatures{margin:25px 0}
+.method-doc pre{padding:0}
+.signatures{text-align:right}
+.signatures .label{margin-bottom:3px;display:inline-block}
+.signatures .signature i{float:left;line-height:31px;display:none}
+.signatures .signature pre{text-align:left}
+.context-methods-section{padding:5px 10px}
+.context-methods-section pre{background-color:transparent;border:none;margin:0;padding:7px 0}
+.sidebar-head,.tree{background-color:#eee}
+.context-methods-section.root ul.context-methods{margin-left:0}
+ul.context-methods{font-size:14px;table-layout:fixed;font-family:monospace;margin:0 0 0 30px;padding:0}
+ul.context-methods li{padding:4px 0;list-style-type:none}
+ul.context-methods .method-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ul.context-methods .method-name .method-link-wrapper{min-width:250px;display:inline-block}
+ul.context-methods .method-name .firstSentenceCommentText{color:#aaa}
+ul.usages{margin:0;padding:0}
+ul.usages li{list-style-type:none;padding:5px 0}
+ul.usages li:first-of-type{border-top:1px solid #ccc}
+.jstree-anchor.deprecated{text-decoration:line-through}
+.sidebar-head{padding:5px}
+.tree-wrapper{overflow:auto}
+.tree{margin:20px;border-right:1px solid #ddd}
+.ui-layout-resizer{background-color:transparent}
+.ui-layout-resizer.ui-layout-resizer-dragging,.ui-layout-resizer:hover{background-color:#aaa;cursor:pointer}
+.search-results ul{margin:0;padding:0}
+.search-results ul li a{height:30px;line-height:30px;padding:0 10px;display:block;color:#000;text-decoration:none;white-space:nowrap;overflow:hidden}
+.search-results ul li a:hover{background-color:#76b6ec;color:#fff}
+.search-results ul li a:hover .simpleClassName{color:#fff}
+.search-results ul li span{margin-right:5px;width:23px;display:inline-block;padding:0;line-height:18px}
+.search-results ul li span.method{background-color:#2E4057}
+.search-results ul li span.plugin{background-color:green}
+.simple-class-name{font-size:12px;color:#888}

@@ -1,8 +1,6 @@
 package javaposse.jobdsl.dsl;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 // this has to be written in Java because of https://jira.codehaus.org/browse/GROOVY-6019
 
@@ -13,6 +11,7 @@ import java.lang.annotation.Target;
  * @since 1.31
  */
 @Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RequiresPlugin {
     /**
