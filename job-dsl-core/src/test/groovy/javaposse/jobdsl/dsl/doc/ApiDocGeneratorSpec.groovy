@@ -1,8 +1,6 @@
 package javaposse.jobdsl.dsl.doc
 
 import groovy.json.JsonBuilder
-import javaposse.jobdsl.dsl.JobParent
-import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 
 class ApiDocGeneratorSpec extends Specification {
