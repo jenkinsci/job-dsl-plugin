@@ -21,6 +21,7 @@ class GitContext extends AbstractContext {
     boolean shallowClone = false
     boolean pruneBranches = false
     boolean ignoreNotifyCommit = false
+    boolean recursiveSubmodules = false
     String localBranch
     String relativeTargetDir
     String reference = ''
@@ -108,6 +109,13 @@ class GitContext extends AbstractContext {
 
     void shallowClone(boolean shallowClone = true) {
         this.shallowClone = shallowClone
+    }
+
+    /**
+     * @since 1.33
+     */
+    void recursiveSubmodules(boolean recursive = true) {
+        this.recursiveSubmodules = recursive
     }
 
     void pruneBranches(boolean pruneBranches = true) {

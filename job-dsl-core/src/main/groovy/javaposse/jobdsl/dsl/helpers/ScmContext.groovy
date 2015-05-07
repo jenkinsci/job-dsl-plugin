@@ -138,7 +138,7 @@ class ScmContext extends AbstractExtensibleContext {
             }
             configVersion '2'
             disableSubmodules 'false'
-            recursiveSubmodules 'false'
+            recursiveSubmodules gitContext.recursiveSubmodules
             doGenerateSubmoduleConfigurations 'false'
             authorOrCommitter 'false'
             clean gitContext.clean

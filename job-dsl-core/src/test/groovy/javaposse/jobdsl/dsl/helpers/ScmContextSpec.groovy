@@ -1089,6 +1089,41 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('git')
     }
 
+    def 'call git scm with recursiveSubmodules with default true'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            recursiveSubmodules()
+        }
+
+        then:
+        with(context.scmNodes[0]) {
+            recursiveSubmodules[0].value() == true
+        }
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with recursiveSubmodules with param'(boolean value) {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            recursiveSubmodules(value)
+        }
+
+        then:
+        with(context.scmNodes[0]) {
+            recursiveSubmodules[0].value() == value
+        }
+        1 * mockJobManagement.requirePlugin('git')
+
+        where:
+        value << [true, false]
+    }
+
     def 'call git scm with configure appending'() {
         when:
         context.git(GIT_REPO_URL, null) { Node gitNode ->
