@@ -10,6 +10,7 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
+import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE

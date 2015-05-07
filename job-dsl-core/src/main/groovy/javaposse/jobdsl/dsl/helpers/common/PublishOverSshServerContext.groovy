@@ -1,4 +1,4 @@
-package javaposse.jobdsl.dsl.helpers.step
+package javaposse.jobdsl.dsl.helpers.common
 
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
