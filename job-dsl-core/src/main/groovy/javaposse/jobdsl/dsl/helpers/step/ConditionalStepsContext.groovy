@@ -25,10 +25,13 @@ class ConditionalStepsContext extends StepContext {
         runnerClass = EvaluationRunners.find(runnerName).longForm
     }
 
+    @Deprecated
     void runner(EvaluationRunners runner) {
+        jobManagement.logDeprecationWarning()
         runnerClass = runner.longForm
     }
 
+    @Deprecated
     static enum EvaluationRunners {
         Fail('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'),
         Unstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Unstable'),
