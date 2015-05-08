@@ -1,3 +1,38 @@
+## Migrating to 1.34
+
+### Conditional Build Steps
+
+An undocumented variant of the `runner` method in `conditionalSteps` and the `EvaluationRunners` enum have been
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+DSL prior to 1.34
+```groovy
+import javaposse.jobdsl.dsl.helpers.step.ConditionalStepsContext
+
+steps {
+    conditionalSteps {
+        condition {
+            alwaysRun()
+        }
+        runner(ConditionalStepsContext.EvaluationRunners.Fail)
+        shell('echo "Hello World!"')
+    }
+}
+```
+
+DSL since to 1.34
+```groovy
+steps {
+    conditionalSteps {
+        condition {
+            alwaysRun()
+        }
+        runner('Fail')
+        shell('echo "Hello World!"')
+    }
+}
+```
+
 ## Migrating to 1.33
 
 ### Archive Artifacts

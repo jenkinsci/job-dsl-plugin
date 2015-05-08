@@ -1704,10 +1704,10 @@ class StepContextSpec extends Specification {
 
         then:
         Node step = context.stepNodes[0]
-        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
-        step.condition[0].children().size() == testConditionArgs.values().size()
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+        step.runCondition[0].children().size() == testConditionArgs.values().size()
 
-        Node condition = step.condition[0]
+        Node condition = step.runCondition[0]
         condition.attribute('class') == "org.jenkins_ci.plugins.run_condition.core.${testConditionClass}"
         if (!testConditionArgs.isEmpty()) {
             testConditionArgs.each { k, v ->
@@ -1716,8 +1716,9 @@ class StepContextSpec extends Specification {
         }
         step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
 
-        Node childStep = step.buildStep[0]
-        childStep.attribute('class') == 'hudson.tasks.Shell'
+        step.conditionalbuilders[0].children().size() == 1
+        Node childStep = step.conditionalbuilders[0].children()[0]
+        childStep.name() == 'hudson.tasks.Shell'
         childStep.command[0].value() == 'look at me'
 
         1 * jobManagement.requirePlugin('conditional-buildstep')
@@ -1753,12 +1754,13 @@ class StepContextSpec extends Specification {
 
         then:
         Node step = context.stepNodes[0]
-        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder'
+        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
 
         step.runner[0].attribute('class') == "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$${runnerName}"
 
-        Node childStep = step.buildStep[0]
-        childStep.attribute('class') == 'hudson.tasks.Shell'
+        step.conditionalbuilders[0].children().size() == 1
+        Node childStep = step.conditionalbuilders[0].children()[0]
+        childStep.name() == 'hudson.tasks.Shell'
         childStep.command[0].value() == 'look at me'
 
         1 * jobManagement.requirePlugin('conditional-buildstep')
@@ -1821,9 +1823,9 @@ class StepContextSpec extends Specification {
 
         then:
         Node step = context.stepNodes[0]
-        step.condition[0].children().size() == 1
+        step.runCondition[0].children().size() == 1
 
-        Node notCondition = step.condition[0]
+        Node notCondition = step.runCondition[0]
         notCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.logic.Not'
         Node matchCondition = notCondition.condition[0]
         matchCondition.attribute('class') ==  'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
@@ -1907,9 +1909,9 @@ class StepContextSpec extends Specification {
 
         then:
         Node step = context.stepNodes[0]
-        step.condition[0].children().size() == 2
+        step.runCondition[0].children().size() == 2
 
-        Node condition = step.condition[0]
+        Node condition = step.runCondition[0]
         condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
         condition.file[0].value() == 'someFile'
         condition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
@@ -1927,7 +1929,7 @@ class StepContextSpec extends Specification {
 
         then:
         Node step = context.stepNodes[0]
-        Node condition = step.condition[0]
+        Node condition = step.runCondition[0]
 
         condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StatusCondition'
         condition.children().size() == 2
@@ -1956,7 +1958,7 @@ class StepContextSpec extends Specification {
         then:
         Node step = context.stepNodes[0]
 
-        def logicOperation = step.condition[0]
+        def logicOperation = step.runCondition[0]
         logicOperation.attribute('class') == operation
         logicOperation.children().size() == 1
 
@@ -1991,7 +1993,7 @@ class StepContextSpec extends Specification {
 
         then:
         Node step = context.stepNodes[0]
-        Node conditionNode = step.condition[0]
+        Node conditionNode = step.runCondition[0]
         conditionNode.children().size() == argNodes.size()
 
         conditionNode.attribute('class') == conditionClass

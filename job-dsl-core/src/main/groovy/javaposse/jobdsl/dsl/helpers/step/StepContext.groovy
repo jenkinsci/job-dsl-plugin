@@ -493,10 +493,12 @@ class StepContext extends AbstractExtensibleContext {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement, item)
         ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
-        if (conditionalStepsContext.stepNodes.size() > 1) {
-            stepNodes << conditionalStepsContext.createMultiStepNode()
-        } else {
-            stepNodes << conditionalStepsContext.createSingleStepNode()
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
+            runCondition(class: conditionalStepsContext.runCondition.conditionClass) {
+                conditionalStepsContext.runCondition.addArgs(delegate)
+            }
+            runner(class: conditionalStepsContext.runnerClass)
+            conditionalbuilders(conditionalStepsContext.stepNodes)
         }
     }
 

@@ -25,38 +25,13 @@ class ConditionalStepsContext extends StepContext {
         runnerClass = EvaluationRunners.find(runnerName).longForm
     }
 
+    @Deprecated
     void runner(EvaluationRunners runner) {
+        jobManagement.logDeprecationWarning()
         runnerClass = runner.longForm
     }
 
-    protected Node createSingleStepNode() {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
-            delegate.condition(class: runCondition.conditionClass) {
-                runCondition.addArgs(delegate)
-            }
-            runner(class: runnerClass)
-            buildStep(class: stepNodes[0].name()) {
-                stepNodes[0].children().each { c ->
-                    "${c.name()}"(c.attributes(), c.value())
-                }
-            }
-        }
-    }
-
-    protected Node createMultiStepNode() {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        nodeBuilder.'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
-            runCondition(class: runCondition.conditionClass) {
-                runCondition.addArgs(delegate)
-            }
-            runner(class: runnerClass)
-            conditionalbuilders(stepNodes)
-        }
-    }
-
+    @Deprecated
     static enum EvaluationRunners {
         Fail('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'),
         Unstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Unstable'),
@@ -73,6 +48,5 @@ class ConditionalStepsContext extends StepContext {
         static find(String enumName) {
             values().find { it.name().toLowerCase() == enumName.toLowerCase() }
         }
-
     }
 }
