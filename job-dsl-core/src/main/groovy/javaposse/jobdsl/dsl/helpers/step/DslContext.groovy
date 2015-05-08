@@ -5,10 +5,12 @@ import javaposse.jobdsl.dsl.Context
 
 class DslContext implements Context {
     private static final Set<String> REMOVE_JOB_ACTIONS = ['IGNORE', 'DISABLE', 'DELETE']
+    private static final Set<String> REMOVE_VIEW_ACTIONS = ['IGNORE', 'DELETE']
     private static final Set<String> LOOKUP_STRATEGIES = ['JENKINS_ROOT', 'SEED_JOB']
 
     String scriptText
     String removedJobAction = 'IGNORE'
+    String removedViewAction = 'IGNORE'
     List<String> externalScripts = []
     boolean ignoreExisting = false
     String additionalClasspath
@@ -39,6 +41,14 @@ class DslContext implements Context {
                 "removeAction must be one of: ${REMOVE_JOB_ACTIONS.join(', ')}"
         )
         this.removedJobAction = action
+    }
+
+    void removeViewAction(String action) {
+        Preconditions.checkArgument(
+                REMOVE_VIEW_ACTIONS.contains(action),
+                "removeViewAction must be one of: ${REMOVE_VIEW_ACTIONS.join(', ')}"
+        )
+        this.removedViewAction = action
     }
 
     /**

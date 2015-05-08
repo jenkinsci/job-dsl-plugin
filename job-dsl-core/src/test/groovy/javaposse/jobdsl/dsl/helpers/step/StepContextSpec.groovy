@@ -1111,11 +1111,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == ''
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'IGNORE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
@@ -1131,11 +1132,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == ''
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'IGNORE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'SEED_JOB'
@@ -1152,7 +1154,7 @@ class StepContextSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'call dsl method external script ignoring existing'() {
+    def 'call dsl method external script disabling existing job'() {
         when:
         context.dsl {
             removeAction('DISABLE')
@@ -1164,11 +1166,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == true
             removedJobAction[0].value() == 'DISABLE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
@@ -1186,11 +1189,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'DISABLE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
@@ -1201,6 +1205,7 @@ class StepContextSpec extends Specification {
         when:
         context.dsl {
             removeAction('DELETE')
+            removeViewAction('DELETE')
             text('''job {
   foo()
   bar {
@@ -1213,11 +1218,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == ''
             usingScriptText[0].value() == true
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'DELETE'
+            removedViewAction[0].value() == 'DELETE'
             scriptText[0].value() == '''job {
   foo()
   bar {
@@ -1237,11 +1243,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'DISABLE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
@@ -1255,11 +1262,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == true
             removedJobAction[0].value() == 'DISABLE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
@@ -1279,11 +1287,12 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 7
+            children().size() == 8
             targets[0].value() == ''
             usingScriptText[0].value() == true
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'DELETE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == '''job {
   foo()
   bar {
@@ -1310,6 +1319,7 @@ class StepContextSpec extends Specification {
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'IGNORE'
+            removedViewAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == 'some/path'
             lookupStrategy[0].value() == 'JENKINS_ROOT'
