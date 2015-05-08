@@ -253,8 +253,8 @@ class StepContext extends AbstractExtensibleContext {
 
         Node groovyNode = new NodeBuilder().'hudson.plugins.groovy.Groovy' {
             groovyName groovyInstallation ?: groovyContext.groovyInstallation ?: '(Default)'
-            parameters groovyContext.groovyParams.join('\n')
-            scriptParameters groovyContext.scriptParams.join('\n')
+            parameters groovyContext.groovyParams.join(' ')
+            scriptParameters groovyContext.scriptParams.join(' ')
             javaOpts groovyContext.javaOpts.join(' ')
             classPath groovyContext.classpathEntries.join(File.pathSeparator)
         }
