@@ -565,11 +565,11 @@ class StepContextSpec extends Specification {
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
+        acmeGroovyNode.parameters[0].value() == 'foo bar baz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa bravo charlie'
         acmeGroovyNode.properties.size() == 1
         acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
@@ -630,11 +630,11 @@ class StepContextSpec extends Specification {
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
+        acmeGroovyNode.parameters[0].value() == 'foo bar baz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa bravo charlie'
         acmeGroovyNode.properties.size() == 1
         acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1
@@ -1881,11 +1881,11 @@ class StepContextSpec extends Specification {
         acmeGroovyNode.groovyName.size() == 1
         acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
         acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == 'foo\nbar\nbaz'
+        acmeGroovyNode.parameters[0].value() == 'foo bar baz'
         acmeGroovyNode.classPath.size() == 1
         acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
         acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == 'alfa\nbravo\ncharlie'
+        acmeGroovyNode.scriptParameters[0].value() == 'alfa bravo charlie'
         acmeGroovyNode.properties.size() == 1
         acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
         acmeGroovyNode.javaOpts.size() == 1

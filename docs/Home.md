@@ -21,6 +21,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-26636](https://issues.jenkins-ci.org/browse/JENKINS-26636))
  * Fixed XML encoding issue when using a single conditional build step
    ([JENKINS-28308](https://issues.jenkins-ci.org/browse/JENKINS-28308))
+ * Fixed issue with multiple (script) parameters for Groovy build steps
+   ([JENKINS-28310](https://issues.jenkins-ci.org/browse/JENKINS-28310))
  * Deprecated an undocumented variant of the `runner` method in `conditionalSteps` context, see [[Migration]]
 * 1.33 (May 07 2015)
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
