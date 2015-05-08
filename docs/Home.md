@@ -16,6 +16,7 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
+* 1.35 (unreleased)
 * 1.34 (May 08 2015)
  * Enhanced support for the [Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin)
    ([JENKINS-26636](https://issues.jenkins-ci.org/browse/JENKINS-26636))
