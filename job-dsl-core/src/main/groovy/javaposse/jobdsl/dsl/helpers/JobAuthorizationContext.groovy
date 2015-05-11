@@ -3,8 +3,14 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.JobManagement
 
 class JobAuthorizationContext extends AuthorizationContext {
+    boolean blocksInheritance = false
+
     JobAuthorizationContext(JobManagement jobManagement) {
         super(jobManagement, 'hudson.security.AuthorizationMatrixProperty')
+    }
+
+    void blocksInheritance(boolean blocksInheritance) {
+        this.blocksInheritance = blocksInheritance
     }
 
     @Deprecated

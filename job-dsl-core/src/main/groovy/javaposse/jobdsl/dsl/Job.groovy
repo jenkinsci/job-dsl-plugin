@@ -378,6 +378,7 @@ abstract class Job extends Item {
 
         withXmlActions << WithXmlAction.create { Node project ->
             Node authorizationMatrixProperty = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
+            authorizationMatrixProperty.appendNode('blocksInheritance', context.blocksInheritance)
             context.permissions.each { String perm ->
                 authorizationMatrixProperty.appendNode('permission', perm)
             }
