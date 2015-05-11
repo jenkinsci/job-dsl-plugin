@@ -138,6 +138,7 @@ class StepContext extends AbstractExtensibleContext {
             scriptText(context.scriptText ?: '')
             ignoreExisting(context.ignoreExisting)
             removedJobAction(context.removedJobAction)
+            removedViewAction(context.removedViewAction)
             lookupStrategy(context.lookupStrategy)
             additionalClasspath(context.additionalClasspath ?: '')
         }
