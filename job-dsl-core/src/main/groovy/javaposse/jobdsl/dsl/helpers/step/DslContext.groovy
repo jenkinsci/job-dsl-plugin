@@ -43,6 +43,9 @@ class DslContext implements Context {
         this.removedJobAction = action
     }
 
+    /**
+     * @since 1.35
+     */
     void removeViewAction(String action) {
         Preconditions.checkArgument(
                 REMOVE_VIEW_ACTIONS.contains(action),

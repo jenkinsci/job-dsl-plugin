@@ -1103,7 +1103,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('sbt')
     }
 
-    def 'call dsl method defaults'() {
+    def 'call dsl with defaults'() {
         when:
         context.dsl {
         }
@@ -1123,9 +1123,15 @@ class StepContextSpec extends Specification {
         }
     }
 
-    def 'call dsl lookup strategy'() {
+    def 'call dsl with external scripts and all options'() {
         when:
         context.dsl {
+            external('some-dsl.groovy', 'some-other-dsl.groovy')
+            external('still-another-dsl.groovy')
+            ignoreExisting()
+            removeAction('DISABLE')
+            removeViewAction('DELETE')
+            additionalClasspath('some/path')
             lookupStrategy('SEED_JOB')
         }
 
@@ -1133,13 +1139,13 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
             children().size() == 8
-            targets[0].value() == ''
+            targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
-            ignoreExisting[0].value() == false
-            removedJobAction[0].value() == 'IGNORE'
-            removedViewAction[0].value() == 'IGNORE'
+            ignoreExisting[0].value() == true
+            removedJobAction[0].value() == 'DISABLE'
+            removedViewAction[0].value() == 'DELETE'
             scriptText[0].value() == ''
-            additionalClasspath[0].value() == ''
+            additionalClasspath[0].value() == 'some/path'
             lookupStrategy[0].value() == 'SEED_JOB'
         }
     }
@@ -1154,58 +1160,29 @@ class StepContextSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def 'call dsl method external script disabling existing job'() {
+    def 'call dsl with invalid remove action'() {
         when:
         context.dsl {
-            removeAction('DISABLE')
-            external('some-dsl.groovy', 'some-other-dsl.groovy')
-            external('still-another-dsl.groovy')
-            ignoreExisting()
+            removeAction('XXX')
         }
 
         then:
-        with(context.stepNodes[0]) {
-            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
-            targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
-            usingScriptText[0].value() == false
-            ignoreExisting[0].value() == true
-            removedJobAction[0].value() == 'DISABLE'
-            removedViewAction[0].value() == 'IGNORE'
-            scriptText[0].value() == ''
-            additionalClasspath[0].value() == ''
-            lookupStrategy[0].value() == 'JENKINS_ROOT'
-        }
+        thrown(IllegalArgumentException)
     }
 
-    def 'call dsl method external script'() {
+    def 'call dsl with invalid remove view action'() {
         when:
         context.dsl {
-            removeAction('DISABLE')
-            external('some-dsl.groovy', 'some-other-dsl.groovy')
-            external('still-another-dsl.groovy')
+            removeViewAction('XXX')
         }
 
         then:
-        with(context.stepNodes[0]) {
-            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
-            targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
-            usingScriptText[0].value() == false
-            ignoreExisting[0].value() == false
-            removedJobAction[0].value() == 'DISABLE'
-            removedViewAction[0].value() == 'IGNORE'
-            scriptText[0].value() == ''
-            additionalClasspath[0].value() == ''
-            lookupStrategy[0].value() == 'JENKINS_ROOT'
-        }
+        thrown(IllegalArgumentException)
     }
 
-    def 'call dsl method with script text'() {
+    def 'call dsl with script text and all options'() {
         when:
         context.dsl {
-            removeAction('DELETE')
-            removeViewAction('DELETE')
             text('''job {
   foo()
   bar {
@@ -1213,6 +1190,11 @@ class StepContextSpec extends Specification {
   }
 }
 ''')
+            ignoreExisting()
+            removeAction('DELETE')
+            removeViewAction('DELETE')
+            additionalClasspath('some/path')
+            lookupStrategy('SEED_JOB')
         }
 
         then:
@@ -1221,7 +1203,7 @@ class StepContextSpec extends Specification {
             children().size() == 8
             targets[0].value() == ''
             usingScriptText[0].value() == true
-            ignoreExisting[0].value() == false
+            ignoreExisting[0].value() == true
             removedJobAction[0].value() == 'DELETE'
             removedViewAction[0].value() == 'DELETE'
             scriptText[0].value() == '''job {
@@ -1231,8 +1213,8 @@ class StepContextSpec extends Specification {
   }
 }
 '''
-            additionalClasspath[0].value() == ''
-            lookupStrategy[0].value() == 'JENKINS_ROOT'
+            additionalClasspath[0].value() == 'some/path'
+            lookupStrategy[0].value() == 'SEED_JOB'
         }
     }
 
@@ -1301,27 +1283,6 @@ class StepContextSpec extends Specification {
 }
 '''
             additionalClasspath[0].value() == ''
-            lookupStrategy[0].value() == 'JENKINS_ROOT'
-        }
-    }
-
-    def 'call dsl method with additional classpath'() {
-        when:
-        context.dsl {
-            external('some-dsl.groovy')
-            additionalClasspath('some/path')
-        }
-
-        then:
-        with(context.stepNodes[0]) {
-            name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            targets[0].value() == 'some-dsl.groovy'
-            usingScriptText[0].value() == false
-            ignoreExisting[0].value() == false
-            removedJobAction[0].value() == 'IGNORE'
-            removedViewAction[0].value() == 'IGNORE'
-            scriptText[0].value() == ''
-            additionalClasspath[0].value() == 'some/path'
             lookupStrategy[0].value() == 'JENKINS_ROOT'
         }
     }

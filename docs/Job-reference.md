@@ -2884,6 +2884,7 @@ job {
             boolean ignoreExisting = false)
         dsl {
             removeAction(String removeAction)
+            removeViewAction(String removeViewAction)     // since 1.35
             external(String... dslFileNames)
             external(Iterable<String> dslFileNames)
             text(String dslSpecification)
@@ -2896,8 +2897,9 @@ job {
 
 Allows the programmatic creation of jobs, folders and views using the Job DSL.
 
-Valid values for `removeAction` are `'IGNORE'` (default), `'DISABLE'` and `'DELETE'`. Valid values for `lookupStrategy`
-are `'JENKINS_ROOT'` (default) and ` 'SEED_JOB'`.
+Valid values for `removeAction` are `'IGNORE'` (default), `'DISABLE'` and `'DELETE'`. Valid values for
+`removeViewAction` are `'IGNORE'` (default) and `'DELETE'`. Valid values for `lookupStrategy` are `'JENKINS_ROOT'`
+(default) and `'SEED_JOB'`.
 
 ```groovy
 job('example-1') {
