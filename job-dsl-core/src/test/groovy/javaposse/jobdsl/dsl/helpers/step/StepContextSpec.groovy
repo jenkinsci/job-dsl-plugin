@@ -1597,7 +1597,7 @@ class StepContextSpec extends Specification {
         stepNode.configs[0].children().size() == 2
         with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
             projects[0].value() == 'Project1, Project2'
-            condition[0].value() == 'UNSTABLE_OR_BETTER'
+            condition[0].value() == 'ALWAYS'
             triggerWithNoParameters[0].value() == true
             configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
             configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
@@ -1629,7 +1629,7 @@ class StepContextSpec extends Specification {
 
         with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]) {
             projects[0].value() == 'Project2'
-            condition[0].value() == 'SUCCESS'
+            condition[0].value() == 'ALWAYS'
             triggerWithNoParameters[0].value() == false
             configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
             block.isEmpty()
@@ -1647,7 +1647,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
             projects[0].value() == 'Project3'
-            condition[0].value() == 'SUCCESS'
+            condition[0].value() == 'ALWAYS'
             triggerWithNoParameters[0].value() == false
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }

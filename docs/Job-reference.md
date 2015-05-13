@@ -3409,7 +3409,8 @@ Multiple triggers can be specified by calling `trigger` multiple times.
 The `projects` argument is a comma separated list of downstream projects.
 
 The `condition` argument must be one of these values: `'SUCCESS'` (default), `'UNSTABLE'`, `'UNSTABLE_OR_BETTER'`,
-`'UNSTABLE_OR_WORSE'`, `'FAILED'` or `'ALWAYS'`.
+`'UNSTABLE_OR_WORSE'`, `'FAILED'` or `'ALWAYS'`. The argument is ignored when configuring a build step, but should be
+set to `'ALWAYS'`.
 
 The `predefinedProp` and `predefinedProps` methods are used to accumulate properties, meaning that they can be called
 multiple times to build a superset of properties.
@@ -3424,7 +3425,7 @@ The `nodeLabel` parameter type requires the
 job('example-1') {
     steps {
         downstreamParameterized {
-            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
+            trigger('Project1, Project2', 'ALWAYS', true,
                     [buildStepFailure: 'FAILURE',
                      failure         : 'FAILURE',
                      unstable        : 'UNSTABLE']) {

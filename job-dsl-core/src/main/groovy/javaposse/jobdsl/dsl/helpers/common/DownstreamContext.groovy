@@ -70,7 +70,7 @@ class DownstreamContext extends AbstractContext {
                 triggers.each { DownstreamTriggerContext trigger ->
                     "${configName}" {
                         projects(trigger.projects)
-                        condition(trigger.condition)
+                        condition(isStep ? 'ALWAYS' : trigger.condition)
                         triggerWithNoParameters(trigger.triggerWithNoParameters)
 
                         if (trigger.hasParameter()) {
