@@ -1124,7 +1124,7 @@ class PublisherContextSpec extends Specification {
         with(publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]) {
             projects[0].value() == 'Project1, Project2'
             condition[0].value() == 'UNSTABLE_OR_BETTER'
-            triggerWithNoParameters[0].value() == 'true'
+            triggerWithNoParameters[0].value() == true
             configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
             configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
                     'dir/my.properties'
@@ -1163,7 +1163,7 @@ class PublisherContextSpec extends Specification {
         Node second = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[1]
         second.projects[0].value() == 'Project2'
         second.condition[0].value() == 'SUCCESS'
-        second.triggerWithNoParameters[0].value() == 'false'
+        second.triggerWithNoParameters[0].value() == false
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
@@ -1178,7 +1178,7 @@ class PublisherContextSpec extends Specification {
         Node third = context.publisherNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
         third.projects[0].value() == 'Project3'
         third.condition[0].value() == 'SUCCESS'
-        third.triggerWithNoParameters[0].value() == 'false'
+        third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
 
@@ -1188,7 +1188,7 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
     }
 
     def 'call violations plugin with no args has correct defaults'() {

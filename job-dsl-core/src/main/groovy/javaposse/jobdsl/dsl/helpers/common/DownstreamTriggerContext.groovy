@@ -6,9 +6,10 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static DownstreamContext.THRESHOLD_COLOR_MAP
+import static javaposse.jobdsl.dsl.helpers.common.DownstreamContext.THRESHOLD_ORDINAL_MAP
 
 class DownstreamTriggerContext extends AbstractContext {
-    Set<String> blockingThresholdTypes = ['buildStepFailure', 'failure', 'unstable']
+    private static final Set<String> BLOCKING_THRESHOLD_TYPES = ['buildStepFailure', 'failure', 'unstable']
 
     List<BlockingThreshold> blockingThresholds = []
     List<String> predefinedProps = []
@@ -21,17 +22,17 @@ class DownstreamTriggerContext extends AbstractContext {
     Map<String, Boolean> boolParams = [:]
 
     boolean triggerWithNoParameters
-    boolean failTriggerOnMissing = false
-    boolean includeUpstreamParameters = false
-    boolean usingSubversionRevision = false
-    boolean usingCurrentBuild = false
-    boolean usingPropertiesFile = false
-    boolean usingGitRevision = false
-    boolean combineQueuedCommits = false
-    boolean usingPredefined = false
-    boolean usingMatrixSubset = false
-    boolean usingNodeLabel = false
-    boolean sameNode = false
+    boolean failTriggerOnMissing
+    boolean includeUpstreamParameters
+    boolean usingSubversionRevision
+    boolean usingCurrentBuild
+    boolean usingPropertiesFile
+    boolean usingGitRevision
+    boolean combineQueuedCommits
+    boolean usingPredefined
+    boolean usingMatrixSubset
+    boolean usingNodeLabel
+    boolean sameNode
 
     DownstreamTriggerContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -64,7 +65,7 @@ class DownstreamTriggerContext extends AbstractContext {
         this.predefinedProps.addAll(props)
     }
 
-    void predefinedProps(String predefinedProps) { // Newline separated
+    void predefinedProps(String predefinedProps) {
         usingPredefined = true
         this.predefinedProps.addAll(predefinedProps.split('\n'))
     }
@@ -104,8 +105,8 @@ class DownstreamTriggerContext extends AbstractContext {
     }
 
     void blockingThreshold(String thresholdType, String thresholdName) {
-        Preconditions.checkArgument(blockingThresholdTypes.contains(thresholdType),
-                "thresholdType must be one of these values: ${blockingThresholdTypes}")
+        Preconditions.checkArgument(BLOCKING_THRESHOLD_TYPES.contains(thresholdType),
+                "thresholdType must be one of these values: ${BLOCKING_THRESHOLD_TYPES}")
         Preconditions.checkArgument(THRESHOLD_COLOR_MAP.containsKey(thresholdName),
                 "thresholdName must be one of these values: ${THRESHOLD_COLOR_MAP.keySet().join(',')}")
 
@@ -168,7 +169,7 @@ class DownstreamTriggerContext extends AbstractContext {
             }
 
             if (!boolParams.isEmpty()) {
-                'hudson.plugins.parameterizedtrigger.BooleanParameters'  {
+                'hudson.plugins.parameterizedtrigger.BooleanParameters' {
                     configs {
                         boolParams.each { k, v ->
                             Node boolConfigNode = 'hudson.plugins.parameterizedtrigger.BooleanParameterConfig' {
@@ -191,8 +192,8 @@ class DownstreamTriggerContext extends AbstractContext {
         BlockingThreshold(String thresholdType, String thresholdName) {
             this.thresholdType = thresholdType
             this.thresholdName = thresholdName
-            this.thresholdOrdinal = DownstreamContext.THRESHOLD_ORDINAL_MAP[thresholdName]
-            this.thresholdColor = DownstreamContext.THRESHOLD_COLOR_MAP[thresholdName]
+            this.thresholdOrdinal = THRESHOLD_ORDINAL_MAP[thresholdName]
+            this.thresholdColor = THRESHOLD_COLOR_MAP[thresholdName]
         }
     }
 }
