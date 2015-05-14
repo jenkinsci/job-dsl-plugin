@@ -1040,6 +1040,333 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('git')
     }
 
+    def 'call git scm with assemblawebBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                assemblaweb('http://assemblaweb')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.AssemblaWeb'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://assemblaweb'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with fisheyeBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                fisheye('http://fisheye')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.FisheyeGitRepositoryBrowser'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://fisheye'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with kilnBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                kiln('http://kiln')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.KilnGit'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://kiln'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with tfs2013Browser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                tfs2013('http://tfs2013')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.TFS2013GitRepositoryBrowser'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://tfs2013'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with bitbucketwebBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                bitbucketweb('http://bitbucketweb')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.BitbucketWeb'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://bitbucketweb'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with cgitBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                cgit('http://cgit')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.CGit'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://cgit'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with gitblitBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitblit('http://gitblit', 'prj-name')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GitBlitRepositoryBrowser'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://gitblit'
+        context.scmNodes[0].browser[0].'projectName'[0].value() == 'prj-name'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with githubwebBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                githubweb('http://githubweb')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://githubweb'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with gitilesBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitiles('http://gitiles')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.Gitiles'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://gitiles'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with gitlabBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitlab('http://gitlab', '7.9')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GitLab'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://gitlab'
+        context.scmNodes[0].browser[0].'version'[0].value() == '7.9'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with gitlistBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitlist('http://gitlist')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GitList'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://gitlist'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with gitoriouswebBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitoriousweb('http://gitoriousweb')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GitoriousWeb'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://gitoriousweb'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with gitwebBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitweb('http://gitweb')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GitWeb'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://gitweb'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with phabricatorBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                phabricator('http://phabricator', 'repoPhabricatorTest')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.Phabricator'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://phabricator'
+        context.scmNodes[0].browser[0].'repo'[0].value() == 'repoPhabricatorTest'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with redminewebBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                redmineweb('http://redmineweb')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.RedmineWeb'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://redmineweb'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with rhodecodeBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                rhodecode('http://rhodecode')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.RhodeCode'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://rhodecode'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with viewgitBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                viewgit('http://viewgit', 'prjNameTest')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.ViewGitWeb'
+        context.scmNodes[0].browser[0].'repoUrl'[0].value() == 'http://viewgit'
+        context.scmNodes[0].browser[0].'projectName'[0].value() == 'prjNameTest'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
     def 'call git scm with ignoreNotifyCommit'() {
         when:
         context.git {
