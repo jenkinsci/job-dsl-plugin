@@ -401,11 +401,13 @@ public class ExecuteDslScripts extends Builder {
                 View view = null;
                 if (parent instanceof ViewGroup) {
                     view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
+                    if (view != null) {
+                        ((ViewGroup) parent).deleteView(view);
+                    }
+                } else if (parent == null) {
+                    LOGGER.log(Level.FINE, "Parent ViewGroup seems to have been already deleted");
                 } else {
                     LOGGER.log(Level.WARNING, format("Could not delete view within %s", parent.getClass()));
-                }
-                if (view != null) {
-                    ((ViewGroup) parent).deleteView(view);
                 }
             }
         }
