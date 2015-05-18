@@ -3367,68 +3367,89 @@ job {
 
 (since 1.31)
 
-# [Parameterized Trigger as Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+# Parameterized Trigger
 
 ```groovy
-downstreamParameterized(Closure downstreamClosure) {
-    trigger(String projects, String condition = 'SUCCESS', boolean triggerWithNoParameters = false, Map<String, String> blockingThresholds = [:], Closure downstreamTriggerClosure = null) {
-        currentBuild() // Current build parameters
-        propertiesFile(String propFile) // Parameters from properties file
-        gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built
-        predefinedProp(String key, String value) // Predefined properties
-        predefinedProps(Map<String, String> predefinedPropsMap)
-        predefinedProps(String predefinedProps) // Newline separated
-        matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
-        subversionRevision() // Subversion Revision
-        sameNode() //Run the next job on the same node
-        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection, since 1.26
+job {
+    steps {
+        downstreamParameterized { // since 1.20
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Map<String, String> blockingThresholds) {
+                currentBuild()
+                propertiesFile(String file, boolean failOnMissing = false)
+                gitRevision(boolean combineQueuedCommits = false)
+                predefinedProp(String key, String value)
+                predefinedProps(Map<String, String> predefinedPropsMap)
+                predefinedProps(String predefinedProps) // newline separated
+                matrixSubset(String groovyFilter)
+                subversionRevision(boolean includeUpstreamParameters = false)
+                sameNode()
+                nodeLabel(String paramName, String nodeLabel) // since 1.26
+            }
+            trigger(String projects, Closure downstreamTriggerClosure = null)
+            trigger(String projects, String condition,
+                    Closure downstreamTriggerClosure = null)
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Closure downstreamTriggerClosure = null)
+        }
+    }
+    publishers {
+        downstreamParameterized(Closure downstreamClosure)
     }
 }
 ```
 
-Supports <a href="https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin">the Parameterized Trigger plugin</a>. The plugin is configured by adding triggers
-to other projects, multiple triggers can be specified. The projects arg is a comma separated list of downstream projects. The condition arg is one of these
-possible values: SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED.  The methods inside the downstreamTriggerClosure are optional, though it
-makes the most sense to call at least one.  Each one is relatively self documenting, mapping directly to what is seen in the UI. The predefinedProp and
-predefinedProps methods are used to accumulate properties, meaning that they can be called multiple times to build a superset of properties.
+Allows to trigger new parameterized builds. Requires the
+[Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin).
 
-In addition to the above (which is common to both the build step and publisher use cases of the Parameterized Trigger plugin), there is the blockingThresholds map argument to the trigger. This is optional, and if given, the build will block until the child build has completed. Then the build status will be updated depending on the blockingThresholds, which are the following:
+Multiple triggers can be specified by calling `trigger` multiple times.
 
-* buildStepFailure
-* failure
-* unstable
+The `projects` argument is a comma separated list of downstream projects.
 
-These can each be set to any of the allowed build statuses ('SUCCESS', 'UNSTABLE', or 'FAILURE'). The parent build's status will be set to failure (or unstable, if that's configured) if the child build's status is equal to or worse than the configured status, while the buildStepFailure threshold allows you to set the parent build's status but continue to further steps as if it hadn't failed.
+The `condition` argument must be one of these values: `'SUCCESS'` (default), `'UNSTABLE'`, `'UNSTABLE_OR_BETTER'`,
+`'UNSTABLE_OR_WORSE'`, `'FAILED'` or `'ALWAYS'`. The argument is ignored when configuring a build step, but should be
+set to `'ALWAYS'`.
+
+The `predefinedProp` and `predefinedProps` methods are used to accumulate properties, meaning that they can be called
+multiple times to build a superset of properties.
+
+The `blockingThresholds` argument can only be used when configuring a build step. Valid keys for the map are
+`buildStepFailure`, `failure` and `unstable`. The values can be set to either `'SUCCESS'`, `'UNSTABLE'`  or `'FAILURE'`.
 
 The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
 
-Examples:
 ```groovy
-steps {
-    downstreamParameterized {
-        trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
-                    ["buildStepFailure": "FAILURE",
-                            "failure": "FAILURE",
-                            "unstable": "UNSTABLE"]) {
-            currentBuild() // Current build parameters
-            propertiesFile('dir/my.properties') // Parameters from properties file
-            gitRevision(false) // Pass-through Git commit that was built
-            predefinedProp('key1', 'value1') // Predefined properties
-            predefinedProps([key2: 'value2', key3: 'value3'])
-            predefinedProps('key4=value4\nkey5=value5') // Newline separated
-            matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
-            subversionRevision() // Subversion Revision
-            nodeLabel('label', 'linux') // Limit to node label selection
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2', 'ALWAYS', true,
+                    [buildStepFailure: 'FAILURE',
+                     failure         : 'FAILURE',
+                     unstable        : 'UNSTABLE']) {
+                predefinedProp('key1', 'value1')
+                predefinedProps([key2: 'value2', key3: 'value3'])
+                predefinedProps('key4=value4\nkey5=value5')
+            }
+            trigger('Project2') {
+                currentBuild()
+            }
         }
-        trigger('Project2') {
-            currentBuild()
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER') {
+                currentBuild()
+            }
         }
     }
 }
 ```
-
-(since 1.20)
 
 ### [Conditional BuildStep Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Conditional+BuildStep+Plugin)
 
@@ -4040,54 +4061,6 @@ downstream(String projectName, String thresholdName = 'SUCCESS')
 ```
 
 Specifies a downstream job. The second arg, thresholdName, can be one of three values: 'SUCCESS', 'UNSTABLE' or 'FAILURE'.
-
-### Extended Downstream
-```groovy
-downstreamParameterized(Closure downstreamClosure) {
-    trigger(String projects, String condition = 'SUCCESS', boolean triggerWithNoParameters = false, Closure downstreamTriggerClosure = null) {
-        currentBuild() // Current build parameters
-        propertiesFile(String propFile) // Parameters from properties file
-        gitRevision(boolean combineQueuedCommits = false) // Pass-through Git commit that was built
-        predefinedProp(String key, String value) // Predefined properties
-        predefinedProps(Map<String, String> predefinedPropsMap)
-        predefinedProps(String predefinedProps) // Newline separated
-        matrixSubset(String groovyFilter) // Restrict matrix execution to a subset
-        subversionRevision() // Subversion Revision
-        nodeLabel(String paramName, String nodeLabel) // Limit to node label selection, since 1.26
-    }
-}
-```
-
-Supports <a href="https://wiki.jenkins-ci.org/display/JENKINS/Downstream-Ext+Plugin">Downstream-Ext plugin</a>. The plugin is configured by adding triggers
-to other projects, multiple triggers can be specified. The projects arg is a comma separated list of downstream projects. The condition arg is one of these
-possible values: SUCCESS, UNSTABLE, UNSTABLE_OR_BETTER, UNSTABLE_OR_WORSE, FAILED.  The methods inside the downstreamTriggerClosure are optional, though it
-makes the most sense to call at least one.  Each one is relatively self documenting, mapping directly to what is seen in the UI. The predefinedProp and
-predefinedProps methods are used to accumulate properties, meaning that they can be called multiple times to build a superset of properties.
-
-The `nodeLabel` parameter type requires the
-[NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
-
-Examples:
-```groovy
-publishers {
-    downstreamParameterized {
-        trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true) {
-            currentBuild() // Current build parameters
-            propertiesFile('dir/my.properties') // Parameters from properties file
-            gitRevision(false) // Pass-through Git commit that was built
-            predefinedProp('key1', 'value1') // Predefined properties
-            predefinedProps([key2: 'value2', key3: 'value3'])
-            predefinedProps('key4=value4\nkey5=value5') // Newline separated
-            matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
-            subversionRevision() // Subversion Revision
-            nodeLabel('label', 'linux') // Limit to node label selection
-        }
-        trigger('Project2') {
-            currentBuild()
-        }
-    }
-}
-```
 
 ### Violations Plugin
 ```groovy

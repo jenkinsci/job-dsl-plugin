@@ -20,6 +20,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced DSL support for the Job DSL plugin
  * Fixed problem when deleting views from already deleted folder
    ([JENKINS-28458](https://issues.jenkins-ci.org/browse/JENKINS-28458))
+ * Fixed [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) build step
+   ([JENKINS-28353](https://issues.jenkins-ci.org/browse/JENKINS-28353))
 * 1.34 (May 08 2015)
  * Enhanced support for the [Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin)
    ([JENKINS-26636](https://issues.jenkins-ci.org/browse/JENKINS-26636))
