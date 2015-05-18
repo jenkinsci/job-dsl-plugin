@@ -335,7 +335,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
-        build.result == SUCCESS
+        assert build.result == SUCCESS
         build
     }
 
@@ -724,6 +724,42 @@ class ExecuteDslScriptsSpec extends Specification {
         then:
         folder.getView('different-view') instanceof ListView
         folder.getView('test-view') == null
+    }
+
+    @WithPlugin('cloudbees-folder.hpi')
+    def 'delete view in folder after folder has been deleted'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+
+        when:
+        String script1 = 'folder("folder")\nlistView("/folder/test-view")'
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, script1),
+                false,
+                RemovedJobAction.DELETE,
+                RemovedViewAction.DELETE,
+                LookupStrategy.JENKINS_ROOT
+        )
+        runBuild(job, builder1)
+
+        then:
+        Folder folder = jenkinsRule.instance.getItemByFullName('folder', Folder)
+        folder != null
+        folder.getView('test-view') instanceof ListView
+
+        when:
+        String script2 = '// no-op'
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, script2),
+                false,
+                RemovedJobAction.DELETE,
+                RemovedViewAction.DELETE,
+                LookupStrategy.JENKINS_ROOT
+        )
+        runBuild(job, builder2)
+
+        then:
+        jenkinsRule.instance.getItemByFullName('folder', Folder) == null
     }
 
     def deleteViewRelative() {

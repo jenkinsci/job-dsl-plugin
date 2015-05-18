@@ -398,9 +398,8 @@ public class ExecuteDslScripts extends Builder {
             for (GeneratedView removedView : removed) {
                 String viewName = removedView.getName();
                 ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
-                View view = null;
                 if (parent instanceof ViewGroup) {
-                    view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
+                    View view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
                     if (view != null) {
                         ((ViewGroup) parent).deleteView(view);
                     }
