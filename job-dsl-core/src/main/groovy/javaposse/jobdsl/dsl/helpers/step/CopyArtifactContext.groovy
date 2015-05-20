@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 class CopyArtifactContext extends AbstractContext {
     final List<String> includePatterns = []
     final List<String> excludePatterns = []
+    String parameters
     String targetDirectory
     boolean flatten
     boolean optional
@@ -29,6 +30,10 @@ class CopyArtifactContext extends AbstractContext {
 
     void targetDirectory(String targetDirectory) {
         this.targetDirectory = targetDirectory
+    }
+
+    void parameters(String parameters) {
+        this.parameters = parameters
     }
 
     void flatten(boolean flatten = true) {

@@ -881,8 +881,9 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 4
+            children().size() == 5
             project[0].value() == 'upstream'
+            parameters[0].value() == ''
             filter[0].value() == ''
             target[0].value() == ''
             with(selector[0]) {
@@ -915,8 +916,9 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 8
+            children().size() == 9
             project[0].value() == 'upstream'
+            parameters[0].value() == ''
             filter[0].value() == '*.xml, *.txt'
             excludes[0].value() == 'foo.xml, foo.txt'
             flatten[0].value() == true
@@ -951,8 +953,9 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 8
+            children().size() == 9
             project[0].value() == 'upstream'
+            parameters[0].value() == ''
             filter[0].value() == '*.xml, *.txt'
             excludes[0].value() == 'foo.xml, foo.txt'
             flatten[0].value() == true

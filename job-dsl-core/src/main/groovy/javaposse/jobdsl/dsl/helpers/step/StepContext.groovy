@@ -406,6 +406,7 @@ class StepContext extends AbstractExtensibleContext {
 
         Node copyArtifactNode = new NodeBuilder().'hudson.plugins.copyartifact.CopyArtifact' {
             project(jobName)
+            parameters(copyArtifactContext.parameters ?: '')
             filter(copyArtifactContext.includePatterns.join(', '))
             target(copyArtifactContext.targetDirectory ?: '')
             if (copyArtifactContext.excludePatterns) {
