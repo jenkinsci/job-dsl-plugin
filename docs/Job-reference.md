@@ -3913,11 +3913,12 @@ job('example') {
 job {
     publishers {
         publishHtml {
-            report(String reportDir) {                    // since 1.28
+            report(String reportDir) {                                      // since 1.28
                 reportName(String reportName)
-                reportFiles(String reportFiles)           // defaults to 'index.html' if omitted
-                allowMissing(boolean allowMissing = true) // defaults to false if omitted
-                keepAll(boolean keepAll = true)           // defaults to false if omitted
+                reportFiles(String reportFiles)                             // defaults to 'index.html' if omitted
+                allowMissing(boolean allowMissing = true)                   // defaults to false if omitted
+                keepAll(boolean keepAll = true)                             // defaults to false if omitted
+                alwaysLinkToLastBuild(boolean alwaysLinkToLastBuild = true) // defaults to false if omitted
             }
             report(String reportDir, String reportName, String reportFiles = 'index.html',
                    Boolean keepAll = false) // deprecated since 1.28
@@ -3940,6 +3941,7 @@ job('example') {
                 reportName('Gradle Tests')
                 keepAll()
                 allowMissing()
+                alwaysLinkToLastBuild()
             }
         }
     }
