@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
@@ -3358,21 +3359,26 @@ class PublisherContextSpec extends Specification {
             tag 'tag'
             shouldWaitForRundeckJob()
             shouldFailTheBuild false
+            shouldIncludeRundeckLogs()
         }
 
         then:
         Node rundeckNode = context.publisherNodes[0]
         rundeckNode.name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-        rundeckNode.jobId[0].value() == 'jobId'
-        rundeckNode.options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-        rundeckNode.nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-        rundeckNode.tag[0].value() == 'tag'
-        rundeckNode.shouldWaitForRundeckJob[0].value() == true
-        rundeckNode.shouldFailTheBuild[0].value() == false
-        1 * jobManagement.requirePlugin('rundeck')
+        rundeckNode.jobId[0]?.value() == 'jobId'
+        rundeckNode.options[0]?.value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+        rundeckNode.nodeFilters[0]?.value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+        rundeckNode.tag[0]?.value() == 'tag'
+        rundeckNode.shouldWaitForRundeckJob[0]?.value() == true
+        rundeckNode.shouldFailTheBuild[0]?.value() == false
+        rundeckNode.includeRundeckLogs[0]?.value() == true
+
+        and:
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
     }
 
-    def 'call rundeck with invalid jobId should fail'() {
+    @Unroll
+    def 'call rundeck with invalid jobId (#id) should fail'() {
         when:
         context.rundeck(id)
 
@@ -3381,9 +3387,7 @@ class PublisherContextSpec extends Specification {
         exception.message =~ /\(.+, line \d+\) jobIdentifier cannot be null or empty/
 
         where:
-        id   | _
-        null | _
-        ''   | _
+        id << [null, '']
     }
 
     def 'call rundeck with default values'() {
@@ -3392,12 +3396,43 @@ class PublisherContextSpec extends Specification {
 
         then:
         Node rundeckNode = context.publisherNodes[0]
-        rundeckNode.options[0].value().isEmpty()
-        rundeckNode.nodeFilters[0].value().isEmpty()
-        rundeckNode.tag[0].value() == ''
-        rundeckNode.shouldWaitForRundeckJob[0].value() == false
-        rundeckNode.shouldFailTheBuild[0].value() == false
+        rundeckNode.options[0]?.value()?.isEmpty()
+        rundeckNode.nodeFilters[0]?.value()?.isEmpty()
+        rundeckNode.tag[0]?.value() == ''
+        rundeckNode.shouldWaitForRundeckJob[0]?.value() == false
+        rundeckNode.shouldFailTheBuild[0]?.value() == false
+        rundeckNode.includeRundeckLogs[0]?.value() == false
+
+        and:
         1 * jobManagement.requirePlugin('rundeck')
+    }
+
+    def "call shouldIncludeRundeckLogs with rundeck plugin older than 3.4 should be ignored"() {
+        when:
+        context.rundeck('jobId') {
+            shouldIncludeRundeckLogs()
+        }
+
+        then:
+        context.publisherNodes[0].shouldIncludeRundeckLogs[0] == null
+
+        and:
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
+    }
+
+    def "shouldIncludeRundeckLogs in rundeck should enable also shouldWaitForRundeckJob"() {
+        when:
+        context.rundeck('jobId') {
+            shouldIncludeRundeckLogs()
+        }
+
+        then:
+        Node rundeckNode = context.publisherNodes[0]
+        rundeckNode.includeRundeckLogs[0]?.value() == true
+        rundeckNode.shouldWaitForRundeckJob[0]?.value() == true
+
+        and:
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
     }
 
     def 'call s3 without profile'(String profile) {

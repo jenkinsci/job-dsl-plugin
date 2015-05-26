@@ -1,13 +1,20 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class RundeckContext implements Context {
+class RundeckContext extends AbstractContext {
     Map<String, String> options = [:]
     Map<String, String> nodeFilters = [:]
     String tag = ''
     boolean shouldWaitForRundeckJob
     boolean shouldFailTheBuild
+    boolean shouldIncludeRundeckLogs
+
+    RundeckContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Adds options for the Rundeck job to execute. Can be called multiple times to add more options.
@@ -59,5 +66,20 @@ class RundeckContext implements Context {
      */
     void shouldFailTheBuild(boolean shouldFailTheBuild = true) {
         this.shouldFailTheBuild = shouldFailTheBuild
+    }
+
+    /**
+     * If set, job execution logs on Rundeck are included in a Jenkins console. Defaults to {@code false}.
+     *
+     * It also sets waiting for Rundeck job to finish as a required element.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
+    void shouldIncludeRundeckLogs(boolean shouldIncludeRundeckLogs = true) {
+        this.shouldIncludeRundeckLogs = shouldIncludeRundeckLogs
+        if (shouldIncludeRundeckLogs) {
+            this.shouldWaitForRundeckJob = true
+        }
     }
 }

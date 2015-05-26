@@ -1187,7 +1187,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
         checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
-        RundeckContext rundeckContext = new RundeckContext()
+        RundeckContext rundeckContext = new RundeckContext(jobManagement)
         ContextHelper.executeInContext(rundeckClosure, rundeckContext)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
@@ -1197,6 +1197,7 @@ class PublisherContext extends AbstractExtensibleContext {
             tag rundeckContext.tag
             shouldWaitForRundeckJob rundeckContext.shouldWaitForRundeckJob
             shouldFailTheBuild rundeckContext.shouldFailTheBuild
+            includeRundeckLogs rundeckContext.shouldIncludeRundeckLogs
         }
     }
 

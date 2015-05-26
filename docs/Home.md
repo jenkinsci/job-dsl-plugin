@@ -36,6 +36,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-32419](https://issues.jenkins-ci.org/browse/JENKINS-32419))
  * Enhanced support for the [JaCoCo Plugins](https://wiki.jenkins-ci.org/display/JENKINS/JaCoCo+Plugin)
    ([#729](https://github.com/jenkinsci/job-dsl-plugin/pull/729))
+ * Enchanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+   ([#493](https://github.com/jenkinsci/job-dsl-plugin/pull/493))
  * Fixed support for the
    [Static Code Analysis Plugins](https://wiki.jenkins-ci.org/display/JENKINS/Static+Code+Analysis+Plug-ins)
    ([#724](https://github.com/jenkinsci/job-dsl-plugin/pull/724))

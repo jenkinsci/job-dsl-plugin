@@ -14,6 +14,7 @@ job('example-2') {
             nodeFilter('tags', 'www+dev')
             shouldWaitForRundeckJob()
             shouldFailTheBuild()
+            shouldIncludeRundeckLogs()
         }
     }
 }
