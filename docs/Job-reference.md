@@ -31,6 +31,12 @@ freeStyleJob(String name) { // since 1.30
     lockableResources(String resources, Closure lockableResourcesClosure) // since 1.25
     logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1,
                int artifactNumToKeep = -1)
+    logRotator {
+        daysToKeep(int daysToKeep)
+        numToKeep(int numToKeep)
+        artifactDaysToKeep(int artifactDaysToKeep)
+        artifactNumToKeep(int artifactNumToKeep)
+    }
     notifications(Closure notificationClosure) // since 1.26
     priority(int value)
     quietPeriod(int seconds = 5)
@@ -474,6 +480,12 @@ Blocks the build of a project when one ore more upstream (blockOnUpstreamProject
 ### Build History
 ```groovy
 logRotator(int daysToKeepInt = -1, int numToKeepInt = -1, int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1)
+logRotator {
+    daysToKeep(int daysToKeep)
+    numToKeep(int numToKeep)
+    artifactDaysToKeep(int artifactDaysToKeep)
+    artifactNumToKeep(int artifactNumToKeep)
+}
 ```
 
 Sets up the number of builds to keep.

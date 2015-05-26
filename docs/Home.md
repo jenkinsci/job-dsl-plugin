@@ -17,6 +17,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.35 (unreleased)
+ * Added closure method for logRotator
  * Enhanced DSL support for the Job DSL plugin
  * Fixed problem when deleting views from already deleted folder
    ([JENKINS-28458](https://issues.jenkins-ci.org/browse/JENKINS-28458))
