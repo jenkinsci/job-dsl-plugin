@@ -1579,6 +1579,26 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends build status and coverage information to Pharbicator
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'phabricator-plugin', minimumVersion = '1.8.1')
+    void phabricatorNotifier(@DslContext(PhabricatorNotifierContext) Closure phabricatorNotifierClosure = null) {
+        PhabricatorNotifierContext phabricatorNotifierContext = new PhabricatorNotifierContext()
+        ContextHelper.executeInContext(phabricatorNotifierClosure, phabricatorNotifierContext)
+
+        publisherNodes << new NodeBuilder().'com.uber.jenkins.phabricator.PhabricatorNotifier' {
+            commentOnSuccess(phabricatorNotifierContext.commentOnSuccess)
+            commentWithConsoleLinkOnFailure(phabricatorNotifierContext.commentWithConsoleLinkOnFailure)
+            commentFile(phabricatorNotifierContext.commentFile)
+            commentSize(phabricatorNotifierContext.commentSize)
+            preserveFormatting(phabricatorNotifierContext.preserveFormatting)
+            uberallsEnabled(phabricatorNotifierContext.enableUberalls)
+        }
+    }
+
+    /**
      * Sends notifications to Slack.
      *
      * @since 1.36

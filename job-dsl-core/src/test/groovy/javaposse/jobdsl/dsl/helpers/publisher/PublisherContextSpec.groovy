@@ -4413,6 +4413,49 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('build-publisher', '1.20')
     }
 
+    def 'phabricatorNotifier with no options'() {
+        when:
+        context.phabricatorNotifier()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorNotifier'
+            children().size() == 6
+            commentOnSuccess[0].value() == false
+            commentWithConsoleLinkOnFailure[0].value() == false
+            commentFile[0].value() == '.phabricator-comment'
+            commentSize[0].value() == 1000
+            preserveFormatting[0].value() == false
+            uberallsEnabled[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
+    def 'phabricatorNotifier with all options'() {
+        when:
+        context.phabricatorNotifier {
+            commentOnSuccess()
+            commentWithConsoleLinkOnFailure()
+            commentFile('.my-comment-file')
+            commentSize(2000)
+            preserveFormatting()
+            enableUberalls()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorNotifier'
+            children().size() == 6
+            commentOnSuccess[0].value() == true
+            commentWithConsoleLinkOnFailure[0].value() == true
+            commentFile[0].value() == '.my-comment-file'
+            commentSize[0].value() == 2000
+            preserveFormatting[0].value() == true
+            uberallsEnabled[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
     def 'publishBuild with all options'() {
         when:
         context.publishBuild {

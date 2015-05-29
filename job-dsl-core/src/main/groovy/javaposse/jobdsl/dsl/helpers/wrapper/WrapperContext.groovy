@@ -306,6 +306,23 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Apply a Phabricator differential to the workspace before the build starts.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'phabricator-plugin', minimumVersion = '1.8.1')
+    void phabricator(@DslContext(PhabricatorContext) Closure closure = null) {
+        PhabricatorContext context = new PhabricatorContext()
+        ContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'com.uber.jenkins.phabricator.PhabricatorBuildWrapper' {
+            createCommit(context.createCommit)
+            applyToMaster(context.applyToMaster)
+            showBuildStartedMessage(context.showBuildStartedMessage)
+        }
+    }
+
+    /**
      * Deletes files from the workspace before the build starts.
      *
      * @since 1.22
