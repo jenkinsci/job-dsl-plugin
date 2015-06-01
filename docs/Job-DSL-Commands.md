@@ -192,7 +192,7 @@ a generated job, e.g.
 ```groovy
 job('example') {
     steps {
-        shell(readFileFromWorkspace('build.sh')
+        shell(readFileFromWorkspace('build.sh'))
     }
 }
 ```
