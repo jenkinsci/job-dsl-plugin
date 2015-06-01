@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.JobAuthorizationContext
-import javaposse.jobdsl.dsl.helpers.Permissions
 import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
@@ -36,12 +35,6 @@ abstract class Job extends Item {
     void using(String templateName) throws JobTemplateMissingException {
         Preconditions.checkState(this.templateName == null, 'Can only use "using" once')
         this.templateName = templateName
-    }
-
-    @Deprecated
-    void name(Closure nameClosure) {
-        jobManagement.logDeprecationWarning()
-        name(nameClosure.call().toString())
     }
 
     void description(String descriptionString) {
@@ -381,33 +374,6 @@ abstract class Job extends Item {
             context.permissions.each { String perm ->
                 authorizationMatrixProperty.appendNode('permission', perm)
             }
-        }
-    }
-
-    @Deprecated
-    void permission(String permission) {
-        jobManagement.logDeprecationWarning()
-
-        authorization {
-            delegate.permission(permission)
-        }
-    }
-
-    @Deprecated
-    void permission(Permissions permission, String user) {
-        jobManagement.logDeprecationWarning()
-
-        authorization {
-            delegate.permission(permission, user)
-        }
-    }
-
-    @Deprecated
-    void permission(String permissionEnumName, String user) {
-        jobManagement.logDeprecationWarning()
-
-        authorization {
-            delegate.permission(permissionEnumName, user)
         }
     }
 

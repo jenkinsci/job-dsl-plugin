@@ -155,42 +155,26 @@ class JobSpec extends Specification {
         setup:
         jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
                 'hudson.model.Item.Configure',
+                'hudson.model.Item.Read',
+                'hudson.model.Run.Update',
         ]
 
         when:
         job.authorization {
             permission('hudson.model.Item.Configure:jill')
             permission('hudson.model.Item.Configure:jack')
+            permission(Permissions.ItemRead, 'jack')
+            permission('RunUpdate', 'joe')
         }
 
         then:
         NodeList permissions = job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
-        permissions.size() == 2
+        permissions.size() == 4
         permissions[0].text() == 'hudson.model.Item.Configure:jill'
         permissions[1].text() == 'hudson.model.Item.Configure:jack'
+        permissions[2].text() == 'hudson.model.Item.Read:jack'
+        permissions[3].text() == 'hudson.model.Run.Update:joe'
         1 * jobManagement.requirePlugin('matrix-auth')
-    }
-
-    def 'call permission'() {
-        setup:
-        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
-                'hudson.model.Item.Configure',
-                'hudson.model.Item.Read',
-                'hudson.model.Run.Update',
-        ]
-
-        when:
-        job.permission('hudson.model.Item.Configure:jill')
-        job.permission(Permissions.ItemRead, 'jack')
-        job.permission('RunUpdate', 'joe')
-
-        then:
-        NodeList permissions = job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
-        permissions.size() == 3
-        permissions[0].text() == 'hudson.model.Item.Configure:jill'
-        permissions[1].text() == 'hudson.model.Item.Read:jack'
-        permissions[2].text() == 'hudson.model.Run.Update:joe'
-        3 * jobManagement.requirePlugin('matrix-auth')
     }
 
     def 'call parameters via helper'() {
