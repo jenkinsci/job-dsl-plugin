@@ -11,6 +11,7 @@ class HtmlReportTargetContext extends AbstractContext {
     String reportFiles = 'index.html'
     boolean keepAll
     boolean allowMissing
+    boolean alwaysLinkToLastBuild
 
     HtmlReportTargetContext(JobManagement jobManagement, String reportDir) {
         super(jobManagement)
@@ -32,5 +33,10 @@ class HtmlReportTargetContext extends AbstractContext {
     @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.3')
     void allowMissing(boolean allowMissing = true) {
         this.allowMissing = allowMissing
+    }
+
+    @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.4')
+    void alwaysLinkToLastBuild(boolean alwaysLinkToLastBuild = true) {
+        this.alwaysLinkToLastBuild = alwaysLinkToLastBuild
     }
 }

@@ -3913,21 +3913,24 @@ job('example') {
 job {
     publishers {
         publishHtml {
-            report(String reportDir) {                    // since 1.28
+            report(String reportDir) {                          // since 1.28
                 reportName(String reportName)
-                reportFiles(String reportFiles)           // defaults to 'index.html' if omitted
-                allowMissing(boolean allowMissing = true) // defaults to false if omitted
-                keepAll(boolean keepAll = true)           // defaults to false if omitted
+                reportFiles(String reportFiles)   // defaults to 'index.html'
+                allowMissing(boolean allow = true)       // defaults to false
+                keepAll(boolean keepAll = true)          // defaults to false
+                alwaysLinkToLastBuild(boolean value = true)     // since 1.35
             }
-            report(String reportDir, String reportName, String reportFiles = 'index.html',
+            report(String reportDir, String reportName,
+                   String reportFiles = 'index.html',
                    Boolean keepAll = false) // deprecated since 1.28
-            report(Map args) // deprecated since 1.28, same names as the method above
+            report(Map args) // deprecated since 1.28
         }
     }
 }
 ```
 
-Allows HTML reports to be archived. The report method can be called multiple times to add more reports.
+Allows HTML reports to be archived. The report method can be called multiple times to add more reports. Requires the
+[HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin).
 
 ```groovy
 job('example') {
@@ -3940,6 +3943,7 @@ job('example') {
                 reportName('Gradle Tests')
                 keepAll()
                 allowMissing()
+                alwaysLinkToLastBuild()
             }
         }
     }
