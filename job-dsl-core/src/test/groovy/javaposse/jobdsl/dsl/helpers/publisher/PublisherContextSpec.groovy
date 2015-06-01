@@ -729,6 +729,7 @@ class PublisherContextSpec extends Specification {
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
         1 * jobManagement.requirePlugin('htmlpublisher')
     }
+
     def 'calling html publisher closure with all options'() {
         when:
         context.publishHtml {

@@ -22,7 +22,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-28458](https://issues.jenkins-ci.org/browse/JENKINS-28458))
  * Fixed [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) build step
    ([JENKINS-28353](https://issues.jenkins-ci.org/browse/JENKINS-28353))
- * Add support for new html-publisher option ([JENKINS-28564](https://issues.jenkins-ci.org/browse/JENKINS-28564))
+ * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
+   ([JENKINS-28564](https://issues.jenkins-ci.org/browse/JENKINS-28564))
 * 1.34 (May 08 2015)
  * Enhanced support for the [Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin)
    ([JENKINS-26636](https://issues.jenkins-ci.org/browse/JENKINS-26636))
