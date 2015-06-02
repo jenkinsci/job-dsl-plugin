@@ -35,6 +35,9 @@ class HtmlReportTargetContext extends AbstractContext {
         this.allowMissing = allowMissing
     }
 
+    /**
+     * @since 1.35
+     */
     @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.4')
     void alwaysLinkToLastBuild(boolean alwaysLinkToLastBuild = true) {
         this.alwaysLinkToLastBuild = alwaysLinkToLastBuild
