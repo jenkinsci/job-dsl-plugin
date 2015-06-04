@@ -1,13 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class MavenTriggerContext extends TriggerContext {
     protected final List<WithXmlAction> withXmlActions
 
-    MavenTriggerContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
-        super(jobManagement)
+    MavenTriggerContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
         this.withXmlActions = withXmlActions
     }
 
