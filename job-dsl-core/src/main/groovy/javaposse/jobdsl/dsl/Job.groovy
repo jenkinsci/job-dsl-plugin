@@ -451,7 +451,7 @@ abstract class Job extends Item {
     }
 
     void triggers(@DslContext(TriggerContext) Closure closure) {
-        TriggerContext context = new TriggerContext(jobManagement)
+        TriggerContext context = new TriggerContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

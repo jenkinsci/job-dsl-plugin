@@ -1,11 +1,24 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class TriggerContextSpec extends Specification {
     JobManagement mockJobManagement = Mock(JobManagement)
-    TriggerContext context = new TriggerContext(mockJobManagement)
+    Item item = Mock(Item)
+    TriggerContext context = new TriggerContext(mockJobManagement, item)
+
+    def 'node from extension is added'() {
+        setup:
+        Node node = Mock(Node)
+
+        when:
+        context.addExtensionNode(node)
+
+        then:
+        context.triggerNodes[0] == node
+    }
 
     def 'call github trigger methods'() {
         when:

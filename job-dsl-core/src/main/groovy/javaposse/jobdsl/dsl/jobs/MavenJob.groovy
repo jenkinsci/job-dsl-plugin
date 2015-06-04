@@ -31,7 +31,7 @@ class MavenJob extends Job {
 
     @Override
     void triggers(@DslContext(MavenTriggerContext) Closure closure) {
-        TriggerContext context = new MavenTriggerContext(withXmlActions, jobManagement)
+        TriggerContext context = new MavenTriggerContext(withXmlActions, jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

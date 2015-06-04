@@ -2,20 +2,26 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
-import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
-class TriggerContext extends AbstractContext {
+class TriggerContext extends AbstractExtensibleContext {
     final List<Node> triggerNodes = []
 
-    TriggerContext(JobManagement jobManagement) {
-        super(jobManagement)
+    TriggerContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        triggerNodes << node
     }
 
     /**
