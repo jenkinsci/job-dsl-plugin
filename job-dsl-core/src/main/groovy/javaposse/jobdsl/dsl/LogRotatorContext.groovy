@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 class LogRotatorContext implements Context {
-
     int daysToKeep = -1
     int numToKeep = -1
     int artifactDaysToKeep = -1
