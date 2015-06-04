@@ -156,15 +156,30 @@ abstract class Job extends Item {
         }
     }
 
-    void logRotator(int daysToKeepInt = -1, int numToKeepInt = -1,
-                   int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1) {
+    void logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1, int artifactNumToKeep = -1) {
+        logRotator {
+            delegate.daysToKeep(daysToKeep)
+            delegate.numToKeep(numToKeep)
+            delegate.artifactDaysToKeep(artifactDaysToKeep)
+            delegate.artifactNumToKeep(artifactNumToKeep)
+        }
+    }
+
+    /**
+     * @since 1.35
+     */
+    void logRotator(@DslContext(LogRotatorContext) Closure closure) {
+        LogRotatorContext context = new LogRotatorContext()
+        ContextHelper.executeInContext(closure, context)
+
         withXmlActions << WithXmlAction.create { Node project ->
-            project / logRotator {
-                daysToKeep daysToKeepInt
-                numToKeep numToKeepInt
-                artifactDaysToKeep artifactDaysToKeepInt
-                artifactNumToKeep artifactNumToKeepInt
+            Node node = methodMissing('logRotator') {
+                daysToKeep(context.daysToKeep)
+                numToKeep(context.numToKeep)
+                artifactDaysToKeep(context.artifactDaysToKeep)
+                artifactNumToKeep(context.artifactNumToKeep)
             }
+            project / node
         }
     }
 

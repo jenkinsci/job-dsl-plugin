@@ -545,6 +545,34 @@ class JobSpec extends Specification {
         job.node.logRotator[0].numToKeep[0].value() == 50
     }
 
+    def 'log rotate xml with closure'() {
+        when:
+        job.logRotator {
+            daysToKeep 1
+            numToKeep 2
+            artifactDaysToKeep 3
+            artifactNumToKeep 4
+        }
+
+        then:
+        job.node.logRotator[0].daysToKeep[0].value() == 1
+        job.node.logRotator[0].numToKeep[0].value() == 2
+        job.node.logRotator[0].artifactDaysToKeep[0].value() == 3
+        job.node.logRotator[0].artifactNumToKeep[0].value() == 4
+    }
+
+    def 'log rotate xml with closure defaults'() {
+        when:
+        job.logRotator {
+        }
+
+        then:
+        job.node.logRotator[0].daysToKeep[0].value() == -1
+        job.node.logRotator[0].numToKeep[0].value() == -1
+        job.node.logRotator[0].artifactDaysToKeep[0].value() == -1
+        job.node.logRotator[0].artifactNumToKeep[0].value() == -1
+    }
+
     def 'build blocker xml'() {
         when:
         job.blockOn('MyProject')

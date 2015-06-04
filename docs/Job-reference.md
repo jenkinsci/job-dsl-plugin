@@ -29,8 +29,9 @@ freeStyleJob(String name) { // since 1.30
     keepDependencies(boolean keep = true)
     label(String label)
     lockableResources(String resources, Closure lockableResourcesClosure) // since 1.25
-    logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1,
-               int artifactNumToKeep = -1)
+    logRotator(int daysToKeep = -1, int numToKeep = -1,
+               int artifactDaysToKeep = -1, int artifactNumToKeep = -1)
+    logRotator(Closure logRotatorClosure) // since 1.25
     notifications(Closure notificationClosure) // since 1.26
     priority(int value)
     quietPeriod(int seconds = 5)
@@ -472,11 +473,34 @@ blockOnDownstreamProjects()
 Blocks the build of a project when one ore more upstream (blockOnUpstreamProjects()) or a downstream projects (blockOnDownstreamProjects()) are running. (Available since 1.16)
 
 ### Build History
+
 ```groovy
-logRotator(int daysToKeepInt = -1, int numToKeepInt = -1, int artifactDaysToKeepInt = -1, int artifactNumToKeepInt = -1)
+job {
+    logRotator(int daysToKeep = -1, int numToKeep = -1,
+               int artifactDaysToKeep = -1, int artifactNumToKeep = -1)
+    logRotator { // since 1.35
+        daysToKeep(int daysToKeep)
+        numToKeep(int numToKeep)
+        artifactDaysToKeep(int artifactDaysToKeep)
+        artifactNumToKeep(int artifactNumToKeep)
+    }
+}
 ```
 
 Sets up the number of builds to keep.
+
+```groovy
+job('example-1') {
+    logRotator(30, -1, 1, -1)
+}
+
+job('example-2') {
+    logRotator {
+        numToKeep(5)
+        artifactNumToKeep(1)
+    }
+}
+```
 
 ### Execute concurrent builds
 ```groovy
