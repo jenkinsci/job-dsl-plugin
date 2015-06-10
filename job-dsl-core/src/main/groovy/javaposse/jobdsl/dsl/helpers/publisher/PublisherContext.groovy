@@ -163,11 +163,11 @@ class PublisherContext extends AbstractExtensibleContext {
 
         publisherNodes << new NodeBuilder().'hudson.plugins.testng.Publisher' {
             reportFilenamePattern(glob)
-            escapeTestDescription(testNGContext.escapeTestDescription)
-            escapeExceptionMessages(testNGContext.escapeExceptionMessages)
-            showFailedBuildsInTrendGraph(testNGContext.showFailedBuildsInTrendGraph)
-            markBuildAsUnstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
-            markBuildAsFailureOnFailedConfiguration(testNGContext.markBuildAsFailureOnFailedConfiguration)
+            escapeTestDescp(testNGContext.escapeTestDescription)
+            escapeExceptionMsg(testNGContext.escapeExceptionMessages)
+            showFailedBuilds(testNGContext.showFailedBuildsInTrendGraph)
+            unstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
+            failureOnFailedTestConfig(testNGContext.markBuildAsFailureOnFailedConfiguration)
             testDataPublishers(testNGContext.testDataPublishersContext.testDataPublishers)
         }
     }
