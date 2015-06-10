@@ -195,6 +195,7 @@ freeStyleJob(String name) { // since 1.30
         vSphereRevertToSnapshot(String server, String vm, String snapshot)
     }
     publishers {
+        aggregateBuildFlowTests()
         aggregateDownstreamTestResults(String jobs = null,
                                        boolean includeFailedBuilds = false) // since 1.19
         allowBrokenBuildClaiming()
@@ -4647,6 +4648,13 @@ publishers {
     task('BUILD SUCCESSFUL', 'git clean -fdx')
   }
 }
+```
+### Aggregate Build Flow Test Results
+
+Build Flow Test Aggregator is the simplest way to aggregate test results from builds started dynamically by the build flow job. It's a post-build step that only shows up for build flow projects.
+
+```groovy
+aggregateBuildFlowTests()
 ```
 
 (Since 1.19)
