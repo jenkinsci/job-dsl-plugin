@@ -156,6 +156,22 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    @RequiresPlugin(id = 'testng-plugin')
+    void archiveTestNG(String glob, @DslContext(ArchiveTestNGContext) Closure testNGClosure = null) {
+        ArchiveTestNGContext testNGContext = new ArchiveTestNGContext(jobManagement);
+        ContextHelper.executeInContext(testNGClosure, testNGContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.testng.Publisher' {
+            reportFilenamePattern(glob)
+            escapeTestDescription(testNGContext.escapeTestDescription)
+            escapeExceptionMessages(testNGContext.escapeExceptionMessages)
+            showFailedBuildsInTrendGraph(testNGContext.showFailedBuildsInTrendGraph)
+            markBuildAsUnstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
+            markBuildAsFailureOnFailedConfiguration(testNGContext.markBuildAsFailureOnFailedConfiguration)
+            testDataPublishers(testNGContext.testDataPublishersContext.testDataPublishers)
+        }
+    }
+
     /**
      * @since 1.24
      */
