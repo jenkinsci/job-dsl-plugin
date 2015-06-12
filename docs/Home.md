@@ -25,6 +25,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-28458](https://issues.jenkins-ci.org/browse/JENKINS-28458))
  * Fixed [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) build step
    ([JENKINS-28353](https://issues.jenkins-ci.org/browse/JENKINS-28353))
+ * Fixed problem with implementing the extension point 
+   ([JENKINS-28408](https://issues.jenkins-ci.org/browse/JENKINS-28408))
  * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
    ([JENKINS-28564](https://issues.jenkins-ci.org/browse/JENKINS-28564))
  * Removed anything that has been deprecated in 1.27, see [[Migration#migrating-to-127]]
