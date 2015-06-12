@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
     <j:set var="allConfigFiles" value="${it.modifiedObjects}"/>
     <j:if test="${!allConfigFiles.isEmpty()}">
-        <t:summary icon="../../plugin/config-file-provider/images/cfg_logo.png">
+        <t:summary icon="/plugin/job-dsl/images/48x48/directory.png">
             Generated Config Files:
             <ul class="folderList">
                 <j:forEach items="${allConfigFiles}" var="configFile">
