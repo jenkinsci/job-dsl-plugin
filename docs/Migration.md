@@ -1,3 +1,32 @@
+## Migrating to 1.35
+
+## S3
+
+Support for versions 0.6 and earlier of the S3 Plugin is [[deprecated|Deprecation-Policy]] and will be removed. The
+region identifiers have changed with version 0.7 of the S3 Plugin.
+
+DSL prior to 1.35
+```groovy
+job('example') {
+    publishers {
+        s3('example') {
+            entry('foo', 'bar', 'EU_WEST_1')
+        }
+    }
+}
+```
+
+DSL since to 1.35
+```groovy
+job('example') {
+    publishers {
+        s3('example') {
+            entry('foo', 'bar', 'eu-west-1')
+        }
+    }
+}
+```
+
 ## Migrating to 1.34
 
 ### Conditional Build Steps
