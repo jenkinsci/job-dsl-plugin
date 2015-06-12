@@ -3007,10 +3007,12 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.s3.S3BucketPublisher'
+            children().size() == 3
             profileName[0].value() == 'profile'
             entries.size() == 1
             entries[0].'hudson.plugins.s3.Entry'.size() == 1
             with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                children().size() == 7
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
                 storageClass[0].value() == 'STANDARD'
@@ -3022,6 +3024,7 @@ class PublisherContextSpec extends Specification {
             userMetadata.size() == 1
             userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
             with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                children().size() == 2
                 key[0].value() == 'key'
                 value[0].value() == 'value'
             }
@@ -3046,10 +3049,12 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.s3.S3BucketPublisher'
+            children().size() == 3
             profileName[0].value() == 'profile'
             entries.size() == 1
             entries[0].'hudson.plugins.s3.Entry'.size() == 2
             with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                children().size() == 7
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
                 storageClass[0].value() == 'STANDARD'
@@ -3059,6 +3064,7 @@ class PublisherContextSpec extends Specification {
                 managedArtifacts[0].value() == false
             }
             with(entries[0].'hudson.plugins.s3.Entry'[1]) {
+                children().size() == 7
                 sourceFile[0].value() == 'bar'
                 bucket[0].value() == 'baz'
                 storageClass[0].value() == 'REDUCED_REDUNDANCY'
@@ -3070,11 +3076,45 @@ class PublisherContextSpec extends Specification {
             userMetadata.size() == 1
             userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
             with(userMetadata[0].'hudson.plugins.s3.MetadataPair'[0]) {
+                children().size() == 2
                 key[0].value() == 'key'
                 value[0].value() == 'value'
             }
         }
         1 * jobManagement.requirePlugin('s3')
+    }
+
+    def 'call s3 with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.6')
+
+        when:
+        context.s3('profile') {
+            entry('foo', 'bar', 'EU_WEST_1')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.s3.S3BucketPublisher'
+            children().size() == 3
+            profileName[0].value() == 'profile'
+            entries.size() == 1
+            entries[0].'hudson.plugins.s3.Entry'.size() == 1
+            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
+                children().size() == 7
+                sourceFile[0].value() == 'foo'
+                bucket[0].value() == 'bar'
+                storageClass[0].value() == 'STANDARD'
+                selectedRegion[0].value() == 'EU_WEST_1'
+                noUploadOnFailure[0].value() == false
+                uploadFromSlave[0].value() == false
+                managedArtifacts[0].value() == false
+            }
+            userMetadata[0].value().empty
+        }
+        1 * jobManagement.requirePlugin('s3')
+        1 * jobManagement.logDeprecationWarning(_)
     }
 
     def 'call flexible publish'() {

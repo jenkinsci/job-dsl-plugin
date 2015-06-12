@@ -1049,7 +1049,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
         checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
 
-        S3BucketPublisherContext context = new S3BucketPublisherContext()
+        S3BucketPublisherContext context = new S3BucketPublisherContext(jobManagement)
         ContextHelper.executeInContext(s3PublisherClosure, context)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.s3.S3BucketPublisher' {
