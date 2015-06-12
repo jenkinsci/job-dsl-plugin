@@ -854,26 +854,30 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
-    def 'call configFile with two files'() {
+    def 'call configFile with all file types'() {
         setup:
         String configName1 = 'myCustomConfig'
         String configId1 = 'CustomConfig1417476679249'
         String configName2 = 'myOtherConfig'
         String configId2 = 'CustomConfig1417476679250'
+        String configName3 = 'myMavenSetttings'
+        String configId3 = 'CustomConfig1417476679251'
         mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName1) >> configId1
         mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName2) >> configId2
+        mockJobManagement.getConfigFileId(ConfigFileType.MavenSettings, configName3) >> configId3
 
         when:
         context.configFiles {
             file(configName1)
-            file(configName2)
+            custom(configName2)
+            mavenSettings(configName3)
         }
 
         then:
         with(context.wrapperNodes[0]) {
             name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
             children().size() == 1
-            managedFiles[0].children().size() == 2
+            managedFiles[0].children().size() == 3
             with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
                 children().size() == 3
                 fileId[0].value() == configId1
@@ -883,6 +887,12 @@ class WrapperContextSpec extends Specification {
             with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[1]) {
                 children().size() == 3
                 fileId[0].value() == configId2
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[2]) {
+                children().size() == 3
+                fileId[0].value() == configId3
                 targetLocation[0].value() == ''
                 variable[0].value() == ''
             }

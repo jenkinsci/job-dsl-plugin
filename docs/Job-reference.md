@@ -1987,10 +1987,14 @@ Downloads the specified tools, if needed, and puts the path to each of them in t
 job {
     wrappers {
         configFiles {
-            file(String fileName) {                   // can be called multiple times
-                targetLocation(String targetLocation) // optional
-                variable(String variable)             // optional
+            file(String fileName) {
+                targetLocation(String targetLocation)       // optional
+                variable(String variable)                   // optional
             }
+            custom(String fileName,
+                   Closure configFileClosure = null)        // since 1.35
+            mavenSettings(String fileName,
+                          Closure configFileClosure = null) // since 1.35
         }
     }
 }
@@ -1999,12 +2003,17 @@ job {
 Makes an existing custom config file available to builds. Requires
 the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin).
 
+`file` is an alias for `custom`.
+
 ```groovy
 job('example') {
     wrappers {
         configFiles {
             file('myCustomConfigFile') {
                 variable('CONFIG_FILE')
+            }
+            mavenSettings('myJenkinsSettingsFile') {
+                targetLocation('settings.xml')
             }
         }
     }

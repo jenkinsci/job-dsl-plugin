@@ -15,8 +15,26 @@ class ConfigFilesContext extends AbstractContext {
     }
 
     void file(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        String configFileId = jobManagement.getConfigFileId(ConfigFileType.Custom, fileName)
-        Preconditions.checkNotNull(configFileId, "Custom config file with name '${fileName}' not found")
+        custom(fileName, configFileClosure)
+    }
+
+    /**
+     * @since 1.35
+     */
+    void custom(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileName, ConfigFileType.Custom, configFileClosure)
+    }
+
+    /**
+     * @since 1.35
+     */
+    void mavenSettings(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileName, ConfigFileType.MavenSettings, configFileClosure)
+    }
+
+    private void configFile(String fileName, ConfigFileType type, Closure configFileClosure) {
+        String configFileId = jobManagement.getConfigFileId(type, fileName)
+        Preconditions.checkNotNull(configFileId, "${type} config file with name '${fileName}' not found")
 
         ConfigFileContext configFileContext = new ConfigFileContext(configFileId)
         ContextHelper.executeInContext(configFileClosure, configFileContext)
