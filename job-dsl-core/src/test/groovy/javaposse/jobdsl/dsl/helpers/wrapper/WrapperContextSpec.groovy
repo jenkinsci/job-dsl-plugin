@@ -854,26 +854,30 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
-    def 'call configFile with two files'() {
+    def 'call configFile with all file types'() {
         setup:
         String configName1 = 'myCustomConfig'
         String configId1 = 'CustomConfig1417476679249'
         String configName2 = 'myOtherConfig'
         String configId2 = 'CustomConfig1417476679250'
+        String configName3 = 'myMavenSetttings'
+        String configId3 = 'CustomConfig1417476679251'
         mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName1) >> configId1
         mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName2) >> configId2
+        mockJobManagement.getConfigFileId(ConfigFileType.MavenSettings, configName3) >> configId3
 
         when:
         context.configFiles {
             file(configName1)
-            file(configName2)
+            custom(configName2)
+            mavenSettings(configName3)
         }
 
         then:
         with(context.wrapperNodes[0]) {
             name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
             children().size() == 1
-            managedFiles[0].children().size() == 2
+            managedFiles[0].children().size() == 3
             with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
                 children().size() == 3
                 fileId[0].value() == configId1
@@ -886,55 +890,14 @@ class WrapperContextSpec extends Specification {
                 targetLocation[0].value() == ''
                 variable[0].value() == ''
             }
-        }
-        1 * mockJobManagement.requirePlugin('config-file-provider')
-    }
-
-    def 'call configFiles with type arg'() {
-        setup:
-        String configName = 'myCustomConfig'
-        String configId = 'CustomConfig1417476679249'
-        String configTarget = 'myTargetLocation'
-        String configVariable = '$CONFIG_FILE_LOCATION'
-        mockJobManagement.getConfigFileId(ConfigFileType.MavenSettings, configName) >> configId
-
-        when:
-        context.configFiles {
-            file(configName, ConfigFileType.MavenSettings) {
-                targetLocation configTarget
-                variable configVariable
-            }
-        }
-
-        then:
-        with(context.wrapperNodes[0]) {
-            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
-            children().size() == 1
-            managedFiles[0].children().size() == 1
-            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[2]) {
                 children().size() == 3
-                fileId[0].value() == configId
-                targetLocation[0].value() == configTarget
-                variable[0].value() == configVariable
+                fileId[0].value() == configId3
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
             }
         }
         1 * mockJobManagement.requirePlugin('config-file-provider')
-    }
-
-    def 'call configFile with null file type'() {
-        setup:
-        String configName = 'lala'
-
-        when:
-        context.configFiles {
-            file(configName, null) {
-                variable 'CONFIG_FILE_LOCATION'
-            }
-        }
-
-        then:
-        Exception e = thrown(NullPointerException)
-        e.message.contains('Config file type must be specified')
     }
 
     def 'call configFile with unknown fileName'() {
