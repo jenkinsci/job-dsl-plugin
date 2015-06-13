@@ -1322,6 +1322,16 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('chucknorris')
     }
 
+    def 'can play the game'() {
+        when:
+        context.playTheGame()
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.cigame.GamePublisher'
+        1 * jobManagement.requirePlugin('ci-game')
+    }
+
     def 'irc channels are added'() {
         when:
         context.irc {

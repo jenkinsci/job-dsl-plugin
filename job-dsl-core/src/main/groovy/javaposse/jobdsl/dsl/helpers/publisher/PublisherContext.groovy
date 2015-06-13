@@ -559,7 +559,9 @@ class PublisherContext extends AbstractExtensibleContext {
 
     @RequiresPlugin(id = 'ci-game')
     void playTheGame() {
-        publisherNodes << new NodeBuilder().'hudson.plugins.cigame.GamePublisher'
+        publisherNodes << new NodeBuilder().'hudson.plugins.cigame.GamePublisher' {
+
+        }
     }
 
     /**
