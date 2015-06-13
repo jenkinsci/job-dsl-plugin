@@ -281,6 +281,21 @@ class PublisherContextSpec extends Specification {
         }
     }
 
+    def 'call testng archive with minimal args'() {
+        when:
+        context.archiveTestNG()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 7
+            reportFilenamePattern[0].value() == '**/testng-results.xml'
+            escapeTestDescp[0].value() == true
+            escapeExceptionMsg[0].value() == true
+            testDataPublishers[0].children().size() == 0
+        }
+    }
+
     def 'call archiveXUnit with no args'() {
         when:
         context.archiveXUnit {

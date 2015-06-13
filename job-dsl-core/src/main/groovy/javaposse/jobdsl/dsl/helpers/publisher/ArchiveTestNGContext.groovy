@@ -1,18 +1,14 @@
-package javaposse.jobdsl.dsl.helpers.publisher;
+package javaposse.jobdsl.dsl.helpers.publisher
 
-import groovy.lang.Closure;
-import javaposse.jobdsl.dsl.Context;
-import javaposse.jobdsl.dsl.ContextHelper;
-import javaposse.jobdsl.dsl.DslContext;
-import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 
-/**
- * Created by tomcat on 6/10/15.
- */
-public class ArchiveTestNGContext implements Context {
+class ArchiveTestNGContext implements Context {
     final TestNGDataPublishersContext testDataPublishersContext
-    boolean escapeTestDescription = false
-    boolean escapeExceptionMessages = false
+    boolean escapeTestDescription = true
+    boolean escapeExceptionMessages = true
     boolean showFailedBuildsInTrendGraph = false
     boolean markBuildAsUnstableOnSkippedTests = false
     boolean markBuildAsFailureOnFailedConfiguration = false
@@ -40,7 +36,6 @@ public class ArchiveTestNGContext implements Context {
     void markBuildAsFailureOnFailedConfiguration(boolean mark = true) {
         markBuildAsFailureOnFailedConfiguration = mark
     }
-
 
     void testDataPublishers(@DslContext(TestNGDataPublishersContext) Closure testDataPublishersClosure) {
         ContextHelper.executeInContext(testDataPublishersClosure, testDataPublishersContext)
