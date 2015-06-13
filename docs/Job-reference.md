@@ -208,6 +208,7 @@ freeStyleJob(String name) { // since 1.30
                      boolean allowClaimingOfFailedTests = false,
                      boolean publishTestAttachments = false) // deprecated
         archiveJunit(String glob, Closure junitClosure = null) // since 1.26
+        archiveTestNG(String glob, Closure testNGClosure = null)
         archiveXunit(Closure xunitClosure) // since 1.24
         associatedFiles(String files = null) // since 1.20
         buildDescription(String regularExpression, String description = '',
@@ -247,6 +248,7 @@ freeStyleJob(String name) { // since 1.30
                Boolean sendToIndividuals = false)
         mavenDeploymentLinker(String regex) // since 1.23
         mergePullRequest(Closure pullRequestClosure = null) // since 1.33
+        playTheGame()
         plotBuildData(Closure closure) // since 1.31
         pmd(String pattern, Closure staticAnalysisClosure = null)
         postBuildScripts(Closure postBuildScriptsClosure) // since 1.31
@@ -3889,6 +3891,23 @@ job('example') {
 }
 ```
 
+### Archive TestNG
+
+```groovy
+job {
+    publishers {
+        archiveTestNG(String glob) {
+            escapeTestDescription()
+            escapeExceptionMessages()
+            showFailedBuildsInTrendGraph()
+            markBuildAsUnstableOnSkippedTests()
+            markBuildAsFailureOnFailedConfiguration()
+        }
+    }
+}
+```
+Supports archiving TestNG results for each build. Requires [TestNG PLugin](https://wiki.jenkins-ci.org/display/JENKINS/testng-plugin)
+
 ### HipChat Publisher
 
 ```groovy
@@ -5509,6 +5528,17 @@ Full usage
 // of my parameter'
 booleanParam("myParameterName", false, "The description of my parameter")
 ```
+### Continuous Integration Game
+
+```groovy
+job {
+    publishers {
+        playTheGame()
+    }
+}
+```
+
+Make the job participate in CI Game. Check [The Continuous Integration Game plugin](https://wiki.jenkins-ci.org/display/JENKINS/The+Continuous+Integration+Game+plugin).
 
 ### ListTags Parameter
 Simplest usage (taking advantage of all defaults)
