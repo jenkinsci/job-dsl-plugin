@@ -195,6 +195,7 @@ freeStyleJob(String name) { // since 1.30
         vSphereRevertToSnapshot(String server, String vm, String snapshot)
     }
     publishers {
+        aggregateBuildFlowTests() // since 1.35
         aggregateDownstreamTestResults(String jobs = null,
                                        boolean includeFailedBuilds = false) // since 1.19
         allowBrokenBuildClaiming()
@@ -4658,7 +4659,30 @@ publishers {
 }
 ```
 
-(Since 1.19)
+(since 1.19)
+
+### Aggregate Build Flow Test Results
+
+```groovy
+buildFlowJob {
+    publishers {
+        aggregateBuildFlowTests()
+    }
+}
+```
+
+Aggregates test results from builds started dynamically by build flow jobs. Requires the
+[Build Flow Test Aggregator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Test+Aggregator+Plugin).
+
+```groovy
+buildFlowJob('example') {
+    publishers {
+        aggregateBuildFlowTests()
+    }
+}
+```
+
+(since 1.35)
 
 ### Aggregate Downstream Test Results
 
