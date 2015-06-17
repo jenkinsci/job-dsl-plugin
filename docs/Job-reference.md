@@ -195,7 +195,7 @@ freeStyleJob(String name) { // since 1.30
         vSphereRevertToSnapshot(String server, String vm, String snapshot)
     }
     publishers {
-        aggregateBuildFlowTests()
+        aggregateBuildFlowTests() // since 1.35
         aggregateDownstreamTestResults(String jobs = null,
                                        boolean includeFailedBuilds = false) // since 1.19
         allowBrokenBuildClaiming()
@@ -4649,15 +4649,31 @@ publishers {
   }
 }
 ```
+
+(since 1.19)
+
 ### Aggregate Build Flow Test Results
 
-Build Flow Test Aggregator is the simplest way to aggregate test results from builds started dynamically by the build flow job. It's a post-build step that only shows up for build flow projects.
-
 ```groovy
-aggregateBuildFlowTests()
+buildFlowJob {
+    publishers {
+        aggregateBuildFlowTests()
+    }
+}
 ```
 
-(Since 1.19)
+Aggregates test results from builds started dynamically by build flow jobs. Requires the
+[Build Flow Test Aggregator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Test+Aggregator+Plugin).
+
+```groovy
+buildFlowJob('example') {
+    publishers {
+        aggregateBuildFlowTests()
+    }
+}
+```
+
+(since 1.35)
 
 ### Aggregate Downstream Test Results
 

@@ -1400,11 +1400,6 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    @RequiresPlugin(id = 'build-flow-test-aggregator')
-    void aggregateBuildFlowTests() {
-        publisherNodes << new NodeBuilder().'org.zeroturnaround.jenkins.flowbuildtestaggregator.FlowTestAggregator'()
-    }
-
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()

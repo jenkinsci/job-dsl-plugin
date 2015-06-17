@@ -4493,14 +4493,4 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('publish-over-ssh', '1.12')
     }
-
-    def 'call aggregateBuildFlowTests'() {
-        when:
-        context.aggregateBuildFlowTests()
-
-        then:
-        context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'org.zeroturnaround.jenkins.flowbuildtestaggregator.FlowTestAggregator'
-        1 * jobManagement.requirePlugin('build-flow-test-aggregator')
-    }
 }
