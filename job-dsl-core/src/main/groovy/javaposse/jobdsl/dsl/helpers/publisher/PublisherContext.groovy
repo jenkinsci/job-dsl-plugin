@@ -401,7 +401,7 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(scpClosure, scpContext)
 
         // Validate values
-        assert !scpContext.entries.empty, 'Scp publish requires at least one entry'
+        Preconditions.checkArgument(!scpContext.entries.empty, 'Scp publish requires at least one entry')
 
         publisherNodes << new NodeBuilder().'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
@@ -448,11 +448,15 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
 
         // Validate values
-        assert validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria),
+        Preconditions.checkArgument(
+                validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria),
                 "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
-        assert validCloneWorkspaceArchiveMethods.contains(cloneWorkspaceContext.archiveMethod),
+        )
+        Preconditions.checkArgument(
+                validCloneWorkspaceArchiveMethods.contains(cloneWorkspaceContext.archiveMethod),
                 'Clone Workspace Archive Method needs to be one of these values: ' +
                         validCloneWorkspaceArchiveMethods.join(',')
+        )
 
         publisherNodes << new NodeBuilder().'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
             workspaceGlob workspaceGlobArg
@@ -470,8 +474,10 @@ class PublisherContext extends AbstractExtensibleContext {
      * Downstream build
      */
     void downstream(String projectName, String thresholdName = 'SUCCESS') {
-        assert DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
+        Preconditions.checkArgument(
+                DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
                 "thresholdName must be one of these values ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
+        )
 
         publisherNodes << new NodeBuilder().'hudson.tasks.BuildTrigger' {
             childProjects projectName
@@ -926,7 +932,10 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     void flowdock(String[] tokens, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
         // Validate values
-        assert tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token'
+        Preconditions.checkArgument(
+                tokens != null && tokens.length > 0,
+                'Flowdock publish requires at least one flow token'
+        )
         flowdock(tokens.join(','), flowdockPublisherClosure)
     }
 

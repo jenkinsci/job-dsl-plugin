@@ -20,7 +20,7 @@ class StaticAnalysisContextSpec extends Specification {
         when:
         context.thresholds(thresholds)
         then:
-        AssertionError e = thrown()
+        IllegalArgumentException e = thrown()
         e.message.contains(thresholds.toString())
         where:
         thresholds  << [

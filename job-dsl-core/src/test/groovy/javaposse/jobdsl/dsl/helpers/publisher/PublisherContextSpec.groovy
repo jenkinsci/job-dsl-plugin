@@ -976,13 +976,13 @@ class PublisherContextSpec extends Specification {
         context.publishCloneWorkspace('*/**', '*/.svn', 'Quite plainly wrong', 'ZIP', true)
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
 
         when:
         context.publishCloneWorkspace('*/**', '*/.svn', 'Not Failed', 'ZAP', true)
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
     }
 
     def 'call Clone Workspace with Closure'() {
@@ -1010,7 +1010,7 @@ class PublisherContextSpec extends Specification {
         context.publishScp('javadoc', null)
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
     }
 
     def 'call scp publish with closure'() {
@@ -1122,7 +1122,7 @@ class PublisherContextSpec extends Specification {
         context.downstream('THE-JOB', 'BAD')
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
     }
 
     def 'call downstream ext with all args'() {
@@ -2703,7 +2703,7 @@ class PublisherContextSpec extends Specification {
         context.flowdock(null)
 
         then:
-        thrown(AssertionError)
+        thrown(IllegalArgumentException)
     }
 
     def 'stashNotifier with default configuration'() {
