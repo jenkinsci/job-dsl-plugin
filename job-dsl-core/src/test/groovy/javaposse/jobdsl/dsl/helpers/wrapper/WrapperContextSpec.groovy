@@ -338,7 +338,8 @@ class WrapperContextSpec extends Specification {
 
         then:
         context.wrapperNodes[0].name() == 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
-        context.wrapperNodes[0].user[0].value() == '4711'
+        context.wrapperNodes[0].credentialsId[0].string[0].value() == '4711'
+        context.wrapperNodes[0].ignoreMissing[0].value() == false
         1 * mockJobManagement.requirePlugin('ssh-agent')
     }
 
