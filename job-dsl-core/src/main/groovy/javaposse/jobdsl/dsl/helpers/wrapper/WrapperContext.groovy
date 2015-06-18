@@ -176,7 +176,10 @@ class WrapperContext extends AbstractExtensibleContext {
         Preconditions.checkNotNull(id, 'credentials not found')
 
         wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
-            user id
+            credentialsId {
+                'string' id
+            }
+            ignoreMissing false
         }
     }
 
