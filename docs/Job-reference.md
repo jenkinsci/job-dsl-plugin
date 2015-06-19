@@ -1030,23 +1030,8 @@ job {
             browser { // since 1.26
                 stash(String url) // URL to the Stash repository, optional
                 // since 1.35
-                assemblaweb(String repoUrl) // URL to the Assembla repository, optional
-                fisheye(String url) // URL to the FishEye repository, optional
-                kiln(String url) // URL to the Kiln repository, optional
-                tfs2013(String repoUrl) // URL to the Microsoft Team Foundation Server repository, optional
-                bitbucketweb(String url) // URL to the BitBucket repository, optional
-                cgit(String url) // URL to the CGit repository, optional
                 gitblit(String url, String projectName) // GitBlit root URL, project name in GitBlit, optional
-                githubweb(String url) // URL to the GitHub repository, optional
-                gitiles(String repoUrl) // URL to the Gitiles repository, optional
                 gitlab(String url, String version) // URL to the Gitlab repository, Major.Minor gitlab version (ex: 7.9), optional
-                gitlist(String repoUrl) // URL to the GitList repository, optional
-                gitoriousweb(String repoUrl) // URL to the Gitorious repository, optional
-                gitweb(String repoUrl) // URL to the jjjjjj repository, optional
-                phabricator(String repoUrl, String repo) // URL to the Phabricator repository, repository name in Phabricator, optional
-                redmineweb(String repoUrl) // URL to the Redmine repository, optional
-                rhodecode(String repoUrl) // URL to the RhodeCode repository, optional
-                viewgit(String repoUrl, String projectName) // URL to the ViewGit repository, optional
             }
             strategy { // since 1.30
                 inverse()
