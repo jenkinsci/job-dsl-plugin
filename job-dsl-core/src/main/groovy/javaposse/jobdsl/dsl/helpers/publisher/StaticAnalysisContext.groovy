@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
 
 class StaticAnalysisContext implements Context {
@@ -29,8 +30,10 @@ class StaticAnalysisContext implements Context {
     }
 
     void thresholdLimit(String limit) {
-        assert THRESHOLD_LIMITS.contains(limit),
+        Preconditions.checkArgument(
+                THRESHOLD_LIMITS.contains(limit),
                 "thresholdLimit must be one of these values: ${THRESHOLD_LIMITS.join(',')}"
+        )
         this.thresholdLimit = limit
     }
 
@@ -55,10 +58,14 @@ class StaticAnalysisContext implements Context {
     }
 
     void thresholds(Map thresholdMap) {
-        assert ALLOWED_THRESHOLDS.containsAll(thresholdMap.keySet()),
+        Preconditions.checkArgument(
+                ALLOWED_THRESHOLDS.containsAll(thresholdMap.keySet()),
                 "Only the thresholds ${ALLOWED_THRESHOLDS.join(',')} are allowed. You used ${thresholdMap}."
-        assert ALLOWED_THRESHOLD_TYPES.containsAll(thresholdMap.values()*.keySet().flatten()),
+        )
+        Preconditions.checkArgument(
+                ALLOWED_THRESHOLD_TYPES.containsAll(thresholdMap.values()*.keySet().flatten()),
                 "Threshold only can use the types ${ALLOWED_THRESHOLD_TYPES.join(',')}. You used ${thresholdMap}."
+        )
         this.thresholdMap = thresholdMap
         this.dontComputeNew = !thresholdMap.keySet().find { it.contains('New') }
     }
