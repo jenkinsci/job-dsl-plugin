@@ -266,6 +266,40 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.jenkins.getItemByFullName('/folder/test-job') == null
     }
 
+    def 'only use last build to calculate items to be deleted'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+
+        when:
+        String script1 = 'job { name "test-job" }'
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, script1), false, RemovedJobAction.DELETE
+        )
+        runBuild(job, builder1)
+
+        then:
+        assertTrue(jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject)
+
+        when:
+        String script2 = 'job { name "different-job" }'
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, script2), false, RemovedJobAction.DELETE
+        )
+        runBuild(job, builder2)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('different-job') instanceof FreeStyleProject
+        jenkinsRule.jenkins.getItemByFullName('test-job') == null
+
+        when:
+        jenkinsRule.createFreeStyleProject('test-job')
+        runBuild(job, builder2)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('different-job') instanceof FreeStyleProject
+        jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject
+    }
+
     def useTemplateInRoot() {
         setup:
         FreeStyleProject template = jenkinsRule.createFreeStyleProject('template')
