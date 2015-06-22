@@ -1525,6 +1525,7 @@ job('example') {
             permitAll(boolean permitAll = true)               // defaults to false
             autoCloseFailedPullRequests(boolean value = true) // defaults to false
             commentFilePath(String commentFilePath)           // since 1.31
+            allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = true)     // defaults to false
         }
     }
 }
@@ -1557,6 +1558,7 @@ job('example') {
             useGitHubHooks()
             permitAll()
             autoCloseFailedPullRequests()
+            allowMembersOfWhitelistedOrgsAsAdmin()
         }
     }
 }

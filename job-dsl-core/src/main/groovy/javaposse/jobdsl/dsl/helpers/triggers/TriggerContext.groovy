@@ -135,6 +135,7 @@ class TriggerContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
         triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+            allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             adminlist pullRequestBuilderContext.admins.join('\n')
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')

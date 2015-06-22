@@ -307,6 +307,7 @@ class TriggerContextSpec extends Specification {
         with(pullRequestNode) {
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
+            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == false
             permitAll[0].value() == false
             autoCloseFailedPullRequests[0].value() == false
             cron[0].value() == 'H/5 * * * *'
@@ -348,6 +349,7 @@ class TriggerContextSpec extends Specification {
             triggerPhrase('ok to test')
             onlyTriggerPhrase(true)
             useGitHubHooks(true)
+            allowMembersOfWhitelistedOrgsAsAdmin(true)
             permitAll(true)
             autoCloseFailedPullRequests(true)
             commentFilePath('myCommentFile')
@@ -365,6 +367,7 @@ class TriggerContextSpec extends Specification {
             triggerPhrase[0].value() == 'ok to test'
             onlyTriggerPhrase[0].value() == true
             useGitHubHooks[0].value() == true
+            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == true
             permitAll[0].value() == true
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
