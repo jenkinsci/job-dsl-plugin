@@ -43,6 +43,7 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
         return newLinkedHashSet();
     }
 
+    @SuppressWarnings("unused") // used by some Jelly views
     public Set<T> findAllGeneratedObjects() {
         Set<T> result = Sets.newLinkedHashSet();
         for (AbstractBuild build : project.getBuilds()) {
@@ -56,6 +57,6 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
 
     public static <T, A extends GeneratedObjectsAction<T, ?>> Set<T> extractGeneratedObjects(AbstractProject<?, ?> project, Class<A> actionType) {
         A action = project.getAction(actionType);
-        return action == null ? Sets.<T>newLinkedHashSet() : action.findAllGeneratedObjects();
+        return action == null ? Sets.<T>newLinkedHashSet() : action.findLastGeneratedObjects();
     }
 }
