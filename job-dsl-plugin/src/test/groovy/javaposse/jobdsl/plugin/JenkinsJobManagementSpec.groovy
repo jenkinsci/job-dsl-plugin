@@ -279,6 +279,18 @@ class JenkinsJobManagementSpec extends Specification {
         jenkinsRule.jenkins.getItemByFullName('oldFolder/oldName') == null
     }
 
+    def 'move job to non-existing folder'() {
+        setup:
+        jenkinsRule.createFreeStyleProject('bar')
+
+        when:
+        jobManagement.renameJobMatching('bar', 'foo/bar')
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'Could not rename job bar to foo/bar, destination folder does not exist'
+    }
+
     def 'createOrUpdateConfig relative to folder'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
