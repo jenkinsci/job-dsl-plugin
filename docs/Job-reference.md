@@ -348,6 +348,7 @@ mavenJob(String name) { // since 1.30
     preBuildSteps(Closure stepsClosure)
     postBuildSteps(Closure stepsClosure)
     providedSettings(String mavenSettingsName) // since 1.25
+    disableDownstreamTrigger(boolean disableDownstreamTrigger) // since 1.35
     wrappers {
         mavenRelease(Closure mavenReleaseClosure = null) // since 1.25
     }
@@ -870,7 +871,17 @@ mavenJob {
 }
 ```
 
-Specifiy this to run the build in headless mode if desktop access is not required. Headless mode is not enabled by default.
+Specify this to run the build in headless mode if desktop access is not required. Headless mode is not enabled by default.
+
+### Disable Downstream Triggering
+
+```groovy
+mavenJob {
+    disableDownstreamTrigger(boolean disableDownstreamTrigger)
+}
+```
+
+Disables automatic downstream build triggering. Downstream build triggering is enabled by default.
 
 ### Maven Pre and Post Build Steps
 
