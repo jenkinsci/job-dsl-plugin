@@ -30,7 +30,9 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Fixed problem with implementing the extension point 
    ([JENKINS-28408](https://issues.jenkins-ci.org/browse/JENKINS-28408))
  * Provide better error message when trying to move a job into a non-existing folder 
-   ([JENKINS-28408](https://issues.jenkins-ci.org/browse/JENKINS-29100))
+   ([JENKINS-29100](https://issues.jenkins-ci.org/browse/JENKINS-29100))
+ * Fixed problem that caused a changing order of elements not to trigger a job update
+   ([JENKINS-29107](https://issues.jenkins-ci.org/browse/JENKINS-29107))
  * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
    ([JENKINS-28564](https://issues.jenkins-ci.org/browse/JENKINS-28564))
  * Enhanced support for the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
