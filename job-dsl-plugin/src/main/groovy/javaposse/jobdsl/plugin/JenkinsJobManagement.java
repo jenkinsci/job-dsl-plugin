@@ -521,6 +521,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         ItemGroup fromParent = from.getParent();
         ItemGroup toParent = lookupStrategy.getParent(build.getProject(), to);
+        if (toParent == null) {
+            throw new DslException(format(Messages.RenameJobMatching_UnknownParent(), from.getFullName(), to));
+        }
         if (fromParent != toParent) {
             LOGGER.info(format("Moving Job %s to folder %s", fromParent.getFullName(), toParent.getFullName()));
             if (toParent instanceof DirectlyModifiableTopLevelItemGroup) {
