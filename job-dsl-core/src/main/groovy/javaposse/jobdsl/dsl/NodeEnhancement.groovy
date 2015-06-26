@@ -15,7 +15,7 @@ class NodeEnhancement {
     Node div(Node orphan) {
         LOGGER.fine("Looking for child node ${orphan}")
         String childName = orphan.name()
-        List children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
+        List children = this.children().findAll { child ->
             child instanceof Node && child.name() == childName &&
                     child.attributes().entrySet().containsAll(orphan.attributes().entrySet())
         }
@@ -27,7 +27,7 @@ class NodeEnhancement {
         } else {
             // Return first childName, that's the contract for div
             LOGGER.fine("Using first found childName for ${childName}")
-            Node found = children[0]
+            Node found = children[0] as Node
 
             // Copy over value and attribute from orphan if it has one.
             if (orphan.value() != null) {
@@ -41,10 +41,10 @@ class NodeEnhancement {
         }
     }
 
-    Node div(String childName) { // a.div(b)
+    Node div(String childName) {
         LOGGER.fine("Looking for childName ${childName} ${LOGGER.level}")
 
-        List children = this.children().findAll { child -> // HAVE TO GIVE IT A NAME, OR ELSE IT WON'T WORK
+        List children = this.children().findAll { child ->
             child instanceof Node && child.name() == childName
         }
         if (children.size() == 0) {
@@ -54,7 +54,7 @@ class NodeEnhancement {
         } else {
             // Return first childName, that's the contract for div
             LOGGER.fine("Using first found childName for ${childName}")
-            return children[0]
+            return children[0] as Node
         }
     }
 

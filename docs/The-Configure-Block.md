@@ -90,7 +90,8 @@ configure {
 To ease navigation, two key operators have been overridden. Try to use them as much as possible:
 
 * `/` - finds a child node by name, always returning the first child. If no child exists, one will be created. E.g.
-  `project / description` will find the description node, creating it if it doesn't exist. It has a very low precedence
+  `project / description` will find the description node, creating it if it doesn't exist. If attributes are specified,
+  it will find the first child which carries those attributes. It has a very low precedence
   in the order of operation, so you need to wrap parenthesis around some operations.
 * `<<` - appends as a child. If a Node is provided, it is directly added. A string is created as a node. A closure is
   processed like a NodeBuilder, allowing many nodes to be appended.
@@ -394,6 +395,7 @@ Configure block:
 ```groovy
 job('example') {
     configure { project ->
+        project.remove(project / scm) // remove the existing 'scm' element
         project / scm(class: 'hudson.scm.SubversionSCM') {
             locations {
                 'hudson.scm.SubversionSCM_-ModuleLocation' {
