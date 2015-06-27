@@ -443,7 +443,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             String oldJob = item.getConfigFile().asString();
             diff = XMLUnit.compareXML(oldJob, config);
-            if (diff.similar()) {
+            if (diff.identical()) {
                 LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
                 notifyItemUpdated(item, dslItem);
                 return false;

@@ -9,6 +9,9 @@ import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
 import hudson.model.ListView
 import hudson.model.View
+import hudson.model.listeners.SaveableListener
+import hudson.tasks.ArtifactArchiver
+import hudson.tasks.test.AggregatedTestResultPublisher
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
@@ -337,6 +340,41 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         folder.getView('view') != null
+    }
+
+    def 'createOrUpdateConfig with changing element order'() {
+        when:
+        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('order-a.xml'), UTF_8), false)
+
+        then:
+        FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
+        job.publishersList[0] instanceof ArtifactArchiver
+        job.publishersList[1] instanceof AggregatedTestResultPublisher
+
+        when:
+        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('order-b.xml'), UTF_8), false)
+
+        then:
+        job.publishersList[0] instanceof AggregatedTestResultPublisher
+        job.publishersList[1] instanceof ArtifactArchiver
+    }
+
+    def 'createOrUpdateConfig skips update if identical'() {
+        setup:
+        SaveableListener saveableListener = Mock(SaveableListener)
+
+        when:
+        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('config.xml'), UTF_8), false)
+
+        then:
+        FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
+        SaveableListener.all().add(0, saveableListener)
+
+        when:
+        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('config.xml'), UTF_8), false)
+
+        then:
+        0 * saveableListener.onChange(job, _)
     }
 
     def 'get plugin version'() {
