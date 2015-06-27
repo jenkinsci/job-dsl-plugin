@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -131,6 +132,12 @@ class TriggerContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ghprb')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
+        if (jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
+            jobManagement.logDeprecationWarning(
+                    'support for GitHub pull request builder plugin versions older than 1.15-0'
+            )
+        }
+
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
@@ -145,7 +152,12 @@ class TriggerContext extends AbstractExtensibleContext {
             useGitHubHooks pullRequestBuilderContext.useGitHubHooks
             permitAll pullRequestBuilderContext.permitAll
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
-            commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.14'))) {
+                commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
+            }
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
+                allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
+            }
         }
     }
 

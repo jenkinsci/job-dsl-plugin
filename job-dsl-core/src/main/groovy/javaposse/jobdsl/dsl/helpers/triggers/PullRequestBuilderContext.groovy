@@ -14,6 +14,7 @@ class PullRequestBuilderContext extends AbstractContext {
     boolean useGitHubHooks = false
     boolean permitAll = false
     boolean autoCloseFailedPullRequests = false
+    boolean allowMembersOfWhitelistedOrgsAsAdmin = false
     String commentFilePath
 
     PullRequestBuilderContext(JobManagement jobManagement) {
@@ -80,5 +81,13 @@ class PullRequestBuilderContext extends AbstractContext {
 
     void autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) {
         this.autoCloseFailedPullRequests = autoCloseFailedPullRequests
+    }
+
+    /**
+     * @since 1.35
+     */
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
+    void allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = true) {
+        this.allowMembersOfWhitelistedOrgsAsAdmin = allowMembersOfWhitelistedOrgsAsAdmin
     }
 }
