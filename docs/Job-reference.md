@@ -1509,7 +1509,7 @@ gerrit {
 ### Github Pull Request Trigger
 
 ```groovy
-job('example') {
+job {
     triggers {
         pullRequest {
             admin(String admin)
@@ -1518,14 +1518,14 @@ job('example') {
             userWhitelist(Iterable<String> users)
             orgWhitelist(String organization)
             orgWhitelist(Iterable<String> organizations)
-            cron(String cron)                                 // defaults to 'H/5 * * * *'
+            cron(String cron)                           // defaults to 'H/5 * * * *'
             triggerPhrase(String triggerPhrase)
-            onlyTriggerPhrase(boolean value = true)            // defaults to false
+            onlyTriggerPhrase(boolean value = true)           // defaults to false
             useGitHubHooks(boolean useGithubHooks = true)     // defaults to false
             permitAll(boolean permitAll = true)               // defaults to false
             autoCloseFailedPullRequests(boolean value = true) // defaults to false
             commentFilePath(String commentFilePath)           // since 1.31
-            allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = true)     // defaults to false
+            allowMembersOfWhitelistedOrgsAsAdmin(boolean value = true) // since 1.35
         }
     }
 }

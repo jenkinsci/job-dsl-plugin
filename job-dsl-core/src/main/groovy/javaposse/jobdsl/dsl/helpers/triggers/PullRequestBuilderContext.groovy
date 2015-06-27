@@ -83,7 +83,11 @@ class PullRequestBuilderContext extends AbstractContext {
         this.autoCloseFailedPullRequests = autoCloseFailedPullRequests
     }
 
-    void allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = false) {
+    /**
+     * @since 1.35
+     */
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
+    void allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = true) {
         this.allowMembersOfWhitelistedOrgsAsAdmin = allowMembersOfWhitelistedOrgsAsAdmin
     }
 }

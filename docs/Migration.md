@@ -27,6 +27,12 @@ job('example') {
 }
 ```
 
+## GitHub Pull Request Builder
+
+Support for versions older than 1.15-0 of the
+[GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.34
 
 ### Conditional Build Steps
