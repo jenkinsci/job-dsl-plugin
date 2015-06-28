@@ -228,6 +228,36 @@ userContent('acme.png', streamFileFromWorkspace('images/acme.png'))
 
 (since 1.33)
 
+# Logging
+
+Each DSL script provides a variable called `out` which points to a
+[`PrintStream`](http://docs.groovy-lang.org/docs/groovy-1.8.9/html/groovy-jdk/java/io/PrintStream.html). It defines
+methods like `println` which can be used to log messages to the build log (Console Output). This can be useful for
+debugging complex DSL scripts.
+
+```groovy
+out.println('Hello from a Job DSL script!')
+```
+
+`out` is only available in scripts, but not in any classes used by a script, even if a class is defined
+in a script. In this case, `out` must be passed into any method for logging.
+
+```groovy
+class Helper {
+    static doSomething(def out) {
+        out.println('Hello from a Job DSL helper class!')
+    }
+}
+
+Helper.doSomething(out)
+```
+
+When used in a script directly, `out` can be omitted.
+
+```groovy
+println('Hello from a Job DSL script!')
+```
+
 # Grab
 
 **WARNING:** Grab support is deprecated, see [[Migration]]
