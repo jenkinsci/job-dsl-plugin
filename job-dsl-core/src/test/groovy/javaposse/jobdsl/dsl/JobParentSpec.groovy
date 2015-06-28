@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
@@ -583,6 +584,22 @@ class JobParentSpec extends Specification {
         2 * jobManagement.logDeprecationWarning()
     }
 
+    def 'mavenJob deprecated variant with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('maven-plugin') >> new VersionNumber('2.2')
+
+        when:
+        Job job = parent.job(type: JobType.Maven) {
+            name 'test'
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        2 * jobManagement.logDeprecationWarning()
+        1 * jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
+    }
+
     def 'mavenJob'() {
         when:
         MavenJob job = parent.mavenJob('test') {
@@ -592,6 +609,21 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('maven-plugin')
+    }
+
+    def 'mavenJob with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('maven-plugin') >> new VersionNumber('2.2')
+
+        when:
+        MavenJob job = parent.mavenJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
     }
 
     def 'multiJob deprecated variant'() {

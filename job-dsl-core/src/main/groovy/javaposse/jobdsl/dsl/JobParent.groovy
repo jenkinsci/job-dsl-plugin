@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
 import com.google.common.collect.Sets
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
@@ -64,6 +65,10 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure = null) {
+        if (jm.getPluginVersion('maven-plugin')?.isOlderThan(new VersionNumber('2.3'))) {
+            jm.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
+        }
+
         processJob(name, MavenJob, closure)
     }
 
@@ -105,6 +110,10 @@ abstract class JobParent extends Script implements DslFactory {
 
         Object typeArg = arguments['type'] ?: JobType.Freeform
         JobType jobType = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
+
+        if (jobType == JobType.Maven && jm.getPluginVersion('maven-plugin')?.isOlderThan(new VersionNumber('2.3'))) {
+            jm.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
+        }
 
         Job job = jobType.jobClass.newInstance(jm)
         job.with(closure)

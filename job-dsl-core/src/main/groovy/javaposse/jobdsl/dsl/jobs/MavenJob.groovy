@@ -232,4 +232,16 @@ class MavenJob extends Job {
             }
         }
     }
+
+    /**
+     * If set, Jenkins will not automatically trigger downstream builds, defaults to <code>false</code>.
+     *
+     * @param disableDownstreamTrigger set to <code>true</code> to disable automatic triggering of downstream builds
+     * @since 1.35
+     */
+    void disableDownstreamTrigger(boolean disableDownstreamTrigger = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'disableTriggerDownstreamProjects'(disableDownstreamTrigger)
+        }
+    }
 }

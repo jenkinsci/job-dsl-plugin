@@ -1,6 +1,12 @@
 ## Migrating to 1.35
 
-## S3
+### Maven
+
+Support for versions older than 2.3 of the
+[[Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### S3
 
 Support for versions 0.6 and earlier of the S3 Plugin is [[deprecated|Deprecation-Policy]] and will be removed. The
 region identifiers have changed with version 0.7 of the S3 Plugin.

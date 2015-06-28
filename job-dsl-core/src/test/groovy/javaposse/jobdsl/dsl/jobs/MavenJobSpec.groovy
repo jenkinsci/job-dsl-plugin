@@ -211,4 +211,13 @@ class MavenJobSpec extends Specification {
         then:
         noExceptionThrown()
     }
+
+    def 'disableDownstreamTrigger constructs xml'() {
+        when:
+        job.disableDownstreamTrigger()
+
+        then:
+        job.node.disableTriggerDownstreamProjects.size() == 1
+        job.node.disableTriggerDownstreamProjects[0].value() == true
+    }
 }

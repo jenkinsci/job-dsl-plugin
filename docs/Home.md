@@ -38,12 +38,15 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced support for the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
  * Enhanced support for the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
  * Removed unnecessary update of Jenkins project dependency graph
+ * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
+   ([JENKINS-29070](https://issues.jenkins-ci.org/browse/JENKINS-29070))
  * Added support for the latest version of the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
    ([JENKINS-26561](https://issues.jenkins-ci.org/browse/JENKINS-26561))
  * Added documentation for [[IDE Support]]
  * Added documentation about [logging](Job-DSL-Commands#logging)
  * Support for the older versions of the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see [[Migration]]
  * Support for the older versions of the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is deprecated, see [[Migration]]
+ * Support for the older versions of the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin) is deprecated, see [[Migration]]
  * Removed anything that has been deprecated in 1.27, see [Migration](Migration#migrating-to-127)
    ([JENKINS-27492](https://issues.jenkins-ci.org/browse/JENKINS-27492))
 * 1.34 (May 08 2015)
