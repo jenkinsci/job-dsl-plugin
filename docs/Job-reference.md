@@ -3956,10 +3956,6 @@ job {
                 keepAll(boolean keepAll = true)          // defaults to false
                 alwaysLinkToLastBuild(boolean value = true)     // since 1.35
             }
-            report(String reportDir, String reportName,
-                   String reportFiles = 'index.html',
-                   Boolean keepAll = false) // deprecated since 1.28
-            report(Map args) // deprecated since 1.28
         }
     }
 }

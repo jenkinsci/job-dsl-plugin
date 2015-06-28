@@ -23,26 +23,4 @@ class HtmlReportContext extends AbstractContext {
 
         targets << context
     }
-
-    @Deprecated
-    void report(String reportDir, String reportName, String reportFiles = null, Boolean keepAll = null) {
-        jobManagement.logDeprecationWarning()
-
-        report(reportDir) {
-            if (reportName != null) {
-                delegate.reportName(reportName)
-            }
-            if (reportFiles != null) {
-                delegate.reportFiles(reportFiles)
-            }
-            if (keepAll != null) {
-                delegate.keepAll(keepAll)
-            }
-        }
-    }
-
-    @Deprecated
-    void report(Map args) {
-        report(args.reportDir, args.reportName, args.reportFiles, args.keepAll)
-    }
 }
