@@ -153,6 +153,61 @@ class MavenJobSpec extends Specification {
         job.node.postbuilders[0].children()[0].command[0].value() == 'ls'
     }
 
+    def 'call post build steps only on successful build'() {
+        when:
+        job.postBuildSteps('SUCCESS') {
+            shell('ls')
+        }
+
+        then:
+        job.node.runPostStepsIfResult[0].name[0].value() == 'SUCCESS'
+        job.node.runPostStepsIfResult[0].ordinal[0].value() == 0
+        job.node.runPostStepsIfResult[0].color[0].value() == 'BLUE'
+        job.node.runPostStepsIfResult[0].completeBuild[0].value() == true
+        job.node.postbuilders[0].children()[0].name() == 'hudson.tasks.Shell'
+        job.node.postbuilders[0].children()[0].command[0].value() == 'ls'
+    }
+
+    def 'call post build steps only on unstable build'() {
+        when:
+        job.postBuildSteps('UNSTABLE') {
+            shell('ls')
+        }
+
+        then:
+        job.node.runPostStepsIfResult[0].name[0].value() == 'UNSTABLE'
+        job.node.runPostStepsIfResult[0].ordinal[0].value() == 1
+        job.node.runPostStepsIfResult[0].color[0].value() == 'YELLOW'
+        job.node.runPostStepsIfResult[0].completeBuild[0].value() == true
+        job.node.postbuilders[0].children()[0].name() == 'hudson.tasks.Shell'
+        job.node.postbuilders[0].children()[0].command[0].value() == 'ls'
+    }
+
+    def 'call post build steps only on failure build'() {
+        when:
+        job.postBuildSteps('FAILURE') {
+            shell('ls')
+        }
+
+        then:
+        job.node.runPostStepsIfResult[0].name[0].value() == 'FAILURE'
+        job.node.runPostStepsIfResult[0].ordinal[0].value() == 2
+        job.node.runPostStepsIfResult[0].color[0].value() == 'RED'
+        job.node.runPostStepsIfResult[0].completeBuild[0].value() == true
+        job.node.postbuilders[0].children()[0].name() == 'hudson.tasks.Shell'
+        job.node.postbuilders[0].children()[0].command[0].value() == 'ls'
+    }
+
+    def 'call post build steps with invalid threshold'() {
+        when:
+        job.postBuildSteps('INVALID') {
+            shell('ls')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'mavenInstallation constructs xml'() {
         when:
         job.mavenInstallation('test')
