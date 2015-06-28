@@ -124,7 +124,6 @@ freeStyleJob(String name) { // since 1.30
         timestamps()
         toolenv(String... tools)
         xvfb(String installation, Closure xvfbClosure = null) // since 1.31
-        xvnc(boolean takeScreenshot) // deprecated
         xvnc(Closure xvncClosure = null) // since 1.26
     }
     properties { // since 1.33
@@ -205,9 +204,6 @@ freeStyleJob(String name) { // since 1.30
                          boolean latestOnlyBoolean = false)
         archiveArtifacts(Closure archiveArtifactsClosure) // since 1.20
         archiveJavadoc(Closure javadocClosure) // since 1.19
-        archiveJunit(String glob, boolean retainLongStdout,
-                     boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false) // deprecated
         archiveJunit(String glob, Closure junitClosure = null) // since 1.26
         archiveXunit(Closure xunitClosure) // since 1.24
         associatedFiles(String files = null) // since 1.20
@@ -1491,7 +1487,6 @@ gerrit {
         draftPublished()  // since 1.26
         patchsetCreated() // since 1.26
         refUpdated()      // since 1.26
-        // free form listing of event names is deprecated since 1.26
     }
     project(String projectName, List<String> branches)    // can be called multiple times
     project(String projectName, String branches)          // can be called multiple times
@@ -1506,8 +1501,6 @@ gerrit {
 
 Polls Gerrit for changes. This DSL method works slightly differently by exposing most of its functionality in its own
 block. This is accommodating how the plugin can be pointed to multiple projects and trigger on many events.
-
-The usage "short names" in the event closure is deprecated since 1.26.
 
 Requires the [Gerrit Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger).
 
@@ -1962,7 +1955,6 @@ job {
 ```groovy
 job {
     wrappers {
-        xvnc(boolean takeScreenshot) // deprecated
         xvnc { // since 1.26
             takeScreenshot(boolean taskScreenshot = true) // defaults to false
             useXauthority(boolean useXauthority = true)   // defaults to true
@@ -3882,9 +3874,6 @@ publishers {
 ```groovy
 job {
     publishers {
-        archiveJunit(String glob, boolean retainLongStdout,
-                     boolean allowClaimingOfFailedTests = false,
-                     boolean publishTestAttachments = false) // deprecated
         archiveJunit(String glob) { // since 1.26
             retainLongStdout(boolean retain = true) // options, defaults to false
             testDataPublishers {
@@ -3975,10 +3964,6 @@ job {
                 keepAll(boolean keepAll = true)          // defaults to false
                 alwaysLinkToLastBuild(boolean value = true)     // since 1.35
             }
-            report(String reportDir, String reportName,
-                   String reportFiles = 'index.html',
-                   Boolean keepAll = false) // deprecated since 1.28
-            report(Map args) // deprecated since 1.28
         }
     }
 }

@@ -759,77 +759,15 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('htmlpublisher')
     }
 
-    def 'calling minimal html publisher'() {
-        when:
-        context.publishHtml {
-            report('build/*', 'My Name')
-        }
-
-        then:
-        Node publisherHtmlNode = context.publisherNodes[0]
-        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
-        !publisherHtmlNode.reportTargets.isEmpty()
-        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
-        target.children().size() == 7
-        target.reportName[0].value() == 'My Name'
-        target.reportDir[0].value() == 'build/*'
-        target.reportFiles[0].value() == 'index.html'
-        target.keepAll[0].value() == false
-        target.allowMissing[0].value() == false
-        target.alwaysLinkToLastBuild[0].value() == false
-        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
-        1 * jobManagement.requirePlugin('htmlpublisher')
-    }
-
-    def 'calling html publisher with a few args'() {
-        when:
-        context.publishHtml {
-            report(reportName: 'Report Name', reportDir: 'build/*', reportFiles: 'content.html', keepAll: true)
-        }
-
-        then:
-        Node publisherHtmlNode = context.publisherNodes[0]
-        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
-        !publisherHtmlNode.reportTargets.isEmpty()
-        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
-        target.children().size() == 7
-        target.reportName[0].value() == 'Report Name'
-        target.reportDir[0].value() == 'build/*'
-        target.reportFiles[0].value() == 'content.html'
-        target.keepAll[0].value() == true
-        target.allowMissing[0].value() == false
-        target.alwaysLinkToLastBuild[0].value() == false
-        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
-        1 * jobManagement.requirePlugin('htmlpublisher')
-    }
-
-    def 'calling html publisher with map syntax without all args'() {
-        when:
-        context.publishHtml {
-            report(reportName: 'Report Name', reportDir: 'build/*')
-        }
-
-        then:
-        Node publisherHtmlNode = context.publisherNodes[0]
-        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
-        !publisherHtmlNode.reportTargets.isEmpty()
-        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
-        target.children().size() == 7
-        target.reportName[0].value() == 'Report Name'
-        target.reportDir[0].value() == 'build/*'
-        target.reportFiles[0].value() == 'index.html'
-        target.keepAll[0].value() == false
-        target.allowMissing[0].value() == false
-        target.alwaysLinkToLastBuild[0].value() == false
-        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
-        1 * jobManagement.requirePlugin('htmlpublisher')
-    }
-
     def 'calling html publisher with multiple reports'() {
         when:
         context.publishHtml {
-            report('build/*', 'Build Report')
-            report('test/*', 'Test Report')
+            report('build/*') {
+                reportName('Build Report')
+            }
+            report('test/*') {
+                reportName('Test Report')
+            }
         }
 
         then:
