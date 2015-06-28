@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
+import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -17,6 +18,7 @@ import javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 
 class MavenJob extends Job {
+
     private final List<String> mavenGoals = []
     private final List<String> mavenOpts = []
 
@@ -197,9 +199,26 @@ class MavenJob extends Job {
     /**
      * @since 1.20
      */
-    void postBuildSteps(@DslContext(StepContext) Closure postBuildClosure) {
+    void postBuildSteps(String thresholdName = 'FAILURE', @DslContext(StepContext) Closure postBuildClosure) {
+        Preconditions.checkArgument(
+            DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
+            "thresholdName must be one of these values ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
+        )
+
         StepContext postBuildContext = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node nameNode = methodMissing('name', thresholdName)
+            Node ordinalNode = methodMissing('ordinal', DownstreamContext.THRESHOLD_ORDINAL_MAP[thresholdName])
+            Node colorNode = methodMissing('color', DownstreamContext.THRESHOLD_COLOR_MAP[thresholdName])
+            Node completeBuildNode = methodMissing('completeBuild', true)
+
+            project / 'runPostStepsIfResult' / nameNode
+            project / 'runPostStepsIfResult' / ordinalNode
+            project / 'runPostStepsIfResult' / colorNode
+            project / 'runPostStepsIfResult' / completeBuildNode
+        }
 
         withXmlActions << WithXmlAction.create { Node project ->
             postBuildContext.stepNodes.each {

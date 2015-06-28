@@ -893,7 +893,7 @@ mavenJob('example') {
 ```groovy
 mavenJob {
     preBuildSteps(Closure mavenPreBuildClosure)
-    postBuildSteps(Closure mavenPostBuildClosure)
+    postBuildSteps(String thresholdName = 'FAILURE', Closure mavenPostBuildClosure)
 }
 ```
 
@@ -905,6 +905,17 @@ mavenJob('example') {
     shell("echo 'run before Maven'")
   }
   postBuildSteps {
+    shell("echo 'run after Maven'")
+  }
+}
+```
+
+For Maven jobs, you can also also specify a threshold for the build result when to run the postBuildSteps. The thresholdName can be one of three values: 'SUCCESS', 'UNSTABLE' or 'FAILURE'. The default value is 'FAILURE', i.e. always run the post build steps.
+In the following example the post build steps would only be executed when the build result is 'SUCCESS'
+
+```groovy
+mavenJob('example') {
+  postBuildSteps('SUCCESS') {
     shell("echo 'run after Maven'")
   }
 }
