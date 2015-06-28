@@ -292,6 +292,10 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'maven-plugin')
     void maven(@DslContext(MavenContext) Closure closure) {
+        if (jobManagement.getPluginVersion('maven-plugin')?.isOlderThan(new VersionNumber('2.3'))) {
+            jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
+        }
+
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
 

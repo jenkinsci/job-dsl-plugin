@@ -457,6 +457,26 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('maven-plugin')
     }
 
+    def 'call maven with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('maven-plugin') >> new VersionNumber('2.2')
+
+        when:
+        context.maven('install')
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Maven'
+            children().size() == 4
+            targets[0].value() == 'install'
+            mavenName[0].value() == '(Default)'
+            jvmOptions[0].value() == ''
+            usePrivateRepository[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
+    }
+
     def 'call ant methods'() {
         when:
         context.ant()
