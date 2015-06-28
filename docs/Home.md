@@ -41,7 +41,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-26561](https://issues.jenkins-ci.org/browse/JENKINS-26561))
  * Support for the older versions of the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see [[Migration]]
  * Support for the older versions of the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is deprecated, see [[Migration]]
- * Removed anything that has been deprecated in 1.27, see [[Migration#migrating-to-127]]
+ * Removed anything that has been deprecated in 1.27, see [Migration](Migration#migrating-to-127)
    ([JENKINS-27492](https://issues.jenkins-ci.org/browse/JENKINS-27492))
 * 1.34 (May 08 2015)
  * Enhanced support for the [Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin)
@@ -111,7 +111,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * The enum argument of `localRepository` for the Maven job and context has changed, see [[Migration]]
  * Support for the older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin) is deprecated, see [[Migration]]
  * The views closure of the nested view type has been changed, see [[Migration]]
- * Removed anything that has been deprecated in 1.26, see [[Migration#migrating-to-126]]
+ * Removed anything that has been deprecated in 1.26, see [Migration](Migration#migrating-to-126)
 * 1.30 (March 08 2015)
  * Added support for [Custom Tools Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Custom+Tools+Plugin)
  * Added support for [Flaky Test Handler Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flaky+Test+Handler+Plugin)
