@@ -263,9 +263,11 @@ class MultiJobStepContextSpec extends Specification {
                 alwaysRun()
             }
             runner('Fail')
-            phase {
-                phaseName 'Second'
-                job('JobA')
+            steps {
+                phase {
+                    phaseName 'Second'
+                    job('JobA')
+                }
             }
         }
 
