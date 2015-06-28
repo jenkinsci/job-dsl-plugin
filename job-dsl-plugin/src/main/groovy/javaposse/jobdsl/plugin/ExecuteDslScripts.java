@@ -231,9 +231,6 @@ public class ExecuteDslScripts extends Builder {
                 build.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
                 build.addAction(new GeneratedUserContentsBuildAction(freshUserContents));
 
-                // Hint that our new jobs might have really shaken things up
-                Jenkins.getInstance().rebuildDependencyGraph();
-
                 return true;
             } finally {
                 generator.close();
