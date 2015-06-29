@@ -239,6 +239,7 @@ freeStyleJob(String name) { // since 1.30
         hipChat(Closure hipChatClosure = null) // since 1.33
         irc(Closure ircClosure)
         jacocoCodeCoverage(Closure jacocoClosure)
+        joinTrigger(Closure joinTriggerClosure) // since 1.35
         jshint(String pattern, Closure staticAnalysisClosure = null)
         mailer(String recipients, Boolean dontNotifyEveryUnstableBuild = false,
                Boolean sendToIndividuals = false)
@@ -4155,6 +4156,51 @@ irc {
   notificationMessage('SummaryOnly')
 }
 ```
+
+### Join Trigger
+
+```groovy
+job {
+    publishers {
+        joinTrigger {
+            projects(String... projects)
+            publishers(Closure publisherClosure)
+            evenIfDownstreamUnstable(boolean evenIfDownstreamUnstable = true)
+        }
+    }
+}
+```
+
+Allows a job to be run after all the immediate downstream jobs have completed. Requires the
+[Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin).
+
+Currently only the `downstreamParameterized` publisher is supported by the Join Plugin.
+
+```groovy
+job('example-1') {
+    publishers {
+        joinTrigger {
+            projects('upload-to-staging')
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        joinTrigger {
+            publishers {
+                downstreamParameterized {
+                    trigger('upload-to-staging') {
+                        currentBuild()
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+(since 1.35)
 
 ### Cobertura coverage report
 

@@ -1409,6 +1409,21 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * @since 1.35
+     */
+    @RequiresPlugin(id = 'join', minimumVersion = '1.15')
+    void joinTrigger(@DslContext(JoinTriggerContext) Closure joinTriggerClosure) {
+        JoinTriggerContext joinTriggerContext = new JoinTriggerContext(jobManagement, item)
+        ContextHelper.executeInContext(joinTriggerClosure, joinTriggerContext)
+
+        publisherNodes << new NodeBuilder().'join.JoinTrigger' {
+            joinProjects(joinTriggerContext.projects.join(', '))
+            joinPublishers(joinTriggerContext.publisherContext.publisherNodes)
+            evenIfDownstreamUnstable(joinTriggerContext.evenIfDownstreamUnstable)
+        }
+    }
+
     private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
                                                    String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
