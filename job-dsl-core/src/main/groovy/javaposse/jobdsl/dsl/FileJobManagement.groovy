@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl
 
 class FileJobManagement extends MockJobManagement {
     /**
-     * Root of where to look for job config files
+     * Root of where to look for and write out job and view config files
      */
     File root
 
@@ -40,7 +40,7 @@ class FileJobManagement extends MockJobManagement {
 
         validateUpdateArgs(jobName, config)
 
-        new File(jobName + ext).write(config)
+        new File(root, jobName + ext).write(config)
         true
     }
 
@@ -48,7 +48,7 @@ class FileJobManagement extends MockJobManagement {
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
         validateUpdateArgs(viewName, config)
 
-        new File(viewName + ext).write(config)
+        new File(root, viewName + ext).write(config)
     }
 
     InputStream streamFileInWorkspace(String filePath) {
