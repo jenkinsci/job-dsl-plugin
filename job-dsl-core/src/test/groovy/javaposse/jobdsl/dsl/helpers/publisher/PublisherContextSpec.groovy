@@ -4471,4 +4471,62 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('publish-over-ssh', '1.12')
     }
+
+    def 'joinTrigger with no options'() {
+        when:
+        context.joinTrigger {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'join.JoinTrigger'
+            children().size() == 3
+            joinProjects[0].value() == ''
+            joinPublishers[0].value().empty
+            evenIfDownstreamUnstable[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
+    }
+
+    def 'joinTrigger with all options'() {
+        when:
+        context.joinTrigger {
+            projects('one')
+            projects('two', 'three')
+            publishers {
+                downstreamParameterized {
+                    trigger('upload-to-staging') {
+                        currentBuild()
+                    }
+                }
+            }
+            evenIfDownstreamUnstable()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'join.JoinTrigger'
+            children().size() == 3
+            joinProjects[0].value() == 'one, two, three'
+            with(joinPublishers[0]) {
+                children().size() == 1
+                children()[0].name() == 'hudson.plugins.parameterizedtrigger.BuildTrigger'
+                children()[0].children().size() == 1
+            }
+            evenIfDownstreamUnstable[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
+    }
+
+    def 'joinTrigger with unsupported publisher'() {
+        when:
+        context.joinTrigger {
+            publishers {
+                hipChat()
+            }
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }
