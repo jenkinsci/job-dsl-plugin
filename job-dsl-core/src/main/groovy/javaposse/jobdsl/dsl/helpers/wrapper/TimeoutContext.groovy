@@ -90,14 +90,14 @@ class TimeoutContext extends AbstractContext {
         }
     }
 
-    private void setStrategy(String type, Closure closure = null) {
+    private void setStrategy(String type, Closure closure = {}) {
         strategy = new NodeBuilder().strategy(
                 class: "hudson.plugins.build_timeout.impl.${type}TimeOutStrategy",
                 closure
         )
     }
 
-    private void addOperation(String type, Closure closure = null) {
+    private void addOperation(String type, Closure closure = {}) {
         operations << new NodeBuilder()."hudson.plugins.build__timeout.operations.${type}Operation"(closure)
     }
 }
