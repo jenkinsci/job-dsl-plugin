@@ -39,6 +39,42 @@ Support for versions older than 1.15-0 of the
 [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+## Conditional Build Steps
+
+Usage build steps directly in the `conditionalSteps` context is [[deprecated|Deprecation-Policy]] and will be removed.
+
+DSL prior to 1.35
+```groovy
+job('example') {
+    steps {
+        conditionalSteps {
+            condition {
+                stringsMatch('${SOME_PARAMETER}', 'pants', false)
+            }
+            runner('Fail')
+            shell("echo 'just one step'")
+        }
+    }
+}
+```
+
+DSL since to 1.35
+```groovy
+job('example') {
+    steps {
+        conditionalSteps {
+            condition {
+                stringsMatch('${SOME_PARAMETER}', 'pants', false)
+            }
+            runner('Fail')
+            steps {
+                shell("echo 'just one step'")
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.34
 
 ### Conditional Build Steps

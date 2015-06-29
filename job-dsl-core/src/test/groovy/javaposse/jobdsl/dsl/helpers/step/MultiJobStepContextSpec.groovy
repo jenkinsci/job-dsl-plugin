@@ -255,4 +255,40 @@ class MultiJobStepContextSpec extends Specification {
         'FAILURE' | '1.11'
         'ALWAYS'  | '1.16'
     }
+
+    def 'phase works inside conditionalSteps'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            runner('Fail')
+            steps {
+                phase {
+                    phaseName 'Second'
+                    job('JobA')
+                }
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+            children().size() == 3
+            runCondition[0].children().size() == 0
+            runCondition[0] != null
+            runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+            with(conditionalbuilders[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
+                    with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
+                        children().size() == 4
+                        jobName[0].value() == 'JobA'
+                    }
+                }
+            }
+        }
+        1 * jobManagement.requirePlugin('conditional-buildstep')
+    }
 }

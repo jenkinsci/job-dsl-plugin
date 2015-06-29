@@ -1,19 +1,33 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 import static com.google.common.base.Preconditions.checkArgument
 
-class ConditionalStepsContext extends StepContext {
+class ConditionalStepsContext extends AbstractContext {
     RunCondition runCondition
     String runnerClass
+    final StepContext stepContext
 
-    ConditionalStepsContext(JobManagement jobManagement, Item item) {
-        super(jobManagement, item)
+    ConditionalStepsContext(JobManagement jobManagement, StepContext stepContext) {
+        super(jobManagement)
+        this.stepContext = stepContext
+    }
+
+    Object methodMissing(String name, args) {
+        Object result
+        if (stepContext.respondsTo(name)) {
+            result = stepContext."$name"(*args)
+        } else {
+            result = stepContext.methodMissing(name, args)
+        }
+        jobManagement.logDeprecationWarning('using build steps outside the nested steps context of conditionalSteps')
+        result
     }
 
     void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
@@ -48,5 +62,9 @@ class ConditionalStepsContext extends StepContext {
         static find(String enumName) {
             values().find { it.name().toLowerCase() == enumName.toLowerCase() }
         }
+    }
+
+    void steps(@DslContext(StepContext) Closure stepContextClosure) {
+        ContextHelper.executeInContext(stepContextClosure, stepContext)
     }
 }

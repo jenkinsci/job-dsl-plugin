@@ -35,6 +35,9 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-29100](https://issues.jenkins-ci.org/browse/JENKINS-29100))
  * Fixed problem that caused a changing order of elements not to trigger a job update
    ([JENKINS-29107](https://issues.jenkins-ci.org/browse/JENKINS-29107))
+ * Fixed support for multi-job phases in conditional build steps
+ * Introduced nested steps context for conditional build steps and deprecated direct use of build steps in conditional
+   build steps, see [[Migration]]
  * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
    ([JENKINS-28564](https://issues.jenkins-ci.org/browse/JENKINS-28564))
  * Enhanced support for the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
