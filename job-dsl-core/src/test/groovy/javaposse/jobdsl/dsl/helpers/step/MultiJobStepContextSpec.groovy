@@ -272,20 +272,23 @@ class MultiJobStepContextSpec extends Specification {
         }
 
         then:
-        Node step = context.stepNodes[0]
-        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
-        step.runCondition[0].children().size() == 0
-
-        step.runCondition[0] != null
-        step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-
-        step.conditionalbuilders[0].children().size() == 1
-        Node childStep = step.conditionalbuilders[0].children()[0]
-        childStep.name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-        def jobNode = childStep.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 4
-        jobNode.jobName[0].value() == 'JobA'
-
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+            children().size() == 3
+            runCondition[0].children().size() == 0
+            runCondition[0] != null
+            runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+            with(conditionalbuilders[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
+                    with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
+                        children().size() == 4
+                        jobName[0].value() == 'JobA'
+                    }
+                }
+            }
+        }
         1 * jobManagement.requirePlugin('conditional-buildstep')
     }
 }

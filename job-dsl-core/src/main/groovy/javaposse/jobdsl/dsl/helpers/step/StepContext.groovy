@@ -499,7 +499,7 @@ class StepContext extends AbstractExtensibleContext {
                 conditionalStepsContext.runCondition.addArgs(delegate)
             }
             runner(class: conditionalStepsContext.runnerClass)
-            conditionalbuilders(conditionalStepsContext.stepNodes)
+            conditionalbuilders(conditionalStepsContext.stepContext.stepNodes)
         }
     }
 
@@ -705,7 +705,10 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
-    StepContext newInstance() {
+    /**
+     * @since 1.35
+     */
+    protected StepContext newInstance() {
         new StepContext(jobManagement, item)
     }
 }

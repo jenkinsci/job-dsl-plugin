@@ -3487,89 +3487,104 @@ job('example-2') {
 }
 ```
 
-### [Conditional BuildStep Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Conditional+BuildStep+Plugin)
+### Conditional Build Steps
 
 ```groovy
-conditionalSteps {
-    condition {
-        // Only one condition is allowed.
-        alwaysRun() // Run no matter what
-        neverRun() // Never run
-        booleanCondition(String token) // Run if the token evaluates to true.
-        stringsMatch(String arg1, String arg2, boolean ignoreCase) // Run if the two strings match
-        cause(String buildCause, boolean exclusiveCondition) // Run if the build cause matches the given string
-        expression(String expression, String label) // Run if the regular expression matches the label
-        time(int earliestHour, int earliestMinute, int latestHour, int latestMinute,
-             boolean useBuildTime) // Run if the current (or build) time is between the given dates.
-        status(String worstResult, String bestResult) // Run if worstResult <= (current build status) <= bestResult
-        shell(String command) // Run if shell script succeeds (Since 1.23)
-        batch(String command) // Run if batch script succeeds (Since 1.23)
-        fileExists(String file, BaseDir baseDir) // Run if file exists relative to baseDir. BaseDir can be one of JENKINS_HOME, ARTIFACTS_DIR and WORKSPACE (Since 1.23)
-        not(Closure condition) // Run if the condition is not satisfied (Since 1.23)
-        and(Closure... conditions) // Run if all conditions are satisfied (Since 1.23)
-        or(Closure... conditions) // Run if any condition is satisfied (Since 1.23)
-    }
-    runner(String runner) // How to evaluate the results of a failure in the conditional step
-    (one or more build steps)
-}
-```
-
-See the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin) for details on the run conditions - note that not all run conditions supported by the Run Condition Plugin are supported here yet.
-
-The worstResult and bestResult for status can be any of the following strings:
-"SUCCESS", "UNSTABLE", "FAILURE",  "NOT_BUILT", or "ABORTED".
-The runner can be any one of "Fail", "Unstable", "RunUnstable", "Run", "DontRun".
-
-Examples:
-```groovy
-steps {
-    conditionalSteps {
-        condition {
-            stringsMatch('${SOME_PARAMETER}', 'pants', false)
-        }
-        runner("Fail")
-        shell("echo 'just one step'")
-    }
-}
-```
-
-```groovy
-steps {
-    conditionalSteps {
-        condition {
-            time(9, 0, 13, 0, false)
-        }
-        runner("Unstable")
-        shell("echo 'a first step'")
-        ant('build') {
-            target 'test'
+job {
+    steps {
+        conditionalSteps {
+            condition {                      // only one condition is allowed
+                alwaysRun()                  // run no matter what
+                neverRun()                   // never run
+                booleanCondition(String token)
+                stringsMatch(String arg1, String arg2, boolean ignoreCase)
+                cause(String buildCause, boolean exclusiveCondition)
+                expression(String expression, String label)
+                time(int earliestHour, int earliestMinute, int latestHour,
+                     int latestMinute, boolean useBuildTime)
+                status(String worstResult, String bestResult)
+                shell(String command)                           // since 1.23
+                batch(String command)                           // since 1.23
+                fileExists(String file, BaseDir baseDir)        // since 1.23
+                not(Closure condition)                          // since 1.23
+                and(Closure... conditions)                      // since 1.23
+                or(Closure... conditions)                       // since 1.23
+            }
+            runner(String runner)
+            steps(Closure stepClosure) // one or more build steps, since 1.35
+            // using build steps directly is deprecated since 1.35
         }
     }
 }
 ```
 
+Wraps any number of other build steps, controlling their execution based on a defined condition. Requires the
+[Conditional BuildStep Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Conditional+BuildStep+Plugin). See the
+[Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin) for details on the run
+conditions - note that not all run conditions supported by the Run Condition Plugin are supported here yet.
+
+The values for `worstResult` and `bestResult` can be any of the following strings: `'SUCCESS'`, `'UNSTABLE'`,
+`'FAILURE'`, `'NOT_BUILT'`, or `'ABORTED'`. The runner can be any one of `'Fail'`, `'Unstable'`, `'RunUnstable'`,
+`'Run'`, `'DontRun'`. Valid values for `baseDir` are `BaseDir.JENKINS_HOME`, `BaseDir.ARTIFACTS_DIR` and
+`BaseDir.WORKSPACE`.
+
 ```groovy
-steps {
-    conditionalSteps {
-        condition {
-            and {
-                status('ABORTED', 'FAILURE')
-            } {
-                not {
-                   fileExists('script.sh', BaseDir.WORKSPACE)
+job('example-1') {
+    steps {
+        conditionalSteps {
+            condition {
+                stringsMatch('${SOME_PARAMETER}', 'pants', false)
+            }
+            runner('Fail')
+            steps {
+                shell("echo 'just one step'")
+            }
+        }
+    }
+}
+
+job('example-2') {
+    steps {
+        conditionalSteps {
+            condition {
+                time(9, 0, 13, 0, false)
+            }
+            runner('Unstable')
+            steps {
+                shell("echo 'a first step'")
+                ant('build') {
+                    target('test')
                 }
             }
         }
-        runner("Unstable")
-        shell("echo 'a first step'")
-        ant('build') {
-            target 'test'
+    }
+}
+
+job('example-3') {
+    steps {
+        conditionalSteps {
+            condition {
+                and {
+                    status('ABORTED', 'FAILURE')
+                } {
+                    not {
+                       fileExists('script.sh', BaseDir.WORKSPACE)
+                    }
+                }
+            }
+            runner('Unstable')
+            steps {
+                shell("echo 'a first step'")
+                ant('build') {
+                    target('test')
+                }
+            }
         }
     }
 }
 ```
 
-(Since 1.20)
+(since 1.20)
 
 ### Repository Connector
 

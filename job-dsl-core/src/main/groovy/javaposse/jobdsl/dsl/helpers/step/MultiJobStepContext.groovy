@@ -76,7 +76,7 @@ class MultiJobStepContext extends StepContext {
     }
 
     @Override
-    StepContext newInstance() {
+    protected StepContext newInstance() {
         new MultiJobStepContext(jobManagement, item)
     }
 }

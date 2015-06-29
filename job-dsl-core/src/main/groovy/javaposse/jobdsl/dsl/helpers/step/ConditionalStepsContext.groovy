@@ -9,30 +9,25 @@ import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 import static com.google.common.base.Preconditions.checkArgument
 
-class ConditionalStepsContext<T extends StepContext> extends AbstractContext {
+class ConditionalStepsContext extends AbstractContext {
     RunCondition runCondition
     String runnerClass
-    T stepContext
+    final StepContext stepContext
 
-    ConditionalStepsContext(JobManagement jobManagement, T freshStepContext) {
+    ConditionalStepsContext(JobManagement jobManagement, StepContext stepContext) {
         super(jobManagement)
-        this.stepContext = freshStepContext
+        this.stepContext = stepContext
     }
 
     Object methodMissing(String name, args) {
+        Object result
         if (stepContext.respondsTo(name)) {
-            stepContext."$name"(*args)
+            result = stepContext."$name"(*args)
         } else {
-            stepContext.methodMissing(name, args)
+            result = stepContext.methodMissing(name, args)
         }
-    }
-
-    Object propertyMissing(String name) {
-        if (stepContext.hasProperty(name)) {
-            stepContext."$name"
-        } else {
-            throw new MissingPropertyException(name, ConditionalStepsContext)
-        }
+        jobManagement.logDeprecationWarning('using build steps outside the nested steps context of conditionalSteps')
+        result
     }
 
     void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
@@ -69,7 +64,7 @@ class ConditionalStepsContext<T extends StepContext> extends AbstractContext {
         }
     }
 
-    void steps(@DslContext(T) Closure stepContextClosure) {
+    void steps(@DslContext(StepContext) Closure stepContextClosure) {
         ContextHelper.executeInContext(stepContextClosure, stepContext)
     }
 }
