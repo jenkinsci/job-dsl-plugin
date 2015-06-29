@@ -495,7 +495,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'conditional-buildstep')
     void conditionalSteps(@DslContext(ConditionalStepsContext) Closure conditionalStepsClosure) {
-        ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement, item)
+        ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement, newInstance())
         ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
         stepNodes << new NodeBuilder().'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
@@ -707,5 +707,9 @@ class StepContext extends AbstractExtensibleContext {
             signPackage(context.signPackage)
             buildEvenWhenThereAreNoChanges(context.alwaysBuild)
         }
+    }
+
+    StepContext newInstance() {
+        new StepContext(jobManagement, item)
     }
 }

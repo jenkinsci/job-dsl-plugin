@@ -1,19 +1,37 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 import static com.google.common.base.Preconditions.checkArgument
 
-class ConditionalStepsContext extends StepContext {
+class ConditionalStepsContext extends AbstractContext {
     RunCondition runCondition
     String runnerClass
+    StepContext stepContext
 
-    ConditionalStepsContext(JobManagement jobManagement, Item item) {
-        super(jobManagement, item)
+    ConditionalStepsContext(JobManagement jobManagement, StepContext freshStepContext) {
+        super(jobManagement)
+        this.stepContext = freshStepContext
+    }
+
+    Object methodMissing(String name, args) {
+        if (stepContext.respondsTo(name)) {
+            stepContext."$name"(*args)
+        } else {
+            stepContext.methodMissing(name, args)
+        }
+    }
+
+    Object propertyMissing(String name) {
+        if (stepContext.hasProperty(name)) {
+            stepContext."$name"
+        } else {
+            throw new MissingPropertyException(name, ConditionalStepsContext)
+        }
     }
 
     void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
