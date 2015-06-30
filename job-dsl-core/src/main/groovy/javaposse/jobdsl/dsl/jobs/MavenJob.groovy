@@ -16,6 +16,9 @@ import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 
+import static javaposse.jobdsl.dsl.helpers.common.DownstreamContext.THRESHOLD_COLOR_MAP
+import static javaposse.jobdsl.dsl.helpers.common.DownstreamContext.THRESHOLD_ORDINAL_MAP
+
 class MavenJob extends Job {
     private final List<String> mavenGoals = []
     private final List<String> mavenOpts = []
@@ -198,10 +201,28 @@ class MavenJob extends Job {
      * @since 1.20
      */
     void postBuildSteps(@DslContext(StepContext) Closure postBuildClosure) {
+        postBuildSteps('FAILURE', postBuildClosure)
+    }
+
+    /**
+     * @since 1.35
+     */
+    void postBuildSteps(String thresholdName, @DslContext(StepContext) Closure postBuildClosure) {
+        Preconditions.checkArgument(
+            THRESHOLD_COLOR_MAP.containsKey(thresholdName),
+            "thresholdName must be one of these values ${THRESHOLD_COLOR_MAP.keySet().join(',')}"
+        )
+
         StepContext postBuildContext = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
+            project / runPostStepsIfResult {
+                delegate.name(thresholdName)
+                ordinal(THRESHOLD_ORDINAL_MAP[thresholdName])
+                color(THRESHOLD_COLOR_MAP[thresholdName])
+                completeBuild(true)
+            }
             postBuildContext.stepNodes.each {
                 project / 'postbuilders' << it
             }
