@@ -611,6 +611,16 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * @since 1.35
+     */
+    @RequiresPlugin(id = 'fail-the-build-plugin')
+    void setBuildResult(String result) {
+        stepNodes << new NodeBuilder().'org.jenkins__ci.plugins.fail__the__build.FixResultBuilder' {
+            'defaultResultName' result
+        }
+    }
+
+    /**
      * @since 1.25
      */
     void vSpherePowerOff(String server, String vm) {

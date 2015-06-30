@@ -186,6 +186,7 @@ freeStyleJob(String name) { // since 1.30
         resolveArtifacts(Closure repositoryConnectorClosure) // since 1.29
         sbt(String sbtName = null, String actions = null, String sbtFlags = null,
             String jvmFlags = null, String subdirPath = null, Closure configure = null)
+        setBuildResult(String result) // since 1.35
         shell(String command)
         systemGroovyCommand(String command, Closure systemGroovyClosure = null)
         systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null)
@@ -2934,6 +2935,32 @@ job('example') {
 ```
 
 (Since 1.25)
+
+### Set the Build Result
+
+```groovy
+job {
+    steps {
+        setBuildResult(String result)
+    }
+}
+```
+
+Set the build status. Possible values are 'SUCCESS', 'UNSTABLE', 'FAILED', 'ABORTED', 'CYCLE'.
+
+You can only worsen the current build status, not improve it.
+
+Requires the [Fail The Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Fail+The+Build+Plugin).
+
+```groovy
+job {
+    steps {
+        setBuildResult 'UNSTABLE'
+    }
+}
+```
+
+(since 1.35)
 
 ### Job DSL
 

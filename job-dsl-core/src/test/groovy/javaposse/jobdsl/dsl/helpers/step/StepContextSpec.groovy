@@ -2433,6 +2433,19 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('rake')
     }
 
+    def 'call setBuildResult'() {
+        when:
+        context.setBuildResult('UNSTABLE')
+
+        then:
+        context.stepNodes.size() == 1
+        def step = context.stepNodes[0]
+        step.name() == 'org.jenkins__ci.plugins.fail__the__build.FixResultBuilder'
+        step.children().size == 1
+        step.defaultResultName[0].value() == 'UNSTABLE'
+        1 * jobManagement.requirePlugin('fail-the-build-plugin')
+    }
+
     def 'vSphere power off'() {
         setup:
         jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
