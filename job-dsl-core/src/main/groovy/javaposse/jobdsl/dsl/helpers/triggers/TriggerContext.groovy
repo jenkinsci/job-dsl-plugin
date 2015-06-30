@@ -297,4 +297,31 @@ class TriggerContext extends AbstractExtensibleContext {
             }
         }
     }
+
+    /**
+     * Configures the stash-pullrequest-builer plugin.
+     */
+    @RequiresPlugin(id = 'stash-pullrequest-builder')
+    void stashPullRequestTrigger(@DslContext(StashPullRequestContext) Closure closure = null) {
+        StashPullRequestContext context = new StashPullRequestContext()
+        ContextHelper.executeInContext(closure, context)
+
+        triggerNodes << new NodeBuilder().'stashpullrequestbuilder.stashpullrequestbuilder.StashBuildTrigger' {
+            spec context.cron
+            projectPath ''
+            delegate.cron context.cron
+            stashHost context.stashHost
+            username context.username
+            password context.password
+            projectCode context.projectCode
+            repositoryName context.repositoryName
+            ciSkipPhrases context.ciSkipPhrases
+            checkDestinationCommit context.checkDestinationCommit
+            checkMergeable context.checkMergeable
+            checkNotConflicted context.checkNotConflicted
+            onlyBuildOnComment context.onlyBuildOnComment
+            ciBuildPhrases context.ciBuildPhrases
+        }
+    }
+
 }

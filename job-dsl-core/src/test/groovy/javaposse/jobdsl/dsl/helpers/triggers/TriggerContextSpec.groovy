@@ -709,4 +709,67 @@ class TriggerContextSpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+
+    def 'call stashPullRequest trigger with default options'() {
+        when:
+        context.stashPullRequestTrigger()
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'stashpullrequestbuilder.stashpullrequestbuilder.StashBuildTrigger'
+            children().size() == 14
+            spec[0].value().empty
+            cron[0].value().empty
+            stashHost[0].value().empty
+            username[0].value().empty
+            password[0].value().empty
+            projectCode[0].value().empty
+            repositoryName[0].value().empty
+            ciSkipPhrases[0].value().empty
+            checkDestinationCommit[0].value() == false
+            checkMergeable[0].value() == false
+            checkNotConflicted[0].value() == false
+            onlyBuildOnComment[0].value() == false
+            ciBuildPhrases[0].value().empty
+        }
+        1 * mockJobManagement.requirePlugin('stash-pullrequest-builder')
+    }
+
+    def 'call stashPullRequest trigger with all options'() {
+        when:
+        context.stashPullRequestTrigger {
+            cron '*****'
+            stashHost = 'host'
+            username = 'username'
+            password = 'password'
+            projectCode = 'project'
+            repositoryName = 'repository'
+            ciSkipPhrases = 'skip phrase'
+            checkDestinationCommit = true
+            checkMergeable = true
+            checkNotConflicted = true
+            onlyBuildOnComment = true
+            ciBuildPhrases = 'build phrase'
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'stashpullrequestbuilder.stashpullrequestbuilder.StashBuildTrigger'
+            children().size() == 14
+            spec[0].value() == '*****'
+            cron[0].value() == '*****'
+            stashHost[0].value() == 'host'
+            username[0].value() == 'username'
+            password[0].value() == 'password'
+            projectCode[0].value() == 'project'
+            repositoryName[0].value() == 'repository'
+            ciSkipPhrases[0].value() == 'skip phrase'
+            checkDestinationCommit[0].value() == true
+            checkMergeable[0].value() == true
+            checkNotConflicted[0].value() == true
+            onlyBuildOnComment[0].value() == true
+            ciBuildPhrases[0].value() == 'build phrase'
+        }
+        1 * mockJobManagement.requirePlugin('stash-pullrequest-builder')
+    }
 }
