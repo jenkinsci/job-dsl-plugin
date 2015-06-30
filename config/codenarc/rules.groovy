@@ -39,6 +39,10 @@ ruleset {
             characterAfterColonRegex = /\s/
             characterBeforeColonRegex = /./
         }
+        // empty blocks like {} are OK
+        SpaceBeforeClosingBrace {
+            ignoreEmptyBlock = true
+        }
 
         // we don't care for now
         exclude 'ClassJavadoc'
