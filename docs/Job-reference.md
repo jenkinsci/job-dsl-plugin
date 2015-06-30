@@ -1082,6 +1082,8 @@ job {
             ignoreNotifyCommit(boolean value = true) // since 1.33
             browser { // since 1.26
                 stash(String url) // URL to the Stash repository, optional
+                gitblit(String url, String projectName) // since 1.35
+                gitLab(String url, String version)      // since 1.35
             }
             strategy { // since 1.30
                 inverse()

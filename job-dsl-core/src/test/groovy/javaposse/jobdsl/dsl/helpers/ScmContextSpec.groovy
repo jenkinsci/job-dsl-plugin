@@ -1040,6 +1040,46 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('git')
     }
 
+    def 'call git scm with gitblitBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitblit('http://gitblit', 'prj-name')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GitBlitRepositoryBrowser'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://gitblit'
+        context.scmNodes[0].browser[0].'projectName'[0].value() == 'prj-name'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with gitlabBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitLab('http://gitlab', '7.9')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GitLab'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://gitlab'
+        context.scmNodes[0].browser[0].'version'[0].value() == '7.9'
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
     def 'call git scm with ignoreNotifyCommit'() {
         when:
         context.git {
