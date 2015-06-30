@@ -1067,7 +1067,7 @@ class ScmContextSpec extends Specification {
                 url('https://github.com/jenkinsci/job-dsl-plugin.git')
             }
             browser {
-                gitlab('http://gitlab', '7.9')
+                gitLab('http://gitlab', '7.9')
             }
         }
 

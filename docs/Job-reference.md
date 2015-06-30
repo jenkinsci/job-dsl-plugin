@@ -1029,9 +1029,8 @@ job {
             ignoreNotifyCommit(boolean value = true) // since 1.33
             browser { // since 1.26
                 stash(String url) // URL to the Stash repository, optional
-                // since 1.35
-                gitblit(String url, String projectName) // GitBlit root URL, project name in GitBlit, optional
-                gitlab(String url, String version) // URL to the Gitlab repository, Major.Minor gitlab version (ex: 7.9), optional
+                gitblit(String url, String projectName) // since 1.35
+                gitLab(String url, String version)      // since 1.35
             }
             strategy { // since 1.30
                 inverse()

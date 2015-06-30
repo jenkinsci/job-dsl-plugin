@@ -11,6 +11,9 @@ class GitBrowserContext implements Context {
         }
     }
 
+    /**
+     * @since 1.35
+     */
     void gitblit(String url, String projectName) {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GitBlitRepositoryBrowser') {
             delegate.url(url)
@@ -18,7 +21,10 @@ class GitBrowserContext implements Context {
         }
     }
 
-    void gitlab(String url, String version) {
+    /**
+     * @since 1.35
+     */
+    void gitLab(String url, String version) {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GitLab') {
             delegate.url(url)
             delegate.version(version)
