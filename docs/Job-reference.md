@@ -344,6 +344,7 @@ mavenJob(String name) { // since 1.30
     runHeadless(boolean shouldRunHeadless)
     preBuildSteps(Closure stepsClosure)
     postBuildSteps(Closure stepsClosure)
+    postBuildSteps(String threshold, Closure stepsClosure) // since 1.35
     providedSettings(String mavenSettingsName) // since 1.25
     disableDownstreamTrigger(boolean value = true) // since 1.35
     wrappers {
@@ -892,15 +893,19 @@ mavenJob('example') {
 
 ```groovy
 mavenJob {
-    preBuildSteps(Closure mavenPreBuildClosure)
-    postBuildSteps(String thresholdName = 'FAILURE', Closure mavenPostBuildClosure)
+    preBuildSteps(Closure stepsClosure)
+    postBuildSteps(Closure stepsClosure)
+    postBuildSteps(String thresholdName, Closure stepsClosure) // since 1.35
 }
 ```
 
-For Maven jobs, you can also run arbitrary build steps before and after the Maven execution. Note that this can only be used with Maven jobs.
+For Maven jobs, you can also run arbitrary build steps before and after the Maven execution. Note that this can only be
+used with Maven jobs. You can also also specify a threshold for the build result when to run the postBuildSteps.
+The thresholdName can be one of three values: `'SUCCESS'`, `'UNSTABLE'` or `'FAILURE'`. The default value is
+`'FAILURE'`, i.e. always run the post build steps.
 
 ```groovy
-mavenJob('example') {
+mavenJob('example-1') {
   preBuildSteps {
     shell("echo 'run before Maven'")
   }
@@ -908,13 +913,9 @@ mavenJob('example') {
     shell("echo 'run after Maven'")
   }
 }
-```
 
-For Maven jobs, you can also also specify a threshold for the build result when to run the postBuildSteps. The thresholdName can be one of three values: 'SUCCESS', 'UNSTABLE' or 'FAILURE'. The default value is 'FAILURE', i.e. always run the post build steps.
-In the following example the post build steps would only be executed when the build result is 'SUCCESS'
-
-```groovy
-mavenJob('example') {
+mavenJob('example-2') {
+  // run post build steps only when the build succeeds
   postBuildSteps('SUCCESS') {
     shell("echo 'run after Maven'")
   }
