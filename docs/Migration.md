@@ -1,3 +1,11 @@
+## Migrating to 1.35
+
+### Matrix Authorization
+
+Support for versions older than 1.2 of the
+[Matrix Authorization Strategy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Authorization+Strategy+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.34
 
 ### Conditional Build Steps
