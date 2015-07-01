@@ -28,7 +28,7 @@ installation.
     }
 
     dependencies {
-        compile 'org.jenkins-ci.plugins:job-dsl-core:1.34'
+        compile 'org.jenkins-ci.plugins:job-dsl-core:1.35'
     }
 
 Job DSL scripts must use the `.groovy` file name extension to let IDEA apply the DSL support.
@@ -40,7 +40,7 @@ Implementation Details
 ----------------------
 
 The Job DSL core library provides a
-[script](https://github.com/jenkinsci/job-dsl-plugin/blob/job-dsl-1.34/job-dsl-core/src/main/resources/javaposse/jobdsl/dsl/idea.gdsl)
+[script](https://github.com/jenkinsci/job-dsl-plugin/blob/job-dsl-1.35/job-dsl-core/src/main/resources/javaposse/jobdsl/dsl/idea.gdsl)
 for the
 [IDEA GroovyDSL scripting framework](https://confluence.jetbrains.com/display/GRVY/Scripting+IDE+for+DSL+awareness).
 IDEA will automatically pick-up the script and enable the DSL support when the Job DSL core library is used as an
