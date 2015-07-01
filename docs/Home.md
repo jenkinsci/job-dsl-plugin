@@ -52,6 +52,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-26561](https://issues.jenkins-ci.org/browse/JENKINS-26561))
  * Added documentation for [[IDE Support]]
  * Added documentation about [logging](Job-DSL-Commands#logging)
+ * Write output files for `FileJobManagment` to the same directory as the input files
  * Support for the older versions of the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see [[Migration]]
  * Support for the older versions of the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is deprecated, see [[Migration]]
  * Support for the older versions of the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin) is deprecated, see [[Migration]]
