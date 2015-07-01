@@ -40,7 +40,9 @@ class FileJobManagement extends MockJobManagement {
 
         validateUpdateArgs(jobName, config)
 
-        new File(root, jobName + ext).write(config)
+        File file = new File(root, jobName + ext)
+        file.parentFile.mkdirs()
+        file.write(config)
         true
     }
 
@@ -48,7 +50,9 @@ class FileJobManagement extends MockJobManagement {
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
         validateUpdateArgs(viewName, config)
 
-        new File(root, viewName + ext).write(config)
+        File file = new File(root, viewName + ext)
+        file.parentFile.mkdirs()
+        file.write(config)
     }
 
     InputStream streamFileInWorkspace(String filePath) {

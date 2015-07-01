@@ -82,6 +82,15 @@ class FileJobManagementSpec extends Specification {
         new File(tempFolder, 'foo.xml').text == 'bar'
     }
 
+    def 'createOrUpdateConfig creates config in folder'() {
+        when:
+        boolean result = jobManagement.createOrUpdateConfig('foo/bar', 'baz', false)
+
+        then:
+        result
+        new File(tempFolder, 'foo/bar.xml').text == 'baz'
+    }
+
     def 'createOrUpdateView complains about missing name'(String name) {
         when:
         jobManagement.createOrUpdateView(name, 'bar', false)
@@ -110,6 +119,14 @@ class FileJobManagementSpec extends Specification {
 
         then:
         new File(tempFolder, 'foo.xml').text == 'bar'
+    }
+
+    def 'createOrUpdateView creates config in folder'() {
+        when:
+        jobManagement.createOrUpdateView('foo/bar', 'baz', false)
+
+        then:
+        new File(tempFolder, 'foo/bar.xml').text == 'baz'
     }
 
     def 'createOrUpdateConfigFile is not supported'() {
