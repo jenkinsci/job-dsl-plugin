@@ -16,6 +16,8 @@ import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
 
 class StepContext extends AbstractExtensibleContext {
+    private final static VALID_BUILD_RESULTS = ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
+
     final List<Node> stepNodes = []
 
     StepContext(JobManagement jobManagement, Item item) {
@@ -613,10 +615,14 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * @since 1.35
      */
-    @RequiresPlugin(id = 'fail-the-build-plugin')
+    @RequiresPlugin(id = 'fail-the-build-plugin', minimumVersion = '1.0')
     void setBuildResult(String result) {
+        Preconditions.checkArgument(
+                VALID_BUILD_RESULTS.contains(result),
+                "result must be on of ${VALID_BUILD_RESULTS.join(', ')}"
+        )
         stepNodes << new NodeBuilder().'org.jenkins__ci.plugins.fail__the__build.FixResultBuilder' {
-            'defaultResultName' result
+            'defaultResultName'(result)
         }
     }
 

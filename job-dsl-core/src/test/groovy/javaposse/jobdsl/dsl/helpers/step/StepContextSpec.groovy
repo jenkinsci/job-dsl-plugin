@@ -2435,15 +2435,26 @@ class StepContextSpec extends Specification {
 
     def 'call setBuildResult'() {
         when:
-        context.setBuildResult('UNSTABLE')
+        context.setBuildResult(result)
 
         then:
-        context.stepNodes.size() == 1
-        def step = context.stepNodes[0]
-        step.name() == 'org.jenkins__ci.plugins.fail__the__build.FixResultBuilder'
-        step.children().size == 1
-        step.defaultResultName[0].value() == 'UNSTABLE'
-        1 * jobManagement.requirePlugin('fail-the-build-plugin')
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.fail__the__build.FixResultBuilder'
+            children().size == 1
+            defaultResultName[0].value() == result
+        }
+        1 * jobManagement.requireMinimumPluginVersion('fail-the-build-plugin', '1.0')
+
+        where:
+        result << ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
+    }
+
+    def 'call setBuildResult with invalid result'() {
+        when:
+        context.setBuildResult('FOO')
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def 'vSphere power off'() {

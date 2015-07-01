@@ -2946,16 +2946,16 @@ job {
 }
 ```
 
-Set the build status. Possible values are 'SUCCESS', 'UNSTABLE', 'FAILED', 'ABORTED', 'CYCLE'.
+Set the build status. Possible values are `'SUCCESS'`, `'UNSTABLE'`, `'FAILURE'`, `'ABORTED'`, `'CYCLE'`.
 
 You can only worsen the current build status, not improve it.
 
 Requires the [Fail The Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Fail+The+Build+Plugin).
 
 ```groovy
-job {
+job('example') {
     steps {
-        setBuildResult 'UNSTABLE'
+        setBuildResult('UNSTABLE')
     }
 }
 ```
