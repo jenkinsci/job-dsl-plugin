@@ -1,8 +1,11 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
+import javaposse.jobdsl.dsl.views.gridbuilder.DownstreamProjectGridBuilderContext
 
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkNotNull
 
@@ -16,6 +19,36 @@ class BuildPipelineView extends View {
 
         execute {
             it / noOfDisplayedBuilds(displayedBuilds)
+        }
+    }
+
+    /**
+     * <filterExecutors>true</filterExecutors>
+     */
+    void filterExecutors(boolean filterExecutors = false) {
+        execute {
+            it / methodMissing('filterExecutors', filterExecutors)
+        }
+    }
+
+    /**
+     * <filterQueue>true</filterQueue>
+     */
+    void filterQueue(boolean filterQueue = false) {
+        execute {
+            it / methodMissing('filterQueue', filterQueue)
+        }
+    }
+
+    void downstreamProject(@DslContext(DownstreamProjectGridBuilderContext) Closure gridBuilderClosure) {
+        DownstreamProjectGridBuilderContext gridBuilderContext = new DownstreamProjectGridBuilderContext()
+        executeInContext(gridBuilderClosure, gridBuilderContext)
+        Node aGridBuilder = NodeBuilder.newInstance().
+                gridBuilder(class: 'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder') {
+            firstJob gridBuilderContext.firstJob
+        }
+        execute {
+            it << aGridBuilder
         }
     }
 
