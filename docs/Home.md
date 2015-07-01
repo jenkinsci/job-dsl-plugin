@@ -16,6 +16,7 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
+* 1.36 (unreleased)
 * 1.35 (July 01 2015)
  * Added support for the [Build Flow Test Aggregator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Test+Aggregator+Plugin)
    ([JENKINS-28851](https://issues.jenkins-ci.org/browse/JENKINS-28851))
