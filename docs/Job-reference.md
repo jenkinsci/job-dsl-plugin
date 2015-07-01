@@ -41,6 +41,7 @@ freeStyleJob(String name) { // since 1.30
         permission(String permission, String user)
         permission(Permissions perm, String user) // deprecated since 1.31
         permissionAll(String user)
+        blocksInheritance(boolean blocksInheritance = true) // since 1.35 
     }
     parameters {
         booleanParam(String parameterName, boolean defaultValue = false,
@@ -604,6 +605,7 @@ job {
         permission(String permission, String user)
         permissionAll(String user)
         permission(Permissions perm, String user) // deprecated since 1.31
+        blocksInheritance(boolean blocksInheritance = true) // since 1.35 
     }
 }
 ```
@@ -630,10 +632,12 @@ job('example-2') {
     }
 }
 
-// add all permissions for user joe
+// add all permissions for user joe, blocking inheritance of the global
+// authorization matrix
 job('example-3') {
     authorization {
         permissionAll('joe')
+        blocksInheritance()
     }
 }
 ```

@@ -168,13 +168,67 @@ class JobSpec extends Specification {
         }
 
         then:
-        NodeList permissions = job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
-        permissions.size() == 4
-        permissions[0].text() == 'hudson.model.Item.Configure:jill'
-        permissions[1].text() == 'hudson.model.Item.Configure:jack'
-        permissions[2].text() == 'hudson.model.Item.Read:jack'
-        permissions[3].text() == 'hudson.model.Run.Update:joe'
+        with(job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0]) {
+            children().size() == 5
+            blocksInheritance[0].value() == false
+            permission.size() == 4
+            permission[0].text() == 'hudson.model.Item.Configure:jill'
+            permission[1].text() == 'hudson.model.Item.Configure:jack'
+            permission[2].text() == 'hudson.model.Item.Read:jack'
+            permission[3].text() == 'hudson.model.Run.Update:joe'
+        }
         1 * jobManagement.requirePlugin('matrix-auth')
+    }
+
+    def 'call authorization with blocksInheritance'() {
+        setup:
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+        ]
+
+        when:
+        job.authorization {
+            permission('hudson.model.Item.Configure:jill')
+            permission('hudson.model.Item.Configure:jack')
+            blocksInheritance()
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0]) {
+            children().size() == 3
+            blocksInheritance[0].value() == true
+            permission.size() == 2
+            permission[0].text() == 'hudson.model.Item.Configure:jill'
+            permission[1].text() == 'hudson.model.Item.Configure:jack'
+        }
+        1 * jobManagement.requirePlugin('matrix-auth')
+        1 * jobManagement.requireMinimumPluginVersion('matrix-auth', '1.2')
+    }
+
+    def 'call authorization with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('matrix-auth') >> new VersionNumber('1.1')
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+        ]
+
+        when:
+        job.authorization {
+            permission('hudson.model.Item.Configure:jill')
+            permission('hudson.model.Item.Configure:jack')
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0]) {
+            children().size() == 2
+            permission.size() == 2
+            permission[0].text() == 'hudson.model.Item.Configure:jill'
+            permission[1].text() == 'hudson.model.Item.Configure:jack'
+        }
+        1 * jobManagement.requirePlugin('matrix-auth')
+        1 * jobManagement.logDeprecationWarning(
+                'support for Matrix Authorization Strategy plugin versions older than 1.2'
+        )
     }
 
     def 'call parameters via helper'() {
