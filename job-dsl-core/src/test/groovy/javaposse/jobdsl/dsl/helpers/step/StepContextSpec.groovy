@@ -2433,6 +2433,30 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('rake')
     }
 
+    def 'call setBuildResult'() {
+        when:
+        context.setBuildResult(result)
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.fail__the__build.FixResultBuilder'
+            children().size == 1
+            defaultResultName[0].value() == result
+        }
+        1 * jobManagement.requireMinimumPluginVersion('fail-the-build-plugin', '1.0')
+
+        where:
+        result << ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
+    }
+
+    def 'call setBuildResult with invalid result'() {
+        when:
+        context.setBuildResult('FOO')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'vSphere power off'() {
         setup:
         jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711

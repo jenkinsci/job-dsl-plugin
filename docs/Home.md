@@ -21,6 +21,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-28851](https://issues.jenkins-ci.org/browse/JENKINS-28851))
  * Added support for the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin)
    ([JENKINS-28985](https://issues.jenkins-ci.org/browse/JENKINS-28985))
+ * Added support for the [Fail The Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Fail+The+Build+Plugin)
  * Added closure method for logRotator
  * Allow to extend the trigger context
    ([JENKINS-28562](https://issues.jenkins-ci.org/browse/JENKINS-28562))
