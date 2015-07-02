@@ -132,11 +132,7 @@ class TriggerContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ghprb')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
-        if (jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
-            jobManagement.logDeprecationWarning(
-                    'support for GitHub pull request builder plugin versions older than 1.15-0'
-            )
-        }
+        jobManagement.logPluginDeprecationWarning('ghprb', '1.15-0')
 
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)

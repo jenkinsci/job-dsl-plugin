@@ -347,9 +347,7 @@ class TriggerContextSpec extends Specification {
             orgslist[0].value() == ''
         }
         1 * mockJobManagement.requirePlugin('ghprb')
-        1 * mockJobManagement.logDeprecationWarning(
-                'support for GitHub pull request builder plugin versions older than 1.15-0'
-        )
+        1 * mockJobManagement.logPluginDeprecationWarning('ghprb', '1.15-0')
     }
 
     def 'call pull request trigger with plugin version 1.14'() {
@@ -377,9 +375,7 @@ class TriggerContextSpec extends Specification {
             commentFilePath[0].value() == ''
         }
         1 * mockJobManagement.requirePlugin('ghprb')
-        1 * mockJobManagement.logDeprecationWarning(
-                'support for GitHub pull request builder plugin versions older than 1.15-0'
-        )
+        1 * mockJobManagement.logPluginDeprecationWarning('ghprb', '1.15-0')
     }
 
     def 'call pull request trigger with multiple admins and orgs'() {

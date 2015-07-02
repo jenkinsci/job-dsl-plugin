@@ -474,7 +474,7 @@ class StepContextSpec extends Specification {
             usePrivateRepository[0].value() == false
         }
         1 * jobManagement.requirePlugin('maven-plugin')
-        1 * jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
+        1 * jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
     }
 
     def 'call ant methods'() {

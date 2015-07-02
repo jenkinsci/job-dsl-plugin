@@ -2022,7 +2022,7 @@ class PublisherContextSpec extends Specification {
             otherFiles[0].value().empty
         }
         1 * jobManagement.requirePlugin('robot')
-        1 * jobManagement.logDeprecationWarning(_)
+        1 * jobManagement.logPluginDeprecationWarning('robot', '1.4.3')
     }
 
     def 'publish Robot framework report using default values and very old plugin version'() {
@@ -2045,7 +2045,7 @@ class PublisherContextSpec extends Specification {
             outputFileName[0].value() == 'output.xml'
         }
         1 * jobManagement.requirePlugin('robot')
-        1 * jobManagement.logDeprecationWarning(_)
+        1 * jobManagement.logPluginDeprecationWarning('robot', '1.4.3')
     }
 
     def 'publish Robot framework report using all options'() {
@@ -3052,7 +3052,7 @@ class PublisherContextSpec extends Specification {
             userMetadata[0].value().empty
         }
         1 * jobManagement.requirePlugin('s3')
-        1 * jobManagement.logDeprecationWarning(_)
+        1 * jobManagement.logPluginDeprecationWarning('s3', '0.7')
     }
 
     def 'call flexible publish'() {

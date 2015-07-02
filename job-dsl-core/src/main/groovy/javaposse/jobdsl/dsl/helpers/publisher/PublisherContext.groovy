@@ -805,9 +805,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'robot')
     void publishRobotFrameworkReports(@DslContext(RobotFrameworkContext) Closure robotClosure = null) {
-        if (jobManagement.getPluginVersion('robot')?.isOlderThan(new VersionNumber('1.4.3'))) {
-            jobManagement.logDeprecationWarning('support for Robot Framework plugin versions older than 1.4.3')
-        }
+        jobManagement.logPluginDeprecationWarning('robot', '1.4.3')
 
         RobotFrameworkContext context = new RobotFrameworkContext(jobManagement)
         ContextHelper.executeInContext(robotClosure, context)
@@ -966,9 +964,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'flexible-publish')
     void flexiblePublish(@DslContext(FlexiblePublisherContext) Closure flexiblePublishClosure) {
-        if (jobManagement.getPluginVersion('flexible-publish')?.isOlderThan(new VersionNumber('0.13'))) {
-            jobManagement.logDeprecationWarning('support for Flexible Publish plugin versions older than 0.13')
-        }
+        jobManagement.logPluginDeprecationWarning('flexible-publish', '0.13')
 
         FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement, item)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
@@ -1056,6 +1052,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 's3')
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
+        jobManagement.logPluginDeprecationWarning('s3', '0.7')
+
         checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
 
         S3BucketPublisherContext context = new S3BucketPublisherContext(jobManagement)

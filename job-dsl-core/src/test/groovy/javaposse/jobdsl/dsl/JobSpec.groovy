@@ -226,9 +226,7 @@ class JobSpec extends Specification {
             permission[1].text() == 'hudson.model.Item.Configure:jack'
         }
         1 * jobManagement.requirePlugin('matrix-auth')
-        1 * jobManagement.logDeprecationWarning(
-                'support for Matrix Authorization Strategy plugin versions older than 1.2'
-        )
+        1 * jobManagement.logPluginDeprecationWarning('matrix-auth', '1.2')
     }
 
     def 'call parameters via helper'() {

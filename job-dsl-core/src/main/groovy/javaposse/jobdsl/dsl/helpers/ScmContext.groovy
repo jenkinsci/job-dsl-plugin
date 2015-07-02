@@ -41,9 +41,9 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'mercurial')
     void hg(String url, String branch = null, Closure configure = null) {
-        if (jobManagement.getPluginVersion('mercurial')?.isOlderThan(new VersionNumber('1.50.1'))) {
-            jobManagement.logDeprecationWarning('support for Mercurial plugin versions older than 1.50.1')
+        jobManagement.logPluginDeprecationWarning('mercurial', '1.50.1')
 
+        if (jobManagement.getPluginVersion('mercurial')?.isOlderThan(new VersionNumber('1.50.1'))) {
             checkNotNull(url)
 
             Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {

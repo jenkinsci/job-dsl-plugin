@@ -166,6 +166,12 @@ interface JobManagement {
     void logDeprecationWarning(String subject, String scriptName, int lineNumber)
 
     /**
+     * Logs a deprecation warning for the given plugin if the installed plugin version is older then the given version.
+     * @since 1.36
+     */
+    void logPluginDeprecationWarning(String pluginShortName, String minimumVersion)
+
+    /**
      * Logs a warning and sets the build status to unstable if given plugin is not installed.
      *
      * @since 1.31

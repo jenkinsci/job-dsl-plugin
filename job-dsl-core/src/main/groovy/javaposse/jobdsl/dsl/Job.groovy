@@ -382,11 +382,7 @@ abstract class Job extends Item {
 
     @RequiresPlugin(id = 'matrix-auth')
     void authorization(@DslContext(JobAuthorizationContext) Closure closure) {
-        if (jobManagement.getPluginVersion('matrix-auth')?.isOlderThan(new VersionNumber('1.2'))) {
-            jobManagement.logDeprecationWarning(
-                    'support for Matrix Authorization Strategy plugin versions older than 1.2'
-            )
-        }
+        jobManagement.logPluginDeprecationWarning('matrix-auth', '1.2')
 
         JobAuthorizationContext context = new JobAuthorizationContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
