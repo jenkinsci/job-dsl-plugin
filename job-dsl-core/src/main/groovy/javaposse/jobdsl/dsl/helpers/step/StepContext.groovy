@@ -294,9 +294,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'maven-plugin')
     void maven(@DslContext(MavenContext) Closure closure) {
-        if (jobManagement.getPluginVersion('maven-plugin')?.isOlderThan(new VersionNumber('2.3'))) {
-            jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
-        }
+        jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
 
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
@@ -403,12 +401,10 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, @DslContext(CopyArtifactContext) Closure copyArtifactClosure = null) {
+        jobManagement.logPluginDeprecationWarning('copyartifact', '1.31')
+
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement)
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
-
-        if (jobManagement.getPluginVersion('copyartifact')?.isOlderThan(new VersionNumber('1.31'))) {
-            jobManagement.logDeprecationWarning('support for Copy Artifact plugin versions 1.30 and earlier')
-        }
 
         Node copyArtifactNode = new NodeBuilder().'hudson.plugins.copyartifact.CopyArtifact' {
             project(jobName)

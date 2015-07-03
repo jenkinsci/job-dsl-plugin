@@ -597,7 +597,6 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         2 * jobManagement.logDeprecationWarning()
-        1 * jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
     }
 
     def 'mavenJob'() {
@@ -623,7 +622,6 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('maven-plugin')
-        1 * jobManagement.logDeprecationWarning('support for Maven project plugin versions older than 2.3')
     }
 
     def 'multiJob deprecated variant'() {

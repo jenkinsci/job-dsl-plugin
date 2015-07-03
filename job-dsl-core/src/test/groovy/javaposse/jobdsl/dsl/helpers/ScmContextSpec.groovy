@@ -35,7 +35,7 @@ class ScmContextSpec extends Specification {
             branch[0].text() == ''
         }
         1 * mockJobManagement.requirePlugin('mercurial')
-        1 * mockJobManagement.logDeprecationWarning('support for Mercurial plugin versions older than 1.50.1')
+        1 * mockJobManagement.logPluginDeprecationWarning('mercurial', '1.50.1')
     }
 
     def 'call hg simple with branch and deprecated plugin version'() {
@@ -56,7 +56,7 @@ class ScmContextSpec extends Specification {
             clean[0].text() == 'false'
         }
         1 * mockJobManagement.requirePlugin('mercurial')
-        1 * mockJobManagement.logDeprecationWarning('support for Mercurial plugin versions older than 1.50.1')
+        1 * mockJobManagement.logPluginDeprecationWarning('mercurial', '1.50.1')
     }
 
     def 'call hg simple configuration'() {

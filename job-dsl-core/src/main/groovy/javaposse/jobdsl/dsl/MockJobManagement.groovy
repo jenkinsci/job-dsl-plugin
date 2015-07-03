@@ -53,6 +53,10 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    void logPluginDeprecationWarning(String pluginShortName, String minimumVersion) {
+    }
+
+    @Override
     void requirePlugin(String pluginShortName) {
     }
 

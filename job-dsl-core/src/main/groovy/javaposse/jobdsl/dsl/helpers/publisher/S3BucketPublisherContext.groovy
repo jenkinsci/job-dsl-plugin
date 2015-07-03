@@ -26,9 +26,7 @@ class S3BucketPublisherContext extends AbstractContext {
         checkArgument(!isNullOrEmpty(source), 'source must be specified')
         checkArgument(!isNullOrEmpty(bucketName), 'bucket must be specified')
 
-        if (jobManagement.getPluginVersion('s3')?.isOlderThan(new VersionNumber('0.7'))) {
-            jobManagement.logDeprecationWarning('support for S3 plugin versions 0.6 and earlier')
-        } else {
+        if (!jobManagement.getPluginVersion('s3')?.isOlderThan(new VersionNumber('0.7'))) {
             checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")
         }
 

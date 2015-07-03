@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.jobs
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
@@ -12,9 +11,7 @@ class MultiJob extends Job {
     MultiJob(JobManagement jobManagement) {
         super(jobManagement)
 
-        if (jobManagement.getPluginVersion('jenkins-multijob-plugin')?.isOlderThan(new VersionNumber('1.13'))) {
-            jobManagement.logDeprecationWarning('support for MultiJob plugin versions 1.12 and earlier')
-        }
+        jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.13')
     }
 
     void steps(@DslContext(MultiJobStepContext) Closure closure) {
