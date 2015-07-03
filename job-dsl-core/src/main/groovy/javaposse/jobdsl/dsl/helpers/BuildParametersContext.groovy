@@ -44,7 +44,7 @@ class BuildParametersContext extends AbstractContext {
         if (description != null) {
             definitionNode.appendNode('description', description)
         }
-        definitionNode.appendNode('uuid', UUID.randomUUID())
+        definitionNode.appendNode('uuid', randomUUID())
 
         buildParameterNodes[parameterName] = definitionNode
     }
