@@ -348,7 +348,7 @@ mavenJob(String name) { // since 1.30
     postBuildSteps(Closure stepsClosure)
     postBuildSteps(String threshold, Closure stepsClosure) // since 1.35
     providedSettings(String mavenSettingsName) // since 1.25
-    disableDownstreamTrigger(boolean value = true) // since 1.35
+    disableDownstreamTrigger(boolean value = false) // since 1.35
     wrappers {
         mavenRelease(Closure mavenReleaseClosure = null) // since 1.25
     }
