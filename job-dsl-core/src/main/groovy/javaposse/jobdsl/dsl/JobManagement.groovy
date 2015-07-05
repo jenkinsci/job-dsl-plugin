@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 /**
  * Interface to manage jobs, which the DSL needs to do.
@@ -12,7 +12,7 @@ interface JobManagement {
      * configuration is returned.
      *
      * @param jobName the name of the job to look up
-     * @return the job configuration as XML
+     * @return the job configuration as XML, never {@code null}
      * @throws JobConfigurationNotFoundException
      */
     String getConfig(String jobName) throws JobConfigurationNotFoundException

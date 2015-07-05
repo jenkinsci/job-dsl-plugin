@@ -1422,8 +1422,8 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    private static createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
-                                                   String pattern) {
+    private static Node createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
+                                                        String pattern) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
 

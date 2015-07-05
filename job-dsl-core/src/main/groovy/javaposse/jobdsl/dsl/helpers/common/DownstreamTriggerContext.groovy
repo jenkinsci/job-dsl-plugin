@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-import static DownstreamContext.THRESHOLD_COLOR_MAP
+import static javaposse.jobdsl.dsl.helpers.common.DownstreamContext.THRESHOLD_COLOR_MAP
 import static javaposse.jobdsl.dsl.helpers.common.DownstreamContext.THRESHOLD_ORDINAL_MAP
 
 class DownstreamTriggerContext extends AbstractContext {

@@ -533,10 +533,7 @@ abstract class Job extends Item {
         String configXml
         try {
             configXml = jobManagement.getConfig(templateName)
-            if (configXml == null) {
-                throw new JobConfigurationNotFoundException()
-            }
-        } catch (JobConfigurationNotFoundException jcnfex) {
+        } catch (JobConfigurationNotFoundException ignore) {
             throw new JobTemplateMissingException(templateName)
         }
 
