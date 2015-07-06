@@ -187,8 +187,11 @@ abstract class Job extends Item {
     /**
      * Block build if certain jobs are running.
      */
-    void blockOn(Iterable<String> projectNames) {
-        blockOn(projectNames.join('\n'))
+    void blockOn(Iterable<String> projectNames, String blockLevel = 'UNDEFINED', String scanQueueFor = 'DISABLED') {
+        blockOn(projectNames.join('\n')) {
+            delegate.blockLevel(blockLevel)
+            delegate.scanQueueFor(scanQueueFor)
+        }
     }
 
     /**
@@ -197,11 +200,17 @@ abstract class Job extends Item {
      * @param projectName Can be regular expressions. Newline delimited.
      */
     @RequiresPlugin(id = 'build-blocker-plugin')
-    void blockOn(String projectName) {
+    void blockOn(String projectName, @DslContext(BuildBlockerContext) Closure closure = null) {
+        BuildBlockerContext context = new BuildBlockerContext()
+        ContextHelper.executeInContext(closure, context)
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
                 useBuildBlocker 'true'
                 blockingJobs projectName
+                if (!jobManagement.getPluginVersion('build-blocker-plugin')?.isOlderThan(new VersionNumber('1.7.0'))) {
+                    blockLevel(context.blockLevel)
+                    scanQueueFor(context.scanQueueFor)
+                }
             }
         }
     }
