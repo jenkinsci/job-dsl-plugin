@@ -69,26 +69,41 @@ abstract class AbstractJobManagement implements JobManagement {
         }
     }
 
+    /**
+     * @deprecated use {@link DslScriptHelper#getStackTrace()} instead
+     */
     @Deprecated
     protected static List<StackTraceElement> getStackTrace() {
         DslScriptHelper.stackTrace
     }
 
+    /**
+     * @deprecated use {@link DslScriptHelper#getSourceDetails(java.util.List)} instead
+     */
     @Deprecated
     protected static String getSourceDetails(List<StackTraceElement> stackTrace) {
         DslScriptHelper.getSourceDetails(stackTrace)
     }
 
+    /**
+     * @deprecated use {@link DslScriptHelper#getSourceDetails(java.lang.String, int)} instead
+     */
     @Deprecated
     protected static String getSourceDetails(String scriptName, int lineNumber) {
         DslScriptHelper.getSourceDetails(scriptName, lineNumber)
     }
 
+    /**
+     * @deprecated use {@link #logWarning(java.lang.String)} instead
+     */
     @Deprecated
     protected void logWarning(String message, Object... args) {
         outputStream.printf("Warning: $message\n", args)
     }
 
+    /**
+     * @since 1.36
+     */
     protected void logWarning(String message, String details = DslScriptHelper.getSourceDetails()) {
         outputStream.println("Warning: ($details) $message")
     }

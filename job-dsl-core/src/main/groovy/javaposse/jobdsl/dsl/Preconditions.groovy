@@ -1,5 +1,10 @@
 package javaposse.jobdsl.dsl
 
+/**
+ * Provides methods for argument validation to be used in DSL methods.
+ *
+ * @since 1.36
+ */
 class Preconditions {
     private Preconditions() {
     }
