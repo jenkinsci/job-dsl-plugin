@@ -464,7 +464,10 @@ blockOn(String projectName) {
   blockLevel(String blockLevel)
   scanQueueFor(String scanQueueFor)
 }
-blockOn(Iterable<String> projectNames, String blockLevel = 'UNDEFINED', String scanQueueFor = 'DISABLED')
+blockOn(Iterable<String> projectNames) {
+  blockLevel(String blockLevel)
+  scanQueueFor(String scanQueueFor)
+}
 ```
 
 Block build if certain jobs are running, supported by the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin">Build Blocker Plugin</a>. If more than one name is provided to projectName, it is newline separated. Per the plugin, regular expressions can be used for the projectNames, e.g. ".*-maintenance" will match all maintenance jobs. `blockLevel` and `scanQueueFor` requires `build-blocker-plugin 1.7.0+`.

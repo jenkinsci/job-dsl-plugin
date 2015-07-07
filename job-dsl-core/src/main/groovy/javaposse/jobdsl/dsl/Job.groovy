@@ -187,11 +187,8 @@ abstract class Job extends Item {
     /**
      * Block build if certain jobs are running.
      */
-    void blockOn(Iterable<String> projectNames, String blockLevel = 'UNDEFINED', String scanQueueFor = 'DISABLED') {
-        blockOn(projectNames.join('\n')) {
-            delegate.blockLevel(blockLevel)
-            delegate.scanQueueFor(scanQueueFor)
-        }
+    void blockOn(Iterable<String> projectNames, @DslContext(BuildBlockerContext) Closure closure = null) {
+        blockOn(projectNames.join('\n'), closure)
     }
 
     /**

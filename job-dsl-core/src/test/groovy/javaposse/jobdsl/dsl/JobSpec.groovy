@@ -633,6 +633,42 @@ class JobSpec extends Specification {
         with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
             useBuildBlocker[0].value() == 'true'
             blockingJobs[0].value() == 'MyProject'
+            blockLevel[0].value() == 'UNDEFINED'
+            scanQueueFor[0].value() == 'DISABLED'
+        }
+        1 * jobManagement.requirePlugin('build-blocker-plugin')
+    }
+
+    def 'build blocker xml with options'() {
+        when:
+        job.blockOn('MyProject2') {
+            blockLevel 'GLOBAL'
+            scanQueueFor 'ALL'
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
+            useBuildBlocker[0].value() == 'true'
+            blockingJobs[0].value() == 'MyProject2'
+            blockLevel[0].value() == 'GLOBAL'
+            scanQueueFor[0].value() == 'ALL'
+        }
+        1 * jobManagement.requirePlugin('build-blocker-plugin')
+    }
+
+    def 'build blocker xml with iterator'() {
+        when:
+        job.blockOn(['MyProject', 'MyProject2', 'MyProject3']) {
+            blockLevel 'GLOBAL'
+            scanQueueFor 'ALL'
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
+            useBuildBlocker[0].value() == 'true'
+            blockingJobs[0].value() == 'MyProject\nMyProject2\nMyProject3'
+            blockLevel[0].value() == 'GLOBAL'
+            scanQueueFor[0].value() == 'ALL'
         }
         1 * jobManagement.requirePlugin('build-blocker-plugin')
     }
