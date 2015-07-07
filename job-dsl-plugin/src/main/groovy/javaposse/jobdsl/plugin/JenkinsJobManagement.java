@@ -31,6 +31,7 @@ import javaposse.jobdsl.dsl.AbstractJobManagement;
 import javaposse.jobdsl.dsl.ConfigFile;
 import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.DslException;
+import javaposse.jobdsl.dsl.DslScriptException;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.UserContent;
@@ -278,14 +279,14 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             if (workspace != null) {
                 try {
                     return locateValidFileInWorkspace(workspace, relLocation).readToString();
-                } catch (IllegalStateException e) {
-                    logWarning(Messages.ReadFileFromWorkspace_JobFileNotFound(), relLocation, jobName);
+                } catch (DslScriptException e) {
+                    logWarning(format(Messages.ReadFileFromWorkspace_JobFileNotFound(), relLocation, jobName));
                 }
             } else {
-                logWarning(Messages.ReadFileFromWorkspace_WorkspaceNotFound(), relLocation, jobName);
+                logWarning(format(Messages.ReadFileFromWorkspace_WorkspaceNotFound(), relLocation, jobName));
             }
         } else {
-            logWarning(Messages.ReadFileFromWorkspace_JobNotFound(), relLocation, jobName);
+            logWarning(format(Messages.ReadFileFromWorkspace_JobNotFound(), relLocation, jobName));
         }
         return null;
     }
@@ -413,7 +414,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private void markBuildAsUnstable(String message) {
-        logWarningWithDetails(message);
+        logWarning(message);
         build.setResult(UNSTABLE);
     }
 
@@ -421,7 +422,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         FilePath filePath = workspace.child(relLocation);
         try {
             if (!filePath.exists()) {
-                throw new IllegalStateException(format("File %s does not exist in workspace", relLocation));
+                throw new DslScriptException(format("File %s does not exist in workspace", relLocation));
             }
         } catch (InterruptedException ie) {
             throw new IOException(ie);

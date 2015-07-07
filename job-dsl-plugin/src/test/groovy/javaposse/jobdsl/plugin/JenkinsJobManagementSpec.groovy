@@ -17,6 +17,7 @@ import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.DslException
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
@@ -582,7 +583,7 @@ class JenkinsJobManagementSpec extends Specification {
         jobManagement.readFileInWorkspace(fileName)
 
         then:
-        Exception e = thrown(IllegalStateException)
+        Exception e = thrown(DslScriptException)
         e.message.contains(fileName)
     }
 
