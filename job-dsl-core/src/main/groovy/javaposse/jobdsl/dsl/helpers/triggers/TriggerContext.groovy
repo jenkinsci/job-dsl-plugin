@@ -1,12 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
@@ -94,7 +93,7 @@ class TriggerContext extends AbstractExtensibleContext {
     }
 
     void cron(String cronString) {
-        Preconditions.checkNotNull(cronString)
+        Preconditions.checkNotNull(cronString, 'cronString must be specified')
 
         triggerNodes << new NodeBuilder().'hudson.triggers.TimerTrigger' {
             spec cronString
@@ -102,7 +101,7 @@ class TriggerContext extends AbstractExtensibleContext {
     }
 
     void scm(String cronString, @DslContext(ScmTriggerContext) Closure scmTriggerClosure = null) {
-        Preconditions.checkNotNull(cronString)
+        Preconditions.checkNotNull(cronString, 'cronString must be specified')
 
         ScmTriggerContext scmTriggerContext = new ScmTriggerContext()
         ContextHelper.executeInContext(scmTriggerClosure, scmTriggerContext)
@@ -250,7 +249,7 @@ class TriggerContext extends AbstractExtensibleContext {
      * @since 1.33
      */
     void upstream(String projects, String threshold = 'SUCCESS') {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(projects), 'projects must be specified')
+        Preconditions.checkNotNullOrEmpty(projects, 'projects must be specified')
         Preconditions.checkArgument(
                 DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(threshold),
                 "threshold must be one of ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(', ')}"

@@ -6,8 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Strings.isNullOrEmpty
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class GitPublisherContext extends AbstractContext {
     boolean pushOnlyIfSuccess
@@ -37,8 +36,8 @@ class GitPublisherContext extends AbstractContext {
     }
 
     void tag(String targetRepo, String name, @DslContext(TagToPushContext) Closure closure = null) {
-        checkArgument(!isNullOrEmpty(targetRepo), 'targetRepo must be specified')
-        checkArgument(!isNullOrEmpty(name), 'name must be specified')
+        checkNotNullOrEmpty(targetRepo, 'targetRepo must be specified')
+        checkNotNullOrEmpty(name, 'name must be specified')
 
         TagToPushContext context = new TagToPushContext()
         ContextHelper.executeInContext(closure, context)
@@ -53,8 +52,8 @@ class GitPublisherContext extends AbstractContext {
     }
 
     void branch(String targetRepo, String name) {
-        checkArgument(!isNullOrEmpty(targetRepo), 'targetRepo must be specified')
-        checkArgument(!isNullOrEmpty(name), 'name must be specified')
+        checkNotNullOrEmpty(targetRepo, 'targetRepo must be specified')
+        checkNotNullOrEmpty(name, 'name must be specified')
 
         branches << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-BranchToPush' {
             targetRepoName(targetRepo)

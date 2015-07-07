@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
@@ -644,7 +645,7 @@ class TriggerContextSpec extends Specification {
         context.upstream(projects, threshold)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         projects | threshold
@@ -703,6 +704,6 @@ class TriggerContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 }

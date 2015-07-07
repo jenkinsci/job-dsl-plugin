@@ -3,8 +3,8 @@ package javaposse.jobdsl.dsl.views
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Preconditions.checkNotNull
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
 class BuildPipelineView extends View {
     BuildPipelineView(JobManagement jobManagement) {

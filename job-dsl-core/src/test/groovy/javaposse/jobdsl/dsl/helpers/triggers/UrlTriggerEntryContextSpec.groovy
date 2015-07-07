@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
 
 /**
@@ -11,7 +12,7 @@ class UrlTriggerEntryContextSpec extends Specification {
         new UrlTriggerEntryContext(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'empty URL causes IllegalArgumentException' () {
@@ -19,7 +20,7 @@ class UrlTriggerEntryContextSpec extends Specification {
         new UrlTriggerEntryContext('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'check default values'() {
@@ -43,7 +44,7 @@ class UrlTriggerEntryContextSpec extends Specification {
         ctx.inspection('foo')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
     }
 
@@ -55,7 +56,7 @@ class UrlTriggerEntryContextSpec extends Specification {
         ctx.check('foo')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
     }
 }

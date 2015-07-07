@@ -1,10 +1,9 @@
 package javaposse.jobdsl.dsl.views
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
 import javaposse.jobdsl.dsl.ViewFactory
@@ -32,7 +31,7 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
     void view(Map<String, Object> arguments = [:], String name, @DslContext(View) Closure closure) {
         jobManagement.logDeprecationWarning()
 
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+        Preconditions.checkNotNullOrEmpty(name, 'name must be specified')
 
         ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
         View view = viewType.viewClass.newInstance(jobManagement)
@@ -103,7 +102,7 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
     }
 
     private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+        Preconditions.checkNotNullOrEmpty(name, 'name must be specified')
 
         T view = viewClass.newInstance(jobManagement)
         view.name = name

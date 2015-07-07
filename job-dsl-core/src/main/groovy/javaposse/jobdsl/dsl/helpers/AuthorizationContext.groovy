@@ -1,10 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
-import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 /**
  * Builds up perms in a closure. So that it be used to build a withXml block
@@ -25,7 +25,7 @@ class AuthorizationContext extends AbstractContext {
     }
 
     void permission(String permission) {
-        checkArgument(!Strings.isNullOrEmpty(permission), 'permission must not be null or empty')
+        checkNotNullOrEmpty(permission, 'permission must not be null or empty')
         checkArgument(permission.contains(':'), 'permission must be <permission>:<user>')
 
         String[] permissionAndUser = permission.split(':', 2)

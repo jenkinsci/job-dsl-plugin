@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.Preconditions
 
 class StaticAnalysisContext implements Context {
     private static final List<String> THRESHOLD_LIMITS = ['low', 'normal', 'high']

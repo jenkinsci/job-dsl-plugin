@@ -1,12 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
@@ -215,7 +214,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'xvfb')
     void xvfb(String installation, @DslContext(XvfbContext) Closure closure = null) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(installation), 'installation must not be null or empty')
+        Preconditions.checkNotNullOrEmpty(installation, 'installation must not be null or empty')
 
         XvfbContext context = new XvfbContext()
         ContextHelper.executeInContext(closure, context)

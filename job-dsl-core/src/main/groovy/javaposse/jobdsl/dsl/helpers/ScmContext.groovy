@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers
 
-import com.google.common.base.Strings
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -14,10 +13,11 @@ import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.SvnContext
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Preconditions.checkNotNull
-import static com.google.common.base.Preconditions.checkState
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
+import static javaposse.jobdsl.dsl.Preconditions.checkState
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
 class ScmContext extends AbstractExtensibleContext {
@@ -44,7 +44,7 @@ class ScmContext extends AbstractExtensibleContext {
         jobManagement.logPluginDeprecationWarning('mercurial', '1.50.1')
 
         if (jobManagement.getPluginVersion('mercurial')?.isOlderThan(new VersionNumber('1.50.1'))) {
-            checkNotNull(url)
+            checkNotNull(url, 'url must not be null')
 
             Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
                 source url
@@ -78,7 +78,7 @@ class ScmContext extends AbstractExtensibleContext {
         HgContext hgContext = new HgContext(jobManagement)
         executeInContext(hgClosure, hgContext)
 
-        checkArgument(!Strings.isNullOrEmpty(url), 'url must be specified')
+        checkNotNullOrEmpty(url, 'url must be specified')
         checkArgument(!(hgContext.tag && hgContext.branch), 'either tag or branch should be used, not both')
 
         Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
@@ -236,8 +236,8 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     void svn(String svnUrl, String localDir, Closure configure = null) {
-        checkNotNull(svnUrl)
-        checkNotNull(localDir)
+        checkNotNull(svnUrl, 'svnUrl must not be null')
+        checkNotNull(localDir, 'localDir must not be null')
 
         svn {
             location(svnUrl) {
@@ -285,7 +285,7 @@ class ScmContext extends AbstractExtensibleContext {
 
     @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, String user, String password, Closure configure = null) {
-        checkNotNull(viewspec)
+        checkNotNull(viewspec, 'viewspec must not be null')
 
         Node p4Node = new NodeBuilder().scm(class: 'hudson.plugins.perforce.PerforceSCM') {
             p4User user
@@ -333,9 +333,11 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'clone-workspace-scm')
     void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
-        checkNotNull(parentProject)
-        checkArgument(validCloneWorkspaceCriteria.contains(criteriaArg),
-                "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}")
+        checkNotNull(parentProject, 'parentProject must not be null')
+        checkArgument(
+                validCloneWorkspaceCriteria.contains(criteriaArg),
+                "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
+        )
 
         scmNodes << new NodeBuilder().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
             parentJobName(parentProject)

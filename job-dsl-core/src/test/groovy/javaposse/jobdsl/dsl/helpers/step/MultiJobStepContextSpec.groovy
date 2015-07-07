@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
@@ -164,7 +165,7 @@ class MultiJobStepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalStateException)
+        thrown(DslScriptException)
 
         when:
         context.phase('Third') {
@@ -175,7 +176,7 @@ class MultiJobStepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalStateException)
+        thrown(DslScriptException)
     }
 
     def 'call phases with plugin version 1.11 options'() {
@@ -214,7 +215,7 @@ class MultiJobStepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call phase with unsupported condition'(String condition, String version) {
@@ -226,7 +227,7 @@ class MultiJobStepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         condition | version

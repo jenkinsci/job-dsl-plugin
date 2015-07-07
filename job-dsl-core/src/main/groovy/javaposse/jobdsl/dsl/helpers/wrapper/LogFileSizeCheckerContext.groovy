@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.Preconditions
 
 /**
  * DSL supporting the Log file size checker plugin.

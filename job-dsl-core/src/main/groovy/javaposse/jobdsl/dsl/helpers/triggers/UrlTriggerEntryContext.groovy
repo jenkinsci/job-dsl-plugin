@@ -1,9 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection
 
 /**
@@ -43,10 +44,8 @@ class UrlTriggerEntryContext implements Context {
      * @param url Required URL to monitor
      */
     UrlTriggerEntryContext(String url) {
-        this.url = Preconditions.checkNotNull(url, 'The URL is required for urlTrigger()')
-        Preconditions.checkArgument(url != '', 'URL must not be empty.')
-        this.statusCode = statusCode
-        this.timeout = timeout
+        Preconditions.checkNotNullOrEmpty(url, 'The URL is required for urlTrigger')
+        this.url = url
     }
 
     /**
@@ -95,15 +94,13 @@ class UrlTriggerEntryContext implements Context {
      * @param performCheck check to perform
      */
     void check(String performCheck) {
-        Check check
+        Preconditions.checkNotNull(performCheck, 'Check must not be null')
 
         try {
-            check = Preconditions.checkNotNull(Check.valueOf(performCheck), 'Check must not be null' as Object)
-        } catch (IllegalArgumentException iae) {
-            throw new IllegalArgumentException("Check must be one of: ${Check.values()}")
+            checks << Check.valueOf(performCheck)
+        } catch (IllegalArgumentException ignore) {
+            throw new DslScriptException("Check must be one of: ${Check.values()}")
         }
-
-        checks << check
     }
 
     /**
@@ -119,11 +116,13 @@ class UrlTriggerEntryContext implements Context {
      * @param inspectionClosure for configuring RegExps/Path expressions for xml, text and json
      */
     void inspection(String type, @DslContext(UrlTriggerInspectionContext) Closure inspectionClosure = null) {
+        Preconditions.checkNotNull(type, 'Inspection must not be null')
+
         Inspection itype
         try {
-            itype = Preconditions.checkNotNull(Inspection.valueOf(type), 'Inspection must not be null' as Object)
-        } catch (IllegalArgumentException iae) {
-            throw new IllegalArgumentException("Inspection must be one of ${Inspection.values()}")
+            itype = Inspection.valueOf(type)
+        } catch (IllegalArgumentException ignore) {
+            throw new DslScriptException("Inspection must be one of ${Inspection.values()}")
         }
 
         UrlTriggerInspectionContext inspection = new UrlTriggerInspectionContext(itype)

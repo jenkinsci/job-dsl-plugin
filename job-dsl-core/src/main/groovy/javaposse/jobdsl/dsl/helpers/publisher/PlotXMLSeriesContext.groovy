@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class PlotXMLSeriesContext extends PlotSeriesContext {
     private static final List<String> NODE_TYPES = [

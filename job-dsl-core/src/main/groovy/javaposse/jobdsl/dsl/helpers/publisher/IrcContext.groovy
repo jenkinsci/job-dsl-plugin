@@ -1,8 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
 import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.Context
+
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class IrcContext implements Context {
     List<IrcPublisherChannel> channels = []
@@ -31,7 +33,7 @@ class IrcContext implements Context {
     }
 
     void channel(String name, String password = '', boolean notificationOnly = false) {
-        Preconditions.checkArgument(name != null && name.length() > 0, 'Channel name for irc channel is required!')
+        checkNotNullOrEmpty(name, 'Channel name for irc channel is required!')
 
         channels << new IrcPublisherChannel(
             name: name,
@@ -45,15 +47,13 @@ class IrcContext implements Context {
     }
 
     void strategy(String strategy) {
-        Preconditions.checkArgument(
-            strategies.contains(strategy), "Possible values: ${strategies.join(',')}"
-        )
+        checkArgument(strategies.contains(strategy), "Possible values: ${strategies.join(',')}")
 
         this.strategy = strategy
     }
 
     void notificationMessage(String notificationMessage) {
-        Preconditions.checkArgument(
+        checkArgument(
             notificationMessages.contains(notificationMessage),
             "Possible values: ${notificationMessages.join(',')}"
         )

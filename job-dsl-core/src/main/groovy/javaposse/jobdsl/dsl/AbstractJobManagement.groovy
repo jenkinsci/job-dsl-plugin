@@ -1,8 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import static java.lang.Thread.currentThread
-import static org.codehaus.groovy.runtime.StackTraceUtils.isApplicationClass
-
 /**
  * Abstract base class providing common functionality for all {@link JobManagement} implementations.
  */
@@ -36,19 +33,19 @@ abstract class AbstractJobManagement implements JobManagement {
 
     @Override
     void logDeprecationWarning() {
-        List<StackTraceElement> currentStackTrack = stackTrace
-        String details = getSourceDetails(currentStackTrack)
+        List<StackTraceElement> currentStackTrack = DslScriptHelper.stackTrace
+        String details = DslScriptHelper.getSourceDetails(currentStackTrack)
         logDeprecationWarning(currentStackTrack[0].methodName, details)
     }
 
     @Override
     void logDeprecationWarning(String subject) {
-        logDeprecationWarning(subject, getSourceDetails(stackTrace))
+        logDeprecationWarning(subject, DslScriptHelper.sourceDetails)
     }
 
     @Override
     void logDeprecationWarning(String subject, String scriptName, int lineNumber) {
-        logDeprecationWarning(subject, getSourceDetails(scriptName, lineNumber))
+        logDeprecationWarning(subject, DslScriptHelper.getSourceDetails(scriptName, lineNumber))
     }
 
     protected void logDeprecationWarning(String subject, String details) {
@@ -72,25 +69,19 @@ abstract class AbstractJobManagement implements JobManagement {
         }
     }
 
+    @Deprecated
     protected static List<StackTraceElement> getStackTrace() {
-        List<StackTraceElement> result = currentThread().stackTrace.findAll { isApplicationClass(it.className) }
-        result[4..-1]
+        DslScriptHelper.stackTrace
     }
 
+    @Deprecated
     protected static String getSourceDetails(List<StackTraceElement> stackTrace) {
-        StackTraceElement source = stackTrace.find { !it.className.startsWith('javaposse.jobdsl.') }
-        getSourceDetails(source?.fileName, source == null ? -1 : source.lineNumber)
+        DslScriptHelper.getSourceDetails(stackTrace)
     }
 
+    @Deprecated
     protected static String getSourceDetails(String scriptName, int lineNumber) {
-        String details = 'unknown source'
-        if (scriptName != null) {
-            details = scriptName.matches(/script\d+\.groovy/) ? 'DSL script' : scriptName
-            if (lineNumber > 0) {
-                details += ", line ${lineNumber}"
-            }
-        }
-        details
+        DslScriptHelper.getSourceDetails(scriptName, lineNumber)
     }
 
     protected void logWarning(String message, Object... args) {

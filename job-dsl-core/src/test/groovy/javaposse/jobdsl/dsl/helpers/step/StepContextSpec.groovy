@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
@@ -425,7 +426,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        Exception e = thrown(NullPointerException)
+        Exception e = thrown(DslScriptException)
         e.message.contains(settingsName)
     }
 
@@ -1177,7 +1178,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call dsl with invalid remove action'() {
@@ -1187,7 +1188,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call dsl with invalid remove view action'() {
@@ -1197,7 +1198,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call dsl with script text and all options'() {
@@ -1368,7 +1369,7 @@ class StepContextSpec extends Specification {
         context.publishOverSsh(null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call publishOverSsh without transferSet'() {
@@ -1379,7 +1380,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call publishOverSsh without sourceFiles and execCommand'() {
@@ -1392,7 +1393,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call publishOverSsh with minimal configuration and check the default values'() {
@@ -1679,7 +1680,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     @Unroll
@@ -1777,7 +1778,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call conditional steps with no condition'() {
@@ -1792,7 +1793,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'call conditional steps with invalid condition'() {
@@ -2049,7 +2050,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         worstResult | bestResult
@@ -2278,13 +2279,13 @@ class StepContextSpec extends Specification {
         context.remoteTrigger(null, 'test')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         context.remoteTrigger('', 'test')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call remoteTrigger without job'() {
@@ -2292,13 +2293,13 @@ class StepContextSpec extends Specification {
         context.remoteTrigger('dev-ci', null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         context.remoteTrigger('dev-ci', '')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'critical block'() {
@@ -2454,7 +2455,7 @@ class StepContextSpec extends Specification {
         context.setBuildResult('FOO')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'vSphere power off'() {
@@ -2529,7 +2530,7 @@ class StepContextSpec extends Specification {
         context.vSpherePowerOff('vsphere.acme.org', 'foo')
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'call http request with minimal options'() {
@@ -2576,7 +2577,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call http request with valid HTTP mode'(String mode) {

@@ -1,3 +1,27 @@
+## Migrating to 1.36
+
+### AbstractJobManagement
+
+The following methods in AbstractJobManagement have been [[deprecated|Deprecation-Policy]] and will be removed:
+
+```groovy
+protected static List<StackTraceElement> getStackTrace()
+
+protected static String getSourceDetails(List<StackTraceElement> stackTrace)
+
+protected static String getSourceDetails(String scriptName, int lineNumber)
+
+protected void logWarning(String message, Object... args)
+```
+
+### Exception Handling
+
+DSL methods will now throw a `javaposse.jobdsl.dsl.DslException` instead of `java.lang.IllegalArgumentException`,
+`java.lang.IllegalStateException` or `java.lang.NullPointerException` when validating arguments.
+
+The `javaposse.jobdsl.dsl.DslScriptLoader` will also throw a `javaposse.jobdsl.dsl.DslException` on script errors like
+compilation failures and missing methods or properties.
+
 ## Migrating to 1.35
 
 ### Maven

@@ -4,9 +4,9 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
 
-import static com.google.common.base.Preconditions.checkNotNull
 import static java.lang.String.CASE_INSENSITIVE_ORDER
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
 class ListView extends View {
     private final JobsContext jobsContext = new JobsContext()

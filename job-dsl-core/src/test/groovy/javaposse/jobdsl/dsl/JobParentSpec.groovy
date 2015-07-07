@@ -429,13 +429,13 @@ class JobParentSpec extends Specification {
         parent.readFileFromWorkspace(null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         parent.readFileFromWorkspace('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'streamFileFromWorkspace'() {
@@ -452,13 +452,13 @@ class JobParentSpec extends Specification {
         parent.readFileFromWorkspace(null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         parent.readFileFromWorkspace('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'readFileInWorkspace from other job'() {
@@ -474,25 +474,25 @@ class JobParentSpec extends Specification {
         parent.readFileFromWorkspace('my-job', null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         parent.readFileFromWorkspace('my-job', '')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         parent.readFileFromWorkspace(null, 'foo.txt')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         parent.readFileFromWorkspace('', 'foo.txt')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'freeStyleJob deprecated variant'() {

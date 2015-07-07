@@ -33,7 +33,7 @@ class ConfigFileSpec extends Specification {
         configFile.comment(null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'set content'() {
@@ -49,6 +49,6 @@ class ConfigFileSpec extends Specification {
         configFile.content(null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 }

@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.Lightbox
@@ -35,7 +36,7 @@ class BuildPipelineViewSpec extends Specification {
         view.displayedBuilds(0)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'displayedBuilds negative'() {
@@ -43,7 +44,7 @@ class BuildPipelineViewSpec extends Specification {
         view.displayedBuilds(-12)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'title'() {
@@ -81,7 +82,7 @@ class BuildPipelineViewSpec extends Specification {
         view.selectedJob(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'consoleOutputLinkStyle No Arg'() {
@@ -89,7 +90,7 @@ class BuildPipelineViewSpec extends Specification {
         view.consoleOutputLinkStyle()
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'consoleOutputLinkStyle Lightbox'() {
@@ -127,7 +128,7 @@ class BuildPipelineViewSpec extends Specification {
         view.consoleOutputLinkStyle(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'cssUrl'() {
@@ -245,7 +246,7 @@ class BuildPipelineViewSpec extends Specification {
         view.refreshFrequency(0)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'refreshFrequency negative'() {
@@ -253,7 +254,7 @@ class BuildPipelineViewSpec extends Specification {
         view.refreshFrequency(-12)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'showPipelineDefinitionHeader'() {

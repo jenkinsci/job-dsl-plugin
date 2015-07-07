@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.base.Preconditions
-
 class ConfigFile implements Context {
     final ConfigFileType type
     final JobManagement jobManagement
@@ -21,13 +19,13 @@ class ConfigFile implements Context {
     }
 
     void comment(String comment) {
-        Preconditions.checkArgument(comment != null, 'comment must not be null')
+        Preconditions.checkNotNull(comment, 'comment must not be null')
 
         this.comment = comment
     }
 
     void content(String content) {
-        Preconditions.checkArgument(content != null, 'content must not be null')
+        Preconditions.checkNotNull(content, 'content must not be null')
 
         this.content = content
     }

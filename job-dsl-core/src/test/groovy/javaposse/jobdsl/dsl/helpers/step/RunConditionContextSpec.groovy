@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 import spock.lang.Specification
 
@@ -12,7 +13,7 @@ class RunConditionContextSpec extends Specification {
         context.time(*args)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         args << [

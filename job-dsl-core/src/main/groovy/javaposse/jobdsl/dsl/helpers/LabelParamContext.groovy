@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.Context
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class LabelParamContext implements Context {
     private static final List<String> ELIGIBILITY = [

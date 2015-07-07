@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
+import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
 
 class StaticAnalysisContextSpec extends Specification {
@@ -20,7 +21,7 @@ class StaticAnalysisContextSpec extends Specification {
         when:
         context.thresholds(thresholds)
         then:
-        IllegalArgumentException e = thrown()
+        Exception e = thrown(DslScriptException)
         e.message.contains(thresholds.toString())
         where:
         thresholds  << [

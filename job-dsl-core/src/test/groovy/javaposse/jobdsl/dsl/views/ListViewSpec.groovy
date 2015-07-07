@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue
 import javaposse.jobdsl.dsl.views.jobfilter.Status
@@ -84,7 +85,7 @@ class ListViewSpec extends Specification {
         view.statusFilter(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'add job by name'() {
@@ -107,7 +108,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'add jobs by name'() {
@@ -131,7 +132,7 @@ class ListViewSpec extends Specification {
         }
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
 
     }
 

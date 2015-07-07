@@ -66,6 +66,7 @@ import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static hudson.security.ACL.SYSTEM;
 import static java.lang.String.format;
+import static javaposse.jobdsl.dsl.DslScriptHelper.getSourceDetails;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
@@ -413,7 +414,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private void markBuildAsUnstable(String message) {
-        getOutputStream().println("Warning: " + message + " (" + getSourceDetails(getStackTrace()) + ")");
+        logWarning(message + " (" + getSourceDetails() + ")");
         build.setResult(UNSTABLE);
     }
 

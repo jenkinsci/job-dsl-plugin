@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class HttpRequestContext implements Context {
     private static final Set<String> VALID_MODES = ['POST', 'GET', 'DELETE', 'PUT']

@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlActionSpec
@@ -111,7 +112,7 @@ class ScmContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call hg branch and tag disallowed'() {
@@ -122,7 +123,7 @@ class ScmContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call hg with branch'() {
@@ -1442,7 +1443,7 @@ class ScmContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalStateException)
+        thrown(DslScriptException)
     }
 
     def 'call svn with one location'() {
@@ -1999,7 +2000,7 @@ class ScmContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call rtc with build definition'() {
