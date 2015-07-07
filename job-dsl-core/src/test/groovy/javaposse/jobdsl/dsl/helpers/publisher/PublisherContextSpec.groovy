@@ -2865,7 +2865,7 @@ class PublisherContextSpec extends Specification {
 
         then:
         Exception exception = thrown(DslScriptException)
-        exception.message =~ /jobIdentifier cannot be null or empty \(.+, line \d+\)/
+        exception.message =~ /\(.+, line \d+\) jobIdentifier cannot be null or empty/
 
         where:
         id   | _

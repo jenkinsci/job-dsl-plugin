@@ -13,8 +13,12 @@ class DslScriptException extends DslException {
         super(message)
     }
 
+    DslScriptException(String message, Throwable cause) {
+        super(message, cause)
+    }
+
     @Override
     String getMessage() {
-        "${super.message} (${getSourceDetails(stackTrace)})"
+        "(${getSourceDetails(cause ? cause.stackTrace : stackTrace)}) ${super.message}"
     }
 }

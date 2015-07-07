@@ -186,7 +186,7 @@ println "Hello ${WordUtils.capitalize('world')}"
         def results = content
         results != null
         results.contains('Hello World')
-        baos.toString().contains('Warning: @Grab support is deprecated (DSL script, line 1)')
+        baos.toString().contains('Warning: (DSL script, line 1) @Grab support is deprecated')
     }
 
     def 'jobs scheduled to build'() {
@@ -329,5 +329,58 @@ folder {
 
         then:
         thrown UnsupportedOperationException
+    }
+
+    def 'DslException on compilation error'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(null, 'import foo.bar', resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        thrown(DslException)
+    }
+
+    def 'DslScriptException on MissingMethodException'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(null, 'foo("bar")', resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ /\(DSL script, line 1\) .+/
+    }
+
+    def 'DslScriptException on MissingPropertyException'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(null, 'job("foo").bar = 1', resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ /\(DSL script, line 1\) .+/
+    }
+
+    def 'DslScriptException is passed through'() {
+        setup:
+        String script = '''
+job('foo') {
+    using('one')
+    using('two')
+}
+'''
+        ScriptRequest request = new ScriptRequest(null, script, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message == '(DSL script, line 4) Can only use "using" once'
     }
 }

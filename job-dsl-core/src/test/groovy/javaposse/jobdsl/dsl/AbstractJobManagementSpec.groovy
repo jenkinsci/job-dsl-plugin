@@ -18,7 +18,7 @@ class AbstractJobManagementSpec extends Specification {
         script.run()
 
         then:
-        buffer.toString().trim() == 'Warning: testMethod is deprecated (DSL script, line 1)'
+        buffer.toString().trim() == 'Warning: (DSL script, line 1) testMethod is deprecated'
     }
 
     def 'deprecation warning in source file'() {
@@ -33,7 +33,7 @@ class AbstractJobManagementSpec extends Specification {
         groovyScriptEngine.run('deprecation.groovy', new Binding([jm: jobManagement]))
 
         then:
-        buffer.toString().trim() == 'Warning: testMethod is deprecated (deprecation.groovy, line 1)'
+        buffer.toString().trim() == 'Warning: (deprecation.groovy, line 1) testMethod is deprecated'
     }
 
     def 'deprecation warning with custom subject in DSL script'() {
@@ -49,7 +49,7 @@ class AbstractJobManagementSpec extends Specification {
         script.run()
 
         then:
-        buffer.toString().trim() == 'Warning: foo is deprecated (DSL script, line 3)'
+        buffer.toString().trim() == 'Warning: (DSL script, line 3) foo is deprecated'
     }
 
     def 'deprecation warning with custom subject  in source file'() {
@@ -64,7 +64,7 @@ class AbstractJobManagementSpec extends Specification {
         groovyScriptEngine.run('deprecation-subject.groovy', new Binding([jm: jobManagement]))
 
         then:
-        buffer.toString().trim() == 'Warning: foo is deprecated (deprecation-subject.groovy, line 3)'
+        buffer.toString().trim() == 'Warning: (deprecation-subject.groovy, line 3) foo is deprecated'
     }
 
     def 'custom deprecation warning in DSL script'() {
@@ -76,7 +76,7 @@ class AbstractJobManagementSpec extends Specification {
         jobManagement.logDeprecationWarning('foo', 'script123123123.groovy', 12)
 
         then:
-        buffer.toString().trim() == 'Warning: foo is deprecated (DSL script, line 12)'
+        buffer.toString().trim() == 'Warning: (DSL script, line 12) foo is deprecated'
     }
 
     def 'custom deprecation warning in source file'() {
@@ -88,7 +88,7 @@ class AbstractJobManagementSpec extends Specification {
         jobManagement.logDeprecationWarning('foo', 'test.groovy', 12)
 
         then:
-        buffer.toString().trim() == 'Warning: foo is deprecated (test.groovy, line 12)'
+        buffer.toString().trim() == 'Warning: (test.groovy, line 12) foo is deprecated'
     }
 
     static class TestJobManagement extends MockJobManagement {

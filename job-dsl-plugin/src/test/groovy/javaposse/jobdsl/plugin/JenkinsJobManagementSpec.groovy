@@ -95,7 +95,7 @@ class JenkinsJobManagementSpec extends Specification {
         jobManagement.logPluginDeprecationWarning('ldap', '20.0')
 
         then:
-        buffer.toString() =~ /Warning: support for LDAP Plugin versions older than 20.0 is deprecated \(.+, line \d+\)/
+        buffer.toString() =~ /Warning: \(.+, line \d+\) support for LDAP Plugin versions older than 20.0 is deprecated/
     }
 
     def 'logPluginDeprecationWarning does not log anything if plugin version is newer'() {

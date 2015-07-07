@@ -7,6 +7,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
@@ -56,7 +57,7 @@ public class DslScriptLoader {
             Script script;
             if (scriptRequest.getBody() != null) {
                 jobManagement.getOutputStream().println("Processing provided DSL script");
-                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody());
+                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody(), "DSL script");
                 script = InvokerHelper.createScript(cls, binding);
             } else {
                 jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
@@ -69,7 +70,15 @@ public class DslScriptLoader {
 
             binding.setVariable("jobFactory", jp);
 
-            script.run();
+            try {
+                script.run();
+            } catch (DslScriptException e) {
+                throw e;
+            } catch (RuntimeException e) {
+                throw new DslScriptException(e.getMessage(), e);
+            }
+        } catch (CompilationFailedException e) {
+            throw new DslException(e.getMessage(), e);
         } catch (Exception e) { // ResourceException or ScriptException
             if (e instanceof RuntimeException) {
                 throw ((RuntimeException) e);

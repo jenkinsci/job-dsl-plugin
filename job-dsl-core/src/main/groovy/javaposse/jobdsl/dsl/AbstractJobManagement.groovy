@@ -49,7 +49,7 @@ abstract class AbstractJobManagement implements JobManagement {
     }
 
     protected void logDeprecationWarning(String subject, String details) {
-        logWarning('%s is deprecated (%s)', subject, details)
+        logWarningWithDetails("${subject} is deprecated", details)
     }
 
     protected static void validateUpdateArgs(String jobName, String config) {
@@ -82,6 +82,10 @@ abstract class AbstractJobManagement implements JobManagement {
     @Deprecated
     protected static String getSourceDetails(String scriptName, int lineNumber) {
         DslScriptHelper.getSourceDetails(scriptName, lineNumber)
+    }
+
+    protected void logWarningWithDetails(String message, String details = DslScriptHelper.getSourceDetails()) {
+        logWarning('(%s) %s', details, message)
     }
 
     protected void logWarning(String message, Object... args) {
