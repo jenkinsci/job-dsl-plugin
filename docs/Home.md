@@ -17,8 +17,11 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.36 (unreleased)
+ * Enhanced support for the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
  * Improved error logging
    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))
+ * Support for the older versions of the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-136)
  * Some methods in `AbstractJobManagement` have been deprecated and the exception handling has changed, see
    [Migration](Migration#migrating-to-136)
 * 1.35 (July 01 2015)

@@ -14,6 +14,8 @@ freeStyleJob(String name) { // since 1.30
     batchTask(String name, String script)
     blockOn(String projectNames)
     blockOn(Iterable<String> projectNames)
+    blockOn(String projectNames, Closure closure) // since 1.36
+    blockOn(Iterable<String> projectNames, Closure closure) // since 1.36
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     checkoutRetryCount(int times = 3)
@@ -458,13 +460,43 @@ Defines a timespan to wait for additional events (pushes, check-ins) before trig
 
 If the number of seconds to wait is omitted from the call the job will be configured to wait for five seconds. If you need to wait for a different amount of time just specify the number of seconds to wait. (Available since 1.16)
 
-### Block build
+### Block Build
+
 ```groovy
-blockOn(String projectName)
-blockOn(Iterable<String> projectNames)
+job {
+    blockOn(String projectName)
+    blockOn(Iterable<String> projectNames)
+    blockOn(String projectName) {              // since 1.36
+        blockLevel(String blockLevel)
+        scanQueueFor(String scanQueueFor)
+    }
+    blockOn(Iterable<String> projectNames) {   // since 1.36
+        blockLevel(String blockLevel)
+        scanQueueFor(String scanQueueFor)
+    }
+}
 ```
 
-Block build if certain jobs are running, supported by the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin">Build Blocker Plugin</a>. If more than one name is provided to projectName, it is newline separated. Per the plugin, regular expressions can be used for the projectNames, e.g. ".*-maintenance" will match all maintenance jobs.
+Block build if certain jobs are running. Requires the
+[Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin).
+ 
+Regular expressions can be used for the project names, e.g. `/.*-maintenance/` will match all maintenance jobs.
+
+Possible values for `blockLevel` are `'GLOBAL'` and `'NODE'` (default). Possible values for `scanQueueFor` are `'ALL'`,
+`'BUILDABLE'` and `'DISABLED'` (default).
+
+```groovy
+job('example-1') {
+    blockOn('project-a')
+}
+
+job('example-2') {
+    blockOn(['project-a', 'project-b']) {
+        blockLevel('GLOBAL')
+        scanQueueFor('ALL')
+    }
+}
+```
 
 ### Block on upstream/downstream projects
 ```groovy

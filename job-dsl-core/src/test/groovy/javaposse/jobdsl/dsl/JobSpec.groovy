@@ -625,16 +625,104 @@ class JobSpec extends Specification {
         job.node.logRotator[0].artifactNumToKeep[0].value() == -1
     }
 
-    def 'build blocker xml'() {
+    def 'build blocker'() {
         when:
         job.blockOn('MyProject')
 
         then:
         with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
-            useBuildBlocker[0].value() == 'true'
+            children().size() == 4
+            useBuildBlocker[0].value() == true
+            blockingJobs[0].value() == 'MyProject'
+            blockLevel[0].value() == 'NODE'
+            scanQueueFor[0].value() == 'DISABLED'
+        }
+        1 * jobManagement.requirePlugin('build-blocker-plugin')
+        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+    }
+
+    def 'build blocker with all options'() {
+        when:
+        job.blockOn('MyProject2') {
+            blockLevel(level)
+            scanQueueFor(queue)
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
+            children().size() == 4
+            useBuildBlocker[0].value() == true
+            blockingJobs[0].value() == 'MyProject2'
+            blockLevel[0].value() == level
+            scanQueueFor[0].value() == queue
+        }
+        1 * jobManagement.requirePlugin('build-blocker-plugin')
+        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+
+        where:
+        level    | queue
+        'GLOBAL' | 'ALL'
+        'NODE'   | 'ALL'
+        'GLOBAL' | 'DISABLED'
+        'NODE'   | 'DISABLED'
+        'GLOBAL' | 'BUILDABLE'
+        'NODE'   | 'BUILDABLE'
+    }
+
+    def 'build blocker with invalid options'() {
+        when:
+        job.blockOn('MyProject2') {
+            blockLevel(level)
+            scanQueueFor(queue)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        level    | queue
+        'GLOBAL' | ''
+        'NODE'   | 'FOO'
+        'GLOBAL' | null
+        ''       | 'DISABLED'
+        'FOO'    | 'BUILDABLE'
+        null     | 'BUILDABLE'
+    }
+
+    def 'build blocker with iterator'() {
+        when:
+        job.blockOn(['MyProject', 'MyProject2', 'MyProject3']) {
+            blockLevel('GLOBAL')
+            scanQueueFor('ALL')
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
+            children().size() == 4
+            useBuildBlocker[0].value() == true
+            blockingJobs[0].value() == 'MyProject\nMyProject2\nMyProject3'
+            blockLevel[0].value() == 'GLOBAL'
+            scanQueueFor[0].value() == 'ALL'
+        }
+        1 * jobManagement.requirePlugin('build-blocker-plugin')
+        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+    }
+
+    def 'build blocker with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('build-blocker-plugin') >> new VersionNumber('1.7.0')
+
+        when:
+        job.blockOn('MyProject')
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
+            children().size() == 2
+            useBuildBlocker[0].value() == true
             blockingJobs[0].value() == 'MyProject'
         }
         1 * jobManagement.requirePlugin('build-blocker-plugin')
+        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
     }
 
     def 'can run jdk'() {

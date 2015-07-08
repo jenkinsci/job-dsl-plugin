@@ -1,5 +1,11 @@
 ## Migrating to 1.36
 
+### Build Blocker
+
+Support for versions older than 1.7.1 of the
+[Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### AbstractJobManagement
 
 The following methods in AbstractJobManagement have been [[deprecated|Deprecation-Policy]] and will be removed:
@@ -27,7 +33,7 @@ compilation failures and missing methods or properties.
 ### Maven
 
 Support for versions older than 2.3 of the
-[[Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin) is
+[Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
 ### S3
