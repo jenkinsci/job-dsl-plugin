@@ -187,8 +187,17 @@ abstract class Job extends Item {
     /**
      * Block build if certain jobs are running.
      */
-    void blockOn(Iterable<String> projectNames, @DslContext(BuildBlockerContext) Closure closure = null) {
-        blockOn(projectNames.join('\n'), closure)
+    void blockOn(Iterable<String> projectNames) {
+        blockOn(projectNames, null)
+    }
+
+    /**
+     * Block build if certain jobs are running.
+
+     * @since 1.36
+     */
+    void blockOn(Iterable<String> projectNames, @DslContext(BuildBlockerContext) Closure closure) {
+        blockOn(projectNames.collect().join('\n'), closure)
     }
 
     /**
@@ -196,15 +205,27 @@ abstract class Job extends Item {
      *
      * @param projectName Can be regular expressions. Newline delimited.
      */
+    void blockOn(String projectName) {
+        blockOn(projectName, null)
+    }
+
+    /**
+     * Block build if certain jobs are running.
+     *
+     * @since 1.36
+     */
     @RequiresPlugin(id = 'build-blocker-plugin')
-    void blockOn(String projectName, @DslContext(BuildBlockerContext) Closure closure = null) {
+    void blockOn(String projectName, @DslContext(BuildBlockerContext) Closure closure) {
+        jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+
         BuildBlockerContext context = new BuildBlockerContext()
         ContextHelper.executeInContext(closure, context)
+
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
-                useBuildBlocker 'true'
-                blockingJobs projectName
-                if (!jobManagement.getPluginVersion('build-blocker-plugin')?.isOlderThan(new VersionNumber('1.7.0'))) {
+                useBuildBlocker(true)
+                blockingJobs(projectName)
+                if (!jobManagement.getPluginVersion('build-blocker-plugin')?.isOlderThan(new VersionNumber('1.7.1'))) {
                     blockLevel(context.blockLevel)
                     scanQueueFor(context.scanQueueFor)
                 }
