@@ -1,0 +1,19 @@
+plugins {
+    id 'com.moowork.gulp' version '0.10'
+}
+
+apply plugin: 'org.ajoberstar.github-pages'
+
+githubPages {
+    commitMessage = "updated gh-pages for $version"
+    repoUri = "git@github.com:$githubUser/job-dsl-plugin.git"
+    pages {
+        from '.'
+    }
+}
+
+tasks.publishGhPages.dependsOn('gulp_build')
+
+task clean(type: Delete) {
+    delete project.buildDir
+}

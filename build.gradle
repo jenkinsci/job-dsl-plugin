@@ -10,7 +10,7 @@ buildscript {
 
 defaultTasks 'build' // for BuildHive
 
-subprojects {
+configure(subprojects - project(':job-dsl-api-viewer')) {
     group = 'org.jenkins-ci.plugins'
 
     apply plugin: 'groovy'
@@ -180,22 +180,5 @@ githubPages {
     workingPath = "$buildDir/wiki"
     pages {
         from 'docs'
-    }
-}
-
-project(':job-dsl-api-viewer') {
-
-    repositories {
-        mavenCentral()
-    }
-
-    apply plugin: 'org.ajoberstar.github-pages'
-
-    githubPages {
-        commitMessage = "updated gh-pages for $version"
-        repoUri = "git@github.com:$githubUser/job-dsl-plugin.git"
-        pages {
-            from '.'
-        }
     }
 }
