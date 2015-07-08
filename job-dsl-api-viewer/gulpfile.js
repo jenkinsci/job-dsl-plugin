@@ -10,6 +10,8 @@ var connect     = require('gulp-connect');
 var watch       = require('gulp-watch');
 var del         = require('del');
 var merge       = require('merge-stream');
+var request     = require('request');
+var source      = require('vinyl-source-stream');
 
 gulp.task('templates', function(){
     var templates = gulp.src('./src/templates/*.hbs')
@@ -43,10 +45,16 @@ gulp.task('connect', ['watch'], function() {
     connect.server();
 });
 
+gulp.task('download', function () {
+    return request('http://updates.jenkins-ci.org/update-center.json')
+        .pipe(source('update-center.jsonp'))
+        .pipe(gulp.dest('./build/data/'));
+});
+
 gulp.task('clean', function() {
     del.sync(['build']);
 });
 
-gulp.task('build', ['clean', 'templates', 'less']);
+gulp.task('build', ['clean', 'download', 'templates', 'less']);
 
 gulp.task('default', ['build']);
