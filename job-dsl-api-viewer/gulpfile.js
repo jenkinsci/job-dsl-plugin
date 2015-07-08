@@ -55,6 +55,6 @@ gulp.task('clean', function() {
     del.sync(['build']);
 });
 
-gulp.task('build', ['clean', 'download', 'templates', 'less']);
+gulp.task('build', ['download', 'templates', 'less']);
 
 gulp.task('default', ['build']);

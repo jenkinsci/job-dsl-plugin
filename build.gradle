@@ -71,6 +71,10 @@ project(':job-dsl-core') {
     description = 'Generates Jenkins jobs via a DSL'
     mainClassName = 'javaposse.jobdsl.Run'
 
+    ext {
+        apiDocData = "${project.buildDir}/dsl-${version}.json"
+    }
+
     dependencies {
         astCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
         compile 'commons-codec:commons-codec:1.8' // for Perforce
@@ -106,10 +110,12 @@ project(':job-dsl-core') {
         mainClass = project.mainClassName
     }
 
-    task generateApiDoc (dependsOn: 'classes', type: JavaExec) {
+    task generateApiDoc(type: JavaExec, dependsOn: 'classes') {
         main = 'javaposse.jobdsl.dsl.doc.ApiDocGenerator'
         classpath = sourceSets.main.runtimeClasspath
-        args = [version]
+        args = [version, apiDocData]
+
+        outputs.file apiDocData
     }
 
     run {
@@ -127,6 +133,7 @@ project(':job-dsl-core') {
                 artifact jarGroovydocs
                 artifact jarSources
                 artifact oneJar
+                artifact source: apiDocData, extension: 'json', classifier: 'apidoc'
             }
         }
 

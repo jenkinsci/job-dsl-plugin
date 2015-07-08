@@ -28,7 +28,7 @@ class ApiDocGenerator {
 
     static void main(String[] args) {
         String version = args[0]
-        String outputPath = "../job-dsl-api-viewer/data/dsl-${version}.json"
+        String outputPath = args[1]
 
         JsonBuilder builder = new ApiDocGenerator().generateApi(version)
 

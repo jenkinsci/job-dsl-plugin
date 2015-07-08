@@ -12,6 +12,12 @@ githubPages {
     }
 }
 
+task copyData(type: Copy) {
+    from tasks.getByPath(':job-dsl-core:generateApiDoc')
+    into "${project.buildDir}/data"
+}
+
+tasks.gulp_build.dependsOn('copyData')
 tasks.publishGhPages.dependsOn('gulp_build')
 
 task clean(type: Delete) {
