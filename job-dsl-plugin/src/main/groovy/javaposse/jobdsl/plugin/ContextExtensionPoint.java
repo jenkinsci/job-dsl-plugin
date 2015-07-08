@@ -1,12 +1,13 @@
 package javaposse.jobdsl.plugin;
 
-import com.google.common.base.Preconditions;
 import groovy.lang.Closure;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.Item;
 import javaposse.jobdsl.dsl.Context;
 import javaposse.jobdsl.dsl.ContextHelper;
+import javaposse.jobdsl.dsl.DslScriptException;
+import javaposse.jobdsl.dsl.Preconditions;
 import jenkins.model.Jenkins;
 
 /**
@@ -39,6 +40,7 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
      *
      * @param runnable the Groovy closure
      * @param context  the {@link Context} for the {@link Runnable}
+     * @throws DslScriptException if the runnable is not a Groovy closure
      */
     public static void executeInContext(Runnable runnable, Context context) {
         if (runnable != null) {

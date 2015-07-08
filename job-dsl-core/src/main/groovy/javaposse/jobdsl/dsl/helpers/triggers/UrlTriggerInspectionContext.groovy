@@ -1,7 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.Preconditions
 
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
@@ -42,7 +43,8 @@ class UrlTriggerInspectionContext implements Context {
     List<String> expressions = []
 
     UrlTriggerInspectionContext(Inspection type) {
-        this.type = Preconditions.checkNotNull(type, 'Inspection type must not be null!')
+        Preconditions.checkNotNull(type, 'Inspection type must not be null!')
+        this.type = type
     }
 
     /**
@@ -50,9 +52,8 @@ class UrlTriggerInspectionContext implements Context {
      * @param path expression to add
      */
     void path(String path) {
-        String p = Preconditions.checkNotNull(path, 'Path must not be null')
-        Preconditions.checkArgument(!p.empty, 'Path given must not be empty')
-        expressions << p
+        Preconditions.checkNotNullOrEmpty(path, 'Path must not be null or empty')
+        expressions << path
     }
 
     /**
@@ -63,12 +64,11 @@ class UrlTriggerInspectionContext implements Context {
      * @param exp regular expression to add
      */
     void regexp(String exp) {
-        String expr = Preconditions.checkNotNull(exp, 'Regular expression must not be null')
-        Preconditions.checkArgument(!expr.empty, 'Regular expressions must not be empty')
+        Preconditions.checkNotNullOrEmpty(exp, 'Regular expression must not be null or empty')
         try {
-            Pattern.compile(expr)
+            Pattern.compile(exp)
         } catch (PatternSyntaxException pse) {
-            throw new IllegalArgumentException("Syntax of pattern ${exp} is invalid: ${pse.message}")
+            throw new DslScriptException("Syntax of pattern ${exp} is invalid: ${pse.message}")
         }
 
         expressions << exp

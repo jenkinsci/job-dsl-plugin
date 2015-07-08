@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
@@ -97,7 +98,7 @@ class MavenJobSpec extends Specification {
         job.localRepository((MavenContext.LocalRepositoryLocation) null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'localRepository constructs xml for LocalToExecutor'() {
@@ -121,7 +122,7 @@ class MavenJobSpec extends Specification {
         job.localRepository((LocalRepositoryLocation) null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'localRepository constructs xml for LOCAL_TO_EXECUTOR'() {
@@ -194,7 +195,7 @@ class MavenJobSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'mavenInstallation constructs xml'() {
@@ -214,7 +215,7 @@ class MavenJobSpec extends Specification {
         job.providedSettings(settingsName)
 
         then:
-        Exception e = thrown(NullPointerException)
+        Exception e = thrown(DslScriptException)
         e.message.contains(settingsName)
     }
 

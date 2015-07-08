@@ -7,7 +7,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class ConditionalStepsContext extends AbstractContext {
     RunCondition runCondition

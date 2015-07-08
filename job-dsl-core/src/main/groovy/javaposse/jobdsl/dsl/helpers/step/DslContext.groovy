@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.Preconditions
 
 class DslContext implements Context {
     private static final Set<String> REMOVE_JOB_ACTIONS = ['IGNORE', 'DISABLE', 'DELETE']
@@ -17,7 +17,8 @@ class DslContext implements Context {
     String lookupStrategy = 'JENKINS_ROOT'
 
     void text(String text) {
-        this.scriptText = Preconditions.checkNotNull(text)
+        Preconditions.checkNotNull(text, 'text must be specified')
+        this.scriptText = text
     }
 
     void external(String... dslScripts) {

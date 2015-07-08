@@ -1,8 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import static java.lang.Thread.currentThread
-import static org.codehaus.groovy.runtime.StackTraceUtils.isApplicationClass
-
 /**
  * Abstract base class providing common functionality for all {@link JobManagement} implementations.
  */
@@ -36,23 +33,23 @@ abstract class AbstractJobManagement implements JobManagement {
 
     @Override
     void logDeprecationWarning() {
-        List<StackTraceElement> currentStackTrack = stackTrace
-        String details = getSourceDetails(currentStackTrack)
+        List<StackTraceElement> currentStackTrack = DslScriptHelper.stackTrace
+        String details = DslScriptHelper.getSourceDetails(currentStackTrack)
         logDeprecationWarning(currentStackTrack[0].methodName, details)
     }
 
     @Override
     void logDeprecationWarning(String subject) {
-        logDeprecationWarning(subject, getSourceDetails(stackTrace))
+        logDeprecationWarning(subject, DslScriptHelper.sourceDetails)
     }
 
     @Override
     void logDeprecationWarning(String subject, String scriptName, int lineNumber) {
-        logDeprecationWarning(subject, getSourceDetails(scriptName, lineNumber))
+        logDeprecationWarning(subject, DslScriptHelper.getSourceDetails(scriptName, lineNumber))
     }
 
     protected void logDeprecationWarning(String subject, String details) {
-        logWarning('%s is deprecated (%s)', subject, details)
+        logWarning("${subject} is deprecated", details)
     }
 
     protected static void validateUpdateArgs(String jobName, String config) {
@@ -72,28 +69,42 @@ abstract class AbstractJobManagement implements JobManagement {
         }
     }
 
+    /**
+     * @deprecated use {@link DslScriptHelper#getStackTrace()} instead
+     */
+    @Deprecated
     protected static List<StackTraceElement> getStackTrace() {
-        List<StackTraceElement> result = currentThread().stackTrace.findAll { isApplicationClass(it.className) }
-        result[4..-1]
+        DslScriptHelper.stackTrace
     }
 
+    /**
+     * @deprecated use {@link DslScriptHelper#getSourceDetails(java.util.List)} instead
+     */
+    @Deprecated
     protected static String getSourceDetails(List<StackTraceElement> stackTrace) {
-        StackTraceElement source = stackTrace.find { !it.className.startsWith('javaposse.jobdsl.') }
-        getSourceDetails(source?.fileName, source == null ? -1 : source.lineNumber)
+        DslScriptHelper.getSourceDetails(stackTrace)
     }
 
+    /**
+     * @deprecated use {@link DslScriptHelper#getSourceDetails(java.lang.String, int)} instead
+     */
+    @Deprecated
     protected static String getSourceDetails(String scriptName, int lineNumber) {
-        String details = 'unknown source'
-        if (scriptName != null) {
-            details = scriptName.matches(/script\d+\.groovy/) ? 'DSL script' : scriptName
-            if (lineNumber > 0) {
-                details += ", line ${lineNumber}"
-            }
-        }
-        details
+        DslScriptHelper.getSourceDetails(scriptName, lineNumber)
     }
 
+    /**
+     * @deprecated use {@link #logWarning(java.lang.String)} instead
+     */
+    @Deprecated
     protected void logWarning(String message, Object... args) {
         outputStream.printf("Warning: $message\n", args)
+    }
+
+    /**
+     * @since 1.36
+     */
+    protected void logWarning(String message, String details = DslScriptHelper.getSourceDetails()) {
+        outputStream.println("Warning: ($details) $message")
     }
 }

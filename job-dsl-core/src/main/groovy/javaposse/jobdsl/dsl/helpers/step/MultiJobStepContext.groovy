@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class MultiJobStepContext extends StepContext {
@@ -40,7 +40,7 @@ class MultiJobStepContext extends StepContext {
             validContinuationConditions << 'ALWAYS'
         }
 
-        Preconditions.checkArgument(phaseContext.phaseName as Boolean, 'A phase needs a name')
+        Preconditions.checkNotNullOrEmpty(phaseContext.phaseName, 'A phase needs a name')
         Preconditions.checkArgument(
                 validContinuationConditions.contains(phaseContext.continuationCondition),
                 "Continuation Condition needs to be one of these values: ${validContinuationConditions.join(', ')}"

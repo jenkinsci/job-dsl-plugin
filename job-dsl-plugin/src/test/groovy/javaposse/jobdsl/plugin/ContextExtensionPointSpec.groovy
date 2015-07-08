@@ -2,6 +2,7 @@ package javaposse.jobdsl.plugin
 
 import hudson.ExtensionList
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.DslScriptException
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
@@ -31,7 +32,7 @@ class ContextExtensionPointSpec extends Specification {
         ContextExtensionPoint.executeInContext(Mock(Runnable), Mock(Context))
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'executeInContext no closure'() {

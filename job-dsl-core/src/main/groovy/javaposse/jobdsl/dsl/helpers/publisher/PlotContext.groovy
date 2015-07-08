@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Strings
-import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class PlotContext implements Context {
     private static final List<String> STYLE = [
@@ -63,7 +63,7 @@ class PlotContext implements Context {
     }
 
     void csvFile(String fileName, @DslContext(PlotCSVSeriesContext) Closure plotSeriesClosure = null) {
-        checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
+        checkNotNullOrEmpty(fileName, 'fileName must not be null or empty')
 
         PlotSeriesContext plotSeriesContext = new PlotCSVSeriesContext(fileName)
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
@@ -72,7 +72,7 @@ class PlotContext implements Context {
     }
 
     void propertiesFile(String fileName, @DslContext(PlotPropertiesSeriesContext) Closure plotSeriesClosure = null) {
-        checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
+        checkNotNullOrEmpty(fileName, 'fileName must not be null or empty')
 
         PlotSeriesContext plotSeriesContext = new PlotPropertiesSeriesContext(fileName)
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)
@@ -81,7 +81,7 @@ class PlotContext implements Context {
     }
 
     void xmlFile(String fileName, @DslContext(PlotXMLSeriesContext) Closure plotSeriesClosure = null) {
-        checkArgument(!Strings.isNullOrEmpty(fileName), 'fileName must not be null or empty')
+        checkNotNullOrEmpty(fileName, 'fileName must not be null or empty')
 
         PlotSeriesContext plotSeriesContext = new PlotXMLSeriesContext(fileName)
         ContextHelper.executeInContext(plotSeriesClosure, plotSeriesContext)

@@ -3,8 +3,8 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import groovy.transform.PackageScope
 import javaposse.jobdsl.dsl.Context
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Preconditions.checkNotNull
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
 class CoberturaContext implements Context {
     boolean onlyStable = false

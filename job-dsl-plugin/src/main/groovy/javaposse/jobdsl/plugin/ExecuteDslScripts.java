@@ -236,7 +236,7 @@ public class ExecuteDslScripts extends Builder {
                 generator.close();
             }
         } catch (DslException e) {
-            LOGGER.log(Level.FINE, String.format("Exception while processing DSL scripts: %s", e.getMessage()));
+            LOGGER.log(Level.FINE, String.format("Exception while processing DSL scripts: %s", e.getMessage()), e);
             throw new AbortException(e.getMessage());
         }
     }

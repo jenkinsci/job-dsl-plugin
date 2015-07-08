@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.Preconditions
 
 class FlowdockPublisherContext implements Context {
     List<String> notificationTags = []

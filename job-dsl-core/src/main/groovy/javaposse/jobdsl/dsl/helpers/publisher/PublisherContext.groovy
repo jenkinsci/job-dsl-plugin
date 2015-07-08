@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
@@ -15,8 +13,8 @@ import javaposse.jobdsl.dsl.helpers.common.BuildPipelineContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Strings.isNullOrEmpty
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class PublisherContext extends AbstractExtensibleContext {
     List<Node> publisherNodes = []
@@ -350,11 +348,11 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
         // Validate values
-        Preconditions.checkArgument(
+        checkArgument(
                 validJabberStrategyNames.contains(jabberContext.strategyName),
                 "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
         )
-        Preconditions.checkArgument(
+        checkArgument(
                 validJabberChannelNotificationNames.contains(jabberContext.channelNotificationName),
                 'Jabber Channel Notification name needs to be one of these values: ' +
                         validJabberChannelNotificationNames.join(',')
@@ -401,7 +399,7 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(scpClosure, scpContext)
 
         // Validate values
-        Preconditions.checkArgument(!scpContext.entries.empty, 'Scp publish requires at least one entry')
+        checkArgument(!scpContext.entries.empty, 'Scp publish requires at least one entry')
 
         publisherNodes << new NodeBuilder().'be.certipost.hudson.plugin.SCPRepositoryPublisher' {
             siteName site
@@ -448,11 +446,11 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
 
         // Validate values
-        Preconditions.checkArgument(
+        checkArgument(
                 validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria),
                 "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
         )
-        Preconditions.checkArgument(
+        checkArgument(
                 validCloneWorkspaceArchiveMethods.contains(cloneWorkspaceContext.archiveMethod),
                 'Clone Workspace Archive Method needs to be one of these values: ' +
                         validCloneWorkspaceArchiveMethods.join(',')
@@ -474,7 +472,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * Downstream build
      */
     void downstream(String projectName, String thresholdName = 'SUCCESS') {
-        Preconditions.checkArgument(
+        checkArgument(
                 DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
                 "thresholdName must be one of these values ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(',')}"
         )
@@ -929,11 +927,8 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.23
      */
     void flowdock(String[] tokens, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
-        // Validate values
-        Preconditions.checkArgument(
-                tokens != null && tokens.length > 0,
-                'Flowdock publish requires at least one flow token'
-        )
+        checkArgument(tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token')
+
         flowdock(tokens.join(','), flowdockPublisherClosure)
     }
 
@@ -969,7 +964,7 @@ class PublisherContext extends AbstractExtensibleContext {
         FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement, item)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
 
-        Preconditions.checkArgument(!context.actions.empty, 'no publisher or build step specified')
+        checkArgument(!context.actions.empty, 'no publisher or build step specified')
 
         publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
             delegate.publishers {
@@ -1032,7 +1027,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'rundeck')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(jobIdentifier), 'jobIdentifier cannot be null or empty')
+        checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
         RundeckContext rundeckContext = new RundeckContext()
         ContextHelper.executeInContext(rundeckClosure, rundeckContext)
@@ -1054,7 +1049,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
         jobManagement.logPluginDeprecationWarning('s3', '0.7')
 
-        checkArgument(!isNullOrEmpty(profile), 'profile must be specified')
+        checkNotNullOrEmpty(profile, 'profile must be specified')
 
         S3BucketPublisherContext context = new S3BucketPublisherContext(jobManagement)
         ContextHelper.executeInContext(s3PublisherClosure, context)
@@ -1399,7 +1394,7 @@ class PublisherContext extends AbstractExtensibleContext {
         PublishOverSshContext publishOverSshContext = new PublishOverSshContext()
         ContextHelper.executeInContext(publishOverSshClosure, publishOverSshContext)
 
-        Preconditions.checkArgument(!publishOverSshContext.servers.empty, 'At least 1 server must be configured')
+        checkArgument(!publishOverSshContext.servers.empty, 'At least 1 server must be configured')
 
         publisherNodes << new NodeBuilder().'jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin' {
             consolePrefix('SSH: ')

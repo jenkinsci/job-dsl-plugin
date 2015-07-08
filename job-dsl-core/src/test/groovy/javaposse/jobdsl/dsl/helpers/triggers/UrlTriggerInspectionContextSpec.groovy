@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection.json
@@ -14,7 +15,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         new UrlTriggerInspectionContext(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'ensure that paths are not null'() {
@@ -24,7 +25,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         when:
         ctx.path(null)
 
-        then: thrown(NullPointerException)
+        then: thrown(DslScriptException)
     }
 
     def 'ensure that paths are not empty'() {
@@ -34,7 +35,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         when:
         ctx.path('')
 
-        then: thrown(IllegalArgumentException)
+        then: thrown(DslScriptException)
     }
 
     def 'ensure that RegExps are not null'() {
@@ -45,7 +46,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         ctx.regexp(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'ensure that RegExps are not empty'() {
@@ -56,7 +57,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         ctx.regexp('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'ensure that RegExps are compileable' () {
@@ -67,6 +68,6 @@ class UrlTriggerInspectionContextSpec extends Specification {
         ctx.regexp('(foo.+')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 }

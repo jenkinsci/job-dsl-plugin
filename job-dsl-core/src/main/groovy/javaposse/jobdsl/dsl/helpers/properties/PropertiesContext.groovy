@@ -1,11 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.properties
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 
@@ -43,7 +42,7 @@ class PropertiesContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'custom-job-icon', minimumVersion = '0.2')
     void customIcon(String iconFileName) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(iconFileName), 'iconFileName must be specified')
+        Preconditions.checkNotNullOrEmpty(iconFileName, 'iconFileName must be specified')
 
         propertiesNodes << new NodeBuilder().'jenkins.plugins.jobicon.CustomIconProperty' {
             iconfile(iconFileName)

@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import com.google.common.collect.Sets
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
@@ -16,6 +14,9 @@ import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.SectionedView
+
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 abstract class JobParent extends Script implements DslFactory {
     JobManagement jm
@@ -87,7 +88,7 @@ abstract class JobParent extends Script implements DslFactory {
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends Job> T processJob(String name, Class<T> jobClass, Closure closure) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+        checkNotNullOrEmpty(name, 'name must be specified')
 
         T job = jobClass.newInstance(jm)
         job.name = name
@@ -176,7 +177,7 @@ abstract class JobParent extends Script implements DslFactory {
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+        checkNotNullOrEmpty(name, 'name must be specified')
 
         T view = viewClass.newInstance(jm)
         view.name = name
@@ -224,7 +225,7 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+        checkNotNullOrEmpty(name, 'name must be specified')
 
         Folder folder = new Folder(jm)
         folder.name = name
@@ -270,7 +271,7 @@ abstract class JobParent extends Script implements DslFactory {
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected ConfigFile processConfigFile(String name, ConfigFileType configFileType, Closure closure) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), 'name must be specified')
+        checkNotNullOrEmpty(name, 'name must be specified')
 
         ConfigFile configFile = new ConfigFile(configFileType, jm)
         configFile.name = name
@@ -299,7 +300,8 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     void queue(Job job) {
-        Preconditions.checkArgument(job.name as Boolean)
+        checkNotNull(job, 'job must not be null')
+        checkNotNullOrEmpty(job.name, 'job name must not be null or empty')
         queueToBuild << job.name
     }
 
@@ -308,7 +310,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     InputStream streamFileFromWorkspace(String filePath) {
-        Preconditions.checkArgument(filePath as Boolean)
+        checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
         jm.streamFileInWorkspace(filePath)
     }
 
@@ -317,7 +319,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     String readFileFromWorkspace(String filePath) {
-        Preconditions.checkArgument(filePath as Boolean)
+        checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
         jm.readFileInWorkspace(filePath)
     }
 
@@ -326,8 +328,8 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     String readFileFromWorkspace(String jobName, String filePath) {
-        Preconditions.checkArgument(jobName as Boolean)
-        Preconditions.checkArgument(filePath as Boolean)
+        checkNotNullOrEmpty(jobName, 'jobName must not be null or empty')
+        checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
         jm.readFileInWorkspace(jobName, filePath)
     }
 }

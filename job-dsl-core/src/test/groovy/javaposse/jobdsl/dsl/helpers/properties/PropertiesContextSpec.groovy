@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.properties
 
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
@@ -60,7 +61,7 @@ class PropertiesContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         url    | text
@@ -88,7 +89,7 @@ class PropertiesContextSpec extends Specification {
         context.customIcon(fileName)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         fileName << [null, '']

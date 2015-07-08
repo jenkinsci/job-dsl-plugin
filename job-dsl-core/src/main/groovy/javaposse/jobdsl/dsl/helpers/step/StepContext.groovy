@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
@@ -111,8 +111,10 @@ class StepContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'sbt')
     void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg = null, String jvmFlagsArg = null,
              String subdirPathArg = null, Closure configure = null) {
+        Preconditions.checkNotNull(sbtNameArg, 'Please provide the name of the SBT to use')
+
         Node sbtNode = new NodeBuilder().'org.jvnet.hudson.plugins.SbtPluginBuilder' {
-            name Preconditions.checkNotNull(sbtNameArg, 'Please provide the name of the SBT to use' as Object)
+            name sbtNameArg
             jvmFlags jvmFlagsArg ?: ''
             sbtFlags sbtFlagsArg ?: ''
             actions actionsArg ?: ''
@@ -524,8 +526,8 @@ class StepContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'Parameterized-Remote-Trigger')
     void remoteTrigger(String remoteJenkins, String jobName,
                        @DslContext(ParameterizedRemoteTriggerContext) Closure closure = null) {
-        Preconditions.checkArgument(!isNullOrEmpty(remoteJenkins), 'remoteJenkins must be specified')
-        Preconditions.checkArgument(!isNullOrEmpty(jobName), 'jobName must be specified')
+        Preconditions.checkNotNullOrEmpty(remoteJenkins, 'remoteJenkins must be specified')
+        Preconditions.checkNotNullOrEmpty(jobName, 'jobName must be specified')
 
         ParameterizedRemoteTriggerContext context = new ParameterizedRemoteTriggerContext()
         ContextHelper.executeInContext(closure, context)
@@ -655,10 +657,9 @@ class StepContext extends AbstractExtensibleContext {
 
     @RequiresPlugin(id = 'vsphere-cloud')
     private vSphereBuildStep(String server, String builder, Closure configuration) {
-        int hash = Preconditions.checkNotNull(
-                jobManagement.getVSphereCloudHash(server),
-                "vSphere server ${server} does not exist"
-        )
+        Integer hash = jobManagement.getVSphereCloudHash(server)
+        Preconditions.checkNotNull(hash, "vSphere server ${server} does not exist")
+
         stepNodes << new NodeBuilder().'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer' {
             buildStep(class: "org.jenkinsci.plugins.vsphere.builders.${builder}", configuration)
             serverName server
@@ -707,7 +708,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.6')
     void debianPackage(String path, @DslContext(DebianContext) Closure closure = null) {
-        Preconditions.checkArgument(!isNullOrEmpty(path), 'path must be specified')
+        Preconditions.checkNotNullOrEmpty(path, 'path must be specified')
 
         DebianContext context = new DebianContext()
         ContextHelper.executeInContext(closure, context)

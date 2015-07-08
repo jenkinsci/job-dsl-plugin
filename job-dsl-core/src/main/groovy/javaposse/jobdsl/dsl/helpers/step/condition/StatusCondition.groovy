@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step.condition
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 /**
  * Generate config for a status condition.

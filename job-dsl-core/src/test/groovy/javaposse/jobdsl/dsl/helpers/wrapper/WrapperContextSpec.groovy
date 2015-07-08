@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
@@ -315,7 +316,7 @@ class WrapperContextSpec extends Specification {
         context.sshAgent(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'sshAgent with invalid credentials'() {
@@ -326,7 +327,7 @@ class WrapperContextSpec extends Specification {
         context.sshAgent('foo')
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'sshAgent'() {
@@ -466,7 +467,7 @@ class WrapperContextSpec extends Specification {
         context.xvfb(installation)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         installation << [null, '']
@@ -699,7 +700,7 @@ class WrapperContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'call injectPasswords'() {
@@ -731,7 +732,7 @@ class WrapperContextSpec extends Specification {
         context.buildName(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'call codeSigning with no args'() {
@@ -910,7 +911,7 @@ class WrapperContextSpec extends Specification {
         }
 
         then:
-        Exception e = thrown(NullPointerException)
+        Exception e = thrown(DslScriptException)
         e.message.contains(configName)
     }
 

@@ -6,8 +6,8 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Strings.isNullOrEmpty
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class S3BucketPublisherContext extends AbstractContext {
     private static final List<String> REGIONS = [
@@ -23,8 +23,8 @@ class S3BucketPublisherContext extends AbstractContext {
     }
 
     void entry(String source, String bucketName, String region, @DslContext(S3EntryContext) Closure closure = null) {
-        checkArgument(!isNullOrEmpty(source), 'source must be specified')
-        checkArgument(!isNullOrEmpty(bucketName), 'bucket must be specified')
+        checkNotNullOrEmpty(source, 'source must be specified')
+        checkNotNullOrEmpty(bucketName, 'bucket must be specified')
 
         if (!jobManagement.getPluginVersion('s3')?.isOlderThan(new VersionNumber('0.7'))) {
             checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")

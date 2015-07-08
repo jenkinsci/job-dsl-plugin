@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
@@ -51,7 +52,7 @@ class BuildParametersContextSpec extends Specification {
         context.booleanParam(null, false)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'booleanParam name argument cant be empty'() {
@@ -59,7 +60,7 @@ class BuildParametersContextSpec extends Specification {
         context.booleanParam('', false)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'multiple booleanParams is just fine'() {
@@ -86,7 +87,7 @@ class BuildParametersContextSpec extends Specification {
         context.booleanParam('one')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'base listTagsParam usage'() {
@@ -155,7 +156,7 @@ class BuildParametersContextSpec extends Specification {
         context.listTagsParam(null, 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex')
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'listTagsParam name argument cant be empty'() {
@@ -163,7 +164,7 @@ class BuildParametersContextSpec extends Specification {
         context.listTagsParam('', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'listTagsParam scmUrl argument cant be null'() {
@@ -171,7 +172,7 @@ class BuildParametersContextSpec extends Specification {
         context.listTagsParam('myParameterName', null, '^mytagsfilterregex')
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'listTagsParam scmUrl argument cant be empty'() {
@@ -179,7 +180,7 @@ class BuildParametersContextSpec extends Specification {
         context.listTagsParam('myParameterName', '', '^mytagsfilterregex')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'listTagsParam tagFilterRegex argument can be null or empty'(String filter) {
@@ -210,7 +211,7 @@ class BuildParametersContextSpec extends Specification {
         context.listTagsParam('one', 'http://kenai.com/svn/myProject/tags', '')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'base choiceParam usage'() {
@@ -257,7 +258,7 @@ class BuildParametersContextSpec extends Specification {
         context.choiceParam(null, ['option 1'])
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'choiceParam name argument cant be empty'() {
@@ -265,7 +266,7 @@ class BuildParametersContextSpec extends Specification {
         context.choiceParam('', ['option 1'])
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'choiceParam options argument cant be null'() {
@@ -273,7 +274,7 @@ class BuildParametersContextSpec extends Specification {
         context.choiceParam('myParameterName', null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'choiceParam options argument cant be empty'() {
@@ -281,7 +282,7 @@ class BuildParametersContextSpec extends Specification {
         context.choiceParam('myParameterName', [])
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'choiceParam already defined'() {
@@ -290,7 +291,7 @@ class BuildParametersContextSpec extends Specification {
         context.choiceParam('one', ['foo', 'bar'])
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'base fileParam usage'() {
@@ -322,7 +323,7 @@ class BuildParametersContextSpec extends Specification {
         context.fileParam(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'fileParam fileLocation argument cant be empty'() {
@@ -330,7 +331,7 @@ class BuildParametersContextSpec extends Specification {
         context.fileParam('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'fileParam already defined'() {
@@ -339,7 +340,7 @@ class BuildParametersContextSpec extends Specification {
         context.fileParam('one')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'base runParam usage'() {
@@ -387,7 +388,7 @@ class BuildParametersContextSpec extends Specification {
         context.runParam(null, null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'runParam name argument cant be empty'() {
@@ -395,7 +396,7 @@ class BuildParametersContextSpec extends Specification {
         context.runParam('', '')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'runParam jobToRun argument cant be null'() {
@@ -403,7 +404,7 @@ class BuildParametersContextSpec extends Specification {
         context.runParam('myParameterName', null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'runParam jobToRun argument cant be empty'() {
@@ -411,7 +412,7 @@ class BuildParametersContextSpec extends Specification {
         context.runParam('myParameterName', '')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'runParam already defined'() {
@@ -420,7 +421,7 @@ class BuildParametersContextSpec extends Specification {
         context.runParam('one', 'job')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'base stringParam usage'() {
@@ -467,7 +468,7 @@ class BuildParametersContextSpec extends Specification {
         context.stringParam(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'stringParam name argument cant be empty'() {
@@ -475,7 +476,7 @@ class BuildParametersContextSpec extends Specification {
         context.stringParam('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'stringParam already defined'() {
@@ -484,7 +485,7 @@ class BuildParametersContextSpec extends Specification {
         context.stringParam('one')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'base textParam usage'() {
@@ -531,7 +532,7 @@ class BuildParametersContextSpec extends Specification {
         context.textParam(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'textParam name argument cant be empty'() {
@@ -539,7 +540,7 @@ class BuildParametersContextSpec extends Specification {
         context.textParam('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'textParam already defined'() {
@@ -548,7 +549,7 @@ class BuildParametersContextSpec extends Specification {
         context.textParam('one')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'nodeParam base usage'() {
@@ -613,7 +614,7 @@ class BuildParametersContextSpec extends Specification {
         context.nodeParam(null, null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'nodeParam invalid trigger'() {
@@ -623,7 +624,7 @@ class BuildParametersContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'nodeParam no name'() {
@@ -631,13 +632,13 @@ class BuildParametersContextSpec extends Specification {
         context.nodeParam('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         when:
         context.nodeParam(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'nodeParam already defined'() {
@@ -646,7 +647,7 @@ class BuildParametersContextSpec extends Specification {
         context.nodeParam('one')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'labelParam base usage'() {
@@ -724,7 +725,7 @@ class BuildParametersContextSpec extends Specification {
         }
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         trigger    | eligibility
@@ -763,7 +764,7 @@ class BuildParametersContextSpec extends Specification {
         context.labelParam(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'labelParam name argument cant be empty'() {
@@ -771,7 +772,7 @@ class BuildParametersContextSpec extends Specification {
         context.labelParam('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'labelParam already defined'() {
@@ -780,7 +781,7 @@ class BuildParametersContextSpec extends Specification {
         context.labelParam('one')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'gitParam already defined'() {
@@ -789,7 +790,7 @@ class BuildParametersContextSpec extends Specification {
         context.gitParam('paramName')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'gitParam name argument cant be null'() {
@@ -797,7 +798,7 @@ class BuildParametersContextSpec extends Specification {
         context.gitParam(null)
 
         then:
-        thrown(NullPointerException)
+        thrown(DslScriptException)
     }
 
     def 'gitParam name argument cant be empty'() {
@@ -805,7 +806,7 @@ class BuildParametersContextSpec extends Specification {
         context.gitParam('')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
     }
 
     def 'gitParam minimal options'() {

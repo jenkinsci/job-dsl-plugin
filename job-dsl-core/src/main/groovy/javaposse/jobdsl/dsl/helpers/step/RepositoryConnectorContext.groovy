@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 /**
  * DSL support for the Repository Connector plugin.

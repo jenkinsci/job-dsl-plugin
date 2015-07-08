@@ -1,11 +1,10 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.base.Preconditions
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.JobAuthorizationContext
-import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext
 import javaposse.jobdsl.dsl.helpers.ScmContext
+import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
@@ -14,6 +13,10 @@ import javaposse.jobdsl.dsl.helpers.toplevel.NotificationContext
 import javaposse.jobdsl.dsl.helpers.toplevel.ThrottleConcurrentBuildsContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
+
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
+import static javaposse.jobdsl.dsl.Preconditions.checkState
 
 /**
  * DSL element representing a Jenkins job.
@@ -34,7 +37,7 @@ abstract class Job extends Item {
      * @throws JobTemplateMissingException
      */
     void using(String templateName) throws JobTemplateMissingException {
-        Preconditions.checkState(this.templateName == null, 'Can only use "using" once')
+        checkArgument(this.templateName == null, 'Can only use "using" once')
         this.templateName = templateName
     }
 
@@ -265,7 +268,7 @@ abstract class Job extends Item {
      * @since 1.16
      */
     void displayName(String displayName) {
-        Preconditions.checkNotNull(displayName, 'Display name must not be null.')
+        checkNotNull(displayName, 'Display name must not be null.')
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('displayName', displayName)
             project / node
@@ -279,7 +282,7 @@ abstract class Job extends Item {
      * @since 1.16
      */
     void customWorkspace(String workspacePath) {
-        Preconditions.checkNotNull(workspacePath, 'Workspace path must not be null')
+        checkNotNull(workspacePath, 'Workspace path must not be null')
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('customWorkspace', workspacePath)
             project / node
@@ -418,7 +421,7 @@ abstract class Job extends Item {
         ContextHelper.executeInContext(closure, context)
 
         if (!context.scmNodes.empty) {
-            Preconditions.checkState(context.scmNodes.size() == 1, 'Outside "multiscm", only one SCM can be specified')
+            checkState(context.scmNodes.size() == 1, 'Outside "multiscm", only one SCM can be specified')
 
             withXmlActions << WithXmlAction.create { Node project ->
                 Node scm = project / scm

@@ -37,7 +37,7 @@ even delay the merge until someone finds time to review a huge change. Only impl
 leave room so that the remaining options can be added when needed.
 
 ## Our Basic Design Decisions / Conventions
-1. Use `com.google.common.base.Preconditions` for argument validation. E.g. `Preconditions.checkArgument(name, "Channel name for irc channel is required!")`
+1. Use `javaposse.jobdsl.dsl.Preconditions` for argument validation. E.g. `Preconditions.checkArgument(name, "Channel name for irc channel is required!")`
 1. We write tests using [Spock](http://code.google.com/p/spock/), so if (for example) you add a new Helper (e.g. `ScmHelper`), then add a corresponding ScmHelperSpec in the tests directory tree.
 
 ## DSL Design

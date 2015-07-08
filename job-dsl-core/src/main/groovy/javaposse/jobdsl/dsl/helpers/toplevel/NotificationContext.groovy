@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
-import static com.google.common.base.Preconditions.checkArgument
-import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class NotificationContext extends AbstractContext {
     private static final List<String> PROTOCOLS = ['UDP', 'TCP', 'HTTP']
@@ -25,7 +25,7 @@ class NotificationContext extends AbstractContext {
 
     void endpoint(String url, String protocol = 'HTTP', String format = 'JSON',
                   @DslContext(NotificationEndpointContext) Closure notificationEndpointClosure) {
-        checkArgument(!isNullOrEmpty(url), 'url must be specified')
+        checkNotNullOrEmpty(url, 'url must be specified')
         checkArgument(PROTOCOLS.contains(protocol), "protocol must be one of ${PROTOCOLS.join(', ')}")
         checkArgument(FORMATS.contains(format), "format must be one of ${FORMATS.join(', ')}")
 

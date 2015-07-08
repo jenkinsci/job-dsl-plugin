@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 
-import static com.google.common.base.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class EmailContext implements Context {
     Set<String> emailTriggerNames = [

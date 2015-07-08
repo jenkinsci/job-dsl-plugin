@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.Context
 
-import static com.google.common.base.Preconditions.checkNotNull
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
 class JobsContext implements Context {
     Set<String> jobNames = []

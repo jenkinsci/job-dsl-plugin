@@ -276,7 +276,7 @@ class JobSpec extends Specification {
         }
 
         then:
-        thrown(IllegalStateException)
+        thrown(DslScriptException)
     }
 
     def 'call wrappers'() {
@@ -887,7 +887,7 @@ class JobSpec extends Specification {
         1 * jobManagement.requirePlugin('notification')
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(DslScriptException)
 
         where:
         url        | protocol | format  | event
