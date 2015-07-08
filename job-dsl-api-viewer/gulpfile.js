@@ -24,7 +24,7 @@ gulp.task('templates', function(){
 
     return merge(js, templates)
         .pipe(concat('app.js'))
-        .pipe(gulp.dest('./dist/js/'));
+        .pipe(gulp.dest('./build/dist/js/'));
 });
 
 gulp.task('less', function () {
@@ -32,7 +32,7 @@ gulp.task('less', function () {
         .pipe(less())
         .pipe(minifyCss({keepBreaks:true}))
         .pipe(concat('app.css'))
-        .pipe(gulp.dest('./dist/css/'));
+        .pipe(gulp.dest('./build/dist/css/'));
 });
 
 gulp.task('watch', function () {
@@ -44,7 +44,7 @@ gulp.task('connect', ['watch'], function() {
 });
 
 gulp.task('clean', function() {
-    del.sync(['dist']);
+    del.sync(['build']);
 });
 
 gulp.task('build', ['clean', 'templates', 'less']);
