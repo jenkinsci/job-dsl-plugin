@@ -12,6 +12,8 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import jenkins.model.Jenkins;
+import org.mantlik.swingboxjh.JoinClassLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Runs provided DSL scripts via an external JObManager
  */
@@ -32,11 +35,24 @@ public class DslScriptLoader {
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator();
 
     public static JobParent runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        ClassLoader parentClassLoader = DslScriptLoader.class.getClassLoader();
+        JoinClassLoader joinClassLoader;
+        try {
+            joinClassLoader = new JoinClassLoader(
+                DslScriptLoader.class.getClassLoader(),
+                Jenkins.getInstance().getPluginManager().uberClassLoader,
+                Thread.currentThread().getContextClassLoader()
+            );
+        } catch ( Throwable e) {
+            joinClassLoader = new JoinClassLoader(
+                DslScriptLoader.class.getClassLoader(),
+                Thread.currentThread().getContextClassLoader()
+            );
+        };
+
         CompilerConfiguration config = createCompilerConfiguration(jobManagement);
 
         // Otherwise baseScript won't take effect
-        GroovyClassLoader cl = new GroovyClassLoader(parentClassLoader, config);
+        GroovyClassLoader cl = new GroovyClassLoader(joinClassLoader, config);
 
         // Add static imports of a few common types, like JobType
         ImportCustomizer icz = new ImportCustomizer();

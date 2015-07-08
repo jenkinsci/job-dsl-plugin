@@ -79,6 +79,7 @@ project(':job-dsl-core') {
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile 'org.jenkins-ci:version-number:1.1'
         compile 'org.jvnet.hudson:xstream:1.4.7-jenkins-1'
+        compile 'org.jenkins-ci.main:jenkins-core:1.554.2'
     }
 
     jar {
