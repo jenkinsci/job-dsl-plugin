@@ -25,7 +25,7 @@ class BuildParametersContext extends AbstractContext {
     @RequiresPlugin(id = 'subversion')
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
-                      String description = null) {
+                      String description = null, String credentialsId = null) {
         checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
         checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
         checkNotNullOrEmpty(scmUrl, 'scmUrl cannot be null or empty')
@@ -42,6 +42,9 @@ class BuildParametersContext extends AbstractContext {
         }
         if (description != null) {
             definitionNode.appendNode('description', description)
+        }
+        if (credentialsId != null) {
+            definitionNode.appendNode('credentialsId', credentialsId)
         }
         definitionNode.appendNode('uuid', randomUUID())
 

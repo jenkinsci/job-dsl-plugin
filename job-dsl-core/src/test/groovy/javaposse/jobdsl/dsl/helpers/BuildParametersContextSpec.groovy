@@ -93,7 +93,7 @@ class BuildParametersContextSpec extends Specification {
     def 'base listTagsParam usage'() {
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
-                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
+                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription', 'myCredentialsId')
 
         then:
         context.buildParameterNodes != null
@@ -108,6 +108,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'true'
             maxTags.text() == 'maximumNumberOfTagsToDisplay'
             description.text() == 'myListTagsParameterDescription'
+            credentialsId.text() == 'myCredentialsId'
         }
         1 * jobManagement.requirePlugin('subversion')
     }
