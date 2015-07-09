@@ -221,7 +221,7 @@ abstract class Job extends Item {
     void blockOn(String projectName, @DslContext(BuildBlockerContext) Closure closure) {
         jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
 
-        BuildBlockerContext context = new BuildBlockerContext()
+        BuildBlockerContext context = new BuildBlockerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

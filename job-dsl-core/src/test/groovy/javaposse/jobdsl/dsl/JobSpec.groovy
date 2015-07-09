@@ -657,6 +657,7 @@ class JobSpec extends Specification {
             scanQueueFor[0].value() == queue
         }
         1 * jobManagement.requirePlugin('build-blocker-plugin')
+        2 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
         1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
 
         where:
