@@ -93,7 +93,8 @@ class BuildParametersContextSpec extends Specification {
     def 'base listTagsParam usage'() {
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
-                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription', 'myCredentialsId')
+                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue',
+                'myListTagsParameterDescription', 'myCredentialsId')
 
         then:
         context.buildParameterNodes != null
