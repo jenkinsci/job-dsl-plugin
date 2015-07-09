@@ -34,28 +34,44 @@ class BuildParametersContext extends AbstractContext {
      * Defines a parameter that allows to select a Subversion tag from which to create the working copy for the project.
      */
     @RequiresPlugin(id = 'subversion')
+    @Deprecated
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
                       String description = null) {
-        checkParameterName(parameterName)
+        jobManagement.logDeprecationWarning()
+
+        listTagsParam(parameterName, scmUrl) {
+          delegate.tagFilterRegex(tagFilterRegex)
+          delegate.sortNewestFirst(sortNewestFirst)
+          delegate.sortZtoA(sortZtoA)
+          delegate.maxTagsToDisplay(maxTagsToDisplay)
+          delegate.defaultValue(defaultValue)
+          delegate.description(description)
+        }
+    }
+
+    @RequiresPlugin(id = 'subversion')
+    void listTagsParam(String parameterName, String scmUrl, @DslContext(ListTagsParamContext) Closure closure = null) {
+        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
+        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
         checkNotNullOrEmpty(scmUrl, 'scmUrl cannot be null or empty')
 
-        Node definitionNode = new Node(null, 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition')
-        definitionNode.appendNode('name', parameterName)
-        definitionNode.appendNode('tagsDir', scmUrl)
-        definitionNode.appendNode('tagsFilter', tagFilterRegex ?: '')
-        definitionNode.appendNode('reverseByDate', sortNewestFirst)
-        definitionNode.appendNode('reverseByName', sortZtoA)
-        definitionNode.appendNode('maxTags', maxTagsToDisplay)
-        if (defaultValue != null) {
-            definitionNode.appendNode('defaultValue', defaultValue)
-        }
-        if (description != null) {
-            definitionNode.appendNode('description', description)
-        }
-        definitionNode.appendNode('uuid', randomUUID())
+        ListTagsParamContext context = new ListTagsParamContext()
+        ContextHelper.executeInContext(closure, context)
 
-        buildParameterNodes[parameterName] = definitionNode
+        buildParameterNodes[parameterName] = NodeBuilder.newInstance().
+                 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition' {
+                    name(parameterName)
+                    tagsDir(scmUrl)
+                    description(context.description ?: '')
+                    tagsFilter(context.tagFilterRegex ?: '')
+                    reverseByDate(context.sortNewestFirst)
+                    reverseByName(context.sortZtoA)
+                    maxTags(context.maxTagsToDisplay)
+                    defaultValue(context.defaultValue ?: '')
+                    credentialsId(context.credentialsId)
+                    uuid(randomUUID())
+                }
     }
 
     /**
