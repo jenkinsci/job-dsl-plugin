@@ -919,6 +919,85 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('git')
     }
 
+    def 'call git scm with mergeOptions default mergeStrategy, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            mergeOptions('acme-plugin')
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].extensions.size() == 1
+        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
+        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
+            options.size() == 1
+            options[0].children().size() == 3
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == ''
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == 'acme-plugin'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+        }
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with mergeOptions given mergeStrategy, plugin version 2.x'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('2.0.0')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            remote {
+                name('other')
+                url('https://github.com/daspilker/job-dsl-plugin.git')
+            }
+            mergeOptions('other', 'acme-plugin', 'recursive')
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].extensions.size() == 1
+        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
+        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
+            options.size() == 1
+            options[0].children().size() == 3
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == 'other'
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == 'acme-plugin'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'recursive'
+        }
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
+    def 'call git scm with mergeOptions should throw when mergeStrategy and plugin version lesser than 2.0.0'() {
+        setup:
+        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            mergeOptions('other', 'acme-plugin', 'recursive')
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+        1 * mockJobManagement.requirePlugin('git')
+    }
+
     def 'call git scm with inverse build chooser'() {
         when:
         context.git {
