@@ -882,4 +882,32 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes['mySecondBooleanParameter'].defaultValue.text() == 'false'
         context.buildParameterNodes['mySecondBooleanParameter'].description.text() == ''
     }
+
+    def 'active choice groovy script param'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            description('Active choice param test')
+            visibleItemCount(2)
+            filterable(true)
+            choiceType('SINGLE_SELECT')
+            groovyScript {
+                script('x1')
+            }
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            description.text() == 'Active choice param test'
+            visibleItemCount.text() == '2'
+            filterable.text() == 'true'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            parameters[0].attributes()['class'] == 'linked-hash-map'
+            script[0].attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+            script[0].script.text() == 'x1'
+            script[0].fallbackScript == []
+        }
+    }
 }
