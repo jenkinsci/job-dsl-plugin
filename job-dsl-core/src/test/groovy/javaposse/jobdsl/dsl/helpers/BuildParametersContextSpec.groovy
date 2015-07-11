@@ -94,7 +94,7 @@ class BuildParametersContextSpec extends Specification {
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
                 true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue',
-                'myListTagsParameterDescription', 'myCredentialsId')
+                'myListTagsParameterDescription')
 
         then:
         context.buildParameterNodes != null
@@ -109,7 +109,6 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'true'
             maxTags.text() == 'maximumNumberOfTagsToDisplay'
             description.text() == 'myListTagsParameterDescription'
-            credentialsId.text() == 'myCredentialsId'
         }
         2 * jobManagement.requirePlugin('subversion')
     }

@@ -26,7 +26,7 @@ class BuildParametersContext extends AbstractContext {
     @Deprecated
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
-                      String description = null, String credentialsId = null) {
+                      String description = null) {
         jobManagement.logDeprecationWarning()
 
         listTagsParam(parameterName, scmUrl) {
@@ -36,7 +36,6 @@ class BuildParametersContext extends AbstractContext {
           delegate.maxTagsToDisplay(maxTagsToDisplay)
           delegate.defaultValue(defaultValue)
           delegate.description(description)
-          delegate.credentialsId(credentialsId)
         }
     }
 
