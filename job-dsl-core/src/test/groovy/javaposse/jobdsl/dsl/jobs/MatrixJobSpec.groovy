@@ -89,4 +89,19 @@ class MatrixJobSpec extends Specification {
         job.node.axes[0].children().size() == 1
         job.node.axes[0].children()[0].name() == 'FooAxis'
     }
+
+    def 'can set child custom workspace'() {
+        when:
+        job.childCustomWorkspace('test')
+
+        then:
+        job.node.childCustomWorkspace[0].value() == 'test'
+
+        when:
+        job.childCustomWorkspace('test2')
+
+        then:
+        job.node.childCustomWorkspace.size() == 1
+        job.node.childCustomWorkspace[0].value() == 'test2'
+    }
 }
