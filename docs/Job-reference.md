@@ -190,6 +190,7 @@ freeStyleJob(String name) { // since 1.30
         powerShell(String command) // since 1.32
         prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
         publishOverSsh(Closure publishOverSshClosure) // since 1.28
+        python(Closure pythonClosure) // since 1.36
         rake(Closure rakeClosure = null) // since 1.25
         rake(String tasksArg, Closure rakeClosure = null) // since 1.25
         remoteTrigger(String remoteJenkinsName, String jobName,
@@ -201,6 +202,7 @@ freeStyleJob(String name) { // since 1.30
         shell(String command)
         systemGroovyCommand(String command, Closure systemGroovyClosure = null)
         systemGroovyScriptFile(String fileName, Closure systemGroovyClosure = null)
+        virtualenv(Closure virtualenvClosure) // since 1.38
         vSpherePowerOff(String server, String vm)
         vSpherePowerOn(String server, String vm)
         vSphereRevertToSnapshot(String server, String vm, String snapshot)
@@ -4182,6 +4184,52 @@ job {
 See [Exclusion Resources](#exclusion-resources).
 
 (since 1.24)
+
+### Python
+
+```groovy
+job {
+    steps {
+        python {
+            command(String command)
+            ignoreExitCode(boolean ignoreExitCode = true)
+            nature(String nature)
+            pythonName(String pythonName)
+        }
+
+        virtualenv {
+            clear(boolean clear = true)
+            command(String command)
+            ignoreExitCode(boolean ignoreExitCode = true)
+            name(String name)
+            nature(String nature)
+            pythonName(String pythonName)
+            systemSitePackages(boolean systemSitePackages = true)
+        }
+    }
+}
+```
+
+(since 1.38)
+
+Adds a Python step context. Requires the [ShiningPanda](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin).
+
+Valid values for nature are `'shell'`, `'xshell'` or `'python'`.
+
+Examples:
+
+```groovy
+// start the job 'test-flow' on the Jenkins instance named 'test-ci' without parameters
+job('example-1') {
+    steps {
+        virtualenv {
+            name 'venv'
+            command 'pip install tox'
+            clear true
+        }
+    }
+}
+```
 
 # Publishers
 
