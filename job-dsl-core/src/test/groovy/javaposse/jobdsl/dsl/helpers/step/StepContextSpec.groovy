@@ -2626,6 +2626,50 @@ class StepContextSpec extends Specification {
         mode << ['GET', 'POST', 'PUT', 'DELETE']
     }
 
+    def 'call clangScanBuild with no options'() {
+        when:
+        context.clangScanBuild {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'jenkins.plugins.clangscanbuild.ClangScanBuildBuilder'
+            children().size() == 6
+            targetSdk[0].value() == ''
+            config[0].value() == ''
+            clangInstallationName[0].value() == ''
+            workspace[0].value() == ''
+            scheme[0].value() == ''
+            xcodebuildargs[0].value() == ''
+        }
+        1 * jobManagement.requirePlugin('clang-scanbuild-plugin')
+    }
+
+    def 'call clangScanBuild with all options'() {
+        when:
+        context.clangScanBuild {
+            targetSdk '1'
+            config '2'
+            clangInstallationName '3'
+            workspace '4'
+            scheme '5'
+            xcodebuildargs '6'
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'jenkins.plugins.clangscanbuild.ClangScanBuildBuilder'
+            children().size() == 6
+            targetSdk[0].value() == '1'
+            config[0].value() == '2'
+            clangInstallationName[0].value() == '3'
+            workspace[0].value() == '4'
+            scheme[0].value() == '5'
+            xcodebuildargs[0].value() == '6'
+        }
+        1 * jobManagement.requirePlugin('clang-scanbuild-plugin')
+    }
+
     def 'call nodejsCommand method'() {
         when:
         context.nodejsCommand('var test = require("node");', 'node (0.0.1)')

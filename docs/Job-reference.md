@@ -144,6 +144,7 @@ freeStyleJob(String name) { // since 1.30
             Closure antClosure = null)
         batchFile(String command)
         buildDescription(String regexp, String description = null) // since 1.31
+        clangScanBuild(Closure clangScanBuildClosure)
         conditionalSteps(Closure conditionalClosure)
         copyArtifacts(String jobName, String includeGlob,
                       Closure buildSelectorClosure)  // deprecated since 1.33
@@ -3628,6 +3629,26 @@ job('example-2') {
     }
 }
 ```
+
+### Clang Scan Build
+
+```groovy
+job('example') {
+    steps {
+        clangScanBuild {
+            targetSdk(String target = '')
+            config(String target = '')
+            clangInstallationName(String target = '')
+            workspace(String target = '')
+            scheme(String target = '')
+            xcodebuildargs(String target = '')
+        }
+    }
+}
+```
+Supports running a Clang scan-build build step. Requires the [Clang Scan-Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin).
+
+
 
 ### Conditional Build Steps
 

@@ -703,6 +703,24 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'clang-scanbuild-plugin')
+    void clangScanBuild(@DslContext(ClangScanBuildContext) Closure closure = null) {
+        ClangScanBuildContext c = new ClangScanBuildContext()
+        ContextHelper.executeInContext(closure, c)
+
+        stepNodes << new NodeBuilder().'jenkins.plugins.clangscanbuild.ClangScanBuildBuilder' {
+            targetSdk             c.targetSdk
+            config                c.config
+            clangInstallationName c.clangInstallationName
+            workspace             c.workspace
+            scheme                c.scheme
+            xcodebuildargs        c.xcodebuildargs
+        }
+    }
+
+    /**
      * @since 1.31
      */
     @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.6')
