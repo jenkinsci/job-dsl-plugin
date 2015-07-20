@@ -3595,6 +3595,7 @@ job {
                 shell(String command)                           // since 1.23
                 batch(String command)                           // since 1.23
                 fileExists(String file, BaseDir baseDir)        // since 1.23
+                filesMatch(String includes, String excludes, BaseDir baseDir) // since 1.36
                 not(Closure condition)                          // since 1.23
                 and(Closure... conditions)                      // since 1.23
                 or(Closure... conditions)                       // since 1.23

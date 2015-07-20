@@ -1,8 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.FilesMatchCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 import spock.lang.Specification
+
+import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 class RunConditionContextSpec extends Specification {
     def 'time condition validation'(def args) {
@@ -46,6 +50,39 @@ class RunConditionContextSpec extends Specification {
                     'latestMinutes': 0,
                     'useBuildTime': true,
             ]
+        }
+    }
+
+    def 'file exists'() {
+        setup:
+        RunConditionContext context = new RunConditionContext()
+
+        when:
+        context.fileExists('some_file.txt', WORKSPACE)
+
+        then:
+        context.condition instanceof FileExistsCondition
+        with(context.condition as FileExistsCondition) {
+            name == 'FileExists'
+            file == 'some_file.txt'
+            baseDir == WORKSPACE
+        }
+    }
+
+    def 'files match'() {
+        setup:
+        RunConditionContext context = new RunConditionContext()
+
+        when:
+        context.filesMatch(/incl.*udes/, /excl.*udes/, WORKSPACE)
+
+        then:
+        context.condition instanceof FilesMatchCondition
+        with(context.condition as FilesMatchCondition) {
+            name == 'FilesMatch'
+            includes == /incl.*udes/
+            excludes == /excl.*udes/
+            baseDir == WORKSPACE
         }
     }
 }

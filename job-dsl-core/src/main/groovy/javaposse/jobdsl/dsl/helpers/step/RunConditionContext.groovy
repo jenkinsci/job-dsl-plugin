@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.BinaryLogicOperation
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir
+import javaposse.jobdsl.dsl.helpers.step.condition.FilesMatchCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.NeverRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.NotCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
@@ -83,6 +84,13 @@ class RunConditionContext implements Context {
      */
     void fileExists(String file, BaseDir baseDir) {
         condition = new FileExistsCondition(file, baseDir)
+    }
+
+    /**
+     * @since 1.36
+     */
+    void filesMatch(String includes, String excludes = '', BaseDir baseDir = BaseDir.WORKSPACE) {
+        condition = new FilesMatchCondition(includes, excludes, baseDir)
     }
 
     /**
