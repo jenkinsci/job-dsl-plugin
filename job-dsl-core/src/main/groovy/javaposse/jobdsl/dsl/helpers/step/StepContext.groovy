@@ -723,6 +723,61 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'xcode-plugin')
+    void xcode(@DslContext(XCodeContext) Closure closure = null) {
+        XCodeContext c = new XCodeContext()
+        ContextHelper.executeInContext(closure, c)
+
+        stepNodes << new NodeBuilder().'au.com.rayh.XCodeBuilder' {
+            cleanBeforeBuild                 c.cleanBeforeBuild
+            cleanTestReports                 c.cleanTestReports
+            configuration                    c.configuration
+            target                           c.target
+            interpretTargetAsRegEx           c.interpretTargetAsRegEx
+            sdk                              c.sdk
+            symRoot                          c.symRoot
+            configurationBuildDir            c.configurationBuildDir
+            xcodeProjectPath                 c.xcodeProjectPath
+            xcodeProjectFile                 c.xcodeProjectFile
+            xcodebuildArguments              c.xcodebuildArguments
+            xcodeSchema                      c.xcodeSchema
+            xcodeWorkspaceFile               c.xcodeWorkspaceFile
+            embeddedProfileFile              c.embeddedProfileFile
+            cfBundleVersionValue             c.cfBundleVersionValue
+            cfBundleShortVersionStringValue  c.cfBundleShortVersionStringValue
+            buildIpa                         c.buildIpa
+            generateArchive                  c.generateArchive
+            unlockKeychain                   c.unlockKeychain
+            keychainName                     c.keychainName
+            keychainPath                     c.keychainPath
+            keychainPwd                      c.keychainPwd
+            codeSigningIdentity              c.codeSigningIdentity
+            allowFailingBuildResults         c.allowFailingBuildResults
+            ipaName                          c.ipaName
+            ipaOutputDirectory               c.ipaOutputDirectory
+            provideApplicationVersion        c.provideApplicationVersion
+            changeBundleID                   c.changeBundleID
+            bundleID                         c.bundleID
+            bundleIDInfoPlistPath            c.bundleIDInfoPlistPath
+            ipaManifestPlistUrl              c.ipaManifestPlistUrl
+        }
+    }
+
+    /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'xcode-plugin')
+    void xcodeDevProfile(String idArg) {
+        Preconditions.checkNotNullOrEmpty(idArg, 'id must be specified')
+
+        stepNodes << new NodeBuilder().'au.com.rayh.DeveloperProfileLoader' {
+            id idArg
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {

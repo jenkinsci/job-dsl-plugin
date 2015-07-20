@@ -17,6 +17,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.36 (unreleased)
+ * Added support for the [Xcode Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xcode+Plugin) ([JENKINS-29504](https://issues.jenkins-ci.org/browse/JENKINS-29504))
  * Enhanced support for the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
  * Improved error logging
    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))

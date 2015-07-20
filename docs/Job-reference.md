@@ -196,6 +196,8 @@ freeStyleJob(String name) { // since 1.30
         vSpherePowerOff(String server, String vm)
         vSpherePowerOn(String server, String vm)
         vSphereRevertToSnapshot(String server, String vm, String snapshot)
+        xcode(Closure xcodeClosure) // since 1.36
+        xcodeDevProfile(String id) // since 1.36
     }
     publishers {
         aggregateBuildFlowTests() // since 1.35
@@ -2833,6 +2835,76 @@ job('example') {
 ```
 
 (since 1.32)
+
+### Xcode
+
+Supports
+* running Xcode as a build step and
+* importing developer profile.
+Requires the
+[Xcode Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xcode+Plugin).
+
+```groovy
+job('example') {
+    steps {
+        xcode {
+            // General build settings
+            target(String target = '')
+            interpretTargetAsRegEx(boolean = false)
+            // Settings
+            cleanBeforeBuild(boolean cleanBeforeBuild = false)
+            allowFailingBuildResults(Boolean allowFailingBuildResults = false)
+            generateArchive(boolean generateArchive = false)
+            configuration(String configuration = 'Release')
+            // (buildIpa enables the next 3 options)
+            buildIpa(boolean buildIpa = false)
+              ipaName(String ipaName = '')
+              ipaOutputDirectory(String ipaOutputDirectory = '')
+              ipaManifestPlistUrl (String ipaManifestPlistUrl = '')
+
+            // Code signing & OS X keychain options
+            // (changeBundleID enables the next 2 options)
+            changeBundleID(Boolean changeBundleID = false)
+              bundleID(String bundleID = '')
+              bundleIDInfoPlistPath(String bundleIDInfoPlistPath = '')
+            codeSigningIdentity(String codeSigningIdentity = '')
+            embeddedProfileFile(String embeddedProfileFile = '')
+            // (unlockKeychain enables the next 3 options)
+            unlockKeychain(boolean unlockKeychain = false)
+              keychainName(String keychainName = 'none (specify one below)')
+              keychainPath(String keychainPath = '')
+              keychainPwd(String keychainPwd = '')
+
+            // Advanced Xcode build options
+            cleanTestReports(boolean cleanTestReports = false)
+            xcodeSchema(String xcodeSchema = '')
+            sdk(String sdk = '')
+            symRoot(String symRoot = '')
+            xcodebuildArguments(String xcodebuildArguments = '')
+            xcodeWorkspaceFile(String xcodeWorkspaceFile = '')
+            xcodeProjectPath(String xcodeProjectPath = '')
+            xcodeProjectFile(String xcodeProjectFile = '')
+            configurationBuildDir(String configurationBuildDir = '')
+
+            // Versioning
+            // (provideApplicationVersion enables the next 2 options)
+            provideApplicationVersion(Boolean provideApplicationVersion = false)
+              cfBundleShortVersionStringValue(String cfBundleShortVersionStringValue = '')
+              cfBundleVersionValue(String cfBundleVersionValue = '')
+        }
+    }
+}
+```
+
+```groovy
+job('example') {
+    steps {
+        xcodeDevProfile(String id)
+    }
+}
+```
+
+(since 1.36)
 
 ### Publish Over SSH
 
