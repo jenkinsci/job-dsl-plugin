@@ -588,6 +588,18 @@ class JobSpec extends Specification {
         1 * jobManagement.requirePlugin('lockable-resources')
     }
 
+    def 'heavy job weight'() {
+        when:
+        job.weight(42)
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.heavy__job.HeavyJobProperty'[0]) {
+            children().size() == 1
+            weight[0].value() == 42
+        }
+        1 * jobManagement.requirePlugin('heavy-job')
+    }
+
     def 'log rotate xml'() {
         when:
         job.logRotator(14, 50)
