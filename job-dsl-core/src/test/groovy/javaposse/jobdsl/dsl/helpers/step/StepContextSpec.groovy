@@ -2614,6 +2614,14 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('nodejs')
     }
 
+    def 'call debian package without required option'() {
+        when:
+        context.debianPackage ''
+
+        then:
+        thrown(DslScriptException)
+    }
+
     def 'call debian package with only required option'() {
         when:
         context.debianPackage('package')

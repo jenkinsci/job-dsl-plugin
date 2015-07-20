@@ -4530,4 +4530,63 @@ class PublisherContextSpec extends Specification {
         then:
         thrown(DslScriptException)
     }
+
+    def 'debianPackage with no options'() {
+        when:
+        context.debianPackage('')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'debianPackage with repoId only'() {
+        when:
+        context.debianPackage('debian-squeeze') {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher'
+            children().size() == 3
+            repoId[0].value() == 'debian-squeeze'
+            commitMessage[0].value() == ''
+            commitChanges[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('debian-package-builder')
+    }
+
+    def 'debianPackage with empty commitMessage'() {
+        when:
+        context.debianPackage('debian-wheezy') {
+            commitMessage ''
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher'
+            children().size() == 3
+            repoId[0].value() == 'debian-wheezy'
+            commitMessage[0].value() == ''
+            commitChanges[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('debian-package-builder')
+    }
+
+    def 'debianPackage with additional commitMessage'() {
+        when:
+        context.debianPackage('debian-wheezy') {
+            commitMessage 'automatic commit by Jenkins'
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher'
+            children().size() == 3
+            repoId[0].value() == 'debian-wheezy'
+            commitMessage[0].value() == 'automatic commit by Jenkins'
+            commitChanges[0].value() == true
+        }
+        1 * jobManagement.requirePlugin('debian-package-builder')
+    }
+
 }
