@@ -243,7 +243,7 @@ freeStyleJob(String name) { // since 1.30
         flowdock(String[] tokens, flowdockClosure = null) // since 1.23
         git(Closure gitPublisherClosure) // since 1.22
         githubCommitNotifier() // since 1.21
-        groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) // since 1.19
+        groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing, boolean useSandbox) // since 1.19
         hipChat(Closure hipChatClosure = null) // since 1.33
         irc(Closure ircClosure)
         jacocoCodeCoverage(Closure jacocoClosure)
@@ -4994,12 +4994,13 @@ publishers {
 Executes Groovy scripts after a build.
 
 ```groovy
-groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing)
+groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing, boolean sandbox = false)
 ```
 
 Arguments:
 * `script` The Groovy script to execute after the build. See [the plugin's page](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin) for details on what can be done.
 * `behavior` optional. If the script fails, allows you to set mark the build as failed, unstable, or do nothing.
+* `sandbox` optional. Run inside the sandbox or not. Defaults to `false`.
 
 The behavior argument uses an enum, which currently has three values: DoNothing, MarkUnstable, and MarkFailed.
 
@@ -5018,6 +5019,11 @@ This example will run a groovy script, and if that fails will mark the build as 
 This example will run a groovy script, and if that fails will mark the build as unstable:
 ```groovy
     groovyPostBuild('// some groovy script', Behavior.MarkUnstable)
+```
+
+This example will run a groovy script inside the sandbox, that prints hello, world and if that fails, it won't affect the build's status:
+```groovy
+    groovyPostBuild('println "hello, world"', null, true)
 ```
 
 (Since 1.19)

@@ -732,10 +732,13 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.19
      */
     @RequiresPlugin(id = 'groovy-postbuild')
-    void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
+    void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing, boolean useSandbox = false) {
         publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
-            delegate.groovyScript(script)
-            delegate.behavior(behavior.value)
+            delegate.script {
+              delegate.script(script)
+              delegate.sandbox(useSandbox)
+            }
+            delegate.behavior((behavior ?: Behavior.DoNothing).value)
         }
     }
 
