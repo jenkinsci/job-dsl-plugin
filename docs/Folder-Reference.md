@@ -76,6 +76,24 @@ folder('project-a') {
 }
 ```
 
+### Primary View
+
+```groovy
+folder {
+    primaryView(String primaryView)
+}
+```
+
+Change the initial view to show when the folder contains multiple views (defaults to the 'All' view, which cannot be removed).
+
+```groovy
+folder('project-a') {
+    primaryView('InitialView')
+}
+listView('project-a/InitialView') {
+    description('shown by default')
+}
+```
 ### Authorization
 
 ```groovy
