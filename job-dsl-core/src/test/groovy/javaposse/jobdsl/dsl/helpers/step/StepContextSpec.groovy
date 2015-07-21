@@ -2650,4 +2650,145 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.6')
     }
+
+    def 'call xcode with no options'() {
+        when:
+        context.xcode {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'au.com.rayh.XCodeBuilder'
+            children().size() == 31
+            interpretTargetAsRegEx         [0].value() == false
+            cleanBeforeBuild               [0].value() == false
+            cleanTestReports               [0].value() == false
+            configuration                  [0].value() == 'Release'
+            target                         [0].value() == ''
+            sdk                            [0].value() == ''
+            symRoot                        [0].value() == ''
+            configurationBuildDir          [0].value() == ''
+            xcodeProjectPath               [0].value() == ''
+            xcodeProjectFile               [0].value() == ''
+            xcodebuildArguments            [0].value() == ''
+            xcodeSchema                    [0].value() == ''
+            xcodeWorkspaceFile             [0].value() == ''
+            embeddedProfileFile            [0].value() == ''
+            cfBundleVersionValue           [0].value() == ''
+            cfBundleShortVersionStringValue[0].value() == ''
+            buildIpa                       [0].value() == false
+            generateArchive                [0].value() == false
+            unlockKeychain                 [0].value() == false
+            keychainName                   [0].value() == 'none (specify one below)'
+            keychainPath                   [0].value() == ''
+            keychainPwd                    [0].value() == ''
+            codeSigningIdentity            [0].value() == ''
+            allowFailingBuildResults       [0].value() == false
+            ipaName                        [0].value() == ''
+            ipaOutputDirectory             [0].value() == ''
+            provideApplicationVersion      [0].value() == false
+            changeBundleID                 [0].value() == false
+            bundleID                       [0].value() == ''
+            bundleIDInfoPlistPath          [0].value() == ''
+            ipaManifestPlistUrl            [0].value() == ''
+        }
+        1 * jobManagement.requirePlugin('xcode-plugin')
+    }
+
+    def 'call xcode with all options'() {
+        when:
+        context.xcode {
+            interpretTargetAsRegEx          true
+            cleanBeforeBuild                true
+            cleanTestReports                true
+            configuration                   '3'
+            target                          '4'
+            sdk                             '5'
+            symRoot                         '6'
+            configurationBuildDir           '7'
+            xcodeProjectPath                '8'
+            xcodeProjectFile                '9'
+            xcodebuildArguments             '10'
+            xcodeSchema                     '11'
+            xcodeWorkspaceFile              '12'
+            embeddedProfileFile             '13'
+            cfBundleVersionValue            '14'
+            cfBundleShortVersionStringValue '15'
+            buildIpa                        true
+            generateArchive                 true
+            unlockKeychain                  true
+            keychainName                    '19'
+            keychainPath                    '20'
+            keychainPwd                     '21'
+            codeSigningIdentity             '22'
+            allowFailingBuildResults        true
+            ipaName                         '24'
+            ipaOutputDirectory              '25'
+            provideApplicationVersion       true
+            changeBundleID                  true
+            bundleID                        '28'
+            bundleIDInfoPlistPath           '29'
+            ipaManifestPlistUrl             '30'
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'au.com.rayh.XCodeBuilder'
+            children().size() == 31
+            interpretTargetAsRegEx         [0].value() == true
+            cleanBeforeBuild               [0].value() == true
+            cleanTestReports               [0].value() == true
+            configuration                  [0].value() == '3'
+            target                         [0].value() == '4'
+            sdk                            [0].value() == '5'
+            symRoot                        [0].value() == '6'
+            configurationBuildDir          [0].value() == '7'
+            xcodeProjectPath               [0].value() == '8'
+            xcodeProjectFile               [0].value() == '9'
+            xcodebuildArguments            [0].value() == '10'
+            xcodeSchema                    [0].value() == '11'
+            xcodeWorkspaceFile             [0].value() == '12'
+            embeddedProfileFile            [0].value() == '13'
+            cfBundleVersionValue           [0].value() == '14'
+            cfBundleShortVersionStringValue[0].value() == '15'
+            buildIpa                       [0].value() == true
+            generateArchive                [0].value() == true
+            unlockKeychain                 [0].value() == true
+            keychainName                   [0].value() == '19'
+            keychainPath                   [0].value() == '20'
+            keychainPwd                    [0].value() == '21'
+            codeSigningIdentity            [0].value() == '22'
+            allowFailingBuildResults       [0].value() == true
+            ipaName                        [0].value() == '24'
+            ipaOutputDirectory             [0].value() == '25'
+            provideApplicationVersion      [0].value() == true
+            changeBundleID                 [0].value() == true
+            bundleID                       [0].value() == '28'
+            bundleIDInfoPlistPath          [0].value() == '29'
+            ipaManifestPlistUrl            [0].value() == '30'
+        }
+        1 * jobManagement.requirePlugin('xcode-plugin')
+    }
+
+    def 'call xcodeDevProfile without required option'() {
+        when:
+        context.xcodeDevProfile()
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'call xcodeDevProfile with all options'() {
+        when:
+        context.xcodeDevProfile 'theId'
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'au.com.rayh.DeveloperProfileLoader'
+            children().size() == 1
+            id[0].value() == 'theId'
+        }
+        1 * jobManagement.requirePlugin('xcode-plugin')
+    }
+
 }
