@@ -153,6 +153,17 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'heavy-job', minimumVersion = '1.1')
+    void weight(int weight) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('weight', weight)
+            project / 'properties' / 'hudson.plugins.heavy__job.HeavyJobProperty' / node
+        }
+    }
+
     void disabled(boolean shouldDisable = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('disabled', shouldDisable)

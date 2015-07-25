@@ -38,6 +38,7 @@ freeStyleJob(String name) { // since 1.30
     priority(int value)
     quietPeriod(int seconds = 5)
     throttleConcurrentBuilds(Closure throttleClosure)
+    weight(int weight) // since 1.36
     authorization {
         permission(String permission)
         permission(String permission, String user)
@@ -506,6 +507,25 @@ blockOnDownstreamProjects()
 ```
 
 Blocks the build of a project when one ore more upstream (blockOnUpstreamProjects()) or a downstream projects (blockOnDownstreamProjects()) are running. (Available since 1.16)
+
+### Job Weight
+
+```groovy
+job {
+    weight(int weight)
+}
+```
+
+Specify the number of executors to block for this job. Requires the
+[Heavy Job Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Heavy+Job+Plugin).
+
+```groovy
+job('example') {
+    weight(2)
+}
+```
+
+(since 1.36)
 
 ### Build History
 
