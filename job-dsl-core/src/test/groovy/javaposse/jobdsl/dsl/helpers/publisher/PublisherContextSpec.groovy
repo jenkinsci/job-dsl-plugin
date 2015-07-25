@@ -4561,20 +4561,20 @@ class PublisherContextSpec extends Specification {
     def 'slackNotifications with all options'() {
         when:
         context.slackNotifications {
-            teamDomain 'testdomain'
-            integrationToken 'token1'
-            projectChannel 'channel1'
-            notifyBuildStart true
-            notifyAborted true
-            notifyFailure true
-            notifyNotBuilt true
-            notifySuccess true
-            notifyUnstable true
-            notifyBackToNormal true
-            notifyRepeatedFailure true
-            includeTestSummary true
-            showCommitList true
-            customMessage 'testing customMessage'
+            teamDomain('testdomain')
+            integrationToken('token1')
+            projectChannel('channel1')
+            notifyBuildStart()
+            notifyAborted()
+            notifyFailure()
+            notifyNotBuilt()
+            notifySuccess()
+            notifyUnstable()
+            notifyBackToNormal()
+            notifyRepeatedFailure()
+            includeTestSummary()
+            showCommitList()
+            customMessage('testing customMessage')
         }
 
         then:

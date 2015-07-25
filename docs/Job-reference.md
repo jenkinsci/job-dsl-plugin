@@ -276,6 +276,7 @@ freeStyleJob(String name) { // since 1.30
         retryBuild(Closure naginatorClosure = null) // since 1.33
         rundeck(String jobId, Closure rundeckClosure = null) // since 1.24
         s3(String profile, Closure s3Closure) // since 1.26
+        slackNotifications(Closure slackNotificationsClosure) // since 1.36
         sonar(Closure sonarClosure = null) // since 1.31
         stashNotifier(Closure stashNotifierClosure = null) // since 1.23
         tasks(String pattern, excludePattern = '', high = '', normal = '', low = '',
@@ -4052,20 +4053,20 @@ job('example') {
 job {
     publishers {
         slackNotifications {
-            teamDomain(String domain)                   // uses global settings if omitted
-            integrationToken(String token)              // uses global settings if omitted
-            projectChannel(String channel)              // uses global settings if omitted
-            notifyBuildStart(boolean notify = false)
-            notifyAborted(boolean notify = false)
-            notifyFailure(boolean notify = false)
-            notifyNotBuilt(boolean notify = false)
-            notifySuccess(boolean notify = false)
-            notifyUnstable(boolean notify = false)
-            notifyBackToNormal(boolean notify = false)
-            notifyRepeatedFailure(boolean notify = false)
-            showCommitList(boolean show = false)
-            includeTestSummary(boolean include = false)
-            includeCustomMessage(boolean include = false)
+            teamDomain(String domain)      // uses global settings if omitted
+            integrationToken(String token) // uses global settings if omitted
+            projectChannel(String channel) // uses global settings if omitted
+            notifyBuildStart(boolean notify = true)
+            notifyAborted(boolean notify = true)
+            notifyFailure(boolean notify = true)
+            notifyNotBuilt(boolean notify = true)
+            notifySuccess(boolean notify = true)
+            notifyUnstable(boolean notify = true)
+            notifyBackToNormal(boolean notify = true)
+            notifyRepeatedFailure(boolean notify = true)
+            showCommitList(boolean show = true)
+            includeTestSummary(boolean include = true)
+            includeCustomMessage(boolean include = true)
             customMessage(String message)
         }
     }
@@ -4079,7 +4080,7 @@ Allows notifications to be set to Slack. Requires the
 job('example') {
     publishers {
         slackNotifications {
-            projectChannel 'Dev Team A'
+            projectChannel('Dev Team A')
             notifyAborted()
             notifyFailure()
             notifyNotBuilt()

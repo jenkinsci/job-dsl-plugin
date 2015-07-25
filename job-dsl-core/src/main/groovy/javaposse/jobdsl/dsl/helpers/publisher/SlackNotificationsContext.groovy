@@ -3,59 +3,58 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class SlackNotificationsContext implements Context {
-
-    boolean notifyBuildStart = false
-    boolean notifyAborted = false
-    boolean notifyFailure = false
-    boolean notifyNotBuilt = false
-    boolean notifySuccess = false
-    boolean notifyUnstable = false
-    boolean notifyBackToNormal = false
-    boolean notifyRepeatedFailure = false
-    boolean includeTestSummary = false
-    boolean showCommitList = false
+    boolean notifyBuildStart
+    boolean notifyAborted
+    boolean notifyFailure
+    boolean notifyNotBuilt
+    boolean notifySuccess
+    boolean notifyUnstable
+    boolean notifyBackToNormal
+    boolean notifyRepeatedFailure
+    boolean includeTestSummary
+    boolean showCommitList
     String teamDomain
     String integrationToken
     String projectChannel
     String customMessage
 
-    void notifyBuildStart(boolean notifyBuildStart) {
+    void notifyBuildStart(boolean notifyBuildStart = true) {
         this.notifyBuildStart = notifyBuildStart
     }
 
-    void notifyAborted(boolean notifyAborted) {
+    void notifyAborted(boolean notifyAborted = true) {
         this.notifyAborted = notifyAborted
     }
 
-    void notifyFailure(boolean notifyFailure) {
+    void notifyFailure(boolean notifyFailure = true) {
         this.notifyFailure = notifyFailure
     }
 
-    void notifyNotBuilt(boolean notifyNotBuilt) {
+    void notifyNotBuilt(boolean notifyNotBuilt = true) {
         this.notifyNotBuilt = notifyNotBuilt
     }
 
-    void notifySuccess(boolean notifySuccess) {
+    void notifySuccess(boolean notifySuccess = true) {
         this.notifySuccess = notifySuccess
     }
 
-    void notifyUnstable(boolean notifyUnstable) {
+    void notifyUnstable(boolean notifyUnstable = true) {
         this.notifyUnstable = notifyUnstable
     }
 
-    void notifyBackToNormal(boolean notifyBackToNormal) {
+    void notifyBackToNormal(boolean notifyBackToNormal = true) {
         this.notifyBackToNormal = notifyBackToNormal
     }
 
-    void notifyRepeatedFailure(boolean notifyRepeatedFailure) {
+    void notifyRepeatedFailure(boolean notifyRepeatedFailure = true) {
         this.notifyRepeatedFailure = notifyRepeatedFailure
     }
 
-    void includeTestSummary(boolean includeTestSummary) {
+    void includeTestSummary(boolean includeTestSummary = true) {
         this.includeTestSummary = includeTestSummary
     }
 
-    void showCommitList(boolean showCommitList) {
+    void showCommitList(boolean showCommitList = true) {
         this.showCommitList = showCommitList
     }
 
