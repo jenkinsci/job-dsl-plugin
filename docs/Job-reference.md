@@ -4046,6 +4046,52 @@ job('example') {
 
 (since 1.33)
 
+### Slack Publisher
+
+```groovy
+job {
+    publishers {
+        slackNotifications {
+            teamDomain(String domain)                   // uses global settings if omitted
+            integrationToken(String token)              // uses global settings if omitted
+            projectChannel(String channel)              // uses global settings if omitted
+            notifyBuildStart(boolean notify = false)
+            notifyAborted(boolean notify = false)
+            notifyFailure(boolean notify = false)
+            notifyNotBuilt(boolean notify = false)
+            notifySuccess(boolean notify = false)
+            notifyUnstable(boolean notify = false)
+            notifyBackToNormal(boolean notify = false)
+            notifyRepeatedFailure(boolean notify = false)
+            showCommitList(boolean show = false)
+            includeTestSummary(boolean include = false)
+            includeCustomMessage(boolean include = false)
+            customMessage(String message)
+        }
+    }
+}
+```
+
+Allows notifications to be set to Slack. Requires the
+[Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin).
+
+```groovy
+job('example') {
+    publishers {
+        slackNotifications {
+            projectChannel 'Dev Team A'
+            notifyAborted()
+            notifyFailure()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyBackToNormal()
+        }
+    }
+}
+```
+
+(since 1.36)
+
 ### HTML Publisher
 
 ```groovy

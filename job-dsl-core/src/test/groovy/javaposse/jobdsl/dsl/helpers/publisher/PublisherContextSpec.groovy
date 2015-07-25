@@ -4,6 +4,7 @@ import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
@@ -11,7 +12,7 @@ import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.M
 
 class PublisherContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
+    Item item = new FreeStyleJob(jobManagement)
     PublisherContext context = new PublisherContext(jobManagement, item)
 
     def 'empty call extended email method'() {
@@ -4529,5 +4530,72 @@ class PublisherContextSpec extends Specification {
 
         then:
         thrown(DslScriptException)
+    }
+
+    def 'slackNotifications with no options'() {
+        when:
+        context.slackNotifications {}
+
+        then:
+        context.publisherNodes[0].name() == 'jenkins.plugins.slack.SlackNotifier'
+        with(item.node.'properties'.'jenkins.plugins.slack.SlackNotifier_-SlackJobProperty') {
+            teamDomain.text() == ''
+            token.text() == ''
+            room.text() == ''
+            startNotification.text() == 'false'
+            notifySuccess.text() == 'false'
+            notifyAborted.text() == 'false'
+            notifyNotBuilt.text() == 'false'
+            notifyUnstable.text() == 'false'
+            notifyFailure.text() == 'false'
+            notifyBackToNormal.text() == 'false'
+            notifyRepeatedFailure.text() == 'false'
+            includeTestSummary.text() == 'false'
+            showCommitList.text() == 'false'
+            includeCustomMessage.text() == 'false'
+            customMessage.text() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('slack', '1.8')
+    }
+
+    def 'slackNotifications with all options'() {
+        when:
+        context.slackNotifications {
+            teamDomain 'testdomain'
+            integrationToken 'token1'
+            projectChannel 'channel1'
+            notifyBuildStart true
+            notifyAborted true
+            notifyFailure true
+            notifyNotBuilt true
+            notifySuccess true
+            notifyUnstable true
+            notifyBackToNormal true
+            notifyRepeatedFailure true
+            includeTestSummary true
+            showCommitList true
+            customMessage 'testing customMessage'
+        }
+
+        then:
+        context.publisherNodes[0].name() == 'jenkins.plugins.slack.SlackNotifier'
+        with(item.node.'properties'.'jenkins.plugins.slack.SlackNotifier_-SlackJobProperty') {
+            teamDomain.text() == 'testdomain'
+            token.text() == 'token1'
+            room.text() == 'channel1'
+            startNotification.text() == 'true'
+            notifySuccess.text() == 'true'
+            notifyAborted.text() == 'true'
+            notifyNotBuilt.text() == 'true'
+            notifyUnstable.text() == 'true'
+            notifyFailure.text() == 'true'
+            notifyBackToNormal.text() == 'true'
+            notifyRepeatedFailure.text() == 'true'
+            includeTestSummary.text() == 'true'
+            showCommitList.text() == 'true'
+            includeCustomMessage.text() == 'true'
+            customMessage.text() == 'testing customMessage'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('slack', '1.8')
     }
 }
