@@ -17,7 +17,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.36 (unreleased)
- * Added support for the [Heavy Job Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Heavy+Job+Plugin) ([JENKINS-29499](https://issues.jenkins-ci.org/browse/JENKINS-29499))
+ * Added support for the [Heavy Job Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Heavy+Job+Plugin)
+   ([JENKINS-29499](https://issues.jenkins-ci.org/browse/JENKINS-29499))
  * Enhanced support for the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
  * Improved error logging
    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))

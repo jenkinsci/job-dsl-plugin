@@ -156,10 +156,10 @@ abstract class Job extends Item {
     /**
      * @since 1.36
      */
-    @RequiresPlugin(id = 'heavy-job')
-    void weight(Integer w) {
+    @RequiresPlugin(id = 'heavy-job', minimumVersion = '1.1')
+    void weight(int weight) {
         withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('weight', w)
+            Node node = methodMissing('weight', weight)
             project / 'properties' / 'hudson.plugins.heavy__job.HeavyJobProperty' / node
         }
     }

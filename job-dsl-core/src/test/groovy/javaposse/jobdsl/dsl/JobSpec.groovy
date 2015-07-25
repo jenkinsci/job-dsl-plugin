@@ -597,7 +597,7 @@ class JobSpec extends Specification {
             children().size() == 1
             weight[0].value() == 42
         }
-        1 * jobManagement.requirePlugin('heavy-job')
+        1 * jobManagement.requireMinimumPluginVersion('heavy-job', '1.1')
     }
 
     def 'log rotate xml'() {
