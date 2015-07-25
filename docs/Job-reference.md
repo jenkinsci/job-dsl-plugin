@@ -276,6 +276,7 @@ freeStyleJob(String name) { // since 1.30
         retryBuild(Closure naginatorClosure = null) // since 1.33
         rundeck(String jobId, Closure rundeckClosure = null) // since 1.24
         s3(String profile, Closure s3Closure) // since 1.26
+        slackNotifications(Closure slackNotificationsClosure) // since 1.36
         sonar(Closure sonarClosure = null) // since 1.31
         stashNotifier(Closure stashNotifierClosure = null) // since 1.23
         tasks(String pattern, excludePattern = '', high = '', normal = '', low = '',
@@ -4045,6 +4046,52 @@ job('example') {
 ```
 
 (since 1.33)
+
+### Slack Publisher
+
+```groovy
+job {
+    publishers {
+        slackNotifications {
+            teamDomain(String domain)      // uses global settings if omitted
+            integrationToken(String token) // uses global settings if omitted
+            projectChannel(String channel) // uses global settings if omitted
+            notifyBuildStart(boolean notify = true)
+            notifyAborted(boolean notify = true)
+            notifyFailure(boolean notify = true)
+            notifyNotBuilt(boolean notify = true)
+            notifySuccess(boolean notify = true)
+            notifyUnstable(boolean notify = true)
+            notifyBackToNormal(boolean notify = true)
+            notifyRepeatedFailure(boolean notify = true)
+            showCommitList(boolean show = true)
+            includeTestSummary(boolean include = true)
+            includeCustomMessage(boolean include = true)
+            customMessage(String message)
+        }
+    }
+}
+```
+
+Allows notifications to be set to Slack. Requires the
+[Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin).
+
+```groovy
+job('example') {
+    publishers {
+        slackNotifications {
+            projectChannel('Dev Team A')
+            notifyAborted()
+            notifyFailure()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyBackToNormal()
+        }
+    }
+}
+```
+
+(since 1.36)
 
 ### HTML Publisher
 
