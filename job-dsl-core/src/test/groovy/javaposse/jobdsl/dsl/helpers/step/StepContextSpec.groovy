@@ -1926,6 +1926,29 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('conditional-buildstep')
     }
 
+    def 'fileMatch is added correctly'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                filesMatch('someFile')
+            }
+            steps {
+                shell('echo Test')
+            }
+        }
+
+        then:
+        Node step = context.stepNodes[0]
+        step.runCondition[0].children().size() == 3
+
+        Node condition = step.runCondition[0]
+        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.FilesMatchCondition'
+        condition.includes[0].value() == 'someFile'
+        condition.excludes[0].value() == ''
+        condition.baseDir[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
+        1 * jobManagement.requirePlugin('conditional-buildstep')
+    }
+
     def 'status condition is added correctly'() {
         when:
         context.conditionalSteps {

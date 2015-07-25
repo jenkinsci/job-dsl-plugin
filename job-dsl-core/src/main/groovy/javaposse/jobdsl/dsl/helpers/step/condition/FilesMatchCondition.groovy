@@ -2,9 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step.condition
 
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir
 
-// for the Conditional Buildstep Plugin, the filesMatch Condition
 class FilesMatchCondition extends SimpleCondition {
-
     String includes, excludes
     BaseDir baseDir
 
@@ -21,5 +19,4 @@ class FilesMatchCondition extends SimpleCondition {
         super.addArgs(builder)
         builder.baseDir(class: baseDir.baseDirClass)
     }
-
 }
