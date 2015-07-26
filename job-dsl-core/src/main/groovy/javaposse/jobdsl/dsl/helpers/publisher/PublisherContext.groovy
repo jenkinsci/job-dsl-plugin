@@ -1421,7 +1421,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * @since 1.36
      */
-    @RequiresPlugin(id = 'debian-package-builder')
+    @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.7')
     void debianPackage(String repoIdArg, @DslContext(DebianPackagePublisherContext) Closure closure = null) {
         Preconditions.checkNotNullOrEmpty(repoIdArg, 'repoId must be specified')
 
@@ -1429,9 +1429,9 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher' {
-            repoId repoIdArg
-            commitMessage context.commitMessage
-            commitChanges context.commitMessage as boolean
+            repoId(repoIdArg)
+            commitMessage(context.commitMessage ?: '')
+            commitChanges(context.commitMessage as boolean)
         }
     }
 

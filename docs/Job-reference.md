@@ -219,7 +219,7 @@ freeStyleJob(String name) { // since 1.30
         checkstyle(String pattern, Closure staticAnalysisClosure = null)
         chucknorris()
         cobertura(String coberturaReportFilePattern, Closure coberturaClosure = null)
-        debianPackage(Closure debianClosure = null) // since 1.36
+        debianPackage(String repoId, Closure closure = null) // since 1.36
         dependencyCheck(String pattern, Closure staticAnalysisClosure = null)
         deployArtifacts(Closure deployArtifactsClosure = null) // since 1.31
         downstream(String projectName, String thresholdName = 'SUCCESS')
@@ -4231,7 +4231,7 @@ violations(50) {
 job {
     publishers {
         debianPackage(String repoId) {
-            commitMessage(String message = '')
+            commitMessage(String message)
         }
     }
 }
@@ -4239,14 +4239,15 @@ job {
 
 Requires the [Debian Package Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Debian+Package+Builder+Plugin).
 
-The required `repoId` parameter specifies the name of the repository to upload to, as specified in the global Jenkins configuration.
-The optional `commitMessage` will commit changes made to package back to SCM. If left empty, nothing will be committed.
+The required `repoId` parameter specifies the name of the repository to upload to, as specified in the global Jenkins
+configuration. The optional `commitMessage` will commit changes made to package back to SCM. If left empty, nothing will
+be committed.
 
 ```groovy
-job {
+job('example') {
     publishers {
         debianPackage('precise-default') {
-            commitMessage 'automatic commit by Jenkins\n\nperformed by job:\n$BUILD_URL'
+            commitMessage('automatic commit by Jenkins')
         }
     }
 }
