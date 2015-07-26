@@ -42,6 +42,16 @@ class FolderSpec extends Specification {
         root.description[0].text() == 'test folder'
     }
 
+    def 'primaryView'() {
+        when:
+        folder.primaryView('test primaryView')
+
+        then:
+        Node root = folder.node
+        root.primaryView.size() == 1
+        root.primaryView[0].text() == 'test primaryView'
+    }
+
     def 'call authorization'() {
         setup:
         String propertyName = 'com.cloudbees.hudson.plugins.folder.properties.AuthorizationMatrixProperty'
@@ -82,6 +92,7 @@ class FolderSpec extends Specification {
         setup:
         folder.displayName('Test Folder')
         folder.description('la la la')
+        folder.primaryView('Some View')
 
         when:
         String xml = folder.xml
@@ -107,7 +118,7 @@ class FolderSpec extends Specification {
         </hudson.model.AllView>
     </views>
     <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
-    <primaryView>All</primaryView>
+    <primaryView>Some View</primaryView>
     <healthMetrics>
         <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
     </healthMetrics>

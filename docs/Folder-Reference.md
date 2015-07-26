@@ -13,6 +13,7 @@ folder(String name) { // since 1.30
     // common options
     displayName(String displayName)
     authorization(Closure closure) // since 1.31
+    primaryView(String primaryView) // since 1.36
 }
 
 folder(Closure folderClosure) // since 1.23, deprecated since 1.30
@@ -75,6 +76,29 @@ folder('project-a') {
     displayName('Project A')
 }
 ```
+
+### Primary View
+
+```groovy
+folder {
+    primaryView(String primaryView)
+}
+```
+
+Change the initial view to show when the folder contains multiple views (defaults to the 'All' view, which cannot be
+removed).
+
+```groovy
+folder('project-a') {
+    primaryView('InitialView')
+}
+
+listView('project-a/InitialView') {
+    description('shown by default')
+}
+```
+
+(since 1.36)
 
 ### Authorization
 

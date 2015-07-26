@@ -26,6 +26,15 @@ class Folder extends Item {
     }
 
     /**
+     * @since 1.36
+     */
+    void primaryView(String primaryViewArg) {
+        execute {
+            it / methodMissing('primaryView', primaryViewArg)
+        }
+    }
+
+    /**
      * @since 1.31
      */
     void authorization(@DslContext(AuthorizationContext) Closure closure) {

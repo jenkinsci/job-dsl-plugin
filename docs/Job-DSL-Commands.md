@@ -1,4 +1,4 @@
-**NOTE: See the [[Job Reference]] and [[View Reference]] pages for details about all options.**
+**NOTE: See the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages for details about all options.**
 
 # DSL Methods
 
