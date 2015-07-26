@@ -24,6 +24,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-29499](https://issues.jenkins-ci.org/browse/JENKINS-29499))
  * Enhanced support for the [Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
    ([JENKINS-29498](https://issues.jenkins-ci.org/browse/JENKINS-29498))
+ * Enhanced support for the [Debian Package Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Debian+Package+Builder+Plugin)
+   ([JENKINS-29502](https://issues.jenkins-ci.org/browse/JENKINS-29502))
  * Enhanced support for the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
    ([JENKINS-29629](https://issues.jenkins-ci.org/browse/JENKINS-29629))
  * Improved error logging

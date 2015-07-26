@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
@@ -1414,6 +1415,23 @@ class PublisherContext extends AbstractExtensibleContext {
             joinProjects(joinTriggerContext.projects.join(', '))
             joinPublishers(joinTriggerContext.publisherContext.publisherNodes)
             evenIfDownstreamUnstable(joinTriggerContext.evenIfDownstreamUnstable)
+        }
+    }
+
+    /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.7')
+    void debianPackage(String repoIdArg, @DslContext(DebianPackagePublisherContext) Closure closure = null) {
+        Preconditions.checkNotNullOrEmpty(repoIdArg, 'repoId must be specified')
+
+        DebianPackagePublisherContext context = new DebianPackagePublisherContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher' {
+            repoId(repoIdArg)
+            commitMessage(context.commitMessage ?: '')
+            commitChanges(context.commitMessage as boolean)
         }
     }
 

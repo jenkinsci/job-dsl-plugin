@@ -4598,4 +4598,53 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('slack', '1.8')
     }
+
+    def 'debianPackage with no options'() {
+        when:
+        context.debianPackage(repoId)
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        repoId << [null, '']
+    }
+
+    def 'debianPackage with repoId only'() {
+        when:
+        context.debianPackage('debian-squeeze') {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher'
+            children().size() == 3
+            repoId[0].value() == 'debian-squeeze'
+            commitMessage[0].value() == ''
+            commitChanges[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.7')
+    }
+
+    def 'debianPackage with empty commitMessage'() {
+        when:
+        context.debianPackage('debian-wheezy') {
+            commitMessage(message)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher'
+            children().size() == 3
+            repoId[0].value() == 'debian-wheezy'
+            commitMessage[0].value() == message
+            commitChanges[0].value() == commit
+        }
+        1 * jobManagement.requireMinimumPluginVersion('debian-package-builder', '1.6.7')
+
+        where:
+        message                       | commit
+        ''                            | false
+        'automatic commit by Jenkins' | true
+    }
 }
