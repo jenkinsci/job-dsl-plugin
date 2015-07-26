@@ -17,7 +17,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.36 (unreleased)
- * Added support for `primaryView` of [Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) ([JENKINS-29498](https://issues.jenkins-ci.org/browse/JENKINS-29498))
+ * Enhanced support for the [Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
+   ([JENKINS-29498](https://issues.jenkins-ci.org/browse/JENKINS-29498))
  * Enhanced support for the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
  * Improved error logging
    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))
