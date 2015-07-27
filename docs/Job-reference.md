@@ -43,7 +43,7 @@ freeStyleJob(String name) { // since 1.30
         permission(String permission, String user)
         permission(Permissions perm, String user) // deprecated since 1.31
         permissionAll(String user)
-        blocksInheritance(boolean blocksInheritance = true) // since 1.35 
+        blocksInheritance(boolean blocksInheritance = true) // since 1.35
     }
     parameters {
         booleanParam(String parameterName, boolean defaultValue = false,
@@ -327,6 +327,7 @@ matrixJob(String name) { // since 1.30
     runSequentially(boolean runSequentially = true)
     touchStoneFilter(String expression, boolean continueOnFailure = false)
     combinationFilter(String expression)
+    childCustomWorkspace(String workspace)
 }
 
 job(type: Matrix, Closure closure) // deprecated since 1.30
@@ -479,7 +480,7 @@ job {
 
 Block build if certain jobs are running. Requires the
 [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin).
- 
+
 Regular expressions can be used for the project names, e.g. `/.*-maintenance/` will match all maintenance jobs.
 
 Possible values for `blockLevel` are `'GLOBAL'` and `'NODE'` (default). Possible values for `scanQueueFor` are `'ALL'`,
@@ -637,7 +638,7 @@ job {
         permission(String permission, String user)
         permissionAll(String user)
         permission(Permissions perm, String user) // deprecated since 1.31
-        blocksInheritance(boolean blocksInheritance = true) // since 1.35 
+        blocksInheritance(boolean blocksInheritance = true) // since 1.35
     }
 }
 ```
@@ -3443,6 +3444,22 @@ matrixJob('example') {
     combinationFilter('jdk=="jdk-6" || label=="linux"')
 }
 ```
+### Child custom workspace
+
+Requires [Matrix Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin)
+
+Explicitly specify custom workspace name for individual child workspaces created for individual axes.
+
+Example:
+
+```groovy
+matrixJob('example') {
+    customWorkspace('example')
+    childCustomWorkspace('.') // Reuse the same custom workspace for every axis.
+}
+```
+
+(Since 1.36)
 
 # [Prerequisite Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Prerequisite+build+step+plugin)
 
@@ -3461,6 +3478,10 @@ When a job is checked the following conditions must be validated before the job 
 * The last completed build must have resulted in a stable (blue) build.
 
 (Since 1.19)
+
+
+
+
 
 # Debian Package Builder
 
