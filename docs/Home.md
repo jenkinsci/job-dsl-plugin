@@ -28,6 +28,9 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-29502](https://issues.jenkins-ci.org/browse/JENKINS-29502))
  * Enhanced support for the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
    ([JENKINS-29629](https://issues.jenkins-ci.org/browse/JENKINS-29629))
+ * Removed automatic IDE support for IDEA, must be provided separately, see [[IDE Support]]
+   ([JENKINS-29668](https://issues.jenkins-ci.org/browse/JENKINS-29668),
+   [JENKINS-29669](https://issues.jenkins-ci.org/browse/JENKINS-29669))
  * Improved error logging
    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))
  * Support for the older versions of the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)

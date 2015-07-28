@@ -1,4 +1,0 @@
-package javaposse.jobdsl.dsl
-// enable DSL support in IDEA, see https://confluence.jetbrains.com/display/GRVY/Scripting+IDE+for+DSL+awareness
-
-scriptSuperClass(pattern: '.groovy', superClass: 'javaposse.jobdsl.dsl.DslFactory')
