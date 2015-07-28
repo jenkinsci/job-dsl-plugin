@@ -30,7 +30,7 @@ subprojects {
     }
 
     codenarc {
-        toolVersion = '0.23'
+        toolVersion = '0.24'
         configFile = file('../config/codenarc/rules.groovy')
     }
 
