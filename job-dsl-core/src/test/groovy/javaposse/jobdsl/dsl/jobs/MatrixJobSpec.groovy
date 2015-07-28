@@ -95,13 +95,7 @@ class MatrixJobSpec extends Specification {
         job.childCustomWorkspace('test')
 
         then:
-        job.node.childCustomWorkspace[0].value() == 'test'
-
-        when:
-        job.childCustomWorkspace('test2')
-
-        then:
         job.node.childCustomWorkspace.size() == 1
-        job.node.childCustomWorkspace[0].value() == 'test2'
+        job.node.childCustomWorkspace[0].value() == 'test'
     }
 }

@@ -33,9 +33,11 @@ class MatrixJob extends Job {
      * Configures a child custom workspace for the matrix project.
      *
      * @param workspacePath workspace path to use
+     * @since 1.36
      */
     void childCustomWorkspace(String workspacePath) {
         checkNotNull(workspacePath, 'Workspace path must not be null')
+
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('childCustomWorkspace', workspacePath)
             project / node
