@@ -55,6 +55,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'matrix-project')
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure = null) {
         processJob(name, MatrixJob, closure)
     }

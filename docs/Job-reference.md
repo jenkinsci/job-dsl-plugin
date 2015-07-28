@@ -44,7 +44,7 @@ freeStyleJob(String name) { // since 1.30
         permission(String permission, String user)
         permission(Permissions perm, String user) // deprecated since 1.31
         permissionAll(String user)
-        blocksInheritance(boolean blocksInheritance = true) // since 1.35 
+        blocksInheritance(boolean blocksInheritance = true) // since 1.35
     }
     parameters {
         booleanParam(String parameterName, boolean defaultValue = false,
@@ -330,6 +330,7 @@ matrixJob(String name) { // since 1.30
     runSequentially(boolean runSequentially = true)
     touchStoneFilter(String expression, boolean continueOnFailure = false)
     combinationFilter(String expression)
+    childCustomWorkspace(String workspace) // since 1.36
 }
 
 job(type: Matrix, Closure closure) // deprecated since 1.30
@@ -482,7 +483,7 @@ job {
 
 Block build if certain jobs are running. Requires the
 [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin).
- 
+
 Regular expressions can be used for the project names, e.g. `/.*-maintenance/` will match all maintenance jobs.
 
 Possible values for `blockLevel` are `'GLOBAL'` and `'NODE'` (default). Possible values for `scanQueueFor` are `'ALL'`,
@@ -659,7 +660,7 @@ job {
         permission(String permission, String user)
         permissionAll(String user)
         permission(Permissions perm, String user) // deprecated since 1.31
-        blocksInheritance(boolean blocksInheritance = true) // since 1.35 
+        blocksInheritance(boolean blocksInheritance = true) // since 1.35
     }
 }
 ```
@@ -3366,12 +3367,13 @@ multiJob('example') {
 
 (since 1.16)
 
-# [MatrixJob](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project)
+# Matrix Job
 
 The `axes`, `sequential`, `touchStoneFiler` and `combinationFilter` methods can only be used in jobs with type `Matrix`.
 Any elements which can be added to a freestyle project can also be added to a MatrixJob and these will be run for each
 of the matrix combinations.
 
+Requires the [Matrix Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin).
 See also [Building a matrix project](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project).
 
 ### Axes
@@ -3398,8 +3400,6 @@ separate label names.
 The configure block can be used to add axes that are currently not supported by the Job DSL Plugin. The `axes` node is
 passed into the configure block.
 
-Example:
-
 ```groovy
 matrixJob('example') {
     axes {
@@ -3422,8 +3422,6 @@ matrixJob {
 
 Run each matrix combination in sequence. If omitted, Jenkins will try to build the combinations in parallel if possible.
 
-Example:
-
 ```groovy
 matrixJob('example') {
     sequential()
@@ -3433,14 +3431,12 @@ matrixJob('example') {
 ### Touchstone Builds
 
 ```groovy
-matrixJob(type) {
+matrixJob {
     touchStoneFilter(String expression, boolean continueOnFailure = false)
 }
 ```
 
 An expression of which combination to run first, the second parameter controls if a failure stops the other builds.
-
-Example:
 
 ```groovy
 matrixJob('example') {
@@ -3451,20 +3447,37 @@ matrixJob('example') {
 ### Combination Filter
 
 ```groovy
-matrixJob(type) {
+matrixJob {
     combinationFilter(String expression)
 }
 ```
 
 An expression to limit which combinations can be run.
 
-Example:
-
 ```groovy
 matrixJob('example') {
     combinationFilter('jdk=="jdk-6" || label=="linux"')
 }
 ```
+
+### Child Custom Workspace
+
+```groovy
+matrixJob {
+    childCustomWorkspace(String workspace)
+}
+```
+
+Explicitly specify custom workspace name for individual child workspaces created for individual axes.
+
+```groovy
+matrixJob('example') {
+    customWorkspace('example')
+    childCustomWorkspace('.') // Reuse the same custom workspace for every axis.
+}
+```
+
+(since 1.36)
 
 # [Prerequisite Build Step](https://wiki.jenkins-ci.org/display/JENKINS/Prerequisite+build+step+plugin)
 

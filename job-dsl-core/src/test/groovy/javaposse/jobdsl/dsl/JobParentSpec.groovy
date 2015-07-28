@@ -570,6 +570,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
+        1 * jobManagement.requirePlugin('matrix-project')
     }
 
     def 'mavenJob deprecated variant'() {

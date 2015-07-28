@@ -7,6 +7,8 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AxisContext
 
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
+
 class MatrixJob extends Job {
     MatrixJob(JobManagement jobManagement) {
         super(jobManagement)
@@ -24,6 +26,21 @@ class MatrixJob extends Job {
             context.configureBlocks.each {
                 new WithXmlAction(it).execute(axesNode)
             }
+        }
+    }
+
+    /**
+     * Configures a child custom workspace for the matrix project.
+     *
+     * @param workspacePath workspace path to use
+     * @since 1.36
+     */
+    void childCustomWorkspace(String workspacePath) {
+        checkNotNull(workspacePath, 'Workspace path must not be null')
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('childCustomWorkspace', workspacePath)
+            project / node
         }
     }
 
