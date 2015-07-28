@@ -464,6 +464,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             LOGGER.warning(e.getMessage());
         }
 
+        checkItemType(item, dslItem);
+
         LOGGER.log(Level.FINE, format("Updating item %s as %s", item.getName(), config));
         Source streamSource = new StreamSource(new StringReader(config));
         try {
@@ -475,6 +477,27 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             created = false;
         }
         return created;
+    }
+
+    private void checkItemType(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
+        Node oldConfig;
+
+        try {
+            oldConfig = new XmlParser().parse(item.getConfigFile().getFile());
+        } catch (Exception e) {
+            throw new DslException(format(
+                    Messages.UpdateExistingItem_CouldNotReadConfig(),
+                    item.getConfigFile().getFile().getAbsolutePath(),
+                    item.getFullName()
+            ), e);
+        }
+
+        if (!oldConfig.name().equals(dslItem.getNode().name())) {
+            throw new DslException(format(
+                    Messages.UpdateExistingItem_ItemTypeDoesNotMatch(),
+                    item.getFullName()
+            ));
+        }
     }
 
     private boolean createNewItem(String path, javaposse.jobdsl.dsl.Item dslItem) {
