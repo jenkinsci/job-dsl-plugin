@@ -86,4 +86,16 @@ class PropertiesContext extends AbstractExtensibleContext {
             rebuildDisabled(rebuildContext.rebuildDisabled)
         }
     }
+
+    /**
+     * Configures the github project URL
+     * @since 1.40
+     */
+    void githubProjectUrl(String projectUrl) {
+        jobManagement.logPluginDeprecationWarning('github', '1.12.0')
+
+        propertiesNodes << new NodeBuilder().'com.coravy.hudson.plugins.github.GithubProjectProperty' {
+            delegate.projectUrl projectUrl
+        }
+    }
 }

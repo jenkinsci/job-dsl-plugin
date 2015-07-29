@@ -136,4 +136,43 @@ class PropertiesContextSpec extends Specification {
             rebuildDisabled[0].value() == true
         }
     }
+
+    def 'github project URL with value'() {
+        when:
+        context.githubProjectUrl('https://github.com/jenkinsci/job-dsl-plugin')
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.coravy.hudson.plugins.github.GithubProjectProperty'
+            children().size() == 1
+            projectUrl[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin'
+        }
+        1 * jobManagement.logPluginDeprecationWarning('github', '1.12.0')
+    }
+
+    def 'github project URL with empty value'() {
+        when:
+        context.githubProjectUrl('')
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.coravy.hudson.plugins.github.GithubProjectProperty'
+            children().size() == 1
+            projectUrl[0].value() == ''
+        }
+        1 * jobManagement.logPluginDeprecationWarning('github', '1.12.0')
+    }
+
+    def 'github project URL with null value'() {
+        when:
+        context.githubProjectUrl(null)
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.coravy.hudson.plugins.github.GithubProjectProperty'
+            children().size() == 1
+            projectUrl[0].value() == null
+        }
+        1 * jobManagement.logPluginDeprecationWarning('github', '1.12.0')
+    }
 }
