@@ -13,7 +13,6 @@ class ActiveChoiceContext implements Context {
     ]
 
     String description
-    int visibleItemCount = 1
     boolean filterable = false
     boolean supportsFilterable = true
     String choiceType = 'SINGLE_SELECT'
@@ -21,10 +20,6 @@ class ActiveChoiceContext implements Context {
 
     void description(String description) {
         this.description = description
-    }
-
-    void visibleItemCount(int visibleItemCount) {
-        this.visibleItemCount = visibleItemCount
     }
 
     void filterable(boolean filterable) {
@@ -59,7 +54,6 @@ class ActiveChoiceContext implements Context {
             name(paramName)
             description(context.description ?: '')
             randomName('choice-parameter-' + System.nanoTime())
-            visibleItemCount(context.visibleItemCount)
             parameters(class: 'linked-hash-map')
             choiceType(choiceTypePrefix + context.choiceType)
             if (context.supportsFilterable) {

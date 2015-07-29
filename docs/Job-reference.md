@@ -5952,7 +5952,6 @@ job('example-2') {
 ```groovy
 activeChoiceParam(String paramName, Closure closure = null) {
     description(String description)
-    visibleItemCount(int visibleItemCount)
     filterable(boolean filterable)
     choiceType(String choiceType)
     groovyScript {

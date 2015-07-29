@@ -887,7 +887,6 @@ class BuildParametersContextSpec extends Specification {
         when:
         context.activeChoiceParam('activeChoiceGroovyParam') {
             description('Active choice param test')
-            visibleItemCount(2)
             filterable(true)
             choiceType('SINGLE_SELECT')
             groovyScript {
@@ -901,7 +900,6 @@ class BuildParametersContextSpec extends Specification {
         with(context.buildParameterNodes['activeChoiceGroovyParam']) {
             name() == 'org.biouno.unochoice.ChoiceParameter'
             description.text() == 'Active choice param test'
-            visibleItemCount.text() == '2'
             filterable.text() == 'true'
             choiceType.text() == 'PT_SINGLE_SELECT'
             parameters[0].attributes()['class'] == 'linked-hash-map'
