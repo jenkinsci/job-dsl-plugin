@@ -217,9 +217,6 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation");
         config.addCompilationCustomizers(icz);
 
-        GrabDeprecationTransformation grabDeprecationTransformation = new GrabDeprecationTransformation(jobManagement);
-        config.addCompilationCustomizers(new ASTTransformationCustomizer(grabDeprecationTransformation));
-
         config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing
         return config;
     }
