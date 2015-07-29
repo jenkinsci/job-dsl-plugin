@@ -5961,6 +5961,24 @@ activeChoiceParam(String paramName, Closure closure = null) {
 }
 ```
 
+```groovy
+// adds build parameter CHOICE-1 with two choices: 'choice1' and 'choice2' and one 'fallback choice' in
+case choices script fails
+job('example-1') {
+    parameters {
+        activeChoiceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            filterable(true)
+            choiceType('SINGLE_SELECT')
+            groovyScript {
+              script('["choice1", "choice2"]')
+              fallbackScript('"fallback choice"')
+            }
+        }
+    }
+}
+```
+
 Defines a Active Choice parameter with groovy script as source of parameter options. Requires the
 [Active Choice Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
 
