@@ -40,6 +40,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Some methods in `AbstractJobManagement` have been deprecated and the exception handling has changed, see
    [Migration](Migration#migrating-to-136)
  * Removed support for the `@Grab` and `@Grapes` annotations, see [[Migration|Migration#migrating-to-129]]
+ * Removed anything that has been deprecated in 1.29, see [Migration](Migration#migrating-to-129)
 * 1.35 (July 01 2015)
  * Added support for the [Build Flow Test Aggregator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Test+Aggregator+Plugin)
    ([JENKINS-28851](https://issues.jenkins-ci.org/browse/JENKINS-28851))

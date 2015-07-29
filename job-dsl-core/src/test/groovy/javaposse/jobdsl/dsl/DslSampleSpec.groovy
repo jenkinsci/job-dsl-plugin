@@ -142,7 +142,6 @@ class DslSampleSpec extends Specification {
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
-    <perModuleEmail>false</perModuleEmail>
     <ignoreUpstremChanges>true</ignoreUpstremChanges>
     <archivingDisabled>true</archivingDisabled>
     <resolveDependencies>false</resolveDependencies>
@@ -257,7 +256,6 @@ job(type: Maven) {
     rootPOM 'my_module/pom.xml'
     goals 'clean verify'
     mavenOpts '-Xmx1024m'
-    perModuleEmail true
     archivingDisabled true
     runHeadless true
     scm {
@@ -276,7 +274,6 @@ job(type: Maven) {
     goals 'install'
     mavenOpts '-Xms128m'
     mavenOpts '-Xmx512m'
-    perModuleEmail true
     jdk 'JDK1.7.0_12'
 }
 '''
@@ -295,7 +292,6 @@ job(type: Maven) {
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
-    <perModuleEmail>true</perModuleEmail>
     <ignoreUpstremChanges>false</ignoreUpstremChanges>
     <archivingDisabled>true</archivingDisabled>
     <resolveDependencies>false</resolveDependencies>
@@ -348,7 +344,6 @@ job(type: Maven) {
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
-    <perModuleEmail>true</perModuleEmail>
     <ignoreUpstremChanges>true</ignoreUpstremChanges>
     <archivingDisabled>true</archivingDisabled>
     <resolveDependencies>false</resolveDependencies>
