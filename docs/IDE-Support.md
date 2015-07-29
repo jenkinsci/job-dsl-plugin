@@ -1,6 +1,22 @@
 Newer versions (14.1 or later) of [IntelliJ IDEA](https://www.jetbrains.com/idea/) can be configured to be aware of the
-Job DSL beyond the basic Groovy syntax. That enables better syntax highlighting and will provide more information about
-the DSL methods like "Parameter Info" and "Quick Documentation".
+Job DSL beyond the basic Groovy syntax. That enables autocompletion and better syntax highlighting and will provide more
+information about the DSL methods like "Parameter Info" and "Quick Documentation".
+
+IDEA has a feature called [GroovyDSL](https://confluence.jetbrains.com/display/GRVY/Scripting+IDE+for+DSL+awareness)
+which enables IDE support for custom Groovy DSLs. To configure support for the Job DSL, a GroovyDSL script with the
+following content must be available on the classpath along with the `job-dsl-core` library.
+
+    // enable DSL support in IDEA, see https://confluence.jetbrains.com/display/GRVY/Scripting+IDE+for+DSL+awareness
+    
+    def jobPath = /.*\/jobs\/.*\.groovy/
+    
+    def ctx = context(pathRegexp: jobPath)
+    contributor(ctx, {
+        delegatesTo(findClass('javaposse.jobdsl.dsl.DslFactory'))
+    })
+
+This GroovyDSL script will enable Job DSL IDE support in all script files matched by the `jobPath` regular expression,
+in this case all file below a folder class `jobs` with file extension `.groovy`.
 
 An easy way to automatically configure IDEA is to use a [Gradle](https://gradle.org/) build file for the project setup.
 The content of the following code block must be saved in a file called `build.gradle`. This file should be stored in the
@@ -31,17 +47,6 @@ installation.
         compile 'org.jenkins-ci.plugins:job-dsl-core:1.35'
     }
 
-Job DSL scripts must use the `.groovy` file name extension to let IDEA apply the DSL support.
+In this example, the GroovyDSL script from above must be stored in `src/main/resources/idea.gdsl`.
 
 For a complete example, have a look at the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example).
-
-
-Implementation Details
-----------------------
-
-The Job DSL core library provides a
-[script](https://github.com/jenkinsci/job-dsl-plugin/blob/job-dsl-1.35/job-dsl-core/src/main/resources/javaposse/jobdsl/dsl/idea.gdsl)
-for the
-[IDEA GroovyDSL scripting framework](https://confluence.jetbrains.com/display/GRVY/Scripting+IDE+for+DSL+awareness).
-IDEA will automatically pick-up the script and enable the DSL support when the Job DSL core library is used as an
-external library in a project.
