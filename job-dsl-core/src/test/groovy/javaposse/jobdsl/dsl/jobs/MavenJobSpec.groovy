@@ -66,15 +66,6 @@ class MavenJobSpec extends Specification {
         job.node.mavenOpts[0].value() == '-Xms256m -Xmx512m'
     }
 
-    def 'perModuleEmail constructs xml'() {
-        when:
-        job.perModuleEmail(false)
-
-        then:
-        job.node.perModuleEmail.size() == 1
-        job.node.perModuleEmail[0].value() == false
-    }
-
     def 'archivingDisabled constructs xml'() {
         when:
         job.archivingDisabled(true)

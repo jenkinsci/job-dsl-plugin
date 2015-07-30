@@ -347,7 +347,6 @@ mavenJob(String name) { // since 1.30
     mavenOpts(String mavenOpts)
     mavenInstallation(String name) // since 1.20
     localRepository(LocalRepositoryLocation location)
-    perModuleEmail(boolean shouldSendEmailPerModule) // deprecated since 1.29
     archivingDisabled(boolean shouldDisableArchiving)
     runHeadless(boolean shouldRunHeadless)
     preBuildSteps(Closure stepsClosure)
@@ -818,7 +817,7 @@ Since 1.21.
 
 # Maven
 
-The `rootPOM`, `goals`, `mavenOpts`, `mavenInstallation`, `perModuleEmail`, `archivingDisabled`, `runHeadless`,
+The `rootPOM`, `goals`, `mavenOpts`, `mavenInstallation`, `archivingDisabled`, `runHeadless`,
  `preBuildSteps`, `postBuildSteps` and `providedSettings` methods can only be used in jobs with type `Maven`.
 
 ### Root POM
@@ -900,16 +899,6 @@ mavenJob {
 ```
 
 (Since 1.17)
-
-### Email Per Module
-
-```groovy
-mavenJob {
-    perModuleEmail(boolean sendEmailPerModule) // deprecated since 1.29
-}
-```
-
-Enable or disable email notifications for each Maven module.
 
 ### Disable Artifact Archiving
 
