@@ -882,4 +882,55 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes['mySecondBooleanParameter'].defaultValue.text() == 'false'
         context.buildParameterNodes['mySecondBooleanParameter'].description.text() == ''
     }
+
+    def 'active choice param with no options'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 6
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+    }
+
+    def 'active choice param with all options'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            description('Active choice param test')
+            filterable()
+            choiceType('MULTI_SELECT')
+            groovyScript {
+                script('x1')
+                fallbackScript('x2')
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == 'Active choice param test'
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_MULTI_SELECT'
+            filterable.text() == 'true'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                script.text() == 'x1'
+                fallbackScript.text() == 'x2'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+    }
 }

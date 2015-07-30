@@ -64,6 +64,7 @@ freeStyleJob(String name) { // since 1.30
                     String description = null)
         textParam(String parameterName, String defaultValue = null,
                   String description = null)
+        activeChoiceParam(String paramName, Closure closure) // since 1.36
     }
     scm {
         baseClearCase(Closure closure) // since 1.24
@@ -5934,6 +5935,47 @@ job('example-2') {
 ```
 
 (since 1.26)
+
+### Active Choice Parameter
+
+```groovy
+job {
+    parameters {
+        activeChoiceParam(String paramName) {
+            description(String description)
+            filterable(boolean filterable = true)
+            choiceType(String choiceType)
+            groovyScript {
+                script(String script)
+                fallbackScript(String fallbackScript)
+            }
+        }
+    }
+}
+```
+
+Defines a Active Choice parameter with groovy script as source of parameter options. Requires the
+[Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin).
+
+Valid values for `choiceType` are `'SINGLE_SELECT'` (default), `'MULTI_SELECT'`, `'CHECKBOX'` and `'RADIO'`.
+
+```groovy
+job('example-1') {
+    parameters {
+        activeChoiceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            filterable()
+            choiceType('SINGLE_SELECT')
+            groovyScript {
+                script('["choice1", "choice2"]')
+                fallbackScript('"fallback choice"')
+            }
+        }
+    }
+}
+```
+
+(since 1.36)
 
 ### Label Parameter
 
