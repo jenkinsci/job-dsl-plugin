@@ -188,6 +188,7 @@ class MultiJobStepContextSpec extends Specification {
             phaseName 'Second'
             job('JobA') {
                 disableJob()
+                abortAllJob()
                 killPhaseCondition('UNSTABLE')
             }
         }
@@ -196,12 +197,13 @@ class MultiJobStepContextSpec extends Specification {
         def phaseNode = context.stepNodes[0]
         phaseNode.phaseName[0].value() == 'Second'
         def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 6
+        jobNode.children().size() == 7
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == true
         jobNode.exposedSCM[0].value() == true
         jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         jobNode.disableJob[0].value() == true
+        jobNode.abortAllJob[0].value() == true
         jobNode.killPhaseOnJobResultCondition[0].value() == 'UNSTABLE'
     }
 

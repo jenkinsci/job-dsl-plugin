@@ -57,6 +57,7 @@ class MultiJobStepContext extends StepContext {
                         exposedSCM jobInPhase.exposedScm
                         if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.10'))) {
                             disableJob jobInPhase.disableJob
+                            abortAllJob jobInPhase.abortAllJob
                             killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
                         }
                         if (jobInPhase.hasConfig()) {
