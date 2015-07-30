@@ -1641,9 +1641,11 @@ class StepContextSpec extends Specification {
             Node unstableThreshold = thresholds.unstableThreshold[0]
             unstableThreshold.name[0].value() == 'UNSTABLE'
             unstableThreshold.ordinal[0].value() == 1
+            unstableThreshold.completeBuild[0].value() == true
             Node failureThreshold = thresholds.failureThreshold[0]
             failureThreshold.name[0].value() == 'FAILURE'
             failureThreshold.ordinal[0].value() == 2
+            failureThreshold.completeBuild[0].value() == true
             Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
             buildStepFailureThreshold.name[0].value() == 'FAILURE'
         }

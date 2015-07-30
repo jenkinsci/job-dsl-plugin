@@ -36,6 +36,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    [JENKINS-29669](https://issues.jenkins-ci.org/browse/JENKINS-29669))
  * Improved error logging
    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))
+ * Fixed support for the [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+   ([JENKINS-24851](https://issues.jenkins-ci.org/browse/JENKINS-24851))
  * Support for the older versions of the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
    is deprecated, see [Migration](Migration#migrating-to-136)
  * Some methods in `AbstractJobManagement` have been deprecated and the exception handling has changed, see
