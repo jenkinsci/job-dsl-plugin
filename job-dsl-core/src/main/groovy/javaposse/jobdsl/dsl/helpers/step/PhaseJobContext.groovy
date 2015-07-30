@@ -128,7 +128,6 @@ class PhaseJobContext implements Context {
         this.abortAllJob = abortAllJob
     }
 
-
     /**
      * @since 1.25
      */
