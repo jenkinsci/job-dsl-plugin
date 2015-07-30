@@ -6,6 +6,17 @@ Support for versions older than 1.7.1 of the
 [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### JobManagement
+
+The following method in the `JobManagement` interface has been [[deprecated|Deprecation-Policy]] and will be removed
+along with all implementations:
+
+```groovy
+String getCredentialsId(String credentialsDescription)
+```
+
+Finding credentials by description has been deprecated some time ago, so this method is no longer needed.
+
 ### AbstractJobManagement
 
 The following methods in AbstractJobManagement have been [[deprecated|Deprecation-Policy]] and will be removed:

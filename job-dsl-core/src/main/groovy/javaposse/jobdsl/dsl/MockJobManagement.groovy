@@ -69,6 +69,7 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    @Deprecated
     String getCredentialsId(String credentialsDescription) {
         null
     }

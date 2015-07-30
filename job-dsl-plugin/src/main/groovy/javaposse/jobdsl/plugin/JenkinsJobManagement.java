@@ -230,6 +230,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    @Deprecated
     public String getCredentialsId(String credentialsDescription) {
         Jenkins jenkins = Jenkins.getInstance();
         Plugin credentialsPlugin = jenkins.getPlugin("credentials");
