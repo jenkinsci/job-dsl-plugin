@@ -883,29 +883,54 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes['mySecondBooleanParameter'].description.text() == ''
     }
 
-    def 'active choice groovy script param'() {
+    def 'active choice param with no options'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 6
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+    }
+
+    def 'active choice param with all options'() {
         when:
         context.activeChoiceParam('activeChoiceGroovyParam') {
             description('Active choice param test')
-            filterable(true)
-            choiceType('SINGLE_SELECT')
+            filterable()
+            choiceType('MULTI_SELECT')
             groovyScript {
                 script('x1')
+                fallbackScript('x2')
             }
         }
 
         then:
-        context.buildParameterNodes != null
-        context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['activeChoiceGroovyParam']) {
             name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
             description.text() == 'Active choice param test'
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_MULTI_SELECT'
             filterable.text() == 'true'
-            choiceType.text() == 'PT_SINGLE_SELECT'
-            parameters[0].attributes()['class'] == 'linked-hash-map'
-            script[0].attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
-            script[0].script.text() == 'x1'
-            script[0].fallbackScript == []
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                script.text() == 'x1'
+                fallbackScript.text() == 'x2'
+            }
         }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
     }
 }

@@ -203,15 +203,25 @@ class BuildParametersContext extends AbstractContext {
     /**
      * @since 1.36
      */
-    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.1')
-    void activeChoiceParam(String paramName, @DslContext(ActiveChoiceContext) Closure closure = null) {
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
+    void activeChoiceParam(String paramName, @DslContext(ActiveChoiceContext) Closure closure) {
         checkNotNull(paramName, 'paramName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(paramName), 'parameter $paramName already defined')
 
         ActiveChoiceContext context = new ActiveChoiceContext()
         ContextHelper.executeInContext(closure, context)
 
-        buildParameterNodes[paramName] = ActiveChoiceContext.createActiveChoiceNode(
-                'org.biouno.unochoice.ChoiceParameter', paramName, context, 'PT_')
+        Node node = new NodeBuilder().'org.biouno.unochoice.ChoiceParameter' {
+            name(paramName)
+            description(context.description ?: '')
+            randomName("choice-parameter-${System.nanoTime()}")
+            visibleItemCount(1)
+            choiceType("PT_${context.choiceType}")
+            filterable(context.filterable)
+        }
+        if (context.script) {
+            node.children().add(context.script)
+        }
+        buildParameterNodes[paramName] = node
     }
 }
