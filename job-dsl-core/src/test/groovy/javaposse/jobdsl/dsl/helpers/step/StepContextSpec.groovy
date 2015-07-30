@@ -2451,7 +2451,7 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
             children().size() == 14
-            token[0].value() == []
+            token[0].value() == ''
             remoteJenkinsName[0].value() == 'dev-ci'
             job[0].value() == 'test'
             shouldNotFailBuild[0].value() == false
@@ -2488,7 +2488,7 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
             children().size() == 14
-            token[0].value() == []
+            token[0].value() == ''
             remoteJenkinsName[0].value() == 'dev-ci'
             job[0].value() == 'test'
             shouldNotFailBuild[0].value() == false
@@ -2524,6 +2524,7 @@ class StepContextSpec extends Specification {
             pollInterval 100
             preventRemoteBuildQueue true
             blockBuildUntilComplete true
+            token 'test'
         }
 
         then:
@@ -2531,7 +2532,7 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
             children().size() == 14
-            token[0].value() == []
+            token[0].value() == 'test'
             remoteJenkinsName[0].value() == 'dev-ci'
             job[0].value() == 'test'
             shouldNotFailBuild[0].value() == true

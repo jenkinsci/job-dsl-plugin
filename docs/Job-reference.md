@@ -4141,6 +4141,7 @@ job {
             pollInterval(int pollInterval)                                  // since 1.29
             preventRemoteBuildQueue(boolean preventRemoteBuildQueue = true) // since 1.29
             blockBuildUntilComplete(boolean blockBuildUntilComplete = true) // since 1.29
+            token(String token = '')
         }
     }
 }
