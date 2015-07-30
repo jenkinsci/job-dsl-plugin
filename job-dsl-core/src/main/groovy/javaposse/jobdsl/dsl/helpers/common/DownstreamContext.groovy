@@ -85,6 +85,7 @@ class DownstreamContext extends AbstractContext {
                                         name(threshold.thresholdName)
                                         ordinal(threshold.thresholdOrdinal)
                                         color(threshold.thresholdColor)
+                                        completeBuild(true)
                                     }
                                 }
                             }
