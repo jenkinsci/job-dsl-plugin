@@ -52,7 +52,7 @@ class MultiJobStepContextSpec extends Specification {
         def phaseNode = context.stepNodes[0]
         phaseNode.phaseName[0].value() == 'Second'
         def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 6
+        jobNode.children().size() == 7
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == true
         jobNode.exposedSCM[0].value() == true
