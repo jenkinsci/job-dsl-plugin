@@ -1,44 +1,37 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
-public class GeneratedJob {
-    private String templateName;
-    private String jobName;
+class GeneratedJob {
+    final String templateName
+    final String jobName
 
-    public GeneratedJob(String templateName, String jobName) {
+    GeneratedJob(String templateName, String jobName) {
         if (jobName == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException()
         }
-        this.templateName = templateName;
-        this.jobName = jobName;
-    }
-
-    public String getJobName() {
-        return jobName;
-    }
-
-    public String getTemplateName() {
-        return templateName;
+        this.templateName = templateName
+        this.jobName = jobName
     }
 
     @Override
-    public int hashCode() {
-        return jobName.hashCode();
+    int hashCode() {
+        jobName.hashCode()
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    boolean equals(Object o) {
+        if (this.is(o)) {
+            return true
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false
+        }
 
-        GeneratedJob that = (GeneratedJob) o;
-        return jobName.equals(that.jobName);
+        GeneratedJob that = (GeneratedJob) o
+        jobName == that.jobName
     }
 
     @Override
-    public String toString() {
-        return "GeneratedJob{" +
-                "name='" + jobName + "'" +
-                (templateName == null ? "" : (", template='" + templateName + "'")) +
-                "}";
+    String toString() {
+        "GeneratedJob{name='${jobName}'${templateName == null ? '' : ", template='${templateName}'"}}"
     }
 }

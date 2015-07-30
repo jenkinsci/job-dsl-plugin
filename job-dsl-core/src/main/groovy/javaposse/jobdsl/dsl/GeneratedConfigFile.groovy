@@ -1,44 +1,37 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
-public class GeneratedConfigFile {
-    private final String id;
-    private final String name;
+class GeneratedConfigFile {
+    final String id
+    final String name
 
-    public GeneratedConfigFile(String id, String name) {
+    GeneratedConfigFile(String id, String name) {
         if (id == null || name == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException()
         }
-        this.id = id;
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
+        this.id = id
+        this.name = name
     }
 
     @Override
-    public int hashCode() {
-        return id.hashCode();
+    int hashCode() {
+        id.hashCode()
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GeneratedConfigFile)) return false;
+    boolean equals(Object o) {
+        if (this.is(o)) {
+            return true
+        }
+        if (!(o instanceof GeneratedConfigFile)) {
+            return false
+        }
 
-        GeneratedConfigFile that = (GeneratedConfigFile) o;
-        return id.equals(that.id);
+        GeneratedConfigFile that = (GeneratedConfigFile) o
+        id == that.id
     }
 
     @Override
-    public String toString() {
-        return "GeneratedConfigFile{" +
-                "name='" + name + "', " +
-                "id='" + id + "'" +
-                "}";
+    String toString() {
+        "GeneratedConfigFile{name='${name}', id='${id}'}"
     }
 }

@@ -1,37 +1,35 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
-public class GeneratedView {
-    private final String name;
+class GeneratedView {
+    final String name
 
-    public GeneratedView(String name) {
+    GeneratedView(String name) {
         if (name == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException()
         }
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+        this.name = name
     }
 
     @Override
-    public int hashCode() {
-        return name.hashCode();
+    int hashCode() {
+        name.hashCode()
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GeneratedView)) return false;
+    boolean equals(Object o) {
+        if (this.is(o)) {
+            return true
+        }
+        if (!(o instanceof GeneratedView)) {
+            return false
+        }
 
-        GeneratedView that = (GeneratedView) o;
-        return name.equals(that.name);
+        GeneratedView that = (GeneratedView) o
+        name == that.name
     }
 
     @Override
-    public String toString() {
-        return "GeneratedView{" +
-                "name='" + name + "'" +
-                "}";
+    String toString() {
+        "GeneratedView{name='${name}'}"
     }
 }

@@ -1,37 +1,35 @@
-package javaposse.jobdsl.dsl;
+package javaposse.jobdsl.dsl
 
-public class GeneratedUserContent {
-    private final String path;
+class GeneratedUserContent {
+    final String path
 
-    public GeneratedUserContent(String path) {
+    GeneratedUserContent(String path) {
         if (path == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException()
         }
-        this.path = path;
-    }
-
-    public String getPath() {
-        return path;
+        this.path = path
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    boolean equals(Object o) {
+        if (this.is(o)) {
+            return true
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false
+        }
 
-        GeneratedUserContent that = (GeneratedUserContent) o;
-        return path.equals(that.path);
+        GeneratedUserContent that = (GeneratedUserContent) o
+        path == that.path
     }
 
     @Override
-    public int hashCode() {
-        return path.hashCode();
+    int hashCode() {
+        path.hashCode()
     }
 
     @Override
-    public String toString() {
-        return "GeneratedUserContent{" +
-                "path='" + path + "'" +
-                "}";
+    String toString() {
+        "GeneratedUserContent{path='${path}'}"
     }
 }
