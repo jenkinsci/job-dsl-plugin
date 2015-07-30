@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
 
 import static java.util.UUID.randomUUID
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -197,5 +198,20 @@ class BuildParametersContext extends AbstractContext {
         }
 
         buildParameterNodes[parameterName] = definitionNode
+    }
+
+    /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.1')
+    void activeChoiceParam(String paramName, @DslContext(ActiveChoiceContext) Closure closure = null) {
+        checkNotNull(paramName, 'paramName cannot be null')
+        checkArgument(!buildParameterNodes.containsKey(paramName), 'parameter $paramName already defined')
+
+        ActiveChoiceContext context = new ActiveChoiceContext()
+        ContextHelper.executeInContext(closure, context)
+
+        buildParameterNodes[paramName] = ActiveChoiceContext.createActiveChoiceNode(
+                'org.biouno.unochoice.ChoiceParameter', paramName, context, 'PT_')
     }
 }
