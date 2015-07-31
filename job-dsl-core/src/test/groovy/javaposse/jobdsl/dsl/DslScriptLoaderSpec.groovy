@@ -278,6 +278,8 @@ folder {
 
         then:
         noExceptionThrown()
+        baos.toString() =~ /support for arbitrary names is deprecated/
+        baos.toString() =~ /test-script\.dsl/
     }
 
     def 'generate config files'() {

@@ -1,5 +1,17 @@
 ## Migrating to 1.36
 
+### Script Names
+
+Groovy currently does not allow to use arbitrary names for scripts, see
+[GROOVY-4020](https://issues.apache.org/jira/browse/GROOVY-4020). In the Job DSL plugin, it's currently only working by
+accident, so usage of arbitrary names is [[deprecated|Deprecation-Policy]] and will be removed.
+
+In the future only names which contain letters, digits, underscores or dollar signs are allowed, but the name must not
+start with a digit. Basically these are the rules for Java identifiers, see
+[this](http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#isJavaIdentifierStart%28char%29) and
+[this](http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#isJavaIdentifierPart%28char%29)) for details.
+The file name extension can be anything and is ignored.  
+
 ### Build Blocker
 
 Support for versions older than 1.7.1 of the
