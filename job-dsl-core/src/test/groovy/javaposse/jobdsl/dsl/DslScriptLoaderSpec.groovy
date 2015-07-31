@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Iterables
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -86,7 +85,7 @@ job {
         jp != null
         def jobs = jp.referencedJobs
         jobs.size() == 2
-        def job = Iterables.get(jobs, 0)
+        def job = jobs.first()
         // If this one fails periodically, then it is because the referenced jobs are
         // Not in definition order, but rather in hash order. Hence, predictability.
         job.name == 'project-a'
@@ -128,7 +127,7 @@ job {
         jp != null
         def jobs = jp.referencedJobs
         jobs.size() == 1
-        def job = Iterables.get(jobs, 0)
+        def job = jobs.first()
         job.name == 'test'
     }
 

@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin
 
-import com.google.common.collect.Sets
 import hudson.EnvVars
 import hudson.FilePath
 import hudson.model.AbstractBuild
@@ -21,7 +20,7 @@ class ScriptRequestGenerator implements Closeable {
     Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText,
                                          boolean ignoreExisting,
                                          String additionalClasspath) throws IOException, InterruptedException {
-        Set<ScriptRequest> scriptRequests = Sets.newLinkedHashSet()
+        Set<ScriptRequest> scriptRequests = new LinkedHashSet<ScriptRequest>()
 
         List<URL> classpath = []
         if (additionalClasspath) {

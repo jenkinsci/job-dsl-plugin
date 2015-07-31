@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 
-import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class PublishOverSshServerContext implements Context {
@@ -47,7 +46,7 @@ class PublishOverSshServerContext implements Context {
         ContextHelper.executeInContext(transferSetClosure, transferSetContext)
 
         checkArgument(
-                !isNullOrEmpty(transferSetContext.sourceFiles) || !isNullOrEmpty(transferSetContext.execCommand),
+                (transferSetContext.sourceFiles as boolean) || (transferSetContext.execCommand as boolean),
                 'sourceFiles or execCommand must be specified'
         )
 

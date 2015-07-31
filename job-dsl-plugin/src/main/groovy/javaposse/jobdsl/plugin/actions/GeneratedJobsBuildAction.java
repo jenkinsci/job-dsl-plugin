@@ -1,11 +1,11 @@
 package javaposse.jobdsl.plugin.actions;
 
-import com.google.common.collect.Sets;
 import hudson.model.Item;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.plugin.LookupStrategy;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class GeneratedJobsBuildAction extends GeneratedObjectsBuildRunAction<GeneratedJob> {
@@ -24,7 +24,7 @@ public class GeneratedJobsBuildAction extends GeneratedObjectsBuildRunAction<Gen
     }
 
     public Set<Item> getItems() {
-        Set<Item> result = Sets.newLinkedHashSet();
+        Set<Item> result = new LinkedHashSet<Item>();
         for (GeneratedJob job : getModifiedObjects()) {
             Item item = getLookupStrategy().getItem(owner.getProject(), job.getJobName(), Item.class);
             if (item != null) {

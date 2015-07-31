@@ -12,7 +12,6 @@ import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
-import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
 
 class StepContext extends AbstractExtensibleContext {
@@ -138,7 +137,7 @@ class StepContext extends AbstractExtensibleContext {
 
         stepNodes << new NodeBuilder().'javaposse.jobdsl.plugin.ExecuteDslScripts' {
             targets(context.externalScripts.join('\n'))
-            usingScriptText(!isNullOrEmpty(context.scriptText))
+            usingScriptText(context.scriptText as boolean)
             scriptText(context.scriptText ?: '')
             ignoreExisting(context.ignoreExisting)
             removedJobAction(context.removedJobAction)

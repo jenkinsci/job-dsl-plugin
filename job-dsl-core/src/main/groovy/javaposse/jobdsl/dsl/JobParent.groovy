@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Sets
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
@@ -20,10 +19,10 @@ import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 abstract class JobParent extends Script implements DslFactory {
     JobManagement jm
-    Set<Item> referencedJobs = Sets.newLinkedHashSet()
-    Set<View> referencedViews = Sets.newLinkedHashSet()
-    Set<ConfigFile> referencedConfigFiles = Sets.newLinkedHashSet()
-    Set<UserContent> referencedUserContents = Sets.newLinkedHashSet()
+    Set<Item> referencedJobs = new LinkedHashSet<>()
+    Set<View> referencedViews = new LinkedHashSet<>()
+    Set<ConfigFile> referencedConfigFiles = new LinkedHashSet<>()
+    Set<UserContent> referencedUserContents = new LinkedHashSet<>()
     List<String> queueToBuild = []
 
     /**
