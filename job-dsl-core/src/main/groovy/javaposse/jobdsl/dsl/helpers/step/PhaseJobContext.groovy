@@ -113,7 +113,7 @@ class PhaseJobContext implements Context {
     }
 
     /**
-     * @since 1.25
+     * @since 1.36
      */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void disableJob(boolean disableJob = true) {
@@ -131,7 +131,7 @@ class PhaseJobContext implements Context {
     /**
      * @since 1.25
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.14')
     void killPhaseCondition(String killPhaseCondition) {
         Preconditions.checkArgument(
                 VALID_KILL_CONDITIONS.contains(killPhaseCondition),
