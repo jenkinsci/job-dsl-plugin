@@ -63,6 +63,10 @@ class ArchiveXUnitContext implements Context {
         addResultFile('GoogleTestType', resultFileClosure)
     }
 
+    void gtester(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
+        addResultFile('GTesterJunitHudsonTestType', resultFileClosure)
+    }
+
     void jUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('JUnitType', resultFileClosure)
     }
