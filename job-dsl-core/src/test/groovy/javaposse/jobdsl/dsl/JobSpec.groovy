@@ -588,6 +588,17 @@ class JobSpec extends Specification {
         1 * jobManagement.requirePlugin('lockable-resources')
     }
 
+    def 'compress build log'() {
+        when:
+        job.compressBuildLog()
+
+        then:
+        with(job.node.properties[0].'org.jenkinsci.plugins.compressbuildlog.BuildLogCompressor'[0]) {
+            children().size() == 0
+        }
+        1 * jobManagement.requireMinimumPluginVersion('compress-buildlog', '1.0')
+    }
+
     def 'heavy job weight'() {
         when:
         job.weight(42)
