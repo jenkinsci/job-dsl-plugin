@@ -5526,6 +5526,7 @@ job {
             embUnit { ... }                                 // see aUnit closure above
             fpcUnit { ... }                                 // see aUnit closure above
             googleTest { ... }                              // see aUnit closure above
+            gtester { ... }                                 // see aUnit closure above
             jUnit { ... }                                   // see aUnit closure above
             msTest { ... }                                  // see aUnit closure above
             mbUnit { ... }                                  // see aUnit closure above

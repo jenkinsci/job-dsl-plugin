@@ -447,6 +447,7 @@ class PublisherContextSpec extends Specification {
         'embUnit'    | 'EmbUnitType'
         'fpcUnit'    | 'FPCUnitJunitHudsonTestType'
         'googleTest' | 'GoogleTestType'
+        'gtester'    | 'GTesterJunitHudsonTestType'
         'jUnit'      | 'JUnitType'
         'msTest'     | 'MSTestJunitHudsonTestType'
         'mbUnit'     | 'MbUnitType'
