@@ -41,4 +41,21 @@ class ActiveChoiceContext implements Context {
             delegate.fallbackScript(context.fallbackScript ?: '')
         }
     }
+
+    void scriptlerScript(String name, @DslContext(ActiveChoiceScriptlerScriptContext) Closure closure = null) {
+        checkArgument(script == null, 'script already defined')
+        ActiveChoiceScriptlerScriptContext context = new ActiveChoiceScriptlerScriptContext()
+        executeInContext(closure, context)
+
+        script = NodeBuilder.newInstance().script(class: 'org.biouno.unochoice.model.ScriptlerScript') {
+            delegate.scriptlerScriptId(name)
+        }
+
+        if (context.parameters.empty) {
+            context.parameter('', '')
+        }
+        Node parameters = NodeBuilder.newInstance().parameters()
+        parameters.children().addAll(context.parameters)
+        script.children().add(parameters)
+    }
 }

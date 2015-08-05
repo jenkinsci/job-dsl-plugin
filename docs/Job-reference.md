@@ -5949,6 +5949,11 @@ job {
                 script(String script)
                 fallbackScript(String fallbackScript)
             }
+            scriptlerScript(String scriptName) {
+                parameter(String paramName, String paramValue)
+                parameter(String paramName2, String paramValue2)
+                ...
+            }
         }
     }
 }
@@ -5969,6 +5974,22 @@ job('example-1') {
             groovyScript {
                 script('["choice1", "choice2"]')
                 fallbackScript('"fallback choice"')
+            }
+        }
+    }
+}
+```
+
+```groovy
+job('example-2') {
+    parameters {
+        activeChoiceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            filterable()
+            choiceType('SINGLE_SELECT')
+            scriptlerScript('scriptler-script1.groovy') {
+              parameter('param1', 'value1')
+              parameter('param2', 'value2')
             }
         }
     }
