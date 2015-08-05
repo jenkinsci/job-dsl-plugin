@@ -1678,6 +1678,34 @@ class StepContextSpec extends Specification {
 
         when:
         context.downstreamParameterized {
+            trigger('ProjectMatchingFiles') {
+                forMatchingFiles('dest1.patch', 'src1.patch')
+                forMatchingFiles('dest2.patch', 'src2.patch', 'FAIL')
+            }
+        }
+
+        then:
+        with(context.stepNodes[2].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'ProjectMatchingFiles'
+            condition[0].value() == 'ALWAYS'
+            triggerWithNoParameters[0].value() == false
+            configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+            configFactories[0].children().size() == 2
+            with(configFactories[0].'hudson.plugins.parameterizedtrigger.BinaryFileParameterFactory'[0]) {
+                parameterName[0].value() == 'dest1.patch'
+                filePattern[0].value() == 'src1.patch'
+                noFilesFoundAction[0].value() == 'SKIP'
+            }
+            with(configFactories[0].'hudson.plugins.parameterizedtrigger.BinaryFileParameterFactory'[1]) {
+                parameterName[0].value() == 'dest2.patch'
+                filePattern[0].value() == 'src2.patch'
+                noFilesFoundAction[0].value() == 'FAIL'
+            }
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+
+        when:
+        context.downstreamParameterized {
             trigger('Project4', 'WRONG')
         }
 

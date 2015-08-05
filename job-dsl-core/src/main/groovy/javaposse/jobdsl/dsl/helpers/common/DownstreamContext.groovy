@@ -78,6 +78,11 @@ class DownstreamContext extends AbstractContext {
                         } else {
                             configs('class': 'java.util.Collections$EmptyList')
                         }
+
+                        if (trigger.hasFactories()) {
+                            configFactories(trigger.createFactoriesNode().children())
+                        }
+
                         if (isStep && !trigger.blockingThresholds.empty) {
                             block {
                                 trigger.blockingThresholds.each { BlockingThreshold threshold ->
