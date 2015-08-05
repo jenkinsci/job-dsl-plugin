@@ -19,6 +19,7 @@ freeStyleJob(String name) { // since 1.30
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     checkoutRetryCount(int times = 3)
+    compressBuildLog() // since 1.36
     concurrentBuild(boolean allowConcurrentBuild = true) // since 1.21
     customWorkspace(String workspacePath)
     deliveryPipelineConfiguration(String stageName, String taskName = null) // since 1.26
@@ -509,6 +510,25 @@ blockOnDownstreamProjects()
 ```
 
 Blocks the build of a project when one ore more upstream (blockOnUpstreamProjects()) or a downstream projects (blockOnDownstreamProjects()) are running. (Available since 1.16)
+
+### Compress Build Log
+
+```groovy
+job {
+    compressBuildLog()
+}
+```
+
+Compress the log file after build completion. Requires the
+[Compress Build Log](https://wiki.jenkins-ci.org/display/JENKINS/Compress+Build+Log+Plugin).
+
+```groovy
+job('example') {
+    compressBuildLog()
+}
+```
+
+(since 1.36)
 
 ### Job Weight
 
