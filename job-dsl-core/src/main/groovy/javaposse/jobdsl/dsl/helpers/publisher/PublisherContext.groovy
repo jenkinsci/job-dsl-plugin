@@ -160,7 +160,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'xunit')
     void archiveXUnit(@DslContext(ArchiveXUnitContext) Closure xUnitClosure) {
-        ArchiveXUnitContext xUnitContext = new ArchiveXUnitContext()
+        ArchiveXUnitContext xUnitContext = new ArchiveXUnitContext(jobManagement)
         ContextHelper.executeInContext(xUnitClosure, xUnitContext)
 
         publisherNodes << new NodeBuilder().'xunit' {
