@@ -17,6 +17,15 @@ class PullRequestBuilderContext extends AbstractContext {
     boolean allowMembersOfWhitelistedOrgsAsAdmin = false
     String commentFilePath
 
+    String commitStatusContext = 'default'
+    String triggeredStatus = 'Build Triggered'
+    String startedStatus = 'Build Started'
+
+    String buildResultSuccessMessage = 'Passed'
+    String buildResultFailureMessage = 'Failed'
+    String buildResultSuccess = 'SUCCESS'
+    String buildResultFailure = 'FAILURE'
+
     PullRequestBuilderContext(JobManagement jobManagement) {
         super(jobManagement)
     }
@@ -89,5 +98,29 @@ class PullRequestBuilderContext extends AbstractContext {
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
     void allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = true) {
         this.allowMembersOfWhitelistedOrgsAsAdmin = allowMembersOfWhitelistedOrgsAsAdmin
+    }
+
+    /**
+    * @since 1.22
+    */
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
+    void commitStatusContext(String commitStatus) {
+        this.commitStatusContext = commitStatus
+    }
+
+    void triggeredStatus(String triggeredStatus) {
+        this.triggeredStatus = triggeredStatus
+    }
+
+    void startedStatus(String startedStatus) {
+        this.startedStatus = startedStatus
+    }
+
+    void buildResultSuccessMessage(String successMessage) {
+        this.buildResultSuccessMessage = successMessage
+    }
+
+    void buildResultFailureMessage(String failureMessage) {
+        this.buildResultFailureMessage = failureMessage
     }
 }

@@ -136,7 +136,8 @@ class TriggerContext extends AbstractExtensibleContext {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
-        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+        NodeBuilder pullRequestNodeBuilder = new NodeBuilder()
+        Node pullRequestNode =  pullRequestNodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
@@ -154,6 +155,44 @@ class TriggerContext extends AbstractExtensibleContext {
                 allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             }
         }
+
+        NodeBuilder extensionsNodeBuilder = new NodeBuilder()
+        Node extensionsNode = extensionsNodeBuilder.'extensions' {}
+
+        // commit status during build
+        NodeBuilder commitStatusNodeBuilder = new NodeBuilder()
+        Node commitStatusNode = commitStatusNodeBuilder
+            .'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus' {
+            commitStatusContext pullRequestBuilderContext.commitStatusContext ?: ''
+            triggeredStatus pullRequestBuilderContext.triggeredStatus ?: ''
+            startedStatus pullRequestBuilderContext.startedStatus ?: ''
+        }
+
+        // completed status
+        NodeBuilder completedStatusBuilder = new NodeBuilder()
+        Node completedStatusNode = completedStatusBuilder.'completedStatus' {}
+
+        NodeBuilder successBuildResultMessageBuilder = new NodeBuilder()
+        Node successBuildResultMessageNode = successBuildResultMessageBuilder
+            .'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
+                message pullRequestBuilderContext.buildResultSuccessMessage ?: ''
+                result pullRequestBuilderContext.buildResultSuccess
+            }
+        NodeBuilder failureBuildResultMessageBuilder = new NodeBuilder()
+        Node failureBuildResultMessageNode = failureBuildResultMessageBuilder
+            .'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
+                message pullRequestBuilderContext.buildResultFailureMessage ?: ''
+                result pullRequestBuilderContext.buildResultFailure
+            }
+
+        completedStatusNode.append(successBuildResultMessageNode)
+        completedStatusNode.append(failureBuildResultMessageNode)
+        commitStatusNode.append(completedStatusNode)
+
+        extensionsNode.append(commitStatusNode)
+
+        pullRequestNode.append(extensionsNode)
+        addExtensionNode(pullRequestNode)
     }
 
     @RequiresPlugin(id = 'gerrit-trigger')
