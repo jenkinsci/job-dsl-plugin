@@ -5518,40 +5518,40 @@ job {
                 deleteOutputFiles(boolean value = true)     // defaults to true
                 stopProcessingIfError(boolean value = true) // defaults to true
             }
-            boostTest { ... }                               // see aUnit closure above
-            cTest { ... }                                   // see aUnit closure above
-            check { ... }                                   // see aUnit closure above
-            cppTest { ... }                                 // see aUnit closure above
-            cppUnit { ... }                                 // see aUnit closure above
-            embUnit { ... }                                 // see aUnit closure above
-            fpcUnit { ... }                                 // see aUnit closure above
-            googleTest { ... }                              // see aUnit closure above
-            gtester { ... }                                 // see aUnit closure above
-            jUnit { ... }                                   // see aUnit closure above
-            msTest { ... }                                  // see aUnit closure above
-            mbUnit { ... }                                  // see aUnit closure above
-            nUnit { ... }                                   // see aUnit closure above
-            phpUnit { ... }                                 // see aUnit closure above
-            qTestLib { ... }                                // see aUnit closure above
-            valgrind { ... }                                // see aUnit closure above
+            boostTest { ... }          // see aUnit closure above
+            cTest { ... }              // see aUnit closure above
+            check { ... }              // see aUnit closure above
+            cppTest { ... }            // see aUnit closure above
+            cppUnit { ... }            // see aUnit closure above
+            embUnit { ... }            // see aUnit closure above
+            fpcUnit { ... }            // see aUnit closure above
+            googleTest { ... }         // see aUnit closure above
+            gtester { ... }            // see aUnit closure above, since 1.36
+            jUnit { ... }              // see aUnit closure above
+            msTest { ... }             // see aUnit closure above
+            mbUnit { ... }             // see aUnit closure above
+            nUnit { ... }              // see aUnit closure above
+            phpUnit { ... }            // see aUnit closure above
+            qTestLib { ... }           // see aUnit closure above
+            valgrind { ... }           // see aUnit closure above
             customTool {
                 // all options from the aUnit closure above, plus
-                stylesheet(String url)                      // empty by default
+                stylesheet(String url)        // empty by default
             }
             failedThresholds {
-                unstable(int threshold)                     // defaults to 0
-                unstableNew(int threshold)                  // defaults to 0
-                failure(int threshold)                      // defaults to 0
-                failureNew(int threshold)                   // defaults to 0
+                unstable(int threshold)       // defaults to 0
+                unstableNew(int threshold)    // defaults to 0
+                failure(int threshold)        // defaults to 0
+                failureNew(int threshold)     // defaults to 0
             }
             skippedThresholds {
-                unstable(int threshold)                     // defaults to 0
-                unstableNew(int threshold)                  // defaults to 0
-                failure(int threshold)                      // defaults to 0
-                failureNew(int threshold)                   // defaults to 0
+                unstable(int threshold)       // defaults to 0
+                unstableNew(int threshold)    // defaults to 0
+                failure(int threshold)        // defaults to 0
+                failureNew(int threshold)     // defaults to 0
             }
-            thresholdMode(ThresholdMode mode)               // defaults to ThresholdMode.NUMBER
-            timeMargin(int margin)                          // defaults to 3000
+            thresholdMode(ThresholdMode mode) // defaults to ThresholdMode.NUMBER
+            timeMargin(int margin)            // defaults to 3000
         }
     }
 }
