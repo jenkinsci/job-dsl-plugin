@@ -307,7 +307,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 12
+            children().size() == 13
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
             allowMembersOfWhitelistedOrgsAsAdmin[0].value() == false
@@ -335,7 +335,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 10
+            children().size() == 11
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
             permitAll[0].value() == false
@@ -362,7 +362,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 11
+            children().size() == 12
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
             permitAll[0].value() == false
@@ -390,7 +390,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 12
+            children().size() == 13
             adminlist[0].value() == 'test1\ntest2'
             whitelist[0].value() == 'test1\ntest2'
             orgslist[0].value() == 'test1\ntest2'
@@ -417,7 +417,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 12
+            children().size() == 13
             adminlist[0].value() == 'test'
             whitelist[0].value() == 'test'
             orgslist[0].value() == 'test'
@@ -472,17 +472,15 @@ class TriggerContextSpec extends Specification {
             permitAll[0].value() == true
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
-
-
         }
         with(context.triggerNodes[0].children()[12]) {
             name() == 'extensions'
             children().size() == 1
         }
         with(context.triggerNodes[0].children()[12].children()[0]) {
-            commitStatusContext == 'Deploy to staging site'
-            triggeredStatus == 'deploy triggered'
-            startedStatus == 'deploy started'
+            commitStatusContext[0].value() == 'Deploy to staging site'
+            triggeredStatus[0].value() == 'deploy triggered'
+            startedStatus[0].value() == 'deploy started'
         }
     }
 

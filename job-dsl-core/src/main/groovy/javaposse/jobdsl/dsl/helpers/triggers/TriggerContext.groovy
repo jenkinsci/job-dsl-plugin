@@ -136,9 +136,8 @@ class TriggerContext extends AbstractExtensibleContext {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
-
-
-        def pullRequestNode = new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+        NodeBuilder pullRequestNodeBuilder = new NodeBuilder()
+        Node pullRequestNode =  pullRequestNodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
@@ -157,16 +156,19 @@ class TriggerContext extends AbstractExtensibleContext {
             }
         }
 
-        def extensionsNode = new NodeBuilder.'extensions'
-        def commitStatusNode = new NodeBuilder.'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus' {
+        NodeBuilder extensionsNodeBuilder = new NodeBuilder()
+        Node extensionsNode = extensionsNodeBuilder.'extensions' {}
+
+        NodeBuilder commitStatusNodeBuilder = new NodeBuilder()
+        Node commitStatusNode = commitStatusNodeBuilder
+            .'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus' {
             commitStatusContext pullRequestBuilderContext.commitStatusContext ?: ''
             triggeredStatus pullRequestBuilderContext.triggeredStatus ?: ''
             startedStatus pullRequestBuilderContext.startedStatus ?: ''
         }
-
-        pullRequestNode << extensionsNode << commitStatusNode
-
-        triggerNodes << pullRequestNode
+        extensionsNode.append(commitStatusNode)
+        pullRequestNode.append(extensionsNode)
+        addExtensionNode(pullRequestNode)
     }
 
     @RequiresPlugin(id = 'gerrit-trigger')

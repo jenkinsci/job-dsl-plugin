@@ -21,8 +21,6 @@ class PullRequestBuilderContext extends AbstractContext {
     String triggeredStatus = 'Build Triggered'
     String startedStatus = 'Build Started'
 
-
-
     PullRequestBuilderContext(JobManagement jobManagement) {
         super(jobManagement)
     }
