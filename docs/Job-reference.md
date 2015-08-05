@@ -514,12 +514,19 @@ Blocks the build of a project when one ore more upstream (blockOnUpstreamProject
 ### Compress Build Log
 
 ```groovy
-job('example') {
+job {
     compressBuildLog()
 }
 ```
 
+Compress the log file after build completion. Requires the
 [Compress Build Log](https://wiki.jenkins-ci.org/display/JENKINS/Compress+Build+Log+Plugin).
+
+```groovy
+job('example') {
+    compressBuildLog()
+}
+```
 
 (since 1.36)
 
