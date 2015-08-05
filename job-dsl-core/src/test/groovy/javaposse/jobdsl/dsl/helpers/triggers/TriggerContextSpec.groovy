@@ -436,6 +436,56 @@ class TriggerContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
     }
 
+    def 'call pull request trigger with extensions node and all args'() {
+        when:
+        context.pullRequest {
+            admins(['test'])
+            userWhitelist(['test'])
+            orgWhitelist(['test'])
+            cron('*/5 * * * *')
+            triggerPhrase('ok to test')
+            onlyTriggerPhrase(true)
+            useGitHubHooks(true)
+            allowMembersOfWhitelistedOrgsAsAdmin(true)
+            permitAll(true)
+            autoCloseFailedPullRequests(true)
+            commentFilePath('myCommentFile')
+
+            commitStatusContext('Deploy to staging site')
+            triggeredStatus('deploy triggered')
+            startedStatus('deploy started')
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            children().size() == 13
+            adminlist[0].value() == 'test'
+            whitelist[0].value() == 'test'
+            orgslist[0].value() == 'test'
+            cron[0].value() == '*/5 * * * *'
+            spec[0].value() == '*/5 * * * *'
+            triggerPhrase[0].value() == 'ok to test'
+            onlyTriggerPhrase[0].value() == true
+            useGitHubHooks[0].value() == true
+            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == true
+            permitAll[0].value() == true
+            autoCloseFailedPullRequests[0].value() == true
+            commentFilePath[0].value() == 'myCommentFile'
+
+
+        }
+        with(context.triggerNodes[0].children()[12]) {
+            name() == 'extensions'
+            children().size() == 1
+        }
+        with(context.triggerNodes[0].children()[12].children()[0]) {
+            commitStatusContext == 'Deploy to staging site'
+            triggeredStatus == 'deploy triggered'
+            startedStatus == 'deploy started'
+        }
+    }
+
     def 'call empty gerrit trigger methods'() {
         when:
         context.gerrit {

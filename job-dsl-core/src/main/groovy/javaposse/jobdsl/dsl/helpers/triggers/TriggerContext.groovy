@@ -136,7 +136,9 @@ class TriggerContext extends AbstractExtensibleContext {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
-        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+
+
+        def pullRequestNode = new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
@@ -154,6 +156,17 @@ class TriggerContext extends AbstractExtensibleContext {
                 allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             }
         }
+
+        def extensionsNode = new NodeBuilder.'extensions'
+        def commitStatusNode = new NodeBuilder.'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus' {
+            commitStatusContext pullRequestBuilderContext.commitStatusContext ?: ''
+            triggeredStatus pullRequestBuilderContext.triggeredStatus ?: ''
+            startedStatus pullRequestBuilderContext.startedStatus ?: ''
+        }
+
+        pullRequestNode << extensionsNode << commitStatusNode
+
+        triggerNodes << pullRequestNode
     }
 
     @RequiresPlugin(id = 'gerrit-trigger')
