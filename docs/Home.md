@@ -40,6 +40,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-24851](https://issues.jenkins-ci.org/browse/JENKINS-24851))
  * Support for the older versions of the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
    is deprecated, see [Migration](Migration#migrating-to-136)
+ * Support for arbitrary script names has been deprecated, see [Migration](Migration#migrating-to-136)
  * Some methods in `AbstractJobManagement` have been deprecated and the exception handling has changed, see
    [Migration](Migration#migrating-to-136)
  * The `getCredentialsId` method in `JobManagement` has been deprecated, see [Migration](Migration#migrating-to-136)

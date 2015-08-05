@@ -268,6 +268,19 @@ folder {
         jobs.any { it.jobName == 'folder-b' }
     }
 
+    def 'script name which is not a valid class name'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('test-script.dsl', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        noExceptionThrown()
+        baos.toString() =~ /support for arbitrary names is deprecated/
+        baos.toString() =~ /test-script\.dsl/
+    }
+
     def 'generate config files'() {
         setup:
         ScriptRequest request = new ScriptRequest('configfiles.dsl', null, resourcesDir, false)

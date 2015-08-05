@@ -60,6 +60,13 @@ public class DslScriptLoader {
                 script = InvokerHelper.createScript(cls, binding);
             } else {
                 jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
+                if (!isValidScriptName(scriptRequest.getLocation())) {
+                    jobManagement.logDeprecationWarning(
+                            "script names may only contain letters, digits and underscores, but may not start with a digit; support for arbitrary names",
+                            scriptRequest.getLocation(),
+                            -1
+                    );
+                }
                 script = engine.createScript(scriptRequest.getLocation(), binding);
             }
             assert script instanceof JobParent;
@@ -86,6 +93,22 @@ public class DslScriptLoader {
             }
         }
         return jp;
+    }
+
+    private static boolean isValidScriptName(String scriptFile) {
+        int idx = scriptFile.lastIndexOf('.');
+        if (idx > -1) {
+            scriptFile = scriptFile.substring(0, idx);
+        }
+        if (scriptFile.length() == 0 || !Character.isJavaIdentifierStart(scriptFile.charAt(0))) {
+            return false;
+        }
+        for (int i = 1; i < scriptFile.length(); i += 1) {
+            if (!Character.isJavaIdentifierPart(scriptFile.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
