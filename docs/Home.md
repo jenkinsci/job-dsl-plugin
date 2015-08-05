@@ -18,6 +18,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 ## Release Notes
 * 1.36 (unreleased)
  * Added support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
+ * Enhanced support for the [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
+   ([JENKINS-29753](https://issues.jenkins-ci.org/browse/JENKINS-29753))
  * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
    ([JENKINS-29503](https://issues.jenkins-ci.org/browse/JENKINS-29503))
  * Added support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin)
