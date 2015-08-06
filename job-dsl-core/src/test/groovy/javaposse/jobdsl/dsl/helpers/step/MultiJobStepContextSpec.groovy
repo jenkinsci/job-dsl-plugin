@@ -188,7 +188,7 @@ class MultiJobStepContextSpec extends Specification {
             phaseName 'Second'
             job('JobA') {
                 disableJob()
-                abortAllJob()
+                abortAllJobs()
                 killPhaseCondition('UNSTABLE')
             }
         }
@@ -215,7 +215,7 @@ class MultiJobStepContextSpec extends Specification {
             phaseName 'Second'
             job('JobA') {
                 disableJob()
-                abortAllJob()
+                abortAllJobs()
                 killPhaseCondition('UNSTABLE')
             }
         }

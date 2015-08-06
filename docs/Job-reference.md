@@ -3307,10 +3307,10 @@ job('example') {
 ```
 multiJob {
     steps {
-        phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phaseClosure = null) {
+        phase(String name, String continuationConditionArg = 'SUCCESSFUL') {
             phaseName(String phaseName)
             continuationCondition(String continuationCondition)
-            job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true, Closure phaseJobClosure = null) {
+            job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true) {
                 currentJobParameters(boolean currentJobParameters = true)
                 exposedScm(boolean exposedScm = true)
                 boolParam(String paramName, boolean defaultValue = false)
@@ -3322,7 +3322,7 @@ multiJob {
                 prop(Object key, Object value)
                 props(Map<String, String> map)
                 disableJob(boolean disableJob = true) // since 1.25
-                abortAllJob(boolean abortAllJob = true) //since 1.36
+                abortAllJobs(boolean abortAllJobs = true) //since 1.36
                 killPhaseCondition(String killPhaseCondition) // since 1.25
                 nodeLabel(String paramName, String nodeLabel) // since 1.26
                 configure(Closure configClosure) // since 1.30

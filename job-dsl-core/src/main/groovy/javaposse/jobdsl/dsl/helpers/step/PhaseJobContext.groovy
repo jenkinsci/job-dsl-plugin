@@ -25,7 +25,7 @@ class PhaseJobContext implements Context {
     String nodeLabelParam
     List<String> props = []
     boolean disableJob = false
-    boolean abortAllJob = false
+    boolean abortAllJobs = false
     String killPhaseCondition = 'FAILURE'
     Closure configureClosure
 
@@ -124,8 +124,8 @@ class PhaseJobContext implements Context {
      * @since 1.36
      */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.14')
-    void abortAllJob(boolean abortAllJob = true) {
-        this.abortAllJob = abortAllJob
+    void abortAllJobs(boolean abortAllJob = true) {
+        this.abortAllJobs = abortAllJob
     }
 
     /**
