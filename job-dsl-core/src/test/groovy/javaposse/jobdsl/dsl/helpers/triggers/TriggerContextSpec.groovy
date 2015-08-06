@@ -454,6 +454,9 @@ class TriggerContextSpec extends Specification {
             commitStatusContext('Deploy to staging site')
             triggeredStatus('deploy triggered')
             startedStatus('deploy started')
+
+            buildResultSuccessMessage('All is well')
+            buildResultFailureMessage('Something has gone wrong')
         }
 
         then:
@@ -481,6 +484,14 @@ class TriggerContextSpec extends Specification {
             commitStatusContext[0].value() == 'Deploy to staging site'
             triggeredStatus[0].value() == 'deploy triggered'
             startedStatus[0].value() == 'deploy started'
+        }
+        with(context.triggerNodes[0].children()[12].children()[0].children()[3].children()[0]) {
+            result[0].value() == 'SUCCESS'
+            message[0].value() == 'All is well'
+        }
+        with(context.triggerNodes[0].children()[12].children()[0].children()[3].children()[1]) {
+            result[0].value() == 'FAILURE'
+            message[0].value() == 'Something has gone wrong'
         }
     }
 

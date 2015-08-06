@@ -21,6 +21,11 @@ class PullRequestBuilderContext extends AbstractContext {
     String triggeredStatus = 'Build Triggered'
     String startedStatus = 'Build Started'
 
+    String buildResultSuccessMessage = 'Passed'
+    String buildResultFailureMessage = 'Failed'
+    String buildResultSuccess = 'SUCCESS'
+    String buildResultFailure = 'FAILURE'
+
     PullRequestBuilderContext(JobManagement jobManagement) {
         super(jobManagement)
     }
@@ -109,5 +114,13 @@ class PullRequestBuilderContext extends AbstractContext {
 
     void startedStatus(String startedStatus) {
         this.startedStatus = startedStatus
+    }
+
+    void buildResultSuccessMessage(String successMessage) {
+        this.buildResultSuccessMessage = successMessage
+    }
+
+    void buildResultFailureMessage(String failureMessage) {
+        this.buildResultFailureMessage = failureMessage
     }
 }

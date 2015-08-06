@@ -1623,6 +1623,11 @@ job {
             autoCloseFailedPullRequests(boolean value = true) // defaults to false
             commentFilePath(String commentFilePath)           // since 1.31
             allowMembersOfWhitelistedOrgsAsAdmin(boolean value = true) // since 1.35
+            commitStatusContext(String commitStatus)          // default to 'default'
+            triggeredStatus(String triggeredStatus)           // default to 'Build triggered'
+            startedStatus(String startedStatus)               // default to 'Build started'
+            buildResultSuccessMessage(String successMessage)  // default to 'Passed'
+            buildResultFailureMessage(String failureMessage)  // default to 'Failed'
         }
     }
 }
@@ -1656,6 +1661,10 @@ job('example') {
             permitAll()
             autoCloseFailedPullRequests()
             allowMembersOfWhitelistedOrgsAsAdmin()
+            commitStatusContext('deploy to staging site')
+            startedStatus('deploying to staging site...')
+            buildResultSuccessMessage('All is well')
+            buildResultFailureMessage('Something went wrong. Investigate!')
         }
     }
 }
