@@ -153,6 +153,25 @@ class TriggerContext extends AbstractExtensibleContext {
             if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
                 allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             }
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.22-0'))) {
+                'extensions' {
+                    'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus' {
+                        commitStatusContext pullRequestBuilderContext.commitStatusContext ?: ''
+                        triggeredStatus pullRequestBuilderContext.triggeredStatus ?: ''
+                        startedStatus pullRequestBuilderContext.startedStatus ?: ''
+                        'completedStatus' {
+                            'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
+                                message pullRequestBuilderContext.buildResultSuccessMessage ?: ''
+                                result pullRequestBuilderContext.buildResultSuccess
+                            }
+                            'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
+                                message pullRequestBuilderContext.buildResultFailureMessage ?: ''
+                                result pullRequestBuilderContext.buildResultFailure
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
