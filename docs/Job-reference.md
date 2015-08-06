@@ -1623,6 +1623,8 @@ job {
             autoCloseFailedPullRequests(boolean value = true) // defaults to false
             commentFilePath(String commentFilePath)           // since 1.31
             allowMembersOfWhitelistedOrgsAsAdmin(boolean value = true) // since 1.35
+
+            // since 1.37
             commitStatusContext(String commitStatus)          // default to 'default'
             triggeredStatus(String triggeredStatus)           // default to 'Build triggered'
             startedStatus(String startedStatus)               // default to 'Build started'

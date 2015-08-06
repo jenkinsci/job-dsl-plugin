@@ -101,25 +101,29 @@ class PullRequestBuilderContext extends AbstractContext {
     }
 
     /**
-    * @since 1.22
+    * @since 1.37
     */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void commitStatusContext(String commitStatus) {
         this.commitStatusContext = commitStatus
     }
 
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void triggeredStatus(String triggeredStatus) {
         this.triggeredStatus = triggeredStatus
     }
 
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void startedStatus(String startedStatus) {
         this.startedStatus = startedStatus
     }
 
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void buildResultSuccessMessage(String successMessage) {
         this.buildResultSuccessMessage = successMessage
     }
 
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void buildResultFailureMessage(String failureMessage) {
         this.buildResultFailureMessage = failureMessage
     }

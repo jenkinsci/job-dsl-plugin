@@ -335,7 +335,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 11
+            children().size() == 10
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
             permitAll[0].value() == false
@@ -362,7 +362,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 12
+            children().size() == 11
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
             permitAll[0].value() == false
