@@ -3322,7 +3322,7 @@ multiJob {
                 prop(Object key, Object value)
                 props(Map<String, String> map)
                 disableJob(boolean disableJob = true) // since 1.25
-                abortAllJobs(boolean abortAllJobs = true) //since 1.36
+                abortAllJobs(boolean abortAllJobs = true) //since 1.37
                 killPhaseCondition(String killPhaseCondition) // since 1.25
                 nodeLabel(String paramName, String nodeLabel) // since 1.26
                 configure(Closure configClosure) // since 1.30

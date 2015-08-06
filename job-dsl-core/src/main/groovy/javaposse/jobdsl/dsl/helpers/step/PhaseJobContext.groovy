@@ -121,7 +121,7 @@ class PhaseJobContext implements Context {
     }
 
     /**
-     * @since 1.36
+     * @since 1.37
      */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.14')
     void abortAllJobs(boolean abortAllJob = true) {
