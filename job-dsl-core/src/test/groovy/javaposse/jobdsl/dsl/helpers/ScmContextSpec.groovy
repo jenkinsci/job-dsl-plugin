@@ -961,7 +961,11 @@ class ScmContextSpec extends Specification {
                 name('other')
                 url('https://github.com/daspilker/job-dsl-plugin.git')
             }
-            mergeOptions('other', 'acme-plugin', 'recursive')
+            mergeOptions {
+                remote('other')
+                branch('acme-plugin')
+                strategy(mergeStrategy)
+            }
         }
 
         then:
@@ -976,26 +980,29 @@ class ScmContextSpec extends Specification {
             options[0].mergeTarget.size() == 1
             options[0].mergeTarget[0].text() == 'acme-plugin'
             options[0].mergeStrategy.size() == 1
-            options[0].mergeStrategy[0].text() == 'recursive'
+            options[0].mergeStrategy[0].text() == mergeStrategy
         }
         1 * mockJobManagement.requirePlugin('git')
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.0.0')
+
+        where:
+        mergeStrategy << ['default', 'resolve', 'recursive', 'octopus', 'ours', 'subtree']
     }
 
-    def 'call git scm with mergeOptions should throw when mergeStrategy and plugin version lesser than 2.0.0'() {
-        setup:
-        mockJobManagement.getPluginVersion('git') >> new VersionNumber('1.9.3')
-
+    def 'call git scm with invalid merge strategy'() {
         when:
         context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            mergeOptions {
+                strategy(mergeStrategy)
             }
-            mergeOptions('other', 'acme-plugin', 'recursive')
         }
 
         then:
-        thrown(IllegalArgumentException)
-        1 * mockJobManagement.requirePlugin('git')
+        Exception e = thrown(DslScriptException)
+        e.message =~ /strategy must be one of .+/
+
+        where:
+        mergeStrategy << [null, '', 'test']
     }
 
     def 'call git scm with inverse build chooser'() {

@@ -1138,7 +1138,11 @@ job {
             branch(String name) // calls are accumulated, defaults to '**'
             branches(String... names)
             mergeOptions(String remote = null, String branch)
-            mergeOptions(String remote, String branch, String mergeStrategy = 'default')
+            mergeOptions { // since 1.37
+                remote(String remote)
+                branch(String branch)
+                strategy(String mergeStrategy)
+            }
             createTag(boolean createTag = true) // defaults to false
             clean(boolean clean = true) // defaults to false
             wipeOutWorkspace(boolean wipeOut = true) // defaults to false
@@ -1192,12 +1196,9 @@ Version 2.0 or later of the Git Plugin is required to use `cloneTimeout` or Jenk
 authentication. The argument for the `credentials` method can either be the ID of the credentials or its description.
 Note that finding credentials by description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
-When Git Plugin version 2.0 or later is used, `mergeOptions`:
-
- * can be called multiple times to merge more than one branch.
- * supports an additional signature: `mergeOptions(String remote, String branch, String mergeStrategy = 'default')`
-   which allow us to set the merge strategy used.
-
+When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch.
+Valid values for `mergeStrategy` are `'default'` (default), `'resolve'`, `'recursive'`, `'octopus'`, `'ours'`, and
+`'subtree'`.
 
 ```groovy
 // checkout repo1 to a sub directory and clean the workspace after checkout
@@ -1258,19 +1259,6 @@ job('example-5') {
                 github('account/repo', 'ssh')
                 credentials('github-ci-key')
             }
-        }
-    }
-}
-
-// add mergeStrategy in mergeOptions
-job('example-6') {
-    scm {
-        git {
-            remote {
-                name('origin')
-                url('git@serverA:account/repo1.git')
-            }
-            mergeOptions('upstream', 'master', 'recursive')
         }
     }
 }

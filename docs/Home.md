@@ -18,6 +18,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 ## Release Notes
 * 1.37 (unreleased)
  * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([JENKINS-29347](https://issues.jenkins-ci.org/browse/JENKINS-29347))
  * Support for older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
    is deprecated, see [Migration](Migration#migrating-to-137)
 * 1.36 (August 06 2015)
