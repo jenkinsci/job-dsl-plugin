@@ -188,6 +188,7 @@ class MultiJobStepContextSpec extends Specification {
             phaseName 'Second'
             job('JobA') {
                 disableJob()
+                abortAllJob()
                 killPhaseCondition('UNSTABLE')
             }
         }
@@ -203,6 +204,28 @@ class MultiJobStepContextSpec extends Specification {
         jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         jobNode.disableJob[0].value() == true
         jobNode.killPhaseOnJobResultCondition[0].value() == 'UNSTABLE'
+    }
+
+    def 'call phases with plugin version 1.14 options'() {
+        setup:
+        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.14')
+
+        when:
+        context.phase {
+            phaseName 'Second'
+            job('JobA') {
+                disableJob()
+                abortAllJob()
+                killPhaseCondition('UNSTABLE')
+            }
+        }
+
+        then:
+        def phaseNode = context.stepNodes[0]
+        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
+        jobNode.children().size() == 7
+        jobNode.abortAllJob[0].value() == true
+        jobNode.disableJob[0].value() == true
     }
 
     def 'call killPhaseCondition with invalid argument'() {
