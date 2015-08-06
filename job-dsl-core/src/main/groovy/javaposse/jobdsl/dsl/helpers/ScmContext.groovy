@@ -108,6 +108,8 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'git')
     void git(@DslContext(GitContext) Closure gitClosure) {
+        jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+
         GitContext gitContext = new GitContext(withXmlActions, jobManagement)
         executeInContext(gitClosure, gitContext)
 

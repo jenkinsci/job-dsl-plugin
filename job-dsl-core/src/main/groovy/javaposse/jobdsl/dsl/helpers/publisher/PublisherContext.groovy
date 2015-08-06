@@ -862,6 +862,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'git')
     void git(@DslContext(GitPublisherContext) Closure gitPublisherClosure) {
+        jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+
         GitPublisherContext context = new GitPublisherContext(jobManagement)
         ContextHelper.executeInContext(gitPublisherClosure, context)
 

@@ -1660,6 +1660,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.requirePlugin('git')
         1 * jobManagement.requirePlugin('nodelabelparameter')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
         context.downstreamParameterized {

@@ -153,6 +153,8 @@ class MultiJobStepContextSpec extends Specification {
             'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
         nodeLabel.name[0].value() == 'nodeParam'
         nodeLabel.nodeLabel[0].value() == 'node_label'
+
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
     def 'call phases with multiple calls'() {

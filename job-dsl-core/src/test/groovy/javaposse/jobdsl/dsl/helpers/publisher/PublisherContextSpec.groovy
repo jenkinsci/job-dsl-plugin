@@ -1139,6 +1139,7 @@ class PublisherContextSpec extends Specification {
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
         context.downstreamParameterized {
@@ -2189,6 +2190,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         context.publisherNodes[0].forcePush[0].value() == false
         1 * jobManagement.requirePlugin('git')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
     def 'call git with minimal options pre 2.2.6'() {
@@ -2207,6 +2209,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         1 * jobManagement.requirePlugin('git')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
     def 'call git with all options'() {
@@ -2248,6 +2251,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requirePlugin('git')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
     def 'call git with minimal tag options'() {
@@ -2275,6 +2279,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requirePlugin('git')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
     def 'call git without tag targetRepoName'() {

@@ -6,6 +6,11 @@ Support for versions older than 1.16 of the
 [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin) is [[deprecated|Deprecation-Policy]] and
 will be removed.
 
+### Git
+
+Support for versions older than 2.2.6 of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.36
 
 ### Script Names
