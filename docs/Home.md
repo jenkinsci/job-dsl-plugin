@@ -18,6 +18,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 ## Release Notes
 * 1.37 (unreleased)
  * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+ * Support for older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-137)
 * 1.36 (August 06 2015)
  * Added support for the [Compress Build Log Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Compress+Build+Log+Plugin)
  * Added support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)

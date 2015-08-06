@@ -74,6 +74,8 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
+        jm.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
+
         processJob(name, MultiJob, closure)
     }
 
@@ -106,6 +108,10 @@ abstract class JobParent extends Script implements DslFactory {
 
         Object typeArg = arguments['type'] ?: JobType.Freeform
         JobType jobType = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
+
+        if (jobType == JobType.Multijob) {
+            jm.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
+        }
 
         Job job = jobType.jobClass.newInstance(jm)
         job.with(closure)

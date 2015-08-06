@@ -635,6 +635,7 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         2 * jobManagement.logDeprecationWarning()
+        1 * jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
     }
 
     def 'multiJob'() {
@@ -646,6 +647,7 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('jenkins-multijob-plugin')
+        1 * jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
     }
 
     def 'workflow deprecated variant'() {

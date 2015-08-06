@@ -1,3 +1,11 @@
+## Migrating to 1.37
+
+### Multijob
+
+Support for versions older than 1.16 of the
+[Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin) is [[deprecated|Deprecation-Policy]] and
+will be removed.
+
 ## Migrating to 1.36
 
 ### Script Names
