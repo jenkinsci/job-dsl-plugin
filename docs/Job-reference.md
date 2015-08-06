@@ -5949,10 +5949,8 @@ job {
                 script(String script)
                 fallbackScript(String fallbackScript)
             }
-            scriptlerScript(String scriptName) {
-                parameter(String paramName, String paramValue)
-                parameter(String paramName2, String paramValue2)
-                ...
+            scriptlerScript(String scriptId) {
+                parameter(String name, String value)
             }
         }
     }
@@ -5978,9 +5976,7 @@ job('example-1') {
         }
     }
 }
-```
 
-```groovy
 job('example-2') {
     parameters {
         activeChoiceParam('CHOICE-1') {

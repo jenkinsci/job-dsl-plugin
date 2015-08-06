@@ -42,20 +42,20 @@ class ActiveChoiceContext implements Context {
         }
     }
 
-    void scriptlerScript(String name, @DslContext(ActiveChoiceScriptlerScriptContext) Closure closure = null) {
-        checkArgument(script == null, 'script already defined')
+    void scriptlerScript(String scriptId, @DslContext(ActiveChoiceScriptlerScriptContext) Closure closure = null) {
         ActiveChoiceScriptlerScriptContext context = new ActiveChoiceScriptlerScriptContext()
         executeInContext(closure, context)
 
-        script = NodeBuilder.newInstance().script(class: 'org.biouno.unochoice.model.ScriptlerScript') {
-            delegate.scriptlerScriptId(name)
+        script = new NodeBuilder().script(class: 'org.biouno.unochoice.model.ScriptlerScript') {
+            scriptlerScriptId(scriptId)
+            parameters {
+                context.parameters.each { String name, String value ->
+                    entry {
+                        string(name)
+                        string(value)
+                    }
+                }
+            }
         }
-
-        if (context.parameters.empty) {
-            context.parameter('', '')
-        }
-        Node parameters = NodeBuilder.newInstance().parameters()
-        parameters.children().addAll(context.parameters)
-        script.children().add(parameters)
     }
 }
