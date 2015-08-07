@@ -3633,21 +3633,35 @@ job('example-2') {
 ### Clang Scan Build
 
 ```groovy
-job('example') {
+job {
     steps {
         clangScanBuild {
-            targetSdk(String target = '')
-            config(String target = '')
-            clangInstallationName(String target = '')
-            workspace(String target = '')
-            scheme(String target = '')
-            xcodebuildargs(String target = '')
+            targetSdk(String targetSdk = '')
+            config(String config = '')
+            clangInstallationName(String name = '')
+            workspace(String workspace = '')
+            scheme(String scheme = '')
+            xcodebuildargs(String args = '')
         }
     }
 }
 ```
 Supports running a Clang scan-build build step. Requires the [Clang Scan-Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin).
 
+```groovy
+job('example') {
+    steps {
+        clangScanBuild {
+            targetSdk 'iphoneos'
+            config 'Betatest'
+            clangInstallationName 'Clang Static Code Analyzer'
+            workspace 'Mobile.xcworkspace'
+            scheme 'mobile.de'
+            xcodebuildargs 'OBJROOT="${WORKSPACE}/build/Build/Intermediates" SYMROOT="${WORKSPACE}/build" CONFIGURATION_BUILD_DIR="${WORKSPACE}/build" -derivedDataPath "${WORKSPACE}/build" build'
+        }
+    }
+}
+```
 
 
 ### Conditional Build Steps
