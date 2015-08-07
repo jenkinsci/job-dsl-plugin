@@ -281,6 +281,19 @@ folder {
         baos.toString() =~ /test-script\.dsl/
     }
 
+    def 'script with method'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(
+                null, DslScriptLoaderSpec.getResource('/test-script-with-method.dsl').text, resourcesDir, false
+        )
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        noExceptionThrown()
+    }
+
     def 'generate config files'() {
         setup:
         ScriptRequest request = new ScriptRequest('configfiles.dsl', null, resourcesDir, false)
