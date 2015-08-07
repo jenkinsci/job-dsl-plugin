@@ -357,7 +357,7 @@ folder {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message =~ /\(DSL script, line 1\) .+/
+        e.message =~ /\(script, line 1\) .+/
     }
 
     def 'DslScriptException on MissingPropertyException'() {
@@ -369,7 +369,7 @@ folder {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message =~ /\(DSL script, line 1\) .+/
+        e.message =~ /\(script, line 1\) .+/
     }
 
     def 'DslScriptException is passed through'() {
@@ -387,6 +387,6 @@ job('foo') {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message == '(DSL script, line 4) Can only use "using" once'
+        e.message == '(script, line 4) Can only use "using" once'
     }
 }
