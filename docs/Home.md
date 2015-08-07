@@ -17,7 +17,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.37 (unreleased)
- * Added support for the [Clang Scan Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin) ([JENKINS-29505](https://issues.jenkins-ci.org/browse/JENKINS-29505))
+ * Added support for the [Clang Scan Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin)
+   ([JENKINS-29505](https://issues.jenkins-ci.org/browse/JENKINS-29505))
  * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-29347](https://issues.jenkins-ci.org/browse/JENKINS-29347))

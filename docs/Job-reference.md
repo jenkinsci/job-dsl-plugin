@@ -144,7 +144,7 @@ freeStyleJob(String name) { // since 1.30
             Closure antClosure = null)
         batchFile(String command)
         buildDescription(String regexp, String description = null) // since 1.31
-        clangScanBuild(Closure clangScanBuildClosure)
+        clangScanBuild(Closure clangScanBuildClosure) // since 1.37
         conditionalSteps(Closure conditionalClosure)
         copyArtifacts(String jobName, String includeGlob,
                       Closure buildSelectorClosure)  // deprecated since 1.33
@@ -3636,33 +3636,41 @@ job('example-2') {
 job {
     steps {
         clangScanBuild {
-            targetSdk(String targetSdk = '')
-            config(String config = '')
-            clangInstallationName(String name = '')
-            workspace(String workspace = '')
-            scheme(String scheme = '')
-            xcodebuildargs(String args = '')
+            workspace(String workspace)
+            scheme(String scheme)
+            clangInstallationName(String name)
+            targetSdk(String targetSdk)
+            configuration(String configuration)
+            scanBuildArgs(String args)
+            xcodeBuildArgs(String args)
         }
     }
 }
 ```
-Supports running a Clang scan-build build step. Requires the [Clang Scan-Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin).
+
+Supports running a Clang scan-build build step. Requires the
+[Clang Scan-Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin).
+
+The `workspace`, `scheme` and `clangInstallationName` options are mandatory. The example below shows the default values
+for `targetSdk`, `configuration` , `scanBuildArgs` and `xcodeBuildArgs`.
 
 ```groovy
 job('example') {
     steps {
         clangScanBuild {
-            targetSdk 'iphoneos'
-            config 'Betatest'
-            clangInstallationName 'Clang Static Code Analyzer'
-            workspace 'Mobile.xcworkspace'
-            scheme 'mobile.de'
-            xcodebuildargs 'OBJROOT="${WORKSPACE}/build/Build/Intermediates" SYMROOT="${WORKSPACE}/build" CONFIGURATION_BUILD_DIR="${WORKSPACE}/build" -derivedDataPath "${WORKSPACE}/build" build'
+            workspace('Mobile.xcworkspace')
+            scheme('mobile.de')
+            clangInstallationName('Clang Static Code Analyzer')
+            targetSdk('iphonesimulator')
+            configuration('Debug')
+            scanBuildArgs('--use-analyzer Xcode')
+            xcodeBuildArgs('-derivedDataPath $WORKSPACE/build')
         }
     }
 }
 ```
 
+(since 1.37)
 
 ### Conditional Build Steps
 

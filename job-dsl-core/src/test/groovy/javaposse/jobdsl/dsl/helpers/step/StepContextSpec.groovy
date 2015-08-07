@@ -2626,48 +2626,75 @@ class StepContextSpec extends Specification {
         mode << ['GET', 'POST', 'PUT', 'DELETE']
     }
 
-    def 'call clangScanBuild with no options'() {
+    def 'call clangScanBuild with minimum options'() {
         when:
         context.clangScanBuild {
+            workspace('foo')
+            scheme('bar')
+            clangInstallationName('test')
         }
 
         then:
         with(context.stepNodes[0]) {
             name() == 'jenkins.plugins.clangscanbuild.ClangScanBuildBuilder'
-            children().size() == 6
-            targetSdk[0].value() == ''
-            config[0].value() == ''
-            clangInstallationName[0].value() == ''
-            workspace[0].value() == ''
-            scheme[0].value() == ''
-            xcodebuildargs[0].value() == ''
+            children().size() == 7
+            targetSdk[0].value() == 'iphonesimulator'
+            config[0].value() == 'Debug'
+            clangInstallationName[0].value() == 'test'
+            workspace[0].value() == 'foo'
+            scheme[0].value() == 'bar'
+            scanbuildargs[0].value() == '--use-analyzer Xcode'
+            xcodebuildargs[0].value() == '-derivedDataPath $WORKSPACE/build'
         }
-        1 * jobManagement.requirePlugin('clang-scanbuild-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('clang-scanbuild-plugin', '1.6')
     }
 
     def 'call clangScanBuild with all options'() {
         when:
         context.clangScanBuild {
-            targetSdk '1'
-            config '2'
-            clangInstallationName '3'
-            workspace '4'
-            scheme '5'
-            xcodebuildargs '6'
+            targetSdk('1')
+            configuration('2')
+            clangInstallationName('3')
+            workspace('4')
+            scheme('5')
+            scanBuildArgs('6')
+            xcodeBuildArgs('7')
         }
 
         then:
         with(context.stepNodes[0]) {
             name() == 'jenkins.plugins.clangscanbuild.ClangScanBuildBuilder'
-            children().size() == 6
+            children().size() == 7
             targetSdk[0].value() == '1'
             config[0].value() == '2'
             clangInstallationName[0].value() == '3'
             workspace[0].value() == '4'
             scheme[0].value() == '5'
-            xcodebuildargs[0].value() == '6'
+            scanbuildargs[0].value() == '6'
+            xcodebuildargs[0].value() == '7'
         }
-        1 * jobManagement.requirePlugin('clang-scanbuild-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('clang-scanbuild-plugin', '1.6')
+    }
+
+    def 'call clangScanBuild with missing options'() {
+        when:
+        context.clangScanBuild {
+            workspace(workspaceOption)
+            scheme(schemeOption)
+            clangInstallationName(clangInstallationNameOption)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        workspaceOption | schemeOption | clangInstallationNameOption
+        'foo'           | 'bar'        | ''
+        'foo'           | 'bar'        | null
+        'foo'           | ''           | 'test'
+        'foo'           | null         | 'test'
+        ''              | 'bar'        | 'test'
+        null            | 'bar'        | 'test'
     }
 
     def 'call nodejsCommand method'() {
