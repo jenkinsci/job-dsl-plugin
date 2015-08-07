@@ -1792,33 +1792,31 @@ class PublisherContextSpec extends Specification {
         aggregateNode.includeFailedBuilds[0].value() == true
     }
 
-    def 'call groovyPostBuild'() {
+    def 'call groovyPostBuild (old style config syntax)'() {
         when:
         context.groovyPostBuild('foo')
 
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
-        context.publisherNodes[0].script[0].script[0].value() == 'foo'
-        context.publisherNodes[0].script[0].sandbox[0].value() == false
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
         context.publisherNodes[0].behavior[0].value() == 0
         1 * jobManagement.requirePlugin('groovy-postbuild')
     }
 
-    def 'call groovyPostBuild with overriden failure behavior'() {
+    def 'call groovyPostBuild with overriden failure behavior  (old style config syntax)'() {
         when:
         context.groovyPostBuild('foo', MarkUnstable)
 
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
-        context.publisherNodes[0].script[0].script[0].value() == 'foo'
-        context.publisherNodes[0].script[0].sandbox[0].value() == false
+        context.publisherNodes[0].groovyScript[0].value() == 'foo'
         context.publisherNodes[0].behavior[0].value() == 1
         1 * jobManagement.requirePlugin('groovy-postbuild')
     }
 
-    def 'call groovyPostBuild with enabled sandbox'() {
+    def 'call groovyPostBuild with enabled sandbox (new style config syntax)'() {
         when:
         context.groovyPostBuild('foo', null, true)
 

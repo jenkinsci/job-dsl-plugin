@@ -734,9 +734,19 @@ class PublisherContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'groovy-postbuild')
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing, boolean useSandbox = false) {
         publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
-            delegate.script {
-              delegate.script(script)
-              delegate.sandbox(useSandbox)
+            // Using the sandbox option requires a newer version of the plugin (2.0 I think).
+            // This would break backward compatibility with 1.19,
+            // so we only write new style config xml, when actually required
+            if (useSandbox) {
+              delegate.script {
+                delegate.script(script)
+                delegate.sandbox(useSandbox)
+              }
+            }
+            else {
+              // backward compatible for older versions of plugin
+              // which do not yet support sandbox option
+              delegate.groovyScript(script)
             }
             delegate.behavior((behavior ?: Behavior.DoNothing).value)
         }
