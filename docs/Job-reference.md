@@ -1133,7 +1133,7 @@ job {
                 github(String ownerAndProject, String protocol = 'https',
                        String host = 'github.com')
                 refspec(String refspec) // optional
-                credentials(String credentialsId) // optional
+                credentials(String credentialsDescription) // optional
             }
             branch(String name) // calls are accumulated, defaults to '**'
             branches(String... names)
