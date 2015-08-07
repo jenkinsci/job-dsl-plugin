@@ -731,24 +731,33 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.19
      */
+    void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
+        groovyPostBuild {
+            delegate.script(script)
+            delegate.behavior(behavior)
+        }
+    }
+
+    /**
+     * @since 1.37
+     */
     @RequiresPlugin(id = 'groovy-postbuild')
-    void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing, boolean useSandbox = false) {
+    void groovyPostBuild(@DslContext(GroovyPostbuildContext) Closure groovyPostbuildClosure) {
+        jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+
+        GroovyPostbuildContext groovyPostbuildContext = new GroovyPostbuildContext(jobManagement)
+        ContextHelper.executeInContext(groovyPostbuildClosure, groovyPostbuildContext)
+
         publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
-            // Using the sandbox option requires a newer version of the plugin (2.0 I think).
-            // This would break backward compatibility with 1.19,
-            // so we only write new style config xml, when actually required
-            if (useSandbox) {
-              delegate.script {
-                delegate.script(script)
-                delegate.sandbox(useSandbox)
+            if (jobManagement.getPluginVersion('groovy-postbuild')?.isOlderThan(new VersionNumber('2.2'))) {
+                groovyScript(groovyPostbuildContext.script ?: '')
+            } else {
+              script {
+                script(groovyPostbuildContext.script ?: '')
+                sandbox(groovyPostbuildContext.sandbox)
               }
             }
-            else {
-              // backward compatible for older versions of plugin
-              // which do not yet support sandbox option
-              delegate.groovyScript(script)
-            }
-            delegate.behavior((behavior ?: Behavior.DoNothing).value)
+            behavior(groovyPostbuildContext.behavior.value)
         }
     }
 

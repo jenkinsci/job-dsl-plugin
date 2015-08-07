@@ -243,7 +243,9 @@ freeStyleJob(String name) { // since 1.30
         flowdock(String[] tokens, flowdockClosure = null) // since 1.23
         git(Closure gitPublisherClosure) // since 1.22
         githubCommitNotifier() // since 1.21
-        groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing, boolean useSandbox) // since 1.19
+        groovyPostBuild(String script,
+                        Behavior behavior = Behavior.DoNothing) // since 1.19
+        groovyPostBuild(Closure groovyPostbuildClosure) // since 1.37
         hipChat(Closure hipChatClosure = null) // since 1.33
         irc(Closure ircClosure)
         jacocoCodeCoverage(Closure jacocoClosure)
@@ -4989,44 +4991,38 @@ publishers {
 
 (Since 1.19)
 
-### [Groovy Postbuild](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin)
-
-Executes Groovy scripts after a build.
+### Groovy Postbuild
 
 ```groovy
-groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing, boolean sandbox = false)
+job {
+    publishers {
+        groovyPostBuild(String script,
+                        Behavior behavior = Behavior.DoNothing)
+        groovyPostBuild { // since 1.37
+            script(String script)
+            behavior(Behavior behavior)
+            sandbox(boolean sandbox = true)
+        }
+    }
+}
 ```
 
-Arguments:
-* `script` The Groovy script to execute after the build. See [the plugin's page](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin) for details on what can be done.
-* `behavior` optional. If the script fails, allows you to set mark the build as failed, unstable, or do nothing.
-* `sandbox` optional. Run inside the sandbox or not. Defaults to `false`.
+Executes Groovy scripts after a build. Requires the
+[Groovy Postbuild](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin).
 
-The behavior argument uses an enum, which currently has three values: DoNothing, MarkUnstable, and MarkFailed.
+The `behavior` argument uses an enum, which currently has three values: `Behavior.DoNothing` (default),
+`Behavior.MarkUnstable`, and `Behavior.MarkFailed`.
 
-Examples:
-
-This example will run a groovy script that prints hello, world and if that fails, it won't affect the build's status:
 ```groovy
-    groovyPostBuild('println "hello, world"')
+// run a groovy script and if that fails will mark the build as failed
+job('example') {
+    publishers {
+        groovyPostBuild('println "hello, world"', Behavior.MarkFailed)
+    }
+}
 ```
 
-This example will run a groovy script, and if that fails will mark the build as failed:
-```groovy
-    groovyPostBuild('// some groovy script', Behavior.MarkFailed)
-```
-
-This example will run a groovy script, and if that fails will mark the build as unstable:
-```groovy
-    groovyPostBuild('// some groovy script', Behavior.MarkUnstable)
-```
-
-This example will run a groovy script inside the sandbox, that prints hello, world and if that fails, it won't affect the build's status:
-```groovy
-    groovyPostBuild('println "hello, world"', null, true)
-```
-
-(Since 1.19)
+(since 1.19)
 
 ### Archive Javadoc
 

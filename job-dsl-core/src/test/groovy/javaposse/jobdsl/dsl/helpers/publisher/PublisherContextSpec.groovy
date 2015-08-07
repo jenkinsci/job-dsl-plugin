@@ -1792,41 +1792,90 @@ class PublisherContextSpec extends Specification {
         aggregateNode.includeFailedBuilds[0].value() == true
     }
 
-    def 'call groovyPostBuild (old style config syntax)'() {
+    def 'call groovyPostBuild with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('1.10')
+
         when:
         context.groovyPostBuild('foo')
 
         then:
-        context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
-        context.publisherNodes[0].groovyScript[0].value() == 'foo'
-        context.publisherNodes[0].behavior[0].value() == 0
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+            children().size() == 2
+            groovyScript[0].value() == 'foo'
+            behavior[0].value() == 0
+        }
         1 * jobManagement.requirePlugin('groovy-postbuild')
+        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with overriden failure behavior  (old style config syntax)'() {
+    def 'call groovyPostBuild with overriden failure behavior and older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('1.10')
+
         when:
         context.groovyPostBuild('foo', MarkUnstable)
 
         then:
-        context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
-        context.publisherNodes[0].groovyScript[0].value() == 'foo'
-        context.publisherNodes[0].behavior[0].value() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+            children().size() == 2
+            groovyScript[0].value() == 'foo'
+            behavior[0].value() == 1
+        }
         1 * jobManagement.requirePlugin('groovy-postbuild')
+        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with enabled sandbox (new style config syntax)'() {
+    def 'call groovyPostBuild with no options and newer plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('2.2')
+
         when:
-        context.groovyPostBuild('foo', null, true)
+        context.groovyPostBuild {
+        }
 
         then:
-        context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
-        context.publisherNodes[0].script[0].script[0].value() == 'foo'
-        context.publisherNodes[0].script[0].sandbox[0].value() == true
-        context.publisherNodes[0].behavior[0].value() == 0
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+            children().size() == 2
+            with(script[0]) {
+                children().size() == 2
+                script[0].value() == ''
+                sandbox[0].value() == false
+            }
+            behavior[0].value() == 0
+        }
         1 * jobManagement.requirePlugin('groovy-postbuild')
+        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+    }
+
+    def 'call groovyPostBuild with all options and newer plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('2.2')
+
+        when:
+        context.groovyPostBuild {
+            script('foo')
+            behavior(PublisherContext.Behavior.MarkFailed)
+            sandbox()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
+            children().size() == 2
+            with(script[0]) {
+                children().size() == 2
+                script[0].value() == 'foo'
+                sandbox[0].value() == true
+            }
+            behavior[0].value() == 2
+        }
+        1 * jobManagement.requirePlugin('groovy-postbuild')
+        1 * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
+        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
     def 'call javadoc archiver with no args'() {
