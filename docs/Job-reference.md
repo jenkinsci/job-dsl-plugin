@@ -144,6 +144,7 @@ freeStyleJob(String name) { // since 1.30
             Closure antClosure = null)
         batchFile(String command)
         buildDescription(String regexp, String description = null) // since 1.31
+        clangScanBuild(Closure clangScanBuildClosure) // since 1.37
         conditionalSteps(Closure conditionalClosure)
         copyArtifacts(String jobName, String includeGlob,
                       Closure buildSelectorClosure)  // deprecated since 1.33
@@ -3630,6 +3631,48 @@ job('example-2') {
     }
 }
 ```
+
+### Clang Scan Build
+
+```groovy
+job {
+    steps {
+        clangScanBuild {
+            workspace(String workspace)
+            scheme(String scheme)
+            clangInstallationName(String name)
+            targetSdk(String targetSdk)
+            configuration(String configuration)
+            scanBuildArgs(String args)
+            xcodeBuildArgs(String args)
+        }
+    }
+}
+```
+
+Supports running a Clang scan-build build step. Requires the
+[Clang Scan-Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin).
+
+The `workspace`, `scheme` and `clangInstallationName` options are mandatory. The example below shows the default values
+for `targetSdk`, `configuration` , `scanBuildArgs` and `xcodeBuildArgs`.
+
+```groovy
+job('example') {
+    steps {
+        clangScanBuild {
+            workspace('Mobile.xcworkspace')
+            scheme('mobile.de')
+            clangInstallationName('Clang Static Code Analyzer')
+            targetSdk('iphonesimulator')
+            configuration('Debug')
+            scanBuildArgs('--use-analyzer Xcode')
+            xcodeBuildArgs('-derivedDataPath $WORKSPACE/build')
+        }
+    }
+}
+```
+
+(since 1.37)
 
 ### Conditional Build Steps
 
