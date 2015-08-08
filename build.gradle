@@ -133,7 +133,7 @@ project(':job-dsl-core') {
                 artifact jarGroovydocs
                 artifact jarSources
                 artifact oneJar
-                artifact source: apiDocData, extension: 'json', classifier: 'apidoc'
+                artifact source: apiDocData, extension: 'json', classifier: 'apidoc' builtBy(project.tasks.generateApiDoc)
             }
         }
 
