@@ -281,6 +281,19 @@ folder {
         baos.toString() =~ /test-script\.dsl/
     }
 
+    def 'script with method'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(
+                null, DslScriptLoaderSpec.getResource('/test-script-with-method.dsl').text, resourcesDir, false
+        )
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        noExceptionThrown()
+    }
+
     def 'generate config files'() {
         setup:
         ScriptRequest request = new ScriptRequest('configfiles.dsl', null, resourcesDir, false)
@@ -344,7 +357,7 @@ folder {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message =~ /\(DSL script, line 1\) .+/
+        e.message =~ /\(script, line 1\) .+/
     }
 
     def 'DslScriptException on MissingPropertyException'() {
@@ -356,7 +369,7 @@ folder {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message =~ /\(DSL script, line 1\) .+/
+        e.message =~ /\(script, line 1\) .+/
     }
 
     def 'DslScriptException is passed through'() {
@@ -374,6 +387,6 @@ job('foo') {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message == '(DSL script, line 4) Can only use "using" once'
+        e.message == '(script, line 4) Can only use "using" once'
     }
 }

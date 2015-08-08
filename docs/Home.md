@@ -24,6 +24,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-29347](https://issues.jenkins-ci.org/browse/JENKINS-29347))
+ * Fixed problem with methods in build scripts
+   ([JENKINS-29862](https://issues.jenkins-ci.org/browse/JENKINS-29862))
  * Support for older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
    is deprecated, see [Migration](Migration#migrating-to-137)
  * Support for older versions of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
