@@ -3567,6 +3567,7 @@ job {
                 subversionRevision(boolean includeUpstreamParameters = false)
                 sameNode()
                 nodeLabel(String paramName, String nodeLabel) // since 1.26
+                forMatchingFiles(String paramName, String filePattern, String action = 'SKIP') // since 1.37
             }
             trigger(String projects, Closure downstreamTriggerClosure = null)
             trigger(String projects, String condition,
@@ -3601,6 +3602,8 @@ The `blockingThresholds` argument can only be used when configuring a build step
 
 The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
+
+The `action` argument in forMatchingFiles must be one of these values: `'SKIP'` (default), `'FAIL'` or `'NOPARMS'`.
 
 ```groovy
 job('example-1') {

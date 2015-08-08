@@ -20,6 +20,7 @@ class DownstreamTriggerContext extends AbstractContext {
     String nodeLabelParam
     String nodeLabel
     Map<String, Boolean> boolParams = [:]
+    List<String[]> binaryFileParameterFactory = []
 
     boolean triggerWithNoParameters
     boolean failTriggerOnMissing
@@ -90,6 +91,10 @@ class DownstreamTriggerContext extends AbstractContext {
         this.sameNode = sameNode
     }
 
+    void forMatchingFiles(String paramName, String filePattern, String action = 'SKIP') {
+        binaryFileParameterFactory << [paramName, filePattern, action]
+    }
+
     /**
      * @since 1.26
      */
@@ -118,6 +123,10 @@ class DownstreamTriggerContext extends AbstractContext {
     boolean hasParameter() {
         usingCurrentBuild || usingGitRevision || usingMatrixSubset || usingPredefined || usingPropertiesFile ||
                 usingSubversionRevision || !boolParams.isEmpty() || sameNode || usingNodeLabel
+    }
+
+    boolean hasFactories() {
+        !binaryFileParameterFactory.isEmpty()
     }
 
     Node createParametersNode() {
@@ -179,6 +188,22 @@ class DownstreamTriggerContext extends AbstractContext {
                             }
                             boolConfigNode.appendNode('name', k)
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    Node createFactoriesNode() {
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+
+        nodeBuilder.'configFactories' {
+            if (!binaryFileParameterFactory.isEmpty()) {
+                binaryFileParameterFactory.each { entry ->
+                    'hudson.plugins.parameterizedtrigger.BinaryFileParameterFactory' {
+                        delegate.createNode('parameterName', entry[0])
+                        delegate.createNode('filePattern', entry[1])
+                        delegate.createNode('noFilesFoundAction', entry[2])
                     }
                 }
             }
