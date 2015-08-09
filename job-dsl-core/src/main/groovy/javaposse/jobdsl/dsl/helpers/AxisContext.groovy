@@ -48,6 +48,16 @@ class AxisContext extends AbstractExtensibleContext {
         simpleAxis('JDK', 'jdk', axisValues)
     }
 
+    void elastic(String axisName, String axisValues, boolean ignoreOffline = true) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        Node node = nodeBuilder.'org.jenkinsci.plugins.elasticaxisplugin.ElasticAxis'(plugin: 'elastic-axis@1.2')
+        node.appendNode('name', axisName)
+        node.appendNode('label', axisValues)
+        node.appendNode('ignoreOffline', ignoreOffline)
+        axisNodes << node
+    }
+
     void configure(Closure closure) {
         configureBlocks << closure
     }

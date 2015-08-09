@@ -76,6 +76,18 @@ class MatrixJobSpec extends Specification {
         job.node.axes[0].children()[0].name() == 'hudson.matrix.LabelAxis'
     }
 
+    def 'can set leastic axis'() {
+        when:
+        job.axes {
+            elastic('AXIS NAME1', 'label1')
+        }
+
+        then:
+        job.node.axes.size() == 1
+        job.node.axes[0].children().size() == 1
+        job.node.axes[0].children()[0].name() == 'org.jenkinsci.plugins.elasticaxisplugin.ElasticAxis'
+    }
+
     def 'axes configure block constructs xml'() {
         when:
         job.axes {
