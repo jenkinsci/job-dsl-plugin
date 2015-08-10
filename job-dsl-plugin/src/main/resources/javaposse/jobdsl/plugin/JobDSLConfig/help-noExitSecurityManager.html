@@ -1,0 +1,9 @@
+<p>
+    <strong>System.setSecurityManager(..)</strong><br><br>
+
+    Uses <b>System.setSecurityManager(..);</b> to set org.codehaus.groovy.tools.shell.util.<b>NoExitSecurityManager()</b> as the new SecurityManagerfor the whole Jenkins Master JVM.<br>
+    This will <b>prevent a System.exit()</b>; call in JobDSL GroovyScripts to prevent a Jenkins shutdown.<br><br>
+
+    <b>If the box is unchecked</b>, the System SecurityManagager will be set to "null".<br>
+    This will only happen if the previous SecurityManager was an instance of org.codehaus.groovy.tools.shell.util.NoExitSecurityManager.
+</p>
