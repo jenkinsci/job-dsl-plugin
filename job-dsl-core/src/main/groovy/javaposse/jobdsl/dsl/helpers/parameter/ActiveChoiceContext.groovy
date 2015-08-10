@@ -11,6 +11,8 @@ class ActiveChoiceContext implements Context {
         'SINGLE_SELECT', 'MULTI_SELECT', 'CHECKBOX', 'RADIO'
     ]
 
+    final boolean supportsFilterable = true
+
     String description
     boolean filterable
     String choiceType = 'SINGLE_SELECT'
@@ -57,5 +59,28 @@ class ActiveChoiceContext implements Context {
                 }
             }
         }
+    }
+
+    static Node createGenericActiveChoiceNode(String type, String paramName, ActiveChoiceContext context, String
+            choiceTypePrefix, Closure additionalParams = {}) {
+        Node newNode = new NodeBuilder()."${type}" additionalParams << {
+            name(paramName)
+            description(context.description ?: '')
+            randomName("choice-parameter-${System.nanoTime()}")
+            visibleItemCount(1)
+            //parameters(class: 'linked-hash-map')
+            choiceType(choiceTypePrefix + context.choiceType)
+            if (context.supportsFilterable) {
+                filterable(context.filterable)
+            }
+        }
+        if (context.script) {
+            newNode.children().add(context.script)
+        }
+        newNode
+    }
+
+    Node createActiveChoiceNode(String paramName) {
+        createGenericActiveChoiceNode('org.biouno.unochoice.ChoiceParameter', paramName, this, 'PT_')
     }
 }

@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
+import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReferenceContext
 
 import static java.util.UUID.randomUUID
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -206,22 +207,26 @@ class BuildParametersContext extends AbstractContext {
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
     void activeChoiceParam(String paramName, @DslContext(ActiveChoiceContext) Closure closure) {
         checkNotNull(paramName, 'paramName cannot be null')
-        checkArgument(!buildParameterNodes.containsKey(paramName), 'parameter $paramName already defined')
+        checkArgument(!buildParameterNodes.containsKey(paramName), "parameter $paramName already defined")
 
         ActiveChoiceContext context = new ActiveChoiceContext()
         ContextHelper.executeInContext(closure, context)
 
-        Node node = new NodeBuilder().'org.biouno.unochoice.ChoiceParameter' {
-            name(paramName)
-            description(context.description ?: '')
-            randomName("choice-parameter-${System.nanoTime()}")
-            visibleItemCount(1)
-            choiceType("PT_${context.choiceType}")
-            filterable(context.filterable)
-        }
-        if (context.script) {
-            node.children().add(context.script)
-        }
-        buildParameterNodes[paramName] = node
+        buildParameterNodes[paramName] = context.createActiveChoiceNode(paramName)
+    }
+
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
+    void activeChoiceReferenceParam(String paramName,
+                                    @DslContext(ActiveChoiceReferenceContext) Closure closure = null) {
+        checkNotNull(paramName, 'paramName cannot be null')
+        checkArgument(!buildParameterNodes.containsKey(paramName), "parameter $paramName already defined")
+
+        ActiveChoiceReferenceContext context = new ActiveChoiceReferenceContext()
+        ContextHelper.executeInContext(closure, context)
+
+        buildParameterNodes[paramName] = context.createActiveChoiceNode(paramName)
     }
 }

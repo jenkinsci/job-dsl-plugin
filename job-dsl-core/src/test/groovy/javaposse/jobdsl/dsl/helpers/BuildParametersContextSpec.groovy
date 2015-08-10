@@ -971,4 +971,57 @@ class BuildParametersContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
     }
+
+    def 'active choice reference without options'() {
+        when:
+        context.activeChoiceReferenceParam('activeChoiceReferenceParam') {
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['activeChoiceReferenceParam']) {
+            name() == 'org.biouno.unochoice.CascadeChoiceParameter'
+            children().size() == 7
+            description.text() == ''
+            visibleItemCount.text() == '1'
+            filterable.text() == 'false'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            script.text() == ''
+            referencedParameters.text() == ''
+        }
+    }
+
+    def 'active choice reference with all options and groovy script'() {
+        when:
+        context.activeChoiceReferenceParam('activeChoiceReferenceScriptlerParam') {
+            description('Active choice param test')
+            filterable()
+            choiceType('SINGLE_SELECT')
+            groovyScript {
+                script('x1')
+                fallbackScript('x2')
+            }
+            referencedParameter('param1')
+            referencedParameter('param2')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['activeChoiceReferenceScriptlerParam']) {
+            name() == 'org.biouno.unochoice.CascadeChoiceParameter'
+            description.text() == 'Active choice param test'
+            visibleItemCount.text() == '1'
+            filterable.text() == 'true'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                script.text() == 'x1'
+                fallbackScript.text() == 'x2'
+            }
+            referencedParameters.text().split(',') == ['param1', 'param2']
+        }
+    }
 }

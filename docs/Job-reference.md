@@ -66,6 +66,7 @@ freeStyleJob(String name) { // since 1.30
         textParam(String parameterName, String defaultValue = null,
                   String description = null)
         activeChoiceParam(String paramName, Closure closure) // since 1.36
+        activeChoiceReferenceParam(String paramName, Closure closure) // since 1.38
     }
     scm {
         baseClearCase(Closure closure) // since 1.24
@@ -6067,6 +6068,70 @@ job('example-2') {
 ```
 
 (since 1.36)
+
+### Active Choice Reference Parameter
+
+```groovy
+job {
+    parameters {
+        activeChoiceReferenceParam(String paramName) {
+            description(String description)
+            filterable(boolean filterable = true)
+            choiceType(String choiceType)
+            groovyScript {
+                script(String script)
+                fallbackScript(String fallbackScript)
+            }
+            scriptlerScript(String scriptId) {
+                parameter(String name, String value)
+            }
+            referencedParameter('referenced-param1')
+            referencedParameter('referenced-param2')
+        }
+    }
+}
+```
+
+Defines a Active Choice parameter with groovy script as source of parameter options. Requires the
+[Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin).
+
+Valid values for `choiceType` are `'SINGLE_SELECT'` (default), `'MULTI_SELECT'`, `'CHECKBOX'` and `'RADIO'`.
+
+```groovy
+job('example-1') {
+    parameters {
+        booleanParam('BOOLEAN-PARAM-1')
+        activeChoiceReferenceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            filterable()
+            choiceType('SINGLE_SELECT')
+            groovyScript {
+                script('["choice1", "choice2"]')
+                fallbackScript('"fallback choice"')
+            }
+            referencedParameter('BOOLEAN-PARAM-1')
+        }
+    }
+}
+
+job('example-2') {
+    parameters {
+        booleanParam('BOOLEAN-PARAM-1')
+        activeChoiceReferenceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            filterable()
+            choiceType('SINGLE_SELECT')
+            scriptlerScript('scriptler-script1.groovy') {
+                parameter('param1', 'value1')
+                parameter('param2', 'value2')
+            }
+            referencedParameter('BOOLEAN-PARAM-1')
+        }
+    }
+}
+```
+
+(since 1.38)
 
 ### Label Parameter
 
