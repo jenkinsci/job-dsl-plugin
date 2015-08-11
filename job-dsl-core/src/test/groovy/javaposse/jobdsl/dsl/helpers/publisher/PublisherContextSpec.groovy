@@ -1066,7 +1066,7 @@ class PublisherContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'call downstream ext with all args'() {
+    def 'call downstream ext with all args with deprecated methods'() {
         when:
         context.downstreamParameterized {
             trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true) {
@@ -1126,6 +1126,109 @@ class PublisherContextSpec extends Specification {
 
             def nodeLabel = configs[0].
                 'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
+            nodeLabel.name[0].value() == 'nodeParam'
+            nodeLabel.nodeLabel[0].value() == 'node_label'
+
+            block.isEmpty()
+        }
+
+        Node second = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[1]
+        second.projects[0].value() == 'Project2'
+        second.condition[0].value() == 'SUCCESS'
+        second.triggerWithNoParameters[0].value() == false
+        second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project3') {
+            }
+        }
+
+        then:
+        Node third = context.publisherNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project3'
+        third.condition[0].value() == 'SUCCESS'
+        third.triggerWithNoParameters[0].value() == false
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project4', 'WRONG')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'call downstream ext with all args'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                condition('UNSTABLE_OR_BETTER')
+                triggerWithNoParameters()
+                parameters {
+                    currentBuild()
+                    propertiesFile('dir/my.properties')
+                    gitRevision(false)
+                    predefinedProp('key1', 'value1')
+                    predefinedProps([key2: 'value2', key3: 'value3'])
+                    matrixSubset('label=="${TARGET}"')
+                    subversionRevision()
+                    booleanParam('aParam')
+                    booleanParam('bParam', false)
+                    booleanParam('cParam', true)
+                    sameNode()
+                    nodeLabel('nodeParam', 'node_label')
+                }
+            }
+            trigger('Project2') {
+                parameters {
+                    currentBuild()
+                }
+            }
+        }
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.parameterizedtrigger.BuildTrigger'
+        publisherNode.configs[0].children().size() == 2
+        with(publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project1, Project2'
+            condition[0].value() == 'UNSTABLE_OR_BETTER'
+            triggerWithNoParameters[0].value() == true
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
+                    'dir/my.properties'
+            configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                    'key1=value1\nkey2=value2\nkey3=value3'
+            configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
+                    'label=="${TARGET}"'
+            configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+            block.size() == 0
+
+            def boolParams = configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
+            boolParams.children().size() == 3
+            def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
+            boolNode.name[0].value() == 'aParam'
+            boolNode.value[0].value() == false
+            def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
+            boolNode1.name[0].value() == 'bParam'
+            boolNode1.value[0].value() == false
+            def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
+            boolNode2.name[0].value() == 'cParam'
+            boolNode2.value[0].value() == true
+
+            def nodeNode = configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
+            nodeNode != null
+
+            def nodeLabel = configs[0].
+            'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
             nodeLabel.name[0].value() == 'nodeParam'
             nodeLabel.nodeLabel[0].value() == 'node_label'
 

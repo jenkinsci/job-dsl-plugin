@@ -15,9 +15,9 @@ class BuildPipelineContext extends AbstractContext {
     /**
      * @since 1.23
      */
-    void parameters(@DslContext(DownstreamTriggerContext) Closure closure) {
-        DownstreamTriggerContext downstreamTriggerContext = new DownstreamTriggerContext(jobManagement)
-        ContextHelper.executeInContext(closure, downstreamTriggerContext)
-        parameterNodes.addAll(downstreamTriggerContext.createParametersNode().children())
+    void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {
+        DownstreamTriggerParameterContext context = new DownstreamTriggerParameterContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+        parameterNodes.addAll(context.configs)
     }
 }

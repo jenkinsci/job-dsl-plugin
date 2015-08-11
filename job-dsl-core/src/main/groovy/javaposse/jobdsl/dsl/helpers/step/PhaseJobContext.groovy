@@ -1,10 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerContext
+import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext
 
 class PhaseJobContext implements Context {
     private static final List<String> VALID_KILL_CONDITIONS = ['FAILURE', 'NEVER', 'UNSTABLE']
@@ -14,16 +15,7 @@ class PhaseJobContext implements Context {
     String jobName
     boolean currentJobParameters = true
     boolean exposedScm = true
-    DownstreamTriggerContext paramTrigger = new DownstreamTriggerContext(jobManagement)
-    Map<String, Boolean> boolParams = [:]
-    String fileParam
-    boolean failTriggerOnMissing
-    boolean nodeParam = false
-    String matrixFilter
-    Boolean subversionRevision
-    Boolean gitRevision
-    String nodeLabelParam
-    List<String> props = []
+    DownstreamTriggerParameterContext paramTrigger = new DownstreamTriggerParameterContext(jobManagement)
     boolean disableJob = false
     boolean abortAllJobs = false
     String killPhaseCondition = 'FAILURE'
@@ -49,67 +41,65 @@ class PhaseJobContext implements Context {
         this.exposedScm = exposedScm
     }
 
+    void parameters(@javaposse.jobdsl.dsl.DslContext(DownstreamTriggerParameterContext) Closure closure) {
+        ContextHelper.executeInContext(closure, paramTrigger)
+    }
+
+    @Deprecated
     void boolParam(String paramName, boolean defaultValue = false) {
-        boolParams[paramName] = defaultValue
+        jobManagement.logDeprecationWarning()
         paramTrigger.boolParam(paramName, defaultValue)
     }
 
+    @Deprecated
     void fileParam(String propertyFile, boolean failTriggerOnMissing = false) {
-        Preconditions.checkState(!fileParam, "File parameter already set with ${fileParam}")
-        this.fileParam = propertyFile
-        this.failTriggerOnMissing = failTriggerOnMissing
+        jobManagement.logDeprecationWarning()
         paramTrigger.propertiesFile(propertyFile, failTriggerOnMissing)
     }
 
+    @Deprecated
     void sameNode(boolean nodeParam = true) {
-        this.nodeParam = nodeParam
-        paramTrigger.sameNode(nodeParam)
+        jobManagement.logDeprecationWarning()
+        paramTrigger.sameNode = nodeParam
     }
 
+    @Deprecated
     void matrixParam(String filter) {
-        Preconditions.checkState(!matrixFilter, "Matrix parameter already set with ${matrixFilter}")
-        this.matrixFilter = filter
+        jobManagement.logDeprecationWarning()
         paramTrigger.matrixSubset(filter)
     }
 
+    @Deprecated
     void subversionRevision(boolean includeUpstreamParameters = false) {
-        this.subversionRevision = includeUpstreamParameters
+        jobManagement.logDeprecationWarning()
         paramTrigger.subversionRevision(includeUpstreamParameters)
     }
 
+    @Deprecated
     void gitRevision(boolean combineQueuedCommits = false) {
-        this.gitRevision = combineQueuedCommits
+        jobManagement.logDeprecationWarning()
         paramTrigger.gitRevision(combineQueuedCommits)
     }
 
+    @Deprecated
     void prop(Object key, Object value) {
-        props << "${key}=${value}"
+        jobManagement.logDeprecationWarning()
         paramTrigger.predefinedProp(key, value)
     }
 
+    @Deprecated
     void props(Map<String, String> map) {
-        map.entrySet().each {
-            prop(it.key, it.value)
-        }
+        jobManagement.logDeprecationWarning()
         paramTrigger.predefinedProps(map)
     }
 
     /**
      * @since 1.26
      */
+    @Deprecated
     void nodeLabel(String paramName, String nodeLabel)  {
-        Preconditions.checkState(!this.nodeLabelParam, "nodeLabel parameter already set with ${this.nodeLabelParam}")
-        this.nodeLabelParam = paramName
+        jobManagement.logDeprecationWarning()
         paramTrigger.nodeLabel(paramName, nodeLabel)
-    }
-
-    Node configAsNode() {
-        paramTrigger.createParametersNode()
-    }
-
-    boolean hasConfig() {
-        !boolParams.isEmpty() || fileParam || nodeParam || matrixFilter || subversionRevision != null ||
-                gitRevision != null || !props.isEmpty() || nodeLabelParam
     }
 
     /**
