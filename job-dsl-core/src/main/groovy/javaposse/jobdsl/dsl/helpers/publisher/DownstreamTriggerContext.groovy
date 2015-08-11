@@ -2,8 +2,9 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
+import javaposse.jobdsl.dsl.helpers.common.AbstractDownstreamTriggerContext
 
-class DownstreamTriggerContext extends javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerContext {
+class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
     private static final Set<String> VALID_DOWNSTREAM_CONDITIONS = [
             'SUCCESS', 'UNSTABLE', 'UNSTABLE_OR_BETTER', 'UNSTABLE_OR_WORSE', 'FAILED', 'ALWAYS'
     ]

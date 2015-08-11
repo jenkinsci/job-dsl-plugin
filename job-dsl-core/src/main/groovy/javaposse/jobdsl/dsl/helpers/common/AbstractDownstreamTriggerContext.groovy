@@ -5,10 +5,10 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 
-class DownstreamTriggerContext extends AbstractContext {
+abstract class AbstractDownstreamTriggerContext extends AbstractContext {
     DownstreamTriggerParameterContext parameterContext
 
-    DownstreamTriggerContext(JobManagement jobManagement) {
+    protected AbstractDownstreamTriggerContext(JobManagement jobManagement) {
         super(jobManagement)
         parameterContext = new DownstreamTriggerParameterContext(jobManagement)
     }
