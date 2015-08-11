@@ -307,7 +307,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 12
+            children().size() == 13
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
             allowMembersOfWhitelistedOrgsAsAdmin[0].value() == false
@@ -390,7 +390,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 12
+            children().size() == 13
             adminlist[0].value() == 'test1\ntest2'
             whitelist[0].value() == 'test1\ntest2'
             orgslist[0].value() == 'test1\ntest2'
@@ -417,7 +417,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 12
+            children().size() == 13
             adminlist[0].value() == 'test'
             whitelist[0].value() == 'test'
             orgslist[0].value() == 'test'
@@ -434,6 +434,68 @@ class TriggerContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('ghprb')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.14')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
+    }
+
+    def 'call pull request trigger with extensions node and all args'() {
+        when:
+        context.pullRequest {
+            admins(['test'])
+            userWhitelist(['test'])
+            orgWhitelist(['test'])
+            cron('*/5 * * * *')
+            triggerPhrase('ok to test')
+            onlyTriggerPhrase(true)
+            useGitHubHooks(true)
+            allowMembersOfWhitelistedOrgsAsAdmin(true)
+            permitAll(true)
+            autoCloseFailedPullRequests(true)
+            commentFilePath('myCommentFile')
+
+            commitStatusContext('Deploy to staging site')
+            triggeredStatus('deploy triggered')
+            startedStatus('deploy started')
+
+            buildResultSuccessMessage('All is well')
+            buildResultFailureMessage('Something has gone wrong')
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            children().size() == 13
+            adminlist[0].value() == 'test'
+            whitelist[0].value() == 'test'
+            orgslist[0].value() == 'test'
+            cron[0].value() == '*/5 * * * *'
+            spec[0].value() == '*/5 * * * *'
+            triggerPhrase[0].value() == 'ok to test'
+            onlyTriggerPhrase[0].value() == true
+            useGitHubHooks[0].value() == true
+            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == true
+            permitAll[0].value() == true
+            autoCloseFailedPullRequests[0].value() == true
+            commentFilePath[0].value() == 'myCommentFile'
+            with(children()[12]) {
+                name() == 'extensions'
+                children().size() == 1
+                with(children()[0]) {
+                    commitStatusContext[0].value() == 'Deploy to staging site'
+                    triggeredStatus[0].value() == 'deploy triggered'
+                    startedStatus[0].value() == 'deploy started'
+                    with(children()[3]) {
+                        with(children()[0]) {
+                            result[0].value() == 'SUCCESS'
+                            message[0].value() == 'All is well'
+                        }
+                        with(children()[1]) {
+                            result[0].value() == 'FAILURE'
+                            message[0].value() == 'Something has gone wrong'
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     def 'call empty gerrit trigger methods'() {
