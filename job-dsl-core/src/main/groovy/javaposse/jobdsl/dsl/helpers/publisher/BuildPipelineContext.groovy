@@ -1,9 +1,10 @@
-package javaposse.jobdsl.dsl.helpers.common
+package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext
 
 class BuildPipelineContext extends AbstractContext {
     List<Node> parameterNodes = []
