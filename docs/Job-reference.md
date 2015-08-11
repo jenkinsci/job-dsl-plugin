@@ -1633,13 +1633,14 @@ job {
             autoCloseFailedPullRequests(boolean value = true) // defaults to false
             commentFilePath(String commentFilePath)           // since 1.31
             allowMembersOfWhitelistedOrgsAsAdmin(boolean value = true) // since 1.35
-
-            // since 1.37
-            commitStatusContext(String commitStatus)          // default to 'default'
-            triggeredStatus(String triggeredStatus)           // default to 'Build triggered'
-            startedStatus(String startedStatus)               // default to 'Build started'
-            buildResultSuccessMessage(String successMessage)  // default to 'Passed'
-            buildResultFailureMessage(String failureMessage)  // default to 'Failed'
+            extensions { // since 1.38
+                commitStatus {
+                    context(String context)
+                    triggeredStatus(String triggeredStatus)
+                    startedStatus(String startedStatus)
+                    completedStatus(String buildResult, String message)
+                }
+            }
         }
     }
 }
@@ -1649,6 +1650,9 @@ Builds pull requests from GitHub and will report the results directly to the pul
 [GitHub pull request builder plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin).
 
 The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for details.
+
+`completedStatus` can be called multiple times to set messages for different build results. Valid values for
+`buildResult` are `'SUCCESS'`, `'FAILURE'`, and `'ERROR'`.
 
 ```groovy
 job('example') {
@@ -1673,10 +1677,14 @@ job('example') {
             permitAll()
             autoCloseFailedPullRequests()
             allowMembersOfWhitelistedOrgsAsAdmin()
-            commitStatusContext('deploy to staging site')
-            startedStatus('deploying to staging site...')
-            buildResultSuccessMessage('All is well')
-            buildResultFailureMessage('Something went wrong. Investigate!')
+            extensions {
+                commitStatus {
+                    context('deploy to staging site')
+                    startedStatus('deploying to staging site...')
+                    completedStatus('SUCCESS', 'All is well')
+                    completedStatus('FAILURE', 'Something went wrong. Investigate!')
+                }
+            }
         }
     }
 }

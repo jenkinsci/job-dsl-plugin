@@ -436,58 +436,55 @@ class TriggerContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
     }
 
-    def 'call pull request trigger with extensions node and all args'() {
+    def 'call pull request trigger with commit status extension'() {
         when:
         context.pullRequest {
-            admins(['test'])
-            userWhitelist(['test'])
-            orgWhitelist(['test'])
-            cron('*/5 * * * *')
-            triggerPhrase('ok to test')
-            onlyTriggerPhrase(true)
-            useGitHubHooks(true)
-            allowMembersOfWhitelistedOrgsAsAdmin(true)
-            permitAll(true)
-            autoCloseFailedPullRequests(true)
-            commentFilePath('myCommentFile')
-
-            commitStatusContext('Deploy to staging site')
-            triggeredStatus('deploy triggered')
-            startedStatus('deploy started')
-
-            buildResultSuccessMessage('All is well')
-            buildResultFailureMessage('Something has gone wrong')
+            extensions {
+                commitStatus {
+                    delegate.context('Deploy to staging site')
+                    triggeredStatus('deploy triggered')
+                    startedStatus('deploy started')
+                    completedStatus('SUCCESS', 'All is well')
+                    completedStatus('FAILURE', 'Something has gone wrong')
+                }
+            }
         }
 
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
             children().size() == 13
-            adminlist[0].value() == 'test'
-            whitelist[0].value() == 'test'
-            orgslist[0].value() == 'test'
-            cron[0].value() == '*/5 * * * *'
-            spec[0].value() == '*/5 * * * *'
-            triggerPhrase[0].value() == 'ok to test'
-            onlyTriggerPhrase[0].value() == true
-            useGitHubHooks[0].value() == true
-            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == true
-            permitAll[0].value() == true
-            autoCloseFailedPullRequests[0].value() == true
-            commentFilePath[0].value() == 'myCommentFile'
-            with(children()[12]) {
-                name() == 'extensions'
+            adminlist[0].value() == ''
+            whitelist[0].value() == ''
+            orgslist[0].value() == ''
+            cron[0].value() == 'H/5 * * * *'
+            spec[0].value() == 'H/5 * * * *'
+            triggerPhrase[0].value() == ''
+            onlyTriggerPhrase[0].value() == false
+            useGitHubHooks[0].value() == false
+            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == false
+            permitAll[0].value() == false
+            autoCloseFailedPullRequests[0].value() == false
+            commentFilePath[0].value() == ''
+            with(extensions[0]) {
                 children().size() == 1
                 with(children()[0]) {
+                    name() == 'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus'
+                    children().size() == 4
                     commitStatusContext[0].value() == 'Deploy to staging site'
                     triggeredStatus[0].value() == 'deploy triggered'
                     startedStatus[0].value() == 'deploy started'
-                    with(children()[3]) {
+                    with(completedStatus[0]) {
+                        children().size() == 2
                         with(children()[0]) {
+                            name() == 'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage'
+                            children().size() == 2
                             result[0].value() == 'SUCCESS'
                             message[0].value() == 'All is well'
                         }
                         with(children()[1]) {
+                            name() == 'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage'
+                            children().size() == 2
                             result[0].value() == 'FAILURE'
                             message[0].value() == 'Something has gone wrong'
                         }
@@ -495,7 +492,23 @@ class TriggerContextSpec extends Specification {
                 }
             }
         }
+    }
 
+    def 'call pull request trigger invalid build result'() {
+        when:
+        context.pullRequest {
+            extensions {
+                commitStatus {
+                    completedStatus(buildResult, 'Something has gone wrong')
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        buildResult << [null, '', 'FOO']
     }
 
     def 'call empty gerrit trigger methods'() {
