@@ -17,6 +17,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.38 (unreleased)
+ * Enhanced support for the
+   [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
 * 1.37 (August 08 2015)
  * Added support for the [Clang Scan Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin)
    ([JENKINS-29505](https://issues.jenkins-ci.org/browse/JENKINS-29505))
