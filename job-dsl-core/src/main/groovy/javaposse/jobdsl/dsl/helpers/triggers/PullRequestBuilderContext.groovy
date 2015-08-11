@@ -21,8 +21,8 @@ class PullRequestBuilderContext extends AbstractContext {
     String triggeredStatus = 'Build Triggered'
     String startedStatus = 'Build Started'
 
-    String buildResultSuccessMessage = 'Passed'
-    String buildResultFailureMessage = 'Failed'
+    String buildResultSuccessMessage = 'Passed.'
+    String buildResultFailureMessage = 'Failed.'
     String buildResultSuccess = 'SUCCESS'
     String buildResultFailure = 'FAILURE'
 
@@ -108,21 +108,33 @@ class PullRequestBuilderContext extends AbstractContext {
         this.commitStatusContext = commitStatus
     }
 
+    /**
+    * @since 1.37
+    */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void triggeredStatus(String triggeredStatus) {
         this.triggeredStatus = triggeredStatus
     }
 
+    /**
+    * @since 1.37
+    */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void startedStatus(String startedStatus) {
         this.startedStatus = startedStatus
     }
 
+    /**
+    * @since 1.37
+    */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void buildResultSuccessMessage(String successMessage) {
         this.buildResultSuccessMessage = successMessage
     }
 
+    /**
+    * @since 1.37
+    */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.22-0')
     void buildResultFailureMessage(String failureMessage) {
         this.buildResultFailureMessage = failureMessage

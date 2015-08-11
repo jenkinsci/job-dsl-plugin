@@ -136,8 +136,7 @@ class TriggerContext extends AbstractExtensibleContext {
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
 
-        NodeBuilder pullRequestNodeBuilder = new NodeBuilder()
-        Node pullRequestNode =  pullRequestNodeBuilder.'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
             adminlist pullRequestBuilderContext.admins.join('\n')
             whitelist pullRequestBuilderContext.userWhitelist.join('\n')
             orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
@@ -154,41 +153,26 @@ class TriggerContext extends AbstractExtensibleContext {
             if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
                 allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             }
-        }
-        if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.22-0'))) {
-            Node extensionsNode = new NodeBuilder().'extensions' {}
-
-            // commit status during build
-            Node commitStatusNode = new NodeBuilder()
-                .'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus' {
-                commitStatusContext pullRequestBuilderContext.commitStatusContext ?: ''
-                triggeredStatus pullRequestBuilderContext.triggeredStatus ?: ''
-                startedStatus pullRequestBuilderContext.startedStatus ?: ''
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.22-0'))) {
+                'extensions' {
+                    'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus' {
+                        commitStatusContext pullRequestBuilderContext.commitStatusContext ?: ''
+                        triggeredStatus pullRequestBuilderContext.triggeredStatus ?: ''
+                        startedStatus pullRequestBuilderContext.startedStatus ?: ''
+                        'completedStatus' {
+                            'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
+                                message pullRequestBuilderContext.buildResultSuccessMessage ?: ''
+                                result pullRequestBuilderContext.buildResultSuccess
+                            }
+                            'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
+                                message pullRequestBuilderContext.buildResultFailureMessage ?: ''
+                                result pullRequestBuilderContext.buildResultFailure
+                            }
+                        }
+                    }
+                }
             }
-
-            // completed status
-            Node completedStatusNode = new NodeBuilder().'completedStatus' {}
-
-            Node successBuildResultMessageNode = new NodeBuilder()
-                .'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
-                    message pullRequestBuilderContext.buildResultSuccessMessage ?: ''
-                    result pullRequestBuilderContext.buildResultSuccess
-                }
-            Node failureBuildResultMessageNode = new NodeBuilder()
-                .'org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage' {
-                    message pullRequestBuilderContext.buildResultFailureMessage ?: ''
-                    result pullRequestBuilderContext.buildResultFailure
-                }
-
-            completedStatusNode.append(successBuildResultMessageNode)
-            completedStatusNode.append(failureBuildResultMessageNode)
-            commitStatusNode.append(completedStatusNode)
-
-            extensionsNode.append(commitStatusNode)
-
-            pullRequestNode.append(extensionsNode)
         }
-        addExtensionNode(pullRequestNode)
     }
 
     @RequiresPlugin(id = 'gerrit-trigger')

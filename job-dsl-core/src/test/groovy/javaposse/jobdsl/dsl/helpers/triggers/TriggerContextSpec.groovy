@@ -475,24 +475,27 @@ class TriggerContextSpec extends Specification {
             permitAll[0].value() == true
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
+            with(children()[12]) {
+                name() == 'extensions'
+                children().size() == 1
+                with(children()[0]) {
+                    commitStatusContext[0].value() == 'Deploy to staging site'
+                    triggeredStatus[0].value() == 'deploy triggered'
+                    startedStatus[0].value() == 'deploy started'
+                    with(children()[3]) {
+                        with(children()[0]) {
+                            result[0].value() == 'SUCCESS'
+                            message[0].value() == 'All is well'
+                        }
+                        with(children()[1]) {
+                            result[0].value() == 'FAILURE'
+                            message[0].value() == 'Something has gone wrong'
+                        }
+                    }
+                }
+            }
         }
-        with(context.triggerNodes[0].children()[12]) {
-            name() == 'extensions'
-            children().size() == 1
-        }
-        with(context.triggerNodes[0].children()[12].children()[0]) {
-            commitStatusContext[0].value() == 'Deploy to staging site'
-            triggeredStatus[0].value() == 'deploy triggered'
-            startedStatus[0].value() == 'deploy started'
-        }
-        with(context.triggerNodes[0].children()[12].children()[0].children()[3].children()[0]) {
-            result[0].value() == 'SUCCESS'
-            message[0].value() == 'All is well'
-        }
-        with(context.triggerNodes[0].children()[12].children()[0].children()[3].children()[1]) {
-            result[0].value() == 'FAILURE'
-            message[0].value() == 'Something has gone wrong'
-        }
+
     }
 
     def 'call empty gerrit trigger methods'() {
