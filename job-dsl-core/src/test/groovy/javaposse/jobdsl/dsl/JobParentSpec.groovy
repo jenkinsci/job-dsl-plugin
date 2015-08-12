@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.IvyJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
@@ -548,6 +549,27 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('build-flow-plugin')
+    }
+
+    def 'ivyJob'() {
+        when:
+        IvyJob job = parent.ivyJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        1 * jobManagement.requireMinimumPluginVersion('ivy', '1.23')
+    }
+
+    def 'ivyJob without closure'() {
+        when:
+        IvyJob job = parent.ivyJob('test')
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        1 * jobManagement.requireMinimumPluginVersion('ivy', '1.23')
     }
 
     def 'matrixJob deprecated variant'() {

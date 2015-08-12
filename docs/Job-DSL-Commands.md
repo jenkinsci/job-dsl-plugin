@@ -43,6 +43,8 @@ freeStyleJob(String name, Closure closure = null) // since 1.30
 
 buildFlowJob(String name, Closure closure = null) // since 1.30
 
+ivyJob(String name, Closure closure = null)       // since 1.38
+
 matrixJob(String name, Closure closure = null)    // since 1.30
 
 mavenJob(String name, Closure closure = null)     // since 1.30

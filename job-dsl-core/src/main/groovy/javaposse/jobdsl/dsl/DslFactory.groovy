@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.IvyJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
@@ -43,6 +44,16 @@ interface DslFactory extends ViewFactory {
      * @since 1.31
      */
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)
+
+    /**
+     * @since 1.38
+     */
+    IvyJob ivyJob(String name)
+
+    /**
+     * @since 1.38
+     */
+    IvyJob ivyJob(String name, @DslContext(IvyJob) Closure closure)
 
     /**
      * @since 1.30

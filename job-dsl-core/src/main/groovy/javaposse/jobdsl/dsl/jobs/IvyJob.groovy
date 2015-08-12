@@ -1,0 +1,142 @@
+package javaposse.jobdsl.dsl.jobs
+
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Job
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.step.StepContext
+
+import static javaposse.jobdsl.dsl.Preconditions.checkState
+
+class IvyJob extends Job {
+
+    IvyJob(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
+    @Override
+    void steps(@DslContext(StepContext) Closure closure) {
+        throw new IllegalStateException('steps cannot be applied for Ivy jobs')
+    }
+
+    /**
+     * Specifies the pattern to use to search for ivy module descriptor files (usually
+     * named ivy.xml) in this project.
+     *
+     * @param ivyFilePattern pattern to use to search for ivy module descriptor files
+     */
+    void ivyFilePattern(String ivyFilePattern) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('ivyFilePattern', ivyFilePattern)
+            project / node
+        }
+    }
+
+    /**
+     * Specifies modules to be excluded from the build.
+     *
+     * @param ivyFileExcludesPattern modules to be excluded from the build
+     */
+    void ivyFileExcludesPattern(String ivyFileExcludesPattern) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('ivyFileExcludesPattern', ivyFileExcludesPattern)
+            project / node
+        }
+    }
+
+    /**
+     * Specifies the default Ivy branch name for this module/set of modules.
+     *
+     * @param ivyBranch default Ivy branch name
+     */
+    void ivyBranch(String ivyBranch) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('ivyBranch', ivyBranch)
+            project / node
+        }
+    }
+
+    /**
+     * Specifies the relative path to the module descriptor file from the root of
+     * each module.
+     *
+     * @param relativePathToDescriptorFromModuleRoot relative path to the module descriptor file
+     */
+    void relativePathToDescriptorFromModuleRoot(String relativePathToDescriptorFromModuleRoot) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('relativePathToDescriptorFromModuleRoot', relativePathToDescriptorFromModuleRoot)
+            project / node
+        }
+    }
+
+    /**
+     * Specifies a custom Ivy settings file to be used when parsing Ivy module descriptors.
+     *
+     * @param ivySettingsFile relative path to Ivy settings file
+     */
+    void ivySettingsFile(String ivySettingsFile) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('ivySettingsFile', ivySettingsFile)
+            project / node
+        }
+    }
+
+    /**
+     * Specifies property files that need to be loaded before parsing the Ivy settings
+     * file and Ivy module descriptors.
+     *
+     * @param ivySettingsPropertyFiles property files to load before parsing
+     */
+    void ivySettingsPropertyFiles(String ivySettingsPropertyFiles) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('ivySettingsPropertyFiles', ivySettingsPropertyFiles)
+            project / node
+        }
+    }
+
+    /**
+     * Specifies if each module should be built as a separate sub-project.
+     *
+     * @param perModuleBuild if each module should be built as a separate sub-project
+     */
+    void perModuleBuild(boolean perModuleBuild = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('aggregatorStyleBuild', !perModuleBuild)
+            project / node
+        }
+    }
+
+    /**
+     * Specifies if only modules with changes or those modules which failed or were
+     * unstable in the previous build should be triggered.
+     *
+     * @param incrementalBuild if only changed modules should be triggered
+     */
+    void incrementalBuild(boolean incrementalBuild = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('incrementalBuild', incrementalBuild)
+            project / node
+        }
+    }
+
+    void ivyBuilder(@DslContext(IvyBuilderContext) Closure closure) {
+        IvyBuilderContext context = new IvyBuilderContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        if (!context.ivyBuilderNodes.empty) {
+            checkState(context.ivyBuilderNodes.size() == 1, 'Only one Ivy builder can be specified')
+
+            withXmlActions << WithXmlAction.create { Node project ->
+                Node ivyBuilderType = project / ivyBuilderType
+                if (ivyBuilderType) {
+                    // There can only be only one Ivy builder, so remove if there
+                    project.remove(ivyBuilderType)
+                }
+
+                // Assuming append the only child
+                project << context.ivyBuilderNodes[0]
+            }
+        }
+    }
+}

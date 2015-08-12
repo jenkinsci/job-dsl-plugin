@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.IvyJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
@@ -48,6 +49,15 @@ abstract class JobParent extends Script implements DslFactory {
     @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
         processJob(name, BuildFlowJob, closure)
+    }
+
+    /**
+     * @since 1.38
+     */
+    @Override
+    @RequiresPlugin(id = 'ivy', minimumVersion = '1.23')
+    IvyJob ivyJob(String name, @DslContext(IvyJob) Closure closure = null) {
+        processJob(name, IvyJob, closure)
     }
 
     /**

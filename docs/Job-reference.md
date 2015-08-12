@@ -319,6 +319,26 @@ buildFlowJob(String name) { // since 1.30
 job(type: BuildFlow, Closure closure) // deprecated since 1.30
 ```
 
+## Ivy Job
+
+```groovy
+ivyJob(String name) { // since 1.38
+    // includes all options from freeStyleJob
+
+    ivyFilePattern(String ivyFilePattern)
+    ivyFileExcludesPattern(String ivyFileExcludesPattern)
+    ivyBranch(String ivyBranch)
+    relativePathToDescriptorFromModuleRoot(String relativePathToDescriptorFromModuleRoot)
+    ivySettingsFile(String ivySettingsFile)
+    ivySettingsPropertyFiles(String ivySettingsPropertyFiles)
+    perModuleBuild(boolean perModuleBuild = true)
+    incrementalBuild(boolean incrementalBuild = true)
+    ivyBuilder {
+        ant(Closure antClosure = null)
+    }
+}
+```
+
 ## Matrix Job
 
 ```groovy
@@ -842,6 +862,162 @@ buildFlowJob('example-3') {
 ```
 
 Since 1.21.
+
+# Ivy
+
+The `ivyFilePattern`, `ivyFileExcludesPattern`, `ivyBranch`, `relativePathToDescriptorFromModuleRoot`,
+ `ivySettingsFile`, `ivySettingsPropertyFiles`, `perModuleBuild`, `incrementalBuild`, and `ivyBuilder`
+ methods can only be used in jobs with type `Ivy`.
+
+### Ivy File Pattern
+
+```groovy
+ivyJob(String name) {
+    ivyFilePattern(String ivyFilePattern)
+}
+```
+
+The pattern to use to search for ivy module descriptor files (usually named `ivy.xml`) in this project.
+Specified using ant-include pattern syntax. Default if not specified is `**/ivy.xml`.
+
+### Ivy File Excludes Pattern
+
+```groovy
+ivyJob(String name) {
+    ivyFileExcludesPattern(String ivyFileExcludesPattern)
+}
+```
+
+Allows modules to be excluded from the build. Specified using ant-include pattern syntax.  At the moment, this
+only effects the build if the `aggregatorStyleBuild` is set to false.
+
+```groovy
+ivyJob('example') {
+    ivyFileExcludesPattern('moduleX/**,moduleZ/**')
+}
+```
+
+### Ivy Branch
+
+```groovy
+ivyJob(String name) {
+    ivyBranch(String ivyBranch)
+}
+```
+
+Default Ivy branch name for this module/set of modules. This is used when calculating upstream/downstream build
+triggers. Only dependencies with an Ivy branch matching this one will be added as upstream/downstream builds.
+
+This only needs to be specified if you use Ivy branches.
+
+```groovy
+ivyJob('example') {
+    ivyBranch('myproduct/1.2')
+}
+```
+
+### Relative Path to Descriptor from Module Root
+
+```groovy
+ivyJob(String name) {
+    relativePathToDescriptorFromModuleRoot(String relativePathToDescriptorFromModuleRoot)
+}
+```
+
+The relative path to the module descriptor file from the root of each module. Defaults to `ivy.xml` if not specified
+(assumes your `ivy.xml` files are located directly in the root of each module).
+
+### Ivy Settings File
+
+```groovy
+ivyJob(String name) {
+    ivySettingsFile(String ivySettingsFile)
+}
+```
+
+Custom Ivy settings file to be used when parsing Ivy module descriptors. Specified as a relative path from the
+workspace root.
+
+This only needs to be specified if you use custom conflict managers and latest strategies in your Ivy files that
+can't be parsed otherwise.
+
+```groovy
+ivyJob('example') {
+    ivySettingsFile('build/ivy/ivysettings.xml')
+}
+```
+
+### Ivy Settings Property Files
+
+```groovy
+ivyJob(String name) {
+    ivySettingsPropertyFiles(String ivySettingsPropertyFiles)
+}
+```
+
+Property files that need to be loaded before parsing the Ivy settings file and Ivy module descriptors.
+Specified as comma-delimited list of relative paths from the workspace root or absolute file paths.
+
+This only needs to be specified if you use `${property}` references in your Ivy settings file or in your
+Ivy module descriptors that normally get loaded by your build scripts prior to initialising Ivy.
+
+```groovy
+ivyJob('example') {
+    ivySettingsPropertyFiles('branch.properties,deps.properties')
+}
+```
+
+### Per Module Build
+
+```groovy
+ivyJob(String name) {
+    perModuleBuild(boolean perModuleBuild = true)
+}
+```
+
+Enables per-module builds where each module gets built as a separate sub-project. Per-module builds are
+not enabled by default.
+
+### Incremental Build
+
+```groovy
+ivyJob(String name) {
+    incrementalBuild(boolean incrementalBuild = true)
+}
+```
+
+Enables incremental builds where only modules which have changes or which failed or were unstable in the
+previous build will be triggered to build. Incremental builds are not enabled by default.
+
+### Ivy Builder
+
+```groovy
+ivyJob(String name) {
+    ivyBuilder {
+        ant(Closure antClosure = null)
+    }
+}
+```
+
+The Ivy builder type to use for building the modules. Only the Ant builder is supported natively. Support for other
+builders, like NAnt for example, could be contributed to this extensible type.
+
+Only one builder may be specified.
+
+```groovy
+ivyJob('example') {
+    ivyBuilder {
+        ant {
+            target 'clean'
+            targets(['test', 'publish'])
+            buildFile 'build.xml'
+            antInstallation 'Ant 1.9'
+            prop('key', 'value')
+            javaOpt('-Xmx=1G')
+        }
+    }
+}
+```
 
 # Maven
 

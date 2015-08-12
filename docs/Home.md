@@ -32,6 +32,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-138)
  * Increased the minimum supported Jenkins version to 1.580
+ * Added support for the [Ivy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ivy+Plugin)
+   ([JENKINS-29910](https://issues.jenkins-ci.org/browse/JENKINS-29910))
 * 1.37 (August 08 2015)
  * Added support for the [Clang Scan Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin)
    ([JENKINS-29505](https://issues.jenkins-ci.org/browse/JENKINS-29505))
