@@ -1772,6 +1772,138 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('parameterized-trigger')
     }
 
+    def 'call downstream build step with default blocking options'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                }
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
+            children().size() == 1
+            configs[0].children().size() == 1
+            with(configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+                children().size() == 5
+                projects[0].value() == 'Project1, Project2'
+                condition[0].value() == 'ALWAYS'
+                triggerWithNoParameters[0].value() == false
+                configs[0].@class == 'java.util.Collections$EmptyList'
+                configs[0].children().size() == 0
+                block[0].children().size() == 0
+            }
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+    }
+
+    def 'call downstream build step with blocking options'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure(threshold)
+                    failure(threshold)
+                    unstable(threshold)
+                }
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
+            children().size() == 1
+            configs[0].children().size() == 1
+            with(configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+                children().size() == 5
+                projects[0].value() == 'Project1, Project2'
+                condition[0].value() == 'ALWAYS'
+                triggerWithNoParameters[0].value() == false
+                configs[0].@class == 'java.util.Collections$EmptyList'
+                configs[0].children().size() == 0
+                with(block[0]) {
+                    if (threshold == 'never') {
+                        children().size() == 0
+                    } else {
+                        children().size() == 3
+                        with(buildStepFailureThreshold[0]) {
+                            children().size() == 4
+                            name[0].value() == threshold
+                            ordinal[0].value() == ordinalValue
+                            color[0].value() == colorValue
+                            completeBuild[0].value() == true
+                        }
+                        with(failureThreshold[0]) {
+                            children().size() == 4
+                            name[0].value() == threshold
+                            ordinal[0].value() == ordinalValue
+                            color[0].value() == colorValue
+                            completeBuild[0].value() == true
+                        }
+                        with(unstableThreshold[0]) {
+                            children().size() == 4
+                            name[0].value() == threshold
+                            ordinal[0].value() == ordinalValue
+                            color[0].value() == colorValue
+                            completeBuild[0].value() == true
+                        }
+                    }
+                }
+            }
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+
+        where:
+        threshold  || ordinalValue | colorValue
+        'never'    || null         | null
+        'SUCCESS'  || 0            | 'BLUE'
+        'UNSTABLE' || 1            | 'YELLOW'
+        'FAILURE'  || 2            | 'RED'
+    }
+
+    def 'call downstream build step with invalid blocking options'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure(threshold)
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    failure(threshold)
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    unstable(threshold)
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        threshold << [null, '', 'FOO']
+    }
+
     @Unroll
     def 'call conditional steps for a single step with #testCondition'() {
         when:

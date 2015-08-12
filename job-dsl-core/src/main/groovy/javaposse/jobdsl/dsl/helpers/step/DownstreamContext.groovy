@@ -69,9 +69,15 @@ class DownstreamContext extends AbstractContext {
             delegate.configs(context.parameterContext.configs ?: [class: 'java.util.Collections$EmptyList'])
             if (context.blockContext) {
                 Node node = block()
-                node.append(createThresholdNode('buildStepFailure', context.blockContext.buildStepFailure))
-                node.append(createThresholdNode('unstable', context.blockContext.unstable))
-                node.append(createThresholdNode('failure', context.blockContext.failure))
+                if (context.blockContext.buildStepFailure != 'never') {
+                    node.append(createThresholdNode('buildStepFailure', context.blockContext.buildStepFailure))
+                }
+                if (context.blockContext.unstable != 'never') {
+                    node.append(createThresholdNode('unstable', context.blockContext.unstable))
+                }
+                if (context.blockContext.failure != 'never') {
+                    node.append(createThresholdNode('failure', context.blockContext.failure))
+                }
             }
         }
     }

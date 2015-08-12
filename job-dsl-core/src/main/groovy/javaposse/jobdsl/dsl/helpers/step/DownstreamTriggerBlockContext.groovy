@@ -6,9 +6,11 @@ import javaposse.jobdsl.dsl.Preconditions
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
 
 class DownstreamTriggerBlockContext implements Context {
-    String buildStepFailure = 'FAILURE'
-    String failure  = 'FAILURE'
-    String unstable = 'UNSTABLE'
+    private static final Set<String> VALID_THRESHOLDS = ['never'] + THRESHOLD_COLOR_MAP.keySet()
+
+    String buildStepFailure = 'never'
+    String failure  = 'never'
+    String unstable = 'never'
 
     void buildStepFailure(String threshold) {
         checkThreshold(threshold)
@@ -27,8 +29,8 @@ class DownstreamTriggerBlockContext implements Context {
 
     private static void checkThreshold(String threshold) {
         Preconditions.checkArgument(
-                THRESHOLD_COLOR_MAP.containsKey(threshold),
-                "threshold must be one of ${THRESHOLD_COLOR_MAP.keySet().join(', ')}"
+                VALID_THRESHOLDS.contains(threshold),
+                "threshold must be one of ${VALID_THRESHOLDS.join(', ')}"
         )
     }
 }

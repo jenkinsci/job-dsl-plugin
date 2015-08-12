@@ -3675,7 +3675,8 @@ The `booleanParam`, `predefinedProp` and `predefinedProps` methods can be used t
 they can be called multiple times to build a superset of properties.
 
 The `blockingThresholds` argument can only be used when configuring a build step. Valid keys for the map are
-`buildStepFailure`, `failure` and `unstable`. The values can be set to either `'SUCCESS'`, `'UNSTABLE'`  or `'FAILURE'`.
+`buildStepFailure`, `failure` and `unstable`. The values can be set to either `'never'` (default), `'SUCCESS'`,
+`'UNSTABLE'` or `'FAILURE'`.
 
 The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
@@ -3688,7 +3689,7 @@ job('example-1') {
                 block {
                     buildStepFailure('FAILURE')
                     failure ('FAILURE')
-                    unstable('UNSTABLE']
+                    unstable('UNSTABLE')
                 }
                 parameters {
                     predefinedProp('key1', 'value1')
