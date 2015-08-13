@@ -9,10 +9,8 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
-import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
-import static com.google.common.base.Strings.isNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
 
 class StepContext extends AbstractExtensibleContext {
@@ -138,7 +136,7 @@ class StepContext extends AbstractExtensibleContext {
 
         stepNodes << new NodeBuilder().'javaposse.jobdsl.plugin.ExecuteDslScripts' {
             targets(context.externalScripts.join('\n'))
-            usingScriptText(!isNullOrEmpty(context.scriptText))
+            usingScriptText(context.scriptText as boolean)
             scriptText(context.scriptText ?: '')
             ignoreExisting(context.ignoreExisting)
             removedJobAction(context.removedJobAction)
@@ -484,10 +482,14 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
+        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
-        stepNodes << downstreamContext.createDownstreamNode(true)
+        stepNodes << new NodeBuilder().'hudson.plugins.parameterizedtrigger.TriggerBuilder' {
+          configs(downstreamContext.configs)
+        }
     }
 
     /**
@@ -700,6 +702,29 @@ class StepContext extends AbstractExtensibleContext {
         stepNodes << new NodeBuilder().'jenkins.plugins.nodejs.NodeJsCommandInterpreter' {
             command(commandScript)
             nodeJSInstallationName(installation)
+        }
+    }
+
+    /**
+     * @since 1.37
+     */
+    @RequiresPlugin(id = 'clang-scanbuild-plugin', minimumVersion = '1.6')
+    void clangScanBuild(@DslContext(ClangScanBuildContext) Closure closure) {
+        ClangScanBuildContext context = new ClangScanBuildContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Preconditions.checkNotNullOrEmpty(context.workspace, 'workspace must be specified')
+        Preconditions.checkNotNullOrEmpty(context.scheme, 'scheme must be specified')
+        Preconditions.checkNotNullOrEmpty(context.clangInstallationName, 'clangInstallationName must be specified')
+
+        stepNodes << new NodeBuilder().'jenkins.plugins.clangscanbuild.ClangScanBuildBuilder' {
+            targetSdk(context.targetSdk ?: '')
+            config(context.configuration ?: '')
+            clangInstallationName(context.clangInstallationName)
+            workspace(context.workspace)
+            scheme(context.scheme)
+            scanbuildargs(context.scanBuildArgs ?: '')
+            xcodebuildargs(context.xcodeBuildArgs ?: '')
         }
     }
 

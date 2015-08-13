@@ -9,7 +9,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
-import javaposse.jobdsl.dsl.helpers.common.DownstreamContext
+import javaposse.jobdsl.dsl.helpers.common.Threshold
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
 class TriggerContext extends AbstractExtensibleContext {
@@ -153,6 +153,9 @@ class TriggerContext extends AbstractExtensibleContext {
             if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
                 allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             }
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26.2'))) {
+                extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
+            }
         }
     }
 
@@ -251,8 +254,8 @@ class TriggerContext extends AbstractExtensibleContext {
     void upstream(String projects, String threshold = 'SUCCESS') {
         Preconditions.checkNotNullOrEmpty(projects, 'projects must be specified')
         Preconditions.checkArgument(
-                DownstreamContext.THRESHOLD_COLOR_MAP.containsKey(threshold),
-                "threshold must be one of ${DownstreamContext.THRESHOLD_COLOR_MAP.keySet().join(', ')}"
+                Threshold.THRESHOLD_COLOR_MAP.containsKey(threshold),
+                "threshold must be one of ${Threshold.THRESHOLD_COLOR_MAP.keySet().join(', ')}"
         )
 
         triggerNodes << new NodeBuilder().'jenkins.triggers.ReverseBuildTrigger' {
@@ -260,8 +263,8 @@ class TriggerContext extends AbstractExtensibleContext {
             upstreamProjects(projects)
             delegate.threshold {
                 name(threshold)
-                ordinal(DownstreamContext.THRESHOLD_ORDINAL_MAP[threshold])
-                color(DownstreamContext.THRESHOLD_COLOR_MAP[threshold])
+                ordinal(Threshold.THRESHOLD_ORDINAL_MAP[threshold])
+                color(Threshold.THRESHOLD_COLOR_MAP[threshold])
                 completeBuild(true)
             }
         }

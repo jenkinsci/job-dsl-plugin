@@ -1,6 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
@@ -16,6 +18,7 @@ class PullRequestBuilderContext extends AbstractContext {
     boolean autoCloseFailedPullRequests = false
     boolean allowMembersOfWhitelistedOrgsAsAdmin = false
     String commentFilePath
+    GitHubPullRequestBuilderExtensionContext extensionContext = new GitHubPullRequestBuilderExtensionContext()
 
     PullRequestBuilderContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -89,5 +92,13 @@ class PullRequestBuilderContext extends AbstractContext {
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
     void allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = true) {
         this.allowMembersOfWhitelistedOrgsAsAdmin = allowMembersOfWhitelistedOrgsAsAdmin
+    }
+
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26.2')
+    void extensions(@DslContext(GitHubPullRequestBuilderExtensionContext) Closure closure) {
+        ContextHelper.executeInContext(closure, extensionContext)
     }
 }

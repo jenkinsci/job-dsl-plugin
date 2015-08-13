@@ -372,6 +372,16 @@ abstract class Job extends Item {
     }
 
     /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'compress-buildlog', minimumVersion = '1.0')
+    void compressBuildLog() {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / 'properties' / 'org.jenkinsci.plugins.compressbuildlog.BuildLogCompressor'
+        }
+    }
+
+    /**
      * Configures the Notification Plugin.
      *
      * @since 1.26

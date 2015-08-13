@@ -16,7 +16,41 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
-* 1.36 (unreleased)
+* 1.38 (unreleased)
+ * Enhanced support for the
+   [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
+ * Enhanced support for the
+   [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+   ([JENKINS-29662](https://issues.jenkins-ci.org/browse/JENKINS-29662),
+   [JENKINS-29801](https://issues.jenkins-ci.org/browse/JENKINS-29801))
+ * Deprecated some overloaded DSL methods for the
+   [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin), see
+   [Migration](Migration#migrating-to-138)
+ * Passing parameters to jobs has been changed, see [Migration](Migration#migrating-to-138)
+ * Support for older versions of the
+   [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-138)
+* 1.37 (August 08 2015)
+ * Added support for the [Clang Scan Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin)
+   ([JENKINS-29505](https://issues.jenkins-ci.org/browse/JENKINS-29505))
+ * Enhanced support for the [Groovy Postbuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin)
+   ([JENKINS-29500](https://issues.jenkins-ci.org/browse/JENKINS-29500))
+ * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([JENKINS-29347](https://issues.jenkins-ci.org/browse/JENKINS-29347))
+ * Fixed problem with methods in build scripts
+   ([JENKINS-29862](https://issues.jenkins-ci.org/browse/JENKINS-29862))
+ * Support for older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-137)
+ * Support for older versions of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-137)
+ * Support for older versions of the [Groovy Postbuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-137)
+* 1.36 (August 06 2015)
+ * Added support for the [Compress Build Log Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Compress+Build+Log+Plugin)
+ * Added support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
+ * Enhanced support for the [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
+   ([JENKINS-29753](https://issues.jenkins-ci.org/browse/JENKINS-29753))
  * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
    ([JENKINS-29503](https://issues.jenkins-ci.org/browse/JENKINS-29503))
  * Added support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin)
@@ -35,10 +69,14 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    [JENKINS-29669](https://issues.jenkins-ci.org/browse/JENKINS-29669))
  * Improved error logging
    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))
+ * Fixed support for the [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+   ([JENKINS-24851](https://issues.jenkins-ci.org/browse/JENKINS-24851))
  * Support for the older versions of the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
    is deprecated, see [Migration](Migration#migrating-to-136)
+ * Support for arbitrary script names has been deprecated, see [Migration](Migration#migrating-to-136)
  * Some methods in `AbstractJobManagement` have been deprecated and the exception handling has changed, see
    [Migration](Migration#migrating-to-136)
+ * The `getCredentialsId` method in `JobManagement` has been deprecated, see [Migration](Migration#migrating-to-136)
  * Removed support for the `@Grab` and `@Grapes` annotations, see [[Migration|Migration#migrating-to-129]]
  * Removed anything that has been deprecated in 1.29, see [Migration](Migration#migrating-to-129)
 * 1.35 (July 01 2015)

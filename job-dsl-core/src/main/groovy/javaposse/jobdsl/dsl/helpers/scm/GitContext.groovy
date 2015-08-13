@@ -67,17 +67,30 @@ class GitContext extends AbstractContext {
     }
 
     void mergeOptions(String remote = null, String branch) {
+        mergeOptions {
+            delegate.remote(remote)
+            delegate.branch(branch)
+        }
+    }
+
+    /**
+     * @since 1.37
+     */
+    void mergeOptions(@DslContext(GitMergeOptionsContext) Closure gitMergeOptionsClosure) {
+        GitMergeOptionsContext gitMergeOptionsContext = new GitMergeOptionsContext(jobManagement)
+        executeInContext(gitMergeOptionsClosure, gitMergeOptionsContext)
+
         if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
             mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
-                mergeRemote(remote ?: '')
-                mergeTarget(branch)
+                mergeRemote(gitMergeOptionsContext.remote ?: '')
+                mergeTarget(gitMergeOptionsContext.branch)
             }
         } else {
             extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.PreBuildMerge' {
                 options {
-                    mergeRemote(remote ?: '')
-                    mergeTarget(branch)
-                    mergeStrategy('default')
+                    mergeRemote(gitMergeOptionsContext.remote ?: '')
+                    mergeTarget(gitMergeOptionsContext.branch)
+                    mergeStrategy(gitMergeOptionsContext.strategy)
                 }
             }
         }

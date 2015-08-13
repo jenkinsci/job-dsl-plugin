@@ -882,4 +882,93 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes['mySecondBooleanParameter'].defaultValue.text() == 'false'
         context.buildParameterNodes['mySecondBooleanParameter'].description.text() == ''
     }
+
+    def 'active choice param with no options'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 6
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+    }
+
+    def 'active choice param with all options and groovy script'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            description('Active choice param test/groovy script')
+            filterable()
+            choiceType('MULTI_SELECT')
+            groovyScript {
+                script('x1')
+                fallbackScript('x2')
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == 'Active choice param test/groovy script'
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_MULTI_SELECT'
+            filterable.text() == 'true'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                script.text() == 'x1'
+                fallbackScript.text() == 'x2'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+    }
+
+    def 'active choice param with all options and scriptler script'() {
+        when:
+        context.activeChoiceParam('activeChoiceScriptlerParam') {
+            description('Active choice param test/scriptler script')
+            filterable()
+            choiceType('MULTI_SELECT')
+            scriptlerScript('scriptler-1.groovy') {
+                parameter('param1', 'x1')
+                parameter('param2', 'x2')
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceScriptlerParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceScriptlerParam'
+            description.text() == 'Active choice param test/scriptler script'
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_MULTI_SELECT'
+            filterable.text() == 'true'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.ScriptlerScript'
+                scriptlerScriptId.text() == 'scriptler-1.groovy'
+                children().size() == 2
+                with(parameters[0]) {
+                  children().size() == 2
+                  entry[0].string[0].text() == 'param1'
+                  entry[0].string[1].text() == 'x1'
+                  entry[1].string[0].text() == 'param2'
+                  entry[1].string[1].text() == 'x2'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+    }
 }

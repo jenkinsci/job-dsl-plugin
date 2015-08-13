@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.collect.Iterables
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -86,7 +85,7 @@ job {
         jp != null
         def jobs = jp.referencedJobs
         jobs.size() == 2
-        def job = Iterables.get(jobs, 0)
+        def job = jobs.first()
         // If this one fails periodically, then it is because the referenced jobs are
         // Not in definition order, but rather in hash order. Hence, predictability.
         job.name == 'project-a'
@@ -128,7 +127,7 @@ job {
         jp != null
         def jobs = jp.referencedJobs
         jobs.size() == 1
-        def job = Iterables.get(jobs, 0)
+        def job = jobs.first()
         job.name == 'test'
     }
 
@@ -269,6 +268,32 @@ folder {
         jobs.any { it.jobName == 'folder-b' }
     }
 
+    def 'script name which is not a valid class name'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('test-script.dsl', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        noExceptionThrown()
+        baos.toString() =~ /support for arbitrary names is deprecated/
+        baos.toString() =~ /test-script\.dsl/
+    }
+
+    def 'script with method'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(
+                null, DslScriptLoaderSpec.getResource('/test-script-with-method.dsl').text, resourcesDir, false
+        )
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        noExceptionThrown()
+    }
+
     def 'generate config files'() {
         setup:
         ScriptRequest request = new ScriptRequest('configfiles.dsl', null, resourcesDir, false)
@@ -332,7 +357,7 @@ folder {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message =~ /\(DSL script, line 1\) .+/
+        e.message =~ /\(script, line 1\) .+/
     }
 
     def 'DslScriptException on MissingPropertyException'() {
@@ -344,7 +369,7 @@ folder {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message =~ /\(DSL script, line 1\) .+/
+        e.message =~ /\(script, line 1\) .+/
     }
 
     def 'DslScriptException is passed through'() {
@@ -362,6 +387,6 @@ job('foo') {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message == '(DSL script, line 4) Can only use "using" once'
+        e.message == '(script, line 4) Can only use "using" once'
     }
 }

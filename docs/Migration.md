@@ -1,10 +1,210 @@
+## Migrating to 1.38
+
+### Parameterized Trigger
+
+Support for versions older than 2.25 of the
+[Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+Some overloaded DSL methods for the
+[Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) have been
+replaced by new methods in the nested context. The overloaded methods have been [[deprecated|Deprecation-Policy]] and
+will be removed.
+
+DSL prior to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2', 'ALWAYS', false,
+                    [buildStepFailure: 'FAILURE',
+                     failure         : 'FAILURE',
+                     unstable        : 'UNSTABLE'])
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true)
+        }
+    }
+}
+```
+
+DSL since to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure('FAILURE')
+                    failure('FAILURE')
+                    unstable('UNSTABLE']
+                }
+            }
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                condition('UNSTABLE_OR_BETTER')
+                triggerWithNoParameters()
+            }
+        }
+    }
+}
+```
+
+### Parameter Passing
+
+The way how parameters are passed to downstream jobs or multi-job phases has changed. The existing methods have been
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+DSL prior to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                predefinedProp('key1', 'value1')
+                predefinedProps('key2=value2\nkey3=value3')
+            }
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                currentBuild()
+                sameNode(true)
+            }
+        }
+    }
+}
+
+multiJob('example-3') {
+    steps {
+        phase('test') {
+             job('other', false, true) {
+                boolParam('cParam', true)
+                fileParam('my.properties')
+                sameNode()
+                matrixParam('it.name=="hello"')
+                subversionRevision()
+                gitRevision()
+                prop('prop1', 'value1')
+                nodeLabel('lParam', 'my_nodes')
+            }
+        }
+   }
+}
+```
+
+DSL since to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                parameters {
+                    predefinedProp('key1', 'value1')
+                    predefinedProps([key2: 'value2', key3: 'value3'])
+                }
+            }
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                parameters {
+                    currentBuild()
+                    sameNode()
+                }
+            }
+        }
+    }
+}
+
+multiJob('example-3') {
+    steps {
+        phase('test') {
+            job('other', false, true) {
+                parameters {
+                    booleanParam('cParam', true)
+                    propertiesFile('my.properties')
+                    sameNode()
+                    matrixSubset('it.name=="hello"')
+                    subversionRevision()
+                    gitRevision()
+                    predefinedProp('prop1', 'value1')
+                    nodeLabel('lParam', 'my_nodes')
+                }
+            }
+        }
+   }
+}
+```
+
+## Migrating to 1.37
+
+### Multijob
+
+Support for versions older than 1.16 of the
+[Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin) is [[deprecated|Deprecation-Policy]] and
+will be removed.
+
+### Git
+
+Support for versions older than 2.2.6 of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### Groovy Postbuild
+
+Support for versions older than 2.2 of the
+[Groovy Postbuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.36
+
+### Script Names
+
+Groovy currently does not allow to use arbitrary names for scripts, see
+[GROOVY-4020](https://issues.apache.org/jira/browse/GROOVY-4020). In the Job DSL plugin, it's currently only working by
+accident, so usage of arbitrary names is [[deprecated|Deprecation-Policy]] and will be removed.
+
+In the future only names which contain letters, digits, underscores or dollar signs are allowed, but the name must not
+start with a digit. Basically these are the rules for Java identifiers, see
+[this](http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#isJavaIdentifierStart%28char%29) and
+[this](http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#isJavaIdentifierPart%28char%29)) for details.
+The file name extension can be anything and is ignored.  
 
 ### Build Blocker
 
 Support for versions older than 1.7.1 of the
 [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
+
+### JobManagement
+
+The following method in the `JobManagement` interface has been [[deprecated|Deprecation-Policy]] and will be removed
+along with all implementations:
+
+```groovy
+String getCredentialsId(String credentialsDescription)
+```
+
+Finding credentials by description has been deprecated some time ago, so this method is no longer needed.
 
 ### AbstractJobManagement
 

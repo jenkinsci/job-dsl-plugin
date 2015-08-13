@@ -19,6 +19,7 @@ freeStyleJob(String name) { // since 1.30
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     checkoutRetryCount(int times = 3)
+    compressBuildLog() // since 1.36
     concurrentBuild(boolean allowConcurrentBuild = true) // since 1.21
     customWorkspace(String workspacePath)
     deliveryPipelineConfiguration(String stageName, String taskName = null) // since 1.26
@@ -64,6 +65,7 @@ freeStyleJob(String name) { // since 1.30
                     String description = null)
         textParam(String parameterName, String defaultValue = null,
                   String description = null)
+        activeChoiceParam(String paramName, Closure closure) // since 1.36
     }
     scm {
         baseClearCase(Closure closure) // since 1.24
@@ -142,6 +144,7 @@ freeStyleJob(String name) { // since 1.30
             Closure antClosure = null)
         batchFile(String command)
         buildDescription(String regexp, String description = null) // since 1.31
+        clangScanBuild(Closure clangScanBuildClosure) // since 1.37
         conditionalSteps(Closure conditionalClosure)
         copyArtifacts(String jobName, String includeGlob,
                       Closure buildSelectorClosure)  // deprecated since 1.33
@@ -241,7 +244,9 @@ freeStyleJob(String name) { // since 1.30
         flowdock(String[] tokens, flowdockClosure = null) // since 1.23
         git(Closure gitPublisherClosure) // since 1.22
         githubCommitNotifier() // since 1.21
-        groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) // since 1.19
+        groovyPostBuild(String script,
+                        Behavior behavior = Behavior.DoNothing) // since 1.19
+        groovyPostBuild(Closure groovyPostbuildClosure) // since 1.37
         hipChat(Closure hipChatClosure = null) // since 1.33
         irc(Closure ircClosure)
         jacocoCodeCoverage(Closure jacocoClosure)
@@ -508,6 +513,25 @@ blockOnDownstreamProjects()
 ```
 
 Blocks the build of a project when one ore more upstream (blockOnUpstreamProjects()) or a downstream projects (blockOnDownstreamProjects()) are running. (Available since 1.16)
+
+### Compress Build Log
+
+```groovy
+job {
+    compressBuildLog()
+}
+```
+
+Compress the log file after build completion. Requires the
+[Compress Build Log](https://wiki.jenkins-ci.org/display/JENKINS/Compress+Build+Log+Plugin).
+
+```groovy
+job('example') {
+    compressBuildLog()
+}
+```
+
+(since 1.36)
 
 ### Job Weight
 
@@ -1117,6 +1141,11 @@ job {
             branch(String name) // calls are accumulated, defaults to '**'
             branches(String... names)
             mergeOptions(String remote = null, String branch)
+            mergeOptions { // since 1.37
+                remote(String remote)
+                branch(String branch)
+                strategy(String mergeStrategy)
+            }
             createTag(boolean createTag = true) // defaults to false
             clean(boolean clean = true) // defaults to false
             wipeOutWorkspace(boolean wipeOut = true) // defaults to false
@@ -1171,6 +1200,8 @@ authentication. The argument for the `credentials` method can either be the ID o
 Note that finding credentials by description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
 When Git Plugin version 2.0 or later is used, `mergeOptions` can be called multiple times to merge more than one branch.
+Valid values for `mergeStrategy` are `'default'` (default), `'resolve'`, `'recursive'`, `'octopus'`, `'ours'`, and
+`'subtree'`.
 
 ```groovy
 // checkout repo1 to a sub directory and clean the workspace after checkout
@@ -1602,6 +1633,14 @@ job {
             autoCloseFailedPullRequests(boolean value = true) // defaults to false
             commentFilePath(String commentFilePath)           // since 1.31
             allowMembersOfWhitelistedOrgsAsAdmin(boolean value = true) // since 1.35
+            extensions { // since 1.38
+                commitStatus {
+                    context(String context)
+                    triggeredStatus(String triggeredStatus)
+                    startedStatus(String startedStatus)
+                    completedStatus(String buildResult, String message)
+                }
+            }
         }
     }
 }
@@ -1611,6 +1650,9 @@ Builds pull requests from GitHub and will report the results directly to the pul
 [GitHub pull request builder plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin).
 
 The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for details.
+
+`completedStatus` can be called multiple times to set messages for different build results. Valid values for
+`buildResult` are `'SUCCESS'`, `'FAILURE'`, and `'ERROR'`.
 
 ```groovy
 job('example') {
@@ -1635,6 +1677,14 @@ job('example') {
             permitAll()
             autoCloseFailedPullRequests()
             allowMembersOfWhitelistedOrgsAsAdmin()
+            extensions {
+                commitStatus {
+                    context('deploy to staging site')
+                    startedStatus('deploying to staging site...')
+                    completedStatus('SUCCESS', 'All is well')
+                    completedStatus('FAILURE', 'Something went wrong. Investigate!')
+                }
+            }
         }
     }
 }
@@ -3286,24 +3336,36 @@ job('example') {
 ```
 multiJob {
     steps {
-        phase(String name, String continuationConditionArg = 'SUCCESSFUL', Closure phaseClosure = null) {
+        phase(String name, String continuationConditionArg = 'SUCCESSFUL') {
             phaseName(String phaseName)
             continuationCondition(String continuationCondition)
-            job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true, Closure phaseJobClosure = null) {
+            job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true) {
                 currentJobParameters(boolean currentJobParameters = true)
                 exposedScm(boolean exposedScm = true)
-                boolParam(String paramName, boolean defaultValue = false)
-                fileParam(String propertyFile, boolean failTriggerOnMissing = false)
-                sameNode(boolean nodeParam = true)
-                matrixParam(String filter)
-                subversionRevision(boolean includeUpstreamParameters = false)
-                gitRevision(boolean combineQueuedCommits = false)
-                prop(Object key, Object value)
-                props(Map<String, String> map)
+                boolParam(String paramName, boolean defaultValue = false) // deprecated
+                fileParam(String propertyFile, boolean failTriggerOnMissing = false) // deprecated
+                sameNode(boolean nodeParam = true) // deprecated
+                matrixParam(String filter) // deprecated
+                subversionRevision(boolean includeUpstreamParameters = false) // deprecated
+                gitRevision(boolean combineQueuedCommits = false) // deprecated
+                prop(Object key, Object value) // deprecated
+                props(Map<String, String> map) // deprecated
                 disableJob(boolean disableJob = true) // since 1.25
-                abortAllJob(boolean abortAllJob = true) //since 1.36
+                abortAllJobs(boolean abortAllJobs = true) //since 1.37
                 killPhaseCondition(String killPhaseCondition) // since 1.25
-                nodeLabel(String paramName, String nodeLabel) // since 1.26
+                nodeLabel(String paramName, String nodeLabel) // since 1.26, deprecated
+                parameters { // since 1.38
+                    booleanParam(String name, boolean defaultValue = false)
+                    sameNode()
+                    currentBuild()
+                    nodeLabel(String paramName, String nodeLabel)
+                    propertiesFile(String file, boolean failOnMissing = false)
+                    gitRevision(boolean combineQueuedCommits = false)
+                    predefinedProp(String key, String value)
+                    predefinedProps(Map<String, String> predefinedPropsMap)
+                    matrixSubset(String groovyFilter)
+                    subversionRevision(boolean includeUpstreamParameters = false)
+                }
                 configure(Closure configClosure) // since 1.30
             }
         }
@@ -3327,7 +3389,9 @@ multiJob('example') {
         phase() {
             phaseName 'Second'
             job('JobZ') {
-                fileParam('my1.properties')
+                parameters {
+                    propertiesFile('my1.properties')
+                }
             }
         }
         phase('Third') {
@@ -3337,14 +3401,16 @@ multiJob('example') {
         }
         phase('Fourth') {
             job('JobD', false, true) {
-                boolParam('cParam', true)
-                fileParam('my.properties')
-                sameNode()
-                matrixParam('it.name=="hello"')
-                subversionRevision()
-                gitRevision()
-                prop('prop1', 'value1')
-                nodeLabel('lParam', 'my_nodes')
+                parameters {
+                    booleanParam('cParam', true)
+                    propertiesFile('my.properties')
+                    sameNode()
+                    matrixSubset('it.name=="hello"')
+                    subversionRevision()
+                    gitRevision()
+                    predefinedProp('prop1', 'value1')
+                    nodeLabel('lParam', 'my_nodes')
+                }
                 configure { phaseJobConfig ->
                   phaseJobConfig / enableCondition << 'true'
                   phaseJobConfig / condition << '${RUN_JOB} == "true"'
@@ -3523,30 +3589,78 @@ job {
 job {
     steps {
         downstreamParameterized { // since 1.20
-            trigger(String projects, String condition,
-                    boolean triggerWithNoParameters,
-                    Map<String, String> blockingThresholds) {
-                currentBuild()
-                propertiesFile(String file, boolean failOnMissing = false)
-                gitRevision(boolean combineQueuedCommits = false)
-                predefinedProp(String key, String value)
-                predefinedProps(Map<String, String> predefinedPropsMap)
-                predefinedProps(String predefinedProps) // newline separated
-                matrixSubset(String groovyFilter)
-                subversionRevision(boolean includeUpstreamParameters = false)
-                sameNode()
-                nodeLabel(String paramName, String nodeLabel) // since 1.26
+            trigger(String projects) {
+                currentBuild()                                                // deprecated
+                propertiesFile(String file, boolean failOnMissing = false)    // deprecated
+                gitRevision(boolean combineQueuedCommits = false)             // deprecated
+                predefinedProp(String key, String value)                      // deprecated
+                predefinedProps(Map<String, String> predefinedPropsMap)       // deprecated
+                predefinedProps(String predefinedProps)                       // deprecated
+                matrixSubset(String groovyFilter)                             // deprecated
+                subversionRevision(boolean includeUpstreamParameters = false) // deprecated
+                sameNode()                                                    // deprecated
+                nodeLabel(String paramName, String nodeLabel)     // since 1.26, deprecated
+                block { // since 1.38
+                    buildStepFailure(String threshold)
+                    failure(String threshold)
+                    unstable(String threshold)
+                }
+                parameters { // since 1.38
+                    booleanParam(String name, boolean defaultValue = false)
+                    sameNode()
+                    currentBuild()
+                    nodeLabel(String paramName, String nodeLabel)
+                    propertiesFile(String file, boolean failOnMissing = false)
+                    gitRevision(boolean combineQueuedCommits = false)
+                    predefinedProp(String key, String value)
+                    predefinedProps(Map<String, String> predefinedPropsMap)
+                    matrixSubset(String groovyFilter)
+                    subversionRevision(boolean includeUpstreamParameters = false)
+                }
+                parameterFactories { // since 1.38
+                    forMatchingFiles(String filePattern,
+                                     String parameterName,
+                                     String noFilesFoundAction = 'SKIP')
+                }
             }
-            trigger(String projects, Closure downstreamTriggerClosure = null)
             trigger(String projects, String condition,
-                    Closure downstreamTriggerClosure = null)
+                    Closure downstreamTriggerClosure = null)    // deprecated
             trigger(String projects, String condition,
                     boolean triggerWithNoParameters,
-                    Closure downstreamTriggerClosure = null)
+                    Closure downstreamTriggerClosure = null)    // deprecated
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Map<String, String> blockingThresholds,
+                    Closure downstreamTriggerClosure = null)    // deprecated
         }
     }
     publishers {
-        downstreamParameterized(Closure downstreamClosure)
+        downstreamParameterized {
+            trigger(String projects) {
+                currentBuild()                                                // deprecated
+                propertiesFile(String file, boolean failOnMissing = false)    // deprecated
+                gitRevision(boolean combineQueuedCommits = false)             // deprecated
+                predefinedProp(String key, String value)                      // deprecated
+                predefinedProps(Map<String, String> predefinedPropsMap)       // deprecated
+                predefinedProps(String predefinedProps)                       // deprecated
+                matrixSubset(String groovyFilter)                             // deprecated
+                subversionRevision(boolean includeUpstreamParameters = false) // deprecated
+                sameNode()                                                    // deprecated
+                nodeLabel(String paramName, String nodeLabel)     // since 1.26, deprecated
+                condition(String condition) // since 1.38
+                triggerWithNoParameters(boolean triggerWithNoParameters = true) // since 1.38
+                parameters(Closure parameterClosure) // since 1.38, see above
+            }
+            trigger(String projects, String condition,
+                    Closure downstreamTriggerClosure = null)    // deprecated
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Closure downstreamTriggerClosure = null)    // deprecated
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Map<String, String> blockingThresholds,
+                    Closure downstreamTriggerClosure = null)    // deprecated
+        }
     }
 }
 ```
@@ -3562,11 +3676,14 @@ The `condition` argument must be one of these values: `'SUCCESS'` (default), `'U
 `'UNSTABLE_OR_WORSE'`, `'FAILED'` or `'ALWAYS'`. The argument is ignored when configuring a build step, but should be
 set to `'ALWAYS'`.
 
-The `predefinedProp` and `predefinedProps` methods are used to accumulate properties, meaning that they can be called
-multiple times to build a superset of properties.
+The `booleanParam`, `predefinedProp` and `predefinedProps` methods can be used to accumulate properties, meaning that
+they can be called multiple times to build a superset of properties.
 
 The `blockingThresholds` argument can only be used when configuring a build step. Valid keys for the map are
-`buildStepFailure`, `failure` and `unstable`. The values can be set to either `'SUCCESS'`, `'UNSTABLE'`  or `'FAILURE'`.
+`buildStepFailure`, `failure` and `unstable`. The values can be set to either `'never'` (default), `'SUCCESS'`,
+`'UNSTABLE'` or `'FAILURE'`.
+
+Valid values for `noFilesFoundAction` are `'SKIP'`, `'NOPARMS'` and `'FAIL'`.
 
 The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
@@ -3575,16 +3692,21 @@ The `nodeLabel` parameter type requires the
 job('example-1') {
     steps {
         downstreamParameterized {
-            trigger('Project1, Project2', 'ALWAYS', true,
-                    [buildStepFailure: 'FAILURE',
-                     failure         : 'FAILURE',
-                     unstable        : 'UNSTABLE']) {
-                predefinedProp('key1', 'value1')
-                predefinedProps([key2: 'value2', key3: 'value3'])
-                predefinedProps('key4=value4\nkey5=value5')
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure('FAILURE')
+                    failure ('FAILURE')
+                    unstable('UNSTABLE')
+                }
+                parameters {
+                    predefinedProp('key1', 'value1')
+                    predefinedProps([key2: 'value2', key3: 'value3'])
+                }
             }
             trigger('Project2') {
-                currentBuild()
+                parameters {
+                    currentBuild()
+                }
             }
         }
     }
@@ -3593,13 +3715,58 @@ job('example-1') {
 job('example-2') {
     publishers {
         downstreamParameterized {
-            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER') {
-                currentBuild()
+            trigger('Project1, Project2') {
+                condition('UNSTABLE_OR_BETTER')
+                parameters {
+                    currentBuild()
+                }
             }
         }
     }
 }
 ```
+
+### Clang Scan Build
+
+```groovy
+job {
+    steps {
+        clangScanBuild {
+            workspace(String workspace)
+            scheme(String scheme)
+            clangInstallationName(String name)
+            targetSdk(String targetSdk)
+            configuration(String configuration)
+            scanBuildArgs(String args)
+            xcodeBuildArgs(String args)
+        }
+    }
+}
+```
+
+Supports running a Clang scan-build build step. Requires the
+[Clang Scan-Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin).
+
+The `workspace`, `scheme` and `clangInstallationName` options are mandatory. The example below shows the default values
+for `targetSdk`, `configuration` , `scanBuildArgs` and `xcodeBuildArgs`.
+
+```groovy
+job('example') {
+    steps {
+        clangScanBuild {
+            workspace('Mobile.xcworkspace')
+            scheme('mobile.de')
+            clangInstallationName('Clang Static Code Analyzer')
+            targetSdk('iphonesimulator')
+            configuration('Debug')
+            scanBuildArgs('--use-analyzer Xcode')
+            xcodeBuildArgs('-derivedDataPath $WORKSPACE/build')
+        }
+    }
+}
+```
+
+(since 1.37)
 
 ### Conditional Build Steps
 
@@ -4961,38 +5128,38 @@ publishers {
 
 (Since 1.19)
 
-### [Groovy Postbuild](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin)
-
-Executes Groovy scripts after a build.
+### Groovy Postbuild
 
 ```groovy
-groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing)
+job {
+    publishers {
+        groovyPostBuild(String script,
+                        Behavior behavior = Behavior.DoNothing)
+        groovyPostBuild { // since 1.37
+            script(String script)
+            behavior(Behavior behavior)
+            sandbox(boolean sandbox = true)
+        }
+    }
+}
 ```
 
-Arguments:
-* `script` The Groovy script to execute after the build. See [the plugin's page](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin) for details on what can be done.
-* `behavior` optional. If the script fails, allows you to set mark the build as failed, unstable, or do nothing.
+Executes Groovy scripts after a build. Requires the
+[Groovy Postbuild](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin).
 
-The behavior argument uses an enum, which currently has three values: DoNothing, MarkUnstable, and MarkFailed.
+The `behavior` argument uses an enum, which currently has three values: `Behavior.DoNothing` (default),
+`Behavior.MarkUnstable`, and `Behavior.MarkFailed`.
 
-Examples:
-
-This example will run a groovy script that prints hello, world and if that fails, it won't affect the build's status:
 ```groovy
-    groovyPostBuild('println "hello, world"')
+// run a groovy script and if that fails will mark the build as failed
+job('example') {
+    publishers {
+        groovyPostBuild('println "hello, world"', Behavior.MarkFailed)
+    }
+}
 ```
 
-This example will run a groovy script, and if that fails will mark the build as failed:
-```groovy
-    groovyPostBuild('// some groovy script', Behavior.MarkFailed)
-```
-
-This example will run a groovy script, and if that fails will mark the build as unstable:
-```groovy
-    groovyPostBuild('// some groovy script', Behavior.MarkUnstable)
-```
-
-(Since 1.19)
+(since 1.19)
 
 ### Archive Javadoc
 
@@ -5128,14 +5295,16 @@ job {
     publishers {
         buildPipelineTrigger(String downstreamProjectNames) {
             parameters { // since 1.23
+                booleanParam(String name, boolean defaultValue = false) // since 1.38
+                sameNode()
                 currentBuild()
-                propertiesFile(String propFile)
+                propertiesFile(String file, boolean failOnMissing = false)
                 gitRevision(boolean combineQueuedCommits = false)
                 predefinedProp(String key, String value)
                 predefinedProps(Map<String, String> predefinedPropsMap)
-                predefinedProps(String predefinedProps)
+                predefinedProps(String predefinedProps) // deprecated
                 matrixSubset(String groovyFilter)
-                subversionRevision()
+                subversionRevision(boolean includeUpstreamParameters = false)
                 nodeLabel(String paramName, String nodeLabel) // since 1.26
             }
         }
@@ -5518,39 +5687,40 @@ job {
                 deleteOutputFiles(boolean value = true)     // defaults to true
                 stopProcessingIfError(boolean value = true) // defaults to true
             }
-            boostTest { ... }                               // see aUnit closure above
-            cTest { ... }                                   // see aUnit closure above
-            check { ... }                                   // see aUnit closure above
-            cppTest { ... }                                 // see aUnit closure above
-            cppUnit { ... }                                 // see aUnit closure above
-            embUnit { ... }                                 // see aUnit closure above
-            fpcUnit { ... }                                 // see aUnit closure above
-            googleTest { ... }                              // see aUnit closure above
-            jUnit { ... }                                   // see aUnit closure above
-            msTest { ... }                                  // see aUnit closure above
-            mbUnit { ... }                                  // see aUnit closure above
-            nUnit { ... }                                   // see aUnit closure above
-            phpUnit { ... }                                 // see aUnit closure above
-            qTestLib { ... }                                // see aUnit closure above
-            valgrind { ... }                                // see aUnit closure above
+            boostTest { ... }          // see aUnit closure above
+            cTest { ... }              // see aUnit closure above
+            check { ... }              // see aUnit closure above
+            cppTest { ... }            // see aUnit closure above
+            cppUnit { ... }            // see aUnit closure above
+            embUnit { ... }            // see aUnit closure above
+            fpcUnit { ... }            // see aUnit closure above
+            googleTest { ... }         // see aUnit closure above
+            gtester { ... }            // see aUnit closure above, since 1.36
+            jUnit { ... }              // see aUnit closure above
+            msTest { ... }             // see aUnit closure above
+            mbUnit { ... }             // see aUnit closure above
+            nUnit { ... }              // see aUnit closure above
+            phpUnit { ... }            // see aUnit closure above
+            qTestLib { ... }           // see aUnit closure above
+            valgrind { ... }           // see aUnit closure above
             customTool {
                 // all options from the aUnit closure above, plus
-                stylesheet(String url)                      // empty by default
+                stylesheet(String url)        // empty by default
             }
             failedThresholds {
-                unstable(int threshold)                     // defaults to 0
-                unstableNew(int threshold)                  // defaults to 0
-                failure(int threshold)                      // defaults to 0
-                failureNew(int threshold)                   // defaults to 0
+                unstable(int threshold)       // defaults to 0
+                unstableNew(int threshold)    // defaults to 0
+                failure(int threshold)        // defaults to 0
+                failureNew(int threshold)     // defaults to 0
             }
             skippedThresholds {
-                unstable(int threshold)                     // defaults to 0
-                unstableNew(int threshold)                  // defaults to 0
-                failure(int threshold)                      // defaults to 0
-                failureNew(int threshold)                   // defaults to 0
+                unstable(int threshold)       // defaults to 0
+                unstableNew(int threshold)    // defaults to 0
+                failure(int threshold)        // defaults to 0
+                failureNew(int threshold)     // defaults to 0
             }
-            thresholdMode(ThresholdMode mode)               // defaults to ThresholdMode.NUMBER
-            timeMargin(int margin)                          // defaults to 3000
+            thresholdMode(ThresholdMode mode) // defaults to ThresholdMode.NUMBER
+            timeMargin(int margin)            // defaults to 3000
         }
     }
 }
@@ -5935,6 +6105,64 @@ job('example-2') {
 ```
 
 (since 1.26)
+
+### Active Choice Parameter
+
+```groovy
+job {
+    parameters {
+        activeChoiceParam(String paramName) {
+            description(String description)
+            filterable(boolean filterable = true)
+            choiceType(String choiceType)
+            groovyScript {
+                script(String script)
+                fallbackScript(String fallbackScript)
+            }
+            scriptlerScript(String scriptId) {
+                parameter(String name, String value)
+            }
+        }
+    }
+}
+```
+
+Defines a Active Choice parameter with groovy script as source of parameter options. Requires the
+[Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin).
+
+Valid values for `choiceType` are `'SINGLE_SELECT'` (default), `'MULTI_SELECT'`, `'CHECKBOX'` and `'RADIO'`.
+
+```groovy
+job('example-1') {
+    parameters {
+        activeChoiceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            filterable()
+            choiceType('SINGLE_SELECT')
+            groovyScript {
+                script('["choice1", "choice2"]')
+                fallbackScript('"fallback choice"')
+            }
+        }
+    }
+}
+
+job('example-2') {
+    parameters {
+        activeChoiceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            filterable()
+            choiceType('SINGLE_SELECT')
+            scriptlerScript('scriptler-script1.groovy') {
+              parameter('param1', 'value1')
+              parameter('param2', 'value2')
+            }
+        }
+    }
+}
+```
+
+(since 1.36)
 
 ### Label Parameter
 

@@ -59,15 +59,10 @@ class MultiJobStepContext extends StepContext {
                             disableJob jobInPhase.disableJob
                             killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
                         }
-
                         if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.13'))) {
-                            abortAllJob jobInPhase.abortAllJob
+                            abortAllJob jobInPhase.abortAllJobs
                         }
-                        if (jobInPhase.hasConfig()) {
-                            configs(jobInPhase.configAsNode().children())
-                        } else {
-                            configs('class': 'java.util.Collections$EmptyList')
-                        }
+                        configs(jobInPhase.paramTrigger.configs ?: [class: 'java.util.Collections$EmptyList'])
                     }
 
                     if (jobInPhase.configureClosure) {

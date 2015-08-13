@@ -1,7 +1,6 @@
 package javaposse.jobdsl.plugin
 
 import com.cloudbees.hudson.plugins.folder.Folder
-import com.google.common.collect.Lists
 import hudson.FilePath
 import hudson.maven.MavenModuleSet
 import hudson.model.AbstractItem
@@ -45,7 +44,7 @@ class ExecuteDslScriptsSpec extends Specification {
     @WithoutJenkins
     def 'getProjectActions'() {
         when:
-        List<? extends Action> actions = Lists.newArrayList(executeDslScripts.getProjectActions(project))
+        List<? extends Action> actions = new ArrayList<? extends Action>(executeDslScripts.getProjectActions(project))
 
         then:
         actions != null

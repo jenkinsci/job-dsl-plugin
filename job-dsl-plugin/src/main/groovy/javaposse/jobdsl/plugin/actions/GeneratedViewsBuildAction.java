@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin.actions;
 
-import com.google.common.collect.Sets;
 import hudson.model.ItemGroup;
 import hudson.model.View;
 import hudson.model.ViewGroup;
@@ -9,6 +8,7 @@ import javaposse.jobdsl.plugin.LookupStrategy;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class GeneratedViewsBuildAction extends GeneratedObjectsBuildRunAction<GeneratedView> {
@@ -27,7 +27,7 @@ public class GeneratedViewsBuildAction extends GeneratedObjectsBuildRunAction<Ge
     }
 
     public Set<View> getViews() {
-        Set<View> allGeneratedViews = Sets.newLinkedHashSet();
+        Set<View> allGeneratedViews = new LinkedHashSet<View>();
         for (GeneratedView generatedView : getModifiedObjects()) {
             ItemGroup itemGroup = getLookupStrategy().getParent(owner.getProject(), generatedView.getName());
             if (itemGroup instanceof ViewGroup) {

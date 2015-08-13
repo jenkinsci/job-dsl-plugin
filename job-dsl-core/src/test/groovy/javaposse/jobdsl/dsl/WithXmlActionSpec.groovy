@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl
 
-import com.google.common.base.Preconditions
 import spock.lang.Specification
 
 import java.util.logging.Handler
 import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
+
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertTrue
 
 /**
  * Work through the additional functionality we're offer over node
@@ -54,8 +56,8 @@ class WithXmlActionSpec extends Specification {
         when:
         def builders = 'build'
         execute { project ->
-            Preconditions.checkNotNull(project)
-            Preconditions.checkArgument(project instanceof Node)
+            assertNotNull(project)
+            assertTrue(project instanceof Node)
 
             project / builders / builder
         }

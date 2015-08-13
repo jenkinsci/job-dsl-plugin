@@ -1,15 +1,21 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class ArchiveXUnitContext implements Context {
+class ArchiveXUnitContext extends AbstractContext {
     ArchiveXUnitThresholdContext failedThresholdsContext = new ArchiveXUnitThresholdContext()
     ArchiveXUnitThresholdContext skippedThresholdsContext = new ArchiveXUnitThresholdContext()
     ThresholdMode thresholdMode = ThresholdMode.NUMBER
     int timeMargin = 3000
     List<ArchiveXUnitResultFileContext> resultFiles = []
+
+    ArchiveXUnitContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     void failedThresholds(@DslContext(ArchiveXUnitThresholdContext) Closure thresholdsClosure) {
         ContextHelper.executeInContext(thresholdsClosure, failedThresholdsContext)
@@ -61,6 +67,14 @@ class ArchiveXUnitContext implements Context {
 
     void googleTest(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('GoogleTestType', resultFileClosure)
+    }
+
+    /**
+     * @since 1.36
+     */
+    @RequiresPlugin(id = 'xunit', minimumVersion = '1.95')
+    void gtester(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
+        addResultFile('GTesterJunitHudsonTestType', resultFileClosure)
     }
 
     void jUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {

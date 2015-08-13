@@ -1,13 +1,11 @@
 package javaposse.jobdsl.plugin.actions;
 
-import com.google.common.collect.Sets;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
-
-import static com.google.common.collect.Sets.newLinkedHashSet;
 
 public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildAction<T>> implements Action {
     protected final AbstractProject<?, ?> project;
@@ -37,15 +35,15 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
         for (AbstractBuild<?, ?> b = project.getLastBuild(); b != null; b = b.getPreviousBuild()) {
             B action = b.getAction(buildActionClass);
             if (action != null && action.getModifiedObjects() != null) {
-                return newLinkedHashSet(action.getModifiedObjects());
+                return new LinkedHashSet<T>(action.getModifiedObjects());
             }
         }
-        return newLinkedHashSet();
+        return new LinkedHashSet<T>();
     }
 
     @SuppressWarnings("unused") // used by some Jelly views
     public Set<T> findAllGeneratedObjects() {
-        Set<T> result = Sets.newLinkedHashSet();
+        Set<T> result = new LinkedHashSet<T>();
         for (AbstractBuild build : project.getBuilds()) {
             B action = build.getAction(buildActionClass);
             if (action != null && action.getModifiedObjects() != null) {
@@ -57,6 +55,6 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
 
     public static <T, A extends GeneratedObjectsAction<T, ?>> Set<T> extractGeneratedObjects(AbstractProject<?, ?> project, Class<A> actionType) {
         A action = project.getAction(actionType);
-        return action == null ? Sets.<T>newLinkedHashSet() : action.findLastGeneratedObjects();
+        return action == null ? new LinkedHashSet<T>() : action.findLastGeneratedObjects();
     }
 }
