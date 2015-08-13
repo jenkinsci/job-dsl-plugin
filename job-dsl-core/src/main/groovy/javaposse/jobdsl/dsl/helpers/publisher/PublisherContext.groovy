@@ -111,15 +111,9 @@ class PublisherContext extends AbstractExtensibleContext {
             }
             latestOnly(artifactsContext.latestOnly)
             allowEmptyArchive(artifactsContext.allowEmpty)
-            if (!jobManagement.jenkinsVersion.isOlderThan(new VersionNumber('1.575'))) {
-                defaultExcludes(artifactsContext.defaultExcludes)
-            }
-            if (!jobManagement.jenkinsVersion.isOlderThan(new VersionNumber('1.571'))) {
-                delegate.fingerprint(artifactsContext.fingerprint)
-            }
-            if (!jobManagement.jenkinsVersion.isOlderThan(new VersionNumber('1.567'))) {
-                onlyIfSuccessful(artifactsContext.onlyIfSuccessful)
-            }
+            defaultExcludes(artifactsContext.defaultExcludes)
+            delegate.fingerprint(artifactsContext.fingerprint)
+            onlyIfSuccessful(artifactsContext.onlyIfSuccessful)
         }
     }
 

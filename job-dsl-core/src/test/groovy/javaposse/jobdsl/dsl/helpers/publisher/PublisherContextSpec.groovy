@@ -126,69 +126,42 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call archive artifacts with all args'() {
-        setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
-
         when:
         context.archiveArtifacts('include/*', 'exclude/*', true)
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 4
+            children().size() == 7
             artifacts[0].value() == 'include/*'
             excludes[0].value() == 'exclude/*'
             latestOnly[0].value() == true
             allowEmptyArchive[0].value() == false
+            fingerprint[0].value() == false
+            onlyIfSuccessful[0].value() == false
+            defaultExcludes[0].value() == true
         }
         2 * jobManagement.logDeprecationWarning()
     }
 
     def 'call archive artifacts least args'() {
-        setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
-
         when:
         context.archiveArtifacts('include/*')
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 3
+            children().size() == 6
             artifacts[0].value() == 'include/*'
             latestOnly[0].value() == false
             allowEmptyArchive[0].value() == false
+            fingerprint[0].value() == false
+            onlyIfSuccessful[0].value() == false
+            defaultExcludes[0].value() == true
         }
     }
 
     def 'call archive artifacts with closure'() {
-        setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
-
-        when:
-        context.archiveArtifacts {
-            pattern('include/*')
-            exclude('exclude/*')
-            allowEmpty()
-            latestOnly()
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 4
-            artifacts[0].value() == 'include/*'
-            excludes[0].value() == 'exclude/*'
-            latestOnly[0].value() == true
-            allowEmptyArchive[0].value() == true
-        }
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'call archive artifacts with closure and newer version of Jenkins'() {
-        setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.580.2')
-
         when:
         context.archiveArtifacts {
             pattern('include/*')
@@ -212,16 +185,10 @@ class PublisherContextSpec extends Specification {
             onlyIfSuccessful[0].value() == true
             defaultExcludes[0].value() == false
         }
-        1 * jobManagement.requireMinimumCoreVersion('1.575')
-        1 * jobManagement.requireMinimumCoreVersion('1.571')
-        1 * jobManagement.requireMinimumCoreVersion('1.567')
         1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call archive artifacts with multiple patterns'() {
-        setup:
-        jobManagement.jenkinsVersion >> new VersionNumber('1.565')
-
         when:
         context.archiveArtifacts {
             pattern('include1/*')
@@ -231,10 +198,13 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 3
+            children().size() == 6
             artifacts[0].value() == 'include1/*,include2/*'
             latestOnly[0].value() == false
             allowEmptyArchive[0].value() == false
+            fingerprint[0].value() == false
+            onlyIfSuccessful[0].value() == false
+            defaultExcludes[0].value() == true
         }
     }
 
