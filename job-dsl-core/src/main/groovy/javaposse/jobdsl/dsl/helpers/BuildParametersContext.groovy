@@ -5,7 +5,9 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
+import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReferenceContext
 
 import static java.util.UUID.randomUUID
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -205,13 +207,34 @@ class BuildParametersContext extends AbstractContext {
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
     void activeChoiceParam(String paramName, @DslContext(ActiveChoiceContext) Closure closure) {
-        checkNotNull(paramName, 'paramName cannot be null')
-        checkArgument(!buildParameterNodes.containsKey(paramName), 'parameter $paramName already defined')
-
         ActiveChoiceContext context = new ActiveChoiceContext()
         ContextHelper.executeInContext(closure, context)
 
-        Node node = new NodeBuilder().'org.biouno.unochoice.ChoiceParameter' {
+        buildParameterNodes[paramName] = createGenericActiveChoiceNode(
+                'org.biouno.unochoice.ChoiceParameter', paramName, context
+        )
+    }
+
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
+    void activeChoiceReferenceParam(String paramName,
+                                    @DslContext(ActiveChoiceReferenceContext) Closure closure = null) {
+        ActiveChoiceReferenceContext context = new ActiveChoiceReferenceContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node node = createGenericActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', paramName, context)
+        node.appendNode('referencedParameters', context.referencedParameters.join(', '))
+
+        buildParameterNodes[paramName] = node
+    }
+
+    Node createGenericActiveChoiceNode(String type, String paramName, ActiveChoiceContext context) {
+        checkNotNull(paramName, 'paramName cannot be null')
+        checkArgument(!buildParameterNodes.containsKey(paramName), "parameter ${paramName} already defined")
+
+        Node node = new NodeBuilder()."${type}" {
             name(paramName)
             description(context.description ?: '')
             randomName("choice-parameter-${System.nanoTime()}")
@@ -222,6 +245,6 @@ class BuildParametersContext extends AbstractContext {
         if (context.script) {
             node.children().add(context.script)
         }
-        buildParameterNodes[paramName] = node
+        node
     }
 }
