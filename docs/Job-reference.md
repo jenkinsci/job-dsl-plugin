@@ -3617,6 +3617,11 @@ job {
                     matrixSubset(String groovyFilter)
                     subversionRevision(boolean includeUpstreamParameters = false)
                 }
+                parameterFactories { // since 1.38
+                    forMatchingFiles(String filePattern,
+                                     String parameterName,
+                                     String noFilesFoundAction = 'SKIP')
+                }
             }
             trigger(String projects, String condition,
                     Closure downstreamTriggerClosure = null)    // deprecated
@@ -3677,6 +3682,8 @@ they can be called multiple times to build a superset of properties.
 The `blockingThresholds` argument can only be used when configuring a build step. Valid keys for the map are
 `buildStepFailure`, `failure` and `unstable`. The values can be set to either `'never'` (default), `'SUCCESS'`,
 `'UNSTABLE'` or `'FAILURE'`.
+
+Valid values for `noFilesFoundAction` are `'SKIP'`, `'NOPARMS'` and `'FAIL'`.
 
 The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).

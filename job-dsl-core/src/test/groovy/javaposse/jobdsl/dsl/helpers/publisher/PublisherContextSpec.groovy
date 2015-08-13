@@ -1139,6 +1139,7 @@ class PublisherContextSpec extends Specification {
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1154,6 +1155,7 @@ class PublisherContextSpec extends Specification {
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
 
         when:
         context.downstreamParameterized {
@@ -1243,6 +1245,7 @@ class PublisherContextSpec extends Specification {
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
 
         when:
         context.downstreamParameterized {
@@ -1257,6 +1260,7 @@ class PublisherContextSpec extends Specification {
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
 
         when:
         context.downstreamParameterized {
@@ -2284,6 +2288,8 @@ class PublisherContextSpec extends Specification {
             configs[0].value().empty
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
     }
 
     def 'call buildPipelineTrigger with parameters'() {
@@ -2311,6 +2317,8 @@ class PublisherContextSpec extends Specification {
                     'key1=value1'
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
     }
 
     def 'call buildPipelineTrigger with null argument'() {

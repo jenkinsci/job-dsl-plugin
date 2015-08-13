@@ -235,6 +235,8 @@ class MultiJobStepContextSpec extends Specification {
         nodeLabel.nodeLabel[0].value() == 'node_label'
 
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
     }
 
     def 'call phases with plugin version 1.11 options'() {
