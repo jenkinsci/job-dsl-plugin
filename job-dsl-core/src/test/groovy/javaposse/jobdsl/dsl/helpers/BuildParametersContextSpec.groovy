@@ -978,12 +978,12 @@ class BuildParametersContextSpec extends Specification {
         }
 
         then:
-        context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['activeChoiceReferenceParam']) {
             name() == 'org.biouno.unochoice.CascadeChoiceParameter'
             children().size() == 7
             description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
             visibleItemCount.text() == '1'
             filterable.text() == 'false'
             choiceType.text() == 'PT_SINGLE_SELECT'
@@ -1007,11 +1007,12 @@ class BuildParametersContextSpec extends Specification {
         }
 
         then:
-        context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['activeChoiceReferenceScriptlerParam']) {
+            children().size() == 8
             name() == 'org.biouno.unochoice.CascadeChoiceParameter'
             description.text() == 'Active choice param test'
+            randomName.text() =~ /choice-parameter-\d+/
             visibleItemCount.text() == '1'
             filterable.text() == 'true'
             choiceType.text() == 'PT_SINGLE_SELECT'
@@ -1021,7 +1022,7 @@ class BuildParametersContextSpec extends Specification {
                 script.text() == 'x1'
                 fallbackScript.text() == 'x2'
             }
-            referencedParameters.text().split(',') == ['param1', 'param2']
+            referencedParameters.text() == 'param1, param2'
         }
     }
 }

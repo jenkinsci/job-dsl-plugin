@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReferenceContext
 
@@ -206,13 +207,12 @@ class BuildParametersContext extends AbstractContext {
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
     void activeChoiceParam(String paramName, @DslContext(ActiveChoiceContext) Closure closure) {
-        checkNotNull(paramName, 'paramName cannot be null')
-        checkArgument(!buildParameterNodes.containsKey(paramName), "parameter $paramName already defined")
-
         ActiveChoiceContext context = new ActiveChoiceContext()
         ContextHelper.executeInContext(closure, context)
 
-        buildParameterNodes[paramName] = context.createActiveChoiceNode(paramName)
+        buildParameterNodes[paramName] = createGenericActiveChoiceNode(
+                'org.biouno.unochoice.ChoiceParameter', paramName, context
+        )
     }
 
     /**
@@ -221,12 +221,30 @@ class BuildParametersContext extends AbstractContext {
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
     void activeChoiceReferenceParam(String paramName,
                                     @DslContext(ActiveChoiceReferenceContext) Closure closure = null) {
-        checkNotNull(paramName, 'paramName cannot be null')
-        checkArgument(!buildParameterNodes.containsKey(paramName), "parameter $paramName already defined")
-
         ActiveChoiceReferenceContext context = new ActiveChoiceReferenceContext()
         ContextHelper.executeInContext(closure, context)
 
-        buildParameterNodes[paramName] = context.createActiveChoiceNode(paramName)
+        Node node = createGenericActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', paramName, context)
+        node.appendNode('referencedParameters', context.referencedParameters.join(', '))
+
+        buildParameterNodes[paramName] = node
+    }
+
+    Node createGenericActiveChoiceNode(String type, String paramName, ActiveChoiceContext context) {
+        checkNotNull(paramName, 'paramName cannot be null')
+        checkArgument(!buildParameterNodes.containsKey(paramName), "parameter ${paramName} already defined")
+
+        Node node = new NodeBuilder()."${type}" {
+            name(paramName)
+            description(context.description ?: '')
+            randomName("choice-parameter-${System.nanoTime()}")
+            visibleItemCount(1)
+            choiceType("PT_${context.choiceType}")
+            filterable(context.filterable)
+        }
+        if (context.script) {
+            node.children().add(context.script)
+        }
+        node
     }
 }
