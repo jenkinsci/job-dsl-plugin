@@ -2,6 +2,10 @@
 
 ### Parameterized Trigger
 
+Support for versions older than 2.25 of the
+[Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 Some overloaded DSL methods for the
 [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) have been
 replaced by new methods in the nested context. The overloaded methods have been [[deprecated|Deprecation-Policy]] and
