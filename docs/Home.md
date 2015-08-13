@@ -21,7 +21,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
  * Enhanced support for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
-   ([JENKINS-29662](https://issues.jenkins-ci.org/browse/JENKINS-29662))
+   ([JENKINS-29662](https://issues.jenkins-ci.org/browse/JENKINS-29662),
+   [JENKINS-29801](https://issues.jenkins-ci.org/browse/JENKINS-29801))
  * Deprecated some overloaded DSL methods for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin), see
    [Migration](Migration#migrating-to-138)

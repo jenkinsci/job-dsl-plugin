@@ -1698,6 +1698,9 @@ class StepContextSpec extends Specification {
                     subversionRevision() // Subversion Revision
                     nodeLabel('nodeParam', 'node_label') // Limit to node label selection
                 }
+                parameterFactories {
+                    forMatchingFiles('foo', 'bar', 'FAIL')
+                }
             }
             trigger('Project2') {
                 parameters {
@@ -1711,6 +1714,7 @@ class StepContextSpec extends Specification {
         stepNode.name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
         stepNode.configs[0].children().size() == 2
         with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            children().size() == 6
             projects[0].value() == 'Project1, Project2'
             condition[0].value() == 'ALWAYS'
             triggerWithNoParameters[0].value() == false
@@ -1742,6 +1746,12 @@ class StepContextSpec extends Specification {
             failureThreshold.completeBuild[0].value() == true
             Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
             buildStepFailureThreshold.name[0].value() == 'FAILURE'
+            configFactories[0].children().size() == 1
+            with(configFactories[0].'hudson.plugins.parameterizedtrigger.BinaryFileParameterFactory') {
+                parameterName.text() == 'bar'
+                filePattern.text() == 'foo'
+                noFilesFoundAction.text() == 'FAIL'
+            }
         }
 
         with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]) {
@@ -1752,9 +1762,32 @@ class StepContextSpec extends Specification {
             block.isEmpty()
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.requirePlugin('git')
         1 * jobManagement.requirePlugin('nodelabelparameter')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+    }
+
+    def 'call downstream build step with no args'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project3') {
+            }
+        }
+
+        then:
+        with(context.stepNodes[0].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project3'
+            condition[0].value() == 'ALWAYS'
+            triggerWithNoParameters[0].value() == false
+            configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+    }
+
+    def 'call downstream build step with no args and older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.24')
 
         when:
         context.downstreamParameterized {
@@ -1763,7 +1796,8 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        with(context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+        with(context.stepNodes[0].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            children().size() == 4
             projects[0].value() == 'Project3'
             condition[0].value() == 'ALWAYS'
             triggerWithNoParameters[0].value() == false
