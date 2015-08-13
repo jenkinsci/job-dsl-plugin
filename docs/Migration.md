@@ -1,3 +1,157 @@
+## Migrating to 1.38
+
+### Parameterized Trigger
+
+Some overloaded DSL methods for the
+[Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) have been
+replaced by new methods in the nested context. The overloaded methods have been [[deprecated|Deprecation-Policy]] and
+will be removed.
+
+DSL prior to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2', 'ALWAYS', false,
+                    [buildStepFailure: 'FAILURE',
+                     failure         : 'FAILURE',
+                     unstable        : 'UNSTABLE'])
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true)
+        }
+    }
+}
+```
+
+DSL since to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure('FAILURE')
+                    failure('FAILURE')
+                    unstable('UNSTABLE']
+                }
+            }
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                condition('UNSTABLE_OR_BETTER')
+                triggerWithNoParameters()
+            }
+        }
+    }
+}
+```
+
+### Parameter Passing
+
+The way how parameters are passed to downstream jobs or multi-job phases has changed. The existing methods have been
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+DSL prior to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                predefinedProp('key1', 'value1')
+                predefinedProps('key2=value2\nkey3=value3')
+            }
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                currentBuild()
+                sameNode(true)
+            }
+        }
+    }
+}
+
+multiJob('example-3') {
+    steps {
+        phase('test') {
+             job('other', false, true) {
+                boolParam('cParam', true)
+                fileParam('my.properties')
+                sameNode()
+                matrixParam('it.name=="hello"')
+                subversionRevision()
+                gitRevision()
+                prop('prop1', 'value1')
+                nodeLabel('lParam', 'my_nodes')
+            }
+        }
+   }
+}
+```
+
+DSL since to 1.38
+```groovy
+job('example-1') {
+    steps {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                parameters {
+                    predefinedProp('key1', 'value1')
+                    predefinedProps([key2: 'value2', key3: 'value3'])
+                }
+            }
+        }
+    }
+}
+
+job('example-2') {
+    publishers {
+        downstreamParameterized {
+            trigger('Project1, Project2') {
+                parameters {
+                    currentBuild()
+                    sameNode()
+                }
+            }
+        }
+    }
+}
+
+multiJob('example-3') {
+    steps {
+        phase('test') {
+            job('other', false, true) {
+                parameters {
+                    booleanParam('cParam', true)
+                    propertiesFile('my.properties')
+                    sameNode()
+                    matrixSubset('it.name=="hello"')
+                    subversionRevision()
+                    gitRevision()
+                    predefinedProp('prop1', 'value1')
+                    nodeLabel('lParam', 'my_nodes')
+                }
+            }
+        }
+   }
+}
+```
+
 ## Migrating to 1.37
 
 ### Multijob

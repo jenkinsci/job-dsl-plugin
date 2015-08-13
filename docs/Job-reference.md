@@ -3342,18 +3342,30 @@ multiJob {
             job(String jobName, boolean currentJobParameters = true, boolean exposedScm = true) {
                 currentJobParameters(boolean currentJobParameters = true)
                 exposedScm(boolean exposedScm = true)
-                boolParam(String paramName, boolean defaultValue = false)
-                fileParam(String propertyFile, boolean failTriggerOnMissing = false)
-                sameNode(boolean nodeParam = true)
-                matrixParam(String filter)
-                subversionRevision(boolean includeUpstreamParameters = false)
-                gitRevision(boolean combineQueuedCommits = false)
-                prop(Object key, Object value)
-                props(Map<String, String> map)
+                boolParam(String paramName, boolean defaultValue = false) // deprecated
+                fileParam(String propertyFile, boolean failTriggerOnMissing = false) // deprecated
+                sameNode(boolean nodeParam = true) // deprecated
+                matrixParam(String filter) // deprecated
+                subversionRevision(boolean includeUpstreamParameters = false) // deprecated
+                gitRevision(boolean combineQueuedCommits = false) // deprecated
+                prop(Object key, Object value) // deprecated
+                props(Map<String, String> map) // deprecated
                 disableJob(boolean disableJob = true) // since 1.25
                 abortAllJobs(boolean abortAllJobs = true) //since 1.37
                 killPhaseCondition(String killPhaseCondition) // since 1.25
-                nodeLabel(String paramName, String nodeLabel) // since 1.26
+                nodeLabel(String paramName, String nodeLabel) // since 1.26, deprecated
+                parameters { // since 1.38
+                    booleanParam(String name, boolean defaultValue = false)
+                    sameNode()
+                    currentBuild()
+                    nodeLabel(String paramName, String nodeLabel)
+                    propertiesFile(String file, boolean failOnMissing = false)
+                    gitRevision(boolean combineQueuedCommits = false)
+                    predefinedProp(String key, String value)
+                    predefinedProps(Map<String, String> predefinedPropsMap)
+                    matrixSubset(String groovyFilter)
+                    subversionRevision(boolean includeUpstreamParameters = false)
+                }
                 configure(Closure configClosure) // since 1.30
             }
         }
@@ -3377,7 +3389,9 @@ multiJob('example') {
         phase() {
             phaseName 'Second'
             job('JobZ') {
-                fileParam('my1.properties')
+                parameters {
+                    propertiesFile('my1.properties')
+                }
             }
         }
         phase('Third') {
@@ -3387,14 +3401,16 @@ multiJob('example') {
         }
         phase('Fourth') {
             job('JobD', false, true) {
-                boolParam('cParam', true)
-                fileParam('my.properties')
-                sameNode()
-                matrixParam('it.name=="hello"')
-                subversionRevision()
-                gitRevision()
-                prop('prop1', 'value1')
-                nodeLabel('lParam', 'my_nodes')
+                parameters {
+                    booleanParam('cParam', true)
+                    propertiesFile('my.properties')
+                    sameNode()
+                    matrixSubset('it.name=="hello"')
+                    subversionRevision()
+                    gitRevision()
+                    predefinedProp('prop1', 'value1')
+                    nodeLabel('lParam', 'my_nodes')
+                }
                 configure { phaseJobConfig ->
                   phaseJobConfig / enableCondition << 'true'
                   phaseJobConfig / condition << '${RUN_JOB} == "true"'
@@ -3573,30 +3589,73 @@ job {
 job {
     steps {
         downstreamParameterized { // since 1.20
-            trigger(String projects, String condition,
-                    boolean triggerWithNoParameters,
-                    Map<String, String> blockingThresholds) {
-                currentBuild()
-                propertiesFile(String file, boolean failOnMissing = false)
-                gitRevision(boolean combineQueuedCommits = false)
-                predefinedProp(String key, String value)
-                predefinedProps(Map<String, String> predefinedPropsMap)
-                predefinedProps(String predefinedProps) // newline separated
-                matrixSubset(String groovyFilter)
-                subversionRevision(boolean includeUpstreamParameters = false)
-                sameNode()
-                nodeLabel(String paramName, String nodeLabel) // since 1.26
+            trigger(String projects) {
+                currentBuild()                                                // deprecated
+                propertiesFile(String file, boolean failOnMissing = false)    // deprecated
+                gitRevision(boolean combineQueuedCommits = false)             // deprecated
+                predefinedProp(String key, String value)                      // deprecated
+                predefinedProps(Map<String, String> predefinedPropsMap)       // deprecated
+                predefinedProps(String predefinedProps)                       // deprecated
+                matrixSubset(String groovyFilter)                             // deprecated
+                subversionRevision(boolean includeUpstreamParameters = false) // deprecated
+                sameNode()                                                    // deprecated
+                nodeLabel(String paramName, String nodeLabel)     // since 1.26, deprecated
+                block { // since 1.38
+                    buildStepFailure(String threshold)
+                    failure(String threshold)
+                    unstable(String threshold)
+                }
+                parameters { // since 1.38
+                    booleanParam(String name, boolean defaultValue = false)
+                    sameNode()
+                    currentBuild()
+                    nodeLabel(String paramName, String nodeLabel)
+                    propertiesFile(String file, boolean failOnMissing = false)
+                    gitRevision(boolean combineQueuedCommits = false)
+                    predefinedProp(String key, String value)
+                    predefinedProps(Map<String, String> predefinedPropsMap)
+                    matrixSubset(String groovyFilter)
+                    subversionRevision(boolean includeUpstreamParameters = false)
+                }
             }
-            trigger(String projects, Closure downstreamTriggerClosure = null)
             trigger(String projects, String condition,
-                    Closure downstreamTriggerClosure = null)
+                    Closure downstreamTriggerClosure = null)    // deprecated
             trigger(String projects, String condition,
                     boolean triggerWithNoParameters,
-                    Closure downstreamTriggerClosure = null)
+                    Closure downstreamTriggerClosure = null)    // deprecated
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Map<String, String> blockingThresholds,
+                    Closure downstreamTriggerClosure = null)    // deprecated
         }
     }
     publishers {
-        downstreamParameterized(Closure downstreamClosure)
+        downstreamParameterized {
+            trigger(String projects) {
+                currentBuild()                                                // deprecated
+                propertiesFile(String file, boolean failOnMissing = false)    // deprecated
+                gitRevision(boolean combineQueuedCommits = false)             // deprecated
+                predefinedProp(String key, String value)                      // deprecated
+                predefinedProps(Map<String, String> predefinedPropsMap)       // deprecated
+                predefinedProps(String predefinedProps)                       // deprecated
+                matrixSubset(String groovyFilter)                             // deprecated
+                subversionRevision(boolean includeUpstreamParameters = false) // deprecated
+                sameNode()                                                    // deprecated
+                nodeLabel(String paramName, String nodeLabel)     // since 1.26, deprecated
+                condition(String condition) // since 1.38
+                triggerWithNoParameters(boolean triggerWithNoParameters = true) // since 1.38
+                parameters(Closure parameterClosure) // since 1.38, see above
+            }
+            trigger(String projects, String condition,
+                    Closure downstreamTriggerClosure = null)    // deprecated
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Closure downstreamTriggerClosure = null)    // deprecated
+            trigger(String projects, String condition,
+                    boolean triggerWithNoParameters,
+                    Map<String, String> blockingThresholds,
+                    Closure downstreamTriggerClosure = null)    // deprecated
+        }
     }
 }
 ```
@@ -3612,11 +3671,12 @@ The `condition` argument must be one of these values: `'SUCCESS'` (default), `'U
 `'UNSTABLE_OR_WORSE'`, `'FAILED'` or `'ALWAYS'`. The argument is ignored when configuring a build step, but should be
 set to `'ALWAYS'`.
 
-The `predefinedProp` and `predefinedProps` methods are used to accumulate properties, meaning that they can be called
-multiple times to build a superset of properties.
+The `booleanParam`, `predefinedProp` and `predefinedProps` methods can be used to accumulate properties, meaning that
+they can be called multiple times to build a superset of properties.
 
 The `blockingThresholds` argument can only be used when configuring a build step. Valid keys for the map are
-`buildStepFailure`, `failure` and `unstable`. The values can be set to either `'SUCCESS'`, `'UNSTABLE'`  or `'FAILURE'`.
+`buildStepFailure`, `failure` and `unstable`. The values can be set to either `'never'` (default), `'SUCCESS'`,
+`'UNSTABLE'` or `'FAILURE'`.
 
 The `nodeLabel` parameter type requires the
 [NodeLabel Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin).
@@ -3625,16 +3685,21 @@ The `nodeLabel` parameter type requires the
 job('example-1') {
     steps {
         downstreamParameterized {
-            trigger('Project1, Project2', 'ALWAYS', true,
-                    [buildStepFailure: 'FAILURE',
-                     failure         : 'FAILURE',
-                     unstable        : 'UNSTABLE']) {
-                predefinedProp('key1', 'value1')
-                predefinedProps([key2: 'value2', key3: 'value3'])
-                predefinedProps('key4=value4\nkey5=value5')
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure('FAILURE')
+                    failure ('FAILURE')
+                    unstable('UNSTABLE')
+                }
+                parameters {
+                    predefinedProp('key1', 'value1')
+                    predefinedProps([key2: 'value2', key3: 'value3'])
+                }
             }
             trigger('Project2') {
-                currentBuild()
+                parameters {
+                    currentBuild()
+                }
             }
         }
     }
@@ -3643,8 +3708,11 @@ job('example-1') {
 job('example-2') {
     publishers {
         downstreamParameterized {
-            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER') {
-                currentBuild()
+            trigger('Project1, Project2') {
+                condition('UNSTABLE_OR_BETTER')
+                parameters {
+                    currentBuild()
+                }
             }
         }
     }
@@ -5220,14 +5288,16 @@ job {
     publishers {
         buildPipelineTrigger(String downstreamProjectNames) {
             parameters { // since 1.23
+                booleanParam(String name, boolean defaultValue = false) // since 1.38
+                sameNode()
                 currentBuild()
-                propertiesFile(String propFile)
+                propertiesFile(String file, boolean failOnMissing = false)
                 gitRevision(boolean combineQueuedCommits = false)
                 predefinedProp(String key, String value)
                 predefinedProps(Map<String, String> predefinedPropsMap)
-                predefinedProps(String predefinedProps)
+                predefinedProps(String predefinedProps) // deprecated
                 matrixSubset(String groovyFilter)
-                subversionRevision()
+                subversionRevision(boolean includeUpstreamParameters = false)
                 nodeLabel(String paramName, String nodeLabel) // since 1.26
             }
         }

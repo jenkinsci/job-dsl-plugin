@@ -1592,7 +1592,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('publish-over-ssh')
     }
 
-    def 'call downstream build step with all args'() {
+    def 'call downstream build step with all args with deprecated methods'() {
         when:
         context.downstreamParameterized {
             trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
@@ -1676,14 +1676,232 @@ class StepContextSpec extends Specification {
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
+    }
+
+    def 'call downstream build step with all args'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure('FAILURE')
+                    failure('FAILURE')
+                    unstable('UNSTABLE')
+                }
+                parameters {
+                    currentBuild() // Current build parameters
+                    propertiesFile('dir/my.properties') // Parameters from properties file
+                    gitRevision(false) // Pass-through Git commit that was built
+                    predefinedProp('key1', 'value1') // Predefined properties
+                    predefinedProps([key2: 'value2', key3: 'value3'])
+                    predefinedProps('key4=value4\nkey5=value5') // Newline separated
+                    matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
+                    subversionRevision() // Subversion Revision
+                    nodeLabel('nodeParam', 'node_label') // Limit to node label selection
+                }
+            }
+            trigger('Project2') {
+                parameters {
+                    currentBuild()
+                }
+            }
+        }
+
+        then:
+        Node stepNode = context.stepNodes[0]
+        stepNode.name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
+        stepNode.configs[0].children().size() == 2
+        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project1, Project2'
+            condition[0].value() == 'ALWAYS'
+            triggerWithNoParameters[0].value() == false
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
+                    'dir/my.properties'
+            configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
+            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
+                    'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+            configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
+                    'label=="${TARGET}"'
+            configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
+            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
+                    name[0].value() == 'nodeParam'
+            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
+                    nodeLabel[0].value() == 'node_label'
+
+            block.size() == 1
+            Node thresholds = block[0]
+            thresholds.children().size() == 3
+            Node unstableThreshold = thresholds.unstableThreshold[0]
+            unstableThreshold.name[0].value() == 'UNSTABLE'
+            unstableThreshold.ordinal[0].value() == 1
+            unstableThreshold.completeBuild[0].value() == true
+            Node failureThreshold = thresholds.failureThreshold[0]
+            failureThreshold.name[0].value() == 'FAILURE'
+            failureThreshold.ordinal[0].value() == 2
+            failureThreshold.completeBuild[0].value() == true
+            Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
+            buildStepFailureThreshold.name[0].value() == 'FAILURE'
+        }
+
+        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]) {
+            projects[0].value() == 'Project2'
+            condition[0].value() == 'ALWAYS'
+            triggerWithNoParameters[0].value() == false
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
+            block.isEmpty()
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requirePlugin('git')
+        1 * jobManagement.requirePlugin('nodelabelparameter')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
         context.downstreamParameterized {
-            trigger('Project4', 'WRONG')
+            trigger('Project3') {
+            }
+        }
+
+        then:
+        with(context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project3'
+            condition[0].value() == 'ALWAYS'
+            triggerWithNoParameters[0].value() == false
+            configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+    }
+
+    def 'call downstream build step with default blocking options'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                }
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
+            children().size() == 1
+            configs[0].children().size() == 1
+            with(configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+                children().size() == 5
+                projects[0].value() == 'Project1, Project2'
+                condition[0].value() == 'ALWAYS'
+                triggerWithNoParameters[0].value() == false
+                configs[0].@class == 'java.util.Collections$EmptyList'
+                configs[0].children().size() == 0
+                block[0].children().size() == 0
+            }
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+    }
+
+    def 'call downstream build step with blocking options'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure(threshold)
+                    failure(threshold)
+                    unstable(threshold)
+                }
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
+            children().size() == 1
+            configs[0].children().size() == 1
+            with(configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+                children().size() == 5
+                projects[0].value() == 'Project1, Project2'
+                condition[0].value() == 'ALWAYS'
+                triggerWithNoParameters[0].value() == false
+                configs[0].@class == 'java.util.Collections$EmptyList'
+                configs[0].children().size() == 0
+                with(block[0]) {
+                    if (threshold == 'never') {
+                        children().size() == 0
+                    } else {
+                        children().size() == 3
+                        with(buildStepFailureThreshold[0]) {
+                            children().size() == 4
+                            name[0].value() == threshold
+                            ordinal[0].value() == ordinalValue
+                            color[0].value() == colorValue
+                            completeBuild[0].value() == true
+                        }
+                        with(failureThreshold[0]) {
+                            children().size() == 4
+                            name[0].value() == threshold
+                            ordinal[0].value() == ordinalValue
+                            color[0].value() == colorValue
+                            completeBuild[0].value() == true
+                        }
+                        with(unstableThreshold[0]) {
+                            children().size() == 4
+                            name[0].value() == threshold
+                            ordinal[0].value() == ordinalValue
+                            color[0].value() == colorValue
+                            completeBuild[0].value() == true
+                        }
+                    }
+                }
+            }
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+
+        where:
+        threshold  || ordinalValue | colorValue
+        'never'    || null         | null
+        'SUCCESS'  || 0            | 'BLUE'
+        'UNSTABLE' || 1            | 'YELLOW'
+        'FAILURE'  || 2            | 'RED'
+    }
+
+    def 'call downstream build step with invalid blocking options'() {
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    buildStepFailure(threshold)
+                }
+            }
         }
 
         then:
         thrown(DslScriptException)
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    failure(threshold)
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1, Project2') {
+                block {
+                    unstable(threshold)
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        threshold << [null, '', 'FOO']
     }
 
     @Unroll
