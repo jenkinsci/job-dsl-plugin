@@ -7,10 +7,6 @@ import javaposse.jobdsl.dsl.Context
  */
 class StashNotifierContext implements Context {
     String commitSha1 = ''
-    String userName = ''
-    String password = ''
-    String serverBaseUrl = ''
-
     boolean keepRepeatedBuilds = false
 
     void commitSha1(String commitSha1) {
@@ -19,17 +15,5 @@ class StashNotifierContext implements Context {
 
     void keepRepeatedBuilds(boolean keepRepeatedBuilds = true) {
         this.keepRepeatedBuilds = keepRepeatedBuilds
-    }
-
-    void userName(String userName) {
-        this.userName = userName
-    }
-
-    void password(String password) {
-        this.password = password
-    }
-
-    void serverBaseUrl(String serverBaseUrl) {
-        this.serverBaseUrl = serverBaseUrl
     }
 }

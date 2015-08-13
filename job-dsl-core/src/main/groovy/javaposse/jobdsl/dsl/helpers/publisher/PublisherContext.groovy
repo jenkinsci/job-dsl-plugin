@@ -972,9 +972,9 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(stashNotifierClosure, context)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
-            stashServerBaseUrl(context.serverBaseUrl)
-            stashUserName(context.userName)
-            stashUserPassword(context.password)
+            stashServerBaseUrl()
+            stashUserName()
+            stashUserPassword()
             ignoreUnverifiedSSLPeer(false)
             commitSha1(context.commitSha1)
             includeBuildNumberInKey(context.keepRepeatedBuilds)
