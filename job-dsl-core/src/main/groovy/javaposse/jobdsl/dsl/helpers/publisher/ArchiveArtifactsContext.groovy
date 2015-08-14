@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresCore
 
 class ArchiveArtifactsContext extends AbstractContext {
     final List<String> patterns = []
@@ -38,7 +37,6 @@ class ArchiveArtifactsContext extends AbstractContext {
     /**
      * @since 1.33
      */
-    @RequiresCore(minimumVersion = '1.571')
     void fingerprint(boolean fingerprint = true) {
         this.fingerprint = fingerprint
     }
@@ -46,7 +44,6 @@ class ArchiveArtifactsContext extends AbstractContext {
     /**
      * @since 1.33
      */
-    @RequiresCore(minimumVersion = '1.567')
     void onlyIfSuccessful(boolean onlyIfSuccessful = true) {
         this.onlyIfSuccessful = onlyIfSuccessful
     }
@@ -54,7 +51,6 @@ class ArchiveArtifactsContext extends AbstractContext {
     /**
      * @since 1.33
      */
-    @RequiresCore(minimumVersion = '1.575')
     void defaultExcludes(boolean defaultExcludes = true) {
         this.defaultExcludes = defaultExcludes
     }
