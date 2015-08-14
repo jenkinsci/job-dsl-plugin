@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReferenceContext
+import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveReferenceContext
 
 import static java.util.UUID.randomUUID
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -230,6 +231,22 @@ class BuildParametersContext extends AbstractContext {
         buildParameterNodes[paramName] = node
     }
 
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
+    void activeChoiceReactiveReferenceParam(String paramName,
+                                            @DslContext(ActiveChoiceReactiveReferenceContext) Closure closure = null) {
+        ActiveChoiceReactiveReferenceContext context = new ActiveChoiceReactiveReferenceContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node node = createGenericActiveChoiceNode('org.biouno.unochoice.DynamicReferenceParameter', paramName, context)
+        node.appendNode('referencedParameters', context.referencedParameters.join(', '))
+        node.appendNode('omitValueField', context.omitValueField)
+
+        buildParameterNodes[paramName] = node
+    }
+
     Node createGenericActiveChoiceNode(String type, String paramName, ActiveChoiceContext context) {
         checkNotNull(paramName, 'paramName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(paramName), "parameter ${paramName} already defined")
@@ -239,8 +256,10 @@ class BuildParametersContext extends AbstractContext {
             description(context.description ?: '')
             randomName("choice-parameter-${System.nanoTime()}")
             visibleItemCount(1)
-            choiceType("PT_${context.choiceType}")
-            filterable(context.filterable)
+            choiceType("${context.choiceTypePrefix}${context.choiceType}")
+            if (context.supportsFilterable) {
+                filterable(context.filterable)
+            }
         }
         if (context.script) {
             node.children().add(context.script)

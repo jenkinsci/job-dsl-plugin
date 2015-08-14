@@ -68,6 +68,8 @@ freeStyleJob(String name) { // since 1.30
         activeChoiceParam(String paramName, Closure closure) // since 1.36
         activeChoiceReferenceParam(String paramName,
                                    Closure closure) // since 1.38
+        activeChoiceReactiveReferenceParam(String paramName,
+                                   Closure closure) // since 1.38
     }
     scm {
         baseClearCase(Closure closure) // since 1.24
@@ -6224,6 +6226,66 @@ job('example-2') {
 ```
 
 (since 1.38)
+
+### Active Choice Reactive Reference Parameter
+
+```groovy
+job {
+    parameters {
+        activeChoiceReactiveReferenceParam(String paramName) {
+            description(String description)
+            omitValueField(boolean omitValueField = true)
+            choiceType(String choiceType)
+            groovyScript {
+                script(String script)
+                fallbackScript(String fallbackScript)
+            }
+            scriptlerScript(String scriptId) {
+                parameter(String name, String value)
+            }
+            referencedParameter(String paramName)
+        }
+    }
+}
+```
+
+Defines a Active Choice Reactive Reference parameter with groovy script as source of parameter options. Requires the
+[Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin).
+
+Valid values for `choiceType` are `'FORMATTED_HTML'` (default), `'FORMATTED_HIDDEN_HTML'`, `'TEXT_BOX'`, `'ORDERED_LIST'`, `'UNORDERED_LIST'`.
+
+```groovy
+job('example-1') {
+    parameters {
+        activeChoiceReactiveReferenceParam('CHOICE-1') {
+            description('Allows user choose from multiple choices')
+            omitValueField()
+            choiceType('FORMATTED_HIDDEN_HTML')
+            groovyScript {
+                script('["choice1", "choice2"]')
+                fallbackScript('"fallback choice"')
+            }
+            referencedParameter('BOOLEAN-PARAM-1')
+            referencedParameter('BOOLEAN-PARAM-2')
+        }
+    }
+}
+
+job('example-2') {
+    parameters {
+        activeChoiceReactiveReferenceParam('CHOICE-1') {
+            scriptlerScript('scriptler-script1.groovy') {
+                parameter('param1', 'value1')
+                parameter('param2', 'value2')
+            }
+            referencedParameter('BOOLEAN-PARAM-1')
+        }
+    }
+}
+```
+
+(since 1.38)
+
 
 ### Label Parameter
 

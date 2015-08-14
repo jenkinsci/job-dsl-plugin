@@ -11,6 +11,9 @@ class ActiveChoiceContext implements Context {
         'SINGLE_SELECT', 'MULTI_SELECT', 'CHECKBOX', 'RADIO'
     ]
 
+    boolean supportsFilterable = true
+    String choiceTypePrefix = 'PT_'
+
     String description
     boolean filterable
     String choiceType = 'SINGLE_SELECT'
