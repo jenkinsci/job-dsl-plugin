@@ -867,7 +867,7 @@ Since 1.21.
 
 The `ivyFilePattern`, `ivyFileExcludesPattern`, `ivyBranch`, `relativePathToDescriptorFromModuleRoot`,
  `ivySettingsFile`, `ivySettingsPropertyFiles`, `perModuleBuild`, `incrementalBuild`, and `ivyBuilder`
- methods can only be used in jobs created with the `ìvyJob` method.
+ methods can only be used in jobs created with the `ivyJob` method.
 
 Requires the [Ivy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ivy+Plugin).
 
