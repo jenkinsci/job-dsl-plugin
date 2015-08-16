@@ -7,6 +7,8 @@ class PullRequestPublisherContext implements Context {
     boolean onlyTriggerPhrase
     boolean onlyAdminsMerge
     boolean disallowOwnCode
+    boolean failOnNonMerge
+    boolean deleteOnMerge
 
     void mergeComment(String mergeComment) {
         this.mergeComment = mergeComment
@@ -22,5 +24,13 @@ class PullRequestPublisherContext implements Context {
 
     void disallowOwnCode(boolean disallowOwnCode = true) {
         this.disallowOwnCode = disallowOwnCode
+    }
+
+    void failOnNonMerge(boolean failOnNonMerge = true) {
+        this.failOnNonMerge = failOnNonMerge
+    }
+
+    void deleteOnMerge(boolean deleteOnMerge = true) {
+        this.deleteOnMerge = deleteOnMerge
     }
 }
