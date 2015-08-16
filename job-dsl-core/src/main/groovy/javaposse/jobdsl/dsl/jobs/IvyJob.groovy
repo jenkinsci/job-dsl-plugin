@@ -5,12 +5,12 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.IvyBuilderContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkState
 
 class IvyJob extends Job {
-
     IvyJob(JobManagement jobManagement) {
         super(jobManagement)
     }

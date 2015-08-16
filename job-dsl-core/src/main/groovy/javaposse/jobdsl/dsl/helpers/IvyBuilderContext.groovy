@@ -1,16 +1,14 @@
-package javaposse.jobdsl.dsl.jobs
+package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.step.AntContext
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class IvyBuilderContext extends AbstractExtensibleContext {
-
     final List<Node> ivyBuilderNodes = []
 
     IvyBuilderContext(JobManagement jobManagement, Item item) {
@@ -22,22 +20,22 @@ class IvyBuilderContext extends AbstractExtensibleContext {
         ivyBuilderNodes << node
     }
 
-    @RequiresPlugin(id = 'ant')
+    @RequiresPlugin(id = 'ant', minimumVersion = '1.2')
     void ant(@DslContext(AntContext) Closure antClosure = null) {
         AntContext antContext = new AntContext()
         executeInContext(antClosure, antContext)
 
         ivyBuilderNodes << new NodeBuilder().ivyBuilderType(class: 'hudson.ivy.builder.AntIvyBuilderType') {
-            targets antContext.targets.join(' ')
-            antName antContext.antName ?: '(Default)'
+            targets(antContext.targets.join(' '))
+            antName(antContext.antName ?: '(Default)')
             if (antContext.antOpts) {
-                antOpts antContext.antOpts.join('\n')
+                antOpts(antContext.antOpts.join('\n'))
             }
             if (antContext.buildFile) {
-                buildFile antContext.buildFile
+                buildFile(antContext.buildFile)
             }
             if (antContext.props) {
-                antProperties antContext.props.join('\n')
+                antProperties(antContext.props.join('\n'))
             }
         }
     }

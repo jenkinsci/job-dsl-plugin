@@ -867,7 +867,11 @@ Since 1.21.
 
 The `ivyFilePattern`, `ivyFileExcludesPattern`, `ivyBranch`, `relativePathToDescriptorFromModuleRoot`,
  `ivySettingsFile`, `ivySettingsPropertyFiles`, `perModuleBuild`, `incrementalBuild`, and `ivyBuilder`
- methods can only be used in jobs with type `Ivy`.
+ methods can only be used in jobs created with the `ìvyJob` method.
+
+Requires the [Ivy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ivy+Plugin).
+
+(since 1.38)
 
 ### Ivy File Pattern
 
@@ -993,9 +997,7 @@ previous build will be triggered to build. Incremental builds are not enabled by
 
 ```groovy
 ivyJob(String name) {
-    ivyBuilder {
-        ant(Closure antClosure = null)
-    }
+    ivyBuilder(Closure ivyBuilderClosure)
 }
 ```
 
@@ -1004,14 +1006,35 @@ builders, like NAnt for example, could be contributed to this extensible type.
 
 Only one builder may be specified.
 
+### Ant Ivy Builder
+
+```groovy
+ivyJob(String name) {
+    ivyBuilder {
+        ant {
+            target(String targetName)
+            targets(Iterable<String> targets)
+            prop(Object key, Object value)
+            props(Map<String, String> map)
+            buildFile(String buildFile)
+            javaOpt(String opt)
+            javaOpts(Iterable<String> opts)
+            antInstallation(String antInstallationName)
+        }
+    }
+}
+```
+
+Uses And for building the modules. Requires the [Ant Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ant+Plugin).
+
 ```groovy
 ivyJob('example') {
     ivyBuilder {
         ant {
-            target 'clean'
+            target('clean')
             targets(['test', 'publish'])
-            buildFile 'build.xml'
-            antInstallation 'Ant 1.9'
+            buildFile('build.xml')
+            antInstallation('Ant 1.9')
             prop('key', 'value')
             javaOpt('-Xmx=1G')
         }
@@ -1021,8 +1044,8 @@ ivyJob('example') {
 
 # Maven
 
-The `rootPOM`, `goals`, `mavenOpts`, `mavenInstallation`, `archivingDisabled`, `runHeadless`,
- `preBuildSteps`, `postBuildSteps` and `providedSettings` methods can only be used in jobs with type `Maven`.
+The `rootPOM`, `goals`, `mavenOpts`, `mavenInstallation`, `archivingDisabled`, `runHeadless`, `preBuildSteps`,
+`postBuildSteps` and `providedSettings` methods can only be used in jobs created with the `mavenJob` method.
 
 ### Root POM
 
@@ -2626,10 +2649,8 @@ mavenJob {
 }
 ```
 
-Allows to perform a release build using the maven-release-plugin. Only available for jobs with type `Maven`. Requires
-the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin).
-
-Example:
+Allows to perform a release build using the maven-release-plugin. Only available for jobs created with the `mavenJob`
+method. Requires the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin).
 
 ```groovy
 mavenJob('example') {

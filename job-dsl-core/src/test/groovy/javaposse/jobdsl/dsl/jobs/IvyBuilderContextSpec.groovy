@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.IvyBuilderContext
 import spock.lang.Specification
 
 class IvyBuilderContextSpec extends Specification {
@@ -21,16 +22,16 @@ class IvyBuilderContextSpec extends Specification {
             targets[0].text() == ''
             antName[0].text() == '(Default)'
         }
-        1 * jobManagement.requirePlugin('ant')
+        1 * jobManagement.requireMinimumPluginVersion('ant', '1.2')
     }
 
     def 'construct ant builder type with options'() {
         when:
         context.ant {
-            target 'clean'
+            target('clean')
             targets(['test', 'publish'])
-            buildFile 'build.xml'
-            antInstallation 'Ant 1.9'
+            buildFile('build.xml')
+            antInstallation('Ant 1.9')
             prop('key', 'value')
             javaOpt('-Xmx=1G')
         }
@@ -46,6 +47,6 @@ class IvyBuilderContextSpec extends Specification {
             buildFile[0].text() == 'build.xml'
             antProperties[0].text() == 'key=value'
         }
-        1 * jobManagement.requirePlugin('ant')
+        1 * jobManagement.requireMinimumPluginVersion('ant', '1.2')
     }
 }
