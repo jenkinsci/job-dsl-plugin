@@ -7,7 +7,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.parameter.AbstractActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
-import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReferenceContext
+import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveReferenceContext
 
 import static java.util.UUID.randomUUID
@@ -220,9 +220,9 @@ class BuildParametersContext extends AbstractContext {
      * @since 1.38
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
-    void activeChoiceReferenceParam(String paramName,
-                                    @DslContext(ActiveChoiceReferenceContext) Closure closure = null) {
-        ActiveChoiceReferenceContext context = new ActiveChoiceReferenceContext()
+    void activeChoiceReactiveParam(String paramName,
+                                   @DslContext(ActiveChoiceReactiveContext) Closure closure = null) {
+        ActiveChoiceReactiveContext context = new ActiveChoiceReactiveContext()
         ContextHelper.executeInContext(closure, context)
 
         Node node = createActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', paramName, context)

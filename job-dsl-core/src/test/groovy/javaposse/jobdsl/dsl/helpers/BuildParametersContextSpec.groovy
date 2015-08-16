@@ -972,9 +972,9 @@ class BuildParametersContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
     }
 
-    def 'active choice reference without options'() {
+    def 'active choice reactive param without options'() {
         when:
-        context.activeChoiceReferenceParam('activeChoiceReferenceParam') {
+        context.activeChoiceReactiveParam('activeChoiceReferenceParam') {
         }
 
         then:
@@ -992,9 +992,9 @@ class BuildParametersContextSpec extends Specification {
         }
     }
 
-    def 'active choice reference with all options and groovy script'() {
+    def 'active choice reactive param with all options and groovy script'() {
         when:
-        context.activeChoiceReferenceParam('activeChoiceReferenceScriptlerParam') {
+        context.activeChoiceReactiveParam('activeChoiceReferenceScriptlerParam') {
             description('Active choice param test')
             filterable()
             choiceType('SINGLE_SELECT')
@@ -1026,7 +1026,7 @@ class BuildParametersContextSpec extends Specification {
         }
     }
 
-    def 'active choice reactive reference without options'() {
+    def 'active choice reactive reference param without options'() {
         when:
         context.activeChoiceReactiveReferenceParam('activeChoiceReactiveReferenceParam') {
         }
@@ -1046,7 +1046,7 @@ class BuildParametersContextSpec extends Specification {
         }
     }
 
-    def 'active choice reactive reference with all options and scriptler script'() {
+    def 'active choice reactive reference param with all options and scriptler script'() {
         when:
         context.activeChoiceReactiveReferenceParam('activeChoiceReactiveReferenceScriptlerParam') {
             description('Active choice reactive reference param test with scriptler script')
@@ -1081,5 +1081,4 @@ class BuildParametersContextSpec extends Specification {
             referencedParameters.text() == 'param3, param4'
         }
     }
-
 }

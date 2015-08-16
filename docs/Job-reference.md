@@ -66,10 +66,10 @@ freeStyleJob(String name) { // since 1.30
         textParam(String parameterName, String defaultValue = null,
                   String description = null)
         activeChoiceParam(String paramName, Closure closure) // since 1.36
-        activeChoiceReferenceParam(String paramName,
-                                   Closure closure) // since 1.38
+        activeChoiceReactiveParam(String paramName,
+                                  Closure closure) // since 1.38
         activeChoiceReactiveReferenceParam(String paramName,
-                                   Closure closure) // since 1.38
+                                           Closure closure) // since 1.38
     }
     scm {
         baseClearCase(Closure closure) // since 1.24
@@ -6168,12 +6168,12 @@ job('example-2') {
 
 (since 1.36)
 
-### Active Choice Reference Parameter
+### Active Choice Reactive Parameter
 
 ```groovy
 job {
     parameters {
-        activeChoiceReferenceParam(String paramName) {
+        activeChoiceReactiveParam(String paramName) {
             description(String description)
             filterable(boolean filterable = true)
             choiceType(String choiceType)
@@ -6198,7 +6198,7 @@ Valid values for `choiceType` are `'SINGLE_SELECT'` (default), `'MULTI_SELECT'`,
 ```groovy
 job('example-1') {
     parameters {
-        activeChoiceReferenceParam('CHOICE-1') {
+        activeChoiceReactiveParam('CHOICE-1') {
             description('Allows user choose from multiple choices')
             filterable()
             choiceType('SINGLE_SELECT')
@@ -6214,7 +6214,7 @@ job('example-1') {
 
 job('example-2') {
     parameters {
-        activeChoiceReferenceParam('CHOICE-1') {
+        activeChoiceReactiveParam('CHOICE-1') {
             scriptlerScript('scriptler-script1.groovy') {
                 parameter('param1', 'value1')
                 parameter('param2', 'value2')
