@@ -1349,7 +1349,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.17')
     void mergePullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure = null) {
-        PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext()
+        PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestPublisherContext)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge' {
@@ -1357,6 +1357,10 @@ class PublisherContext extends AbstractExtensibleContext {
             disallowOwnCode(pullRequestPublisherContext.disallowOwnCode)
             onlyTriggerPhrase(pullRequestPublisherContext.onlyTriggerPhrase)
             mergeComment(pullRequestPublisherContext.mergeComment ?: '')
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
+                failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
+                deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
+            }
         }
     }
 
