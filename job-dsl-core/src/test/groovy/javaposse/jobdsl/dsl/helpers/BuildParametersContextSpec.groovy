@@ -1039,7 +1039,7 @@ class BuildParametersContextSpec extends Specification {
             description.text() == ''
             randomName.text() =~ /choice-parameter-\d+/
             visibleItemCount.text() == '1'
-            choiceType.text() == 'ET_FORMATTED_HTML'
+            choiceType.text() == 'ET_TEXT_BOX'
             script.text() == ''
             referencedParameters.text() == ''
             omitValueField.text() == 'false'

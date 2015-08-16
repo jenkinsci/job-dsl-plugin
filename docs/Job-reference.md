@@ -6252,7 +6252,8 @@ job {
 Defines a Active Choice Reactive Reference parameter with groovy script as source of parameter options. Requires the
 [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin).
 
-Valid values for `choiceType` are `'FORMATTED_HTML'` (default), `'FORMATTED_HIDDEN_HTML'`, `'TEXT_BOX'`, `'ORDERED_LIST'`, `'UNORDERED_LIST'`.
+Valid values for `choiceType` are  `'TEXT_BOX'` (default), `'FORMATTED_HTML'`, `'FORMATTED_HIDDEN_HTML'`,
+`'ORDERED_LIST'`, `'UNORDERED_LIST'`.
 
 ```groovy
 job('example-1') {
@@ -6285,7 +6286,6 @@ job('example-2') {
 ```
 
 (since 1.38)
-
 
 ### Label Parameter
 

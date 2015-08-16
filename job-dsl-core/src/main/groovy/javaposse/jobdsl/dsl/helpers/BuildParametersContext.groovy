@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
-
+import javaposse.jobdsl.dsl.helpers.parameter.AbstractActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReferenceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveReferenceContext
@@ -211,7 +211,7 @@ class BuildParametersContext extends AbstractContext {
         ActiveChoiceContext context = new ActiveChoiceContext()
         ContextHelper.executeInContext(closure, context)
 
-        buildParameterNodes[paramName] = createGenericActiveChoiceNode(
+        buildParameterNodes[paramName] = createActiveChoiceNode(
                 'org.biouno.unochoice.ChoiceParameter', paramName, context
         )
     }
@@ -225,7 +225,7 @@ class BuildParametersContext extends AbstractContext {
         ActiveChoiceReferenceContext context = new ActiveChoiceReferenceContext()
         ContextHelper.executeInContext(closure, context)
 
-        Node node = createGenericActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', paramName, context)
+        Node node = createActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', paramName, context)
         node.appendNode('referencedParameters', context.referencedParameters.join(', '))
 
         buildParameterNodes[paramName] = node
@@ -240,14 +240,22 @@ class BuildParametersContext extends AbstractContext {
         ActiveChoiceReactiveReferenceContext context = new ActiveChoiceReactiveReferenceContext()
         ContextHelper.executeInContext(closure, context)
 
-        Node node = createGenericActiveChoiceNode('org.biouno.unochoice.DynamicReferenceParameter', paramName, context)
+        Node node = createAbstractActiveChoiceNode('org.biouno.unochoice.DynamicReferenceParameter', paramName, context)
         node.appendNode('referencedParameters', context.referencedParameters.join(', '))
+        node.appendNode('choiceType', "ET_${context.choiceType}")
         node.appendNode('omitValueField', context.omitValueField)
 
         buildParameterNodes[paramName] = node
     }
 
-    Node createGenericActiveChoiceNode(String type, String paramName, ActiveChoiceContext context) {
+    Node createActiveChoiceNode(String type, String paramName, ActiveChoiceContext context) {
+        Node node = createAbstractActiveChoiceNode(type, paramName, context)
+        node.appendNode('filterable', context.filterable)
+        node.appendNode('choiceType', "PT_${context.choiceType}")
+        node
+    }
+
+    Node createAbstractActiveChoiceNode(String type, String paramName, AbstractActiveChoiceContext context) {
         checkNotNull(paramName, 'paramName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(paramName), "parameter ${paramName} already defined")
 
@@ -256,10 +264,6 @@ class BuildParametersContext extends AbstractContext {
             description(context.description ?: '')
             randomName("choice-parameter-${System.nanoTime()}")
             visibleItemCount(1)
-            choiceType("${context.choiceTypePrefix}${context.choiceType}")
-            if (context.supportsFilterable) {
-                filterable(context.filterable)
-            }
         }
         if (context.script) {
             node.children().add(context.script)
