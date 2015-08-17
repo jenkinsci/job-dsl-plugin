@@ -100,10 +100,13 @@ interface DslFactory extends ViewFactory {
 
     /**
      * @since 1.30
+     * @see #folder(java.lang.String, groovy.lang.Closure)
      */
     Folder folder(String name)
 
     /**
+     * Creates or updates a folder.
+     *
      * @since 1.31
      */
     Folder folder(String name, @DslContext(Folder) Closure closure)

@@ -21,7 +21,7 @@ import java.lang.reflect.Type
 class ApiDocGenerator {
 
     final private GroovyDocHelper docHelper = new GroovyDocHelper('src/main/groovy/')
-    final private String commandDocsPath = 'api-docs'
+    final private String commandDocsPath = 'src/main/docs'
     final private Class rootClass = JobParent
     final private Map allContextClasses = [:]
     final private List allContextClassesList = []

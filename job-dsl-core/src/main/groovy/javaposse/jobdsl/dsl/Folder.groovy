@@ -13,19 +13,27 @@ class Folder extends Item {
         super(jobManagement)
     }
 
-    void displayName(String displayNameArg) {
+    /**
+     * Sets the name to display instead of the actual folder name.
+     */
+    void displayName(String displayName) {
         execute {
-            it / methodMissing('displayName', displayNameArg)
-        }
-    }
-
-    void description(String descriptionArg) {
-        execute {
-            it / methodMissing('description', descriptionArg)
+            it / methodMissing('displayName', displayName)
         }
     }
 
     /**
+     * Sets a description for the folder.
+     */
+    void description(String description) {
+        execute {
+            it / methodMissing('description', description)
+        }
+    }
+
+    /**
+     * Creates permission records.
+     *
      * @since 1.36
      */
     void primaryView(String primaryViewArg) {

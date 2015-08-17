@@ -16,7 +16,9 @@ abstract class Item extends AbstractContext {
     }
 
     /**
-     * Provide raw config.xml for direct manipulation.
+     * Allows direct manipulation of the generated XML.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void configure(Closure withXmlClosure) {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )

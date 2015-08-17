@@ -18,12 +18,21 @@ class AuthorizationContext extends AbstractContext {
         this.authorizationMatrixPropertyClassName = authorizationMatrixPropertyClassName
     }
 
+    /**
+     * Adds all available permissions for the user.
+     */
     void permissionAll(String user) {
         availablePermissions.each {
             addPermission(it, user)
         }
     }
 
+    /**
+     * Adds a specific permission.
+     *
+     * @param permission a permission string in {@code '<permission>:<user>'} format, e.g.
+     * {@code 'hudson.model.Item.Create:authenticated'}
+     */
     void permission(String permission) {
         checkNotNullOrEmpty(permission, 'permission must not be null or empty')
         checkArgument(permission.contains(':'), 'permission must be <permission>:<user>')
@@ -32,6 +41,9 @@ class AuthorizationContext extends AbstractContext {
         this.permission(permissionAndUser[0], permissionAndUser[1])
     }
 
+    /**
+     * Adds a specific permission, but breaks apart the permission from the user name.
+     */
     void permission(String permission, String user) {
         checkArgument(
                 availablePermissions.contains(permission),
