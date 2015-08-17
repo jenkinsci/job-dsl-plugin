@@ -1610,6 +1610,9 @@ p4(String viewspec, String user = 'rolem', String password = '', Closure configu
 
 Add Perforce SCM source. The user probably has to be specified. The password will be properly encrypted. Sets p4Client to builds-${JOB_NAME}. The configure block is handed a hudson.plugins.perforce.PerforceSCM. Perforce requires a few fields to be setup, so it's very likely that the configure block will be needed, especially for things like p4Port.
 
+For security reasons, do not use a hard-coded password. See [[Handling-Credentials]] for details about handling
+credentials in DSL scripts.
+
 ```groovy
 p4('//depot/Tools/build') { node ->
     node / p4Port('perforce:1666')
@@ -4422,6 +4425,9 @@ job {
 Allows notifications to be set to HipChat. Requires the
 [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin).
 
+For security reasons, do not use a hard-coded API token. Use either the global settings or see [[Handling-Credentials]]
+for details about handling credentials in DSL scripts.
+
 ```groovy
 job('example') {
     publishers {
@@ -4467,6 +4473,9 @@ job {
 
 Allows notifications to be set to Slack. Requires the
 [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin).
+
+For security reasons, do not use a hard-coded integration token. Either use the global settings or see
+[[Handling-Credentials]] for handling credentials in DSL scripts.
 
 ```groovy
 job('example') {
@@ -4706,6 +4715,9 @@ Enables the Cordell Walker plugin.
 ### IRC
 
 Interface for the [IRC plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin). All the options can be set and multiple channels can be added. The channel calls support named parameters as well. The notification settings can be disabled with passing false as a parameter. A complete example:
+
+For security reasons, do not use hard-coded passwords. See [[Handling-Credentials]] for details about handling
+credentials in DSL scripts.
 
 ```groovy
 irc {
@@ -5619,7 +5631,7 @@ job('example-2') {
 ```groovy
 job {
     publishers {
-        flowdock('a-long-token') {
+        flowdock(String token) {
             unstable(boolean unstable = true)
             success(boolean success = true)
             aborted(boolean aborted = true)
@@ -5638,7 +5650,8 @@ Sends build notification from Jenkins to your flow. Requires the [Flowdock Plugi
 Omitting an argument to any of the methods taking a boolean will behave as if you passed in true. Not calling the method will default to the plugin's default values (which are true for success, failure and fixed; false for all others).
 Tags are appended to form a single list, so that multiple calls to tag will behave as if youc alled tags variant with the concatenated list of Strings.
 
-Examples:
+For security reasons, do not use a hard-coded API token. See [[Handling-Credentials]] for details about handling
+credentials in DSL scripts.
 
 ```groovy
 // Minimal example. Notify using all the plugin defaults (inbox, not chat; notify on success, failure, fixed; no tags)
