@@ -1359,8 +1359,10 @@ class PublisherContext extends AbstractExtensibleContext {
             disallowOwnCode(pullRequestPublisherContext.disallowOwnCode)
             onlyTriggerPhrase(pullRequestPublisherContext.onlyTriggerPhrase)
             mergeComment(pullRequestPublisherContext.mergeComment ?: '')
-            failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
-            deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
+                failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
+                deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
+            }
         }
     }
 

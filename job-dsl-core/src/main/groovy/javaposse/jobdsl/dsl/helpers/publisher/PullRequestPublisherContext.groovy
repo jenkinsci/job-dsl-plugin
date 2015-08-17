@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class PullRequestPublisherContext implements Context {
     String mergeComment
@@ -26,10 +27,18 @@ class PullRequestPublisherContext implements Context {
         this.disallowOwnCode = disallowOwnCode
     }
 
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id="ghprb", minimumVersion="1.26")
     void failOnNonMerge(boolean failOnNonMerge = true) {
         this.failOnNonMerge = failOnNonMerge
     }
 
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id="ghprb", minimumVersion="1.26")
     void deleteOnMerge(boolean deleteOnMerge = true) {
         this.deleteOnMerge = deleteOnMerge
     }
