@@ -97,7 +97,7 @@ class PullRequestBuilderContext extends AbstractContext {
     /**
      * @since 1.38
      */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26.2')
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void extensions(@DslContext(GitHubPullRequestBuilderExtensionContext) Closure closure) {
         ContextHelper.executeInContext(closure, extensionContext)
     }

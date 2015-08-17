@@ -6120,6 +6120,8 @@ job {
             onlyTriggerPhrase(boolean enable = true) // defaults to false
             onlyAdminsMerge(boolean enable = true)   // defaults to false
             disallowOwnCode(boolean enable = true)   // defaults to false
+            failOnNonMerge(boolean enable = true)    // since 1.38
+            deleteOnMerge(boolean enable = true)     // since 1.38
         }
     }
 }

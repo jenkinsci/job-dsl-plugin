@@ -4277,12 +4277,16 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
-            children().size() == 4
+            children().size() == 6
             mergeComment[0].value() == ''
             onlyTriggerPhrase[0].value() == false
             onlyAdminsMerge[0].value() == false
             disallowOwnCode[0].value() == false
+            failOnNonMerge[0].value() == false
+            deleteOnMerge[0].value() == false
         }
+        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
+        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
     }
 
     def 'mergePullRequest with all options'() {
@@ -4292,17 +4296,44 @@ class PublisherContextSpec extends Specification {
             onlyTriggerPhrase()
             onlyAdminsMerge()
             disallowOwnCode()
+            failOnNonMerge()
+            deleteOnMerge()
         }
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
-            children().size() == 4
+            children().size() == 6
             mergeComment[0].value() == 'Test comment'
             onlyTriggerPhrase[0].value() == true
             onlyAdminsMerge[0].value() == true
             disallowOwnCode[0].value() == true
+            failOnNonMerge[0].value() == true
+            deleteOnMerge[0].value() == true
         }
+        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
+        2 * jobManagement.requireMinimumPluginVersion('ghprb', '1.26')
+        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+    }
+
+    def 'mergePullRequest with no options and older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('ghprb') >> new VersionNumber('1.25')
+
+        when:
+        context.mergePullRequest()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
+            children().size() == 4
+            mergeComment[0].value() == ''
+            onlyTriggerPhrase[0].value() == false
+            onlyAdminsMerge[0].value() == false
+            disallowOwnCode[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
+        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
     }
 
     def 'publishBuild with no options'() {
