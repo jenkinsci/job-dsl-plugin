@@ -39,7 +39,7 @@ class HgContext extends AbstractContext {
     }
 
     void credentials(String credentials) {
-        this.credentialsId = jobManagement.getCredentialsId(credentials)
+        this.credentialsId = credentials
     }
 
     void clean(boolean clean = true) {

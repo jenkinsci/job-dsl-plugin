@@ -29,7 +29,7 @@ class CredentialsBindingContext extends AbstractContext {
     @RequiresPlugin(id = 'credentials-binding', minimumVersion = '1.3')
     void usernamePassword(String userVariableName, String passwordVariableName, String credentials) {
         nodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding' {
-            credentialsId(jobManagement.getCredentialsId(credentials))
+            credentialsId(credentials)
             usernameVariable(userVariableName)
             passwordVariable(passwordVariableName)
         }
@@ -42,7 +42,7 @@ class CredentialsBindingContext extends AbstractContext {
     private void addSimpleBinding(String type, String variableName, String credentials) {
         nodes << new NodeBuilder()."org.jenkinsci.plugins.credentialsbinding.impl.${type}Binding" {
             variable(variableName)
-            credentialsId(jobManagement.getCredentialsId(credentials))
+            credentialsId(credentials)
         }
     }
 }

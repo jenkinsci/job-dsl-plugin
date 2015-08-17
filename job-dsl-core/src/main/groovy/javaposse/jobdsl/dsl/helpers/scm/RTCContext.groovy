@@ -34,7 +34,7 @@ class RTCContext extends AbstractContext {
     void connection(String buildTool, String credentials, String serverURI, int timeout) {
         this.overrideGlobal = true
         this.buildTool = buildTool
-        this.credentialsId = jobManagement.getCredentialsId(credentials)
+        this.credentialsId = credentials
         this.serverURI = serverURI
         this.timeout = timeout
     }

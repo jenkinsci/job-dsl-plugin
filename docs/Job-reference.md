@@ -4,8 +4,6 @@ This is the in-depth documentation of the methods available on inside the _job_ 
 
 ```groovy
 freeStyleJob(String name) { // since 1.30
-    name(String name) // deprecated since 1.30
-
     // DSL specific methods
     using(String templateName)
     configure(Closure configBlock)
@@ -277,10 +275,6 @@ freeStyleJob(String name) { // since 1.30
                               Closure cloneWorkspaceClosure = null)
         publishHtml(Closure htmlReportClosure)
         publishJabber(String target, Closure jabberClosure = null)
-        publishJabber(String target, String strategyName,
-                      Closure jabberClosure = null) // deprecated since 1.30
-        publishJabber(String target, String strategyName, String channelNotificationName,
-                      Closure jabberClosure = null) // deprecated since 1.30
         publishOverSsh(Closure publishOverSshClosure) // since 1.34
         publishRobotFrameworkReports(Closure closure = null) // since 1.21
         publishScp(String site, Closure scpClosure)
@@ -303,8 +297,6 @@ freeStyleJob(String name) { // since 1.30
         wsCleanup(Closure wsCleanupClosure = null) // since 1.23
     }
 }
-
-job(type: Freeform, Closure closure) // deprecated since 1.30
 ```
 
 ## Build Flow Job
@@ -315,8 +307,6 @@ buildFlowJob(String name) { // since 1.30
 
     buildFlow(String buildFlowText)
 }
-
-job(type: BuildFlow, Closure closure) // deprecated since 1.30
 ```
 
 ## Ivy Job
@@ -361,8 +351,6 @@ matrixJob(String name) { // since 1.30
     combinationFilter(String expression)
     childCustomWorkspace(String workspace) // since 1.36
 }
-
-job(type: Matrix, Closure closure) // deprecated since 1.30
 ```
 
 ## Maven Job
@@ -387,8 +375,6 @@ mavenJob(String name) { // since 1.30
         mavenRelease(Closure mavenReleaseClosure = null) // since 1.25
     }
 }
-
-job(type: Maven, Closure closure) // deprecated since 1.30
 ```
 
 ## Multi Job
@@ -396,8 +382,6 @@ job(type: Maven, Closure closure) // deprecated since 1.30
 multiJob(String name) { // since 1.30
     // includes all options from freeStyleJob
 }
-
-job(type: Multijob, Closure closure) // deprecated since 1.30
 ```
 
 ## Workflow Job
@@ -409,8 +393,6 @@ workflowJob(String name) { // since 1.30
         cps(Closure cpsClosure)
     }
 }
-
-job(type: Workflow, Closure closure) // deprecated since 1.30
 ```
 
 ## Job Options
@@ -2063,7 +2045,6 @@ job {
             absolute(int minutes = 3)                  // default
             likelyStuck()
             failBuild()
-            failBuild(boolean fail)                    // deprecated since 1.30
             abortBuild()                               // since 1.30
             writeDescription(String description)
         }
@@ -4529,10 +4510,6 @@ job('example') {
 ```groovy
 job {
     publishers {
-        publishJabber(String target, String strategyName, String channelNotificationName,
-                      Closure jabberClosure = null)        // deprecated since 1.30
-        publishJabber(String target, String strategyName,
-                      Closure jabberClosure = null)        // deprecated since 1.30
         publishJabber(String target) {
             strategyName(String strategy)                  // defaults to 'ALL'
             notifyOnBuildStart(boolean value = true)       // defaults to false

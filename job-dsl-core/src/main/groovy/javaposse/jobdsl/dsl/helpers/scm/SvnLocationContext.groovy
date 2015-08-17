@@ -19,7 +19,7 @@ class SvnLocationContext extends AbstractContext {
 
     @RequiresPlugin(id = 'subversion', minimumVersion = '2.0')
     void credentials(String credentials) {
-        this.credentials = jobManagement.getCredentialsId(credentials)
+        this.credentials = credentials
     }
 
     void depth(SvnDepth depth) {

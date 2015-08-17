@@ -647,7 +647,7 @@ job {
 }
 ```
 
-## Finding Credentials by Description
+### Finding Credentials by Description
 
 Finding credentials by description has been [[deprecated|Deprecation-Policy]]. The argument passed to the `credentials`
 methods (e.g. for Git or Subversion SCM) has been used to find credentials by comparing the value to the credential's

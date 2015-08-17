@@ -320,42 +320,14 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    void publishJabber(String target, @DslContext(JabberContext) Closure jabberClosure = null) {
-        publishJabber(target, null, null, jabberClosure)
-    }
-
-    @Deprecated
-    void publishJabber(String target, String strategyName, @DslContext(JabberContext) Closure jabberClosure = null) {
-        publishJabber(target, strategyName, null, jabberClosure)
-    }
-
-    @Deprecated
     @RequiresPlugin(id = 'jabber')
-    void publishJabber(String targetsArg, String strategyName, String channelNotificationName,
-                       @DslContext(JabberContext) Closure jabberClosure = null) {
-        if (strategyName || channelNotificationName) {
-            jobManagement.logDeprecationWarning()
-        }
-
+    void publishJabber(String targets, @DslContext(JabberContext) Closure jabberClosure = null) {
         JabberContext jabberContext = new JabberContext()
-        jabberContext.strategyName = strategyName ?: 'ALL'
-        jabberContext.channelNotificationName = channelNotificationName ?: 'Default'
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
-        // Validate values
-        checkArgument(
-                validJabberStrategyNames.contains(jabberContext.strategyName),
-                "Jabber Strategy needs to be one of these values: ${validJabberStrategyNames.join(',')}"
-        )
-        checkArgument(
-                validJabberChannelNotificationNames.contains(jabberContext.channelNotificationName),
-                'Jabber Channel Notification name needs to be one of these values: ' +
-                        validJabberChannelNotificationNames.join(',')
-        )
-
         publisherNodes << new NodeBuilder().'hudson.plugins.jabber.im.transport.JabberPublisher' {
-            targets {
-                targetsArg.split().each { target ->
+            delegate.targets {
+                targets.split().each { target ->
                     boolean isGroup = target.startsWith('*')
                     if (isGroup) {
                         String targetClean = target[1..-1]
@@ -382,11 +354,6 @@ class PublisherContext extends AbstractExtensibleContext {
             matrixMultiplier 'ONLY_CONFIGURATIONS'
         }
     }
-
-    @Deprecated
-    Set<String> validJabberStrategyNames = ['ALL', 'FAILURE_AND_FIXED', 'ANY_FAILURE', 'STATECHANGE_ONLY']
-    @Deprecated
-    Set<String> validJabberChannelNotificationNames = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
     @RequiresPlugin(id = 'scp')
     void publishScp(String site, @DslContext(ScpContext) Closure scpClosure) {

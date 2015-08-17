@@ -184,7 +184,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        String script1 = 'job { name "test-job" }'
+        String script1 = 'job("test-job")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script1), false, RemovedJobAction.DELETE
         )
@@ -194,7 +194,7 @@ class ExecuteDslScriptsSpec extends Specification {
         assertTrue(jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject)
 
         when:
-        String script2 = 'job { name "different-job" }'
+        String script2 = 'job("different-job")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script2), false, RemovedJobAction.DELETE
         )
@@ -211,7 +211,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        String script1 = 'job { name "/folder/test-job" }'
+        String script1 = 'job("/folder/test-job")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script1), false, RemovedJobAction.DELETE
         )
@@ -221,7 +221,7 @@ class ExecuteDslScriptsSpec extends Specification {
         assertTrue(jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject)
 
         when:
-        String script2 = 'job { name "/folder/different-job" }'
+        String script2 = 'job("/folder/different-job")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script2), false, RemovedJobAction.DELETE
         )
@@ -238,7 +238,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = folder.createProject(FreeStyleProject, 'seed')
 
         when:
-        String script1 = 'job { name "test-job" }'
+        String script1 = 'job("test-job")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script1),
                 false,
@@ -251,7 +251,7 @@ class ExecuteDslScriptsSpec extends Specification {
         assertTrue(jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject)
 
         when:
-        String script2 = 'job { name "/folder/different-job" }'
+        String script2 = 'job("/folder/different-job")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script2),
                 false,
@@ -270,7 +270,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        String script1 = 'job { name "test-job" }'
+        String script1 = 'job("test-job")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script1), false, RemovedJobAction.DELETE
         )
@@ -280,7 +280,7 @@ class ExecuteDslScriptsSpec extends Specification {
         assertTrue(jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject)
 
         when:
-        String script2 = 'job { name "different-job" }'
+        String script2 = 'job("different-job")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script2), false, RemovedJobAction.DELETE
         )
@@ -307,7 +307,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        String script = 'job {\n name("test-job")\n using("template")\n}'
+        String script = 'job("test-job") {\n using("template")\n}'
         ExecuteDslScripts builder = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script), false, RemovedJobAction.DELETE
         )
@@ -327,7 +327,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        String script = 'job {\n name("test-job")\n using("/template-folder/template")\n}'
+        String script = 'job("test-job") {\n using("/template-folder/template")\n}'
         ExecuteDslScripts builder = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script), false, RemovedJobAction.DELETE
         )
@@ -347,7 +347,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = folder.createProject(FreeStyleProject, 'seed')
 
         when:
-        String script = 'job {\n name("test-job")\n using("template")\n}'
+        String script = 'job("test-job") {\n using("template")\n}'
         ExecuteDslScripts builder = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script),
                 false,
@@ -379,7 +379,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject template = jenkinsRule.createFreeStyleProject('template')
 
         when:
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n using("template")\n}'))
 
         then:
         AbstractProject testJob = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
@@ -400,7 +400,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.createFreeStyleProject('test-job')
 
         when:
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n using("template")\n}'))
 
         then:
         AbstractProject testJob = jenkinsRule.instance.getItemByFullName('test-job', AbstractProject)
@@ -416,7 +416,7 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n using("template")\n}'))
 
         when:
         runBuild(seedJob, new ExecuteDslScripts(
@@ -432,7 +432,7 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n using("template")\n}'))
 
         when:
         runBuild(seedJob, new ExecuteDslScripts(
@@ -448,7 +448,7 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n using("template")\n}'))
 
         when:
         runBuild(seedJob, new ExecuteDslScripts(
@@ -463,7 +463,7 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n using("template")\n}'))
 
         when:
         jenkinsRule.instance.getItemByFullName('test-job').delete()
@@ -477,7 +477,7 @@ class ExecuteDslScriptsSpec extends Specification {
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("/folder/test-job") {\n using("template")\n}'))
 
         when:
         folder.delete()
@@ -491,7 +491,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.jenkins.createProject(Folder, 'folder')
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("/folder/test-job") {\n using("template")\n}'))
 
         when:
         (jenkinsRule.instance.getItemByFullName('/folder/test-job') as AbstractProject).renameTo('renamed')
@@ -507,7 +507,7 @@ class ExecuteDslScriptsSpec extends Specification {
         Folder target = jenkinsRule.jenkins.createProject(Folder, 'target')
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         jenkinsRule.createFreeStyleProject('template')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("/folder/test-job")\n using("template")\n}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("/folder/test-job") {\n using("template")\n}'))
 
         when:
         Items.move(jenkinsRule.instance.getItemByFullName('/folder/test-job', FreeStyleProject), target)
@@ -520,7 +520,7 @@ class ExecuteDslScriptsSpec extends Specification {
     def "Warn when job is updated manually"() {
         when:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
-        runBuild(seedJob, new ExecuteDslScripts('job {\n name("test-job")\n description("abc")}'))
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n description("abc")}'))
 
         then:
         !jenkinsRule.instance.getItemByFullName('test-job', AbstractProject).getAction(
@@ -695,7 +695,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        String script1 = 'view { name "test-view" }'
+        String script1 = 'listView("test-view")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script1),
                 false,
@@ -709,7 +709,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getView('test-view') instanceof ListView
 
         when:
-        String script2 = 'view { name "different-view" }'
+        String script2 = 'listView("different-view")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script2),
                 false,
@@ -730,7 +730,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 
         when:
-        String script1 = 'view { name "/folder/test-view" }'
+        String script1 = 'listView("/folder/test-view")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script1),
                 false,
@@ -744,7 +744,7 @@ class ExecuteDslScriptsSpec extends Specification {
         folder.getView('test-view') instanceof ListView
 
         when:
-        String script2 = 'view { name "/folder/different-view" }'
+        String script2 = 'listView("/folder/different-view")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script2),
                 false,
@@ -801,7 +801,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleProject job = folder.createProject(FreeStyleProject, 'seed')
 
         when:
-        String script1 = 'view { name "test-view" }'
+        String script1 = 'listView("test-view")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script1),
                 false,
@@ -815,7 +815,7 @@ class ExecuteDslScriptsSpec extends Specification {
         folder.getView('test-view') instanceof ListView
 
         when:
-        String script2 = 'view { name "different-view" }'
+        String script2 = 'listView("different-view")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(
                 new ExecuteDslScripts.ScriptLocation('true', null, script2),
                 false,
@@ -979,8 +979,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
     def 'maven pre and post build steps'() {
         setup:
-        String mavenPrePostScript = '''job(type: 'Maven') {
-    name('maven-job')
+        String mavenPrePostScript = '''mavenJob('maven-job') {
     goals('clean install')
     preBuildSteps {
         shell('echo first')
@@ -1010,8 +1009,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
     def 'allow empty archive'() {
         setup:
-        String emptyArchiveScript = """job {
-    name('test-job')
+        String emptyArchiveScript = """job('test-job') {
     steps {
         shell("echo 'foo' > test")
     }
@@ -1071,8 +1069,7 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString().trim() == 'lorem ipsum'
     }
 
-    private static final String SCRIPT = """job {
-    name('test-job')
+    private static final String SCRIPT = """job('test-job') {
 }"""
 
     private static final String EXTENSION_SCRIPT = """job('example-extension') {
@@ -1085,8 +1082,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
 def u = new Util().getName()
 
-job {
-    name(u)
+job(u) {
 }'''
 
     private static final String UTIL_CLASS = '''package util
@@ -1095,40 +1091,32 @@ public class Util {
     String getName() { return "test-job" }
 }'''
 
-    private static final String JOB_IN_FOLDER_SCRIPT = """folder {
-  name('folder-a')
+    private static final String JOB_IN_FOLDER_SCRIPT = """folder('folder-a') {
 }
 
-job {
-  name('folder-a/test-job')
+job('folder-a/test-job') {
   description('lorem ipsum')
 }"""
 
-    private static final String VIEW_SCRIPT = """view {
-  name('test-view')
+    private static final String VIEW_SCRIPT = """listView('test-view') {
   description('lorem ipsum')
 }"""
 
-    private static final String VIEW_IN_FOLDER_SCRIPT = """folder {
-  name('folder-a')
+    private static final String VIEW_IN_FOLDER_SCRIPT = """folder('folder-a') {
 }
 
-view {
-  name('folder-a/test-view')
+listView('folder-a/test-view') {
   description('lorem ipsum')
 }"""
 
-    private static final String FOLDER_SCRIPT = """folder {
-  name('test-folder')
+    private static final String FOLDER_SCRIPT = """folder('test-folder') {
   description('lorem ipsum')
 }"""
 
-    private static final String FOLDER_IN_FOLDER_SCRIPT = """folder {
-  name('folder-a')
+    private static final String FOLDER_IN_FOLDER_SCRIPT = """folder('folder-a') {
 }
 
-folder {
-  name('folder-a/folder-b')
+folder('folder-a/folder-b') {
   description('lorem ipsum')
 }"""
 }

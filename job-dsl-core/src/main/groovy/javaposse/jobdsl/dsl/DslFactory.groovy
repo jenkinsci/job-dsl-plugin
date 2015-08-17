@@ -9,12 +9,6 @@ import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 
 interface DslFactory extends ViewFactory {
-    @Deprecated
-    Job job(@DslContext(Job) Closure closure)
-
-    @Deprecated
-    Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
-
     /**
      * @since 1.30
      */
@@ -95,9 +89,6 @@ interface DslFactory extends ViewFactory {
      */
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
-    @Deprecated
-    Folder folder(@DslContext(Folder) Closure closure)
-
     /**
      * @since 1.30
      */
@@ -107,12 +98,6 @@ interface DslFactory extends ViewFactory {
      * @since 1.31
      */
     Folder folder(String name, @DslContext(Folder) Closure closure)
-
-    @Deprecated
-    ConfigFile configFile(@DslContext(ConfigFile) Closure closure)
-
-    @Deprecated
-    ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
     /**
      * @since 1.30

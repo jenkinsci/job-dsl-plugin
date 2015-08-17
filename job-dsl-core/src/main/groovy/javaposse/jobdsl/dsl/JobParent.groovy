@@ -111,24 +111,6 @@ abstract class JobParent extends Script implements DslFactory {
         job
     }
 
-    @Override
-    @Deprecated
-    Job job(Map<String, Object> arguments = [:], @DslContext(Job) Closure closure) {
-        jm.logDeprecationWarning()
-
-        Object typeArg = arguments['type'] ?: JobType.Freeform
-        JobType jobType = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
-
-        if (jobType == JobType.Multijob) {
-            jm.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
-        }
-
-        Job job = jobType.jobClass.newInstance(jm)
-        job.with(closure)
-        referencedJobs << job
-        job
-    }
-
     /**
      * @since 1.30
      */
@@ -205,37 +187,6 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     /**
-     * @since 1.21
-     */
-    @Override
-    @Deprecated
-    View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
-        jm.logDeprecationWarning()
-
-        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
-
-        View view = viewType.viewClass.newInstance(jm)
-        view.with(closure)
-        referencedViews << view
-        view
-    }
-
-    /**
-     * @since 1.23
-     */
-    @Override
-    @Deprecated
-    @RequiresPlugin(id = 'cloudbees-folder')
-    Folder folder(@DslContext(Folder) Closure closure) {
-        jm.logDeprecationWarning()
-
-        Folder folder = new Folder(jm)
-        folder.with(closure)
-        referencedJobs << folder
-        folder
-    }
-
-    /**
      * @since 1.30
      */
     @Override
@@ -266,23 +217,6 @@ abstract class JobParent extends Script implements DslFactory {
     @RequiresPlugin(id = 'config-file-provider')
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.MavenSettings, closure)
-    }
-
-    /**
-     * @since 1.25
-     */
-    @Override
-    @Deprecated
-    @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile configFile(Map<String, Object> arguments = [:], @DslContext(ConfigFile) Closure closure) {
-        jm.logDeprecationWarning()
-
-        ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
-
-        ConfigFile configFile = new ConfigFile(configFileType, jm)
-        configFile.with(closure)
-        referencedConfigFiles << configFile
-        configFile
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263

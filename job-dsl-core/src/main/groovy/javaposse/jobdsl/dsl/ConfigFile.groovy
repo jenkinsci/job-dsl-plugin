@@ -12,12 +12,6 @@ class ConfigFile implements Context {
         this.jobManagement = jobManagement
     }
 
-    @Deprecated
-    void name(String name) {
-        jobManagement.logDeprecationWarning()
-        this.name = name
-    }
-
     void comment(String comment) {
         Preconditions.checkNotNull(comment, 'comment must not be null')
 

@@ -62,17 +62,6 @@ class TimeoutContext extends AbstractContext {
         addOperation('Fail')
     }
 
-    @Deprecated
-    void failBuild(boolean fail) {
-        jobManagement.logDeprecationWarning()
-
-        if (fail) {
-            failBuild()
-        } else {
-            operations.removeAll { it.name() == 'hudson.plugins.build__timeout.operations.FailOperation' }
-        }
-    }
-
     /**
      * @since 1.30
      */

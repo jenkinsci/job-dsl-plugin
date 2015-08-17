@@ -5,7 +5,6 @@ This is the in-depth documentation of the methods available on inside the _view_
 ```groovy
 listView(String name) { // since 1.30
     // common options
-    name(String name) // deprecated since 1.30
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
@@ -47,7 +46,6 @@ listView(String name) { // since 1.30
     }
     recurse(boolean shouldRecurse = true) // since 1.31
 }
-view(type: ListView, Closure viewClosure) // since 1.21, deprecated since 1.30
 ```
 
 Create a view which shows jobs in a list format. Details about the options can be found below. Similar to jobs, the view DSL can be extended using a [[configure block|The Configure Block]].
@@ -83,7 +81,6 @@ listView('project-A') {
 ```groovy
 buildPipelineView(String name) {  // since 1.30
     // common options
-    name(String name) // deprecated since 1.30
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
@@ -104,7 +101,6 @@ buildPipelineView(String name) {  // since 1.30
     showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true)
     startsWithParameters(boolean startsWithParameters = true) // since 1.26
 }
-view(type: BuildPipelineView, Closure viewClosure) // since 1.21, deprecated since 1.30
 ```
 
 Create a view of upstream and downstream connected jobs. Details about the options can be found below. Requires the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin).
@@ -127,7 +123,6 @@ buildPipelineView('project-A') {
 ```groovy
 sectionedView(String name) {  // since 1.30
     // common options
-    name(String name) // deprecated since 1.30
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
@@ -138,7 +133,6 @@ sectionedView(String name) {  // since 1.30
         listView(Closure listViewSectionClosure)
     }
 }
-view(type: SectionedView, Closure viewClosure) // since 1.25, deprecated since 1.30
 ```
 
 Create a view that can be divided into sections. Details about the options can be found below. Requires the
@@ -190,7 +184,6 @@ sectionedView('project-summary') {
 ```groovy
 nestedView(String name) { // since 1.30
     // common options
-    name(String name) // deprecated since 1.30
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
@@ -206,14 +199,12 @@ nestedView(String name) { // since 1.30
         buildMonitorView(String name, Closure closure = null)     // since 1.30
         categorizedJobsView(String name, Closure closure = null)  // since 1.31
         view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30, deprecated since 1.31
-        view(Map<String, Object> arguments = [:], Closure viewClosure) // deprecated since 1.30
     }
     columns {
         status()
         weather()
     }
 }
-view(type: NestedView, Closure viewClosure) // since 1.25, deprecated since 1.30
 ```
 
 Create a view that allows grouping views into multiple levels. Details about the options can be found below. Requires
@@ -246,7 +237,6 @@ nestedView('project-a') {
 ```groovy
 deliveryPipelineView(String name) {  // since 1.30
     // common options
-    name(String name) // deprecated since 1.30
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
@@ -266,7 +256,6 @@ deliveryPipelineView(String name) {  // since 1.30
         regex(String regex)
     }
 }
-view(type: DeliveryPipelineView, Closure viewClosure) // since 1.26, deprecated since 1.30
 ```
 
 Create a view that renders pipelines based on upstream/downstream jobs. Details about the options can be found below.
@@ -295,7 +284,6 @@ deliveryPipelineView('project-a') {
 ```groovy
 buildMonitorView(String name) {  // since 1.28
     // common options
-    name(String name) // deprecated since 1.30
     description(String description)
     filterBuildQueue(boolean filterBuildQueue = true)
     filterExecutors(boolean filterExecutors = true)
@@ -309,7 +297,6 @@ buildMonitorView(String name) {  // since 1.28
         regex(String regex)
     }
 }
-view(type: BuildMonitorView, Closure viewClosure) // since 1.28, deprecated since 1.30
 ```
 
 Create a view that provides a highly visible view of the status of selected Jenkins jobs. Details
@@ -369,21 +356,6 @@ categorizedJobsView('Configuration') {
 ```
 
 ## Common View Options
-
-### Name
-
-```groovy
-name(String viewName) // deprecated since 1.30
-```
-
-The name of the view, required when using the deprecated `view` method without name argument.
-
-The view name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret
-names relative to the seed job. (since 1.24)
-
-```groovy
-name('project-A')
-```
 
 ### Description
 
@@ -745,7 +717,6 @@ nestedView {
         buildPipelineView(String name, Closure closure = null)    // since 1.30
         buildMonitorView(String name, Closure closure = null)     // since 1.30
         view(Map<String, Object> arguments = [:], String name, Closure viewClosure) // since 1.30, deprecated since 1.31
-        view(Map<String, Object> arguments = [:], Closure viewClosure) // deprecated since 1.30
     }
 }
 ```

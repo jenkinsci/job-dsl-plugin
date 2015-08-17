@@ -5,8 +5,6 @@ to use folders.
 
 ```groovy
 folder(String name) { // since 1.30
-    name(String name) // deprecated since 1.30
-
     // DSL specific methods
     configure(Closure configureBlock)
 
@@ -16,33 +14,9 @@ folder(String name) { // since 1.30
     primaryView(String primaryView) // since 1.36
 }
 
-folder(Closure folderClosure) // since 1.23, deprecated since 1.30
 ```
 
 ## Folder Options
-
-### Name
-
-```groovy
-folder(String name) { // since 1.30
-}
-folder {              // since 1.23
-    name(String name) // deprecated since 1.30
-}
-```
-
-The name of the folder. Folders can be created within other folders by using the full path as name.
-
-The name is treated as absolute to the Jenkins root by default, but the seed job can be configured to interpret names
-relative to the seed job. (since 1.24)
-
-```groovy
-folder('example-1') {
-}
-
-folder('example-1/example-2') {
-}
-```
 
 ### Configure
 

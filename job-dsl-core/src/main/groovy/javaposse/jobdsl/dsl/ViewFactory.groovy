@@ -12,12 +12,6 @@ import javaposse.jobdsl.dsl.views.SectionedView
  * @since 1.31
  */
 interface ViewFactory {
-    @Deprecated
-    View view(@DslContext(View) Closure closure)
-
-    @Deprecated
-    View view(Map<String, Object> arguments, @DslContext(View) Closure closure)
-
     ListView listView(String name)
 
     ListView listView(String name, @DslContext(ListView) Closure closure)
