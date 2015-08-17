@@ -131,7 +131,7 @@ class TriggerContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ghprb')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
-        jobManagement.logPluginDeprecationWarning('ghprb', '1.15-0')
+        jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
 
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
@@ -153,7 +153,7 @@ class TriggerContext extends AbstractExtensibleContext {
             if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
                 allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             }
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26.2'))) {
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
                 extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
             }
         }

@@ -156,6 +156,12 @@ multiJob('example-3') {
 }
 ```
 
+### GitHub Pull Request Builder
+
+Support for versions older than 1.26 of the
+[GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.37
 
 ### Multijob
@@ -263,13 +269,13 @@ job('example') {
 }
 ```
 
-## GitHub Pull Request Builder
+### GitHub Pull Request Builder
 
 Support for versions older than 1.15-0 of the
 [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
-## Conditional Build Steps
+### Conditional Build Steps
 
 Usage build steps directly in the `conditionalSteps` context is [[deprecated|Deprecation-Policy]] and will be removed.
 

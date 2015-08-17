@@ -4286,6 +4286,7 @@ class PublisherContextSpec extends Specification {
             deleteOnMerge[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
+        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
     }
 
     def 'mergePullRequest with all options'() {
@@ -4312,6 +4313,7 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
         2 * jobManagement.requireMinimumPluginVersion('ghprb', '1.26')
+        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
     }
 
     def 'mergePullRequest with no options and older plugin version'() {
@@ -4331,6 +4333,7 @@ class PublisherContextSpec extends Specification {
             disallowOwnCode[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
+        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
     }
 
     def 'publishBuild with no options'() {

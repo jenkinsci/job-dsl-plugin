@@ -31,6 +31,9 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Support for older versions of the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-138)
+ * Support for the older versions of the
+   [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
+   is deprecated, see [Migration](Migration#migrating-to-138)
  * Increased the minimum supported Jenkins version to 1.580
  * Added support for the [Ivy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ivy+Plugin)
    ([JENKINS-29910](https://issues.jenkins-ci.org/browse/JENKINS-29910))
