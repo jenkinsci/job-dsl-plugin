@@ -51,6 +51,8 @@ freeStyleJob(String name) { // since 1.30
         booleanParam(String parameterName, boolean defaultValue = false,
                      String description = null)
         choiceParam(String parameterName, List<String> options, String description = null)
+        credentialsParam(String parameterName,
+                         Closure closure = null) // since 1.38
         fileParam(String fileLocation, String description = null)
         gitParam(String parameterName, Closure closure = null) // since 1.31
         labelParam(String parameterName, Closure closure = null) // since 1.30
@@ -6569,6 +6571,49 @@ job('example') {
 ```
 
 (since 1.31)
+
+### Credentials Parameter
+
+```groovy
+job {
+    parameters {
+        credentialsParam(String name) {
+            type(String type)
+            required(boolean required = true)
+            defaultValue(String credentialsId)
+            description(String description)
+        }
+    }
+}
+```
+
+Defines a credentials parameter. Requires the
+[Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin).
+
+The `type` setting must be a fully-qualified Java class name of a credentials type. Possible values include
+`'com.cloudbees.plugins.credentials.common.StandardCredentials'` (default, allows any type to be chosen),
+`'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl'`, or
+`'com.cloudbees.plugins.credentials.impl.CertificateCredentialsImpl'`. Additional credentials types are provided by
+other plugins, e.g. `'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'` is provided by the
+[SSH Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+Credentials+Plugin) and
+`'org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl'` and
+`'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl'` are provided by the
+[Plain Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plain+Credentials+Plugin).
+
+```groovy
+job('example') {
+    parameters {
+        credentialsParam('DEPLOY_KEY') {
+            type('com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey')
+            required()
+            defaultValue('ssh-key-staging')
+            description('SSH Key for deploying build artifacts')
+        }
+    }
+}
+```
+
+(since 1.38)
 
 # Job Properties
 

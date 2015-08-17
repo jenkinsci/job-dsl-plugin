@@ -9,6 +9,7 @@ import javaposse.jobdsl.dsl.helpers.parameter.AbstractActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveReferenceContext
+import javaposse.jobdsl.dsl.helpers.parameter.CredentialsParameterContext
 
 import static java.util.UUID.randomUUID
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -30,8 +31,7 @@ class BuildParametersContext extends AbstractContext {
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
                       String description = null) {
-        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
+        checkParameterName(parameterName)
         checkNotNullOrEmpty(scmUrl, 'scmUrl cannot be null or empty')
 
         Node definitionNode = new Node(null, 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition')
@@ -53,8 +53,7 @@ class BuildParametersContext extends AbstractContext {
     }
 
     void choiceParam(String parameterName, List<String> options, String description = null) {
-        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
+        checkParameterName(parameterName)
         checkNotNull(options, 'options cannot be null')
         checkArgument(options.size() > 0, 'at least one option must be specified')
 
@@ -76,8 +75,7 @@ class BuildParametersContext extends AbstractContext {
     }
 
     void fileParam(String fileLocation, String description = null) {
-        checkArgument(!buildParameterNodes.containsKey(fileLocation), 'parameter $fileLocation already defined')
-        checkNotNullOrEmpty(fileLocation, 'fileLocation cannot be null or empty')
+        checkParameterName(fileLocation)
 
         Node definitionNode = new Node(null, 'hudson.model.FileParameterDefinition')
         definitionNode.appendNode('name', fileLocation)
@@ -89,8 +87,7 @@ class BuildParametersContext extends AbstractContext {
     }
 
     void runParam(String parameterName, String jobToRun, String description = null, String filter = null) {
-        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
+        checkParameterName(parameterName)
         checkNotNullOrEmpty(jobToRun, 'jobToRun cannot be null or empty')
 
         Node definitionNode = new Node(null, 'hudson.model.RunParameterDefinition')
@@ -111,8 +108,7 @@ class BuildParametersContext extends AbstractContext {
      */
     @RequiresPlugin(id = 'nodelabelparameter')
     void labelParam(String parameterName, @DslContext(LabelParamContext) Closure labelParamClosure = null) {
-        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
+        checkParameterName(parameterName)
 
         LabelParamContext context = new LabelParamContext()
         ContextHelper.executeInContext(labelParamClosure, context)
@@ -133,8 +129,7 @@ class BuildParametersContext extends AbstractContext {
      */
     @RequiresPlugin(id = 'nodelabelparameter')
     void nodeParam(String parameterName, @DslContext(NodeParamContext) Closure nodeParamClosure = null) {
-        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
+        checkParameterName(parameterName)
 
         NodeParamContext context = new NodeParamContext()
         ContextHelper.executeInContext(nodeParamClosure, context)
@@ -162,8 +157,7 @@ class BuildParametersContext extends AbstractContext {
      */
     @RequiresPlugin(id = 'git-parameter', minimumVersion = '0.4.0')
     void gitParam(String parameterName, @DslContext(GitParamContext) Closure closure = null) {
-        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
+        checkParameterName(parameterName)
 
         GitParamContext context = new GitParamContext()
         ContextHelper.executeInContext(closure, context)
@@ -190,8 +184,7 @@ class BuildParametersContext extends AbstractContext {
     }
 
     private simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
-        checkArgument(!buildParameterNodes.containsKey(parameterName), 'parameter $parameterName already defined')
-        checkNotNullOrEmpty(parameterName, 'parameterName cannot be null or empty')
+        checkParameterName(parameterName)
 
         Node definitionNode = new Node(null, type)
         definitionNode.appendNode('name', parameterName)
@@ -207,12 +200,12 @@ class BuildParametersContext extends AbstractContext {
      * @since 1.36
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
-    void activeChoiceParam(String paramName, @DslContext(ActiveChoiceContext) Closure closure) {
+    void activeChoiceParam(String parameterName, @DslContext(ActiveChoiceContext) Closure closure) {
         ActiveChoiceContext context = new ActiveChoiceContext()
         ContextHelper.executeInContext(closure, context)
 
-        buildParameterNodes[paramName] = createActiveChoiceNode(
-                'org.biouno.unochoice.ChoiceParameter', paramName, context
+        buildParameterNodes[parameterName] = createActiveChoiceNode(
+                'org.biouno.unochoice.ChoiceParameter', parameterName, context
         )
     }
 
@@ -220,44 +213,70 @@ class BuildParametersContext extends AbstractContext {
      * @since 1.38
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
-    void activeChoiceReactiveParam(String paramName,
+    void activeChoiceReactiveParam(String parameterName,
                                    @DslContext(ActiveChoiceReactiveContext) Closure closure = null) {
         ActiveChoiceReactiveContext context = new ActiveChoiceReactiveContext()
         ContextHelper.executeInContext(closure, context)
 
-        Node node = createActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', paramName, context)
+        Node node = createActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', parameterName, context)
         node.appendNode('referencedParameters', context.referencedParameters.join(', '))
 
-        buildParameterNodes[paramName] = node
+        buildParameterNodes[parameterName] = node
     }
 
     /**
      * @since 1.38
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
-    void activeChoiceReactiveReferenceParam(String paramName,
+    void activeChoiceReactiveReferenceParam(String parameterName,
                                             @DslContext(ActiveChoiceReactiveReferenceContext) Closure closure = null) {
         ActiveChoiceReactiveReferenceContext context = new ActiveChoiceReactiveReferenceContext()
         ContextHelper.executeInContext(closure, context)
 
-        Node node = createAbstractActiveChoiceNode('org.biouno.unochoice.DynamicReferenceParameter', paramName, context)
+        Node node = createAbstractActiveChoiceNode(
+                'org.biouno.unochoice.DynamicReferenceParameter', parameterName, context
+        )
         node.appendNode('referencedParameters', context.referencedParameters.join(', '))
         node.appendNode('choiceType', "ET_${context.choiceType}")
         node.appendNode('omitValueField', context.omitValueField)
 
+        buildParameterNodes[parameterName] = node
+    }
+
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'credentials', minimumVersion = '1.22')
+    void credentialsParam(String paramName, @DslContext(CredentialsParameterContext) Closure closure = null) {
+        checkParameterName(paramName)
+
+        CredentialsParameterContext context = new CredentialsParameterContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node node = new NodeBuilder().'com.cloudbees.plugins.credentials.CredentialsParameterDefinition' {
+            name(paramName)
+            description(context.description ?: '')
+            defaultValue(context.defaultValue ?: '')
+            credentialType(context.type)
+            required(context.required)
+        }
         buildParameterNodes[paramName] = node
     }
 
-    Node createActiveChoiceNode(String type, String paramName, ActiveChoiceContext context) {
+    private checkParameterName(String name) {
+        checkNotNullOrEmpty(name, 'parameterName cannot be null')
+        checkArgument(!buildParameterNodes.containsKey(name), "parameter ${name} already defined")
+    }
+
+    private Node createActiveChoiceNode(String type, String paramName, ActiveChoiceContext context) {
         Node node = createAbstractActiveChoiceNode(type, paramName, context)
         node.appendNode('filterable', context.filterable)
         node.appendNode('choiceType', "PT_${context.choiceType}")
         node
     }
 
-    Node createAbstractActiveChoiceNode(String type, String paramName, AbstractActiveChoiceContext context) {
-        checkNotNull(paramName, 'paramName cannot be null')
-        checkArgument(!buildParameterNodes.containsKey(paramName), "parameter ${paramName} already defined")
+    private Node createAbstractActiveChoiceNode(String type, String paramName, AbstractActiveChoiceContext context) {
+        checkParameterName(paramName)
 
         Node node = new NodeBuilder()."${type}" {
             name(paramName)

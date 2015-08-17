@@ -1081,4 +1081,76 @@ class BuildParametersContextSpec extends Specification {
             referencedParameters.text() == 'param3, param4'
         }
     }
+
+    def 'credentials parameter with minimal options'() {
+        when:
+        context.credentialsParam('foo')
+
+        then:
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['foo']) {
+            name() == 'com.cloudbees.plugins.credentials.CredentialsParameterDefinition'
+            children().size() == 5
+            name.text() == 'foo'
+            description.text() == ''
+            defaultValue.text() == ''
+            credentialType.text() == 'com.cloudbees.plugins.credentials.common.StandardCredentials'
+            required.text() == 'false'
+        }
+    }
+
+    def 'credentials parameter with all options'() {
+        when:
+        context.credentialsParam('foo') {
+            type('test')
+            defaultValue('bar')
+            description('hello')
+            required()
+        }
+
+        then:
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['foo']) {
+            name() == 'com.cloudbees.plugins.credentials.CredentialsParameterDefinition'
+            children().size() == 5
+            name.text() == 'foo'
+            description.text() == 'hello'
+            defaultValue.text() == 'bar'
+            credentialType.text() == 'test'
+            required.text() == 'true'
+        }
+    }
+
+    def 'credentials parameter with invalid type option'() {
+        when:
+        context.credentialsParam('foo') {
+            type(value)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        value << [null, '']
+    }
+
+    def 'credentials parameter with invalid parameter name'() {
+        when:
+        context.credentialsParam(value)
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        value << [null, '']
+    }
+
+    def 'credentials parameter with duplicate parameter name'() {
+        when:
+        context.credentialsParam('foo')
+        context.credentialsParam('foo')
+
+        then:
+        thrown(DslScriptException)
+    }
 }
