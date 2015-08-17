@@ -93,7 +93,8 @@ class BuildParametersContextSpec extends Specification {
     def 'base listTagsParam usage'() {
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
-                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
+                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue',
+                'myListTagsParameterDescription')
 
         then:
         context.buildParameterNodes != null
@@ -109,7 +110,7 @@ class BuildParametersContextSpec extends Specification {
             maxTags.text() == 'maximumNumberOfTagsToDisplay'
             description.text() == 'myListTagsParameterDescription'
         }
-        1 * jobManagement.requirePlugin('subversion')
+        2 * jobManagement.requirePlugin('subversion')
     }
 
     def 'simplified listTagsParam usage'() {
@@ -129,7 +130,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'true'
             maxTags.text() == 'all'
         }
-        1 * jobManagement.requirePlugin('subversion')
+        2 * jobManagement.requirePlugin('subversion')
     }
 
     def 'simplest listTagsParam usage'() {
@@ -147,6 +148,24 @@ class BuildParametersContextSpec extends Specification {
             reverseByDate.text() == 'false'
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
+        }
+        2 * jobManagement.requirePlugin('subversion')
+    }
+
+    def 'simplest closure listTagsParam usage'() {
+        when:
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags') {
+          credentialsId('CREDENTIALS')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            name.text() == 'myParameterName'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            credentialsId.text() == 'CREDENTIALS'
         }
         1 * jobManagement.requirePlugin('subversion')
     }
@@ -199,7 +218,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
         }
-        1 * jobManagement.requirePlugin('subversion')
+        2 * jobManagement.requirePlugin('subversion')
 
         where:
         filter << [null, '']
