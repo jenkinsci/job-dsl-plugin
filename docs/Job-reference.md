@@ -4137,11 +4137,11 @@ job {
         remoteTrigger(String remoteJenkinsName, String jobName) {
             parameter(String name, String value)
             parameters(Map<String, String> parameters)
-            shouldNotFailBuild(boolean shouldNotFailBuild = true)           // since 1.29
-            pollInterval(int pollInterval)                                  // since 1.29
-            preventRemoteBuildQueue(boolean preventRemoteBuildQueue = true) // since 1.29
-            blockBuildUntilComplete(boolean blockBuildUntilComplete = true) // since 1.29
-            token(String token = '')
+            shouldNotFailBuild(boolean value = true)            // since 1.29
+            pollInterval(int pollInterval)                      // since 1.29
+            preventRemoteBuildQueue(boolean value = true)       // since 1.29
+            blockBuildUntilComplete(boolean value = true)       // since 1.29
+            token(String token = '')                            // since 1.38
         }
     }
 }
@@ -4150,7 +4150,8 @@ job {
 Triggers a job on another Jenkins instance. Requires the
 [Parameterized Remote Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin).
 
-Examples:
+For security reasons, do not use a hard-coded token. See [[Handling-Credentials]] for details about handling credentials
+in DSL scripts.
 
 ```groovy
 // start the job 'test-flow' on the Jenkins instance named 'test-ci' without parameters

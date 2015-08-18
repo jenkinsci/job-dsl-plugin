@@ -8,7 +8,7 @@ class ParameterizedRemoteTriggerContext implements Context {
     int pollInterval = 10
     boolean preventRemoteBuildQueue = false
     boolean blockBuildUntilComplete = false
-    String token = ''
+    String token
 
     void parameter(String name, String value) {
         this.parameters[name] = value
@@ -46,7 +46,10 @@ class ParameterizedRemoteTriggerContext implements Context {
         this.blockBuildUntilComplete = blockUntilBuildComplete
     }
 
-    void token(String token = '') {
+    /**
+     * @since 1.38
+     */
+    void token(String token) {
         this.token = token
     }
 }

@@ -537,7 +537,7 @@ class StepContext extends AbstractExtensibleContext {
         List<String> jobParameters = context.parameters.collect { String key, String value -> "$key=$value" }
 
         stepNodes << new NodeBuilder().'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration' {
-            token(context.token)
+            token(context.token ?: '')
             remoteJenkinsName(remoteJenkins)
             job(jobName)
             shouldNotFailBuild(context.shouldNotFailBuild)
