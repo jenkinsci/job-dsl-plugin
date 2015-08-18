@@ -220,6 +220,7 @@ class BuildParametersContext extends AbstractContext {
 
         Node node = createActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', parameterName, context)
         node.appendNode('referencedParameters', context.referencedParameters.join(', '))
+        node.appendNode('parameters', [class: 'linked-hash-map'])
 
         buildParameterNodes[parameterName] = node
     }
@@ -239,6 +240,7 @@ class BuildParametersContext extends AbstractContext {
         node.appendNode('referencedParameters', context.referencedParameters.join(', '))
         node.appendNode('choiceType', "ET_${context.choiceType}")
         node.appendNode('omitValueField', context.omitValueField)
+        node.appendNode('parameters', [class: 'linked-hash-map'])
 
         buildParameterNodes[parameterName] = node
     }
