@@ -981,7 +981,8 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['activeChoiceReferenceParam']) {
             name() == 'org.biouno.unochoice.CascadeChoiceParameter'
-            children().size() == 7
+            children().size() == 8
+            parameters[0].attributes()['class'] == 'linked-hash-map'
             description.text() == ''
             randomName.text() =~ /choice-parameter-\d+/
             visibleItemCount.text() == '1'
@@ -1009,7 +1010,8 @@ class BuildParametersContextSpec extends Specification {
         then:
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['activeChoiceReferenceScriptlerParam']) {
-            children().size() == 8
+            children().size() == 9
+            parameters[0].attributes()['class'] == 'linked-hash-map'
             name() == 'org.biouno.unochoice.CascadeChoiceParameter'
             description.text() == 'Active choice param test'
             randomName.text() =~ /choice-parameter-\d+/
@@ -1035,7 +1037,8 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['activeChoiceReactiveReferenceParam']) {
             name() == 'org.biouno.unochoice.DynamicReferenceParameter'
-            children().size() == 7
+            children().size() == 8
+            parameters[0].attributes()['class'] == 'linked-hash-map'
             description.text() == ''
             randomName.text() =~ /choice-parameter-\d+/
             visibleItemCount.text() == '1'
@@ -1062,7 +1065,8 @@ class BuildParametersContextSpec extends Specification {
         then:
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['activeChoiceReactiveReferenceScriptlerParam']) {
-            children().size() == 8
+            children().size() == 9
+            parameters[0].attributes()['class'] == 'linked-hash-map'
             name() == 'org.biouno.unochoice.DynamicReferenceParameter'
             description.text() == 'Active choice reactive reference param test with scriptler script'
             randomName.text() =~ /choice-parameter-\d+/
