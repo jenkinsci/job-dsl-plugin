@@ -35,6 +35,7 @@ class ConfigFileProviderHelper {
                         configFile.name,
                         configFile.comment,
                         configFile.content,
+                        null,
                         null
                 )
             default:
