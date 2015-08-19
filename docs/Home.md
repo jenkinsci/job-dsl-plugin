@@ -28,6 +28,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced support for the [Parameterized Remote Trigger
    Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
    ([JENKINS-29531](https://issues.jenkins-ci.org/browse/JENKINS-29531))
+ * Enhanced support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
  * Added documentation about [[handling credentials]]
  * Deprecated some overloaded DSL methods for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin), see

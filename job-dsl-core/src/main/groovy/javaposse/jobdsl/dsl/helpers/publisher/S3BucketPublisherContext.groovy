@@ -30,7 +30,7 @@ class S3BucketPublisherContext extends AbstractContext {
             checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")
         }
 
-        S3EntryContext context = new S3EntryContext()
+        S3EntryContext context = new S3EntryContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         this.entries << NodeBuilder.newInstance().'hudson.plugins.s3.Entry' {
@@ -41,6 +41,11 @@ class S3BucketPublisherContext extends AbstractContext {
             noUploadOnFailure(context.noUploadOnFailure)
             uploadFromSlave(context.uploadFromSlave)
             managedArtifacts(context.managedArtifacts)
+
+            if (!jobManagement.getPluginVersion('s3')?.isOlderThan(new VersionNumber('0.7'))) {
+                useServerSideEncryption(context.useServerSideEncryption)
+                flatten(context.flatten)
+            }
         }
     }
 

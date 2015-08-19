@@ -3086,6 +3086,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call s3 with some options'() {
+        setup:
+        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.7')
+
         when:
         context.s3('profile') {
             entry('foo', 'bar', 'us-east-1')
@@ -3101,7 +3104,7 @@ class PublisherContextSpec extends Specification {
             entries.size() == 1
             entries[0].'hudson.plugins.s3.Entry'.size() == 1
             with(entries[0].'hudson.plugins.s3.Entry'[0]) {
-                children().size() == 7
+                children().size() == 9
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
                 storageClass[0].value() == 'STANDARD'
@@ -3109,6 +3112,8 @@ class PublisherContextSpec extends Specification {
                 noUploadOnFailure[0].value() == false
                 uploadFromSlave[0].value() == false
                 managedArtifacts[0].value() == false
+                useServerSideEncryption[0].value() == false
+                flatten[0].value() == false
             }
             userMetadata.size() == 1
             userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
@@ -3122,6 +3127,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call s3 with more options'() {
+        setup:
+        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.7')
+
         when:
         context.s3('profile') {
             entry('foo', 'bar', 'eu-west-1')
@@ -3130,6 +3138,8 @@ class PublisherContextSpec extends Specification {
                 noUploadOnFailure(true)
                 uploadFromSlave(true)
                 managedArtifacts(true)
+                useServerSideEncryption(true)
+                flatten(true)
             }
             metadata('key', 'value')
         }
@@ -3143,7 +3153,7 @@ class PublisherContextSpec extends Specification {
             entries.size() == 1
             entries[0].'hudson.plugins.s3.Entry'.size() == 2
             with(entries[0].'hudson.plugins.s3.Entry'[0]) {
-                children().size() == 7
+                children().size() == 9
                 sourceFile[0].value() == 'foo'
                 bucket[0].value() == 'bar'
                 storageClass[0].value() == 'STANDARD'
@@ -3151,9 +3161,11 @@ class PublisherContextSpec extends Specification {
                 noUploadOnFailure[0].value() == false
                 uploadFromSlave[0].value() == false
                 managedArtifacts[0].value() == false
+                useServerSideEncryption[0].value() == false
+                flatten[0].value() == false
             }
             with(entries[0].'hudson.plugins.s3.Entry'[1]) {
-                children().size() == 7
+                children().size() == 9
                 sourceFile[0].value() == 'bar'
                 bucket[0].value() == 'baz'
                 storageClass[0].value() == 'REDUCED_REDUNDANCY'
@@ -3161,6 +3173,8 @@ class PublisherContextSpec extends Specification {
                 noUploadOnFailure[0].value() == true
                 uploadFromSlave[0].value() == true
                 managedArtifacts[0].value() == true
+                useServerSideEncryption[0].value() == true
+                flatten[0].value() == true
             }
             userMetadata.size() == 1
             userMetadata[0].'hudson.plugins.s3.MetadataPair'.size() == 1
