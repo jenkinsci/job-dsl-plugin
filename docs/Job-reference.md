@@ -5989,7 +5989,7 @@ job {
                 noUploadOnFailure(boolean noUploadOnFailure = true)
                 uploadFromSlave(boolean uploadFromSlave = true)
                 managedArtifacts(boolean managedArtifacts = true)
-                useServerSideEncryption(boolean useServerSideEncryption = true) // since 1.38
+                useServerSideEncryption(boolean value = true) // since 1.38
                 flatten(boolean flatten = true) // since 1.38
             }
             metadata(String key, String value)
