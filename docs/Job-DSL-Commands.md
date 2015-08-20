@@ -119,7 +119,7 @@ folder(Closure folderClosure)               // since 1.23, deprecated since 1.30
 
 The `folder` methods behaves like the [job](#job) methods and will return a folder object.
 
-See the [[Folder Reference]] page for details about folder options.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/folder) page for details about folder options.
 
 Folders will be created before jobs and views to ensure that a folder exists before entries are created.
 
@@ -147,6 +147,8 @@ mavenSettingsConfigFile(String name, Closure configFileClosure = null) // since 
 ```
 
 These methods behaves like the [job](#job) methods and will return a config file object.
+
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) page for details about config file options.
 
 Config files will be created before jobs to ensure that the file exists before it is referenced.
 

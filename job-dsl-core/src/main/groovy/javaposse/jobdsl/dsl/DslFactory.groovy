@@ -119,26 +119,33 @@ interface DslFactory extends ViewFactory {
 
     /**
      * @since 1.30
+     * @see #customConfigFile(java.lang.String, groovy.lang.Closure)
      */
     ConfigFile customConfigFile(String name)
 
     /**
+     * Creates a managed custom file.
+     *
      * @since 1.31
      */
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
      * @since 1.30
+     * @see #mavenSettingsConfigFile(java.lang.String, groovy.lang.Closure)
      */
     ConfigFile mavenSettingsConfigFile(String name)
 
     /**
+     * Creates a managed Maven settings file.
+     *
      * @since 1.31
      */
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
      * Upload the stream as <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
+     * Use {@link DslFactory#streamFileFromWorkspace(java.lang.String)} to read the content from a file.
      *
      * @param path relative destination path within the Jenkins userContent directory
      * @param content stream of the content to upload
@@ -160,9 +167,25 @@ interface DslFactory extends ViewFactory {
      */
     void queue(Job job)
 
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     */
     InputStream streamFileFromWorkspace(String filePath)
 
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     */
     String readFileFromWorkspace(String filePath)
 
+    /**
+     * Reads a file from the workspace of a job.
+     *
+     * @param jobName the job from which to read a file
+     * @param filePath path of the file relative to the workspace root
+     */
     String readFileFromWorkspace(String jobName, String filePath)
 }
