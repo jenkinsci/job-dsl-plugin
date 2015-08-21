@@ -190,7 +190,7 @@ freeStyleJob(String name) { // since 1.30
         powerShell(String command) // since 1.32
         prerequisite(String projectList = '', boolean warningOnly = false) // since 1.19
         publishOverSsh(Closure publishOverSshClosure) // since 1.28
-        python(Closure pythonClosure) // since 1.36
+        python(Closure pythonClosure) // since 1.38
         rake(Closure rakeClosure = null) // since 1.25
         rake(String tasksArg, Closure rakeClosure = null) // since 1.25
         remoteTrigger(String remoteJenkinsName, String jobName,
@@ -4196,7 +4196,32 @@ job {
             nature(String nature)
             pythonName(String pythonName)
         }
+    }
+}
+```
 
+Adds a Python build step. Requires the [ShiningPanda
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin).
+
+Valid values for nature are `'shell'` (default), `'xshell'` or `'python'`.
+
+```groovy
+job('example-1') {
+    steps {
+        python {
+            command('python setup.py')
+        }
+    }
+}
+```
+
+(since 1.38)
+
+### Virtualenv
+
+```groovy
+job {
+    steps {
         virtualenv {
             clear(boolean clear = true)
             command(String command)
@@ -4210,26 +4235,24 @@ job {
 }
 ```
 
-(since 1.38)
+Adds a VirtualEnv build step. Requires the [ShiningPanda
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin).
 
-Adds a Python step context. Requires the [ShiningPanda](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin).
-
-Valid values for nature are `'shell'`, `'xshell'` or `'python'`.
-
-Examples:
+Valid values for nature are `'shell'` (default), `'xshell'` or `'python'`.
 
 ```groovy
-// start the job 'test-flow' on the Jenkins instance named 'test-ci' without parameters
 job('example-1') {
     steps {
         virtualenv {
-            name 'venv'
-            command 'pip install tox'
-            clear true
+            name('venv')
+            command('pip install tox')
+            clear()
         }
     }
 }
 ```
+
+(since 1.38)
 
 # Publishers
 

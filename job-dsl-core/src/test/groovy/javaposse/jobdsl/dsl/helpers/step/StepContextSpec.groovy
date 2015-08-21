@@ -3017,7 +3017,7 @@ class StepContextSpec extends Specification {
     def 'call python'() {
         when:
         context.python {
-            command 'python setup.py'
+            command('python setup.py')
         }
 
         then:
@@ -3030,15 +3030,16 @@ class StepContextSpec extends Specification {
             nature[0].value() == 'shell'
             pythonName[0].value() == 'System-CPython-2.7'
         }
+        1 * jobManagement.requireMinimumPluginVersion('shiningpanda', '0.21')
     }
 
     def 'call python with all options'() {
         when:
         context.python {
-            command 'python setup.py'
-            ignoreExitCode true
-            nature 'python'
-            pythonName 'python2.7'
+            command('python setup.py')
+            ignoreExitCode(true)
+            nature('python')
+            pythonName('python2.7')
         }
 
         then:
@@ -3051,12 +3052,13 @@ class StepContextSpec extends Specification {
             nature[0].value() == 'python'
             pythonName[0].value() == 'python2.7'
         }
+        1 * jobManagement.requireMinimumPluginVersion('shiningpanda', '0.21')
     }
 
     def 'call virtualenv'() {
         when:
         context.virtualenv {
-            command 'python setup.py'
+            command('python setup.py')
         }
 
         then:
@@ -3069,18 +3071,19 @@ class StepContextSpec extends Specification {
             nature[0].value() == 'shell'
             pythonName[0].value() == 'System-CPython-2.7'
         }
+        1 * jobManagement.requireMinimumPluginVersion('shiningpanda', '0.21')
     }
 
     def 'call virtualenv with all options'() {
         when:
         context.virtualenv {
-            command 'python setup.py'
-            clear true
-            ignoreExitCode true
-            name 'venv'
-            nature 'python'
-            pythonName 'python2.7'
-            systemSitePackages true
+            command('python setup.py')
+            clear()
+            ignoreExitCode()
+            name('venv')
+            nature('python')
+            pythonName('python2.7')
+            systemSitePackages(true)
         }
 
         then:
@@ -3096,5 +3099,6 @@ class StepContextSpec extends Specification {
             pythonName[0].value() == 'python2.7'
             systemSitePackages[0].value() == true
         }
+        1 * jobManagement.requireMinimumPluginVersion('shiningpanda', '0.21')
     }
 }

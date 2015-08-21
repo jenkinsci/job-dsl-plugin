@@ -756,10 +756,10 @@ class StepContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'jenkins.plugins.shiningpanda.builders.PythonBuilder' {
-            pythonName context.pythonName
-            nature context.nature
-            command context.command
-            ignoreExitCode context.ignoreExitCode
+            pythonName(context.pythonName ?: '')
+            nature(context.nature)
+            command(context.command ?: '')
+            ignoreExitCode(context.ignoreExitCode)
         }
     }
 
@@ -770,16 +770,15 @@ class StepContext extends AbstractExtensibleContext {
     void virtualenv(@DslContext(VirtualenvContext) Closure closure) {
         VirtualenvContext context = new VirtualenvContext()
         ContextHelper.executeInContext(closure, context)
-        NodeBuilder nodeBuilder = new NodeBuilder()
 
-        stepNodes << nodeBuilder.'jenkins.plugins.shiningpanda.builders.VirtualenvBuilder' {
-            pythonName context.pythonName
-            home context.name
-            clear context.clear
-            systemSitePackages context.systemSitePackages
-            nature context.nature
-            command context.command
-            ignoreExitCode context.ignoreExitCode
+        stepNodes << new NodeBuilder().'jenkins.plugins.shiningpanda.builders.VirtualenvBuilder' {
+            pythonName(context.pythonName ?: '')
+            home(context.name ?: '')
+            clear(context.clear)
+            systemSitePackages(context.systemSitePackages)
+            nature(context.nature)
+            command(context.command ?: '')
+            ignoreExitCode(context.ignoreExitCode)
         }
     }
 
