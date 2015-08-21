@@ -748,6 +748,41 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'shiningpanda', minimumVersion = '0.21')
+    void python(@DslContext(PythonContext) Closure closure) {
+        PythonContext context = new PythonContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'jenkins.plugins.shiningpanda.builders.PythonBuilder' {
+            pythonName(context.pythonName ?: '')
+            nature(context.nature)
+            command(context.command ?: '')
+            ignoreExitCode(context.ignoreExitCode)
+        }
+    }
+
+    /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'shiningpanda', minimumVersion = '0.21')
+    void virtualenv(@DslContext(VirtualenvContext) Closure closure) {
+        VirtualenvContext context = new VirtualenvContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'jenkins.plugins.shiningpanda.builders.VirtualenvBuilder' {
+            pythonName(context.pythonName ?: '')
+            home(context.name ?: '')
+            clear(context.clear)
+            systemSitePackages(context.systemSitePackages)
+            nature(context.nature)
+            command(context.command ?: '')
+            ignoreExitCode(context.ignoreExitCode)
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
