@@ -44,7 +44,7 @@ context attribute of the annotation specifies which DSL context should provide t
 implementing `javaposse.jobdsl.dsl.helpers.ExtensibleContext` can be extended, which includes the following classes and
 contexts:
 
-* `javaposse.jobdsl.dsl.helpers.step.ScmContext` for the `scm` and `multiscm` contexts
+* `javaposse.jobdsl.dsl.helpers.ScmContext` for the `scm` and `multiscm` contexts
 * `javaposse.jobdsl.dsl.helpers.step.StepsContext` for the `steps` context
 * `javaposse.jobdsl.dsl.helpers.triggers.TriggerContext` for the `triggers` context
 * `javaposse.jobdsl.dsl.helpers.properties.PropertiesContext` for the `properties` context
