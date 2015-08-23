@@ -358,6 +358,7 @@ matrixJob(String name) { // since 1.30
         labelExpression(String name, Iterable<String> expressions)
         jdk(String... jdks)
         jdk(Iterable<String> jdks)
+        elastic(String name, String values)
         configure(Closure configBlock)
     }
     runSequentially(boolean runSequentially = true)
@@ -3675,6 +3676,23 @@ matrixJob('example') {
     }
 }
 ```
+
+### Elastic Axis
+
+Requires [Elastic Axis Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Elastic+Axis)
+
+Adds support for Elastic axis, which allows the same job to be run on a number of slaves across a label.
+This is useful for distributing tests, as well as running jobs related to slave setup.
+
+```groovy
+matrixJob {
+    axes {
+        elastic(String name, String values, boolean ignoreOffline=true)
+    }
+}
+```
+
+(Since 1.38)
 
 ### Run Sequentially
 
