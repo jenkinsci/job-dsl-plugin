@@ -9,6 +9,7 @@ githubPages {
     repoUri = "git@github.com:$githubUser/job-dsl-plugin.git"
     pages {
         from '.'
+        exclude 'build/ghpages'
     }
 }
 

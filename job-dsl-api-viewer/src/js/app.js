@@ -306,11 +306,10 @@
             return usages;
         },
 
-        showPathDetail: function(path) {
+        getPathInfo: function(path) {
             var methodNode;
             var ancestors = [];
             var usages = [];
-
             if (path) {
                 var tokens = path.split('-');
 
@@ -338,44 +337,135 @@
                 methodNode = this.data.root;
             }
 
+            return {
+                methodNode: methodNode,
+                ancestors: ancestors,
+                usages: usages
+            };
+        },
+
+        showPathDetail: function(path) {
+            var pathInfo = this.getPathInfo(path);
+            var methodNode = pathInfo.methodNode;
+            var ancestors = pathInfo.ancestors;
+            var usages = pathInfo.usages;
+
             var data = {
                 methodNode: methodNode,
                 name: methodNode.name,
-                ancestors: ancestors,
-                isRoot: !path
+                ancestors: ancestors
             };
 
             if (methodNode.signatures) {
-                data.signatures = methodNode.signatures.map(function(signature) {
-                    if (signature.contextClass) {
-                        signature.context = this.data.contexts[signature.contextClass];
-                    }
-                    return signature;
-                }, this)
+                data.signatures = this.getSignatures(methodNode, path)
             }
 
             if (methodNode.contextClass) {
                 data.contextMethods = this.data.contexts[methodNode.contextClass].methods.map(function(method) {
-                    var href = '#path/' + (path ? path + '-' : '') + method.name;
                     return {
-                        href: href,
-                        method: method
+                        signatures: this.getSignatures(method, path)
                     }
-                });
+                }, this);
             }
 
             data.usages = _.sortBy(usages, function(usage) { return (usage.method.name + usage.simpleClassName).toLowerCase(); });
 
+            var html;
+            if (path) {
+                html = Handlebars.templates['detail'](data);
+                $('.detail-wrapper').html(html);
+            } else {
+                html = Handlebars.templates['root'](data);
+                $('.detail-wrapper').html(html);
 
-            var html = Handlebars.templates['detail'](data);
-            $('.detail-wrapper').html(html);
+                var signatures = [];
+                this.data.contexts[methodNode.contextClass].methods.forEach(function(method) {
+                    var methodPath = (path ? path + '-' : '') + method.name;
+                    Array.prototype.push.apply(signatures, this.getSignatures(method, methodPath));
+                }, this);
+
+
+                var contextHtml = Handlebars.templates['context']({
+                    signatures: signatures
+                });
+                $('.detail-wrapper').find('.context-methods-section').html(contextHtml);
+            }
 
             $('pre.highlight')
                 .add('.method-doc pre code')
+                .add('span.highlight')
                 .each(function(i, block) {
                     hljs.highlightBlock(block);
                 });
-            $('.method-doc pre').addClass('highlight');
+
+            $('.detail-wrapper .expand-closure').click(this.onExpandClick.bind(this));
+        },
+
+        onExpandClick: function(e) {
+            e.preventDefault();
+            var $el = $(e.currentTarget);
+            var path = $el.data('path');
+
+            $el.hide();
+
+            var pathInfo = this.getPathInfo(path);
+            var context = this.data.contexts[pathInfo.methodNode.contextClass];
+            var signatures = [];
+            context.methods.forEach(function(method) {
+                var methodPath = (path ? path + '-' : '') + method.name;
+                Array.prototype.push.apply(signatures, this.getSignatures(method, methodPath));
+            }, this);
+
+            var contextHtml = Handlebars.templates['context']({
+                signatures: signatures
+            });
+            var $contextHtml = $(contextHtml);
+            $contextHtml.insertAfter($el);
+
+            $contextHtml.find('.highlight').each(function(i, block) {
+                hljs.highlightBlock(block);
+            });
+
+            $contextHtml.find('.expand-closure').click(this.onExpandClick.bind(this));
+        },
+
+        getSignatures: function(method, path) {
+            var href = '#path/' + (path ? path + '-' : '') + method.name;
+            return method.signatures.map(function(signature) {
+
+                if (signature.contextClass) {
+                    signature.context = this.data.contexts[signature.contextClass];
+                } // TODO
+
+                var params = signature.parameters;
+                if (signature.context) {
+                    params = params.slice(0, params.length - 1);
+                }
+                var paramTokens = params.map(function(param) {
+                    var token = param.type + ' ' + param.name;
+                    if (param.defaultValue) {
+                        token += ' = ' + param.defaultValue;
+                    }
+                    return token;
+                });
+                var text = paramTokens.join(', ');
+                if (paramTokens.length || !signature.context) {
+                    text = '(' + text + ')';
+                }
+                text = text;
+
+                return {
+                    name: method.name,
+                    href: href,
+                    path: path,
+                    availableSince: signature.availableSince,
+                    deprecated: signature.deprecated,
+                    text: text,
+                    html: signature.html,
+                    context: signature.context,
+                    comment: signature.firstSentenceCommentText
+                };
+            }, this)
         },
 
         getTreeNodeAncestors: function(node) {

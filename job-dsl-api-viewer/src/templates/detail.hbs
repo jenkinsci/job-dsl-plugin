@@ -15,21 +15,17 @@
         <div class="signatures">
             {{#each signatures}}
                 {{#if availableSince}}
-                    <span class="label label-info">Available since {{availableSince}}</span>
+                    <span class="label label-info">Since {{availableSince}}</span>
                 {{/if}}
-                {{#if deprecatedSince}}
-                    <span class="label label-warning">Deprecated since {{deprecatedSince}}</span>
-                {{else}}
-                    {{#if deprecated}}
-                        <span class="label label-warning">Deprecated</span>
-                    {{/if}}
+                {{#if deprecated}}
+                    <span class="label label-warning">Deprecated</span>
                 {{/if}}
                 <div class="signature">
-                    {{#if context}}
-                        <i class="glyphicon glyphicon-triangle-right"></i>
-                    {{/if}}
-                    <pre class="highlight groovy">{{text}}</pre>
+                    {{name}}<span class="highlight groovy inline">{{text}}</span>{{#if context}} {<span class="expand-closure glyphicon glyphicon-option-horizontal" data-path="{{path}}"></span>}{{/if}}
                 </div>
+                {{#if html}}
+                    <div class="method-doc">{{{html}}}</div>
+                {{/if}}
             {{/each}}
         </div>
 
@@ -37,32 +33,10 @@
             <div class="method-doc">{{{methodNode.html}}}</div>
         {{/if}}
 
-        {{#if contextMethods}}
-            <h3 class="section-header">Context Methods</h3>
-            <div class="context-methods-section {{#if isRoot}}root{{/if}}">
-                {{#unless isRoot}}
-                <pre><code>{{name}} {</code></pre>
-                {{/unless}}
-                <ul class="context-methods">
-                    {{#each contextMethods}}
-                        <li>
-                            <div class="method-name {{#if method.deprecated}}deprecated{{/if}}">
-                                <span class="method-link-wrapper">
-                                    <a href="{{href}}" title="{{method.name}}">{{method.name}}</a>
-                                </span>
-                                {{# if method.firstSentenceCommentText}}
-                                    <span class="firstSentenceCommentText">
-                                    // {{method.firstSentenceCommentText}}
-                                    </span>
-                                {{/if}}
-                            </div>
-                        </li>
-                    {{/each}}
-                </ul>
-                {{#unless isRoot}}
-                <pre><code>}</code></pre>
-                {{/unless}}
-            </div>
+        {{#if methodNode.examples}}
+            <h3 class="section-header">Examples</h3>
+
+            <pre class="highlight groovy">{{methodNode.examples}}</pre>
         {{/if}}
 
         {{#if usages}}

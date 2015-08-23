@@ -1,15 +1,13 @@
 package javaposse.jobdsl.dsl.doc
 
 import groovy.json.JsonBuilder
-import javaposse.jobdsl.dsl.JobParent
+import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.RequiresPlugin
 import org.codehaus.groovy.groovydoc.GroovyAnnotationRef
 import org.codehaus.groovy.groovydoc.GroovyClassDoc
 import org.codehaus.groovy.groovydoc.GroovyMethodDoc
 import org.codehaus.groovy.groovydoc.GroovyParameter
 import org.codehaus.groovy.tools.groovydoc.ArrayClassDocWrapper
-import org.pegdown.Extensions
-import org.pegdown.PegDownProcessor
 
 import java.lang.annotation.Annotation
 import java.lang.reflect.Field
@@ -22,7 +20,7 @@ class ApiDocGenerator {
 
     final private GroovyDocHelper docHelper = new GroovyDocHelper('src/main/groovy/')
     final private String commandDocsPath = 'src/main/docs'
-    final private Class rootClass = JobParent
+    final private Class rootClass = DslFactory
     final private Map allContextClasses = [:]
     final private List allContextClassesList = []
 
@@ -45,8 +43,7 @@ class ApiDocGenerator {
             version: version,
             root: [
                 name: 'Jenkins Job DSL API',
-                contextClass: rootClass.name,
-                html: markdownToHtml(getMarkdownFromFile('/root'))
+                contextClass: rootClass.name
             ],
             contexts: allContextClasses
         ]
@@ -55,11 +52,6 @@ class ApiDocGenerator {
         builder map
 
         builder
-    }
-
-    private String getMarkdownFromFile(String path) {
-        File file = new File("${commandDocsPath}${path}.md")
-        file.exists() ? file.text : null
     }
 
     private Map processClass(Class clazz) {
@@ -101,7 +93,6 @@ class ApiDocGenerator {
             name      : methodName,
             signatures: []
         ]
-
         GroovyMethodDoc[] methodDocs = docHelper.getAllMethods(clazz).findAll { it.name() == methodName }
 
         methodDocs.each { GroovyMethodDoc methodDoc ->
@@ -131,42 +122,15 @@ class ApiDocGenerator {
             methodMap.plugin = dslPlugin
         }
 
-        String markdownFromFile = getMarkdownFromFile("/${clazz.name.replaceAll('\\.', '/')}/$methodName")
-        if (markdownFromFile) {
-            methodMap.html = markdownToHtml(markdownFromFile)
-            methodMap.firstSentenceCommentText = markdownFromFile.trim().split('\n', 2)[0]
-        } else {
-            for (GroovyMethodDoc methodDoc : methodDocs) {
-                String comment = methodDoc.commentText().trim()
-                if (comment) {
-                    int defListIndex = comment.indexOf('<DL>')
-                    if (defListIndex != -1) {
-                        comment = comment[0..<defListIndex]
-                    }
-                    if (comment) {
-                        methodMap.html = comment
-                    }
+        String path = "${clazz.name.replaceAll('\\.', '/')}/$methodName"
+        File file = new File("${commandDocsPath}/examples/${path}.groovy")
+        // TODO check superclasses
 
-                    String firstSentenceCommentText = methodDoc.firstSentenceCommentText()
-                    int annotationIndex = firstSentenceCommentText.indexOf('@')
-                    if (annotationIndex != -1) {
-                        firstSentenceCommentText = firstSentenceCommentText[0..<annotationIndex]
-                    }
-                    if (firstSentenceCommentText) {
-                        methodMap.firstSentenceCommentText = firstSentenceCommentText
-                    }
-
-                    break
-                }
-            }
+        if (file.exists()) {
+            methodMap.examples = file.text
         }
 
         methodMap
-    }
-
-    private String markdownToHtml(String markdown) {
-        PegDownProcessor processor = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS | Extensions.SUPPRESS_ALL_HTML)
-        processor.markdownToHtml markdown
     }
 
     private Class getContextClass(Method method, GroovyMethodDoc methodDoc) {
@@ -213,6 +177,27 @@ class ApiDocGenerator {
         String availableSince = methodDoc.tags().find { it.name() == 'since' }?.text()
         if (availableSince) {
             map.availableSince = availableSince
+        }
+
+
+        String comment = methodDoc.commentText().trim()
+        if (comment) {
+            int defListIndex = comment.indexOf('<DL>')
+            if (defListIndex != -1) {
+                comment = comment[0..<defListIndex]
+            }
+            if (comment) {
+                map.html = comment
+            }
+
+            String firstSentenceCommentText = methodDoc.firstSentenceCommentText()
+            int annotationIndex = firstSentenceCommentText.indexOf('@')
+            if (annotationIndex != -1) {
+                firstSentenceCommentText = firstSentenceCommentText[0..<annotationIndex]
+            }
+            if (firstSentenceCommentText) {
+                map.firstSentenceCommentText = firstSentenceCommentText
+            }
         }
 
         map
