@@ -17,7 +17,7 @@ class IvyBuilderContext extends AbstractExtensibleContext {
 
     @Override
     protected void addExtensionNode(Node node) {
-        ivyBuilderNodes << node
+        ivyBuilderNodes << toNamedNode('ivyBuilderType', node)
     }
 
     @RequiresPlugin(id = 'ant', minimumVersion = '1.2')
