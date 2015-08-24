@@ -22,17 +22,54 @@ class WrapperContext extends AbstractExtensibleContext {
         wrapperNodes << node
     }
 
+
+    @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '@1.140')
+    void sauceOnDemandConfig(@DslContext(SauceOnDemandContext) Closure sauceOnDemandclosure) {
+        SauceOnDemandContext context = new SauceOnDemandContext()
+        ContextHelper.executeInContext(sauceOnDemandclosure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'{
+                    useGeneratedTunnelIdentifier(context.useGeneratedTunnelIdentifier)
+                    sendUsageData(context.sendUsageData)
+                    nativeAppPackage(context.nativeAppPackage)
+                    useChromeForAndroid(context.useChromeForAndroid)
+                    sauceConnectPath(context.sauceConnectPath ?: '')
+                    useOldSauceConnect(context.useOldSauceConnect)
+                    enableSauceConnect(context.enableSauceConnect)
+                    seleniumHost(context.seleniumHost ?: '')
+                    seleniumPort(context.seleniumPort ?: '')
+                    webDriverBrowsers {
+                        context.webDriverBrowsers.each { browserName ->
+                            'string'(browserName)
+                        }
+                    }
+                    appiumBrowsers {
+                        context.appiumBrowsers.each { browserName ->
+                            'string'(browserName)
+                        }
+                    }
+
+                    useLatestVersion(context.useLatestVersion)
+                    launchSauceConnectOnSlave(context.launchSauceConnectOnSlave)
+                    httpsProtocol(context.httpsProtocol ?: '')
+                    options(context.options ?: '')
+                    verboseLogging(context.verboseLogging)
+                    condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun', plugin: 'run-condition@1.0')
+                }
+    }
+
+
     @RequiresPlugin(id = 'timestamper')
     void timestamps() {
         wrapperNodes << new NodeBuilder().'hudson.plugins.timestamper.TimestamperBuildWrapper'()
     }
 
-    /**
-     * Build the job on the same node as another job and optionally use the same workspace as the other job.
-     *
-     * @param jobName name of the job
-     * @param useSameWorkspace set to <code>true</code> to share the workspace with the given job
-     */
+/**
+ * Build the job on the same node as another job and optionally use the same workspace as the other job.
+ *
+ * @param jobName name of the job
+ * @param useSameWorkspace set to <code>true</code> to share the workspace with the given job
+ */
     @RequiresPlugin(id = 'job-node-stalker')
     void runOnSameNodeAs(String jobName, boolean useSameWorkspace = false) {
         Preconditions.checkNotNull(jobName, 'Job name must not be null')
@@ -43,9 +80,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.27
-     */
+/**
+ * @since 1.27
+ */
     @RequiresPlugin(id = 'rbenv')
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
@@ -70,13 +107,13 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Support for builds using a rvm environment.
-     *
-     * @param rubySpecification Specification of the required ruby version,
-     *                          optionally containing a gemset
-     *                          (i.e. ruby-1.9.3, ruby-2.0.0@gemset-foo)
-     */
+/**
+ * Support for builds using a rvm environment.
+ *
+ * @param rubySpecification Specification of the required ruby version,
+ *                          optionally containing a gemset
+ *                          (i.e. ruby-1.9.3, ruby-2.0.0@gemset-foo)
+ */
     @RequiresPlugin(id = 'rvm')
     void rvm(String rubySpecification) {
         Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
@@ -106,12 +143,12 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Add a timeout to the build job.
-     *
-     * @param timeoutClosure optional closure for configuring the timeout
-     * @since 1.24
-     */
+/**
+ * Add a timeout to the build job.
+ *
+ * @param timeoutClosure optional closure for configuring the timeout
+ * @since 1.24
+ */
     @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.12')
     void timeout(@DslContext(TimeoutContext) Closure timeoutClosure = null) {
         TimeoutContext context = new TimeoutContext(jobManagement)
@@ -163,11 +200,11 @@ class WrapperContext extends AbstractExtensibleContext {
         allocatePorts(new String[0], cl)
     }
 
-    /**
-     * Provide SSH credentials to builds via a ssh-agent in Jenkins.
-     *
-     * @param credentials name of the credentials to use
-     */
+/**
+ * Provide SSH credentials to builds via a ssh-agent in Jenkins.
+ *
+ * @param credentials name of the credentials to use
+ */
     @RequiresPlugin(id = 'ssh-agent')
     void sshAgent(String credentials) {
         Preconditions.checkNotNull(credentials, 'credentials must not be null')
@@ -179,11 +216,11 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Converts ANSI escape codes to colors.
-     *
-     * @param colorMap name of colormap to use (eg: xterm)
-     */
+/**
+ * Converts ANSI escape codes to colors.
+ *
+ * @param colorMap name of colormap to use (eg: xterm)
+ */
     @RequiresPlugin(id = 'ansicolor')
     void colorizeOutput(String colorMap = 'xterm') {
         wrapperNodes << new NodeBuilder().'hudson.plugins.ansicolor.AnsiColorBuildWrapper' {
@@ -191,11 +228,11 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Runs build under XVNC.
-     *
-     * @since 1.26
-     */
+/**
+ * Runs build under XVNC.
+ *
+ * @since 1.26
+ */
     @RequiresPlugin(id = 'xvnc')
     void xvnc(@DslContext(XvncContext) Closure xvncClosure = null) {
         XvncContext xvncContext = new XvncContext(jobManagement)
@@ -209,9 +246,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.31
-     */
+/**
+ * @since 1.31
+ */
     @RequiresPlugin(id = 'xvfb')
     void xvfb(String installation, @DslContext(XvfbContext) Closure closure = null) {
         Preconditions.checkNotNullOrEmpty(installation, 'installation must not be null or empty')
@@ -234,15 +271,15 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Lets you use "tools" in unusual ways, such as from shell scripts.
-     *
-     * Note that we do not check for validity of tool names.
-     *
-     * @param tools Tool names to import into the environment. They will be transformed
-     *              according to the rules used by the toolenv plugin.
-     * @since 1.21
-     */
+/**
+ * Lets you use "tools" in unusual ways, such as from shell scripts.
+ *
+ * Note that we do not check for validity of tool names.
+ *
+ * @param tools Tool names to import into the environment. They will be transformed
+ *              according to the rules used by the toolenv plugin.
+ * @since 1.21
+ */
     @RequiresPlugin(id = 'toolenv')
     void toolenv(String... tools) {
         wrapperNodes << new NodeBuilder().'hudson.plugins.toolenv.ToolEnvBuildWrapper' {
@@ -250,9 +287,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.21
-     */
+/**
+ * @since 1.21
+ */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(@DslContext(WrapperEnvironmentVariableContext) Closure envClosure) {
         WrapperEnvironmentVariableContext envContext = new WrapperEnvironmentVariableContext(jobManagement)
@@ -263,11 +300,11 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Injects global passwords into the job.
-     *
-     * @since 1.23
-     */
+/**
+ * Injects global passwords into the job.
+ *
+ * @since 1.23
+ */
     @RequiresPlugin(id = 'envinject')
     void injectPasswords() {
         wrapperNodes << new NodeBuilder().'EnvInjectPasswordWrapper' {
@@ -276,12 +313,12 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
-     *
-     * @param releaseClosure attributes and steps used by the plugin
-     * @since 1.22
-     */
+/**
+ * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
+ *
+ * @param releaseClosure attributes and steps used by the plugin
+ * @since 1.22
+ */
     @RequiresPlugin(id = 'release')
     void release(@DslContext(ReleaseContext) Closure releaseClosure) {
         ReleaseContext releaseContext = new ReleaseContext(jobManagement, item)
@@ -308,9 +345,9 @@ class WrapperContext extends AbstractExtensibleContext {
         wrapperNodes << releaseNode
     }
 
-    /**
-     * @since 1.22
-     */
+/**
+ * @since 1.22
+ */
     @RequiresPlugin(id = 'ws-cleanup')
     void preBuildCleanup(@DslContext(PreBuildCleanupContext) Closure closure = null) {
         PreBuildCleanupContext context = new PreBuildCleanupContext()
@@ -324,11 +361,11 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Configures the configuration for the Log File Size Checker build wrapper.
-     *
-     * @since 1.23
-     */
+/**
+ * Configures the configuration for the Log File Size Checker build wrapper.
+ *
+ * @since 1.23
+ */
     @RequiresPlugin(id = 'logfilesizechecker')
     void logSizeChecker(@DslContext(LogFileSizeCheckerContext) Closure closure = null) {
         LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
@@ -341,12 +378,12 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * Enables the "Build Name Setter Plugin" build wrapper.
-     *
-     * @param nameTemplate template defining the build name
-     * @since 1.24
-     */
+/**
+ * Enables the "Build Name Setter Plugin" build wrapper.
+ *
+ * @param nameTemplate template defining the build name
+ * @since 1.24
+ */
     @RequiresPlugin(id = 'build-name-setter')
     void buildName(String nameTemplate) {
         Preconditions.checkNotNull(nameTemplate, 'Name template must not be null')
@@ -356,9 +393,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.24
-     */
+/**
+ * @since 1.24
+ */
     @RequiresPlugin(id = 'kpp-management-plugin')
     void keychains(@DslContext(KeychainsContext) Closure keychainsClosure) {
         KeychainsContext keychainsContext = new KeychainsContext()
@@ -371,9 +408,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.28
-     */
+/**
+ * @since 1.28
+ */
     @RequiresPlugin(id = 'config-file-provider')
     void configFiles(@DslContext(ConfigFilesContext) Closure configFilesClosure) {
         ConfigFilesContext configFilesContext = new ConfigFilesContext(jobManagement)
@@ -392,16 +429,16 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.24
-     */
+/**
+ * @since 1.24
+ */
     void exclusionResources(String... resourceNames) {
         exclusionResources(resourceNames.toList())
     }
 
-    /**
-     * @since 1.24
-     */
+/**
+ * @since 1.24
+ */
     @RequiresPlugin(id = 'Exclusion')
     void exclusionResources(Iterable<String> resourceNames) {
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.IdAllocator' {
@@ -415,9 +452,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.26
-     */
+/**
+ * @since 1.26
+ */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineVersion(String template, boolean setDisplayName = false) {
         wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
@@ -426,25 +463,25 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.26
-     */
+/**
+ * @since 1.26
+ */
     @RequiresPlugin(id = 'mask-passwords')
     void maskPasswords() {
         wrapperNodes << new NodeBuilder().'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'()
     }
 
-    /**
-     * @since 1.26
-     */
+/**
+ * @since 1.26
+ */
     @RequiresPlugin(id = 'build-user-vars-plugin')
     void buildUserVars() {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.builduser.BuildUser'()
     }
 
-    /**
-     * @since 1.27
-     */
+/**
+ * @since 1.27
+ */
     @RequiresPlugin(id = 'nodejs')
     void nodejs(String installation) {
         wrapperNodes << new NodeBuilder().'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper' {
@@ -452,9 +489,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.27
-     */
+/**
+ * @since 1.27
+ */
     @RequiresPlugin(id = 'golang')
     void golang(String version) {
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.golang.GolangBuildWrapper' {
@@ -462,9 +499,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.28
-     */
+/**
+ * @since 1.28
+ */
     @RequiresPlugin(id = 'credentials-binding')
     void credentialsBinding(@DslContext(CredentialsBindingContext) Closure closure) {
         CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)
@@ -475,9 +512,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.30
-     */
+/**
+ * @since 1.30
+ */
     @RequiresPlugin(id = 'custom-tools-plugin')
     void customTools(Iterable<String> tools, @DslContext(CustomToolsContext) Closure closure = null) {
         Preconditions.checkNotNull(tools, 'Please specify some tool names')
@@ -500,9 +537,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    /**
-     * @since 1.31
-     */
+/**
+ * @since 1.31
+ */
     @RequiresPlugin(id = 'preSCMbuildstep')
     void preScmSteps(@DslContext(PreScmStepsContext) Closure closure) {
         PreScmStepsContext context = new PreScmStepsContext(jobManagement, item)
@@ -513,4 +550,5 @@ class WrapperContext extends AbstractExtensibleContext {
             failOnError(context.failOnError)
         }
     }
+
 }

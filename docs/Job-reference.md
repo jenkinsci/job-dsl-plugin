@@ -133,6 +133,7 @@ freeStyleJob(String name) { // since 1.30
         toolenv(String... tools)
         xvfb(String installation, Closure xvfbClosure = null) // since 1.31
         xvnc(Closure xvncClosure = null) // since 1.26
+        sauceOnDemandConfig(Closure sauceOnDemandConfig} //since 1.38
     }
     properties { // since 1.33
         customIcon(String iconFileName)
@@ -1996,6 +1997,60 @@ The `credentialsId` argument can either be the ID of the credentials or its desc
 by description has been [[deprecated|Deprecation-Policy]], see [[Migration]].
 
 (Since 1.17)
+
+### [Sauce OnDemand](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)
+
+```groovy
+job{
+  wrappers{
+    sauceOnDemandConfig{
+    	useGeneratedTunnelIdentifier(Boolean useGeneratedTunnelIdentifier = false )
+        sendUsageData(Boolean sendUsageData = false)
+        nativeAppPackage(String nativeAppPackage)
+        useChromeForAndroid(Boolean useChromeForAndroid = false)
+        sauceConnectPath(String sauceConnectPath)
+        useOldSauceConnect(Boolean useOldSauceConnect = false)
+        enableSauceConnect(Boolean enableSauceConnect = false)
+        seleniumHost(String seleniumHost)
+        seleniumPort(String seleniumPort)
+        webDriverBrowsers(String... browsers)
+        appiumBrowsers(String... browsers)
+        useLatestVersion(Boolean useLatestVersion = false)
+        launchSauceConnectOnSlave(Boolean launchSauceConnectOnSlave = false)
+        httpsProtocol(String httpsProtocol)
+        options(String options)
+        verboseLogging(Boolean verboseLogging = false)
+    }
+  }
+}
+```
+Allows configuration of Sauce Tunnel. Requires the
+[Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)
+```groovy
+job('example') {
+  wrappers{
+    sauceOnDemandConfig{
+    	useGeneratedTunnelIdentifier(false)
+            sendUsageData(false)
+            nativeAppPackage()
+            useChromeForAndroid(true)
+            sauceConnectPath()
+            useOldSauceConnect(false)
+            enableSauceConnect(false)
+            seleniumHost()
+            seleniumPort()
+            webDriverBrowsers('Linuxchrome43', 'Linuxchrome44')
+            appiumBrowsers('Amazon_Kindle_Fire_Emulatorlandscapeandroid2_3_7_')
+            useLatestVersion(true)
+            launchSauceConnectOnSlave(true)
+            httpsProtocol()
+            options()
+            verboseLogging(false)
+    }
+  }
+}
+```
+(Since 1.38)
 
 ### [Timestamper](https://wiki.jenkins-ci.org/display/JENKINS/Timestamper)
 
@@ -4263,8 +4318,7 @@ job {
             customMessage(String message)
         }
     }
-}
-```
+}```
 
 Allows notifications to be set to Slack. Requires the
 [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin).
