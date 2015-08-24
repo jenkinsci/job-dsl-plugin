@@ -984,6 +984,93 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('nodejs')
     }
 
+    def 'call sauce on demand with defaults'() {
+        when:
+        context.sauceOnDemandConfig {
+            webDriverBrowsers('foo', 'bar')
+            appiumBrowsers('larry', 'curly', 'moe')
+        }
+        then:
+
+        context.wrapperNodes?.size == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
+            useGeneratedTunnelIdentifier[0].value() == false
+            sendUsageData[0].value() == false
+            nativeAppPackage[0].value() == null
+            useChromeForAndroid[0].value() == false
+            sauceConnectPath[0].value() == ''
+            useOldSauceConnect[0].value() == false
+            enableSauceConnect[0].value() == true
+            seleniumHost[0].value() == ''
+            seleniumPort[0].value() == ''
+            webDriverBrowsers.'string'.any { br -> br.value() == 'foo' }
+            webDriverBrowsers.'string'.any { br -> br.value() == 'bar' }
+            webDriverBrowsers.'string'.size() == 2
+            appiumBrowsers.'string'.any { app -> app.value() == 'larry' }
+            appiumBrowsers.'string'.any { app -> app.value() == 'curly' }
+            appiumBrowsers.'string'.any { app -> app.value() == 'moe' }
+            appiumBrowsers.'string'.size() == 3
+            useLatestVersion[0].value() == false
+            launchSauceConnectOnSlave[0].value() == false
+            httpsProtocol[0].value() == ''
+            options[0].value() == ''
+            verboseLogging[0].value() == false
+            condition[0].value() == []
+        }
+    }
+
+    def 'call sauce on demand with values'() {
+        when:
+        context.sauceOnDemandConfig {
+            useGeneratedTunnelIdentifier(true)
+            sendUsageData(true)
+            nativeAppPackage('nativeAppPackage')
+            useChromeForAndroid(true)
+            sauceConnectPath('sauceConnectPath')
+            useOldSauceConnect(true)
+            enableSauceConnect(true)
+            seleniumHost('seleniumHost')
+            seleniumPort('seleniumPort')
+            webDriverBrowsers('foo', 'bar')
+            appiumBrowsers('larry', 'curly', 'moe')
+            useLatestVersion(true)
+            launchSauceConnectOnSlave(true)
+            httpsProtocol('httpsProtocol')
+            options('options')
+            verboseLogging(true)
+
+        }
+        then:
+
+        context.wrapperNodes?.size == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
+            useGeneratedTunnelIdentifier[0].value() == true
+            sendUsageData[0].value() == true
+            nativeAppPackage[0].value() == 'nativeAppPackage'
+            useChromeForAndroid[0].value() == true
+            sauceConnectPath[0].value() == 'sauceConnectPath'
+            useOldSauceConnect[0].value() == true
+            enableSauceConnect[0].value() == true
+            seleniumHost[0].value() == 'seleniumHost'
+            seleniumPort[0].value() == 'seleniumPort'
+            webDriverBrowsers.'string'.any { br -> br.value() == 'foo' }
+            webDriverBrowsers.'string'.any { br -> br.value() == 'bar' }
+            webDriverBrowsers.'string'.size() == 2
+            appiumBrowsers.'string'.any { app -> app.value() == 'larry' }
+            appiumBrowsers.'string'.any { app -> app.value() == 'curly' }
+            appiumBrowsers.'string'.any { app -> app.value() == 'moe' }
+            appiumBrowsers.'string'.size() == 3
+            useLatestVersion[0].value() == true
+            launchSauceConnectOnSlave[0].value() == true
+            httpsProtocol[0].value() == 'httpsProtocol'
+            options[0].value() == 'options'
+            verboseLogging[0].value() == true
+            condition[0].value() == []
+        }
+    }
+
     def 'call golang'() {
         when:
         context.golang('Go 1.3.3')
