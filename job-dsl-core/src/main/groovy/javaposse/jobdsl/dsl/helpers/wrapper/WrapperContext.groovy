@@ -586,4 +586,42 @@ class WrapperContext extends AbstractExtensibleContext {
         node.append(context.selector)
         wrapperNodes << node
     }
+
+    /**
+     * Add support for SauceOnDemand plugin configuration
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.140')
+    void sauceOnDemandConfig(@DslContext(SauceOnDemandContext) Closure sauceOnDemandclosure) {
+        SauceOnDemandContext context = new SauceOnDemandContext()
+        ContextHelper.executeInContext(sauceOnDemandclosure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper' {
+            useGeneratedTunnelIdentifier(context.useGeneratedTunnelIdentifier)
+            sendUsageData(context.sendUsageData)
+            nativeAppPackage(context.nativeAppPackage)
+            useChromeForAndroid(context.useChromeForAndroid)
+            sauceConnectPath(context.sauceConnectPath ?: '')
+            enableSauceConnect(context.enableSauceConnect)
+            seleniumHost(context.seleniumHost ?: '')
+            seleniumPort(context.seleniumPort ?: '')
+            webDriverBrowsers {
+                context.webDriverBrowsers.each { browserName ->
+                    'string'(browserName)
+                }
+            }
+            appiumBrowsers {
+                context.appiumBrowsers.each { browserName ->
+                    'string'(browserName)
+                }
+            }
+
+            useLatestVersion(context.useLatestVersion)
+            launchSauceConnectOnSlave(context.launchSauceConnectOnSlave)
+            options(context.options ?: '')
+            verboseLogging(context.verboseLogging)
+            condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun')
+        }
+    }
 }
