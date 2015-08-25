@@ -21,6 +21,8 @@ interface ViewFactory {
     View view(Map<String, Object> arguments, @DslContext(View) Closure closure)
 
     /**
+     * Creates or updates a view that shows items in a simple list format.
+     *
      * @see #listView(java.lang.String, groovy.lang.Closure)
      */
     ListView listView(String name)
@@ -31,6 +33,8 @@ interface ViewFactory {
     ListView listView(String name, @DslContext(ListView) Closure closure)
 
     /**
+     * Creates or updates a view that can be divided into sections.
+     *
      * @see #sectionedView(java.lang.String)
      */
     SectionedView sectionedView(String name)
@@ -41,6 +45,8 @@ interface ViewFactory {
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure)
 
     /**
+     * Creates or updates a view that allows grouping views into multiple levels.
+     *
      * @see #nestedView(java.lang.String, groovy.lang.Closure)
      */
     NestedView nestedView(String name)
@@ -51,6 +57,8 @@ interface ViewFactory {
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure)
 
     /**
+     * Creates or updates a view that renders pipelines based on upstream/downstream jobs.
+     *
      * @see #deliveryPipelineView(java.lang.String, groovy.lang.Closure)
      */
     DeliveryPipelineView deliveryPipelineView(String name)
@@ -61,6 +69,8 @@ interface ViewFactory {
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure)
 
     /**
+     * Create or updates a view of upstream and downstream connected jobs.
+     *
      * @see #buildPipelineView(java.lang.String, groovy.lang.Closure)
      */
     BuildPipelineView buildPipelineView(String name)
@@ -71,6 +81,8 @@ interface ViewFactory {
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure)
 
     /**
+     * Creates or updates a view that provides a highly visible view of the status of selected Jenkins jobs.
+     *
      * @see #buildMonitorView(java.lang.String, groovy.lang.Closure)
      */
     BuildMonitorView buildMonitorView(String name)
@@ -81,6 +93,9 @@ interface ViewFactory {
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure)
 
     /**
+     * Creates or updates a new view that is very similar to the standard Jenkins List Views, but where you can group
+     * jobs and categorize them according to regular expressions.
+     *
      * @see #categorizedJobsView(java.lang.String, groovy.lang.Closure)
      */
     CategorizedJobsView categorizedJobsView(String name)
