@@ -11,6 +11,9 @@ class SectionedView extends View {
         super(jobManagement)
     }
 
+    /**
+     * Creates a section containing a list of jobs.
+     */
     void sections(@DslContext(SectionsContext) Closure sectionsClosure) {
         SectionsContext context = new SectionsContext(jobManagement)
         executeInContext(sectionsClosure, context)

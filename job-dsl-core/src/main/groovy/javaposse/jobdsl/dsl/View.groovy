@@ -18,24 +18,39 @@ abstract class View extends AbstractContext {
         this.name = name
     }
 
-    void description(String descriptionArg) {
+    /**
+     * Sets a description for the view.
+     */
+    void description(String description) {
         execute {
-            it / methodMissing('description', descriptionArg)
+            it / methodMissing('description', description)
         }
     }
 
-    void filterBuildQueue(boolean filterBuildQueueArg = true) {
+    /**
+     * If set to {@code true}. only jobs in this view will be shown in the build queue. Defaults to {@code false}.
+     */
+    void filterBuildQueue(boolean filterBuildQueue = true) {
         execute {
-            it / methodMissing('filterQueue', filterBuildQueueArg)
+            it / methodMissing('filterQueue', filterBuildQueue)
         }
     }
 
-    void filterExecutors(boolean filterExecutorsArg = true) {
+    /**
+     * If set to {@code true}, only those build executors will be shown that could execute the jobs in this view.
+     * Defaults to {@code false}.
+     */
+    void filterExecutors(boolean filterExecutors = true) {
         execute {
-            it / methodMissing('filterExecutors', filterExecutorsArg)
+            it / methodMissing('filterExecutors', filterExecutors)
         }
     }
 
+    /**
+     * Allows direct manipulation of the generated XML.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
+     */
     void configure(Closure withXmlClosure) {
         withXmlActions.add(new WithXmlAction(withXmlClosure))
     }

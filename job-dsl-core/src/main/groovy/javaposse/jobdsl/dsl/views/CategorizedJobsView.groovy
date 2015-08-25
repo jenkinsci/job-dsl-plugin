@@ -10,6 +10,9 @@ class CategorizedJobsView extends ListView {
         super(jobManagement)
     }
 
+    /**
+     * Adds grouping rules.
+     */
     void categorizationCriteria(@DslContext(CategorizationCriteriaContext) Closure categorizationCriteriaClosure) {
         CategorizationCriteriaContext context = new CategorizationCriteriaContext()
         executeInContext(categorizationCriteriaClosure, context)

@@ -9,6 +9,8 @@ import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.SectionedView
 
 /**
+ * Creates or updates views.
+ *
  * @since 1.31
  */
 interface ViewFactory {
@@ -18,31 +20,74 @@ interface ViewFactory {
     @Deprecated
     View view(Map<String, Object> arguments, @DslContext(View) Closure closure)
 
+    /**
+     * @see #listView(java.lang.String, groovy.lang.Closure)
+     */
     ListView listView(String name)
 
+    /**
+     * Creates or updates a view that shows items in a simple list format.
+     */
     ListView listView(String name, @DslContext(ListView) Closure closure)
 
+    /**
+     * @see #sectionedView(java.lang.String)
+     */
     SectionedView sectionedView(String name)
 
+    /**
+     * Creates or updates a view that can be divided into sections.
+     */
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure)
 
+    /**
+     * @see #nestedView(java.lang.String, groovy.lang.Closure)
+     */
     NestedView nestedView(String name)
 
+    /**
+     * Creates or updates a view that allows grouping views into multiple levels.
+     */
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure)
 
+    /**
+     * @see #deliveryPipelineView(java.lang.String, groovy.lang.Closure)
+     */
     DeliveryPipelineView deliveryPipelineView(String name)
 
+    /**
+     * Creates or updates a view that renders pipelines based on upstream/downstream jobs.
+     */
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure)
 
+    /**
+     * @see #buildPipelineView(java.lang.String, groovy.lang.Closure)
+     */
     BuildPipelineView buildPipelineView(String name)
 
+    /**
+     * Create or updates a view of upstream and downstream connected jobs.
+     */
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure)
 
+    /**
+     * @see #buildMonitorView(java.lang.String, groovy.lang.Closure)
+     */
     BuildMonitorView buildMonitorView(String name)
 
+    /**
+     * Creates or updates a view that provides a highly visible view of the status of selected Jenkins jobs.
+     */
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure)
 
+    /**
+     * @see #categorizedJobsView(java.lang.String, groovy.lang.Closure)
+     */
     CategorizedJobsView categorizedJobsView(String name)
 
+    /**
+     * Creates or updates a new view that is very similar to the standard Jenkins List Views, but where you can group
+     * jobs and categorize them according to regular expressions.
+     */
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure)
 }

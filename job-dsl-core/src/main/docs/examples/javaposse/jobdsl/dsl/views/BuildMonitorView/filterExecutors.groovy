@@ -1,0 +1,3 @@
+buildMonitorView('example') {
+    filterExecutors()
+}

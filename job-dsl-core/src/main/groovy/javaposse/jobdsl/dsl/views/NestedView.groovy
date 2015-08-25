@@ -11,6 +11,9 @@ class NestedView extends View {
         super(jobManagement)
     }
 
+    /**
+     * Adds nested views.
+     */
     void views(@DslContext(NestedViewsContext) Closure viewsClosure) {
         NestedViewsContext context = new NestedViewsContext(jobManagement)
         executeInContext(viewsClosure, context)
@@ -25,6 +28,9 @@ class NestedView extends View {
         }
     }
 
+    /**
+     * Adds columns to the views. The view will have no columns by default.
+     */
     void columns(@DslContext(NestedViewColumnsContext) Closure columnsClosure) {
         NestedViewColumnsContext context = new NestedViewColumnsContext()
         executeInContext(columnsClosure, context)

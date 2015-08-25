@@ -1,0 +1,3 @@
+categorizedJobsView('example') {
+    filterExecutors()
+}

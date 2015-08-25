@@ -1,0 +1,3 @@
+buildPipelineView('example') {
+    alwaysAllowManualTrigger()
+}

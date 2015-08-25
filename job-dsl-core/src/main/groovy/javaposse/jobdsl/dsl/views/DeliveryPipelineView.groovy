@@ -11,54 +11,83 @@ class DeliveryPipelineView extends View {
         super(jobManagement)
     }
 
+    /**
+     * Sets the number of pipelines instances shown for each pipeline. Defaults to 3.
+     */
     void pipelineInstances(int number) {
         execute {
             it / noOfPipelines(number)
         }
     }
 
+    /**
+     * Show a aggregated view where each stage shows the latest version being executed. Defaults to {@code false}.
+     */
     void showAggregatedPipeline(boolean value = true) {
         execute {
             it / methodMissing('showAggregatedPipeline', value)
         }
     }
 
+    /**
+     * Sets the number of columns used for showing pipelines. Defaults to 1.
+     */
     void columns(int number) {
         execute {
             it / noOfColumns(number)
         }
     }
 
+    /**
+     * Specifies how to sort the pipeline in the view, only applicable for several pipelines. Possible values are
+     * {@code Sorting.NONE} (default), {@code Sorting.TITLE} and {@code Sorting.LAST_ACTIVITY}.
+     */
     void sorting(Sorting sorting) {
         execute {
             it / methodMissing('sorting', (sorting ?: Sorting.NONE).value)
         }
     }
 
+    /**
+     * Show avatar pictures instead of user names. Defaults to {@code false}.
+     */
     void showAvatars(boolean value = true) {
         execute {
             it / methodMissing('showAvatars', value)
         }
     }
 
+    /**
+     * Specifies how often the view will be updated. Defaults to 2.
+     */
     void updateInterval(int seconds) {
         execute {
             it / methodMissing('updateInterval', seconds)
         }
     }
 
+    /**
+     * Show SCM change log for the first job in the pipeline. Defaults to {@code false}.
+     */
     void showChangeLog(boolean value = true) {
         execute {
             it / methodMissing('showChanges', value)
         }
     }
 
+    /**
+     * Show a button if a task is manual. Defaults to {@code false}.
+     */
     void enableManualTriggers(boolean value = true) {
         execute {
             it / methodMissing('allowManualTriggers', value)
         }
     }
 
+    /**
+     * Defines pipelines by either specifying names and start jobs or by regular expressions. Both variants can be
+     * called multiple times to add different pipelines to the view.
+     */
     void pipelines(@DslContext(DeliveryPipelinesContext) Closure pipelinesClosure) {
         DeliveryPipelinesContext context = new DeliveryPipelinesContext()
         executeInContext(pipelinesClosure, context)

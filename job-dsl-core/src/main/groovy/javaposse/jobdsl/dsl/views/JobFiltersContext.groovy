@@ -11,6 +11,9 @@ import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 class JobFiltersContext implements Context {
     List<Node> filterNodes = []
 
+    /**
+     * Adds a job status filter.
+     */
     void status(@DslContext(JobStatusesFilter) Closure statusesFilterClosure) {
         JobStatusesFilter statusesFilter = new JobStatusesFilter()
         executeInContext(statusesFilterClosure, statusesFilter)
@@ -23,6 +26,9 @@ class JobFiltersContext implements Context {
         }
     }
 
+    /**
+     * Adds a regular expression filter.
+     */
     void regex(@DslContext(RegexFilter) Closure regexFilterClosure) {
         RegexFilter regexFilter = new RegexFilter()
         executeInContext(regexFilterClosure, regexFilter)
