@@ -2,6 +2,11 @@ plugins {
     id 'com.moowork.gulp' version '0.10'
 }
 
+// see https://github.com/srs/gradle-gulp-plugin/issues/9
+node {
+    download = true
+}
+
 apply plugin: 'org.ajoberstar.github-pages'
 
 githubPages {
@@ -18,6 +23,7 @@ task copyData(type: Copy) {
     into "${project.buildDir}/data"
 }
 
+tasks.gulp_build.dependsOn('npmInstall')
 tasks.gulp_build.dependsOn('copyData')
 tasks.publishGhPages.dependsOn('gulp_build')
 
