@@ -1,6 +1,7 @@
 Welcome to the jenkins-job-dsl wiki!
 
-* The formal documentation and full syntax reference is detailed in [[Job DSL Commands]].
+* The high-level DSL concepts are documented in [[Job DSL Commands]].
+* See the [[Job Reference]] and the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for a full syntax reference
 * There are also tips on [[more advanced usage and workflows|User Power Moves]].
 * [The forum](https://groups.google.com/forum/#!forum/job-dsl-plugin) has lots of information, some of which is making its way to the [[FAQ|Frequently Asked Questions]].
 * If you want to get more involved, here's [how to contribute](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)...
@@ -17,6 +18,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.38 (unreleased)
+ * Replaced the [[View Reference]] and [[Folder Reference]] pages by the
+   [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
  * Added support for the [ShiningPanda Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin)
  * Enhanced support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
  * Enhanced support for the [Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin)
