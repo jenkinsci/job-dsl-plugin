@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.doc
 
 import groovy.json.JsonBuilder
 import javaposse.jobdsl.dsl.DslFactory
+import javaposse.jobdsl.dsl.NoDoc
 import javaposse.jobdsl.dsl.RequiresPlugin
 import org.codehaus.groovy.groovydoc.GroovyAnnotationRef
 import org.codehaus.groovy.groovydoc.GroovyClassDoc
@@ -83,6 +84,7 @@ class ApiDocGenerator {
                 !(it.declaringClass in [Object, Script]) &&
                 Modifier.isPublic(it.modifiers) &&
                 !it.name.contains('$') &&
+                !it.getAnnotation(NoDoc) &&
                 !(it.name in ['invokeMethod', 'executeWithXmlActions'])
         }*.name.unique().sort()
         methodNames.collect { processMethodName it, clazz }
