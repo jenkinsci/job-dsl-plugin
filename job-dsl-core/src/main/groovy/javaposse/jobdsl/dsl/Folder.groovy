@@ -32,7 +32,7 @@ class Folder extends Item {
     }
 
     /**
-     * Creates permission records.
+     * Changes the initial view to show when the folder contains multiple views. Defaults to the {@code 'All'} view.
      *
      * @since 1.36
      */
@@ -43,6 +43,8 @@ class Folder extends Item {
     }
 
     /**
+     * Creates permission records.
+     *
      * @since 1.31
      */
     void authorization(@DslContext(AuthorizationContext) Closure closure) {
