@@ -145,7 +145,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'requireMinimumCoreVersion failed'() {
         when:
-        jobManagement.requireMinimumCoreVersion('1.600')
+        jobManagement.requireMinimumCoreVersion('3.600')
 
         then:
         1 * build.setResult(UNSTABLE)
