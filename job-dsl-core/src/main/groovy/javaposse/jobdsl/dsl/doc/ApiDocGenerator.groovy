@@ -196,6 +196,7 @@ class ApiDocGenerator {
                 firstSentenceCommentText = firstSentenceCommentText[0..<annotationIndex]
             }
             if (firstSentenceCommentText) {
+                firstSentenceCommentText = firstSentenceCommentText.replaceAll('<[^>]*>', '') // strip tags
                 map.firstSentenceCommentText = firstSentenceCommentText
             }
         }
@@ -221,6 +222,7 @@ class ApiDocGenerator {
             } else {
                 map.type = getSimpleClassName(clazz)
             }
+            map.type = map.type.replaceAll('\\$', '.') // fix inner class names
         }
 
         if (parameter.defaultValue()) {
