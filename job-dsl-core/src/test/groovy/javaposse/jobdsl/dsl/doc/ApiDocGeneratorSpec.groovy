@@ -14,7 +14,7 @@ class ApiDocGeneratorSpec extends Specification {
         then:
         with(builder.content) {
             version == '1.0'
-            root.contextClass == 'javaposse.jobdsl.dsl.JobParent'
+            root.contextClass == 'javaposse.jobdsl.dsl.DslFactory'
             with(contexts['javaposse.jobdsl.dsl.jobs.FreeStyleJob']) {
                 type == 'javaposse.jobdsl.dsl.jobs.FreeStyleJob'
                 methods.find { it.name == 'scm' }

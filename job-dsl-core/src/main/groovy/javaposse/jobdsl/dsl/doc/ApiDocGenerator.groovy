@@ -179,7 +179,6 @@ class ApiDocGenerator {
             map.availableSince = availableSince
         }
 
-
         String comment = methodDoc.commentText().trim()
         if (comment) {
             int defListIndex = comment.indexOf('<DL>')

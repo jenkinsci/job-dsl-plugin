@@ -114,6 +114,7 @@ project(':job-dsl-core') {
         classpath = sourceSets.main.runtimeClasspath
         args = [version, apiDocData]
 
+        inputs.dir "${project.projectDir}/src/main/docs"
         outputs.file apiDocData
     }
 
