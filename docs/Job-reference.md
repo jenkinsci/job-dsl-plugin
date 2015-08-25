@@ -10,6 +10,7 @@ freeStyleJob(String name) { // since 1.30
     using(String templateName)
     configure(Closure configBlock)
     previousNames(String regex) // since 1.29
+    nextBuildNumber(int nextBuildNumber) // since 1.38
 
     batchTask(String name, String script)
     blockOn(String projectNames)
@@ -477,6 +478,13 @@ previousNames(String regex)
 Is used by the Plugin when the jobs configuration is updated. If exactly one jobs exists matching this regular expression
 then it is renamed to the name of the current job before the configuration is updated.
 The regular expression needs to match the full name of the job, i.e. with folders included.
+
+### Next Build Number
+```groovy
+nextBuildNumber(int nextBuildNumber)
+```
+
+Optionally sets the next BUILD_NUMBER for this job.  Values smaller than the current next build number will be ignored
 
 ### Disable
 

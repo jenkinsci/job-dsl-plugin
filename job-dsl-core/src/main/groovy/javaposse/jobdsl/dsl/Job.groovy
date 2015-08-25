@@ -24,6 +24,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkState
 abstract class Job extends Item {
     String templateName = null // Optional
     String previousNamesRegex = null // Optional
+    int nextBuildNumber = 0 //Optional
 
     protected Job(JobManagement jobManagement) {
         super(jobManagement)
@@ -57,6 +58,16 @@ abstract class Job extends Item {
      */
     void previousNames(String regex) {
         this.previousNamesRegex = regex
+    }
+
+    /**
+     * Set the next run's BUILD_NUMBER if possible (if it's &gt;= previous)
+     *
+     * @since 1.38
+     */
+    void nextBuildNumber(int nextBuildNumber) {
+        checkArgument(nextBuildNumber > 0, 'nextBuildNumber must be positive')
+        this.nextBuildNumber = nextBuildNumber
     }
 
     /**

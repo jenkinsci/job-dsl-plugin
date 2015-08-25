@@ -152,6 +152,10 @@ public class DslScriptLoader {
                 jp.getJm().createOrUpdateConfig(item, ignoreExisting);
                 String templateName = item instanceof Job ? ((Job) item).getTemplateName() : null;
                 generatedJobs.add(new GeneratedJob(templateName, item.getName()));
+                if (item instanceof Job) {
+                    Job job = (Job) item;
+                    jp.getJm().updateNextBuildNumber(job.getName(), job.getNextBuildNumber());
+                }
             }
         }
         return generatedJobs;
