@@ -418,7 +418,7 @@
         },
 
         showPluginDetail: function(plugin) {
-            var usages = this.findPluginUsages(plugin);
+            var usages = this.dsl.findPluginUsages(plugin);
             var html = Handlebars.templates['pluginDetail']({plugin: plugin, usages: usages});
             $('.detail-wrapper').html(html);
         },
