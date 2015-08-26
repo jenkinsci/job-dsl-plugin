@@ -138,5 +138,20 @@ class AxisContextSpec extends Specification {
         context.axisNodes[0].values[0].string[1].value() == 'b'
         context.axisNodes[0].values[0].string[2].value() == 'c'
     }
+
+    def 'can set python'() {
+        when:
+        context.python('a', 'b', 'c')
+
+        then:
+        context.axisNodes.size() == 1
+        context.axisNodes[0].name() == 'jenkins.plugins.shiningpanda.matrix.PythonAxis'
+        context.axisNodes[0].children().size() == 2
+        context.axisNodes[0].name[0].value() == 'PYTHON'
+        context.axisNodes[0].values[0].children().size() == 3
+        context.axisNodes[0].values[0].string[0].value() == 'a'
+        context.axisNodes[0].values[0].string[1].value() == 'b'
+        context.axisNodes[0].values[0].string[2].value() == 'c'
+    }
 }
 

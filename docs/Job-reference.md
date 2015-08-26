@@ -358,6 +358,8 @@ matrixJob(String name) { // since 1.30
         labelExpression(String name, Iterable<String> expressions)
         jdk(String... jdks)
         jdk(Iterable<String> jdks)
+        python(String... pythonInstallations)  // since 1.38
+        python(Iterable<String> pythonInstallations) // since 1.38
         configure(Closure configBlock)
     }
     runSequentially(boolean runSequentially = true)
@@ -3639,6 +3641,7 @@ of the matrix combinations.
 
 Requires the [Matrix Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin).
 See also [Building a matrix project](https://wiki.jenkins-ci.org/display/JENKINS/Building+a+matrix+project).
+The `python` method requires [ShiningPanda Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin).
 
 ### Axes
 
@@ -3653,6 +3656,8 @@ matrixJob {
         labelExpression(String name, Iterable<String> expressions)
         jdk(String... jdks)
         jdk(Iterable<String> jdks)
+        python(String... pythonInstallations)
+        python(Iterable<String> pythonInstallations)
         configure(Closure configClosure)
     }
 }
