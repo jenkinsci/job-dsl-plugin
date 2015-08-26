@@ -124,15 +124,24 @@ class ApiDocGenerator {
             methodMap.plugin = dslPlugin
         }
 
-        String path = "${clazz.name.replaceAll('\\.', '/')}/$methodName"
-        File file = new File("${commandDocsPath}/examples/${path}.groovy")
-        // TODO check superclasses
-
-        if (file.exists()) {
-            methodMap.examples = file.text
+        String examples = getExamples(clazz, methodName)
+        if (examples) {
+            methodMap.examples = examples
         }
 
         methodMap
+    }
+
+    private String getExamples(Class clazz, String methodName) {
+        String path = "${clazz.name.replaceAll('\\.', '/')}/$methodName"
+        File file = new File("${commandDocsPath}/examples/${path}.groovy")
+        if (file.exists()) {
+            file.text
+        } else if (clazz.superclass) {
+            getExamples(clazz.superclass, methodName)
+        } else {
+            null
+        }
     }
 
     private Class getContextClass(Method method, GroovyMethodDoc methodDoc) {
