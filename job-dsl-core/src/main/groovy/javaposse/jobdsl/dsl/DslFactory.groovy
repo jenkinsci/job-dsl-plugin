@@ -99,6 +99,8 @@ interface DslFactory extends ViewFactory {
     Folder folder(@DslContext(Folder) Closure closure)
 
     /**
+     * Creates or updates a folder.
+     *
      * @since 1.30
      * @see #folder(java.lang.String, groovy.lang.Closure)
      */
@@ -118,6 +120,8 @@ interface DslFactory extends ViewFactory {
     ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
     /**
+     * Creates a managed custom file.
+     *
      * @since 1.30
      * @see #customConfigFile(java.lang.String, groovy.lang.Closure)
      */
@@ -131,6 +135,8 @@ interface DslFactory extends ViewFactory {
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
+     * Creates a managed Maven settings file.
+     *
      * @since 1.30
      * @see #mavenSettingsConfigFile(java.lang.String, groovy.lang.Closure)
      */

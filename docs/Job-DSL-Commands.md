@@ -1,4 +1,5 @@
-**NOTE: See the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages for details about all options.**
+**NOTE: See the [[Job Reference]] and the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for details about
+all options.**
 
 # DSL Methods
 
@@ -95,7 +96,7 @@ categorizedJobsView(String name, Closure closure = null)  // since 1.31
 
 The view methods behaves like the [job](#job) methods and will return a view object.
 
-See the [[View Reference]] page for details about view options.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) page for details about view options.
 
 For compatibility with previous releases, a generic `view` method exists which has an optional `type` attribute to
 specify the type of view to be created. The `type` attribute can have a value of `ListView`, `BuildPipelineView`,

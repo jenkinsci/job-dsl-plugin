@@ -189,3 +189,5 @@ githubPages {
         from 'docs'
     }
 }
+
+task publishDocs(dependsOn: ['publishGhPages', ':job-dsl-api-viewer:publishGhPages'])
