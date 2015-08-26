@@ -72,6 +72,14 @@ class AxisContext extends AbstractExtensibleContext {
         simpleAxis('JDK', 'jdk', axisValues)
     }
 
+    void python(String... axisValues) {
+        python(axisValues.toList())
+    }
+
+    void python(Iterable<String> axisValues) {
+        pythonAxis('PYTHON', axisValues)
+    }
+
     /**
      * Allows direct manipulation of the generated XML. The {@code axes} node is passed into the configure block.
      *
@@ -85,6 +93,17 @@ class AxisContext extends AbstractExtensibleContext {
         NodeBuilder nodeBuilder = new NodeBuilder()
 
         axisNodes << nodeBuilder."hudson.matrix.${axisType}Axis" {
+            name axisName
+            values {
+                axisValues.each { string it }
+            }
+        }
+    }
+
+    private pythonAxis(String axisName, Iterable<String> axisValues) {
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        axisNodes << nodeBuilder.'jenkins.plugins.shiningpanda.matrix.PythonAxis' {
             name axisName
             values {
                 axisValues.each { string it }
