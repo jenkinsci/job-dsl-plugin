@@ -85,7 +85,7 @@ class ApiDocGenerator {
                 Modifier.isPublic(it.modifiers) &&
                 !it.name.contains('$') &&
                 !it.getAnnotation(NoDoc) &&
-                !(it.name in ['invokeMethod', 'executeWithXmlActions'])
+                !(it.name in ['invokeMethod', 'executeWithXmlActions', 'methodMissing'])
         }*.name.unique().sort()
         methodNames.collect { processMethodName it, clazz }
     }
