@@ -5808,15 +5808,20 @@ job {
 job {
     publishers {
         stashNotifier {
+            stashServerBaseUrl(String stashServerBaseUrl) // optional
+            stashUserName(String stashUserName) // optional
+            stashUserPassword(String stashUserPassword) // optional
             commitSha1(String commitSha1) // optional
+            ignoreUnverifiedSSLPeer(boolean ignoreUnverifiedSSLPeer = true) // optional, defaults to false if omitted
             keepRepeatedBuilds(boolean keepRepeatedBuilds = true) // optional, defaults to false if omitted
+            commitSha1(String commitSha1) // optional
         }
     }
 }
 ```
 
 Supports the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin).
-Uses global Jenkins settings for Stash URL, username, password and unverified SSL certificate handling.
+Uses global Jenkins settings for Stash URL, username, password and unverified SSL certificate handling when not given.
 All parameters are optional. If a method is not called then the plugin default parameter will be used.
 
 Examples:
