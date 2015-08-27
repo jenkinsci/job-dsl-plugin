@@ -38,64 +38,77 @@ interface DslFactory extends ViewFactory {
     /**
      * @since 1.30
      */
+    @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name)
 
     /**
      * @since 1.31
      */
+    @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)
 
     /**
      * @since 1.38
      */
+    @RequiresPlugin(id = 'ivy', minimumVersion = '1.23')
     IvyJob ivyJob(String name)
 
     /**
      * @since 1.38
      */
+    @RequiresPlugin(id = 'ivy', minimumVersion = '1.23')
     IvyJob ivyJob(String name, @DslContext(IvyJob) Closure closure)
 
     /**
      * @since 1.30
      */
+    @RequiresPlugin(id = 'matrix-project')
     MatrixJob matrixJob(String name)
 
     /**
      * @since 1.31
      */
+    @RequiresPlugin(id = 'matrix-project')
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure)
 
     /**
      * @since 1.30
      */
+    @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name)
 
     /**
      * @since 1.31
      */
+    @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure)
 
     /**
      * @since 1.30
      */
+    @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name)
 
     /**
      * @since 1.31
      */
+    @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure)
 
     /**
      * @since 1.30
      */
+    @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name)
 
     /**
      * @since 1.31
      */
+    @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
     @Deprecated
+    @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(@DslContext(Folder) Closure closure)
 
     /**
@@ -104,6 +117,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.30
      * @see #folder(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name)
 
     /**
@@ -111,12 +125,15 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.31
      */
+    @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name, @DslContext(Folder) Closure closure)
 
     @Deprecated
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile configFile(@DslContext(ConfigFile) Closure closure)
 
     @Deprecated
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
     /**
@@ -125,6 +142,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.30
      * @see #customConfigFile(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile customConfigFile(String name)
 
     /**
@@ -132,6 +150,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.31
      */
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
@@ -140,6 +159,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.30
      * @see #mavenSettingsConfigFile(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile mavenSettingsConfigFile(String name)
 
     /**
@@ -147,6 +167,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.31
      */
+    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**

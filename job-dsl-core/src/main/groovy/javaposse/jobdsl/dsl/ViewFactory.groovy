@@ -37,11 +37,13 @@ interface ViewFactory {
      *
      * @see #sectionedView(java.lang.String)
      */
+    @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name)
 
     /**
      * Creates or updates a view that can be divided into sections.
      */
+    @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure)
 
     /**
@@ -49,11 +51,13 @@ interface ViewFactory {
      *
      * @see #nestedView(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'nested-view')
     NestedView nestedView(String name)
 
     /**
      * Creates or updates a view that allows grouping views into multiple levels.
      */
+    @RequiresPlugin(id = 'nested-view')
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure)
 
     /**
@@ -61,11 +65,13 @@ interface ViewFactory {
      *
      * @see #deliveryPipelineView(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name)
 
     /**
      * Creates or updates a view that renders pipelines based on upstream/downstream jobs.
      */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure)
 
     /**
@@ -73,11 +79,13 @@ interface ViewFactory {
      *
      * @see #buildPipelineView(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name)
 
     /**
      * Create or updates a view of upstream and downstream connected jobs.
      */
+    @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure)
 
     /**
@@ -85,11 +93,13 @@ interface ViewFactory {
      *
      * @see #buildMonitorView(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name)
 
     /**
      * Creates or updates a view that provides a highly visible view of the status of selected Jenkins jobs.
      */
+    @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure)
 
     /**
@@ -98,11 +108,13 @@ interface ViewFactory {
      *
      * @see #categorizedJobsView(java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     CategorizedJobsView categorizedJobsView(String name)
 
     /**
      * Creates or updates a new view that is very similar to the standard Jenkins List Views, but where you can group
      * jobs and categorize them according to regular expressions.
      */
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure)
 }

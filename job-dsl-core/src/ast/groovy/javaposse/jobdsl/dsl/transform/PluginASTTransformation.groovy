@@ -30,8 +30,17 @@ class PluginASTTransformation implements ASTTransformation {
 
     @Override
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
-        sourceUnit.AST?.classes*.methods.flatten().each { MethodNode method ->
-            method.getAnnotations(REQUIRES_PLUGIN_ANNOTATION).each { AnnotationNode requiresPluginAnnotation ->
+        List<ClassNode> classes = sourceUnit.AST.classes.findAll { !it.interface }
+        classes.methods.flatten().each { MethodNode method ->
+            List<AnnotationNode> annotations = method.getAnnotations(REQUIRES_PLUGIN_ANNOTATION)
+            method.declaringClass.allInterfaces.each { ClassNode iface ->
+                MethodNode interfaceMethod = iface.getMethod(method.name, method.parameters)
+                if (interfaceMethod) {
+                    annotations.addAll(interfaceMethod.getAnnotations(REQUIRES_PLUGIN_ANNOTATION))
+                }
+            }
+
+            annotations.each { AnnotationNode requiresPluginAnnotation ->
                 if (!method.declaringClass.getField('jobManagement') && !method.declaringClass.getField('jm')) {
                     sourceUnit.errorCollector.addError(
                             "no jobManagement field in $method.declaringClass",

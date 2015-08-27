@@ -114,9 +114,9 @@ class ApiDocGenerator {
             }
         }
 
-        List<RequiresPlugin> annotations = methodDocs.collect { GroovyMethodDoc methodDoc ->
+        List<RequiresPlugin> annotations = methodDocs.collectMany { GroovyMethodDoc methodDoc ->
             Method method = GroovyDocHelper.getMethodFromGroovyMethodDoc(methodDoc, clazz)
-            method?.getAnnotation(RequiresPlugin)
+            (getImplementedMethods(method) + method)*.getAnnotation(RequiresPlugin)
         }.findAll()
 
         String dslPlugin = annotations.find { it.id() }?.id() // TODO add min ver
@@ -130,6 +130,12 @@ class ApiDocGenerator {
         }
 
         methodMap
+    }
+
+    private static List<Method> getImplementedMethods(Method method) {
+        method.declaringClass.interfaces*.methods.flatten().findAll {
+            it.name == method.name && Arrays.equals(it.parameterTypes, method.parameterTypes)
+        }
     }
 
     private String getExamples(Class clazz, String methodName) {
