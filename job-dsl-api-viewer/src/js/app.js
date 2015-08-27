@@ -230,6 +230,13 @@
         $('.version-select').change(this.loadSelectedDsl.bind(this));
 
         window.addEventListener('hashchange', this.onHashChange.bind(this), false);
+
+        $('.search-input').keyup(this.onSearch.bind(this));
+        $('.clear-search').click(function(event) {
+            event.preventDefault();
+            $('.search-input').val('');
+            this.onSearch();
+        }.bind(this));
     };
 
     _.extend(App.prototype, {
@@ -294,13 +301,12 @@
             allItems = _.sortBy(allItems, function(item) { return item.name.toLowerCase(); });
             this.allItems = allItems;
 
-            $('.search-input').keyup(this.onSearch.bind(this));
-
             this.updateDetailFromHash();
         },
 
         onSearch: function() {
             var val = $('.search-input').val();
+            $('.clear-search').toggleClass('hide', !val);
             var $treeBody = $('.tree-body');
             var $searchResults = $('.search-results');
             if (val) {
