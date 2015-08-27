@@ -79,7 +79,7 @@ class ApiDocGenerator {
     private List getMethodsForClass(Class clazz) {
         List<String> methodNames = clazz.methods.findAll {
             !it.name.startsWith('get') &&
-                !it.name.startsWith('set') &&
+                (!it.name.startsWith('set') || it.name == 'setBuildResult') &&
                 !it.name.startsWith('is') &&
                 !(it.declaringClass in [Object, Script]) &&
                 Modifier.isPublic(it.modifiers) &&
