@@ -12,6 +12,19 @@ class BuildFlowJob extends Job {
         super(jobManagement)
     }
 
+    void buildFlowNeedsWorkspace(boolean needsWorkspace) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / buildNeedsWorkspace(Boolean.valueOf(needsWorkspace).toString())
+        }
+    }
+
+    void buildFlowFile(String fileName) {
+        buildFlowNeedsWorkspace(true) //File requires a workspace
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / dslFile(fileName)
+        }
+    }
+
     void buildFlow(String buildFlowText) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / dsl(buildFlowText)

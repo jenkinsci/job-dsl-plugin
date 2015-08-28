@@ -318,6 +318,8 @@ buildFlowJob(String name) { // since 1.30
     // includes all options from freeStyleJob
 
     buildFlow(String buildFlowText)
+    buildFlowNeedsWorkspace(boolean needsWorkspace) // since 1.38
+    buildFlowFile(String fileName) // since 1.38
 }
 
 job(type: BuildFlow, Closure closure) // deprecated since 1.30
@@ -857,7 +859,7 @@ buildFlowJob('example-2') {
 }
 ```
 
-The build flow text can also be stored in a file and set in the new job when it's created.
+The build flow text can also be stored in a file in the DSL Job's workspace and set in the new job when it's created.
 
 ```groovy
 buildFlowJob('example-3') {
@@ -866,6 +868,17 @@ buildFlowJob('example-3') {
 ```
 
 Since 1.21.
+
+The build flow text can also be read from a file during execution of the Build Flow job.
+
+```groovy
+buildFlowJob('example-4') {
+    buildFlowFile("my-build-flow-text.groovy") // Implicitly enables buildFlowNeedsWorkspace
+}
+```
+
+Since 1.38
+
 
 # Ivy
 
