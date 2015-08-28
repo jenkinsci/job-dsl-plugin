@@ -196,8 +196,11 @@ class ApiDocGenerator {
             map.availableSince = availableSince
         }
 
-        String comment = methodDoc.commentText().trim()
-        if (comment) {
+        GroovyMethodDoc methodDocWithComment = getMethodHierarchy(method, methodDoc).find {
+            it.commentText().trim()
+        }
+        if (methodDocWithComment) {
+            String comment = methodDocWithComment.commentText().trim()
             int defListIndex = comment.indexOf('<DL>')
             if (defListIndex != -1) {
                 comment = comment[0..<defListIndex]
@@ -206,7 +209,7 @@ class ApiDocGenerator {
                 map.html = comment
             }
 
-            String firstSentenceCommentText = methodDoc.firstSentenceCommentText()
+            String firstSentenceCommentText = methodDocWithComment.firstSentenceCommentText()
             int annotationIndex = firstSentenceCommentText.indexOf('@')
             if (annotationIndex != -1) {
                 firstSentenceCommentText = firstSentenceCommentText[0..<annotationIndex]
@@ -218,6 +221,24 @@ class ApiDocGenerator {
         }
 
         map
+    }
+
+    /**
+     * Returns the method and all methods that it overrides.
+     */
+    private List<GroovyMethodDoc> getMethodHierarchy(Method method, GroovyMethodDoc groovyMethodDoc) {
+        List<GroovyMethodDoc> result = []
+
+        Class clazz = method.declaringClass
+        while (clazz) {
+            result.addAll(docHelper.getAllMethods(clazz).findAll {
+                it.name() == groovyMethodDoc.name() &&
+                        it.parameters()*.typeName() == groovyMethodDoc.parameters()*.typeName()
+            })
+            clazz = clazz.superclass
+        }
+
+        result
     }
 
     private Map processParameter(GroovyParameter parameter, Type type) {
