@@ -105,6 +105,7 @@ freeStyleJob(String name) { // since 1.30
         snapshotDependencies(boolean checkSnapshotDependencies)
         urlTrigger(String cronString = null, Closure urlTriggerClosure)
         upstream(String projects, String threshold = 'SUCCESS') // since 1.33
+        stashPullRequestTrigger(Closure stashPullRequestTrigger) // since 1.36
     }
     wrappers { // since 1.19, before that the methods were on top level
         allocatePorts(Closure closure = null)
@@ -2036,6 +2037,53 @@ job('example') {
 ```
 
 (since 1.33)
+
+### StashBuildTrigger
+
+```groovy
+job {
+    triggers {
+        stashPullRequestTrigger {
+            cron(String cron)
+            stashHost(String stashHost)
+            username(String stashUsername)
+            password(String stashUserPassword)
+            projectCode(String projectCode)
+            repositoryName(String repositoryName)
+            ciSkipPhrases(String ciSkipPhrases)                    // optional
+            checkDestinationCommit(boolean checkDestinationCommit) // optional, default false
+            checkMergeable(boolean checkDestinationCommit)         // optional, default false
+            checkNotConflicted(boolean checkDestinationCommit)     // optional, default false
+            onlyBuildOnComment(boolean onlyBuildOnComment)         // optional, default false
+            ciBuildPhrases(String )                                // optional
+        }
+    }
+}
+```
+
+Builds pull requests from Stash. Requires the
+[Stash Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Stash+pullrequest+builder+plugin).
+
+```groovy
+job('example') {
+    triggers {
+        stashPullRequestTrigger {
+            cron('*****')
+            stashHost('https://myStash')
+            username('myStashUser')
+            password('hisPassword')
+            projectCode('myProject')
+            repositoryName('myRepo')
+            checkDestinationCommit(true)
+            checkMergeable(true)
+            checkNotConflicted(true)
+            ciBuildPhrases('test this please')
+        }
+    }
+}
+```
+
+(since 1.36)
 
 # Build Environment (Build Wrappers)
 
