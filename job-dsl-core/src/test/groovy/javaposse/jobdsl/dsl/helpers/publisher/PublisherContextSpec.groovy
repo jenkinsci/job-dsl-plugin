@@ -4644,6 +4644,41 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('publish-over-ssh', '1.12')
     }
 
+    def 'crittercismDsymUpload with no options'() {
+        when:
+        context.crittercismDsymUpload {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.crittercism__dsym.CrittercismDsymRecorder'
+            children().size() == 3
+            apiKey[0].value() == ''
+            appID[0].value() == ''
+            filePath[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('crittercism-dsym', '1.1')
+    }
+
+    def 'crittercismDsymUpload with all options'() {
+        when:
+        context.crittercismDsymUpload {
+            apiKey 'theKey'
+            appID 'theId'
+            filePath 'thePath'
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.crittercism__dsym.CrittercismDsymRecorder'
+            children().size() == 3
+            apiKey[0].value() == 'theKey'
+            appID[0].value() == 'theId'
+            filePath[0].value() == 'thePath'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('crittercism-dsym', '1.1')
+    }
+
     def 'joinTrigger with no options'() {
         when:
         context.joinTrigger {

@@ -1494,6 +1494,21 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'crittercism-dsym', minimumVersion = '1.1')
+    void crittercismDsymUpload(@DslContext(CrittercismDsymRecorderContext) Closure closure) {
+        CrittercismDsymRecorderContext dsymuploadContext = new CrittercismDsymRecorderContext()
+        ContextHelper.executeInContext(closure, dsymuploadContext)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.crittercism__dsym.CrittercismDsymRecorder' {
+            apiKey dsymuploadContext.apiKey
+            appID dsymuploadContext.appID
+            filePath dsymuploadContext.filePath
+        }
+    }
+
+    /**
      * Runs a job after all immediate downstream jobs have completed.
      *
      * @since 1.35

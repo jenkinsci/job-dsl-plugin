@@ -20,6 +20,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 * 1.38 (unreleased)
  * Replaced the [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
+ * Added support for [Crittercism dSYM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Crittercism+dSYM+Plugin)
+   ([JENKINS-29501](https://issues.jenkins-ci.org/browse/JENKINS-29501))
  * Added support for the [ShiningPanda Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin)
  * Enhanced support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
  * Enhanced support for the [Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin)
