@@ -49,6 +49,12 @@ class DeliveryPipelineViewSpec extends Specification {
             updateInterval(60)
             showChangeLog()
             enableManualTriggers()
+            showTotalBuildTime()
+            allowRebuild()
+            allowPipelineStart()
+            showDescription()
+            showPromotions()
+
             pipelines {
                 component('test', 'compile-a')
                 regex(/compile-(.*)/)
@@ -102,6 +108,11 @@ class DeliveryPipelineViewSpec extends Specification {
     <updateInterval>60</updateInterval>
     <showChanges>true</showChanges>
     <allowManualTriggers>true</allowManualTriggers>
+    <showTotalBuildTime>true</showTotalBuildTime>
+    <allowRebuild>true</allowRebuild>
+    <allowPipelineStart>true</allowPipelineStart>
+    <showDescription>true</showDescription>
+    <showPromotions>true</showPromotions>
     <componentSpecs>
         <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
             <name>test</name>

@@ -261,6 +261,11 @@ deliveryPipelineView(String name) {  // since 1.30
     enableManualTriggers(boolean enable = true)
     showAvatars(boolean showAvatars = true)
     showChangeLog(boolean showChangeLog = true)
+    showTotalBuildTime(boolean value = true)
+    allowRebuild(boolean value = true)
+    allowPipelineStart(boolean value = true)
+    showDescription(boolean value = true)
+    showPromotions(boolean value = true)
     pipelines {
         component(String name, String initialJob)
         regex(String regex)
