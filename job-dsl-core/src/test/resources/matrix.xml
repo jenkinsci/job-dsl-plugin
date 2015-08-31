@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<matrix-project plugin="matrix-project@1.4">
+    <actions/>
+    <description>Build and test the app.</description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers/>
+    <concurrentBuild>false</concurrentBuild>
+    <customWorkspace>matrix</customWorkspace>
+    <axes>
+        <hudson.matrix.TextAxis>
+            <name>ddd</name>
+            <values>
+                <string>a</string>
+                <string>b</string>
+                <string>c</string>
+            </values>
+        </hudson.matrix.TextAxis>
+        <hudson.matrix.TextAxis>
+            <name>eee</name>
+            <values>
+                <string>a</string>
+                <string>b</string>
+                <string>c</string>
+            </values>
+        </hudson.matrix.TextAxis>
+    </axes>
+    <combinationFilter>eee=='a'||ddd=='c'</combinationFilter>
+    <builders>
+        <hudson.tasks.Shell>
+            <command>ps</command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command>env |sort</command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command>ps</command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command>env |sort</command>
+        </hudson.tasks.Shell>
+    </builders>
+    <publishers/>
+    <buildWrappers/>
+    <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+        <runSequentially>true</runSequentially>
+        <touchStoneCombinationFilter>eee=='b'</touchStoneCombinationFilter>
+        <touchStoneResultCondition>
+            <name>SUCCESS</name>
+            <ordinal>0</ordinal>
+            <color>BLUE</color>
+            <completeBuild>true</completeBuild>
+        </touchStoneResultCondition>
+    </executionStrategy>
+    <childCustomWorkspace>matrix2</childCustomWorkspace>
+</matrix-project>
