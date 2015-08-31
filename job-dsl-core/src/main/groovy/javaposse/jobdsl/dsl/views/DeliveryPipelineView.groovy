@@ -103,6 +103,36 @@ class DeliveryPipelineView extends View {
         }
     }
 
+    void showTotalBuildTime(boolean value = true) {
+        execute {
+            it / methodMissing('showTotalBuildTime', value)
+        }
+    }
+
+    void allowRebuild(boolean value = true) {
+        execute {
+            it / methodMissing('allowRebuild', value)
+        }
+    }
+
+    void allowPipelineStart(boolean value = true) {
+        execute {
+            it / methodMissing('allowPipelineStart', value)
+        }
+    }
+
+    void showDescription(boolean value = true) {
+        execute {
+            it / methodMissing('showDescription', value)
+        }
+    }
+
+    void showPromotions(boolean value = true) {
+        execute {
+            it / methodMissing('showPromotions', value)
+        }
+    }
+
     /**
      * Defines pipelines by either specifying names and start jobs or by regular expressions. Both variants can be
      * called multiple times to add different pipelines to the view.
