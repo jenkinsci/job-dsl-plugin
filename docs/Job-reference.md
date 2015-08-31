@@ -236,6 +236,7 @@ freeStyleJob(String name) { // since 1.30
         deployArtifacts(Closure deployArtifactsClosure = null) // since 1.31
         downstream(String projectName, String thresholdName = 'SUCCESS')
         downstreamParameterized(Closure downstreamClosure)
+        crittercismDsymUpload(Closure crittercismDsymUploadClosure) // since 1.38
         dry(String pattern, highThreshold = 50, normalThreshold = 25,
             Closure staticAnalysisClosure = null)
         emma(String coverageFile = '', Closure closure) // since 1.20
@@ -6107,6 +6108,40 @@ job('example') {
 ```
 
 (since 1.26)
+
+### [Crittercism dSYM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Crittercism+dSYM+Plugin)
+
+```groovy
+job {
+    publishers {
+        crittercismDsymUpload {
+            apiKey(String apiKey = '')
+            appID(String appID = '')
+            filePath(String filePath = '')
+        }
+    }
+}
+```
+
+Adds a Crittercism dSYM Upload publisher. Requires the [Crittercism dSYM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Crittercism+dSYM+Plugin).
+
+For security reasons, do not use a hard-coded api token. See [[Handling-Credentials]] for details about handling credentials in DSL scripts.
+
+```groovy
+job {
+    publishers {
+        crittercismDsymUpload {
+            apiKey(CRITTERCISM_API_TOKEN)
+            appID('c001abb')
+            filePath('build/myapp.dSYM.zip')
+        }
+    }
+}
+```
+
+
+
+(since 1.38)
 
 ### Flexible publish
 
