@@ -1,6 +1,6 @@
 multiJob('example') {
     steps {
-        phase() {
+        phase {
             phaseName 'Second'
             job('JobZ') {
                 parameters {
