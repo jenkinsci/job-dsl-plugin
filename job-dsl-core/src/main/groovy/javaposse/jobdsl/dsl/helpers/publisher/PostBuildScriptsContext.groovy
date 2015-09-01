@@ -15,10 +15,16 @@ class PostBuildScriptsContext implements Context {
         this.stepContext = new StepContext(jobManagement, item)
     }
 
+    /**
+     * Adds build steps to run at the end of the build.
+     */
     void steps(@DslContext(StepContext) Closure stepClosure) {
         ContextHelper.executeInContext(stepClosure, stepContext)
     }
 
+    /**
+     * If set, runs the build steps only if the build was successful. Defaults to {@code true}.
+     */
     void onlyIfBuildSucceeds(boolean onlyIfBuildSucceeds = true) {
         this.onlyIfBuildSucceeds = onlyIfBuildSucceeds
     }

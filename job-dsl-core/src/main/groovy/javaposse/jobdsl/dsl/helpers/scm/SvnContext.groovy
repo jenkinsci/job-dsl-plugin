@@ -41,8 +41,10 @@ class SvnContext extends AbstractContext {
     }
 
     /**
-     * The checkout strategy that should be used.  This is a global setting for all locations. If no checkout strategy
-     * is configured, the default is {@link SvnCheckoutStrategy#UPDATE}.
+     * The checkout strategy that should be used.  This is a global setting for all locations.
+     *
+     * Valid values are {@code SvnCheckoutStrategy.UPDATE} (default), {@code SvnCheckoutStrategy.CHECKOUT},
+     * {@code SvnCheckoutStrategy.UPDATE_WITH_CLEAN} and {@code SvnCheckoutStrategy.UPDATE_WITH_REVERT}.
      *
      * @param strategy the strategy to use, see {@link SvnCheckoutStrategy}
      */
@@ -138,6 +140,7 @@ class SvnContext extends AbstractContext {
      * The SVN node is passed to the closure as the first parameter.
      *
      * @param closure closure used to perform additional configuration on the generated SVN node
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void configure(Closure closure) {
         this.configureClosure = closure

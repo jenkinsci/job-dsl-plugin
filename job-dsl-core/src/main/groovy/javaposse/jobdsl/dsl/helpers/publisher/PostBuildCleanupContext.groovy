@@ -15,26 +15,44 @@ class PostBuildCleanupContext extends WorkspaceCleanupContext {
     boolean cleanWhenAborted = true
     boolean failBuild = true
 
+    /**
+     * Deletes files when the build was successful. Defaults to {@code true}.
+     */
     void cleanWhenSuccess(boolean cleanWhenSuccess = true) {
         this.cleanWhenSuccess = cleanWhenSuccess
     }
 
+    /**
+     * Deletes files when the build is unstable. Defaults to {@code true}.
+     */
     void cleanWhenUnstable(boolean cleanWhenUnstable = true) {
         this.cleanWhenUnstable = cleanWhenUnstable
     }
 
+    /**
+     * Deletes files when the build failed. Defaults to {@code true}.
+     */
     void cleanWhenFailure(boolean cleanWhenFailure = true) {
         this.cleanWhenFailure = cleanWhenFailure
     }
 
+    /**
+     * Deletes files when the build was not run. Defaults to {@code true}.
+     */
     void cleanWhenNotBuilt(boolean cleanWhenNotBuilt = true) {
         this.cleanWhenNotBuilt = cleanWhenNotBuilt
     }
 
+    /**
+     * Deletes files when the build has been aborted. Defaults to {@code true}.
+     */
     void cleanWhenAborted(boolean cleanWhenAborted = true) {
         this.cleanWhenAborted = cleanWhenAborted
     }
 
+    /**
+     * If set, does not fail the build when the cleanup fails. Defaults to {@code true}.
+     */
     void failBuildWhenCleanupFails(boolean failBuild = true) {
         this.failBuild = failBuild
     }

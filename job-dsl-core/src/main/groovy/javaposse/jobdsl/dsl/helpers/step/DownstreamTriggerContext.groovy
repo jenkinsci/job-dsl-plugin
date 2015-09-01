@@ -14,11 +14,17 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
         super(jobManagement)
     }
 
+    /**
+     * Blocks until the triggered projects finish their builds.
+     */
     void block(@DslContext(DownstreamTriggerBlockContext) Closure closure = null) {
         blockContext = blockContext ?: new DownstreamTriggerBlockContext()
         ContextHelper.executeInContext(closure, blockContext)
     }
 
+    /**
+     * Adds parameters factories.
+     */
     @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
     void parameterFactories(@DslContext(DownstreamTriggerParameterFactoryContext) Closure closure) {
         ContextHelper.executeInContext(closure, parameterFactoryContext)

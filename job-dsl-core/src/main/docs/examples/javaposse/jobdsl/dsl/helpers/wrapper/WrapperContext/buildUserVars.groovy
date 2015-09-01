@@ -1,0 +1,5 @@
+job('example') {
+    wrappers {
+        buildUserVars()
+    }
+}

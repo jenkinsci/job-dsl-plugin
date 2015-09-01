@@ -13,18 +13,30 @@ class ViolationsContext implements Context {
     Integer perFileDisplayLimit = null
     String sourceEncoding = null
 
+    /**
+     * Resolves class names to source file names.
+     */
     void sourcePathPattern(String sourcePathPattern) {
         this.sourcePathPattern = sourcePathPattern
     }
 
+    /**
+     * Sets an alternative project directory for the reporting engine.
+     */
     void fauxProjectPath(String fauxProjectPath) {
         this.fauxProjectPath = fauxProjectPath
     }
 
+    /**
+     * Limits the number of violations displayed per file and violation type.
+     */
     void perFileDisplayLimit(Integer perFileDisplayLimit) {
         this.perFileDisplayLimit = perFileDisplayLimit
     }
 
+    /**
+     * Sets the encoding to use for reading source files.
+     */
     void sourceEncoding(String sourceEncoding) {
         this.sourceEncoding = sourceEncoding
     }

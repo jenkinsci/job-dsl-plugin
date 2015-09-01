@@ -6,9 +6,6 @@ import javaposse.jobdsl.dsl.DslContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
-/**
- * DSL support for the Repository Connector plugin.
- */
 class RepositoryConnectorContext implements Context {
     private static final Set<String> UPDATE_POLICIES = ['daily', 'never', 'always']
 
@@ -43,7 +40,7 @@ class RepositoryConnectorContext implements Context {
     /**
      * Maven snapshot update policy, defaults to <code>daily</code>.
      *
-     * @param updatePolicy must be one of <code>daily</code>, <code>never</code> or <code>always</code>.
+     * Must be one of <code>daily</code>, <code>never</code> or <code>always</code>.
      */
     void snapshotUpdatePolicy(String updatePolicy) {
         validateUpdatePolicy(updatePolicy)
@@ -53,7 +50,7 @@ class RepositoryConnectorContext implements Context {
     /**
      * Maven release update policy, defaults to <code>daily</code>.
      *
-     * @param updatePolicy must be one of <code>daily</code>, <code>never</code> or <code>always</code>.
+     * Must be one of <code>daily</code>, <code>never</code> or <code>always</code>.
      */
     void releaseUpdatePolicy(String updatePolicy) {
         validateUpdatePolicy(updatePolicy)
@@ -61,7 +58,7 @@ class RepositoryConnectorContext implements Context {
     }
 
     /**
-     * Configures the resolution of an artifact from an repository using the repository-connector plugin.
+     * Adds an artifact for resolution from a repository. Can be called multiple times to resolve more artifacts.
      */
     void artifact(@DslContext(RepositoryConnectorArtifactContext) Closure artifactClosure) {
         RepositoryConnectorArtifactContext context = new RepositoryConnectorArtifactContext()

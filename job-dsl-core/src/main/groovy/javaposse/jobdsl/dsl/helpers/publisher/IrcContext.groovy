@@ -32,6 +32,13 @@ class IrcContext implements Context {
         notificationMessage = notificationMessages[0]
     }
 
+    /**
+     * Adds a channel to notify. Can be called multiple times to add notify more channels.
+     *
+     * For security reasons, do not use a hard-coded password. See
+     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
+     * details about handling credentials in DSL scripts.
+     */
     void channel(String name, String password = '', boolean notificationOnly = false) {
         checkNotNullOrEmpty(name, 'Channel name for irc channel is required!')
 
@@ -42,16 +49,34 @@ class IrcContext implements Context {
         )
     }
 
+    /**
+     * Adds a channel to notify. Can be called multiple times to add notify more channels.
+     *
+     * The map can contain one or more of the following keys: {@code name}, {@code password} and
+     * {@code notificationOnly}.
+     *
+     * For security reasons, do not use a hard-coded password. See
+     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
+     * details about handling credentials in DSL scripts.
+     */
     void channel(Map args) {
         channel(args.name, args.password, args.notificationOnly)
     }
 
+    /**
+     * Specifies when to send notifications. Must be one of {@code 'ALL'}, {@code 'FAILURE_AND_FIXED'},
+     * {@code 'ANY_FAILURE'} or {@code 'STATECHANGE_ONLY'}.
+     */
     void strategy(String strategy) {
         checkArgument(strategies.contains(strategy), "Possible values: ${strategies.join(',')}")
 
         this.strategy = strategy
     }
 
+    /**
+     * Specifies the message type. Must be one of {@code 'Default'}, {@code 'SummaryOnly'},
+     * {@code 'BuildParameters'} or {@code 'PrintFailingTests'}.
+     */
     void notificationMessage(String notificationMessage) {
         checkArgument(
             notificationMessages.contains(notificationMessage),
@@ -61,18 +86,31 @@ class IrcContext implements Context {
         this.notificationMessage = notificationMessage
     }
 
+    /**
+     * Sends notifications to the users that are suspected of having broken this build. Defaults to {@code false}.
+     */
     void notifyScmCommitters(boolean value = true) {
         notifyScmCommitters = value
     }
 
+    /**
+     * Sends notifications to users from previous unstable/failed builds. Defaults to {@code false}.
+     */
     void notifyScmCulprits(boolean value = true) {
         notifyScmCulprits = value
     }
 
+    /**
+     * Sends notifications to upstream committers if no committers were found for a broken build. Defaults to
+     * {@code false}.
+     */
     void notifyUpstreamCommitters(boolean value = true) {
         notifyUpstreamCommitters = value
     }
 
+    /**
+     * Sends notifications to the users that have fixed a broken build. Defaults to {@code false}.
+     */
     void notifyScmFixers(boolean value = true) {
         notifyScmFixers = value
     }

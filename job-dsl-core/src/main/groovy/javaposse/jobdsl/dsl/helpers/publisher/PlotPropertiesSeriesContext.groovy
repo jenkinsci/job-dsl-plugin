@@ -7,6 +7,9 @@ class PlotPropertiesSeriesContext extends PlotSeriesContext {
         super(fileName, 'properties', 'PropertiesSeries')
     }
 
+    /**
+     * Specifies the legend label for this data series.
+     */
     void label(String label) {
         this.label = label
     }

@@ -29,15 +29,24 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << node
     }
 
+    /**
+     * Sends customizable email notifications.
+     */
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)
     }
 
+    /**
+     * Sends customizable email notifications.
+     */
     void extendedEmail(String recipients, String subjectTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, subjectTemplate, null, emailClosure)
     }
 
+    /**
+     * Sends customizable email notifications.
+     */
     @RequiresPlugin(id = 'email-ext')
     void extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
@@ -85,19 +94,22 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends email notifications.
+     *
      * @since 1.17
      */
     @RequiresPlugin(id = 'mailer')
-    void mailer(String mailRecipients, Boolean dontNotifyEveryUnstableBuildBoolean = false,
-               Boolean sendToIndividualsBoolean = false) {
+    void mailer(String recipients, Boolean dontNotifyEveryUnstableBuild = false, Boolean sendToIndividuals = false) {
         publisherNodes << new NodeBuilder().'hudson.tasks.Mailer' {
-            recipients(mailRecipients)
-            dontNotifyEveryUnstableBuild(dontNotifyEveryUnstableBuildBoolean)
-            sendToIndividuals(sendToIndividualsBoolean)
+            delegate.recipients(recipients)
+            delegate.dontNotifyEveryUnstableBuild(dontNotifyEveryUnstableBuild)
+            delegate.sendToIndividuals(sendToIndividuals)
         }
     }
 
     /**
+     * Archives artifacts with each build.
+     *
      * @since 1.20
      */
     void archiveArtifacts(@DslContext(ArchiveArtifactsContext) Closure artifactsClosure) {
@@ -117,6 +129,9 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Archives artifacts with each build.
+     */
     void archiveArtifacts(String glob, String excludeGlob = null) {
         archiveArtifacts {
             pattern(glob)
@@ -124,6 +139,9 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Archives artifacts with each build.
+     */
     @Deprecated
     void archiveArtifacts(String glob, String excludeGlob, boolean latestOnly) {
         jobManagement.logDeprecationWarning()
@@ -136,8 +154,11 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Publishes JUnit test result reports.
+     *
      * @since 1.26
      */
+    @RequiresPlugin(id = 'junit')
     void archiveJunit(String glob, @DslContext(ArchiveJUnitContext) Closure junitClosure = null) {
         ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         ContextHelper.executeInContext(junitClosure, junitContext)
@@ -150,6 +171,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Publishes reports generated from results of various testing tools.
+     *
      * @since 1.24
      */
     @RequiresPlugin(id = 'xunit')
@@ -194,11 +217,13 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Publishes a JaCoCo coverage report.
+     *
      * @since 1.17
      */
     @RequiresPlugin(id = 'jacoco')
     void jacocoCodeCoverage(@DslContext(JacocoContext) Closure jacocoClosure = null) {
-        JacocoContext jacocoContext = new JacocoContext()
+        JacocoContext jacocoContext = new JacocoContext(jobManagement)
         ContextHelper.executeInContext(jacocoClosure, jacocoContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.jacoco.JacocoPublisher' {
@@ -226,6 +251,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Plots data across builds.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'plot', minimumVersion = '1.9')
@@ -294,6 +321,9 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Publishes HTML reports.
+     */
     @RequiresPlugin(id = 'htmlpublisher')
     void publishHtml(@DslContext(HtmlReportContext) Closure htmlReportContext) {
         HtmlReportContext reportContext = new HtmlReportContext(jobManagement)
@@ -320,15 +350,24 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Sends notifications to Jabber.
+     */
     void publishJabber(String target, @DslContext(JabberContext) Closure jabberClosure = null) {
         publishJabber(target, null, null, jabberClosure)
     }
 
+    /**
+     * Sends notifications to Jabber.
+     */
     @Deprecated
     void publishJabber(String target, String strategyName, @DslContext(JabberContext) Closure jabberClosure = null) {
         publishJabber(target, strategyName, null, jabberClosure)
     }
 
+    /**
+     * Sends notifications to Jabber.
+     */
     @Deprecated
     @RequiresPlugin(id = 'jabber')
     void publishJabber(String targetsArg, String strategyName, String channelNotificationName,
@@ -388,6 +427,10 @@ class PublisherContext extends AbstractExtensibleContext {
     @Deprecated
     Set<String> validJabberChannelNotificationNames = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
+    /**
+     * Uploads artifacts to the remote sites using the SFTP (SSH) protocol. The site is specified in the global Jenkins
+     * configuration.
+     */
     @RequiresPlugin(id = 'scp')
     void publishScp(String site, @DslContext(ScpContext) Closure scpClosure) {
         ScpContext scpContext = new ScpContext()
@@ -411,17 +454,23 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Clone Workspace SCM
+     * Archives files for Clone Workspace SCM source.
      */
     void publishCloneWorkspace(String workspaceGlob, @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, cloneWorkspaceClosure)
     }
 
+    /**
+     * Archives files for Clone Workspace SCM source.
+     */
     void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
                                @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, cloneWorkspaceClosure)
     }
 
+    /**
+     * Archives files for Clone Workspace SCM source.
+     */
     void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod,
                                @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(
@@ -429,15 +478,18 @@ class PublisherContext extends AbstractExtensibleContext {
         )
     }
 
+    /**
+     * Archives files for Clone Workspace SCM source.
+     */
     @RequiresPlugin(id = 'clone-workspace-scm')
-    void publishCloneWorkspace(String workspaceGlobArg, String workspaceExcludeGlobArg = '', String criteriaArg = 'Any',
-                               String archiveMethodArg = 'TAR', boolean overrideDefaultExcludesArg = false,
+    void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob = '', String criteria = 'Any',
+                               String archiveMethod = 'TAR', boolean overrideDefaultExcludes = false,
                                @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure = null) {
         CloneWorkspaceContext cloneWorkspaceContext = new CloneWorkspaceContext()
-        cloneWorkspaceContext.criteria = criteriaArg ?: 'Any'
-        cloneWorkspaceContext.archiveMethod = archiveMethodArg ?: 'TAR'
-        cloneWorkspaceContext.workspaceExcludeGlob = workspaceExcludeGlobArg ?: ''
-        cloneWorkspaceContext.overrideDefaultExcludes = overrideDefaultExcludesArg ?: false
+        cloneWorkspaceContext.criteria = criteria ?: 'Any'
+        cloneWorkspaceContext.archiveMethod = archiveMethod ?: 'TAR'
+        cloneWorkspaceContext.workspaceExcludeGlob = workspaceExcludeGlob ?: ''
+        cloneWorkspaceContext.overrideDefaultExcludes = overrideDefaultExcludes ?: false
         ContextHelper.executeInContext(cloneWorkspaceClosure, cloneWorkspaceContext)
 
         // Validate values
@@ -452,11 +504,11 @@ class PublisherContext extends AbstractExtensibleContext {
         )
 
         publisherNodes << new NodeBuilder().'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
-            workspaceGlob workspaceGlobArg
-            workspaceExcludeGlob cloneWorkspaceContext.workspaceExcludeGlob
-            criteria cloneWorkspaceContext.criteria
-            archiveMethod cloneWorkspaceContext.archiveMethod
-            overrideDefaultExcludes cloneWorkspaceContext.overrideDefaultExcludes
+            delegate.workspaceGlob(workspaceGlob)
+            delegate.workspaceExcludeGlob(cloneWorkspaceContext.workspaceExcludeGlob)
+            delegate.criteria(cloneWorkspaceContext.criteria)
+            delegate.archiveMethod(cloneWorkspaceContext.archiveMethod)
+            delegate.overrideDefaultExcludes(cloneWorkspaceContext.overrideDefaultExcludes)
         }
     }
 
@@ -464,7 +516,9 @@ class PublisherContext extends AbstractExtensibleContext {
     Set<String> validCloneWorkspaceArchiveMethods = ['TAR', 'ZIP']
 
     /**
-     * Downstream build
+     * Triggers builds on other projects.
+     *
+     * The {@code threshold} must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'} or {@code 'FAILURE'}.
      */
     void downstream(String projectName, String thresholdName = 'SUCCESS') {
         checkArgument(
@@ -483,7 +537,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Trigger parameterized build on other projects.
+     * Triggers parameterized builds on other projects.
      */
     @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
@@ -497,10 +551,27 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Generates reports from static code violations detectors.
+     *
+     * @see #violations(int, groovy.lang.Closure)
+     */
     void violations(@DslContext(ViolationsContext) Closure violationsClosure = null) {
         violations(100, violationsClosure)
     }
 
+    /**
+     * Generates reports from static code violations detectors.
+     *
+     * For each supported detector type, the closure method with up to four arguments is available. The first argument
+     * specifies the lowest number of violations to generate the sunny weather report, defaults to 10. The second
+     * argument specifies the lowest number of violations to generate the stormy weather report, defaults to 999. If the
+     * number of violations exceeds the third argument, the build is set to unstable, defaults to 999. The last argument
+     * specifies an Ant pattern to find the violation files in the workspace. Supported detector types are
+     * {@code checkstyle}, {@code codenarc}, {@code cpd}, {@code cpplint}, {@code csslint}, {@code findbugs},
+     * {@code fxcop}, {@code gendarme}, {@code jcreport}, {@code jslint}, {@code pep8}, {@code perlcritic}, {@code pmd},
+     * {@code pylint}, {@code simian}, {@code stylecop} and {@code jshint}.
+     */
     @RequiresPlugin(id = 'violations')
     void violations(int perFileDisplayLimit, @DslContext(ViolationsContext) Closure violationsClosure = null) {
         ViolationsContext violationsContext = new ViolationsContext()
@@ -537,6 +608,10 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Displays a picture of Chuck Norris (instead of Jenkins the butler) and a random Chuck Norris 'The Programmer'
+     * fact on each build page.
+     */
     @RequiresPlugin(id = 'chucknorris')
     void chucknorris() {
         publisherNodes << new NodeBuilder().'hudson.plugins.chucknorris.CordellWalkerRecorder' {
@@ -545,6 +620,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends notifications to IRC.
+     *
      * @since 1.15
      */
     @RequiresPlugin(id = 'ircbot')
@@ -575,6 +652,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Publishes a Cobertura coverage report.
+     *
      * @since 1.16
      */
     @RequiresPlugin(id = 'cobertura')
@@ -608,6 +687,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Allows to claim unsuccessful builds.
+     *
      * @since 1.17
      */
     @RequiresPlugin(id = 'claim')
@@ -616,7 +697,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures Fingerprinting.
+     * Activates fingerprinting for the build.
      *
      * @since 1.17
      */
@@ -628,7 +709,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Description Setter Plugin.
+     * Automatically sets a description for the build after it has completed.
      *
      * @since 1.17
      */
@@ -649,7 +730,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Jenkins Text Finder plugin.
+     * Searches for keywords in files or the console log and uses that to downgrade a build to be unstable or a failure.
      *
      * @since 1.19
      */
@@ -668,7 +749,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Jenkins Post Build Task plugin.
+     * Searches for a regular expression in the console log and, if matched, executes a script.
      *
      * @since 1.19
      */
@@ -697,9 +778,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures Aggregate Downstream Test Results. Pass no args or null for jobs (first arg) to automatically
-     * aggregate downstream test results. Pass in comma-delimited list for first arg to manually choose jobs.
-     * Second argument is optional and sets whether failed builds are included.
+     * Aggregates downstream test results.
      *
      * @since 1.19
      */
@@ -725,7 +804,10 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Groovy Postbuild script plugin.
+     * Executes Groovy scripts after a build.
+     *
+     * {@code behavior} must be one of {@code Behaviour.DoNothing} (default), {@code Behavior.MarkUnstable} or
+     * {@code Behavior.MarkFailed}.
      *
      * @since 1.19
      */
@@ -737,6 +819,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Executes Groovy scripts after a build.
+     *
      * @since 1.37
      */
     @RequiresPlugin(id = 'groovy-postbuild')
@@ -760,7 +844,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Javadoc Plugin, used to archive Javadoc artifacts.
+     * Archives Javadoc artifacts.
      *
      * @since 1.19
      */
@@ -776,8 +860,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Associated Files plugin to associate archived files from
-     * outside Jenkins proper.
+     * Marks files or directories outside of Jenkins as related to a build.
      *
      * @since 1.20
      */
@@ -789,7 +872,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Emma Code Coverage plugin.
+     * Publishes an Emma coverage report.
      *
      * @since 1.20
      */
@@ -816,9 +899,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures Jenkins job to publish Robot Framework reports.
-     * By default the following values are applied. If an instance of a
-     * closure is provided, the values from the closure will take effect.
+     * Publishes Robot Framework test reports.
      *
      * @since 1.21
      */
@@ -851,7 +932,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures a Build Pipeline Trigger.
+     * Adds a manual triggers for jobs that require intervention prior to execution.
      *
      * @since 1.21
      */
@@ -878,6 +959,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Pushes tags or branches to a Git repository.
+     *
      * @since 1.22
      */
     @RequiresPlugin(id = 'git')
@@ -900,6 +983,12 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends build notification to Flowdock.
+     *
+     * For security reasons, do not use a hard-coded token. See
+     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
+     * details about handling credentials in DSL scripts.
+     *
      * @since 1.23
      */
     @RequiresPlugin(id = 'jenkins-flowdock-plugin')
@@ -947,6 +1036,12 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends build notification to Flowdock.
+     *
+     * For security reasons, do not use a hard-coded token. See
+     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
+     * details about handling credentials in DSL scripts.
+     *
      * @since 1.23
      */
     void flowdock(String[] tokens, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
@@ -956,7 +1051,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the StashNotifier plugin.
+     * Notifies an Atlassian Stash instance of Jenkins builds in progress and of their results.
      *
      * @since 1.23
      */
@@ -976,7 +1071,11 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the FlexiblePublish plugin.
+     * Add conditional post-build actions.
+     *
+     * If the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin">Any Build Step Plugin</a> is
+     * installed, build steps can be used along with publishers. When using versions older then 0.13 of the Flexible
+     * Publish Plugin, only one build step or one publisher can be used.
      *
      * @since 1.26
      */
@@ -1010,8 +1109,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     *
-     * Configures the Maven Deployment Linker plugin.
+     * Add a summary to the build of the artifacts uploaded to a Maven repository.
      *
      * @since 1.23
      */
@@ -1023,7 +1121,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the post build action of the Workspace Cleanup Plugin to delete the workspace.
+     * Deletes files from the workspace after the build completed.
      *
      * @since 1.23
      */
@@ -1046,6 +1144,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Triggers a Rundeck job.
+     *
      * @since 1.24
      */
     @RequiresPlugin(id = 'rundeck')
@@ -1066,6 +1166,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Uploads build artifacts to Amazon S3.
+     *
      * @since 1.26
      */
     @RequiresPlugin(id = 's3')
@@ -1085,7 +1187,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the findbugs publisher.
+     * Publishes FindBugs analysis results.
      *
      * @since 1.17
      */
@@ -1102,7 +1204,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the PMD Publisher.
+     * Publishes PMD analysis results.
      *
      * @since 1.17
      */
@@ -1116,7 +1218,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Checkstyle Publisher.
+     * Publishes Checkstyle analysis results.
      *
      * @since 1.17
      */
@@ -1130,7 +1232,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the JsHint checkstyle Publisher.
+     * Publishes JSHint analysis results.
      *
      * @since 1.20
      */
@@ -1145,7 +1247,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the DRY Publisher.
+     * Publishes duplicate code analysis results.
      *
      * @since 1.17
      */
@@ -1163,7 +1265,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Task Scanner Publisher.
+     * Scans the workspace for open tasks.
      *
      * @since 1.17
      */
@@ -1184,7 +1286,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the CCM Publisher.
+     * Publishes CCM analysis results.
      *
      * @since 1.17
      */
@@ -1198,7 +1300,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Android Lint Publisher.
+     * Publishes Android Lint results.
      *
      * @since 1.17
      */
@@ -1212,7 +1314,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the OWASP Dependency-Check Publisher.
+     * Publishes OWASP dependency check results.
      *
      * @since 1.17
      */
@@ -1226,7 +1328,11 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Compiler Warnings Publisher.
+     * Scans for compiler warnings.
+     *
+     * The first argument specifies the name of the console parsers to use. The second argument specifies a map of log
+     * file parsers, the key is the name of the parser and the value defines the files to scan. The parser are either
+     * built-in ones or custom parsers defined in the global Jenkins configuration.
      *
      * @since 1.17
      */
@@ -1260,7 +1366,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Analysis Collector Publisher.
+     * Publishes combined analysis results.
      *
      * @since 1.26
      */
@@ -1281,6 +1387,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Execute a set of scripts at the end of the build.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'postbuildscript')
@@ -1295,6 +1403,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Triggers SonarQube analysis.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'sonar')
@@ -1324,6 +1434,9 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Allows to automatically reschedule a build after a failure. By default a progressive
+     * delay with an increment of 5 minutes and a maximum of 3 hours is used.
+     *
      * @since 1.33
      */
     @RequiresPlugin(id = 'naginator', minimumVersion = '1.15')
@@ -1343,7 +1456,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the GitHub pull request builder plugin to perform an automatic request after a successful build.
+     * Allows to merge the pull request if the build was successful.
      *
      * @since 1.33
      */
@@ -1367,7 +1480,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Build Publisher plugin to publish builds to a 'public' Jenkins server.
+     * Publishes builds to another Jenkins instance.
      *
      * @since 1.33
      */
@@ -1391,7 +1504,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Allows notifications to be set to HipChat.
+     * Sends notifications to HipChat.
      *
      * @since 1.33
      */
@@ -1416,6 +1529,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
+     *
      * @since 1.34
      */
     @RequiresPlugin(id = 'publish-over-ssh', minimumVersion = '1.12')
@@ -1432,6 +1547,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Runs a job after all immediate downstream jobs have completed.
+     *
      * @since 1.35
      */
     @RequiresPlugin(id = 'join', minimumVersion = '1.15')
@@ -1447,17 +1564,19 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Uploads Debian packages.
+     *
      * @since 1.36
      */
     @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.7')
-    void debianPackage(String repoIdArg, @DslContext(DebianPackagePublisherContext) Closure closure = null) {
-        Preconditions.checkNotNullOrEmpty(repoIdArg, 'repoId must be specified')
+    void debianPackage(String repoId, @DslContext(DebianPackagePublisherContext) Closure closure = null) {
+        Preconditions.checkNotNullOrEmpty(repoId, 'repoId must be specified')
 
         DebianPackagePublisherContext context = new DebianPackagePublisherContext()
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'ru.yandex.jenkins.plugins.debuilder.DebianPackagePublisher' {
-            repoId(repoIdArg)
+            delegate.repoId(repoId)
             commitMessage(context.commitMessage ?: '')
             commitChanges(context.commitMessage as boolean)
         }
@@ -1474,6 +1593,8 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends notifications to Slack.
+     *
      * @since 1.36
      */
     @RequiresPlugin(id = 'slack', minimumVersion = '1.8')

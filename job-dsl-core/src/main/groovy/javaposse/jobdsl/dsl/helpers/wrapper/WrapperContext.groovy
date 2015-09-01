@@ -22,6 +22,9 @@ class WrapperContext extends AbstractExtensibleContext {
         wrapperNodes << node
     }
 
+    /**
+     * Adds timestamps to the console log.
+     */
     @RequiresPlugin(id = 'timestamper')
     void timestamps() {
         wrapperNodes << new NodeBuilder().'hudson.plugins.timestamper.TimestamperBuildWrapper'()
@@ -44,6 +47,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Specifies the rbenv wrapper to be used during job execution.
+     *
      * @since 1.27
      */
     @RequiresPlugin(id = 'rbenv')
@@ -71,7 +76,7 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Support for builds using a rvm environment.
+     * Configures the job to prepare a Ruby environment controlled by RVM for the build.
      *
      * @param rubySpecification Specification of the required ruby version,
      *                          optionally containing a gemset
@@ -109,6 +114,8 @@ class WrapperContext extends AbstractExtensibleContext {
     /**
      * Add a timeout to the build job.
      *
+     * Defaults to a absolute timeout with a maximum build time of 3 minutes.
+     *
      * @param timeoutClosure optional closure for configuring the timeout
      * @since 1.24
      */
@@ -123,6 +130,9 @@ class WrapperContext extends AbstractExtensibleContext {
         wrapperNodes << node
     }
 
+    /**
+     * Allocate ports for build executions to prevent conflicts between build jobs competing for a single port number.
+     */
     @RequiresPlugin(id = 'port-allocator')
     void allocatePorts(String[] portsArg, @DslContext(PortsContext) Closure closure = null) {
         PortsContext portContext = new PortsContext()
@@ -159,6 +169,9 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Allocate ports for build executions to prevent conflicts between build jobs competing for a single port number.
+     */
     void allocatePorts(@DslContext(PortsContext) Closure cl = null) {
         allocatePorts(new String[0], cl)
     }
@@ -180,7 +193,7 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Converts ANSI escape codes to colors.
+     * Renders ANSI escape sequences, including color, to console output.
      *
      * @param colorMap name of colormap to use (eg: xterm)
      */
@@ -192,7 +205,7 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Runs build under XVNC.
+     * Run a Xvnc session during a build.
      *
      * @since 1.26
      */
@@ -210,6 +223,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Controls the Xvfb virtual frame buffer X11 server.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'xvfb')
@@ -235,9 +250,7 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Lets you use "tools" in unusual ways, such as from shell scripts.
-     *
-     * Note that we do not check for validity of tool names.
+     * Downloads the specified tools, if needed, and puts the path to each of them in the build's environment.
      *
      * @param tools Tool names to import into the environment. They will be transformed
      *              according to the rules used by the toolenv plugin.
@@ -251,6 +264,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Injects environment variables into the build.
+     *
      * @since 1.21
      */
     @RequiresPlugin(id = 'envinject')
@@ -264,7 +279,7 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Injects global passwords into the job.
+     * Injects globally defined passwords as environment variables into the job.
      *
      * @since 1.23
      */
@@ -277,9 +292,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Lets you use "Jenkins Release Plugin" to perform steps inside a release action.
+     * Wrap the job with pre- and post-build steps which are only executed when a manual release build is triggered.
      *
-     * @param releaseClosure attributes and steps used by the plugin
      * @since 1.22
      */
     @RequiresPlugin(id = 'release')
@@ -287,7 +301,6 @@ class WrapperContext extends AbstractExtensibleContext {
         ReleaseContext releaseContext = new ReleaseContext(jobManagement, item)
         ContextHelper.executeInContext(releaseClosure, releaseContext)
 
-        // plugin properties
         Node releaseNode = new NodeBuilder().'hudson.plugins.release.ReleaseWrapper' {
             releaseVersionTemplate(releaseContext.releaseVersionTemplate ?: '')
             doNotKeepLog(releaseContext.doNotKeepLog)
@@ -299,7 +312,6 @@ class WrapperContext extends AbstractExtensibleContext {
             postFailedBuildSteps(releaseContext.postFailedBuildSteps)
         }
 
-        // Apply Context
         if (releaseContext.configureBlock) {
             WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
             action.execute(releaseNode)
@@ -309,6 +321,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Deletes files from the workspace before the build starts.
+     *
      * @since 1.22
      */
     @RequiresPlugin(id = 'ws-cleanup')
@@ -325,7 +339,7 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the configuration for the Log File Size Checker build wrapper.
+     * Monitors the size of the output file of a build and aborts the build if the log file gets too big.
      *
      * @since 1.23
      */
@@ -342,7 +356,7 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Enables the "Build Name Setter Plugin" build wrapper.
+     * Sets the display name of a build.
      *
      * @param nameTemplate template defining the build name
      * @since 1.24
@@ -357,6 +371,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Configures keychains for the build.
+     *
      * @since 1.24
      */
     @RequiresPlugin(id = 'kpp-management-plugin')
@@ -372,6 +388,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Make globally configured files available to the build.
+     *
      * @since 1.28
      */
     @RequiresPlugin(id = 'config-file-provider')
@@ -393,6 +411,9 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Configures exclusion plugin resources that are required for the
+     * {@link javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) criticalBlock} step.
+     *
      * @since 1.24
      */
     void exclusionResources(String... resourceNames) {
@@ -400,6 +421,9 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Configures exclusion plugin resources that are required for the
+     * {@link javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) criticalBlock} step.
+     *
      * @since 1.24
      */
     @RequiresPlugin(id = 'Exclusion')
@@ -416,6 +440,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Creates a pipeline version based on the template and optionally sets that version as display name for the build.
+     *
      * @since 1.26
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
@@ -427,6 +453,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Masks the passwords that occur in the console output.
+     *
      * @since 1.26
      */
     @RequiresPlugin(id = 'mask-passwords')
@@ -435,6 +463,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a number of environment variables with information about the current user.
+     *
      * @since 1.26
      */
     @RequiresPlugin(id = 'build-user-vars-plugin')
@@ -443,6 +473,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sets up a NodeJS environment.
+     *
      * @since 1.27
      */
     @RequiresPlugin(id = 'nodejs')
@@ -453,6 +485,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sets up a Go environment.
+     *
      * @since 1.27
      */
     @RequiresPlugin(id = 'golang')
@@ -463,6 +497,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Binds environment variables to credentials.
+     *
      * @since 1.28
      */
     @RequiresPlugin(id = 'credentials-binding')
@@ -476,6 +512,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Installs custom tools.
+     *
      * @since 1.30
      */
     @RequiresPlugin(id = 'custom-tools-plugin')
@@ -501,6 +539,8 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Allows to run build steps before SCM checkout.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'preSCMbuildstep')

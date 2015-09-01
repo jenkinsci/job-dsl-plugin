@@ -19,15 +19,23 @@ class GitPublisherContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Only pushes to remotes if the build succeeds. Defaults to {@code false}.
+     */
     void pushOnlyIfSuccess(boolean pushOnlyIfSuccess = true) {
         this.pushOnlyIfSuccess = pushOnlyIfSuccess
     }
 
+    /**
+     * Pushes merges back to the origin specified in the pre-build merge options. Defaults to {@code false}.
+     */
     void pushMerge(boolean pushMerge = true) {
         this.pushMerge = pushMerge
     }
 
     /**
+     * Adds the force option to {@code git push}.
+     *
      * @since 1.27
      */
     @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
@@ -35,6 +43,9 @@ class GitPublisherContext extends AbstractContext {
         this.forcePush = forcePush
     }
 
+    /**
+     * Adds a tag to push to a remote repository. Can be called multiple times to push more tags.
+     */
     void tag(String targetRepo, String name, @DslContext(TagToPushContext) Closure closure = null) {
         checkNotNullOrEmpty(targetRepo, 'targetRepo must be specified')
         checkNotNullOrEmpty(name, 'name must be specified')
@@ -51,6 +62,9 @@ class GitPublisherContext extends AbstractContext {
         }
     }
 
+    /**
+     * Adds a branch to push to a remote repository. Can be called multiple times to push more branches.
+     */
     void branch(String targetRepo, String name) {
         checkNotNullOrEmpty(targetRepo, 'targetRepo must be specified')
         checkNotNullOrEmpty(name, 'name must be specified')

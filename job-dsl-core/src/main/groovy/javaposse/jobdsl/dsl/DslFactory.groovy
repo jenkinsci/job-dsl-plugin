@@ -16,92 +16,133 @@ interface DslFactory extends ViewFactory {
     Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
 
     /**
+     * Creates or updates a free style job.
+     *
      * @since 1.30
+     * @see #freeStyleJob(java.lang.String, groovy.lang.Closure)
      */
     FreeStyleJob job(String name)
 
     /**
+     * Creates or updates a free style job.
+     *
      * @since 1.31
+     * @see #freeStyleJob(java.lang.String, groovy.lang.Closure)
      */
     FreeStyleJob job(String name, @DslContext(FreeStyleJob) Closure closure)
 
     /**
+     * Creates or updates a free style job.
+     *
      * @since 1.30
+     * @see #freeStyleJob(java.lang.String, groovy.lang.Closure)
      */
     FreeStyleJob freeStyleJob(String name)
 
     /**
+     * Creates or updates a free style job.
+     *
      * @since 1.31
      */
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure)
 
     /**
+     * Creates or update a job for managing Jenkins jobs orchestration using a dedicated DSL.
+     *
      * @since 1.30
+     * @see #buildFlowJob(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name)
 
     /**
+     * Creates or update a job for managing Jenkins jobs orchestration using a dedicated DSL.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)
 
     /**
+     * Creates or updates a job to build an Ivy project.
+     *
      * @since 1.38
+     * @see #ivyJob(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'ivy', minimumVersion = '1.23')
     IvyJob ivyJob(String name)
 
     /**
+     * Creates or updates a job to build an Ivy project.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 'ivy', minimumVersion = '1.23')
     IvyJob ivyJob(String name, @DslContext(IvyJob) Closure closure)
 
     /**
+     * Creates or updates a multi-configuration job.
+     *
      * @since 1.30
+     * @see #matrixJob(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'matrix-project')
     MatrixJob matrixJob(String name)
 
     /**
+     * Creates or updates a multi-configuration job.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'matrix-project')
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure)
 
     /**
+     * Creates or updates a job to build a Maven project.
+     *
      * @since 1.30
+     * @see #mavenJob(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name)
 
     /**
+     * Creates or updates a job to build a Maven project.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure)
 
     /**
+     * Creates or updates a multi-job project, suitable for running other jobs.
+     *
      * @since 1.30
+     * @see #multiJob(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name)
 
     /**
+     * Creates or updates a multi-job project, suitable for running other jobs.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure)
 
     /**
+     * Create or updates a workflow job.
+     *
      * @since 1.30
+     * @see #workflowJob(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name)
 
     /**
+     * Create or updates a workflow job.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'workflow-aggregator')
