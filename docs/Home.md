@@ -31,6 +31,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-29531](https://issues.jenkins-ci.org/browse/JENKINS-29531))
  * Enhanced support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
  * Added documentation about [[handling credentials]]
+ * Fixed a problem with `ScmContext` and the extension point
+   ([JENKINS-29972](https://issues.jenkins-ci.org/browse/JENKINS-29972))
  * Deprecated some overloaded DSL methods for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin), see
    [Migration](Migration#migrating-to-138)
