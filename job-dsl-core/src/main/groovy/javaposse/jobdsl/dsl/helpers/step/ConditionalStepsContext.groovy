@@ -30,10 +30,17 @@ class ConditionalStepsContext extends AbstractContext {
         result
     }
 
+    /**
+     * Specifies the condition to evaluate before executing the build steps.
+     */
     void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
         this.runCondition = RunConditionFactory.of(conditionClosure)
     }
 
+    /**
+     * Specifies the action to take if the evaluation of a run condition fails. Must be one of {@code 'Fail'},
+     * {@code 'Unstable'}, {@code 'RunUnstable'}, {@code 'Run'} or {@code 'DontRun'}.
+     */
     void runner(String runnerName) {
         checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")
         runnerClass = EvaluationRunners.find(runnerName).longForm
@@ -64,6 +71,9 @@ class ConditionalStepsContext extends AbstractContext {
         }
     }
 
+    /**
+     * Adds one or more build steps which will be executed conditionally.
+     */
     void steps(@DslContext(StepContext) Closure stepContextClosure) {
         ContextHelper.executeInContext(stepContextClosure, stepContext)
     }

@@ -20,21 +20,23 @@ class UrlTriggerContext implements Context {
     }
 
     /**
-     * Adds configure closure for overriding the generated XML.
+     * Allows direct manipulation of the generated XML. The {@code URLTrigger} node is passed into the configure block.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void configure(Closure configureClosure) {
         this.configureClosure = configureClosure
     }
 
     /**
-     * Restrict execution to label.
+     * Restricts execution to label.
      */
     void restrictToLabel(String label) {
         this.label = label
     }
 
     /**
-     * Sets the cron schedule.
+     * Sets the cron schedule. Defaults to {@code 'H/5 * * * *'}.
      */
     void cron(String cron) {
         this.crontab = cron
@@ -48,5 +50,4 @@ class UrlTriggerContext implements Context {
         ContextHelper.executeInContext(entryClosure, entryContext)
         entries << entryContext
     }
-
 }

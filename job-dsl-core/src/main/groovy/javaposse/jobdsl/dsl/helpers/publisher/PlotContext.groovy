@@ -29,39 +29,68 @@ class PlotContext implements Context {
         this.dataStore = dataStore
     }
 
+    /**
+     * Specifies the plot title.
+     */
     void title(String title) {
         this.title = title
     }
 
+    /**
+     * Specifies the plot's y-axis label.
+     */
     void yAxis(String yAxis) {
         this.yAxis = yAxis
     }
 
+    /**
+     * Specifies the graph style of the plot. Must be one of {@code 'area'}, {@code 'bar'}, {@code 'bar3d'},
+     * {@code 'line'} (default), {@code 'line3d'}, {@code 'stackedArea'}, {@code 'stackedbar'}, {@code 'stackedbar3d'}
+     * or {@code 'waterfall'}.
+     */
     void style(String style) {
         checkArgument(STYLE.contains(style), "style must be one of ${STYLE.join(', ')}")
         this.style = style
     }
 
+    /**
+     * Specifies the number of builds to plot across, starting with the latest build.
+     */
     void numberOfBuilds(int numberOfBuilds) {
         this.numberOfBuilds = numberOfBuilds
     }
 
+    /**
+     * If set, uses build descriptions used as X-axis labels. Defaults to {@code false}.
+     */
     void useDescriptions(boolean useDescriptions = true) {
         this.useDescriptions = useDescriptions
     }
 
+    /**
+     * If set, shows all builds up to included number of builds. Defaults to {@code false}.
+     */
     void keepRecords(boolean keepRecords = true) {
         this.keepRecords = keepRecords
     }
 
+    /**
+     * If set, does not automatically include the value zero. Defaults to {@code false}.
+     */
     void excludeZero(boolean excludeZero = true) {
         this.excludeZero = excludeZero
     }
 
+    /**
+     * If set, the Y-axis will use a logarithmic scale. Defaults to {@code false}.
+     */
     void logarithmic(boolean logarithmic = true) {
         this.logarithmic = logarithmic
     }
 
+    /**
+     * Loads a data series from a CSV file. Can be called multiple times to add more data series.
+     */
     void csvFile(String fileName, @DslContext(PlotCSVSeriesContext) Closure plotSeriesClosure = null) {
         checkNotNullOrEmpty(fileName, 'fileName must not be null or empty')
 
@@ -71,6 +100,9 @@ class PlotContext implements Context {
         dataSeriesList << plotSeriesContext
     }
 
+    /**
+     * Loads a data series from a properties file. Can be called multiple times to add more data series.
+     */
     void propertiesFile(String fileName, @DslContext(PlotPropertiesSeriesContext) Closure plotSeriesClosure = null) {
         checkNotNullOrEmpty(fileName, 'fileName must not be null or empty')
 
@@ -80,6 +112,9 @@ class PlotContext implements Context {
         dataSeriesList << plotSeriesContext
     }
 
+    /**
+     * Loads a data series from a XML file. Can be called multiple times to add more data series.
+     */
     void xmlFile(String fileName, @DslContext(PlotXMLSeriesContext) Closure plotSeriesClosure = null) {
         checkNotNullOrEmpty(fileName, 'fileName must not be null or empty')
 

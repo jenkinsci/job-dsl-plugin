@@ -20,20 +20,32 @@ class PublishOverSshServerContext implements Context {
         this.name = name
     }
 
+    /**
+     * Enables logging of detailed information to the Jenkins console.
+     */
     void verbose(boolean verbose = true) {
         this.verbose = verbose
     }
 
+    /**
+     * Set the label for this Server instance for use with parametrized publishing.
+     */
     void label(String label) {
         this.label = label
     }
 
+    /**
+     * Tries again if publishing to the server or command execution fails.
+     */
     void retry(int retries = 0, int delay = 10000) {
         this.retry = true
         this.retries = retries
         this.delay = delay
     }
 
+    /**
+     * Sets the credentials to use with this connection.
+     */
     void credentials(String username, @DslContext(PublishOverSshCredentialsContext) Closure credentialsClosure) {
         PublishOverSshCredentialsContext credentialsContext = new PublishOverSshCredentialsContext(username)
         ContextHelper.executeInContext(credentialsClosure, credentialsContext)
@@ -41,6 +53,9 @@ class PublishOverSshServerContext implements Context {
         credentials = credentialsContext
     }
 
+    /**
+     * Adds a transfer set. Can be called multiple times to add more transfer sets.
+     */
     void transferSet(@DslContext(PublishOverSshTransferSetContext) Closure transferSetClosure) {
         PublishOverSshTransferSetContext transferSetContext = new PublishOverSshTransferSetContext()
         ContextHelper.executeInContext(transferSetClosure, transferSetContext)

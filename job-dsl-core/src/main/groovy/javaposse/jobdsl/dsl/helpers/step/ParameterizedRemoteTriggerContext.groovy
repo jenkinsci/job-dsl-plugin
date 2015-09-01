@@ -10,22 +10,30 @@ class ParameterizedRemoteTriggerContext implements Context {
     boolean blockBuildUntilComplete = false
     String token
 
+    /**
+     * Adds a parameter value for the remote job. Can be called multiple times to add more parameter values.
+     */
     void parameter(String name, String value) {
         this.parameters[name] = value
     }
 
+    /**
+     * Adds parameter values for the remote job. Can be called multiple times to add more parameter values.
+     */
     void parameters(Map<String, String> parameters) {
         this.parameters.putAll(parameters)
     }
 
     /**
-     * @since 1.29
+     * If set, a failure of the remote job will not fail this job. Defaults to {@code false}.
      */
     void shouldNotFailBuild(boolean shouldNotFailBuild = true) {
         this.shouldNotFailBuild = shouldNotFailBuild
     }
 
     /**
+     * Sets the poll interval in seconds. Defaults to 10 seconds.
+     *
      * @since 1.29
      */
     void pollInterval(int pollInterval) {
@@ -33,6 +41,8 @@ class ParameterizedRemoteTriggerContext implements Context {
     }
 
     /**
+     * If set, waits to trigger remote builds until no other builds are running. Defaults to {@code false}.
+     *
      * @since 1.29
      */
     boolean preventRemoteBuildQueue(boolean preventRemoteBuildQueue = true) {
@@ -40,6 +50,8 @@ class ParameterizedRemoteTriggerContext implements Context {
     }
 
     /**
+     * Blocks the job until the remote triggered projects finish their builds. Defaults to {@code false}.
+     *
      * @since 1.29
      */
     boolean blockBuildUntilComplete(boolean blockUntilBuildComplete = true) {
@@ -47,6 +59,12 @@ class ParameterizedRemoteTriggerContext implements Context {
     }
 
     /**
+     * Sets a security token which is defined on the job of the remote Jenkins host.
+     *
+     * For security reasons, do not use a hard-coded token. See
+     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
+     * details about handling credentials in DSL scripts.
+     *
      * @since 1.38
      */
     void token(String token) {

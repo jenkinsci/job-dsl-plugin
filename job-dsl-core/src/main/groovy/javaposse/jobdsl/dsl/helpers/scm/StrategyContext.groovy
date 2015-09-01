@@ -11,6 +11,10 @@ class StrategyContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * This strategy must be selected when using the
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger">Gerrit Trigger Plugin</a>.
+     */
     @RequiresPlugin(id = 'gerrit-trigger', minimumVersion = '2.0')
     void gerritTrigger() {
         buildChooser = NodeBuilder.newInstance().buildChooser(
@@ -20,10 +24,16 @@ class StrategyContext extends AbstractContext {
         }
     }
 
+    /**
+     * Build all branches except for those which match the branch specifiers.
+     */
     void inverse() {
         buildChooser = NodeBuilder.newInstance().buildChooser(class: 'hudson.plugins.git.util.InverseBuildChooser')
     }
 
+    /**
+     * Selects commits to be build by maximum age and ancestor commit.
+     */
     @RequiresPlugin(id = 'git', minimumVersion = '2.3.1')
     void ancestry(int maxAge, String commit) {
         buildChooser = NodeBuilder.newInstance().buildChooser(class: 'hudson.plugins.git.util.AncestryBuildChooser') {

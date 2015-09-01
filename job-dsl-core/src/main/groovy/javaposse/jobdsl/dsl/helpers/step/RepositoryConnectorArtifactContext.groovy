@@ -2,9 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
 
-/**
- * DSL support for the Repository Connector plugin's artifacts subsection.
- */
 class RepositoryConnectorArtifactContext implements Context {
     String groupId
     String artifactId

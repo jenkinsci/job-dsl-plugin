@@ -7,6 +7,9 @@ import javaposse.jobdsl.dsl.DslContext
 class GitHubPullRequestBuilderExtensionContext implements Context {
     List<Node> extensionNodes = []
 
+    /**
+     * Updates the commit status during the build.
+     */
     void commitStatus(@DslContext(GitHubPullRequestBuilderCommitStatusContext) Closure closure) {
         GitHubPullRequestBuilderCommitStatusContext context = new GitHubPullRequestBuilderCommitStatusContext()
         ContextHelper.executeInContext(closure, context)

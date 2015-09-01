@@ -18,36 +18,57 @@ import javaposse.jobdsl.dsl.helpers.step.condition.StatusCondition
 class RunConditionContext implements Context {
     RunCondition condition
 
+    /**
+     * Runs the build steps no matter what.
+     */
     void alwaysRun() {
         this.condition = new AlwaysRunCondition()
     }
 
+    /**
+     * Does not run the build steps.
+     */
     void neverRun() {
         this.condition = new NeverRunCondition()
     }
 
+    /**
+     * Expands the Token Macro and run the build step if it evaluates to true.
+     */
     void booleanCondition(String token) {
         this.condition = new SimpleCondition(name: 'Boolean', args: ['token': token])
     }
 
+    /**
+     * Runs the build steps if the two strings are the same.
+     */
     void stringsMatch(String arg1, String arg2, boolean ignoreCase) {
         this.condition = new SimpleCondition(
                 name: 'StringsMatch',
                 args: ['arg1': arg1, 'arg2': arg2, 'ignoreCase': ignoreCase.toString()])
     }
 
+    /**
+     * Runs the build steps if the current build has a specific cause.
+     */
     void cause(String buildCause, boolean exclusiveCondition) {
         this.condition = new SimpleCondition(
                 name: 'Cause',
                 args: ['buildCause': buildCause, 'exclusiveCondition': exclusiveCondition.toString()])
     }
 
+    /**
+     * Runs the build steps if the expression matches the label.
+     */
     void expression(String expression, String label) {
         this.condition = new SimpleCondition(
                 name: 'Expression',
                 args: ['expression': expression, 'label': label])
     }
 
+    /**
+     * Only runs the build steps during a certain period of the day.
+     */
     void time(int earliestHours, int earliestMinutes, int latestHours, int latestMinutes, boolean useBuildTime) {
         Preconditions.checkArgument((0..23).contains(earliestHours), 'earliestHours must be between 0 and 23')
         Preconditions.checkArgument((0..59).contains(earliestMinutes), 'earliestMinutes must be between 0 and 59')
@@ -61,11 +82,22 @@ class RunConditionContext implements Context {
                        'useBuildTime': useBuildTime])
     }
 
+    /**
+     * Runs the build steps if the current build status is within the configured range.
+     *
+     * The values must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'FAILURE'}, {@code 'NOT_BUILT'} or
+     * {@code 'ABORTED'}.
+     */
     void status(String worstResult, String bestResult) {
         this.condition = new StatusCondition(worstResult, bestResult)
     }
 
     /**
+     * Runs a shell script for checking the condition.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     *
      * @since 1.23
      */
     void shell(String command) {
@@ -73,6 +105,11 @@ class RunConditionContext implements Context {
     }
 
     /**
+     * Runs a Windows batch script for checking the condition.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     *
      * @since 1.23
      */
     void batch(String command) {
@@ -80,6 +117,11 @@ class RunConditionContext implements Context {
     }
 
     /**
+     * Runs the build steps if the file exists.
+     *
+     * The {@code baseDir} must be one of {@code BaseDir.JENKINS_HOME}, {@code BaseDir.ARTIFACTS_DIR} or
+     * {@code BaseDir.WORKSPACE}.
+     *
      * @since 1.23
      */
     void fileExists(String file, BaseDir baseDir) {
@@ -87,6 +129,11 @@ class RunConditionContext implements Context {
     }
 
     /**
+     * Runs the build steps if one or more files match the selectors.
+     *
+     * The {@code baseDir} must be one of {@code BaseDir.JENKINS_HOME}, {@code BaseDir.ARTIFACTS_DIR} or
+     * {@code BaseDir.WORKSPACE}.
+     *
      * @since 1.36
      */
     void filesMatch(String includes, String excludes = '', BaseDir baseDir = BaseDir.WORKSPACE) {
@@ -94,6 +141,8 @@ class RunConditionContext implements Context {
     }
 
     /**
+     * Inverts the result of the selected condition.
+     *
      * @since 1.23
      */
     void not(@DslContext(RunConditionContext) Closure conditionClosure) {
@@ -101,6 +150,8 @@ class RunConditionContext implements Context {
     }
 
     /**
+     * Runs the build steps if all of the contained conditions would run.
+     *
      * @since 1.23
      */
     void and(@DslContext(RunConditionContext) Closure... conditionClosures) {
@@ -109,6 +160,8 @@ class RunConditionContext implements Context {
     }
 
     /**
+     * Runs the build steps if any of the contained conditions would run.
+     *
      * @since 1.23
      */
     void or(@DslContext(RunConditionContext) Closure... conditionClosures) {

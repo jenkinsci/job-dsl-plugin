@@ -15,6 +15,8 @@ class BuildPipelineContext extends AbstractContext {
     }
 
     /**
+     * Adds parameter values for the projects to trigger.
+     *
      * @since 1.23
      */
     @RequiresPlugin(id = 'parameterized-trigger')

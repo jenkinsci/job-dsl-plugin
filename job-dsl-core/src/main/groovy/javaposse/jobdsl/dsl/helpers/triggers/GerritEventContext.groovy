@@ -6,6 +6,8 @@ class GerritEventContext implements Context {
     final List<String> eventShortNames = []
 
     /**
+     * Trigger when a change is abandoned.
+     *
      * @since 1.26
      */
     void changeAbandoned() {
@@ -13,6 +15,8 @@ class GerritEventContext implements Context {
     }
 
     /**
+     * Trigger when a change is merged/submitted.
+     *
      * @since 1.26
      */
     void changeMerged() {
@@ -20,6 +24,8 @@ class GerritEventContext implements Context {
     }
 
     /**
+     * Trigger when a change is restored.
+     *
      * @since 1.26
      */
     void changeRestored() {
@@ -27,6 +33,8 @@ class GerritEventContext implements Context {
     }
 
     /**
+     * Trigger when a review comment is left with the indicated vote category and value.
+     *
      * @since 1.26
      */
     void commentAdded() {
@@ -34,6 +42,8 @@ class GerritEventContext implements Context {
     }
 
     /**
+     * Trigger when a draft change or patch set is published.
+     *
      * @since 1.26
      */
     void draftPublished() {
@@ -41,6 +51,8 @@ class GerritEventContext implements Context {
     }
 
     /**
+     * Trigger when a new change or patch set is uploaded.
+     *
      * @since 1.26
      */
     void patchsetCreated() {
@@ -48,6 +60,8 @@ class GerritEventContext implements Context {
     }
 
     /**
+     * Trigger when a reference (e.g., branch or tag) is updated.
+     *
      * @since 1.26
      */
     void refUpdated() {

@@ -1,0 +1,5 @@
+buildFlowJob('example') {
+    publishers {
+        aggregateBuildFlowTests()
+    }
+}

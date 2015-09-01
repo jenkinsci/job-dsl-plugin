@@ -12,6 +12,11 @@ class BuildFlowJob extends Job {
         super(jobManagement)
     }
 
+    /**
+     * Sets the build flow DSL script.
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String)} to read DSL scripts from
+     * files.
+     */
     void buildFlow(String buildFlowText) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / dsl(buildFlowText)

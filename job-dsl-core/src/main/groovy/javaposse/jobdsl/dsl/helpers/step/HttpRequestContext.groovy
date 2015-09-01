@@ -12,19 +12,31 @@ class HttpRequestContext implements Context {
     Boolean returnCodeBuildRelevant
     Boolean logResponseBody
 
+    /**
+     * Sets the HTTP method to use. Must be one of {@code 'GET'}, {@code 'POST'}, {@code 'PUT'} or {@code 'DELETE'}.
+     */
     void httpMode(String httpMode) {
         checkArgument(VALID_MODES.contains(httpMode), "HTTP mode must be one of ${VALID_MODES.join(', ')}")
         this.httpMode = httpMode
     }
 
+    /**
+     * Sets the key of the authentication to be used. Authentications are created in global configuration.
+     */
     void authentication(String authentication) {
         this.authentication = authentication
     }
 
+    /**
+     * Fails the build if the response contains an error. Defaults to {@code false}.
+     */
     void returnCodeBuildRelevant(boolean returnCodeBuildRelevant = true) {
         this.returnCodeBuildRelevant = returnCodeBuildRelevant
     }
 
+    /**
+     * Allows to write the response body to the log. Defaults to {@code false}.
+     */
     void logResponseBody(boolean logResponseBody = true) {
         this.logResponseBody = logResponseBody
     }

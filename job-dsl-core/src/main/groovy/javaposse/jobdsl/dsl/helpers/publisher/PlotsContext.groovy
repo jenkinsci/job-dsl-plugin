@@ -8,6 +8,13 @@ import javaposse.jobdsl.dsl.Preconditions
 class PlotsContext implements Context {
     final List<PlotContext> plots = []
 
+    /**
+     * Adds a plot containing one or more data series. Can be called multiple times to add more plots.
+     *
+     * Plot plugin relies on a data store to hold the plot data, this is normally stored in a randomly named CSV file
+     * within the workspace root. To avoid conflicts this location needs to be set manually relative to the workspace
+     * using the {@code dataStore} parameter.
+     */
     void plot(String group, String dataStore, @DslContext(PlotContext) Closure plotClosure) {
         Preconditions.checkNotNullOrEmpty(group, 'group must not be null or empty')
         Preconditions.checkNotNullOrEmpty(dataStore, 'dataStore must not be null or empty')

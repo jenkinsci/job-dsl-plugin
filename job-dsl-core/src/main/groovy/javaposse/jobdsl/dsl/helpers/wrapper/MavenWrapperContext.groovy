@@ -11,9 +11,8 @@ class MavenWrapperContext extends WrapperContext {
     }
 
     /**
-     * Configures a release using the m2release plugin.
-     * By default the following values are applied. If an instance of a
-     * closure is provided, the values from the closure will take effect.
+     * Allows to perform a release build using the
+     * <a href="http://maven.apache.org/maven-release/maven-release-plugin/">maven-release-plugin</a>.
      *
      * @since 1.25
      */

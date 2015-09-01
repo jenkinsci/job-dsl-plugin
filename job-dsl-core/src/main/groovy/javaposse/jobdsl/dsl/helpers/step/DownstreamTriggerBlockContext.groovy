@@ -12,16 +12,31 @@ class DownstreamTriggerBlockContext implements Context {
     String failure  = 'never'
     String unstable = 'never'
 
+    /**
+     * Fails the build step if the triggered build is worse or equal to the threshold.
+     *
+     * Must be of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'FAILURE'} or {@code 'never'}.
+     */
     void buildStepFailure(String threshold) {
         checkThreshold(threshold)
         this.buildStepFailure = threshold
     }
 
+    /**
+     * Marks this build as failure if the triggered build is worse or equal to the threshold.
+     *
+     * Must be of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'FAILURE'} or {@code 'never'}.
+     */
     void failure(String threshold) {
         checkThreshold(threshold)
         this.failure = threshold
     }
 
+    /**
+     * Mark this build as unstable if the triggered build is worse or equal to the threshold.
+     *
+     * Must be of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'FAILURE'} or {@code 'never'}.
+     */
     void unstable(String threshold) {
         checkThreshold(threshold)
         this.unstable = threshold

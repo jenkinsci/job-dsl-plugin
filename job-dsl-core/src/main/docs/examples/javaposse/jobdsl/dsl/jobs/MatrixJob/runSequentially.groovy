@@ -1,0 +1,3 @@
+matrixJob('example') {
+    runSequentially()
+}
