@@ -149,6 +149,23 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    @RequiresPlugin(id = 'testng-plugin')
+    void archiveTestNG(String glob = '**/testng-results.xml',
+                       @DslContext(ArchiveTestNGContext) Closure testNGClosure = null) {
+        ArchiveTestNGContext testNGContext = new ArchiveTestNGContext(jobManagement)
+        ContextHelper.executeInContext(testNGClosure, testNGContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.testng.Publisher' {
+            reportFilenamePattern(glob)
+            escapeTestDescp(testNGContext.escapeTestDescription)
+            escapeExceptionMsg(testNGContext.escapeExceptionMessages)
+            showFailedBuilds(testNGContext.showFailedBuildsInTrendGraph)
+            unstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
+            failureOnFailedTestConfig(testNGContext.markBuildAsFailureOnFailedConfiguration)
+            testDataPublishers(testNGContext.testDataPublishersContext.testDataPublishers)
+        }
+    }
+
     /**
      * @since 1.24
      */
@@ -541,6 +558,13 @@ class PublisherContext extends AbstractExtensibleContext {
     void chucknorris() {
         publisherNodes << new NodeBuilder().'hudson.plugins.chucknorris.CordellWalkerRecorder' {
             'factGenerator' ''
+        }
+    }
+
+    @RequiresPlugin(id = 'ci-game')
+    void playTheGame() {
+        publisherNodes << new NodeBuilder().'hudson.plugins.cigame.GamePublisher' {
+
         }
     }
 

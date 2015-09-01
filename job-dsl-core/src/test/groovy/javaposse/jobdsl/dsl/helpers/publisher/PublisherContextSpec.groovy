@@ -253,6 +253,21 @@ class PublisherContextSpec extends Specification {
         }
     }
 
+    def 'call testng archive with minimal args'() {
+        when:
+        context.archiveTestNG()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 7
+            reportFilenamePattern[0].value() == '**/testng-results.xml'
+            escapeTestDescp[0].value() == true
+            escapeExceptionMsg[0].value() == true
+            testDataPublishers[0].children().size() == 0
+        }
+    }
+
     def 'call archiveXUnit with no args'() {
         when:
         context.archiveXUnit {
@@ -1339,6 +1354,16 @@ class PublisherContextSpec extends Specification {
         publisherNode.value()[0].name() == 'factGenerator'
         publisherNode.value()[0].value() == ''
         1 * jobManagement.requirePlugin('chucknorris')
+    }
+
+    def 'can play the game'() {
+        when:
+        context.playTheGame()
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.plugins.cigame.GamePublisher'
+        1 * jobManagement.requirePlugin('ci-game')
     }
 
     def 'irc channels are added'() {
