@@ -155,7 +155,9 @@ Justin Ryan <jryan@netflix.com>
 
 Andrew Harmel-Law <andrew@harmel-law.com>
 
-Emil Sit <sit@hadapt.com>
+Daniel Spilker <mail@daniel-spilker.com>
+
+Matt Sheehan <mr.sheehan@gmail.com>
 
 Mailing List
 ------------

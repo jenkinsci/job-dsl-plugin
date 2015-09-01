@@ -36,14 +36,14 @@ jenkinsPlugin {
             email 'andrew@harmel-law.com'
         }
         developer {
-            id 'sit'
-            name 'Emil Sit'
-            email 'sit@hadapt.com'
-        }
-        developer {
             id 'daspilker'
             name 'Daniel Spilker'
             email 'mail@daniel-spilker.com'
+        }
+        developer {
+            id 'sheehan'
+            name 'Matt Sheehan'
+            email 'mr.sheehan@gmail.com'
         }
     }
 }
