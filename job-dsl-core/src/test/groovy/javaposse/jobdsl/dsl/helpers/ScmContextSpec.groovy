@@ -18,6 +18,24 @@ class ScmContextSpec extends Specification {
     ScmContext context = new ScmContext([], mockJobManagement, item)
     Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
 
+    def 'extension node is transformed to SCM node'() {
+        Node node = new Node(null, 'org.example.CustomSCM', [foo: 'bar'])
+        node.appendNode('test', 'value')
+
+        when:
+        context.addExtensionNode(node)
+
+        then:
+        with(context.scmNodes[0]) {
+            name() == 'scm'
+            attributes().size() == 2
+            attribute('class') == 'org.example.CustomSCM'
+            attribute('foo') == 'bar'
+            children().size() == 1
+            test[0].text() == 'value'
+        }
+    }
+
     def 'call hg simple configuration with deprecated plugin version'() {
         setup:
         mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50')
