@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -52,7 +53,7 @@ class PhaseJobContext extends AbstractContext {
      * Adds parameter values for the job.
      */
     @RequiresPlugin(id = 'parameterized-trigger')
-    void parameters(@javaposse.jobdsl.dsl.DslContext(DownstreamTriggerParameterContext) Closure closure) {
+    void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
 
         ContextHelper.executeInContext(closure, paramTrigger)
