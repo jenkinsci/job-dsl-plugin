@@ -59,6 +59,36 @@ class DeliveryPipelineView extends View {
         }
     }
 
+    void showTotalBuildTime(boolean value = true) {
+        execute {
+            it / methodMissing('showTotalBuildTime', value)
+        }
+    }
+
+    void allowRebuild(boolean value = true) {
+        execute {
+            it / methodMissing('allowRebuild', value)
+        }
+    }
+
+    void allowPipelineStart(boolean value = true) {
+        execute {
+            it / methodMissing('allowPipelineStart', value)
+        }
+    }
+
+    void showDescription(boolean value = true) {
+        execute {
+            it / methodMissing('showDescription', value)
+        }
+    }
+
+    void showPromotions(boolean value = true) {
+        execute {
+            it / methodMissing('showPromotions', value)
+        }
+    }
+
     void pipelines(@DslContext(DeliveryPipelinesContext) Closure pipelinesClosure) {
         DeliveryPipelinesContext context = new DeliveryPipelinesContext()
         executeInContext(pipelinesClosure, context)
