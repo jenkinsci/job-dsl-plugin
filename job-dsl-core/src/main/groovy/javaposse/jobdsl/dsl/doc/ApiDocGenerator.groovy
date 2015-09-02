@@ -122,12 +122,6 @@ class ApiDocGenerator {
         methodMap
     }
 
-    private static List<Method> getImplementedMethods(Method method) {
-        method.declaringClass.interfaces*.methods.flatten().findAll {
-            it.name == method.name && Arrays.equals(it.parameterTypes, method.parameterTypes)
-        }
-    }
-
     private String getExamples(Class clazz, String methodName) {
         String path = "${clazz.name.replaceAll('\\.', '/')}/$methodName"
         File file = new File("${commandDocsPath}/examples/${path}.groovy")
