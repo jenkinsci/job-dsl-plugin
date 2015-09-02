@@ -138,7 +138,7 @@ class FooContext {
 
 ```groovy
     /**
-     * Generate configuration for Mercurial.
+     * Adds a Mercurial SCM source.
      *
      * @since 1.33
      */
@@ -148,29 +148,3 @@ class FooContext {
 ```
 
 * Add at least one example for each DSL method to `job-dsl-core/src/main/docs/examples`.
-* Update the [DSL Overview](docs/Job-DSL-Commands.md#dsl-methods) if necessary.
-* Make sure that the Job Reference page contains a formal reference, a short description including a link to the plugin, at least one example and the version which added the feature.
-
-```
-    ## Foo
-
-    ```groovy
-    job {
-        wrappers {
-            foo(String option) // optional
-        }
-    }
-    ```
-
-    Does some foo. Requires the [Foo Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Foo).
-
-    ```groovy
-    job {
-        wrappers {
-            foo('bar')
-        }
-    }
-    ```
-
-    (Since 1.15)
-```
