@@ -553,8 +553,6 @@ class PublisherContext extends AbstractExtensibleContext {
 
     /**
      * Generates reports from static code violations detectors.
-     *
-     * @see #violations(int, groovy.lang.Closure)
      */
     void violations(@DslContext(ViolationsContext) Closure violationsClosure = null) {
         violations(100, violationsClosure)
@@ -562,15 +560,6 @@ class PublisherContext extends AbstractExtensibleContext {
 
     /**
      * Generates reports from static code violations detectors.
-     *
-     * For each supported detector type, the closure method with up to four arguments is available. The first argument
-     * specifies the lowest number of violations to generate the sunny weather report, defaults to 10. The second
-     * argument specifies the lowest number of violations to generate the stormy weather report, defaults to 999. If the
-     * number of violations exceeds the third argument, the build is set to unstable, defaults to 999. The last argument
-     * specifies an Ant pattern to find the violation files in the workspace. Supported detector types are
-     * {@code checkstyle}, {@code codenarc}, {@code cpd}, {@code cpplint}, {@code csslint}, {@code findbugs},
-     * {@code fxcop}, {@code gendarme}, {@code jcreport}, {@code jslint}, {@code pep8}, {@code perlcritic}, {@code pmd},
-     * {@code pylint}, {@code simian}, {@code stylecop} and {@code jshint}.
      */
     @RequiresPlugin(id = 'violations')
     void violations(int perFileDisplayLimit, @DslContext(ViolationsContext) Closure violationsClosure = null) {
