@@ -114,16 +114,6 @@ class ApiDocGenerator {
             }
         }
 
-        List<RequiresPlugin> annotations = methodDocs.collectMany { GroovyMethodDoc methodDoc ->
-            Method method = GroovyDocHelper.getMethodFromGroovyMethodDoc(methodDoc, clazz)
-            (getImplementedMethods(method) + method)*.getAnnotation(RequiresPlugin)
-        }.findAll()
-
-        String dslPlugin = annotations.find { it.id() }?.id() // TODO add min ver
-        if (dslPlugin) {
-            methodMap.plugin = dslPlugin
-        }
-
         String examples = getExamples(clazz, methodName)
         if (examples) {
             methodMap.examples = examples
@@ -178,15 +168,6 @@ class ApiDocGenerator {
             map.parameters << processParameter(parameter, types[index])
         }
 
-        List paramTokens = map.parameters.collect {
-            String token = "$it.type $it.name"
-            if (it.defaultValue) {
-                token += " = $it.defaultValue"
-            }
-            token
-        }
-        map.text = method.name + '(' + paramTokens.join(', ') + ')'
-
         if (method.getAnnotation(Deprecated)) {  // TODO or comment deprecated
             map.deprecated = true
         }
@@ -194,6 +175,14 @@ class ApiDocGenerator {
         String availableSince = methodDoc.tags().find { it.name() == 'since' }?.text()
         if (availableSince) {
             map.availableSince = availableSince
+        }
+
+        RequiresPlugin requiresPluginAnnotation = method.getAnnotation(RequiresPlugin)
+        if (requiresPluginAnnotation) {
+            map.plugin = [id: requiresPluginAnnotation.id()]
+            if (requiresPluginAnnotation.minimumVersion()) {
+                map.plugin.minimumVersion = requiresPluginAnnotation.minimumVersion()
+            }
         }
 
         GroovyMethodDoc methodDocWithComment = getMethodHierarchy(method, methodDoc).find {

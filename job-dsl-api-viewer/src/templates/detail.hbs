@@ -21,7 +21,8 @@
                     <span class="label label-warning">Deprecated</span>
                 {{/if}}
                 <div class="signature">
-                    {{name}}<span class="highlight groovy inline">{{text}}</span>{{#if context}} {<span class="expand-closure glyphicon glyphicon-option-horizontal" data-path="{{path}}"></span>}{{/if}}
+                    {{name}}<span class="highlight groovy inline">{{text}}</span>
+                    {{#if context}}{<span class="expand-closure glyphicon glyphicon-option-horizontal" data-path="{{path}}" data-index="{{index}}"></span>}{{/if}}
                 </div>
                 {{#if html}}
                     <div class="method-doc">{{{html}}}</div>

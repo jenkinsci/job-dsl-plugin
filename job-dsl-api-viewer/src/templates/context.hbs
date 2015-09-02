@@ -6,7 +6,8 @@
                     // {{comment}} {{#if deprecated}}Deprecated.{{/if}}
                 </div>
             {{/if}}
-            <a href="#path/{{path}}">{{name}}</a><span class="highlight groovy inline">{{text}}</span>{{#if context}} {<span class="expand-closure glyphicon glyphicon-option-horizontal" data-path="{{path}}"></span>}{{/if}}
+            <a href="#path/{{path}}">{{name}}</a><span class="highlight groovy inline">{{text}}</span>
+            {{#if context}}{<span class="expand-closure glyphicon glyphicon-option-horizontal" data-path="{{path}}" data-index="{{index}}"></span>}{{/if}}
         </li>
     {{/each}}
 </ul>

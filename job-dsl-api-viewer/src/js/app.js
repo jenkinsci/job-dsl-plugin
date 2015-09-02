@@ -39,13 +39,18 @@
                     method.deprecated = true;
                 }
 
-                var signatureWithContext = _.find(method.signatures, function(signature) { return signature.contextClass; });
+                var signatureWithContext = _.find(method.signatures, function(signature) { return signature.contextClass && !signature.deprecated; });
+                if (!signatureWithContext) {
+                    signatureWithContext = _.find(method.signatures, function(signature) { return signature.contextClass; });
+                }
+
                 if (signatureWithContext) {
                     method.contextClass = signatureWithContext.contextClass;
                 }
 
-                if (method.plugin) {
-                    method.plugin = window.updateCenter.data.plugins[method.plugin];
+                var signatureWithPlugin = _.find(method.signatures, function(signature) { return signature.plugin; });
+                if (signatureWithPlugin) {
+                    method.plugin = window.updateCenter.data.plugins[signatureWithPlugin.plugin.id];
                 }
             });
         },
@@ -103,12 +108,29 @@
 
         findMethodNode: function(contextClass, tokens) {
             var methodNode = null;
-            var node = this.data.contexts[contextClass];
+            var contextNode = this.data.contexts[contextClass];
 
-            tokens.forEach(function(token) {
-                methodNode = _.find(node.methods, function(method) { return method.name === token; });
-                node = this.data.contexts[methodNode.contextClass];
-            }, this);
+            for (var i = 0; i < tokens.length; i++) {
+                var token = tokens[i];
+                methodNode = _.findWhere(contextNode.methods, {name: token});
+
+                if (i < tokens.length - 1) {
+                    contextNode = this.getContext(methodNode.contextClass);
+                    // TODO this is a hack to make sure we get the right context (for copyArtifacts). it only checks one level though.
+                    // should be a depth-first search or something
+                    var nextToken = tokens[i + 1];
+                    var matchingSig = _.find(methodNode.signatures, function(signature) {
+                        var match = false;
+                        var sigContextClass = signature.contextClass;
+                        if (sigContextClass) {
+                            var sigContext = this.getContext(sigContextClass);
+                            match = !!_.findWhere(sigContext.methods, {name: nextToken});
+                        }
+                        return match;
+                    }, this);
+                    contextNode = this.getContext(matchingSig.contextClass);
+                }
+            }
 
             return methodNode;
         },
@@ -142,11 +164,11 @@
 
         getSignatures: function(method, path) {
             var href = '#path/' + (path ? path + '-' : '') + method.name;
-            return method.signatures.map(function(signature) {
+            return method.signatures.map(function(signature, index) {
 
                 if (signature.contextClass) {
                     signature.context = this.data.contexts[signature.contextClass];
-                } // TODO
+                }
 
                 var params = signature.parameters;
                 if (signature.context) {
@@ -168,6 +190,7 @@
                     name: method.name,
                     href: href,
                     path: path,
+                    index: index,
                     availableSince: signature.availableSince,
                     deprecated: signature.deprecated,
                     text: text,
@@ -202,7 +225,7 @@
                 methodNode = this.findMethodNode(contextClass, pathTokens);
                 ancestors = this.findAncestors(contextClass, pathTokens);
 
-                if (ancestors.length) {
+                if (ancestors.length && methodIndex !== -1) {
                     ancestors[0].id = contextClass + '.' + ancestors[0].id;
                 }
             } else {
@@ -355,11 +378,13 @@
                     .removeClass('glyphicon-triangle-bottom').addClass('glyphicon glyphicon-triangle-right');
             };
             $treeBody.on('open_node.jstree', function(e, data){
-                updateNodes($('#'+data.node.id));
+                var el = document.getElementById(data.node.id);
+                updateNodes($(el));
             });
 
             $treeBody.on('close_node.jstree', function(e, data){
-                updateNodes($('#'+data.node.id));
+                var el = document.getElementById(data.node.id);
+                updateNodes($(el));
             });
 
             $treeBody
@@ -367,15 +392,12 @@
                 .on('changed.jstree', this.onTreeChanged.bind(this))
                 .on('ready.jstree', function() {
                     this.updateTreeFromHash();
-                    var selectedNodes = this.jstree.get_selected(true);
-                    if (selectedNodes.length) {
-                        $('#' + selectedNodes[0].id)[0].scrollIntoView();
-                    }
                     updateNodes($('.tree-body'));
                 }.bind(this))
                 .jstree({
                     'plugins': ['wholerow'],
                     'core': {
+                        'animation': false,
                         'data': function(node, cb) {
                             var contextClass = node.id === '#' ? this.dsl.getRootContextClass() : node.original.methodNode.contextClass;
                             var methods = this.dsl.getContext(contextClass).methods;
@@ -398,7 +420,12 @@
 
         onTreeChanged: function(e, data) {
             e.preventDefault();
-            window.location.hash = 'path/' + data.node.id;
+            var path = data.node.id;
+            if (path.match('\\)$')) {
+                var lastSignatureIndex = path.lastIndexOf('(');
+                path = path.substring(0, lastSignatureIndex);
+            }
+            window.location.hash = 'path/' + path;
         },
 
         updateTreeFromHash: function() {
@@ -418,6 +445,14 @@
                         this.jstree.open_node(node);
                     } else {
                         this.jstree.select_node(node.id);
+                        var $el = $('#' + node.id);
+                        if ($el.length) {
+                            var $wrapper = $('.tree-wrapper');
+                            if ($el.offset().top < $wrapper.offset().top ||
+                                $el.offset().top + $el.height() > $wrapper.offset().top + $wrapper.height()) {
+                                $el[0].scrollIntoView();
+                            }
+                        }
                     }
                 }, this);
             }
@@ -473,12 +508,13 @@
             e.preventDefault();
             var $el = $(e.currentTarget);
             var path = $el.data('path');
+            var index = $el.data('index');
 
             $el.hide();
 
             var pathInfo = this.dsl.getPathInfo(path);
-            var signatures = this.dsl.getContextSignatures(pathInfo.methodNode.contextClass, path);
-
+            var parentSignature = pathInfo.methodNode.signatures[index];
+            var signatures = this.dsl.getContextSignatures(parentSignature.contextClass, path);
             var contextHtml = Handlebars.templates['context']({
                 signatures: signatures
             });
