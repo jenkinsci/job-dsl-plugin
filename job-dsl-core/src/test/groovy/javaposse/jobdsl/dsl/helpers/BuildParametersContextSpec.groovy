@@ -424,6 +424,70 @@ class BuildParametersContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
+    def 'base passwordParam usage'() {
+        when:
+        context.passwordParam('myParameterName', 'my default passwordParam value', 'myPasswordParameterDescription')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default passwordParam value'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myPasswordParameterDescription'
+    }
+
+    def 'simplified passwordParam usage'() {
+        when:
+        context.passwordParam('myParameterName', 'my default passwordParam value')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default passwordParam value'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+    }
+
+    def 'simplest passwordParam usage'() {
+        when:
+        context.passwordParam('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.model.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == ''
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+    }
+
+    def 'passwordParam name argument cant be null'() {
+        when:
+        context.passwordParam(null)
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'passwordParam name argument cant be empty'() {
+        when:
+        context.passwordParam('')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'passwordParam already defined'() {
+        when:
+        context.booleanParam('one')
+        context.passwordParam('one')
+
+        then:
+        thrown(DslScriptException)
+    }
+
     def 'base stringParam usage'() {
         when:
         context.stringParam('myParameterName', 'my default stringParam value', 'myStringParameterDescription')

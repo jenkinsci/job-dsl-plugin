@@ -175,6 +175,10 @@ class BuildParametersContext extends AbstractContext {
                 }
     }
 
+    void passwordParam(String parameterName, String defaultValue = null, String description = null) {
+        simpleParam('hudson.model.PasswordParameterDefinition', parameterName, defaultValue, description)
+    }
+
     void stringParam(String parameterName, String defaultValue = null, String description = null) {
         simpleParam('hudson.model.StringParameterDefinition', parameterName, defaultValue, description)
     }
