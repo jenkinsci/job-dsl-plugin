@@ -1,5 +1,8 @@
 @color1: #13262F;
-//http://app.coolors.co/2e4057-583e23-13262f-66a182-caffb9
+@color2: #27A668;
+@color3: #FC715B;
+@color4: #E4344A;
+@color5: #FE9D0B;
 
 .text-ellipsis {
   white-space: nowrap;
@@ -203,6 +206,17 @@ body {
   .label {
     margin-bottom: 3px;
     display: inline-block;
+    font-size: 12px;
+    padding: 4px 5px 5px;
+    &.label-min-version {
+      background-color: @color2;
+    }
+    &.label-since {
+      background-color: @color4;
+    }
+    &.label-deprecated {
+      background-color: @color5;
+    }
   }
   .signature {
     .code-block;

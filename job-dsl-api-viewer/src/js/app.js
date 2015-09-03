@@ -186,7 +186,7 @@
                     text = '(' + text + ')';
                 }
 
-                return {
+                var data = {
                     name: method.name,
                     href: href,
                     path: path,
@@ -198,6 +198,13 @@
                     context: signature.context,
                     comment: signature.firstSentenceCommentText
                 };
+
+                if (signature.plugin) {
+                    data.plugin = signature.plugin;
+                    data.plugin.title = window.updateCenter.data.plugins[signature.plugin.id].title;
+                }
+
+                return data;
             }, this)
         },
 

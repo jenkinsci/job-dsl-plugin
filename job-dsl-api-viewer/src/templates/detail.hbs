@@ -14,11 +14,12 @@
         </h2>
         <div class="signatures">
             {{#each signatures}}
+                {{#if plugin.minimumVersion}}<span class="label label-min-version">Requires {{plugin.title}} v{{plugin.minimumVersion}}+</span>{{/if}}
                 {{#if availableSince}}
-                    <span class="label label-info">Since {{availableSince}}</span>
+                    <span class="label label-since">Since {{availableSince}}</span>
                 {{/if}}
                 {{#if deprecated}}
-                    <span class="label label-warning">Deprecated</span>
+                    <span class="label label-deprecated">Deprecated</span>
                 {{/if}}
                 <div class="signature">
                     {{name}}<span class="highlight groovy inline">{{text}}</span>
