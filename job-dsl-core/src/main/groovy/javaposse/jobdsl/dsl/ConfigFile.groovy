@@ -12,12 +12,6 @@ class ConfigFile implements Context {
         this.jobManagement = jobManagement
     }
 
-    @Deprecated
-    void name(String name) {
-        jobManagement.logDeprecationWarning()
-        this.name = name
-    }
-
     /**
      * Sets a comment for the config file.
      */

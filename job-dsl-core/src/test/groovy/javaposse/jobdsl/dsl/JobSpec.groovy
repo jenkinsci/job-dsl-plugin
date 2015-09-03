@@ -19,14 +19,6 @@ class JobSpec extends Specification {
         XMLUnit.setIgnoreWhitespace(true)
     }
 
-    def 'set name on a manually constructed job'() {
-        when:
-        job.name('NAME')
-
-        then:
-        job.name == 'NAME'
-    }
-
     def 'load an empty template from a manually constructed job and generate xml from it'() {
         when:
         job.using('TMPL')

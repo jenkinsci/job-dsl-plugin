@@ -9,12 +9,6 @@ abstract class Item extends AbstractContext {
         super(jobManagement)
     }
 
-    @Deprecated
-    void name(String name) {
-        jobManagement.logDeprecationWarning()
-        this.name = name
-    }
-
     /**
      * Allows direct manipulation of the generated XML.
      *

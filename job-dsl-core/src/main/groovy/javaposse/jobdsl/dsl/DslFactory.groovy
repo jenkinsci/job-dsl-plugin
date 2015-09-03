@@ -9,12 +9,6 @@ import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 
 interface DslFactory extends ViewFactory {
-    @Deprecated
-    Job job(@DslContext(Job) Closure closure)
-
-    @Deprecated
-    Job job(Map<String, Object> arguments, @DslContext(Job) Closure closure)
-
     /**
      * Creates or updates a free style job.
      *
@@ -148,10 +142,6 @@ interface DslFactory extends ViewFactory {
     @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
-    @Deprecated
-    @RequiresPlugin(id = 'cloudbees-folder')
-    Folder folder(@DslContext(Folder) Closure closure)
-
     /**
      * Creates or updates a folder.
      *
@@ -168,14 +158,6 @@ interface DslFactory extends ViewFactory {
      */
     @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name, @DslContext(Folder) Closure closure)
-
-    @Deprecated
-    @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile configFile(@DslContext(ConfigFile) Closure closure)
-
-    @Deprecated
-    @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile configFile(Map<String, Object> arguments, @DslContext(ConfigFile) Closure closure)
 
     /**
      * Creates a managed custom file.

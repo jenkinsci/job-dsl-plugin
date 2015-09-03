@@ -190,8 +190,6 @@ class ScmContextSpec extends Specification {
 
     def 'call hg with all options'() {
         setup:
-        mockJobManagement.getCredentialsId('user1') >> 'user1-credentials'
-
         when:
         context.hg('http://selenic.com/repo/hello') {
             installation('companyMercurial')
@@ -216,7 +214,7 @@ class ScmContextSpec extends Specification {
             revisionType[0].text() == 'BRANCH'
             revision[0].text() == 'default'
             clean[0].text() == 'true'
-            credentialsId[0].text() == 'user1-credentials'
+            credentialsId[0].text() == 'user1'
             disableChangeLog[0].text() == 'true'
             subdir[0].text() == '/foo/bar'
             foo[0].text() == 'bar'
@@ -1125,9 +1123,6 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call git scm with credentials'() {
-        setup:
-        mockJobManagement.getCredentialsId('ci-user') >> '0815'
-
         when:
         context.git {
             remote {
@@ -1140,7 +1135,7 @@ class ScmContextSpec extends Specification {
         with(context.scmNodes[0]) {
             userRemoteConfigs.size() == 1
             userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'.size() == 1
-            userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].credentialsId[0].text() == '0815'
+            userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].credentialsId[0].text() == 'ci-user'
         }
         1 * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
@@ -1632,9 +1627,6 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call svn with credentials'() {
-        setup:
-        mockJobManagement.getCredentialsId('foo') >> '4711'
-
         when:
         context.svn {
             location('url') {
@@ -1648,7 +1640,7 @@ class ScmContextSpec extends Specification {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
-            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].credentialsId[0].value() == '4711'
+            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].credentialsId[0].value() == 'foo'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('subversion', '2.0')
         1 * mockJobManagement.requirePlugin('subversion')
@@ -2209,9 +2201,6 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call rtc with connection override'() {
-        setup:
-        mockJobManagement.getCredentialsId('absd_credential') >> '0815'
-
         when:
         context.rtc {
             buildDefinition('buildDEF')
@@ -2227,7 +2216,7 @@ class ScmContextSpec extends Specification {
             buildTool[0].value() == '4.0.7'
             serverURI[0].value() == 'https//uri.com/ccm'
             timeout[0].value() == 480
-            credentialsId[0].value() == '0815'
+            credentialsId[0].value() == 'absd_credential'
             buildType[0].value() == 'buildDefinition'
             buildDefinition[0].value() == 'buildDEF'
             avoidUsingToolkit[0].value() == false

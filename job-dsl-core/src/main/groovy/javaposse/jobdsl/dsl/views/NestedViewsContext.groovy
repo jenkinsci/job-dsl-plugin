@@ -16,17 +16,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
     }
 
     @Deprecated
-    View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
-        jobManagement.logDeprecationWarning()
-
-        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
-        View view = viewType.viewClass.newInstance(jobManagement)
-        view.with(closure)
-        views << view
-        view
-    }
-
-    @Deprecated
     void view(Map<String, Object> arguments = [:], String name, @DslContext(View) Closure closure) {
         jobManagement.logDeprecationWarning()
 

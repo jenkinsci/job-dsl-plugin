@@ -97,20 +97,6 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    @Deprecated
-    static enum Timeout {
-        absolute('Absolute'),
-        elastic('Elastic'),
-        likelyStuck('LikelyStuck'),
-        noActivity('NoActivity')
-
-        final String className
-
-        Timeout(String name) {
-            className = "hudson.plugins.build_timeout.impl.${name}TimeOutStrategy"
-        }
-    }
-
     /**
      * Add a timeout to the build job.
      *
@@ -184,11 +170,9 @@ class WrapperContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'ssh-agent')
     void sshAgent(String credentials) {
         Preconditions.checkNotNull(credentials, 'credentials must not be null')
-        String id = jobManagement.getCredentialsId(credentials)
-        Preconditions.checkNotNull(id, 'credentials not found')
 
         wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
-            user id
+            user(credentials)
         }
     }
 

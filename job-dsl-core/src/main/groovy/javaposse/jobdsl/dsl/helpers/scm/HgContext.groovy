@@ -57,7 +57,7 @@ class HgContext extends AbstractContext {
      * Use pre-defined credentials.
      */
     void credentials(String credentials) {
-        this.credentialsId = jobManagement.getCredentialsId(credentials)
+        this.credentialsId = credentials
     }
 
     /**

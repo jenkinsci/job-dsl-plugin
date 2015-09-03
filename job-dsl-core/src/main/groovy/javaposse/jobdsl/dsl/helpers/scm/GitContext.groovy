@@ -53,7 +53,7 @@ class GitContext extends AbstractContext {
             }
             url(remoteContext.url)
             if (remoteContext.credentials) {
-                credentialsId(jobManagement.getCredentialsId(remoteContext.credentials))
+                credentialsId(remoteContext.credentials)
             }
         }
 
