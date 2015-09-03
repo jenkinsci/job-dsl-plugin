@@ -1,0 +1,3 @@
+buildMonitorView('project-A') {
+    recurse()
+}

@@ -15,10 +15,16 @@ class PreScmStepsContext implements Context {
         this.stepContext = new StepContext(jobManagement, item)
     }
 
+    /**
+     * Adds build steps to be run before SCM checkout.
+     */
     void steps(@DslContext(StepContext) Closure closure) {
         ContextHelper.executeInContext(closure, stepContext)
     }
 
+    /**
+     * Fails the build when one of the steps fails. Defaults to {@code false}.
+     */
     void failOnError(boolean failOnError = true) {
         this.failOnError = failOnError
     }

@@ -17,10 +17,19 @@ class JoinTriggerContext extends AbstractContext {
         publisherContext = new PublisherContext(jobManagement, item)
     }
 
+    /**
+     * Specifies the projects to run after all immediate downstream jobs have completed.
+     */
     void projects(String... projects) {
         this.projects.addAll(projects)
     }
 
+    /**
+     * Adds publishers to run after all immediate downstream jobs have completed.
+     *
+     * Currently only the {@link PublisherContext#downstreamParameterized(groovy.lang.Closure) downstreamParameterized}
+     * publisher is supported by the Join Plugin.
+     */
     void publishers(@DslContext(PublisherContext) Closure publisherClosure) {
         ContextHelper.executeInContext(publisherClosure, publisherContext)
         Preconditions.checkArgument(
@@ -31,6 +40,9 @@ class JoinTriggerContext extends AbstractContext {
         )
     }
 
+    /**
+     * If set, runs the projects even if the downstream jobs are unstable. Defaults to {@code false}.
+     */
     void evenIfDownstreamUnstable(boolean evenIfDownstreamUnstable = true) {
         this.evenIfDownstreamUnstable = evenIfDownstreamUnstable
     }

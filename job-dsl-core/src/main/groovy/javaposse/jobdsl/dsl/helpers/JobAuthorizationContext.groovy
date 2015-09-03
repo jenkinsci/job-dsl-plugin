@@ -11,6 +11,8 @@ class JobAuthorizationContext extends AuthorizationContext {
     }
 
     /**
+     * Blocks inheritance of the global authorization matrix.
+     *
      * @since 1.35
      */
     @RequiresPlugin(id = 'matrix-auth', minimumVersion = '1.2')

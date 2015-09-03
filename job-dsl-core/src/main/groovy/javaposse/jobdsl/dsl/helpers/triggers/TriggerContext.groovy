@@ -92,6 +92,9 @@ class TriggerContext extends AbstractExtensibleContext {
         triggerNodes << urlTriggerNode
     }
 
+    /**
+     * Triggers the job based on regular intervals.
+     */
     void cron(String cronString) {
         Preconditions.checkNotNull(cronString, 'cronString must be specified')
 
@@ -100,6 +103,9 @@ class TriggerContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Polls source control for changes at regular intervals.
+     */
     void scm(String cronString, @DslContext(ScmTriggerContext) Closure scmTriggerClosure = null) {
         Preconditions.checkNotNull(cronString, 'cronString must be specified')
 
@@ -125,7 +131,10 @@ class TriggerContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Jenkins GitHub pull request builder plugin.
+     * Builds pull requests from GitHub and will report the results back to the pull request.
+     *
+     * The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for
+     * details.
      *
      * @since 1.22
      */
@@ -159,6 +168,9 @@ class TriggerContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Polls Gerrit for changes.
+     */
     @RequiresPlugin(id = 'gerrit-trigger')
     void gerrit(@DslContext(GerritContext) Closure contextClosure = null) {
         // See what they set up in the contextClosure before generating xml
@@ -249,6 +261,10 @@ class TriggerContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Starts a build on completion of an upstream job, i.e. adds the "Build after other projects are built" trigger.
+     *
+     * Possible thresholds are {@code 'SUCCESS'}, {@code 'UNSTABLE'} or {@code 'FAILURE'}.
+     *
      * @since 1.33
      */
     void upstream(String projects, String threshold = 'SUCCESS') {

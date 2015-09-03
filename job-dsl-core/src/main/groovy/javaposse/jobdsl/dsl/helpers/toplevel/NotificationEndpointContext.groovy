@@ -16,6 +16,11 @@ class NotificationEndpointContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Sets the job lifecycle event triggering notification.
+     *
+     * Possible values are {@code 'all'}, {@code 'started'}, {@code 'completed'} and {@code 'finalized'}.
+     */
     @RequiresPlugin(id = 'notification', minimumVersion = '1.6')
     void event(String event) {
         checkArgument(EVENTS.contains(event), "event must be one of ${EVENTS.join(', ')}")
@@ -23,6 +28,9 @@ class NotificationEndpointContext extends AbstractContext {
         this.event = event
     }
 
+    /**
+     * Sets a timeout in milliseconds.
+     */
     @RequiresPlugin(id = 'notification', minimumVersion = '1.6')
     void timeout(int timeout) {
         this.timeout = timeout

@@ -9,10 +9,16 @@ class SonarContext implements Context {
     boolean overrideTriggers
     final SonarTriggersContext sonarTriggersContext = new SonarTriggersContext()
 
+    /**
+     * Sets the {@code sonar.branch} property.
+     */
     void branch(String branch) {
         this.branch = branch
     }
 
+    /**
+     * Overrides the default trigger actions set at SonarQube installation level.
+     */
     void overrideTriggers(@DslContext(SonarTriggersContext) Closure sonarTriggersClosure) {
         overrideTriggers = true
         ContextHelper.executeInContext(sonarTriggersClosure, sonarTriggersContext)

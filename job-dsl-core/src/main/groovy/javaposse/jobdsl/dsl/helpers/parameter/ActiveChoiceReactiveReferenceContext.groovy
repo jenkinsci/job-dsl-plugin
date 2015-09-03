@@ -11,14 +11,26 @@ class ActiveChoiceReactiveReferenceContext extends AbstractActiveChoiceContext {
     boolean omitValueField
     String choiceType = 'TEXT_BOX'
 
+    /**
+     * Specifies a list of job parameters that trigger an auto-refresh.
+     */
     void referencedParameter(String referencedParameters) {
         this.referencedParameters << referencedParameters
     }
 
+    /**
+     * Omits the hidden value field.
+     */
     void omitValueField(boolean omitValueField = true) {
         this.omitValueField = omitValueField
     }
 
+    /**
+     * Selects one of four different rendering options for the option values.
+     *
+     * Must be one of {@code 'TEXT_BOX'} (default), {@code 'FORMATTED_HTML'}, {@code 'FORMATTED_HIDDEN_HTML'},
+     * {@code 'ORDERED_LIST'} or {@code 'UNORDERED_LIST'}.
+     */
     void choiceType(String choiceType) {
         checkArgument(
                 VALID_CHOICE_TYPES.contains(choiceType),

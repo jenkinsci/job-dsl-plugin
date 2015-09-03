@@ -19,10 +19,16 @@ class DownstreamContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
+     */
     void trigger(String projects, @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
         addTrigger(projects, null, false, downstreamTriggerClosure)
     }
 
+    /**
+     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
+     */
     @Deprecated
     @SuppressWarnings(['UnusedMethodParameter', 'GroovyUnusedDeclaration'])
     void trigger(String projects, String condition,
@@ -31,6 +37,9 @@ class DownstreamContext extends AbstractContext {
         addTrigger(projects, null, false, downstreamTriggerClosure)
     }
 
+    /**
+     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
+     */
     @Deprecated
     @SuppressWarnings(['UnusedMethodParameter', 'GroovyUnusedDeclaration'])
     void trigger(String projects, String condition, boolean triggerWithNoParameters,
@@ -39,6 +48,9 @@ class DownstreamContext extends AbstractContext {
         addTrigger(projects, null, triggerWithNoParameters, downstreamTriggerClosure)
     }
 
+    /**
+     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
+     */
     @Deprecated
     @SuppressWarnings(['UnusedMethodParameter', 'GroovyUnusedDeclaration'])
     void trigger(String projects, String condition, boolean triggerWithNoParameters,

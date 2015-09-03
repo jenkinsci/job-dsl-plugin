@@ -1,0 +1,3 @@
+categorizedJobsView('project-A') {
+    recurse()
+}

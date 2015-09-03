@@ -15,6 +15,9 @@ class ListView extends View {
         super(jobManagement)
     }
 
+    /**
+     * Filter the job list by enabled/disabled status. Defaults to {@code StatusFilter.ALL}.
+     */
     void statusFilter(StatusFilter filter) {
         checkNotNull(filter, 'filter must not be null')
 
@@ -27,6 +30,9 @@ class ListView extends View {
         }
     }
 
+    /**
+     * Adds jobs to the view.
+     */
     void jobs(@DslContext(JobsContext) Closure jobsClosure) {
         executeInContext(jobsClosure, jobsContext)
 
@@ -46,6 +52,9 @@ class ListView extends View {
         }
     }
 
+    /**
+     * Adds columns to the views. The view will have no columns by default.
+     */
     void columns(@DslContext(ColumnsContext) Closure columnsClosure) {
         ColumnsContext context = new ColumnsContext(jobManagement)
         executeInContext(columnsClosure, context)
@@ -58,6 +67,8 @@ class ListView extends View {
     }
 
     /**
+     * Adds or removes jobs from the view by specifying filters.
+     *
      * @since 1.29
      */
     void jobFilters(@DslContext(JobFiltersContext) Closure jobFiltersClosure) {
@@ -72,6 +83,9 @@ class ListView extends View {
     }
 
     /**
+     * If set to {@code true}, jobs from sub-folders will be shown.
+     * Defaults to {@code false}.
+     *
      * @since 1.31
      */
     void recurse(boolean shouldRecurse = true) {

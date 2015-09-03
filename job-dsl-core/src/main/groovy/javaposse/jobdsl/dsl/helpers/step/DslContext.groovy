@@ -16,26 +16,42 @@ class DslContext implements Context {
     String additionalClasspath
     String lookupStrategy = 'JENKINS_ROOT'
 
+    /**
+     * Sets the Job DSL script.
+     */
     void text(String text) {
         Preconditions.checkNotNull(text, 'text must be specified')
         this.scriptText = text
     }
 
+    /**
+     * Reads Job DSL scripts from the job's workspace.
+     */
     void external(String... dslScripts) {
         externalScripts.addAll(dslScripts)
     }
 
     /**
+     * Reads Job DSL scripts from the job's workspace.
+     *
      * @since 1.29
      */
     void external(Iterable<String> dslScripts) {
         dslScripts.each { externalScripts << it }
     }
 
+    /**
+     * Ignores existing items when processing Job DSL scripts. Defaults to {@code false}.
+     */
     void ignoreExisting(boolean ignore = true) {
         this.ignoreExisting = ignore
     }
 
+    /**
+     * Specifies the action to be taken for job that have been removed from DSL scripts.
+     *
+     * Must be one of {@code 'IGNORE'} (default), {@code 'DISABLE'} or {@code 'DELETE'}.
+     */
     void removeAction(String action) {
         Preconditions.checkArgument(
                 REMOVE_JOB_ACTIONS.contains(action),
@@ -45,6 +61,10 @@ class DslContext implements Context {
     }
 
     /**
+     * Specifies the action to be taken for views that have been removed from DSL scripts.
+     *
+     * Must be either {@code 'IGNORE'} (default) or {@code 'DELETE'}.
+     *
      * @since 1.35
      */
     void removeViewAction(String action) {
@@ -56,6 +76,8 @@ class DslContext implements Context {
     }
 
     /**
+     * Adds entries to the classpath for DSL scripts.
+     *
      * @since 1.29
      */
     void additionalClasspath(String classpath) {
@@ -63,6 +85,10 @@ class DslContext implements Context {
     }
 
     /**
+     * Chooses the lookup strategy for relative job names.
+     *
+     * Must be either {@code 'JENKINS_ROOT'} (default) or {@code 'SEED_JOB'}.
+     *
      * @since 1.33
      */
     void lookupStrategy(String lookupStrategy) {

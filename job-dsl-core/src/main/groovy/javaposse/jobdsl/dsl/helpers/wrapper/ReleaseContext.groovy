@@ -25,46 +25,76 @@ class ReleaseContext extends AbstractContext {
         this.item = item
     }
 
+    /**
+     * Adds build steps to run before the release.
+     */
     void preBuildSteps(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
         preBuildSteps.addAll(stepContext.stepNodes)
     }
 
+    /**
+     * Adds build steps to run after a successful release.
+     */
     void postSuccessfulBuildSteps(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
         postSuccessfulBuildSteps.addAll(stepContext.stepNodes)
     }
 
+    /**
+     * Adds build steps to run after a successful or failed release.
+     */
     void postBuildSteps(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
         postBuildSteps.addAll(stepContext.stepNodes)
     }
 
+    /**
+     * Adds build steps to run after a failed release.
+     */
     void postFailedBuildSteps(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
         postFailedBuildSteps.addAll(stepContext.stepNodes)
     }
 
+    /**
+     * Sets a template used to tell the release process how to formulate a release version string.
+     */
     void releaseVersionTemplate(String releaseVersionTemplate) {
         this.releaseVersionTemplate = releaseVersionTemplate
     }
 
+    /**
+     * If set, release builds will not be automatically kept forever. Defaults to {@code false}.
+     */
     void doNotKeepLog(boolean doNotKeepLog = true) {
         this.doNotKeepLog = doNotKeepLog
     }
 
+    /**
+     * If set, a release can override the build parameters.
+     */
     void overrideBuildParameters(boolean overrideBuildParameters = true) {
         this.overrideBuildParameters = overrideBuildParameters
     }
 
+    /**
+     * Allows direct manipulation of the generated XML. The {@code ReleaseWrapper} node is passed into the configure
+     * block.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
+     */
     void configure(Closure closure) {
         this.configureBlock = closure
     }
 
+    /**
+     * Add parameters for the release.
+     */
     void parameters(@DslContext(BuildParametersContext) Closure parametersClosure) {
         BuildParametersContext parametersContext = new BuildParametersContext(jobManagement)
         ContextHelper.executeInContext(parametersClosure, parametersContext)

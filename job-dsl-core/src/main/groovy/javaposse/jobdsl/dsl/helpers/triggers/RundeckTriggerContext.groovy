@@ -13,11 +13,21 @@ class RundeckTriggerContext implements Context {
     List<String> jobIdentifiers = []
     Set<String> executionStatuses = []
 
+    /**
+     * Only triggers a new build if the Rundeck execution at the origin of the notification matches one of the following
+     * Rundeck job identifier. The identifier can be either a job UUID or a job reference.
+     */
     void jobIdentifiers(String... jobIdentifiers) {
         this.filterJobs = true
         this.jobIdentifiers.addAll(jobIdentifiers)
     }
 
+    /**
+     *  Only triggers a build if the status of the Rundeck execution at the origin of the notification matches one of
+     *  the given statuses.
+     *
+     * Possible values for are {@code 'SUCCEEDED'}, {@code 'FAILED'} and {@code 'ABORTED'}.
+     */
     void executionStatuses(String... executionStatuses) {
         executionStatuses.each { String status ->
             checkArgument(

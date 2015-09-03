@@ -1319,16 +1319,6 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('violations')
     }
 
-    def 'call violations plugin with bad types'() {
-        when:
-        context.violations {
-            badType 10
-        }
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
     def 'cordell walker constructs xml'() {
         when:
         context.chucknorris()

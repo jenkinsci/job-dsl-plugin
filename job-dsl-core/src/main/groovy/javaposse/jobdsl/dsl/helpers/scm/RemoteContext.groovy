@@ -16,22 +16,40 @@ class RemoteContext implements Context {
         this.withXmlActions = withXmlActions
     }
 
+    /**
+     * Sets a name for the remote.
+     */
     void name(String name) {
         this.name = name
     }
 
+    /**
+     * Sets the remote URL.
+     */
     void url(String url) {
         this.url = url
     }
 
+    /**
+     * Sets credentials for authentication with the remote repository.
+     */
     void credentials(String credentials) {
         this.credentials = credentials
     }
 
+    /**
+     * Sets a refspec for the remote.
+     */
     void refspec(String refspec) {
         this.refspec = refspec
     }
 
+    /**
+     * Sets a remote URL for a GitHub repository.
+     *
+     * The URL will be derived from the {@code ownerAndProject}, {@code protocol} and {@code host} parameters.
+     * Supported protocols are {@code 'https'}, {@code 'ssh'} and {@code 'git'}.
+     */
     void github(String ownerAndProject, String protocol = 'https', String host = 'github.com') {
         switch (protocol) {
             case 'https':
