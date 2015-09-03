@@ -3415,14 +3415,10 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.sonar.SonarPublisher'
-            children().size() == 10
+            children().size() == 6
             jdk[0].value() == '(Inherit From Job)'
             branch[0].value() == ''
-            language[0].value().empty
-            mavenOpts[0].value().empty
-            jobAdditionalProperties[0].value().empty
             mavenInstallationName[0].value() == '(Inherit From Job)'
-            rootPom[0].value().empty
             settings[0].value().empty
             settings[0].@class == 'jenkins.mvn.DefaultSettingsProvider'
             globalSettings[0].value().empty
@@ -3436,6 +3432,10 @@ class PublisherContextSpec extends Specification {
         when:
         context.sonar {
             branch('test')
+            language('java')
+            mavenOpts('aa')
+            jobAdditionalProperties('bb')
+            rootPom('pom.xml')
             overrideTriggers {
                 skipIfEnvironmentVariable('FOO')
             }
@@ -3447,11 +3447,11 @@ class PublisherContextSpec extends Specification {
             children().size() == 11
             jdk[0].value() == '(Inherit From Job)'
             branch[0].value() == 'test'
-            language[0].value().empty
-            mavenOpts[0].value().empty
-            jobAdditionalProperties[0].value().empty
+            language[0].value() == 'java'
+            mavenOpts[0].value() == 'aa'
+            jobAdditionalProperties[0].value() == 'bb'
             mavenInstallationName[0].value() == '(Inherit From Job)'
-            rootPom[0].value().empty
+            rootPom[0].value() == 'pom.xml'
             settings[0].value().empty
             settings[0].@class == 'jenkins.mvn.DefaultSettingsProvider'
             globalSettings[0].value().empty
