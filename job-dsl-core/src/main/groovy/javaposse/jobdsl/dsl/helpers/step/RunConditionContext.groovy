@@ -119,9 +119,6 @@ class RunConditionContext implements Context {
     /**
      * Runs the build steps if the file exists.
      *
-     * The {@code baseDir} must be one of {@code BaseDir.JENKINS_HOME}, {@code BaseDir.ARTIFACTS_DIR} or
-     * {@code BaseDir.WORKSPACE}.
-     *
      * @since 1.23
      */
     void fileExists(String file, BaseDir baseDir) {
@@ -130,9 +127,6 @@ class RunConditionContext implements Context {
 
     /**
      * Runs the build steps if one or more files match the selectors.
-     *
-     * The {@code baseDir} must be one of {@code BaseDir.JENKINS_HOME}, {@code BaseDir.ARTIFACTS_DIR} or
-     * {@code BaseDir.WORKSPACE}.
      *
      * @since 1.36
      */

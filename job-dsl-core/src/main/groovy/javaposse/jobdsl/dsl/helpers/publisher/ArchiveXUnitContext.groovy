@@ -32,8 +32,8 @@ class ArchiveXUnitContext extends AbstractContext {
     }
 
     /**
-     * Specifies whether thresholds are given as total number or percentages. Must be either
-     * {@code ThresholdMode.NUMBER} (default) or {@code ThresholdMode.PERCENT}.
+     * Specifies whether thresholds are given as total number or percentages. Defaults to
+     * {@code ThresholdMode.NUMBER}.
      */
     void thresholdMode(ThresholdMode thresholdMode) {
         this.thresholdMode = thresholdMode

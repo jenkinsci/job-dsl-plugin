@@ -5,9 +5,7 @@ class RegexFilter extends AbstractJobFilter {
     String regex
 
     /**
-     * Selects the value to be matched. Possible values are {@code RegexMatchValue.NAME},
-     * {@code RegexMatchValue.DESCRIPTION}, {@code RegexMatchValue.SCM}, {@code RegexMatchValue.EMAIL},
-     * {@code RegexMatchValue.MAVEN}, {@code RegexMatchValue.SCHEDULE} or {@code RegexMatchValue.NODE}.
+     * Selects the value to be matched. Defaults to {@code RegexMatchValue.NAME}.
      */
     void matchValue(RegexMatchValue value) {
         this.matchValue = value

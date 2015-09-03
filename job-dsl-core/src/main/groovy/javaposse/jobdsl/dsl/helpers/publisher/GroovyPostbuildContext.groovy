@@ -22,10 +22,7 @@ class GroovyPostbuildContext extends AbstractContext {
     }
 
     /**
-     * Specifies the behavior when the script fails.
-     *
-     * Must be one of {@code Behaviour.DoNothing} (default), {@code Behavior.MarkUnstable} or
-     * {@code Behavior.MarkFailed}.
+     * Specifies the behavior when the script fails. Defaults to {@code Behavior.DoNothing}.
      */
     void behavior(PublisherContext.Behavior behavior) {
         this.behavior = behavior

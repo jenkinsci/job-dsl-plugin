@@ -6,9 +6,8 @@ abstract class AbstractJobFilter implements Context {
     MatchType matchType = MatchType.INCLUDE_MATCHED
 
     /**
-     * Specifies whether the filter includes or excludes jobs from the view.
-     * Possible values are {@code MatchType.INCLUDE_MATCHED}, {@code MatchType.INCLUDE_UNMATCHED},
-     * {@code MatchType.EXCLUDE_MATCHED} or {@code MatchType.EXCLUDE_UNMATCHED}.
+     * Specifies whether the filter includes or excludes jobs from the view. Defaults to
+     * {@code MatchType.INCLUDE_MATCHED}.
      */
     void matchType(MatchType matchType) {
         this.matchType = matchType

@@ -29,10 +29,7 @@ class SvnLocationContext extends AbstractContext {
     }
 
     /**
-     * Specifies the depth for sparse checkouts.
-     *
-     * Valid values are {@code SvnDepth.INFINITY} (default), {@code SvnDepth.EMPTY}, {@code SvnDepth.IMMEDIATES},
-     * {@code SvnDepth.FILES} and {@code SvnDepth.AS_IT_IS}.
+     * Specifies the depth for sparse checkouts. Defaults to {@code SvnDepth.INFINITY}.
      */
     void depth(SvnDepth depth) {
         this.depth = depth

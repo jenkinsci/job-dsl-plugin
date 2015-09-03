@@ -44,8 +44,7 @@ class BuildPipelineView extends View {
     }
 
     /**
-     * Defines the console output style. Options are {@code OutputStyle.Lightbox}, {@code OutputStyle.NewWindow} and
-     * {@code OutputStyle.ThisWindow}.
+     * Defines the console output style. Defaults to {@code OutputStyle.Lightbox}.
      */
     void consoleOutputLinkStyle(OutputStyle outputStyle) {
         checkNotNull(outputStyle, 'consoleOutputLinkStyle must not be null')

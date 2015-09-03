@@ -58,8 +58,8 @@ class DeliveryPipelineView extends View {
     }
 
     /**
-     * Specifies how to sort the pipeline in the view, only applicable for several pipelines. Possible values are
-     * {@code Sorting.NONE} (default), {@code Sorting.TITLE} and {@code Sorting.LAST_ACTIVITY}.
+     * Specifies how to sort the pipeline in the view, only applicable for several pipelines. Defaults to
+     * {@code Sorting.NONE}.
      */
     void sorting(Sorting sorting) {
         execute {

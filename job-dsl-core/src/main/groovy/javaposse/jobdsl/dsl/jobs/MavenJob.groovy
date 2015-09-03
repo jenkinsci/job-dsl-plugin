@@ -147,9 +147,7 @@ class MavenJob extends Job {
     }
 
     /**
-     * Set to use isolated local Maven repositories.
-     *
-     * Possible values are {@code LocalToWorkspace} and {@code LocalToExecutor}.
+     * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LocalToExecutor}.
      *
      * @param location the local repository to use for isolation
      * @since 1.17
@@ -164,10 +162,7 @@ class MavenJob extends Job {
     }
 
     /**
-     * Set to use isolated local Maven repositories.
-     *
-     * Possible values for are {@code LocalRepositoryLocation.LOCAL_TO_WORKSPACE} and
-     * {@code LocalRepositoryLocation.LOCAL_TO_EXECUTOR}.
+     * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LOCAL_TO_EXECUTOR}.
      *
      * @param location the local repository to use for isolation
      * @since 1.31

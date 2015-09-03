@@ -16,8 +16,7 @@ class ListView extends View {
     }
 
     /**
-     * Filter the job list by enabled/disabled status. Valid values are {@code StatusFilter.ALL} (default),
-     * {@code StatusFilter.ENABLED} and {@code StatusFilter.DISABLED}.
+     * Filter the job list by enabled/disabled status. Defaults to {@code StatusFilter.ALL}.
      */
     void statusFilter(StatusFilter filter) {
         checkNotNull(filter, 'filter must not be null')

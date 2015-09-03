@@ -41,10 +41,8 @@ class SvnContext extends AbstractContext {
     }
 
     /**
-     * The checkout strategy that should be used.  This is a global setting for all locations.
-     *
-     * Valid values are {@code SvnCheckoutStrategy.UPDATE} (default), {@code SvnCheckoutStrategy.CHECKOUT},
-     * {@code SvnCheckoutStrategy.UPDATE_WITH_CLEAN} and {@code SvnCheckoutStrategy.UPDATE_WITH_REVERT}.
+     * The checkout strategy that should be used.  This is a global setting for all locations. Defaults to
+     * {@code SvnCheckoutStrategy.UPDATE}.
      *
      * @param strategy the strategy to use, see {@link SvnCheckoutStrategy}
      */

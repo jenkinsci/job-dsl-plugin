@@ -795,9 +795,6 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Executes Groovy scripts after a build.
      *
-     * {@code behavior} must be one of {@code Behaviour.DoNothing} (default), {@code Behavior.MarkUnstable} or
-     * {@code Behavior.MarkFailed}.
-     *
      * @since 1.19
      */
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
