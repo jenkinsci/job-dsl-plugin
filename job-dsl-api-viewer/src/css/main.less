@@ -193,7 +193,7 @@ body {
 }
 
 .method-doc {
-  margin: 25px 0;
+  margin: 15px 0 15px 5px;
   text-align: left;
   pre {
     padding: 0;
@@ -212,10 +212,10 @@ body {
       background-color: @color2;
     }
     &.label-since {
-      background-color: @color4;
+      background-color: @color5;
     }
     &.label-deprecated {
-      background-color: @color5;
+      background-color: @color4;
     }
   }
   .signature {
@@ -224,6 +224,21 @@ body {
     margin-bottom: 10px;
     text-align: left;
     display: block;
+  }
+  .enums {
+    text-align: left;
+    margin-left: 5px;
+    margin-bottom: 10px;
+    ul {
+      padding: 0 0 0 20px;
+      margin: 0;
+      li {
+        font-family: monospace;;
+      }
+    }
+    .enum-title {
+      margin-bottom: 3px;
+    }
   }
 }
 

@@ -245,6 +245,10 @@ class ApiDocGenerator {
             map.type = map.type.replaceAll('\\$', '.') // fix inner class names
         }
 
+        if (clazz.isEnum()) {
+            map.enumConstants = clazz.enumConstants*.toString()
+        }
+
         if (parameter.defaultValue()) {
             map.defaultValue = parameter.defaultValue()
         }

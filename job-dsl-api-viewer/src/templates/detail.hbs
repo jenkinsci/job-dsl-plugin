@@ -28,6 +28,20 @@
                 {{#if html}}
                     <div class="method-doc">{{{html}}}</div>
                 {{/if}}
+                {{#if enums}}
+                    <div class="enums">
+                    {{#each enums}}
+                        <div class="enum">
+                            <div class="enum-title">Possible values for <code>{{paramName}}</code>:</div>
+                            <ul>
+                                {{#each values}}
+                                    <li>{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    {{/each}}
+                    </div>
+                {{/if}}
             {{/each}}
         </div>
 

@@ -199,9 +199,30 @@
                     comment: signature.firstSentenceCommentText
                 };
 
+                var enums = _.chain(signature.parameters)
+                    .filter(function(parameter) { return parameter.enumConstants; })
+                    .map(function(parameter) {
+                        var typeTokens = parameter.type.split('.');
+                        var simpleName = typeTokens[typeTokens.length - 1];
+                        return {
+                            paramName: parameter.name,
+                            values: parameter.enumConstants.map(function(v) { return simpleName + '.' + v; })
+                        };
+                    })
+                    .value();
+
+                if (enums.length) {
+                    data.enums = enums;
+                }
+
                 if (signature.plugin) {
                     data.plugin = signature.plugin;
-                    data.plugin.title = window.updateCenter.data.plugins[signature.plugin.id].title;
+                    var pluginData = window.updateCenter.data.plugins[signature.plugin.id];
+                    if (pluginData) {
+                        data.plugin.title = pluginData.title;
+                    } else {
+                        console.log('plugin not found', signature.plugin.id);
+                    }
                 }
 
                 return data;
