@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
 import groovy.text.SimpleTemplateEngine
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting
 import spock.lang.Specification
 
@@ -8,7 +9,8 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class DeliveryPipelineViewSpec extends Specification {
-    DeliveryPipelineView view = new DeliveryPipelineView()
+    JobManagement jobManagement = Mock(JobManagement)
+    DeliveryPipelineView view = new DeliveryPipelineView(jobManagement)
 
     def setup() {
         setIgnoreWhitespace(true)
@@ -63,6 +65,8 @@ class DeliveryPipelineViewSpec extends Specification {
 
         then:
         compareXML(allOptionsXml, view.xml).similar()
+        3 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.5')
+        2 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.0')
     }
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>

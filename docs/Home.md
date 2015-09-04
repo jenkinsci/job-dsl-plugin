@@ -28,6 +28,9 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced support for the
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
  * Enhanced support for the
+   [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
+   ([JENKINS-30221](https://issues.jenkins-ci.org/browse/JENKINS-30221))
+ * Enhanced support for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
    ([JENKINS-29662](https://issues.jenkins-ci.org/browse/JENKINS-29662),
    [JENKINS-29801](https://issues.jenkins-ci.org/browse/JENKINS-29801))

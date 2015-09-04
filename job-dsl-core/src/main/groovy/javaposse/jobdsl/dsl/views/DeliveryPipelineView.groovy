@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.views
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -103,30 +104,62 @@ class DeliveryPipelineView extends View {
         }
     }
 
+    /**
+     * Shows the total build time of a pipeline. Defaults to {@code false}.
+     *
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showTotalBuildTime(boolean value = true) {
         execute {
             it / methodMissing('showTotalBuildTime', value)
         }
     }
 
+    /**
+     * Allows to rebuild a task. Defaults to {@code false}.
+     *
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.0')
     void allowRebuild(boolean value = true) {
         execute {
             it / methodMissing('allowRebuild', value)
         }
     }
 
+    /**
+     * Allows to start a new pipeline build. Defaults to {@code false}.
+     *
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.0')
     void allowPipelineStart(boolean value = true) {
         execute {
             it / methodMissing('allowPipelineStart', value)
         }
     }
 
+    /**
+     * Shows the build description connected to a task. Defaults to {@code false}.
+     *
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showDescription(boolean value = true) {
         execute {
             it / methodMissing('showDescription', value)
         }
     }
 
+    /**
+     * Shows promotions from the
+     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Promoted+Builds+Plugin">Promoted Builds Plugin</a>.
+     * Defaults to {@code false}.
+     *
+     * @since 1.38
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showPromotions(boolean value = true) {
         execute {
             it / methodMissing('showPromotions', value)
