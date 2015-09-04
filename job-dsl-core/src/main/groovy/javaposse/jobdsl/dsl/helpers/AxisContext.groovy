@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class AxisContext extends AbstractExtensibleContext {
     List<Node> axisNodes = []
@@ -72,12 +73,26 @@ class AxisContext extends AbstractExtensibleContext {
         simpleAxis('JDK', 'jdk', axisValues)
     }
 
+    /**
+     * Adds an axis that allows to build the project with multiple versions of Python.
+     */
     void python(String... axisValues) {
         python(axisValues.toList())
     }
 
+    /**
+     * Adds an axis that allows to build the project with multiple versions of Python.
+     */
+    @RequiresPlugin(id='shiningpanda', minimumVersion = '0.21')
     void python(Iterable<String> axisValues) {
-        pythonAxis('PYTHON', axisValues)
+        NodeBuilder nodeBuilder = new NodeBuilder()
+
+        axisNodes << nodeBuilder.'jenkins.plugins.shiningpanda.matrix.PythonAxis' {
+            name('PYTHON')
+            values {
+                axisValues.each { string(it) }
+            }
+        }
     }
 
     /**
@@ -93,17 +108,6 @@ class AxisContext extends AbstractExtensibleContext {
         NodeBuilder nodeBuilder = new NodeBuilder()
 
         axisNodes << nodeBuilder."hudson.matrix.${axisType}Axis" {
-            name axisName
-            values {
-                axisValues.each { string it }
-            }
-        }
-    }
-
-    private pythonAxis(String axisName, Iterable<String> axisValues) {
-        NodeBuilder nodeBuilder = new NodeBuilder()
-
-        axisNodes << nodeBuilder.'jenkins.plugins.shiningpanda.matrix.PythonAxis' {
             name axisName
             values {
                 axisValues.each { string it }
