@@ -18,14 +18,30 @@ class LabelParamContext implements Context {
     String trigger = 'allCases'
     String eligibility = 'AllNodeEligibility'
 
+    /**
+     * Sets the default value for the parameter.
+     */
     void defaultValue(String defaultValue) {
         this.defaultValue = defaultValue
     }
 
+    /**
+     * Sets a description for the parameter.
+     */
     void description(String description) {
         this.description = description
     }
 
+    /**
+     * Defines in which case a build on the next node should be triggered.
+     *
+     * The {@code trigger} argument defines in which case a build on the next node should be triggered, must be one of
+     * {@code 'allCases'}, {@code 'success'} or {@code 'unstable'}.
+     *
+     * The {@code eligibility} argument defines how selected offline nodes should be handled, must be one of
+     * {@code 'AllNodeEligibility'}, {@code 'IgnoreOfflineNodeEligibility'} or
+     * {@code 'IgnoreTempOfflineNodeEligibility'}.
+     */
     void allNodes(String trigger = 'allCases', String eligibility = 'AllNodeEligibility') {
         checkArgument(TRIGGERS.contains(trigger), "trigger must be one of ${TRIGGERS.join(', ')}")
         checkArgument(ELIGIBILITY.contains(eligibility), "eligibility must be one of ${ELIGIBILITY.join(', ')}")

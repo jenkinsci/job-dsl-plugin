@@ -24,39 +24,76 @@ class GerritContext implements Context {
     Integer notBuiltCodeReview = null
     Integer notBuiltVerified = null
 
+    /**
+     * The Verified and Code Review vote to set in Gerrit when the build starts.
+     *
+     * Set an argument to {@code null} to use the default value.
+     */
     void buildStarted(Integer verified, Integer codeReview) {
         startedVerified = verified
         startedCodeReview = codeReview
     }
 
+    /**
+     * The Verified and Code Review vote to set in Gerrit when the build is successful.
+     *
+     * Set an argument to {@code null} to use the default value.
+     */
     void buildSuccessful(Integer verified, Integer codeReview) {
         successfulVerified = verified
         successfulCodeReview = codeReview
     }
 
+    /**
+     * The Verified and Code Review vote to set in Gerrit when the build fails.
+     *
+     * Set an argument to {@code null} to use the default value.
+     */
     void buildFailed(Integer verified, Integer codeReview) {
         failedVerified = verified
         failedCodeReview = codeReview
     }
 
+    /**
+     * The Verified and Code Review vote to set in Gerrit when the build is unstable.
+     *
+     * Set an argument to {@code null} to use the default value.
+     */
     void buildUnstable(Integer verified, Integer codeReview) {
         unstableVerified = verified
         unstableCodeReview = codeReview
     }
 
+    /**
+     * The Verified and Code Review vote to set in Gerrit when no build was built.
+     *
+     * Set an argument to {@code null} to use the default value.
+     */
     void buildNotBuilt(Integer verified, Integer codeReview) {
         notBuiltVerified = verified
         notBuiltCodeReview = codeReview
     }
 
+    /**
+     * Allows direct manipulation of the generated XML. The {@code GerritTrigger} node is passed into the configure
+     * block.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
+     */
     void configure(Closure configureClosure) {
         this.configureClosure = configureClosure
     }
 
+    /**
+     * Specifies which type of Gerrit events should trigger the build.
+     */
     void events(@DslContext(GerritEventContext) Closure eventClosure) {
         ContextHelper.executeInContext(eventClosure, eventContext)
     }
 
+    /**
+     * Specifies on which Gerrit projects to trigger a build on.
+     */
     void project(String projectName, List<String> branches) {
         projects << [
                 new GerritSpec(projectName),
@@ -64,6 +101,9 @@ class GerritContext implements Context {
         ]
     }
 
+    /**
+     * Specifies on which Gerrit projects to trigger a build on.
+     */
     void project(String projectName, String branch) {
         project(projectName, [branch])
     }

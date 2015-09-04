@@ -14,6 +14,9 @@ class MatrixJob extends Job {
         super(jobManagement)
     }
 
+    /**
+     * Specifies the axes for the matrix job.
+     */
     void axes(@DslContext(AxisContext) Closure closure) {
         AxisContext context = new AxisContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
@@ -30,7 +33,7 @@ class MatrixJob extends Job {
     }
 
     /**
-     * Configures a child custom workspace for the matrix project.
+     * Specifies a custom workspace name for individual child workspaces created for individual axes.
      *
      * @param workspacePath workspace path to use
      * @since 1.36
@@ -44,6 +47,9 @@ class MatrixJob extends Job {
         }
     }
 
+    /**
+     * Set an expression to limit which combinations can be run.
+     */
     void combinationFilter(String filterExpression) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('combinationFilter', filterExpression)
@@ -51,6 +57,9 @@ class MatrixJob extends Job {
         }
     }
 
+    /**
+     * Runs each matrix combination in sequence. Defaults to {@code false}.
+     */
     void runSequentially(boolean sequentially = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('runSequentially', sequentially)
@@ -58,6 +67,9 @@ class MatrixJob extends Job {
         }
     }
 
+    /**
+     * Sets an expression of which combination to run first.
+     */
     void touchStoneFilter(String filter, boolean continueOnUnstable = false) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'executionStrategy' / 'touchStoneCombinationFilter'(filter)

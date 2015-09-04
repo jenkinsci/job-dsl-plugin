@@ -35,22 +35,6 @@ class NestedViewSpec extends Specification {
         compareXML(nestedViewColumnsXml, view.xml).similar()
     }
 
-    def 'nested view with deprecated view method'() {
-        when:
-        view.views {
-            delegate.view {
-                name('foo')
-            }
-            delegate.view(type: ViewType.SectionedView) {
-                name('bar')
-            }
-        }
-
-        then:
-        compareXML(nestedViewViewsXml, view.xml).similar()
-        4 * jobManagement.logDeprecationWarning()
-    }
-
     def 'nested view with other deprecated view method'() {
         when:
         view.views {

@@ -181,8 +181,7 @@ class DslSampleSpec extends Specification {
 '''
 
     private final sampleVarDsl = '''
-job {
-    name "PROJ-${REPO}"
+job("PROJ-${REPO}") {
     scm {
         git(gitUrl)
     }
@@ -198,9 +197,8 @@ job {
     private final sampleDsl = '''
 def gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
 
-job {
+job('PROJ-unit-tests') {
     using 'TMPL-test'
-    name 'PROJ-unit-tests'
     scm {
         git(gitUrl)
     }
@@ -212,9 +210,8 @@ job {
     }
 }
 
-job {
+job('PROJ-sonar') {
     using 'TMPL-test'
-    name 'PROJ-sonar'
     scm {
         git(gitUrl)
     }
@@ -225,9 +222,8 @@ job {
         maven('sonar:sonar')
     }
 }
-job {
+job('PROJ-integ-tests') {
     using 'TMPL-test'
-    name 'PROJ-integ-tests'
     scm {
         git(gitUrl)
     }
@@ -239,9 +235,8 @@ job {
     }
 }
 
-job {
+job('PROJ-release') {
     // No template, not needed
-    name 'PROJ-release'
     scm {
         git(gitUrl)
     }
@@ -251,8 +246,7 @@ job {
     }
 }
 
-job(type: Maven) {
-    name 'PROJ-maven'
+mavenJob('PROJ-maven') {
     rootPOM 'my_module/pom.xml'
     goals 'clean verify'
     mavenOpts '-Xmx1024m'
@@ -266,9 +260,8 @@ job(type: Maven) {
     }
 }
 
-job(type: Maven) {
+mavenJob('PROJ-maven-with-template') {
     using 'TMPL-test-maven'
-    name 'PROJ-maven-with-template'
     rootPOM 'other_module/pom.xml'
     goals 'clean'
     goals 'install'

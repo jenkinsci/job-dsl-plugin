@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
 import groovy.text.SimpleTemplateEngine
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting
 import spock.lang.Specification
 
@@ -8,7 +9,8 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class DeliveryPipelineViewSpec extends Specification {
-    DeliveryPipelineView view = new DeliveryPipelineView()
+    JobManagement jobManagement = Mock(JobManagement)
+    DeliveryPipelineView view = new DeliveryPipelineView(jobManagement)
 
     def setup() {
         setIgnoreWhitespace(true)
@@ -49,6 +51,12 @@ class DeliveryPipelineViewSpec extends Specification {
             updateInterval(60)
             showChangeLog()
             enableManualTriggers()
+            showTotalBuildTime()
+            allowRebuild()
+            allowPipelineStart()
+            showDescription()
+            showPromotions()
+
             pipelines {
                 component('test', 'compile-a')
                 regex(/compile-(.*)/)
@@ -57,6 +65,8 @@ class DeliveryPipelineViewSpec extends Specification {
 
         then:
         compareXML(allOptionsXml, view.xml).similar()
+        3 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.5')
+        2 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.0')
     }
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
@@ -102,6 +112,11 @@ class DeliveryPipelineViewSpec extends Specification {
     <updateInterval>60</updateInterval>
     <showChanges>true</showChanges>
     <allowManualTriggers>true</allowManualTriggers>
+    <showTotalBuildTime>true</showTotalBuildTime>
+    <allowRebuild>true</allowRebuild>
+    <allowPipelineStart>true</allowPipelineStart>
+    <showDescription>true</showDescription>
+    <showPromotions>true</showPromotions>
     <componentSpecs>
         <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
             <name>test</name>

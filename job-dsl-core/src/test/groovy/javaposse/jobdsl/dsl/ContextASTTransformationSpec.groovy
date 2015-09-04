@@ -7,12 +7,12 @@ import java.lang.annotation.Annotation
 class ContextASTTransformationSpec extends Specification {
     def 'DelegatesTo annotation is present'() {
         when:
-        Annotation[][] parameterAnnotations = JobParent.getMethod('folder', Closure).parameterAnnotations
+        Annotation[][] parameterAnnotations = JobParent.getMethod('folder', String, Closure).parameterAnnotations
 
         then:
-        parameterAnnotations[0].length == 1
-        parameterAnnotations[0][0] instanceof DelegatesTo
-        with((DelegatesTo) parameterAnnotations[0][0]) {
+        parameterAnnotations[1].length == 1
+        parameterAnnotations[1][0] instanceof DelegatesTo
+        with((DelegatesTo) parameterAnnotations[1][0]) {
             value() == Folder
             strategy() == Closure.DELEGATE_FIRST
         }

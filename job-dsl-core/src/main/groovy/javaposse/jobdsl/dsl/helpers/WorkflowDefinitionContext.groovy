@@ -7,6 +7,9 @@ import javaposse.jobdsl.dsl.DslContext
 class WorkflowDefinitionContext implements Context {
     Node definitionNode
 
+    /**
+     * Defines a Groovy CPS DSL definition.
+     */
     void cps(@DslContext(CpsContext) Closure cpsClosure) {
         CpsContext context = new CpsContext()
         ContextHelper.executeInContext(cpsClosure, context)

@@ -14,11 +14,18 @@ class ConfigFilesContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * An alias for {@link #custom(java.lang.String, groovy.lang.Closure) custom}.
+     *
+     * @see #custom(java.lang.String, groovy.lang.Closure)
+     */
     void file(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
         custom(fileName, configFileClosure)
     }
 
     /**
+     * Makes a custom file available to the build.
+     *
      * @since 1.35
      */
     void custom(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
@@ -26,6 +33,8 @@ class ConfigFilesContext extends AbstractContext {
     }
 
     /**
+     * Makes a Maven settings file available to the build.
+     *
      * @since 1.35
      */
     void mavenSettings(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {

@@ -19,10 +19,21 @@ class NotificationContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Adds an endpoint which will receive notifications about the job status.
+     *
+     * @see #endpoint(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
+     */
     void endpoint(String url, String protocol = 'HTTP', String format = 'JSON') {
         endpoint(url, protocol, format, null)
     }
 
+    /**
+     * Adds an endpoint which will receive notifications about the job status.
+     *
+     * Possible values for the protocol argument are {@code 'HTTP'}, {@code 'TCP'}, and {@code 'UDP'}.
+     * Possible values for the format argument are {@code 'JSON'} and {@code 'XML'}.
+     */
     void endpoint(String url, String protocol = 'HTTP', String format = 'JSON',
                   @DslContext(NotificationEndpointContext) Closure notificationEndpointClosure) {
         checkNotNullOrEmpty(url, 'url must be specified')

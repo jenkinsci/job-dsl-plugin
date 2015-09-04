@@ -27,19 +27,36 @@ class StepContext extends AbstractExtensibleContext {
         stepNodes << node
     }
 
-    void shell(String commandStr) {
+    /**
+     * Runs a shell script.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     */
+    void shell(String command) {
         stepNodes << new NodeBuilder().'hudson.tasks.Shell' {
-            'command' commandStr
-        }
-    }
-
-    void batchFile(String commandStr) {
-        stepNodes << new NodeBuilder().'hudson.tasks.BatchFile' {
-            'command' commandStr
+            delegate.command(command)
         }
     }
 
     /**
+     * Runs a Windows batch script.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     */
+    void batchFile(String command) {
+        stepNodes << new NodeBuilder().'hudson.tasks.BatchFile' {
+            delegate.command(command)
+        }
+    }
+
+    /**
+     * Runs a Windows PowerShell script.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+
      * @since 1.32
      */
     @RequiresPlugin(id = 'powershell', minimumVersion = '1.2')
@@ -50,6 +67,7 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Set a build description based upon a regular expression test of the log file.
      * @since 1.31
      */
     @RequiresPlugin(id = 'description-setter', minimumVersion = '1.9')
@@ -61,6 +79,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes a Gradle build script.
+     *
      * @since 1.27
      */
     @RequiresPlugin(id = 'gradle')
@@ -88,6 +108,12 @@ class StepContext extends AbstractExtensibleContext {
         stepNodes << gradleNode
     }
 
+    /**
+     * Invokes a Gradle build script.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The
+     * {@code hudson.plugins.gradle.Gradle} node is passed into the configure block.
+     */
     void gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
         gradle {
             if (tasks != null) {
@@ -104,19 +130,24 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes the Scala Build Tool (SBT).
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The
+     * {@code org.jvnet.hudson.plugins.SbtPluginBuilder} node is passed into the configure block.
+     *
      * @since 1.16
      */
     @RequiresPlugin(id = 'sbt')
-    void sbt(String sbtNameArg, String actionsArg = null, String sbtFlagsArg = null, String jvmFlagsArg = null,
-             String subdirPathArg = null, Closure configure = null) {
-        Preconditions.checkNotNull(sbtNameArg, 'Please provide the name of the SBT to use')
+    void sbt(String sbtName, String actions = null, String sbtFlags = null, String jvmFlags = null,
+             String subdirPath = null, Closure configure = null) {
+        Preconditions.checkNotNull(sbtName, 'Please provide the name of the SBT to use')
 
         Node sbtNode = new NodeBuilder().'org.jvnet.hudson.plugins.SbtPluginBuilder' {
-            name sbtNameArg
-            jvmFlags jvmFlagsArg ?: ''
-            sbtFlags sbtFlagsArg ?: ''
-            actions actionsArg ?: ''
-            subdirPath subdirPathArg ?: ''
+            name(sbtName)
+            delegate.jvmFlags(jvmFlags ?: '')
+            delegate.sbtFlags(sbtFlags ?: '')
+            delegate.actions(actions ?: '')
+            delegate.subdirPath(subdirPath ?: '')
         }
 
         if (configure) {
@@ -128,11 +159,13 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Processes Job DSL scripts.
+     *
      * @since 1.16
      */
-    void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure configure) {
+    void dsl(@DslContext(javaposse.jobdsl.dsl.helpers.step.DslContext) Closure dslClosure) {
         javaposse.jobdsl.dsl.helpers.step.DslContext context = new javaposse.jobdsl.dsl.helpers.step.DslContext()
-        ContextHelper.executeInContext(configure, context)
+        ContextHelper.executeInContext(dslClosure, context)
 
         stepNodes << new NodeBuilder().'javaposse.jobdsl.plugin.ExecuteDslScripts' {
             targets(context.externalScripts.join('\n'))
@@ -147,6 +180,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Processes Job DSL scripts.
+     *
      * @since 1.16
      */
     void dsl(String scriptText, String removedJobAction = null, boolean ignoreExisting = false) {
@@ -160,6 +195,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Processes Job DSL scripts.
+     *
      * @since 1.16
      */
     void dsl(Iterable<String> externalScripts, String removedJobAction = null, boolean ignoreExisting = false) {
@@ -172,28 +209,40 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Invokes an Ant build script.
+     */
     void ant(@DslContext(AntContext) Closure antClosure = null) {
         ant(null, null, null, antClosure)
     }
 
-    void ant(String targetsStr, @DslContext(AntContext) Closure antClosure = null) {
-        ant(targetsStr, null, null, antClosure)
+    /**
+     * Invokes an Ant build script.
+     */
+    void ant(String targets, @DslContext(AntContext) Closure antClosure = null) {
+        ant(targets, null, null, antClosure)
     }
 
-    void ant(String targetsStr, String buildFileStr, @DslContext(AntContext) Closure antClosure = null) {
-        ant(targetsStr, buildFileStr, null, antClosure)
+    /**
+     * Invokes an Ant build script.
+     */
+    void ant(String targets, String buildFile, @DslContext(AntContext) Closure antClosure = null) {
+        ant(targets, buildFile, null, antClosure)
     }
 
+    /**
+     * Invokes an Ant build script.
+     */
     @RequiresPlugin(id = 'ant')
-    void ant(String targetsArg, String buildFileArg, String antInstallation,
+    void ant(String targets, String buildFile, String antInstallation,
              @DslContext(AntContext) Closure antClosure = null) {
         AntContext antContext = new AntContext()
         ContextHelper.executeInContext(antClosure, antContext)
 
         List<String> targetList = []
 
-        if (targetsArg) {
-            targetList.addAll targetsArg.contains('\n') ? targetsArg.split('\n') : targetsArg.split(' ')
+        if (targets) {
+            targetList.addAll targets.contains('\n') ? targets.split('\n') : targets.split(' ')
         }
         targetList.addAll antContext.targets
 
@@ -203,7 +252,7 @@ class StepContext extends AbstractExtensibleContext {
         propertiesList += antContext.props
 
         Node antNode = new NodeBuilder().'hudson.tasks.Ant' {
-            targets targetList.join(' ')
+            delegate.targets(targetList.join(' '))
 
             antName antInstallation ?: antContext.antName ?: '(Default)'
 
@@ -211,8 +260,8 @@ class StepContext extends AbstractExtensibleContext {
                 antOpts antOptsList.join('\n')
             }
 
-            if (buildFileArg || antContext.buildFile) {
-                buildFile buildFileArg ?: antContext.buildFile
+            if (buildFile || antContext.buildFile) {
+                delegate.buildFile(buildFile ?: antContext.buildFile)
             }
         }
 
@@ -223,18 +272,30 @@ class StepContext extends AbstractExtensibleContext {
         stepNodes << antNode
     }
 
+    /**
+     * Executes a Groovy script.
+     */
     void groovyCommand(String command, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, null, groovyClosure)
     }
 
+    /**
+     * Executes a Groovy script.
+     */
     void groovyCommand(String command, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, groovyName, groovyClosure)
     }
 
+    /**
+     * Executes a Groovy script.
+     */
     void groovyScriptFile(String fileName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, null, groovyClosure)
     }
 
+    /**
+     * Executes a Groovy script.
+     */
     void groovyScriptFile(String fileName, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, groovyName, groovyClosure)
     }
@@ -267,10 +328,16 @@ class StepContext extends AbstractExtensibleContext {
         stepNodes << groovyNode
     }
 
+    /**
+     * Executes a system Groovy script.
+     */
     void systemGroovyCommand(String command, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
         systemGroovy(command, true, systemGroovyClosure)
     }
 
+    /**
+     * Executes a system Groovy script.
+     */
     void systemGroovyScriptFile(String fileName, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
@@ -290,6 +357,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes a Maven build.
+     *
      * @since 1.20
      */
     @RequiresPlugin(id = 'maven-plugin')
@@ -317,7 +386,6 @@ class StepContext extends AbstractExtensibleContext {
             }
         }
 
-        // Apply Context
         if (mavenContext.configureBlock) {
             WithXmlAction action = new WithXmlAction(mavenContext.configureBlock)
             action.execute(mavenNode)
@@ -326,62 +394,89 @@ class StepContext extends AbstractExtensibleContext {
         stepNodes << mavenNode
     }
 
-    void maven(String targetsArg = null, String pomArg = null, Closure configure = null) {
+    /**
+     * Invokes a Maven build.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The
+     * {@code hudson.tasks.Maven} node is passed into the configure block.
+     */
+    void maven(String targets = null, String pom = null, Closure configure = null) {
         maven {
-            delegate.goals(targetsArg)
-            delegate.rootPOM(pomArg)
+            delegate.goals(targets)
+            delegate.rootPOM(pom)
             delegate.configure(configure)
         }
     }
 
+    /**
+     * Builds a Grails project.
+     */
     void grails(@DslContext(GrailsContext) Closure grailsClosure) {
         grails null, false, grailsClosure
     }
 
-    void grails(String targetsArg, @DslContext(GrailsContext) Closure grailsClosure) {
-        grails targetsArg, false, grailsClosure
+    /**
+     * Builds a Grails project.
+     */
+    void grails(String targets, @DslContext(GrailsContext) Closure grailsClosure) {
+        grails targets, false, grailsClosure
     }
 
+    /**
+     * Builds a Grails project.
+     */
     @RequiresPlugin(id = 'grails')
-    void grails(String targetsArg = null, boolean useWrapperArg = false,
+    void grails(String targets = null, boolean useWrapper = false,
                 @DslContext(GrailsContext) Closure grailsClosure = null) {
         GrailsContext grailsContext = new GrailsContext(
-                useWrapper: useWrapperArg
+                useWrapper: useWrapper
         )
         ContextHelper.executeInContext(grailsClosure, grailsContext)
 
         stepNodes << new NodeBuilder().'com.g2one.hudson.grails.GrailsBuilder' {
-            targets targetsArg ?: grailsContext.targetsString
+            delegate.targets(targets ?: grailsContext.targets.join(' '))
             name grailsContext.name
             grailsWorkDir grailsContext.grailsWorkDir
             projectWorkDir grailsContext.projectWorkDir
             projectBaseDir grailsContext.projectBaseDir
             serverPort grailsContext.serverPort
-            'properties' grailsContext.propertiesString
+            'properties' grailsContext.props.collect { k, v -> "$k=$v" }.join('\n')
             forceUpgrade grailsContext.forceUpgrade
             nonInteractive grailsContext.nonInteractive
-            useWrapper grailsContext.useWrapper
+            delegate.useWrapper(grailsContext.useWrapper)
         }
     }
 
+    /**
+     * Copies artifacts from another project.
+     */
     @Deprecated
     void copyArtifacts(String jobName, String includeGlob,
                        @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
     }
 
+    /**
+     * Copies artifacts from another project.
+     */
     @Deprecated
     void copyArtifacts(String jobName, String includeGlob, String targetPath,
                        @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
     }
 
+    /**
+     * Copies artifacts from another project.
+     */
     @Deprecated
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
     }
 
+    /**
+     * Copies artifacts from another project.
+     */
     @Deprecated
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        boolean optionalAllowed,
@@ -397,6 +492,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Copies artifacts from another project.
+     *
      * @since 1.33
      */
     @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
@@ -428,6 +525,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Resolves artifacts from a Maven repository.
+     *
      * @since 1.29
      */
     @RequiresPlugin(id = 'repository-connector')
@@ -448,18 +547,24 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Verify the state of other jobs and fails the build if needed.
+     *
+     * @param projectList a comma delimited list of jobs to check
+     * @param warningOnly if set to {@code true} then the build will not be failed even if the checks are failed
      * @since 1.19
      */
     @RequiresPlugin(id = 'prereq-buildstep')
-    void prerequisite(String projectList = '', boolean warningOnlyBool = false) {
+    void prerequisite(String projectList = '', boolean warningOnly = false) {
         stepNodes << new NodeBuilder().'dk.hlyh.ciplugins.prereqbuildstep.PrereqBuilder' {
             // Important that there are no spaces for comma delimited values, plugin doesn't trim, so we will
             projects(projectList.tokenize(',')*.trim().join(','))
-            warningOnly(warningOnlyBool)
+            delegate.warningOnly(warningOnly)
         }
     }
 
     /**
+     * Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
+     *
      * @since 1.28
      */
     @RequiresPlugin(id = 'publish-over-ssh')
@@ -478,6 +583,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Triggers new parametrized builds.
+     *
      * @since 1.20
      */
     @RequiresPlugin(id = 'parameterized-trigger')
@@ -493,6 +600,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Wraps any number of other build steps, controlling their execution based on a defined condition.
+     *
      * @since 1.20
      */
     @RequiresPlugin(id = 'conditional-buildstep')
@@ -510,6 +619,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Injects environment variables into the build.
+     *
      * @since 1.21
      */
     @RequiresPlugin(id = 'envinject')
@@ -523,6 +634,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Triggers a job on another Jenkins instance.
+     *
      * @since 1.22
      */
     @RequiresPlugin(id = 'Parameterized-Remote-Trigger')
@@ -569,6 +682,10 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Contains the build steps of the critical zone defined by the
+     * {@link javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext#exclusionResources(java.lang.Iterable)
+     * exclusionResources} wrapper.
+     *
      * @since 1.24
      */
     @RequiresPlugin(id = 'Exclusion')
@@ -582,6 +699,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes Rake.
+     *
      * @since 1.25
      */
     void rake(@DslContext(RakeContext) Closure rakeClosure = null) {
@@ -589,14 +708,16 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes Rake.
+     *
      * @since 1.25
      */
     @RequiresPlugin(id = 'rake')
-    void rake(String tasksArg, @DslContext(RakeContext) Closure rakeClosure = null) {
+    void rake(String tasks, @DslContext(RakeContext) Closure rakeClosure = null) {
         RakeContext rakeContext = new RakeContext()
 
-        if (tasksArg) {
-            rakeContext.task(tasksArg)
+        if (tasks) {
+            rakeContext.task(tasks)
         }
 
         ContextHelper.executeInContext(rakeClosure, rakeContext)
@@ -606,13 +727,17 @@ class StepContext extends AbstractExtensibleContext {
             rakeFile rakeContext.file
             rakeLibDir rakeContext.libDir
             rakeWorkingDir rakeContext.workingDir
-            tasks rakeContext.tasks.join(' ')
+            delegate.tasks(rakeContext.tasks.join(' '))
             silent rakeContext.silent
             bundleExec rakeContext.bundleExec
         }
     }
 
     /**
+     * Set the build status.
+     *
+     * Must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'FAILURE'}, {@code 'ABORTED'} or {@code 'CYCLE'}.
+     *
      * @since 1.35
      */
     @RequiresPlugin(id = 'fail-the-build-plugin', minimumVersion = '1.0')
@@ -627,6 +752,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * This build step will power off the specified VM.
+     *
      * @since 1.25
      */
     void vSpherePowerOff(String server, String vm) {
@@ -638,6 +765,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * This build step will power on the specified VM.
+     *
      * @since 1.25
      */
     void vSpherePowerOn(String server, String vm) {
@@ -648,6 +777,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * This build step will revert the specified VM to the specified snapshot.
+     *
      * @since 1.25
      */
     void vSphereRevertToSnapshot(String server, String vm, String snapshot) {
@@ -670,6 +801,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a step which performs a HTTP request.
+     *
      * @since 1.28
      */
     @RequiresPlugin(id = 'http_request')
@@ -695,6 +828,9 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Executes a NodeJS script. Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String)
+     * readFileFromWorkspace} to read scripts from a file.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'nodejs')
@@ -706,6 +842,13 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Executes Clang scan-build against Mac or iPhone XCode projects or other scan-build compatible build tools.
+     *
+     * The {@link ClangScanBuildContext#workspace(java.lang.String) workspace},
+     * {@link ClangScanBuildContext#scheme(java.lang.String) scheme} and
+     * {@link ClangScanBuildContext#clangInstallationName(java.lang.String) clangInstallationName} options are
+     * mandatory.
+     *
      * @since 1.37
      */
     @RequiresPlugin(id = 'clang-scanbuild-plugin', minimumVersion = '1.6')
@@ -729,6 +872,9 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Builds Debian (.deb) packages.
+     *
+     * @param path refers to a path in the workspace where the 'debian' catalog is stored.
      * @since 1.31
      */
     @RequiresPlugin(id = 'debian-package-builder', minimumVersion = '1.6.6')
@@ -748,6 +894,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Builds the project with a declared Python installation.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 'shiningpanda', minimumVersion = '0.21')
@@ -764,7 +912,7 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
-     * @since 1.38
+     * Creates a virtualenv to build the project.
      */
     @RequiresPlugin(id = 'shiningpanda', minimumVersion = '0.21')
     void virtualenv(@DslContext(VirtualenvContext) Closure closure) {

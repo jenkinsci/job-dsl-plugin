@@ -24,41 +24,64 @@ class PullRequestBuilderContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Adds admins for this job.
+     */
     void admin(String admin) {
         admins << admin
     }
 
+    /**
+     * Adds admins for this job.
+     */
     void admins(Iterable<String> admins) {
         admins.each {
             admin(it)
         }
     }
 
+    /**
+     * Adds whitelisted users for this job.
+     */
     void userWhitelist(String user) {
         userWhitelist << user
     }
 
+    /**
+     * Adds whitelisted users for this job.
+     */
     void userWhitelist(Iterable<String> users) {
         users.each {
             userWhitelist(it)
         }
     }
 
+    /**
+     * Adds organisation names whose members are considered whitelisted for this specific job.
+     */
     void orgWhitelist(String organization) {
         orgWhitelist << organization
     }
 
+    /**
+     * Adds organisation names whose members are considered whitelisted for this specific job.
+     */
     void orgWhitelist(Iterable<String> organizations) {
         organizations.each {
             orgWhitelist(it)
         }
     }
 
+    /**
+     * This schedules polling to GitHub for new changes in pull requests.
+     */
     void cron(String cron) {
         this.cron = cron
     }
 
     /**
+     * Extends the standard build comment message on github with a custom message file.
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
@@ -66,27 +89,44 @@ class PullRequestBuilderContext extends AbstractContext {
         this.commentFilePath = commentFilePath
     }
 
+    /**
+     * When filled, commenting this phrase in the pull request will trigger a build.
+     */
     void triggerPhrase(String triggerPhrase) {
         this.triggerPhrase = triggerPhrase
     }
 
+    /**
+     * When set, only commenting the trigger phrase in the pull request will trigger a build.
+     */
     void onlyTriggerPhrase(boolean onlyTriggerPhrase = true) {
         this.onlyTriggerPhrase = onlyTriggerPhrase
     }
 
+    /**
+     * Checking this option will disable regular polling for changes in GitHub and will try to create a GitHub hook.
+     */
     void useGitHubHooks(boolean useGitHubHooks = true) {
         this.useGitHubHooks = useGitHubHooks
     }
 
+    /**
+     * Build every pull request automatically without asking.
+     */
     void permitAll(boolean permitAll = true) {
         this.permitAll = permitAll
     }
 
+    /**
+     * Close pull request automatically when the build fails.
+     */
     void autoCloseFailedPullRequests(boolean autoCloseFailedPullRequests = true) {
         this.autoCloseFailedPullRequests = autoCloseFailedPullRequests
     }
 
     /**
+     * Allows members of whitelisted organisations to behave like admins.
+     *
      * @since 1.35
      */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
@@ -95,6 +135,8 @@ class PullRequestBuilderContext extends AbstractContext {
     }
 
     /**
+     * Adds additional trigger options.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')

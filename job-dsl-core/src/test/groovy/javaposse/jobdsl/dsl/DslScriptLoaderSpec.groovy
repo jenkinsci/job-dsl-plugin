@@ -69,11 +69,9 @@ class DslScriptLoaderSpec extends Specification {
 
     def 'run engine with dependent jobs'() {
         setup:
-        def scriptStr = '''job {
-    name 'project-a'
+        def scriptStr = '''job('project-a') {
 }
-job {
-  name 'project-b'
+job('project-b') {
 }
 '''
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
@@ -95,8 +93,7 @@ job {
 
     def 'run engine renaming existing jobs'() {
         setup:
-        def scriptStr = '''job {
-    name '5-project'
+        def scriptStr = '''job('5-project') {
     previousNames '\\\\d-project'
 }
 '''
@@ -112,29 +109,9 @@ job {
 
     }
 
-    def 'run engine that uses static import'() {
-        setup:
-        def scriptStr = '''job(type: Maven) {
-    name 'test'
-}
-'''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
-
-        when:
-        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
-
-        then:
-        jp != null
-        def jobs = jp.referencedJobs
-        jobs.size() == 1
-        def job = jobs.first()
-        job.name == 'test'
-    }
-
     def 'run engine that uses static import for LocalRepositoryLocation'() {
         setup:
-        def scriptStr = '''job(type: Maven) {
-    name 'test'
+        def scriptStr = '''mavenJob('test') {
     localRepository LocalToExecutor
 }
 '''
@@ -151,8 +128,7 @@ job {
 
     def 'run engine with reference to other class from a string'() {
         setup:
-        def scriptStr = '''job {
-    name 'test'
+        def scriptStr = '''job('test') {
 }
 
 Callee.makeJob(this, 'test2')
@@ -172,8 +148,7 @@ Callee.makeJob(this, 'test2')
     def 'jobs scheduled to build'() {
         setup:
         def scriptStr = '''
-def jobA = job {
-    name 'JobA'
+def jobA = job('JobA') {
 }
 queue jobA
 queue 'JobB'
@@ -192,8 +167,7 @@ queue 'JobB'
     def 'files read through to JobManagement'() {
         setup:
         def scriptStr = '''
-def jobA = job {
-    name 'JobA'
+def jobA = job('JobA') {
 }
 
 def content = readFileFromWorkspace('foo.txt')
@@ -232,11 +206,9 @@ readFileFromWorkspace('bar.txt')
 
     def 'run engine with views'() {
         setup:
-        def scriptStr = '''view {
-    name 'view-a'
+        def scriptStr = '''listView('view-a') {
 }
-view(type: ListView) {
-    name 'view-b'
+listView('view-b') {
 }
 '''
 
@@ -251,11 +223,9 @@ view(type: ListView) {
 
     def 'run engine with folders'() {
         setup:
-        def scriptStr = '''folder {
-    name 'folder-a'
+        def scriptStr = '''folder('folder-a') {
 }
-folder {
-    name 'folder-b'
+folder('folder-b') {
 }
 '''
 
@@ -321,8 +291,7 @@ folder {
     def 'getProperties throws exception'() { // JENKINS-22708
         setup:
         String script = '''
-            job {
-                name "Test"
+            job('Test') {
                 configure { root ->
                     (properties / 'hudson.plugins.disk__usage.DiskUsageProperty').@plugin="disk-usage@0.23"
                 }

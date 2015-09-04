@@ -19,6 +19,9 @@ class S3EntryContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Specifies the S3 storage class. Must be either {@code 'STANDARRD'} (default) or {@code 'REDUCED_REDUNDANCY'}.
+     */
     void storageClass(String storageClass) {
         Preconditions.checkArgument(
                 STORAGE_CLASSES.contains(storageClass),
@@ -28,19 +31,31 @@ class S3EntryContext extends AbstractContext {
         this.storageClass = storageClass
     }
 
+    /**
+     * Skips upload if the build failed. Defaults to {@code false}.
+     */
     void noUploadOnFailure(boolean noUploadOnFailure = true) {
         this.noUploadOnFailure = noUploadOnFailure
     }
 
+    /**
+     * Upload directly from the slave, instead of proxying the upload to the master. Defaults to {@code false}.
+     */
     void uploadFromSlave(boolean uploadFromSlave = true) {
         this.uploadFromSlave = uploadFromSlave
     }
 
+    /**
+     * If set, Jenkins fully manages the artifacts, exactly like it does when the artifacts are published to the master.
+     * Defaults to {@code false}.
+     */
     void managedArtifacts(boolean managedArtifacts = true) {
         this.managedArtifacts = managedArtifacts
     }
 
     /**
+     * Enables S3 AES-256 server side encryption support. Defaults to {@code false}.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 's3', minimumVersion = '0.7')
@@ -49,6 +64,9 @@ class S3EntryContext extends AbstractContext {
     }
 
     /**
+     * If set, ignores the directory structure of the artifacts in the source project and copies all matching artifacts
+     * directly into the specified bucket.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 's3', minimumVersion = '0.7')

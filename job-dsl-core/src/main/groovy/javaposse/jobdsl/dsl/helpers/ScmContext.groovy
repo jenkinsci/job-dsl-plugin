@@ -33,11 +33,11 @@ class ScmContext extends AbstractExtensibleContext {
 
     @Override
     protected void addExtensionNode(Node node) {
-        scmNodes << node
+        scmNodes << toNamedNode('scm', node)
     }
 
     /**
-     * Generate configuration for Mercurial.
+     * Adds a Mercurial SCM source.
      */
     @RequiresPlugin(id = 'mercurial')
     void hg(String url, String branch = null, Closure configure = null) {
@@ -69,7 +69,7 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Generate configuration for Mercurial.
+     * Adds a Mercurial SCM source.
      *
      * @since 1.33
      */
@@ -104,6 +104,8 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a Git SCM source.
+     *
      * @since 1.20
      */
     @RequiresPlugin(id = 'git')
@@ -189,10 +191,22 @@ class ScmContext extends AbstractExtensibleContext {
         scmNodes << gitNode
     }
 
+    /**
+     * Adds a Git SCM source.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
+     * node is passed into the configure block.
+     */
     void git(String url, Closure configure = null) {
         git(url, null, configure)
     }
 
+    /**
+     * Adds a Git SCM source.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
+     * node is passed into the configure block.
+     */
     void git(String url, String branch, Closure configure = null) {
         git {
             remote {
@@ -209,14 +223,28 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a Git SCM source for a GitHub repository.
+     *
      * @since 1.15
+     * @see #github(java.lang.String, java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
     void github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
         github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
 
     /**
+     * Adds a Git SCM source for a GitHub repository.
+     *
+     * The Git URL will be derived from the {@code ownerAndProject}, {@code protocol} and {@code host} parameters.
+     * Supported protocols are {@code 'https'}, {@code 'ssh'} and {@code 'git'}.
+     *
+     * This will also configure the source browser to point to GitHub and set the GitHub project URL.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
+     * node is passed into the configure block.
+     *
      * @since 1.15
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
                Closure closure = null) {
@@ -233,10 +261,22 @@ class ScmContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Adds a Subversion SCM source.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
+     * node is passed into the configure block.
+     */
     void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
 
+    /**
+     * Adds a Subversion SCM source.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
+     * node is passed into the configure block.
+     */
     void svn(String svnUrl, String localDir, Closure configure = null) {
         checkNotNull(svnUrl, 'svnUrl must not be null')
         checkNotNull(localDir, 'localDir must not be null')
@@ -250,6 +290,8 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a Subversion SCM source.
+     *
      * @since 1.30
      */
     @RequiresPlugin(id = 'subversion')
@@ -277,14 +319,40 @@ class ScmContext extends AbstractExtensibleContext {
         scmNodes << svnNode
     }
 
+    /**
+     * Add Perforce SCM source.
+     *
+     * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
+     */
     void p4(String viewspec, Closure configure = null) {
         p4(viewspec, 'rolem', '', configure)
     }
 
+    /**
+     * Add Perforce SCM source.
+     *
+     * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
+     */
     void p4(String viewspec, String user, Closure configure = null) {
         p4(viewspec, user, '', configure)
     }
 
+    /**
+     * Add Perforce SCM source.
+     *
+     * The client name will be set to {@code builds-${JOB_NAME}}.
+     *
+     * For security reasons, do not use a hard-coded password. See
+     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
+     * details about handling credentials in DSL scripts.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
+     * node is passed into the configure block.
+     *
+     * The configure block must be used to set additional options.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
+     */
     @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, String user, String password, Closure configure = null) {
         checkNotNull(viewspec, 'viewspec must not be null')
@@ -331,23 +399,29 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Add a SCM source which copies the workspace of another project.
+     *
+     * Valid criteria are {@code 'Any'}, {@code 'Not Failed'} and {@code 'Successful'}.
+     *
      * @since 1.16
      */
     @RequiresPlugin(id = 'clone-workspace-scm')
-    void cloneWorkspace(String parentProject, String criteriaArg = 'Any') {
+    void cloneWorkspace(String parentProject, String criteria = 'Any') {
         checkNotNull(parentProject, 'parentProject must not be null')
         checkArgument(
-                validCloneWorkspaceCriteria.contains(criteriaArg),
+                validCloneWorkspaceCriteria.contains(criteria),
                 "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
         )
 
         scmNodes << new NodeBuilder().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
             parentJobName(parentProject)
-            criteria(criteriaArg)
+            delegate.criteria(criteria)
         }
     }
 
     /**
+     * Adds a ClearCase SCM source.
+     *
      * @since 1.24
      */
     @RequiresPlugin(id = 'clearcase')
@@ -387,6 +461,8 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a Team Concert SCM source.
+     *
      * @since 1.28
      */
     @RequiresPlugin(id = 'teamconcert')

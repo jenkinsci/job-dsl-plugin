@@ -12,10 +12,16 @@ class XvncContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Takes a screenshot upon completion of the build. Defaults to {@code false}.
+     */
     void takeScreenshot(boolean takeScreenshot = true) {
         this.takeScreenshot = takeScreenshot
     }
 
+    /**
+     * Creates a dedicated Xauthority file per build. Defaults to {@code true}.
+     */
     @RequiresPlugin(id = 'xvnc', minimumVersion = '1.16')
     void useXauthority(boolean useXauthority = true) {
         this.useXauthority = useXauthority

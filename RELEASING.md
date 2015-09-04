@@ -7,6 +7,7 @@ These are the steps to release a gradle-based Jenkins plugin, assuming the relea
 * Set `compatibleSinceVersion` to the new version if deprecated features have been removed
 * Update the release notes, set the release date: `* 1.14 (Mar 31 2013)`
 * Update any references to the version in the documentation, e.g. in `IDE-Support.md` and `Extending-the-DSL.md`
+* Update any references to the version in the API viewer, e.g. in `index.html`
 * Ensure everything is checked in: _git commit -am "Releasing 1.14"_
 * Ensure you have your Jenkins credentials in ~/.jenkins-ci.org: _cat ~/.jenkins-ci.org_
 ```
@@ -14,7 +15,7 @@ userName=yourUsername
 password=IHeartJenkins
 ```
 * Deploy: _./gradlew publish
-* Publish the docs: _./gradlew publishGhPages_
+* Publish the docs: _./gradlew publishDocs_
 * Tag the source as it is: _git tag -a job-dsl-1.14 -m "Staging 1.14"_
 * Increment the version in gradle.properties and append "-SNAPSHOT": _echo "version=1.15-SNAPSHOT">gradle.properties_
 * Update the release notes, add the next version: `* 1.15 (unreleased)`

@@ -1,0 +1,3 @@
+sectionedView('example') {
+    filterBuildQueue()
+}

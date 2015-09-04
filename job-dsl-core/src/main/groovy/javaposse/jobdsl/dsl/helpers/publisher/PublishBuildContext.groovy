@@ -11,14 +11,23 @@ class PublishBuildContext implements Context {
     int artifactDaysToKeep
     int artifactNumToKeep
 
+    /**
+     * If set, publishes unstable builds. Defaults to {@code true}.
+     */
     void publishUnstable(boolean publishUnstable) {
         this.publishUnstable = publishUnstable
     }
 
+    /**
+     * If set, publishes failed builds. Defaults to {@code true}.
+     */
     void publishFailed(boolean publishFailed) {
         this.publishFailed = publishFailed
     }
 
+    /**
+     * Manages how long to keep records of the builds.
+     */
     void discardOldBuilds(int daysToKeep = -1, int numToKeep = -1,
                           int artifactDaysToKeep = -1, int artifactNumToKeep = -1) {
         discardOldBuilds = true

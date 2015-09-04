@@ -9,14 +9,10 @@ abstract class Item extends AbstractContext {
         super(jobManagement)
     }
 
-    @Deprecated
-    void name(String name) {
-        jobManagement.logDeprecationWarning()
-        this.name = name
-    }
-
     /**
-     * Provide raw config.xml for direct manipulation.
+     * Allows direct manipulation of the generated XML.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void configure(Closure withXmlClosure) {
         withXmlActions.add( new WithXmlAction(withXmlClosure) )

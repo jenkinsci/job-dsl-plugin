@@ -23,10 +23,16 @@ class BuildParametersContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Defines a simple boolean parameter.
+     */
     void booleanParam(String parameterName, boolean defaultValue = false, String description = null) {
         simpleParam('hudson.model.BooleanParameterDefinition', parameterName, defaultValue, description)
     }
 
+    /**
+     * Defines a parameter that allows to select a Subversion tag from which to create the working copy for the project.
+     */
     @RequiresPlugin(id = 'subversion')
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
@@ -52,6 +58,9 @@ class BuildParametersContext extends AbstractContext {
         buildParameterNodes[parameterName] = definitionNode
     }
 
+    /**
+     * Defines a simple string parameter, which can be selected from a list.
+     */
     void choiceParam(String parameterName, List<String> options, String description = null) {
         checkParameterName(parameterName)
         checkNotNull(options, 'options cannot be null')
@@ -74,6 +83,9 @@ class BuildParametersContext extends AbstractContext {
         buildParameterNodes[parameterName] = definitionNode
     }
 
+    /**
+     * Defines a parameters that accepts a file submission.
+     */
     void fileParam(String fileLocation, String description = null) {
         checkParameterName(fileLocation)
 
@@ -86,6 +98,9 @@ class BuildParametersContext extends AbstractContext {
         buildParameterNodes[fileLocation] = definitionNode
     }
 
+    /**
+     * Defines a run parameter, where users can pick a single run of a certain project.
+     */
     void runParam(String parameterName, String jobToRun, String description = null, String filter = null) {
         checkParameterName(parameterName)
         checkNotNullOrEmpty(jobToRun, 'jobToRun cannot be null or empty')
@@ -104,6 +119,8 @@ class BuildParametersContext extends AbstractContext {
     }
 
     /**
+     * Defines a parameter to select a label used to identify/restrict the node where this job should run on.
+     *
      * @since 1.30
      */
     @RequiresPlugin(id = 'nodelabelparameter')
@@ -125,6 +142,8 @@ class BuildParametersContext extends AbstractContext {
     }
 
     /**
+     * Defines a parameter to select a list of nodes where the job could potentially be executed on.
+     *
      * @since 1.26
      */
     @RequiresPlugin(id = 'nodelabelparameter')
@@ -153,6 +172,8 @@ class BuildParametersContext extends AbstractContext {
     }
 
     /**
+     * Defines a parameter that allows select a Git tag (or revision number).
+     *
      * @since 1.31
      */
     @RequiresPlugin(id = 'git-parameter', minimumVersion = '0.4.0')
@@ -175,10 +196,16 @@ class BuildParametersContext extends AbstractContext {
                 }
     }
 
+    /**
+     * Defines a simple text parameter, where users can enter a string value.
+     */
     void stringParam(String parameterName, String defaultValue = null, String description = null) {
         simpleParam('hudson.model.StringParameterDefinition', parameterName, defaultValue, description)
     }
 
+    /**
+     * Defines a simple text parameter, where users can enter a multi-line string value.
+     */
     void textParam(String parameterName, String defaultValue = null, String description = null) {
         simpleParam('hudson.model.TextParameterDefinition', parameterName, defaultValue, description)
     }
@@ -197,6 +224,9 @@ class BuildParametersContext extends AbstractContext {
     }
 
     /**
+     * Defines a parameter that dynamically generates a list of value options for a build parameter using a Groovy
+     * script or a script from the Scriptler catalog.
+     *
      * @since 1.36
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
@@ -210,6 +240,10 @@ class BuildParametersContext extends AbstractContext {
     }
 
     /**
+     * Defines a parameter that dynamically generates a list of value options for a build parameter using a Groovy
+     * script or a script from the Scriptler catalog and that dynamically updates when the value of other job UI
+     * controls change.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
@@ -226,6 +260,10 @@ class BuildParametersContext extends AbstractContext {
     }
 
     /**
+     * Defines a parameter that dynamically generates a list of value options for a build parameter using a Groovy
+     * script or a script from the Scriptler catalog and that dynamically updates when the value of other job UI
+     * controls change.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
@@ -246,6 +284,8 @@ class BuildParametersContext extends AbstractContext {
     }
 
     /**
+     * Defines a credentials parameter. The string value will be the UUID of the credential.
+     *
      * @since 1.38
      */
     @RequiresPlugin(id = 'credentials', minimumVersion = '1.22')

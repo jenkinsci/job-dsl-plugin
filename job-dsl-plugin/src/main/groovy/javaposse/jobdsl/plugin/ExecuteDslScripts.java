@@ -355,7 +355,9 @@ public class ExecuteDslScripts extends Builder {
                 SeedReference newSeedReference = new SeedReference(seedJob.getFullName());
                 if (generatedJob.getTemplateName() != null) {
                     Item template = getLookupStrategy().getItem(seedJob, generatedJob.getTemplateName(), Item.class);
-                    newSeedReference.setTemplateJobName(template.getFullName());
+                    if (template != null) {
+                        newSeedReference.setTemplateJobName(template.getFullName());
+                    }
                 }
                 newSeedReference.setDigest(Util.getDigestOf(Items.getConfigFile(item).getFile()));
 

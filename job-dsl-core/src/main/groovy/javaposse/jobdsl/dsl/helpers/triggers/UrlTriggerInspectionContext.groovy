@@ -49,6 +49,7 @@ class UrlTriggerInspectionContext implements Context {
 
     /**
      * Adds a JSON/XPATH path expression to the inspection.
+     *
      * @param path expression to add
      */
     void path(String path) {
@@ -73,5 +74,4 @@ class UrlTriggerInspectionContext implements Context {
 
         expressions << exp
     }
-
 }

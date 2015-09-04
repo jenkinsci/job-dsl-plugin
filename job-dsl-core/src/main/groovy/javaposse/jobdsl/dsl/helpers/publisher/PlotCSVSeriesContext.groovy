@@ -12,26 +12,44 @@ class PlotCSVSeriesContext extends PlotSeriesContext {
         super(fileName, 'csv', 'CSVSeries')
     }
 
+    /**
+     * If set, opens the URL when a point is clicked.
+     */
     void url(String url) {
         this.url = url
     }
 
+    /**
+     * If set, the original CSV data will be shown above the plot.
+     */
     void showTable(boolean showTable = true) {
         this.showTable = showTable
     }
 
+    /**
+     * Specifies the column names to include in the plot.
+     */
     void includeColumns(String... columnNames) {
         includeExcludeColumn('INCLUDE_BY_STRING', columnNames)
     }
 
+    /**
+     * Specifies the column names to exclude from the plot.
+     */
     void excludeColumns(String... columnNames) {
         includeExcludeColumn('EXCLUDE_BY_STRING', columnNames)
     }
 
+    /**
+     * Specifies the column indexes to include in the plot.
+     */
     void includeColumns(int... columnIndexes) {
         includeExcludeColumn('INCLUDE_BY_COLUMN', columnIndexes as String[])
     }
 
+    /**
+     * Specifies the column indexes to exclude from the plot.
+     */
     void excludeColumns(int... columnIndexes) {
         includeExcludeColumn('EXCLUDE_BY_COLUMN', columnIndexes as String[])
     }

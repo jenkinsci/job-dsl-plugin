@@ -27,7 +27,8 @@ class ContextASTTransformation implements ASTTransformation {
     @Override
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
         sourceUnit.AST?.classes*.methods*.parameters.flatten().each { Parameter parameter ->
-            List<AnnotationNode> dslContextAnnotations = parameter.getAnnotations(ClassHelper.make('DslContext'))
+            List<AnnotationNode> dslContextAnnotations = parameter.getAnnotations(ClassHelper.make('DslContext')) +
+                    parameter.getAnnotations(ClassHelper.make('javaposse.jobdsl.dsl.DslContext'))
             if (!dslContextAnnotations.empty) {
                 AnnotationNode delegatesToAnnotation = new AnnotationNode(DELEGATES_TO_CLASS)
                 delegatesToAnnotation.members.value = dslContextAnnotations[0].members.value

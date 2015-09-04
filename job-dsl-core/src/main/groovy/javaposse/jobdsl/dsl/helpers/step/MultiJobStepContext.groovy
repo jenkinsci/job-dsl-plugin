@@ -16,18 +16,24 @@ class MultiJobStepContext extends StepContext {
     }
 
     /**
-     * phaseName will have to be provided in the closure.
+     * Adds a MultiJob phase.
      */
     void phase(@DslContext(PhaseContext) Closure phaseContext) {
         phase(null, 'SUCCESSFUL', phaseContext)
     }
 
+    /**
+     * Adds a MultiJob phase.
+     */
     void phase(String phaseName, @DslContext(PhaseContext) Closure phaseContext = null) {
         phase(phaseName, 'SUCCESSFUL', phaseContext)
     }
 
-    void phase(String name, String continuationConditionArg, @DslContext(PhaseContext) Closure phaseClosure) {
-        PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationConditionArg)
+    /**
+     * Adds a MultiJob phase.
+     */
+    void phase(String name, String continuationCondition, @DslContext(PhaseContext) Closure phaseClosure) {
+        PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationCondition)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
@@ -48,7 +54,7 @@ class MultiJobStepContext extends StepContext {
 
         stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName
-            continuationCondition phaseContext.continuationCondition
+            delegate.continuationCondition(phaseContext.continuationCondition)
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {

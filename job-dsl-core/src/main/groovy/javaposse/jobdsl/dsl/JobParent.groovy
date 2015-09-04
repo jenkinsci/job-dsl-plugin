@@ -46,7 +46,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'build-flow-plugin')
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
         processJob(name, BuildFlowJob, closure)
     }
@@ -55,7 +54,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.38
      */
     @Override
-    @RequiresPlugin(id = 'ivy', minimumVersion = '1.23')
     IvyJob ivyJob(String name, @DslContext(IvyJob) Closure closure = null) {
         processJob(name, IvyJob, closure)
     }
@@ -64,7 +62,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'matrix-project')
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure = null) {
         processJob(name, MatrixJob, closure)
     }
@@ -73,7 +70,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'maven-plugin')
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure = null) {
         processJob(name, MavenJob, closure)
     }
@@ -82,7 +78,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
         jm.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
 
@@ -93,7 +88,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
         processJob(name, WorkflowJob, closure)
     }
@@ -111,24 +105,6 @@ abstract class JobParent extends Script implements DslFactory {
         job
     }
 
-    @Override
-    @Deprecated
-    Job job(Map<String, Object> arguments = [:], @DslContext(Job) Closure closure) {
-        jm.logDeprecationWarning()
-
-        Object typeArg = arguments['type'] ?: JobType.Freeform
-        JobType jobType = (typeArg instanceof JobType) ? typeArg : JobType.find(typeArg)
-
-        if (jobType == JobType.Multijob) {
-            jm.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
-        }
-
-        Job job = jobType.jobClass.newInstance(jm)
-        job.with(closure)
-        referencedJobs << job
-        job
-    }
-
     /**
      * @since 1.30
      */
@@ -141,7 +117,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
@@ -150,7 +125,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'nested-view')
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure = null) {
         processView(name, NestedView, closure)
     }
@@ -159,7 +133,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         processView(name, DeliveryPipelineView, closure)
     }
@@ -168,7 +141,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
@@ -177,7 +149,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
     }
@@ -186,7 +157,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.31
      */
     @Override
-    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
         processView(name, CategorizedJobsView, closure)
     }
@@ -205,41 +175,9 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     /**
-     * @since 1.21
-     */
-    @Override
-    @Deprecated
-    View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
-        jm.logDeprecationWarning()
-
-        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
-
-        View view = viewType.viewClass.newInstance(jm)
-        view.with(closure)
-        referencedViews << view
-        view
-    }
-
-    /**
-     * @since 1.23
-     */
-    @Override
-    @Deprecated
-    @RequiresPlugin(id = 'cloudbees-folder')
-    Folder folder(@DslContext(Folder) Closure closure) {
-        jm.logDeprecationWarning()
-
-        Folder folder = new Folder(jm)
-        folder.with(closure)
-        referencedJobs << folder
-        folder
-    }
-
-    /**
      * @since 1.30
      */
     @Override
-    @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
         checkNotNullOrEmpty(name, 'name must be specified')
 
@@ -255,7 +193,6 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.30
      */
-    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.Custom, closure)
     }
@@ -263,26 +200,8 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.30
      */
-    @RequiresPlugin(id = 'config-file-provider')
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.MavenSettings, closure)
-    }
-
-    /**
-     * @since 1.25
-     */
-    @Override
-    @Deprecated
-    @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile configFile(Map<String, Object> arguments = [:], @DslContext(ConfigFile) Closure closure) {
-        jm.logDeprecationWarning()
-
-        ConfigFileType configFileType = arguments['type'] as ConfigFileType ?: ConfigFileType.Custom
-
-        ConfigFile configFile = new ConfigFile(configFileType, jm)
-        configFile.with(closure)
-        referencedConfigFiles << configFile
-        configFile
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263

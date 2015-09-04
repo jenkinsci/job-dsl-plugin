@@ -17,9 +17,12 @@ class IvyBuilderContext extends AbstractExtensibleContext {
 
     @Override
     protected void addExtensionNode(Node node) {
-        ivyBuilderNodes << node
+        ivyBuilderNodes << toNamedNode('ivyBuilderType', node)
     }
 
+    /**
+     * Uses Ant for building the modules.
+     */
     @RequiresPlugin(id = 'ant', minimumVersion = '1.2')
     void ant(@DslContext(AntContext) Closure antClosure = null) {
         AntContext antContext = new AntContext()

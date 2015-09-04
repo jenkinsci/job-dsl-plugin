@@ -5,7 +5,9 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.NoDoc
 import javaposse.jobdsl.dsl.Preconditions
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import javaposse.jobdsl.dsl.helpers.common.MavenContext
@@ -30,6 +32,7 @@ class MavenJob extends Job {
     }
 
     @Override
+    @NoDoc
     void steps(@DslContext(StepContext) Closure closure) {
         throw new IllegalStateException('steps cannot be applied for Maven jobs')
     }
@@ -86,7 +89,8 @@ class MavenJob extends Job {
     }
 
     /**
-     * Specifies the goals to execute.
+     * Specifies the goals to execute including other command line options.
+     * When specified multiple times, the goals and options will be concatenated.
      *
      * @param goals the goals to execute
      */
@@ -102,6 +106,8 @@ class MavenJob extends Job {
 
     /**
      * Specifies the JVM options needed when launching Maven as an external process.
+     *
+     * When specified multiple times, the options will be concatenated.
      *
      * @param mavenOpts JVM options needed when launching Maven
      */
@@ -141,7 +147,7 @@ class MavenJob extends Job {
     }
 
     /**
-     * Set to use isolated local Maven repositories.
+     * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LocalToExecutor}.
      *
      * @param location the local repository to use for isolation
      * @since 1.17
@@ -156,7 +162,7 @@ class MavenJob extends Job {
     }
 
     /**
-     * Set to use isolated local Maven repositories.
+     * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LOCAL_TO_EXECUTOR}.
      *
      * @param location the local repository to use for isolation
      * @since 1.31
@@ -171,6 +177,8 @@ class MavenJob extends Job {
     }
 
     /**
+     * Adds build steps to run before the Maven execution.
+     *
      * @since 1.20
      */
     void preBuildSteps(@DslContext(StepContext) Closure preBuildClosure) {
@@ -185,6 +193,8 @@ class MavenJob extends Job {
     }
 
     /**
+     * Adds build steps to run after the Maven execution.
+     *
      * @since 1.20
      */
     void postBuildSteps(@DslContext(StepContext) Closure postBuildClosure) {
@@ -192,6 +202,11 @@ class MavenJob extends Job {
     }
 
     /**
+     * Adds build steps to run after the Maven execution. The steps will only run of the build result is equal or
+     * better than the threshold.
+     *
+     * The threshold can be one of three values: {@code 'SUCCESS'}, {@code 'UNSTABLE'} or {@code 'FAILURE'}.
+     *
      * @since 1.35
      */
     void postBuildSteps(String thresholdName, @DslContext(StepContext) Closure postBuildClosure) {
@@ -217,6 +232,8 @@ class MavenJob extends Job {
     }
 
     /**
+     * Selects which installation of Maven to use.
+     *
      * @since 1.20
      */
     void mavenInstallation(String name) {
@@ -228,8 +245,11 @@ class MavenJob extends Job {
     }
 
     /**
+     * Use managed Maven settings.
+     *
      * @since 1.25
      */
+    @RequiresPlugin(id = 'config-file-provider')
     void providedSettings(String settingsName) {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")

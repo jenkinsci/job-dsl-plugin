@@ -41,54 +41,94 @@ class CoberturaContext implements Context {
 
     String sourceEncoding = 'ASCII'
 
+    /**
+     * Considers only stable builds. Defaults to {@code false}.
+     */
     void onlyStable(boolean onlyStable) {
         this.onlyStable = onlyStable
     }
 
+    /**
+     * Fails unhealthy builds. Defaults to {@code false}.
+     */
     void failUnhealthy(boolean failUnhealthy) {
         this.failUnhealthy = failUnhealthy
     }
 
+    /**
+     * Fails unstable builds. Defaults to {@code false}.
+     */
     void failUnstable(boolean failUnstable) {
         this.failUnstable = failUnstable
     }
 
+    /**
+     * Automatically updates the threshold for health on successful builds. Defaults to {@code false}.
+     */
     void autoUpdateHealth(boolean autoUpdateHealth) {
         this.autoUpdateHealth = autoUpdateHealth
     }
 
+    /**
+     * Automatically updates the threshold for stability on successful builds. Defaults to {@code false}.
+     */
     void autoUpdateStability(boolean autoUpdateStability) {
         this.autoUpdateStability = autoUpdateStability
     }
 
+    /**
+     * Zooms the coverage chart and crop area below the minimum and above the maximum coverage of the past reports.
+     * Defaults to {@code false}.
+     */
     void zoomCoverageChart(boolean zoomCoverageChart) {
         this.zoomCoverageChart = zoomCoverageChart
     }
 
+    /**
+     * Fails builds if no coverage reports are found. Defaults to {@code false}.
+     */
     void failNoReports(boolean failNoReports) {
         this.failNoReports = failNoReports
     }
 
+    /**
+     * Sets health reporting thresholds for method level converage.
+     */
     void methodTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.METHOD.name(), healthy, unhealthy, failing)
     }
 
+    /**
+     * Sets health reporting thresholds for line level converage.
+     */
     void lineTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.LINE.name(), healthy, unhealthy, failing)
     }
 
+    /**
+     * Sets health reporting thresholds for conditional level converage.
+     */
     void conditionalTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.CONDITIONAL.name(), healthy, unhealthy, failing)
     }
 
+    /**
+     * Sets health reporting thresholds for file level converage.
+     */
     void fileTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.FILES.name(), healthy, unhealthy, failing)
     }
 
+    /**
+     * Sets health reporting thresholds for class level converage.
+     */
     void classTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.CLASSES.name(), healthy, unhealthy, failing)
     }
 
+    /**
+     * Sets health reporting thresholds for package level converage.
+     */
     void packageTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.PACKAGES.name(), healthy, unhealthy, failing)
     }
@@ -108,6 +148,9 @@ class CoberturaContext implements Context {
         ))
     }
 
+    /**
+     * Specifies the encoding to use when showing files.
+     */
     void sourceEncoding(String sourceEncoding) {
         checkNotNull(sourceEncoding, 'Source encoding must not be null!')
         this.sourceEncoding = sourceEncoding

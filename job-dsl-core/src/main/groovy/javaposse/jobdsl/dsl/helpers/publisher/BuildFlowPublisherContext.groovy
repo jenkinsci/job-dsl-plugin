@@ -10,6 +10,8 @@ class BuildFlowPublisherContext extends PublisherContext {
     }
 
     /**
+     * Aggregates test results from builds started dynamically by build flow jobs.
+     *
      * @since 1.35
      */
     @RequiresPlugin(id = 'build-flow-test-aggregator', minimumVersion = '1.1')

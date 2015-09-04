@@ -26,41 +26,65 @@ class DownstreamTriggerParameterContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Adds a boolean parameter. Can be called multiple times to add more parameters.
+     */
     @Deprecated
     void boolParam(String name, boolean defaultValue = false) {
         jobManagement.logDeprecationWarning()
         booleanParam(name, defaultValue)
     }
 
+    /**
+     * Adds a boolean parameter. Can be called multiple times to add more parameters.
+     */
     void booleanParam(String name, boolean defaultValue = false) {
         this.booleanParams[name] = defaultValue
     }
 
+    /**
+     * Uses the same node for the triggered builds that was used for this build.
+     */
     void sameNode() {
         this.sameNode = true
     }
 
+    /**
+     * Uses the same node for the triggered builds that was used for this build.
+     */
     @Deprecated
     void sameNode(boolean sameNode) {
         jobManagement.logDeprecationWarning()
         this.sameNode = sameNode
     }
 
+    /**
+     * Copies parameters from the current build, except for file parameters.
+     */
     void currentBuild() {
         this.currentBuild = true
     }
 
+    /**
+     * Defines where the target job should be executed, the value must match either a label or a node name.
+     */
     @RequiresPlugin(id = 'nodelabelparameter')
     void nodeLabel(String paramName, String nodeLabel) {
         this.nodeLabelParam = paramName
         this.nodeLabel = nodeLabel
     }
 
+    /**
+     * Reads parameters from a properties file.
+     */
     void propertiesFile(String fileName, boolean failTriggerOnMissing = false) {
         this.propertiesFile = fileName
         this.failTriggerOnMissing = failTriggerOnMissing
     }
 
+    /**
+     * Passes the Git commit that was used in this build to the downstream builds.
+     */
     @RequiresPlugin(id = 'git')
     void gitRevision(boolean combineQueuedCommits = false) {
         jobManagement.logPluginDeprecationWarning('git', '2.2.6')
@@ -69,25 +93,41 @@ class DownstreamTriggerParameterContext extends AbstractContext {
         this.combineQueuedCommits = combineQueuedCommits
     }
 
+    /**
+     * Adds a parameter. Can be called multiple times to add more parameters.
+     */
     void predefinedProp(String key, String value) {
         this.predefinedProps << "${key}=${value}"
     }
 
+    /**
+     * Adds parameters. Can be called multiple times to add more parameters.
+     */
     void predefinedProps(Map<String, String> predefinedPropsMap) {
         List<String> props = predefinedPropsMap.collect { "${it.key}=${it.value}" }
         this.predefinedProps.addAll(props)
     }
 
+    /**
+     * Adds parameters. Can be called multiple times to add more parameters.
+     */
     @Deprecated
     void predefinedProps(String predefinedProps) {
         jobManagement.logDeprecationWarning()
         this.predefinedProps.addAll(predefinedProps.split('\n'))
     }
 
+    /**
+     * Specifies a Groovy filter expression that restricts the subset of combinations that the downstream project will
+     * run.
+     */
     void matrixSubset(String groovyFilter) {
         this.matrixSubsetFilter = groovyFilter
     }
 
+    /**
+     * Passes the Subversion revisions that were used in this build to the downstream builds.
+     */
     void subversionRevision(boolean includeUpstreamParameters = false) {
         this.includeUpstreamParameters = includeUpstreamParameters
         this.subversionRevision = true

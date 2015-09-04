@@ -12,18 +12,30 @@ abstract class WorkspaceCleanupContext implements Context {
     boolean deleteDirectories = false
     String deleteCommand
 
+    /**
+     * Makes cleanup more selective by specifying file to be deleted using Ant syntax.
+     */
     void includePattern(String pattern) {
         addPattern('INCLUDE', pattern)
     }
 
+    /**
+     * Makes cleanup more selective by specifying file to be excluded from deletion using Ant syntax.
+     */
     void excludePattern(String pattern) {
         addPattern('EXCLUDE', pattern)
     }
 
+    /**
+     * If set, the pattern will also be applied to directories. Defaults to {@code false}.
+     */
     void deleteDirectories(boolean deleteDirectories = true) {
         this.deleteDirectories = deleteDirectories
     }
 
+    /**
+     * If set, an external program will be used for deletion.
+     */
     void deleteCommand(String deleteCommand) {
         this.deleteCommand = deleteCommand
     }

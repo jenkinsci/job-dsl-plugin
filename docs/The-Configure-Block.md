@@ -15,13 +15,13 @@ job('example-1') {
     }
 }
 
-job('example-2', type: Maven) {
+mavenJob('example-2') {
     configure { node ->
         // node represents <maven2-moduleset>
     }
 }
 
-view('example') {
+listView('example') {
     configure { node ->
         // node represents <hudson.model.ListView>
     }
@@ -570,7 +570,7 @@ Result:
 
 DSL:
 ```groovy
-job('example', type: Matrix) {
+matrixJob('example') {
     axes {
         label('label', 'linux', 'windows')
     }

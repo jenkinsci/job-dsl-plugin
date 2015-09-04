@@ -11,6 +11,9 @@ class EnvironmentVariableContributorsContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Populates the locations of installed tools as environment variables.
+     */
     @RequiresPlugin(id = 'shared-objects', minimumVersion = '0.1')
     void populateToolInstallations() {
         Node node = new NodeBuilder().'org.jenkinsci.plugins.sharedobjects.ToolInstallationJobProperty' {

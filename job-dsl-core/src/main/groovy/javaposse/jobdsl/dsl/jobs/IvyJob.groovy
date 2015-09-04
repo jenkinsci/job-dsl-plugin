@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.NoDoc
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.IvyBuilderContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -16,6 +17,7 @@ class IvyJob extends Job {
     }
 
     @Override
+    @NoDoc
     void steps(@DslContext(StepContext) Closure closure) {
         throw new IllegalStateException('steps cannot be applied for Ivy jobs')
     }
@@ -34,7 +36,7 @@ class IvyJob extends Job {
     }
 
     /**
-     * Specifies modules to be excluded from the build.
+     * Specifies modules to be excluded from the build using Ant-include pattern syntax.
      *
      * @param ivyFileExcludesPattern modules to be excluded from the build
      */
@@ -120,6 +122,9 @@ class IvyJob extends Job {
         }
     }
 
+    /**
+     * Sets the Ivy builder type to use for building the modules. Only one builder may be specified.
+     */
     void ivyBuilder(@DslContext(IvyBuilderContext) Closure closure) {
         IvyBuilderContext context = new IvyBuilderContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)

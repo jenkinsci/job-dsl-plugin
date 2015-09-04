@@ -13,15 +13,6 @@ class FolderSpec extends Specification {
         XMLUnit.ignoreWhitespace = true
     }
 
-    def 'name'() {
-        when:
-        folder.name('test')
-
-        then:
-        folder.name == 'test'
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'displayName'() {
         when:
         folder.displayName('foo')

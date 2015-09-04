@@ -33,15 +33,17 @@ abstract class Job extends Item {
     /**
      * Creates a new job configuration, based on the job template referenced by the parameter and stores this.
      *
-     * @param templateName the name of the template upon which to base the new job
-     * @return a new graph of groovy.util.Node objects, representing the job configuration structure
-     * @throws JobTemplateMissingException
+     * When the template is changed, the seed job will attempt to re-run, which has the side-effect of cascading changes
+     * of the template the jobs generated from it.
      */
     void using(String templateName) throws JobTemplateMissingException {
         checkArgument(this.templateName == null, 'Can only use "using" once')
         this.templateName = templateName
     }
 
+    /**
+     * Sets a description for the job.
+     */
     void description(String descriptionString) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('description', descriptionString)
@@ -50,8 +52,8 @@ abstract class Job extends Item {
     }
 
     /**
-     * Renames jobs matching the regular expression (fullName) to the name of
-     * this job before the configuration is updated.
+     * Renames jobs matching the regular expression to the name of this job before the configuration is updated.
+     * The regular expression needs to match the full name of the job, i.e. with folders included.
      * This can be useful to keep the build history.
      *
      * @since 1.29
@@ -71,10 +73,8 @@ abstract class Job extends Item {
     }
 
     /**
-     * "Restrict where this project can be run"
-     *
-     * @param labelExpression Label of node to use, if null is passed in, the label is cleared out and it can roam
-     * @return
+     * Label which specifies which nodes this job can run on. If {@code null} is passed in, the label is cleared out and
+     * the job can roam.
      */
     void label(String labelExpression = null) {
         withXmlActions << WithXmlAction.create { Node project ->
@@ -89,12 +89,15 @@ abstract class Job extends Item {
     }
 
     /**
-     * Add environment variables to the build.
+     * Adds environment variables to the build.
      */
     void environmentVariables(@DslContext(EnvironmentVariableContext) Closure envClosure) {
         environmentVariables(null, envClosure)
     }
 
+    /**
+     * Adds environment variables to the build.
+     */
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(Map<Object, Object> vars,
                               @DslContext(EnvironmentVariableContext) Closure envClosure = null) {
@@ -117,6 +120,8 @@ abstract class Job extends Item {
     }
 
     /**
+     * Throttles the number of concurrent builds of a project running per node or globally.
+     *
      * @since 1.20
      */
     @RequiresPlugin(id = 'throttle-concurrents')
@@ -144,6 +149,8 @@ abstract class Job extends Item {
     }
 
     /**
+     * Locks resources while a job is running.
+     *
      * @since 1.25
      */
     @RequiresPlugin(id = 'lockable-resources')
@@ -165,6 +172,8 @@ abstract class Job extends Item {
     }
 
     /**
+     * Specifies the number of executors to block for this job.
+     *
      * @since 1.36
      */
     @RequiresPlugin(id = 'heavy-job', minimumVersion = '1.1')
@@ -175,6 +184,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Disables the job, so that no new builds will be executed until the project is re-enabled.
+     */
     void disabled(boolean shouldDisable = true) {
         withXmlActions << WithXmlAction.create { Node project ->
             Node node = methodMissing('disabled', shouldDisable)
@@ -182,6 +194,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Manages how long to keep records of the builds.
+     */
     void logRotator(int daysToKeep = -1, int numToKeep = -1, int artifactDaysToKeep = -1, int artifactNumToKeep = -1) {
         logRotator {
             delegate.daysToKeep(daysToKeep)
@@ -192,6 +207,8 @@ abstract class Job extends Item {
     }
 
     /**
+     * Manages how long to keep records of the builds.
+     *
      * @since 1.35
      */
     void logRotator(@DslContext(LogRotatorContext) Closure closure) {
@@ -211,6 +228,8 @@ abstract class Job extends Item {
 
     /**
      * Block build if certain jobs are running.
+     *
+     * @see #blockOn(java.lang.String, groovy.lang.Closure)
      */
     void blockOn(Iterable<String> projectNames) {
         blockOn(projectNames, null)
@@ -218,8 +237,9 @@ abstract class Job extends Item {
 
     /**
      * Block build if certain jobs are running.
-
+     *
      * @since 1.36
+     * @see #blockOn(java.lang.String, groovy.lang.Closure)
      */
     void blockOn(Iterable<String> projectNames, @DslContext(BuildBlockerContext) Closure closure) {
         blockOn(projectNames.collect().join('\n'), closure)
@@ -228,7 +248,7 @@ abstract class Job extends Item {
     /**
      * Block build if certain jobs are running.
      *
-     * @param projectName Can be regular expressions. Newline delimited.
+     * @see #blockOn(java.lang.String, groovy.lang.Closure)
      */
     void blockOn(String projectName) {
         blockOn(projectName, null)
@@ -236,6 +256,9 @@ abstract class Job extends Item {
 
     /**
      * Block build if certain jobs are running.
+     *
+     * Regular expressions can be used for the project names, e.g. {@code /.*-maintenance/} will match all maintenance
+     * jobs.
      *
      * @since 1.36
      */
@@ -259,20 +282,18 @@ abstract class Job extends Item {
     }
 
     /**
-     * Name of the JDK installation to use for this job.
-     *
-     * @param jdkArg name of the JDK installation to use for this job.
+     * Name of the JDK installation to use for this job. The name must match the name of a JDK installation defined in
+     * the Jenkins system configuration. The default JDK will be used when the jdk method is omitted.
      */
-    void jdk(String jdkArg) {
+    void jdk(String jdk) {
         withXmlActions << WithXmlAction.create { Node project ->
-            Node node = methodMissing('jdk', jdkArg)
+            Node node = methodMissing('jdk', jdk)
             project / node
         }
     }
 
     /**
-     * Priority of this job.
-     * Default value is 100.
+     * Set the priority of the job. Default value is 100.
      *
      * @since 1.15
      */
@@ -285,9 +306,8 @@ abstract class Job extends Item {
     }
 
     /**
-     * Adds a quiet period to the project.
+     * Defines a timespan (in seconds) to wait for additional events (pushes, check-ins) before triggering a build.
      *
-     * @param seconds number of seconds to wait
      * @since 1.16
      */
     void quietPeriod(int seconds = 5) {
@@ -300,7 +320,6 @@ abstract class Job extends Item {
     /**
      * Sets the number of times the SCM checkout is retried on errors.
      *
-     * @param times number of attempts
      * @since 1.16
      */
     void checkoutRetryCount(int times = 3) {
@@ -313,7 +332,6 @@ abstract class Job extends Item {
     /**
      * Sets a display name for the project.
      *
-     * @param displayName name to display
      * @since 1.16
      */
     void displayName(String displayName) {
@@ -325,9 +343,8 @@ abstract class Job extends Item {
     }
 
     /**
-     * Configures a custom workspace for the project.
+     * Defines that a project should use the given directory as a workspace instead of the default workspace location.
      *
-     * @param workspacePath workspace path to use
      * @since 1.16
      */
     void customWorkspace(String workspacePath) {
@@ -340,6 +357,7 @@ abstract class Job extends Item {
 
     /**
      * Configures the job to block when upstream projects are building.
+     *
      * @since 1.16
      */
     void blockOnUpstreamProjects() {
@@ -350,6 +368,7 @@ abstract class Job extends Item {
 
     /**
      * Configures the job to block when downstream projects are building.
+     *
      * @since 1.16
      */
     void blockOnDownstreamProjects() {
@@ -359,7 +378,7 @@ abstract class Job extends Item {
     }
 
     /**
-     * Configures the keep Dependencies Flag which can be set in the Fingerprinting action.
+     * Protects all builds that are referenced from builds of this project (via fingerprint) from log rotation.
      *
      * @since 1.17
      */
@@ -371,7 +390,7 @@ abstract class Job extends Item {
     }
 
     /**
-     * Configures the 'Execute concurrent builds if necessary' flag.
+     * Allows Jenkins to schedule and execute multiple builds concurrently.
      *
      * @since 1.21
      */
@@ -383,6 +402,8 @@ abstract class Job extends Item {
     }
 
     /**
+     * Compresses the log file after build completion.
+     *
      * @since 1.36
      */
     @RequiresPlugin(id = 'compress-buildlog', minimumVersion = '1.0')
@@ -393,7 +414,7 @@ abstract class Job extends Item {
     }
 
     /**
-     * Configures the Notification Plugin.
+     * Configures notifications for the build.
      *
      * @since 1.26
      */
@@ -410,6 +431,9 @@ abstract class Job extends Item {
     }
 
     /**
+     * Adds batch tasks that are not regularly executed to projects, such as releases, integration, archiving.
+     * Can be called multiple times to add more batch tasks.
+     *
      * @since 1.24
      */
     @RequiresPlugin(id = 'batch-task')
@@ -424,6 +448,9 @@ abstract class Job extends Item {
     }
 
     /**
+     * Sets the stage name and task name for the delivery pipeline view. Each of the parameters can be set to
+     * {@code null} to use the job name as stage or task name.
+     *
      * @since 1.26
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
@@ -442,6 +469,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Creates permission records.
+     */
     @RequiresPlugin(id = 'matrix-auth')
     void authorization(@DslContext(JobAuthorizationContext) Closure closure) {
         jobManagement.logPluginDeprecationWarning('matrix-auth', '1.2')
@@ -461,6 +491,8 @@ abstract class Job extends Item {
     }
 
     /**
+     * Allows to parameterize the job.
+     *
      * @since 1.15
      */
     void parameters(@DslContext(BuildParametersContext) Closure closure) {
@@ -475,6 +507,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Allows a job to check out sources from an SCM provider.
+     */
     void scm(@DslContext(ScmContext) Closure closure) {
         ScmContext context = new ScmContext(withXmlActions, jobManagement, this)
         ContextHelper.executeInContext(closure, context)
@@ -495,6 +530,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Allows a job to check out sources from multiple SCM providers.
+     */
     @RequiresPlugin(id = 'multiple-scms')
     void multiscm(@DslContext(ScmContext) Closure closure) {
         ScmContext context = new ScmContext(withXmlActions, jobManagement, this)
@@ -518,6 +556,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Adds build triggers to the job.
+     */
     void triggers(@DslContext(TriggerContext) Closure closure) {
         TriggerContext context = new TriggerContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
@@ -530,6 +571,8 @@ abstract class Job extends Item {
     }
 
     /**
+     * Adds pre/post actions to the job.
+     *
      * @since 1.19
      */
     void wrappers(@DslContext(WrapperContext) Closure closure) {
@@ -543,6 +586,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Adds custom properties to the job.
+     */
     void properties(@DslContext(PropertiesContext) Closure closure) {
         PropertiesContext context = new PropertiesContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
@@ -554,6 +600,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Adds build steps to the jobs.
+     */
     void steps(@DslContext(StepContext) Closure closure) {
         StepContext context = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
@@ -565,6 +614,9 @@ abstract class Job extends Item {
         }
     }
 
+    /**
+     * Adds post-build actions to the job.
+     */
     void publishers(@DslContext(PublisherContext) Closure closure) {
         PublisherContext context = new PublisherContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
