@@ -4663,9 +4663,9 @@ class PublisherContextSpec extends Specification {
     def 'crittercismDsymUpload with all options'() {
         when:
         context.crittercismDsymUpload {
-            apiKey 'theKey'
-            appID 'theId'
-            filePath 'thePath'
+            apiKey('theKey')
+            appID('theId')
+            filePath('thePath')
         }
 
         then:
