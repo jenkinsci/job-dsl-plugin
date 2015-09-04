@@ -1,14 +1,31 @@
-package javaposse.jobdsl.dsl.jobs
+package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.IvyBuilderContext
 import spock.lang.Specification
 
 class IvyBuilderContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     Item item = Mock(Item)
     IvyBuilderContext context = new IvyBuilderContext(jobManagement, item)
+
+    def 'extension node is transformed to ivyBuilderType node'() {
+        Node node = new Node(null, 'org.example.CustomBuilder', [foo: 'bar'])
+        node.appendNode('test', 'value')
+
+        when:
+        context.addExtensionNode(node)
+
+        then:
+        with(context.ivyBuilderNodes[0]) {
+            name() == 'ivyBuilderType'
+            attributes().size() == 2
+            attribute('class') == 'org.example.CustomBuilder'
+            attribute('foo') == 'bar'
+            children().size() == 1
+            test[0].text() == 'value'
+        }
+    }
 
     def 'construct simple ant builder type'() {
         when:

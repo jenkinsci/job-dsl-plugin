@@ -22,10 +22,16 @@ class FlexiblePublisherContext extends AbstractContext {
         this.item = item
     }
 
+    /**
+     * Specifies the condition to evaluate before executing publishers or build steps.
+     */
     void condition(@DslContext(RunConditionContext) Closure closure) {
         condition = RunConditionFactory.of(closure)
     }
 
+    /**
+     * Adds one or more build steps which will be executed conditionally.
+     */
     @RequiresPlugin(id = 'any-buildstep')
     void step(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement, item)
@@ -33,6 +39,9 @@ class FlexiblePublisherContext extends AbstractContext {
         actions.addAll(stepContext.stepNodes)
     }
 
+    /**
+     * Adds one or more post-build actions which will be executed conditionally.
+     */
     void publisher(@DslContext(PublisherContext) Closure closure) {
         PublisherContext publisherContext = new PublisherContext(jobManagement, item)
         ContextHelper.executeInContext(closure, publisherContext)

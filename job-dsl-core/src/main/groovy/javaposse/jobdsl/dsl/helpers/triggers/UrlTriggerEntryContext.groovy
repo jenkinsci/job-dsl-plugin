@@ -63,7 +63,7 @@ class UrlTriggerEntryContext implements Context {
      * Define the expected status code of the response.
      *
      * Defaults to 200.
-     * Needs to be used with check('status') to be useful.
+     * Needs to be used with {@code check('status')} to be useful.
      *
      * @param statusCode status code to expect from URL
      */
@@ -85,11 +85,8 @@ class UrlTriggerEntryContext implements Context {
     /**
      * Enables checks to perform for URL.
      *
-     * Can be one of:
-     *
-     * 'status' (Check status code)
-     * 'etag' (Check the ETag)
-     * 'lastModified' (Check the last modified date)
+     * Can be one of {@code 'status'} (check status code), {@code 'etag'} (check the ETag) and {@code 'lastModified'}
+     * (check the last modified date).
      *
      * @param performCheck check to perform
      */
@@ -106,11 +103,7 @@ class UrlTriggerEntryContext implements Context {
     /**
      * Adds inspections of the returned content.
      *
-     * Can be one of:
-     * 'change'
-     * 'json'
-     * 'xml'
-     * 'text'
+     * Can be one of {@code 'change'}, {@code 'json'}, {@code 'xml'} or {@code 'text}.
      *
      * @param type type of inspection to use
      * @param inspectionClosure for configuring RegExps/Path expressions for xml, text and json
@@ -129,6 +122,5 @@ class UrlTriggerEntryContext implements Context {
         ContextHelper.executeInContext(inspectionClosure, inspection)
 
         inspections << inspection
-
     }
 }

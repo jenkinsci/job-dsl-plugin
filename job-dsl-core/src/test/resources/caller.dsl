@@ -1,5 +1,4 @@
-job {
-    name 'test'
+job('test') {
 }
 
 Callee.makeJob(this, 'test2')

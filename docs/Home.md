@@ -1,6 +1,7 @@
 Welcome to the jenkins-job-dsl wiki!
 
-* The formal documentation and full syntax reference is detailed in [[Job DSL Commands]].
+* The high-level DSL concepts are documented in [[Job DSL Commands]].
+* See the [[Job Reference]] and the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for a full syntax reference
 * There are also tips on [[more advanced usage and workflows|User Power Moves]].
 * [The forum](https://groups.google.com/forum/#!forum/job-dsl-plugin) has lots of information, some of which is making its way to the [[FAQ|Frequently Asked Questions]].
 * If you want to get more involved, here's [how to contribute](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)...
@@ -17,11 +18,18 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.38 (unreleased)
+ * Replaced the [[View Reference]] and [[Folder Reference]] pages by the
+   [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
+ * Added support for [Crittercism dSYM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Crittercism+dSYM+Plugin)
+   ([JENKINS-29501](https://issues.jenkins-ci.org/browse/JENKINS-29501))
  * Added support for the [ShiningPanda Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin)
  * Enhanced support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
  * Enhanced support for the [Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin)
  * Enhanced support for the
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
+ * Enhanced support for the
+   [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
+   ([JENKINS-30221](https://issues.jenkins-ci.org/browse/JENKINS-30221))
  * Enhanced support for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
    ([JENKINS-29662](https://issues.jenkins-ci.org/browse/JENKINS-29662),
@@ -31,6 +39,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-29531](https://issues.jenkins-ci.org/browse/JENKINS-29531))
  * Enhanced support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
  * Added documentation about [[handling credentials]]
+ * Fixed a problem with `ScmContext` and the extension point
+   ([JENKINS-29972](https://issues.jenkins-ci.org/browse/JENKINS-29972))
  * Deprecated some overloaded DSL methods for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin), see
    [Migration](Migration#migrating-to-138)
@@ -47,6 +57,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-30013](https://issues.jenkins-ci.org/browse/JENKINS-30013))
  * Added support for the [Ivy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ivy+Plugin)
    ([JENKINS-29910](https://issues.jenkins-ci.org/browse/JENKINS-29910))
+ * Removed anything that has been deprecated in 1.30, see [Migration](Migration#migrating-to-130)
 * 1.37 (August 08 2015)
  * Added support for the [Clang Scan Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin)
    ([JENKINS-29505](https://issues.jenkins-ci.org/browse/JENKINS-29505))

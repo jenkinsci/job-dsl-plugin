@@ -1,0 +1,3 @@
+listView('project-A') {
+    recurse()
+}

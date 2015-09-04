@@ -11,15 +11,6 @@ class ConfigFileSpec extends Specification {
         configFile.type == ConfigFileType.Custom
     }
 
-    def 'set name'() {
-        when:
-        configFile.name('foo')
-
-        then:
-        configFile.name == 'foo'
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'set comment'() {
         when:
         configFile.comment('lorem ipsum')

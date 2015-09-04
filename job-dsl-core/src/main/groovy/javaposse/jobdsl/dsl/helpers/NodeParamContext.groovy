@@ -20,18 +20,33 @@ class NodeParamContext implements Context {
     boolean triggerConcurrentBuilds = false
     String eligibility = 'AllNodeEligibility'
 
+    /**
+     * Sets a description for the parameter.
+     */
     void description(String description) {
         this.description = description
     }
 
+    /**
+     * Specifies the nodes available for selection when job gets triggered manually. Defaults to all nodes if omitted.
+     */
     void allowedNodes(List<String> nodes) {
         allowedNodes.addAll(nodes)
     }
 
+    /**
+     * Specifies the nodes used when job gets triggered by anything else then manually. Empty by default.
+     */
     void defaultNodes(List<String> nodes) {
         defaultNodes.addAll(nodes)
     }
 
+    /**
+     * Defines in which case a build on the next node should be triggered.
+     *
+     * Must be one of {@code 'allCases'}, {@code 'success'}, {@code 'unstable'},
+     * {@code 'allowMultiSelectionForConcurrentBuilds'} or {@code 'multiSelectionDisallowed'} (default).
+     */
     void trigger(String trigger) {
         checkArgument(TRIGGERS.contains(trigger), "trigger must be one of ${TRIGGERS.join(', ')}")
 
@@ -54,6 +69,12 @@ class NodeParamContext implements Context {
         }
     }
 
+    /**
+     * Defines how selected offline nodes should be handled.
+     *
+     * Must be one of {@code 'AllNodeEligibility'} (default), {@code 'IgnoreOfflineNodeEligibility'} or
+     * {@code 'IgnoreTempOfflineNodeEligibility'}.
+     */
     void eligibility(String eligibility) {
         checkArgument(ELIGIBILITY.contains(eligibility), "eligibility must be one of ${ELIGIBILITY.join(', ')}")
         this.eligibility = eligibility

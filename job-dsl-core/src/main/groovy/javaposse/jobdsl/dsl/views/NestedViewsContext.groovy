@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
 import javaposse.jobdsl.dsl.ViewFactory
 import javaposse.jobdsl.dsl.ViewType
@@ -14,17 +13,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
 
     NestedViewsContext(JobManagement jobManagement) {
         super(jobManagement)
-    }
-
-    @Deprecated
-    View view(Map<String, Object> arguments = [:], @DslContext(View) Closure closure) {
-        jobManagement.logDeprecationWarning()
-
-        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
-        View view = viewType.viewClass.newInstance(jobManagement)
-        view.with(closure)
-        views << view
-        view
     }
 
     @Deprecated
@@ -52,7 +40,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
      * @since 1.31
      */
     @Override
-    @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
@@ -69,7 +56,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
      * @since 1.31
      */
     @Override
-    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         processView(name, DeliveryPipelineView, closure)
     }
@@ -78,7 +64,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
      * @since 1.31
      */
     @Override
-    @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
@@ -87,7 +72,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
      * @since 1.31
      */
     @Override
-    @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
     }
@@ -96,7 +80,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
      * @since 1.31
      */
     @Override
-    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
         processView(name, CategorizedJobsView, closure)
     }

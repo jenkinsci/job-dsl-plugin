@@ -10,10 +10,18 @@ class ActiveChoiceContext extends AbstractActiveChoiceContext {
     boolean filterable
     String choiceType = 'SINGLE_SELECT'
 
+    /**
+     * If set, provides a text box filter in the UI control where a text filter can be typed.
+     */
     void filterable(boolean filterable = true) {
         this.filterable = filterable
     }
 
+    /**
+     * Selects one of four different rendering options for the option values.
+     *
+     * Must be one of {@code 'SINGLE_SELECT'} (default), {@code 'MULTI_SELECT'}, {@code 'CHECKBOX'} or {@code 'RADIO'}.
+     */
     void choiceType(String choiceType) {
         checkArgument(
                 VALID_CHOICE_TYPES.contains(choiceType),

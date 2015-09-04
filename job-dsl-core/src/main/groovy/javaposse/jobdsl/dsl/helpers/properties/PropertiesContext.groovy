@@ -23,6 +23,11 @@ class PropertiesContext extends AbstractExtensibleContext {
     /**
      * Adds links in the sidebar of the project page.
      *
+     * The icon may be a plain filename of an image in Jenkins' {@code images/24x24} directory (such as
+     * {@code help.gif}, {@code document.gif} or {@code refresh.gif}), or {@code /userContent/filename.ext} for a custom
+     * icon placed in the {@code JENKINS_HOME/userContent} directory. User content can also be uploaded by using
+     * {@link javaposse.jobdsl.dsl.DslFactory#userContent(java.lang.String, java.io.InputStream)}.
+     *
      * @since 1.33
      */
     @RequiresPlugin(id = 'sidebar-link', minimumVersion = '1.7')
@@ -37,6 +42,10 @@ class PropertiesContext extends AbstractExtensibleContext {
 
     /**
      * Allows to configure a custom icon for each job.
+     *
+     * The argument must point to a custom icon placed in the {@code JENKINS_HOME/userContent/customIcon} directory.
+     * User content can be uploaded by using
+     * {@link javaposse.jobdsl.dsl.DslFactory#userContent(java.lang.String, java.io.InputStream)}.
      *
      * @since 1.33
      */

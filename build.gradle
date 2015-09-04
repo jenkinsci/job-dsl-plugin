@@ -10,7 +10,7 @@ buildscript {
 
 defaultTasks 'build' // for BuildHive
 
-subprojects {
+configure(subprojects - project(':job-dsl-api-viewer')) {
     group = 'org.jenkins-ci.plugins'
 
     apply plugin: 'groovy'
@@ -65,11 +65,20 @@ project(':job-dsl-core') {
                 srcDir 'src/ast/resources'
             }
         }
+        examples {
+            groovy {
+                srcDirs 'src/main/docs/examples'
+            }
+        }
         main.compileClasspath += sourceSets.ast.output
     }
 
     description = 'Generates Jenkins jobs via a DSL'
     mainClassName = 'javaposse.jobdsl.Run'
+
+    ext {
+        apiDocData = "${project.buildDir}/dsl-${version}.json"
+    }
 
     dependencies {
         astCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
@@ -77,6 +86,10 @@ project(':job-dsl-core') {
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile 'org.jenkins-ci:version-number:1.1'
         compile 'org.jvnet.hudson:xstream:1.4.7-jenkins-1'
+    }
+
+    codenarcExamples {
+        configFile = file('../config/codenarc/rules-examples.groovy')
     }
 
     jar {
@@ -105,6 +118,15 @@ project(':job-dsl-core') {
         mainClass = project.mainClassName
     }
 
+    task generateApiDoc(type: JavaExec, dependsOn: 'classes') {
+        main = 'javaposse.jobdsl.dsl.doc.ApiDocGenerator'
+        classpath = sourceSets.main.runtimeClasspath
+        args = [version, apiDocData]
+
+        inputs.dir "${project.projectDir}/src/main/docs"
+        outputs.file apiDocData
+    }
+
     run {
         if (project.hasProperty('args')) {
             args project.args.split('\\s+')
@@ -120,6 +142,7 @@ project(':job-dsl-core') {
                 artifact jarGroovydocs
                 artifact jarSources
                 artifact oneJar
+                artifact source: apiDocData, extension: 'json', classifier: 'apidoc' builtBy(project.tasks.generateApiDoc)
             }
         }
 
@@ -168,10 +191,12 @@ apply plugin: 'org.ajoberstar.github-pages'
 
 githubPages {
     commitMessage = "updated wiki for $version"
-    repoUri = 'git@github.com:jenkinsci/job-dsl-plugin.wiki.git'
+    repoUri = "git@github.com:$githubUser/job-dsl-plugin.wiki.git"
     targetBranch = 'master'
     workingPath = "$buildDir/wiki"
     pages {
         from 'docs'
     }
 }
+
+task publishDocs(dependsOn: ['publishGhPages', ':job-dsl-api-viewer:publishGhPages'])

@@ -232,23 +232,6 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
-    def 'default timeout will not fail the build'() {
-        when:
-        context.timeout {
-            failBuild()
-            failBuild(false)
-        }
-
-        then:
-        with(context.wrapperNodes[0]) {
-            children().size() == 2
-            strategy[0].children().size() == 1
-            strategy[0].timeoutMinutes[0].value() == 3
-            operationList[0].children().size() == 0
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
-    }
-
     def 'default timeout will abort the build'() {
         when:
         context.timeout {
@@ -319,27 +302,13 @@ class WrapperContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'sshAgent with invalid credentials'() {
-        setup:
-        mockJobManagement.getCredentialsId('foo') >> null
-
-        when:
-        context.sshAgent('foo')
-
-        then:
-        thrown(DslScriptException)
-    }
-
     def 'sshAgent'() {
-        setup:
-        mockJobManagement.getCredentialsId('acme') >> '4711'
-
         when:
         context.sshAgent('acme')
 
         then:
         context.wrapperNodes[0].name() == 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
-        context.wrapperNodes[0].user[0].value() == '4711'
+        context.wrapperNodes[0].user[0].value() == 'acme'
         1 * mockJobManagement.requirePlugin('ssh-agent')
     }
 
@@ -1019,12 +988,6 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'call credentials binding'() {
-        setup:
-        mockJobManagement.getCredentialsId('foo') >> 'bar'
-        mockJobManagement.getCredentialsId('bar') >> 'baz'
-        mockJobManagement.getCredentialsId('baz') >> 'foo'
-        mockJobManagement.getCredentialsId('foobar') >> 'foobarbaz'
-
         when:
         context.credentialsBinding {
             file('A', 'foo')
@@ -1042,31 +1005,28 @@ class WrapperContextSpec extends Specification {
             with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.FileBinding'[0]) {
                 children().size() == 2
                 variable[0].value() == 'A'
-                credentialsId[0].value() == 'bar'
+                credentialsId[0].value() == 'foo'
             }
             with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.StringBinding'[0]) {
                 children().size() == 2
                 variable[0].value() == 'B'
-                credentialsId[0].value() == 'baz'
+                credentialsId[0].value() == 'bar'
             }
             with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding'[0]) {
                 children().size() == 2
                 variable[0].value() == 'C'
-                credentialsId[0].value() == 'foo'
+                credentialsId[0].value() == 'baz'
             }
             with(bindings[0].'org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding'[0]) {
                 children().size() == 2
                 variable[0].value() == 'D'
-                credentialsId[0].value() == 'foobarbaz'
+                credentialsId[0].value() == 'foobar'
             }
         }
         1 * mockJobManagement.requirePlugin('credentials-binding')
     }
 
     def 'call credentials binding with username password multi binding'() {
-        setup:
-        mockJobManagement.getCredentialsId('foo') >> 'bar'
-
         when:
         context.credentialsBinding {
             usernamePassword('A', 'B', 'foo')
@@ -1082,7 +1042,7 @@ class WrapperContextSpec extends Specification {
                 children().size() == 3
                 usernameVariable[0].value() == 'A'
                 passwordVariable[0].value() == 'B'
-                credentialsId[0].value() == 'bar'
+                credentialsId[0].value() == 'foo'
             }
         }
         1 * mockJobManagement.requirePlugin('credentials-binding')

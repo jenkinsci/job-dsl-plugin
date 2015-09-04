@@ -11,18 +11,31 @@ class GitHubPullRequestBuilderCommitStatusContext implements Context {
     String startedStatus
     List<Node> completedStatus = []
 
+    /**
+     * A string label to differentiate this status from the status of other systems.
+     */
     void context(String context) {
         this.context = context
     }
 
+    /**
+     * Use a custom status for when a build is triggered.
+     */
     void triggeredStatus(String triggeredStatus) {
         this.triggeredStatus = triggeredStatus
     }
 
+    /**
+     * Use a custom status for when a build is started.
+     */
     void startedStatus(String startedStatus) {
         this.startedStatus = startedStatus
     }
 
+    /**
+     * Use a custom status for when a build is completed. Can be called multiple times to set messages for different
+     * build results. Valid build results are {@code 'SUCCESS'}, {@code 'FAILURE'}, and {@code 'ERROR'}.
+     */
     void completedStatus(String buildResult, String message) {
         Preconditions.checkArgument(
                 VALID_BUILD_RESULT.contains(buildResult),

@@ -12,6 +12,9 @@ class WorkflowJob extends Job {
         super(jobManagement)
     }
 
+    /**
+     * Adds a workflow definition.
+     */
     void definition(@DslContext(WorkflowDefinitionContext) Closure definitionClosure) {
         WorkflowDefinitionContext context = new WorkflowDefinitionContext()
         ContextHelper.executeInContext(definitionClosure, context)

@@ -22,6 +22,9 @@ class S3BucketPublisherContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Specifies files to upload. Can be called multiple times to add upload more files.
+     */
     void entry(String source, String bucketName, String region, @DslContext(S3EntryContext) Closure closure = null) {
         checkNotNullOrEmpty(source, 'source must be specified')
         checkNotNullOrEmpty(bucketName, 'bucket must be specified')
@@ -49,6 +52,9 @@ class S3BucketPublisherContext extends AbstractContext {
         }
     }
 
+    /**
+     * Adds metadata for the upload files. Can be called multiple times to add more metadata.
+     */
     void metadata(String key, String value) {
         this.metadata << NodeBuilder.newInstance().'hudson.plugins.s3.MetadataPair' {
             delegate.key(key)

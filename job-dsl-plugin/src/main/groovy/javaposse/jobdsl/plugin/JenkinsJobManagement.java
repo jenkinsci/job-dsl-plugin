@@ -239,9 +239,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                 for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, jenkins, SYSTEM)) {
                     if (credentials.getId().equals(credentialsDescription)) {
                         return credentials.getId();
-                    } else if (credentials.getDescription().equals(credentialsDescription)) {
-                        logDeprecationWarning("finding credentials by description");
-                        return credentials.getId();
                     }
                 }
             }

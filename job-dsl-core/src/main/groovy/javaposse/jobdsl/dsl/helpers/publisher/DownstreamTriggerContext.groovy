@@ -16,6 +16,12 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
         super(jobManagement)
     }
 
+    /**
+     * Determines for which results of the current build, the new build(s) will be triggered.
+     *
+     * Must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'UNSTABLE_OR_BETTER'}, {@code 'UNSTABLE_OR_WORSE'},
+     * {@code 'FAILED'} or {@code 'ALWAYS'}.
+     */
     void condition(String condition) {
         Preconditions.checkArgument(
                 VALID_DOWNSTREAM_CONDITIONS.contains(condition),
@@ -25,6 +31,9 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
         this.condition = condition
     }
 
+    /**
+     * Triggers a build even when there are currently no parameters defined.
+     */
     void triggerWithNoParameters(boolean triggerWithNoParameters = true) {
         this.triggerWithNoParameters = triggerWithNoParameters
     }

@@ -17,6 +17,8 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     }
 
     /**
+     * Load files (properties or scripts) from the master node.
+     *
      * @since 1.21
      */
     void loadFilesFromMaster(boolean loadFilesFromMaster) {
@@ -24,6 +26,8 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     }
 
     /**
+     * Injects Jenkins system variables and environment variables defined as global properties and as node properties.
+     *
      * @since 1.21
      */
     void keepSystemVariables(boolean keepSystemVariables) {
@@ -31,6 +35,9 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     }
 
     /**
+     * Inject Jenkins build variables and also environment contributors and build variable contributors provided by
+     * other plugins.
+     *
      * @since 1.21
      */
     void keepBuildVariables(boolean keepBuildVariables) {
@@ -38,6 +45,8 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     }
 
     /**
+     * Allows environment variables to override build parameters.
+     *
      * @since 1.30
      */
     void overrideBuildParameters(boolean overrideBuildParameters = true) {
@@ -45,6 +54,8 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     }
 
     /**
+     * Add environment and build variable contributors provided by other plugins.
+     *
      * @since 1.30
      */
     void contributors(@DslContext(EnvironmentVariableContributorsContext) Closure contributorsClosure) {

@@ -13,14 +13,24 @@ class GroovyPostbuildContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Sets the Groovy script to execute.
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String)} to read scripts from files.
+     */
     void script(String script) {
         this.script = script
     }
 
+    /**
+     * Specifies the behavior when the script fails. Defaults to {@code Behavior.DoNothing}.
+     */
     void behavior(PublisherContext.Behavior behavior) {
         this.behavior = behavior
     }
 
+    /**
+     * If set, executes the the script in a sandbox environment. Defaults to {@code false}.
+     */
     @RequiresPlugin(id = 'groovy-postbuild', minimumVersion = '2.2')
     void sandbox(boolean sandbox = true) {
         this.sandbox = sandbox

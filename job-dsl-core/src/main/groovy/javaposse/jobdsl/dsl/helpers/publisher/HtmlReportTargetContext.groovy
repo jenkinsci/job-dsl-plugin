@@ -18,24 +18,38 @@ class HtmlReportTargetContext extends AbstractContext {
         this.reportDir = reportDir
     }
 
+    /**
+     * Sets a title for the report.
+     */
     void reportName(String reportName) {
         this.reportName = reportName
     }
 
+    /**
+     * Sets the path to the HTML report directory relative to the workspace.
+     */
     void reportFiles(String reportFiles) {
         this.reportFiles = reportFiles
     }
 
+    /**
+     * If set, archives reports for all successful builds. Defaults to {@code false}.
+     */
     void keepAll(boolean keepAll = true) {
         this.keepAll = keepAll
     }
 
+    /**
+     * If set, allows report to be missing. Defaults to {@code false}.
+     */
     @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.3')
     void allowMissing(boolean allowMissing = true) {
         this.allowMissing = allowMissing
     }
 
     /**
+     * Publishes the link on project level even if build failed.
+     *
      * @since 1.35
      */
     @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.4')

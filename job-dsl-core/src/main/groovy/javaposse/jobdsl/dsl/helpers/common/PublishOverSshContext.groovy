@@ -13,22 +13,39 @@ class PublishOverSshContext implements Context {
     boolean alwaysPublishFromMaster
     String parameterName
 
+    /**
+     * Continues publishing to the other servers after a problem with a previous server. Defaults to {@code false}.
+     */
     void continueOnError(boolean continueOnError = true) {
         this.continueOnError = continueOnError
     }
 
+    /**
+     * Mark the build as a failure if there is a problem publishing to a server. The default is to mark the build as
+     * unstable.
+     */
     void failOnError(boolean failOnError = true) {
         this.failOnError = failOnError
     }
 
+    /**
+     * Publishes from the Jenkins master. Defaults to {@code false}.
+     */
     void alwaysPublishFromMaster(boolean alwaysPublishFromMaster = true) {
         this.alwaysPublishFromMaster = alwaysPublishFromMaster
     }
 
+    /**
+     * Publishes to servers by matching labels against a regular expression provided by a parameter or an environment
+     * variable.
+     */
     void parameterizedPublishing(String parameterName) {
         this.parameterName = parameterName
     }
 
+    /**
+     * Adds a target server. Can be called multiple times to add more servers.
+     */
     void server(String name, @DslContext(PublishOverSshServerContext) Closure serverClosure) {
         PublishOverSshServerContext serverContext = new PublishOverSshServerContext(name)
         ContextHelper.executeInContext(serverClosure, serverContext)

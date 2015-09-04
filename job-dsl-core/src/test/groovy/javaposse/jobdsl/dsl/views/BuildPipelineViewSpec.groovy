@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
 
@@ -10,7 +11,8 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class BuildPipelineViewSpec extends Specification {
-    BuildPipelineView view = new BuildPipelineView()
+    JobManagement jobManagement = Mock(JobManagement)
+    BuildPipelineView view = new BuildPipelineView(jobManagement)
 
     def 'defaults'() {
         when:
@@ -285,6 +287,7 @@ class BuildPipelineViewSpec extends Specification {
         Node root = view.node
         root.startsWithParameters.size() == 1
         root.startsWithParameters[0].text() == 'true'
+        jobManagement.requireMinimumPluginVersion('build-pipeline-plugin', '1.4.3')
     }
 
     def 'startsWithParameters no arguments'() {
@@ -295,6 +298,7 @@ class BuildPipelineViewSpec extends Specification {
         Node root = view.node
         root.startsWithParameters.size() == 1
         root.startsWithParameters[0].text() == 'true'
+        jobManagement.requireMinimumPluginVersion('build-pipeline-plugin', '1.4.3')
     }
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>

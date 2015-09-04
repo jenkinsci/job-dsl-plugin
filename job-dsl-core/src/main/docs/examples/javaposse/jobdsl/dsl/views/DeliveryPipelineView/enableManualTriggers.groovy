@@ -1,0 +1,3 @@
+deliveryPipelineView('example') {
+    enableManualTriggers()
+}

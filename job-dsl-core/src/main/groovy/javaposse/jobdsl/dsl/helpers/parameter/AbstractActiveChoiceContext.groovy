@@ -9,10 +9,16 @@ abstract class AbstractActiveChoiceContext implements Context {
     String description
     Node script
 
+    /**
+     * Sets a description for the parameter.
+     */
     void description(String description) {
         this.description = description
     }
 
+    /**
+     * Use a Groovy script to generate value options.
+     */
     void groovyScript(@DslContext(ActiveChoiceGroovyScriptContext) Closure closure) {
         ActiveChoiceGroovyScriptContext context = new ActiveChoiceGroovyScriptContext()
         executeInContext(closure, context)
@@ -23,6 +29,9 @@ abstract class AbstractActiveChoiceContext implements Context {
         }
     }
 
+    /**
+     * Use a Scriptler script to generate value options.
+     */
     void scriptlerScript(String scriptId, @DslContext(ActiveChoiceScriptlerScriptContext) Closure closure = null) {
         ActiveChoiceScriptlerScriptContext context = new ActiveChoiceScriptlerScriptContext()
         executeInContext(closure, context)

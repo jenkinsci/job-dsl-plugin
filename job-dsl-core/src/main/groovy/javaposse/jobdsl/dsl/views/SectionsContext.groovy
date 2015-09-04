@@ -14,6 +14,9 @@ class SectionsContext extends AbstractContext {
         super(jobManagement)
     }
 
+    /**
+     * Adds a list view section.
+     */
     void listView(@DslContext(ListViewSectionContext) Closure listViewSectionClosure) {
         ListViewSectionContext context = new ListViewSectionContext(jobManagement)
         executeInContext(listViewSectionClosure, context)

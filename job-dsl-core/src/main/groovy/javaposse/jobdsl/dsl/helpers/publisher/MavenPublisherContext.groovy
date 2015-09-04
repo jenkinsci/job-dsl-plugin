@@ -11,6 +11,8 @@ class MavenPublisherContext extends PublisherContext {
     }
 
     /**
+     * Deploys artifacts to a Maven repository.
+     *
      * @since 1.31
      */
     void deployArtifacts(@DslContext(DeployArtifactsContext) Closure closure = null) {

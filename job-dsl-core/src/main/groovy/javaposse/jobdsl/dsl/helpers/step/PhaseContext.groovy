@@ -17,23 +17,38 @@ class PhaseContext extends AbstractContext {
         this.continuationCondition = continuationCondition
     }
 
+    /**
+     * Defines the name of the MultiJob phase.
+     */
     void phaseName(String phaseName) {
         this.phaseName = phaseName
     }
 
+    /**
+     * Defines how to decide the status of the whole MultiJob phase.
+     */
     void continuationCondition(String continuationCondition) {
         this.continuationCondition = continuationCondition
     }
 
+    /**
+     * Adds a job to the phase.
+     */
     void job(String jobName, @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
         job(jobName, true, true, phaseJobClosure)
     }
 
+    /**
+     * Adds a job to the phase.
+     */
     void job(String jobName, boolean currentJobParameters,
              @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
         job(jobName, currentJobParameters, true, phaseJobClosure)
     }
 
+    /**
+     * Adds a job to the phase.
+     */
     void job(String jobName, boolean currentJobParameters, boolean exposedScm,
              @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
         PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, jobName, currentJobParameters, exposedScm)
