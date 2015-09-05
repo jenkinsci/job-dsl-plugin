@@ -60,7 +60,8 @@ job('example') {
 
 The `configure` method can be stated multiple times and configure blocks are run in the order they are provided.
 
-See the [[Job Reference]] for details about the configure blocks supported by DSL methods.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for details about the configure blocks supported by
+DSL methods.
 
 # Transforming XML
 
@@ -105,7 +106,8 @@ to generate might have a conflict with other (possibly undocumented and internal
 can use the closure's `delegate` variable.
 
 Below is an example of a configure block that is trying to generate `<label>my-label</label>`.
-The label element is conflicting with the [label](Job-reference#label) DSL method.
+The label element is conflicting with the [label](https://jenkinsci.github.io/job-dsl-plugin/#path/job-label) DSL
+method.
 
 ```groovy
 job('example') {

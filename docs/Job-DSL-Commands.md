@@ -1,5 +1,4 @@
-**NOTE: See the [[Job Reference]] and the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for details about
-all options.**
+**NOTE: See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for details about all options.**
 
 # DSL Methods
 
@@ -64,7 +63,7 @@ myJob.with {
 }
 ```
 
-See the [[Job Reference]] page for details about all job options.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) page for details about all job options.
 
 # View
 

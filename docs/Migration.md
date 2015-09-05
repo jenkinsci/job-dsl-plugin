@@ -897,7 +897,7 @@ job {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/job-publishers-archiveJunit) for further details.
 
 ### Xvnc
 
@@ -924,7 +924,7 @@ job {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/job-wrappers-xvnc) for further details.
 
 ### Gerrit Trigger
 
@@ -969,7 +969,7 @@ job {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/job-triggers-gerrit-events) for further details.
 
 ### AbstractStepContext
 
@@ -1019,7 +1019,7 @@ timeout {
 }
 ```
 
-See the [[Job Reference]] for further details.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/job-wrappers-timeout) for further details.
 
 ### Gerrit Trigger
 
@@ -1028,15 +1028,18 @@ Before 1.24, the Gerrit trigger configuration used hardwired configuration for u
 plugin configuration). Now the Gerrit trigger configuration correctly honors central configuration of labels. If you use
 non-default labels in your central configuration, you might need to change the trigger label configuration of your jobs.
 
-See the [[Job Reference]] for further details.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/job-triggers-gerrit) for further details.
 
 ## Migrating to 1.20
 
-In version 1.20, some implementation classes have been moved to work around a [bug](http://jira.codehaus.org/browse/GROOVY-5875) in Groovy. When these classes have been used to [extend the DSL](Extending-the-DSL-from-your-Job-Scripts), import statements and fully qualified class names have to be adjusted.
+In version 1.20, some implementation classes have been moved to work around a
+[bug](http://jira.codehaus.org/browse/GROOVY-5875) in Groovy. When these classes have been used to extend the DSL,
+import statements and fully qualified class names have to be adjusted.
 
 ## Migrating to 1.19
 
-In version 1.19 all build wrapper elements have been moved from the job element to a wrappers sub-element. When upgrading to 1.19 or later, the wrapper elements have to moved as shown below.
+In version 1.19 all build wrapper elements have been moved from the job element to a wrappers sub-element. When
+upgrading to 1.19 or later, the wrapper elements have to moved as shown below.
 
 DSL prior to 1.19:
 
