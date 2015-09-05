@@ -3,6 +3,7 @@ Welcome to the jenkins-job-dsl wiki!
 * The high-level DSL concepts are documented in [[Job DSL Commands]].
 * See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for a full syntax reference
 * There are also tips on [[more advanced usage and workflows|User Power Moves]].
+* An introduction to the DSL can be found in a collection of [[Talks and Blog Posts]].
 * [The forum](https://groups.google.com/forum/#!forum/job-dsl-plugin) has lots of information, some of which is making its way to the [[FAQ|Frequently Asked Questions]].
 * If you want to get more involved, here's [how to contribute](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)...
 
@@ -20,6 +21,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 * 1.38 (unreleased)
  * Replaced the [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
+ * Added a collection of [[Talks amd Blog Posts]]
  * Added support for [Crittercism dSYM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Crittercism+dSYM+Plugin)
    ([JENKINS-29501](https://issues.jenkins-ci.org/browse/JENKINS-29501))
  * Added support for the [ShiningPanda Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin)
