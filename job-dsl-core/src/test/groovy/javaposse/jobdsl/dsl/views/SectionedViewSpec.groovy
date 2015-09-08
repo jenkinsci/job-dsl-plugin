@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.views.jobfilter.Status
 import spock.lang.Specification
 
@@ -7,7 +8,8 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class SectionedViewSpec extends Specification {
-    SectionedView view = new SectionedView()
+    JobManagement jobManagement = Mock(JobManagement)
+    SectionedView view = new SectionedView(jobManagement)
 
     def setup() {
         setIgnoreWhitespace(true)
