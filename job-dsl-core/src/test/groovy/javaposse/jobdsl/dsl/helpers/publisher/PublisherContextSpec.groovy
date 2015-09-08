@@ -899,7 +899,7 @@ class PublisherContextSpec extends Specification {
         publisherNode.criteria[0].value() == 'Not Failed'
         publisherNode.archiveMethod[0].value() == 'ZIP'
         publisherNode.overrideDefaultExcludes[0].value() == true
-        1 * jobManagement.requirePlugin('clone-workspace-scm')
+        (1.._) * jobManagement.requirePlugin('clone-workspace-scm')
     }
 
     def 'call scp publish with not enough entries'() {
@@ -1248,7 +1248,7 @@ class PublisherContextSpec extends Specification {
         typeConfigNode.unstable[0].value() == '999'
         typeConfigNode.usePattern[0].value() == 'false'
         typeConfigNode.pattern[0].value() == ''
-        1 * jobManagement.requirePlugin('violations')
+        (1.._) * jobManagement.requirePlugin('violations')
     }
 
     def 'call violations plugin with all args'() {
@@ -1859,7 +1859,7 @@ class PublisherContextSpec extends Specification {
             groovyScript[0].value() == 'foo'
             behavior[0].value() == 0
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
+        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
         1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
@@ -1877,7 +1877,7 @@ class PublisherContextSpec extends Specification {
             groovyScript[0].value() == 'foo'
             behavior[0].value() == 1
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
+        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
         1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
@@ -2760,7 +2760,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == false
             }
         }
-        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
+        (1.._) * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with no tokens'() {

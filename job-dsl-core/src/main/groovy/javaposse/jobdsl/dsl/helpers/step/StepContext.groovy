@@ -114,6 +114,7 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.plugins.gradle.Gradle} node is passed into the configure block.
      */
+    @RequiresPlugin(id = 'gradle')
     void gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
         gradle {
             if (tasks != null) {
@@ -212,6 +213,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Invokes an Ant build script.
      */
+    @RequiresPlugin(id = 'ant')
     void ant(@DslContext(AntContext) Closure antClosure = null) {
         ant(null, null, null, antClosure)
     }
@@ -219,6 +221,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Invokes an Ant build script.
      */
+    @RequiresPlugin(id = 'ant')
     void ant(String targets, @DslContext(AntContext) Closure antClosure = null) {
         ant(targets, null, null, antClosure)
     }
@@ -226,6 +229,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Invokes an Ant build script.
      */
+    @RequiresPlugin(id = 'ant')
     void ant(String targets, String buildFile, @DslContext(AntContext) Closure antClosure = null) {
         ant(targets, buildFile, null, antClosure)
     }
@@ -275,6 +279,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
+    @RequiresPlugin(id = 'groovy')
     void groovyCommand(String command, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, null, groovyClosure)
     }
@@ -282,6 +287,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
+    @RequiresPlugin(id = 'groovy')
     void groovyCommand(String command, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, groovyName, groovyClosure)
     }
@@ -289,6 +295,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
+    @RequiresPlugin(id = 'groovy')
     void groovyScriptFile(String fileName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, null, groovyClosure)
     }
@@ -296,6 +303,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
+    @RequiresPlugin(id = 'groovy')
     void groovyScriptFile(String fileName, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, groovyName, groovyClosure)
     }
@@ -310,7 +318,6 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
-    @RequiresPlugin(id = 'groovy')
     protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
         GroovyContext groovyContext = new GroovyContext()
         ContextHelper.executeInContext(groovyClosure, groovyContext)
@@ -331,6 +338,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a system Groovy script.
      */
+    @RequiresPlugin(id = 'groovy')
     void systemGroovyCommand(String command, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
         systemGroovy(command, true, systemGroovyClosure)
     }
@@ -338,11 +346,11 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a system Groovy script.
      */
+    @RequiresPlugin(id = 'groovy')
     void systemGroovyScriptFile(String fileName, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
         systemGroovy(fileName, false, systemGroovyClosure)
     }
 
-    @RequiresPlugin(id = 'groovy')
     protected systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
         SystemGroovyContext systemGroovyContext = new SystemGroovyContext()
         ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
@@ -400,6 +408,7 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.tasks.Maven} node is passed into the configure block.
      */
+    @RequiresPlugin(id = 'maven-plugin')
     void maven(String targets = null, String pom = null, Closure configure = null) {
         maven {
             delegate.goals(targets)
@@ -411,6 +420,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Builds a Grails project.
      */
+    @RequiresPlugin(id = 'grails')
     void grails(@DslContext(GrailsContext) Closure grailsClosure) {
         grails null, false, grailsClosure
     }
@@ -418,6 +428,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Builds a Grails project.
      */
+    @RequiresPlugin(id = 'grails')
     void grails(String targets, @DslContext(GrailsContext) Closure grailsClosure) {
         grails targets, false, grailsClosure
     }
@@ -451,6 +462,7 @@ class StepContext extends AbstractExtensibleContext {
      * Copies artifacts from another project.
      */
     @Deprecated
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, String includeGlob,
                        @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
@@ -460,6 +472,7 @@ class StepContext extends AbstractExtensibleContext {
      * Copies artifacts from another project.
      */
     @Deprecated
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, String includeGlob, String targetPath,
                        @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
@@ -469,6 +482,7 @@ class StepContext extends AbstractExtensibleContext {
      * Copies artifacts from another project.
      */
     @Deprecated
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
         copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
@@ -478,6 +492,7 @@ class StepContext extends AbstractExtensibleContext {
      * Copies artifacts from another project.
      */
     @Deprecated
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
     void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
                        boolean optionalAllowed,
                        @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
@@ -703,6 +718,7 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.25
      */
+    @RequiresPlugin(id = 'rake')
     void rake(@DslContext(RakeContext) Closure rakeClosure = null) {
         rake(null, rakeClosure)
     }
@@ -756,6 +772,7 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.25
      */
+    @RequiresPlugin(id = 'vsphere-cloud')
     void vSpherePowerOff(String server, String vm) {
         vSphereBuildStep(server, 'PowerOff') {
             delegate.vm vm
@@ -769,6 +786,7 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.25
      */
+    @RequiresPlugin(id = 'vsphere-cloud')
     void vSpherePowerOn(String server, String vm) {
         vSphereBuildStep(server, 'PowerOn') {
             delegate.vm vm
@@ -781,6 +799,7 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.25
      */
+    @RequiresPlugin(id = 'vsphere-cloud')
     void vSphereRevertToSnapshot(String server, String vm, String snapshot) {
         vSphereBuildStep(server, 'RevertToSnapshot') {
             delegate.vm vm
@@ -788,7 +807,6 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
-    @RequiresPlugin(id = 'vsphere-cloud')
     private vSphereBuildStep(String server, String builder, Closure configuration) {
         Integer hash = jobManagement.getVSphereCloudHash(server)
         Preconditions.checkNotNull(hash, "vSphere server ${server} does not exist")

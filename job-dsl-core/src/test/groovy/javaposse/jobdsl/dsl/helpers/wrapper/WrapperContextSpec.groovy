@@ -291,7 +291,7 @@ class WrapperContextSpec extends Specification {
         def ports = context.wrapperNodes[0].ports
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[0].name[0].value() == 'HTTP'
         ports.'org.jvnet.hudson.plugins.port__allocator.DefaultPortType'[1].name[0].value() == '8080'
-        1 * mockJobManagement.requirePlugin('port-allocator')
+        (1.._) * mockJobManagement.requirePlugin('port-allocator')
     }
 
     def 'sshAgent without credentials'() {
@@ -893,7 +893,7 @@ class WrapperContextSpec extends Specification {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
             ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
         }
-        1 * mockJobManagement.requirePlugin('Exclusion')
+        (1.._) * mockJobManagement.requirePlugin('Exclusion')
     }
 
     def 'call exclusion with multiple args'() {

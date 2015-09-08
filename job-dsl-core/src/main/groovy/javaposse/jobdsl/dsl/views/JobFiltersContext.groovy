@@ -1,19 +1,26 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.views.jobfilter.JobStatusesFilter
 import javaposse.jobdsl.dsl.views.jobfilter.RegexFilter
 import javaposse.jobdsl.dsl.views.jobfilter.Status
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class JobFiltersContext implements Context {
+class JobFiltersContext extends AbstractContext {
     List<Node> filterNodes = []
+
+    protected JobFiltersContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Adds a job status filter.
      */
+    @RequiresPlugin(id = 'view-job-filters')
     void status(@DslContext(JobStatusesFilter) Closure statusesFilterClosure) {
         JobStatusesFilter statusesFilter = new JobStatusesFilter()
         executeInContext(statusesFilterClosure, statusesFilter)
@@ -29,6 +36,7 @@ class JobFiltersContext implements Context {
     /**
      * Adds a regular expression filter.
      */
+    @RequiresPlugin(id = 'view-job-filters')
     void regex(@DslContext(RegexFilter) Closure regexFilterClosure) {
         RegexFilter regexFilter = new RegexFilter()
         executeInContext(regexFilterClosure, regexFilter)

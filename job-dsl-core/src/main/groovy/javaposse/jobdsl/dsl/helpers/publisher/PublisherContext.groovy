@@ -32,6 +32,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Sends customizable email notifications.
      */
+    @RequiresPlugin(id = 'email-ext')
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)
     }
@@ -39,6 +40,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Sends customizable email notifications.
      */
+    @RequiresPlugin(id = 'email-ext')
     void extendedEmail(String recipients, String subjectTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, subjectTemplate, null, emailClosure)
@@ -417,6 +419,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Archives files for Clone Workspace SCM source.
      */
+    @RequiresPlugin(id = 'clone-workspace-scm')
     void publishCloneWorkspace(String workspaceGlob, @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, cloneWorkspaceClosure)
     }
@@ -424,6 +427,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Archives files for Clone Workspace SCM source.
      */
+    @RequiresPlugin(id = 'clone-workspace-scm')
     void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
                                @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, cloneWorkspaceClosure)
@@ -432,6 +436,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Archives files for Clone Workspace SCM source.
      */
+    @RequiresPlugin(id = 'clone-workspace-scm')
     void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod,
                                @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(
@@ -515,6 +520,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Generates reports from static code violations detectors.
      */
+    @RequiresPlugin(id = 'violations')
     void violations(@DslContext(ViolationsContext) Closure violationsClosure = null) {
         violations(100, violationsClosure)
     }
@@ -758,6 +764,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.19
      */
+    @RequiresPlugin(id = 'groovy-postbuild')
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
         groovyPostBuild {
             delegate.script(script)
@@ -991,6 +998,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.23
      */
+    @RequiresPlugin(id = 'jenkins-flowdock-plugin')
     void flowdock(String[] tokens, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
         checkArgument(tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token')
 

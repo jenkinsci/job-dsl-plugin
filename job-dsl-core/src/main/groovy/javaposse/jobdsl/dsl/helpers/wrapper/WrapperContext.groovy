@@ -158,6 +158,7 @@ class WrapperContext extends AbstractExtensibleContext {
     /**
      * Allocate ports for build executions to prevent conflicts between build jobs competing for a single port number.
      */
+    @RequiresPlugin(id = 'port-allocator')
     void allocatePorts(@DslContext(PortsContext) Closure cl = null) {
         allocatePorts(new String[0], cl)
     }
@@ -400,6 +401,7 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.24
      */
+    @RequiresPlugin(id = 'Exclusion')
     void exclusionResources(String... resourceNames) {
         exclusionResources(resourceNames.toList())
     }

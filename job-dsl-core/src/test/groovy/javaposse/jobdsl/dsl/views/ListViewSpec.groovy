@@ -302,6 +302,7 @@ class ListViewSpec extends Specification {
             assert statusFilter.children()[idx].name() == name
             assert statusFilter.children()[idx].value() == value
         }
+        1 * jobManagement.requirePlugin('view-job-filters')
 
         where:
         filter || children
@@ -381,6 +382,7 @@ class ListViewSpec extends Specification {
         statusFilter.children()[1].value() == regexType.name()
         statusFilter.children()[2].name() == 'regex'
         statusFilter.children()[2].value() == regexString
+        1 * jobManagement.requirePlugin('view-job-filters')
 
         where:
         regexType  || regexString

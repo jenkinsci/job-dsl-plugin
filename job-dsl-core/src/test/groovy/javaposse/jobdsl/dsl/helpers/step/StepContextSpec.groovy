@@ -93,7 +93,7 @@ class StepContextSpec extends Specification {
         gradleStep.name() == 'hudson.plugins.gradle.Gradle'
         gradleStep.tasks[0].value() == 'build'
         gradleStep.useWrapper[0].value() == true
-        1 * jobManagement.requirePlugin('gradle')
+        (1.._) * jobManagement.requirePlugin('gradle')
 
         when:
         context.gradle('build', '-I init.gradle', false)
@@ -103,7 +103,7 @@ class StepContextSpec extends Specification {
         def gradleStep2 = context.stepNodes[1]
         gradleStep2.switches[0].value() == '-I init.gradle'
         gradleStep2.useWrapper[0].value() == false
-        1 * jobManagement.requirePlugin('gradle')
+        (1.._) * jobManagement.requirePlugin('gradle')
 
         when:
         context.gradle('build', '-I init.gradle', false) {
@@ -114,7 +114,7 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 3
         def gradleStep3 = context.stepNodes[2]
         gradleStep3.node1[0].value() == 'value1'
-        1 * jobManagement.requirePlugin('gradle')
+        (1.._) * jobManagement.requirePlugin('gradle')
     }
 
     def 'call gradle methods with defaults'() {
@@ -134,7 +134,7 @@ class StepContextSpec extends Specification {
             fromRootBuildScriptDir[0].value() == true
             makeExecutable[0].value() == false
         }
-        1 * jobManagement.requirePlugin('gradle')
+        (1.._) * jobManagement.requirePlugin('gradle')
 
         when:
         context.gradle {
@@ -153,7 +153,7 @@ class StepContextSpec extends Specification {
             fromRootBuildScriptDir[0].value() == true
             makeExecutable[0].value() == false
         }
-        1 * jobManagement.requirePlugin('gradle')
+        (1.._) * jobManagement.requirePlugin('gradle')
     }
 
     def 'call gradle methods with context'() {
@@ -206,7 +206,7 @@ class StepContextSpec extends Specification {
         grailsStep0.'properties'[0].value() == ''
         grailsStep0.forceUpgrade[0].value() == false
         grailsStep0.nonInteractive[0].value() == true
-        1 * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.requirePlugin('grails')
 
         when:
         context.grails('compile', true)
@@ -224,7 +224,7 @@ class StepContextSpec extends Specification {
         grailsStep1.'properties'[0].value() == ''
         grailsStep1.forceUpgrade[0].value() == false
         grailsStep1.nonInteractive[0].value() == true
-        1 * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.requirePlugin('grails')
 
         when:
         context.grails('compile', false) {
@@ -245,7 +245,7 @@ class StepContextSpec extends Specification {
         grailsStep2.'properties'[0].value() == ''
         grailsStep2.forceUpgrade[0].value() == false
         grailsStep2.nonInteractive[0].value() == false
-        1 * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.requirePlugin('grails')
 
         when:
         context.grails {
@@ -275,7 +275,7 @@ class StepContextSpec extends Specification {
         grailsStep3.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
         grailsStep3.forceUpgrade[0].value() == true
         grailsStep3.nonInteractive[0].value() == false
-        1 * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.requirePlugin('grails')
 
         when:
         context.grails '"test-app --stacktrace"', {
@@ -301,7 +301,7 @@ class StepContextSpec extends Specification {
         grailsStep4.'properties'[0].value() == ''
         grailsStep4.forceUpgrade[0].value() == true
         grailsStep4.nonInteractive[0].value() == false
-        1 * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.requirePlugin('grails')
 
         when:
         context.grails {
@@ -320,7 +320,7 @@ class StepContextSpec extends Specification {
         grailsStep5.'properties'[0].value() == ''
         grailsStep5.forceUpgrade[0].value() == false
         grailsStep5.nonInteractive[0].value() == true
-        1 * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.requirePlugin('grails')
     }
 
     def 'call maven methods'() {
@@ -334,7 +334,7 @@ class StepContextSpec extends Specification {
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
         mavenStep.pom[0] == null
-        1 * jobManagement.requirePlugin('maven-plugin')
+        (1.._) * jobManagement.requirePlugin('maven-plugin')
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
@@ -347,7 +347,7 @@ class StepContextSpec extends Specification {
         def mavenStep2 = context.stepNodes[1]
         mavenStep2.pom[0].value() == 'pom.xml'
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
-        1 * jobManagement.requirePlugin('maven-plugin')
+        (1.._) * jobManagement.requirePlugin('maven-plugin')
     }
 
     def 'call maven method with full context'() {
@@ -474,7 +474,7 @@ class StepContextSpec extends Specification {
             jvmOptions[0].value() == ''
             usePrivateRepository[0].value() == false
         }
-        1 * jobManagement.requirePlugin('maven-plugin')
+        (1.._) * jobManagement.requirePlugin('maven-plugin')
         1 * jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
     }
 
@@ -490,7 +490,7 @@ class StepContextSpec extends Specification {
         antEmptyNode.antName[0].value() == '(Default)'
         !antEmptyNode.children().any { it.name() == 'antOpts' }
         !antEmptyNode.children().any { it.name() == 'properties' }
-        1 * jobManagement.requirePlugin('ant')
+        (1.._) * jobManagement.requirePlugin('ant')
 
         when:
         context.ant('build')
@@ -499,7 +499,7 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 2
         def antBuildNode = context.stepNodes[1]
         antBuildNode.targets[0].value() == 'build'
-        1 * jobManagement.requirePlugin('ant')
+        (1.._) * jobManagement.requirePlugin('ant')
 
         when:
         context.ant('build', 'dir1/build.xml', 'Ant 1.8')
@@ -509,7 +509,7 @@ class StepContextSpec extends Specification {
         def antArgs = context.stepNodes[2]
         antArgs.buildFile[0].value() == 'dir1/build.xml'
         antArgs.antName[0].value() == 'Ant 1.8'
-        1 * jobManagement.requirePlugin('ant')
+        (1.._) * jobManagement.requirePlugin('ant')
 
         when:
         context.ant('build') {
@@ -535,7 +535,7 @@ class StepContextSpec extends Specification {
         antClosure.targets[0].value() == 'build test integTest publish deploy'
         antClosure.antOpts[0].value() == '-Xmx1g\n-Dprop2=value2\n-Dprop3=value3'
         antClosure.'properties'[0].value() == 'test.size=4\nlogging=info\ntest.threads=10\ninput.status=release'
-        1 * jobManagement.requirePlugin('ant')
+        (1.._) * jobManagement.requirePlugin('ant')
     }
 
     def 'call groovyCommand methods'() {
@@ -773,7 +773,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
         1 * jobManagement.logDeprecationWarning()
         context.stepNodes.size() == 1
         def copyEmptyNode = context.stepNodes[0]
@@ -795,7 +795,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
         1 * jobManagement.logDeprecationWarning()
         context.stepNodes.size() == 1
         def copyEmptyNode = context.stepNodes[0]
@@ -2618,7 +2618,7 @@ class StepContextSpec extends Specification {
         rakeStep.tasks[0].value() == ''
         rakeStep.silent[0].value() == false
         rakeStep.bundleExec[0].value() == false
-        1 * jobManagement.requirePlugin('rake')
+        (1.._) * jobManagement.requirePlugin('rake')
     }
 
     def 'call rake method with tasks as argument'() {
@@ -2668,7 +2668,7 @@ class StepContextSpec extends Specification {
         rakeStep.tasks[0].value() == 'first second'
         rakeStep.silent[0].value() == false
         rakeStep.bundleExec[0].value() == false
-        1 * jobManagement.requirePlugin('rake')
+        (1.._) * jobManagement.requirePlugin('rake')
     }
 
     def 'call rake method with task as argument and tasks in closure'() {
@@ -2716,7 +2716,7 @@ class StepContextSpec extends Specification {
         rakeStep.tasks[0].value() == 'first'
         rakeStep.silent[0].value() == true
         rakeStep.bundleExec[0].value() == true
-        1 * jobManagement.requirePlugin('rake')
+        (1.._) * jobManagement.requirePlugin('rake')
     }
 
     def 'call setBuildResult'() {

@@ -197,6 +197,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
+    @RequiresPlugin(id = 'git')
     void git(String url, Closure configure = null) {
         git(url, null, configure)
     }
@@ -207,6 +208,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
+    @RequiresPlugin(id = 'git')
     void git(String url, String branch, Closure configure = null) {
         git {
             remote {
@@ -228,6 +230,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @since 1.15
      * @see #github(java.lang.String, java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'git')
     void github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
         github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
@@ -246,6 +249,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @since 1.15
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
+    @RequiresPlugin(id = 'git')
     void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
                Closure closure = null) {
         git {
@@ -267,6 +271,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
+    @RequiresPlugin(id = 'subversion')
     void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
@@ -277,6 +282,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
+    @RequiresPlugin(id = 'subversion')
     void svn(String svnUrl, String localDir, Closure configure = null) {
         checkNotNull(svnUrl, 'svnUrl must not be null')
         checkNotNull(localDir, 'localDir must not be null')
@@ -324,6 +330,7 @@ class ScmContext extends AbstractExtensibleContext {
      *
      * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, Closure configure = null) {
         p4(viewspec, 'rolem', '', configure)
     }
@@ -333,6 +340,7 @@ class ScmContext extends AbstractExtensibleContext {
      *
      * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
+    @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, String user, Closure configure = null) {
         p4(viewspec, user, '', configure)
     }
