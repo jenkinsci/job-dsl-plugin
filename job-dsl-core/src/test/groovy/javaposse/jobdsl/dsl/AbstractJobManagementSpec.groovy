@@ -91,6 +91,19 @@ class AbstractJobManagementSpec extends Specification {
         buffer.toString().trim() == 'Warning: (test.groovy, line 12) foo is deprecated'
     }
 
+    def 'deprecation warning is logged once only'() {
+        setup:
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream()
+        AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
+
+        when:
+        jobManagement.logDeprecationWarning('foo', 'script123123123.groovy', 12)
+        jobManagement.logDeprecationWarning('foo', 'script123123123.groovy', 12)
+
+        then:
+        buffer.toString().trim() == 'Warning: (DSL script, line 12) foo is deprecated'
+    }
+
     static class TestJobManagement extends MockJobManagement {
         TestJobManagement() {
             super()

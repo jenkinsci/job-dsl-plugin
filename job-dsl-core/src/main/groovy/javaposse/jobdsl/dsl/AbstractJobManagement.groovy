@@ -5,6 +5,7 @@ package javaposse.jobdsl.dsl
  */
 abstract class AbstractJobManagement implements JobManagement {
     final PrintStream outputStream
+    private String lastWarning
 
     protected AbstractJobManagement(PrintStream out) {
         this.outputStream = out
@@ -105,6 +106,10 @@ abstract class AbstractJobManagement implements JobManagement {
      * @since 1.36
      */
     protected void logWarning(String message, String details = DslScriptHelper.getSourceDetails()) {
-        outputStream.println("Warning: ($details) $message")
+        String warning = "Warning: ($details) $message"
+        if (warning != lastWarning) {
+            outputStream.println(warning)
+            lastWarning = warning
+        }
     }
 }
