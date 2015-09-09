@@ -19,8 +19,9 @@ password=IHeartJenkins
 * Tag the source as it is: _git tag -a job-dsl-1.14 -m "Staging 1.14"_
 * Increment the version in gradle.properties and append "-SNAPSHOT": _echo "version=1.15-SNAPSHOT">gradle.properties_
 * Update the release notes, add the next version: `* 1.15 (unreleased)`
+* Add the new snapshot version to the API viewer, e.g. in `index.html`
 * Commit the updated version number: _git commit -am "Bumping to next rev"_
-* Push the two new commit and the tag back to GitHub: _git push --tags origin_
+* Push the two new commit and the tag back to GitHub: _git push --tags && git push_
 * Close all resolved issues in [JIRA](https://issues.jenkins-ci.org/browse/JENKINS/component/16720)
 * Open a pull request to update the [Job DSL Playground](https://github.com/sheehan/job-dsl-playground) 
 * Open a pull request to update the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example)

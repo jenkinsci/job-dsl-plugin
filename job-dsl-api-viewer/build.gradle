@@ -1,5 +1,8 @@
+import de.undercouch.gradle.tasks.download.Download
+
 plugins {
     id 'com.moowork.gulp' version '0.10'
+    id 'de.undercouch.download' version '2.0.0'
 }
 
 // see https://github.com/srs/gradle-gulp-plugin/issues/9
@@ -25,8 +28,15 @@ task copyData(type: Copy) {
     into "${project.buildDir}/data"
 }
 
+task downloadData(type: Download) {
+    src 'http://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/1.38/job-dsl-core-1.38-apidoc.json'
+    dest "${project.buildDir}/data/dsl-1.38.json"
+    onlyIfNewer true
+}
+
 tasks.gulp_build.dependsOn('npmInstall')
 tasks.gulp_build.dependsOn('copyData')
+tasks.gulp_build.dependsOn('downloadData')
 tasks.publishGhPages.dependsOn('gulp_build')
 
 task clean(type: Delete) {
