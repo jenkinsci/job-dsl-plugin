@@ -416,14 +416,10 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         build.setResult(UNSTABLE);
     }
 
-    private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation) throws IOException {
+    private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation) throws IOException, InterruptedException {
         FilePath filePath = workspace.child(relLocation);
-        try {
-            if (!filePath.exists()) {
-                throw new DslScriptException(format("File %s does not exist in workspace", relLocation));
-            }
-        } catch (InterruptedException ie) {
-            throw new IOException(ie);
+        if (!filePath.exists()) {
+            throw new DslScriptException(format("File %s does not exist in workspace", relLocation));
         }
         return filePath;
     }
