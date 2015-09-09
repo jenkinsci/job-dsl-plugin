@@ -18,7 +18,7 @@ description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jo
 def generatedSourcesDir = 'generated'
 
 jenkinsPlugin {
-    coreVersion = '1.580'
+    coreVersion = '1.596'
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
