@@ -18,7 +18,7 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
-* 1.38 (unreleased)
+* 1.38 (September 09 2015)
  * Replaced the [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
  * Added a collection of [[Talks amd Blog Posts]]
