@@ -19,6 +19,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.39 (unreleased)
+ * Increased the minimum supported Jenkins version to 1.596
 * 1.38 (September 09 2015)
  * Replaced the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
