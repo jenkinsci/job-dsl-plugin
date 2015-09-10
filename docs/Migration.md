@@ -1,3 +1,11 @@
+## Migrating to 1.39
+
+### Subversion
+
+Support for versions older than 2.1 of the
+[Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
 ## Migrating to 1.38
 
 ### Parameterized Trigger

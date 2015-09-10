@@ -141,6 +141,7 @@ class BuildParametersContextSpec extends Specification {
             !uuid.text().empty
         }
         (1.._) * jobManagement.requirePlugin('subversion')
+        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.1')
     }
 
     def 'simplified listTagsParam usage'() {

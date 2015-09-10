@@ -21,6 +21,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 * 1.39 (unreleased)
  * Increased the minimum supported Jenkins version to 1.596
  * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
+ * Support for older versions of the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-139)
 * 1.38 (September 09 2015)
  * Replaced the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)

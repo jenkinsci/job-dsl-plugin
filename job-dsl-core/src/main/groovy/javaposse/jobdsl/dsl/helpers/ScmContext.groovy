@@ -302,6 +302,8 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'subversion')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
+        jobManagement.logPluginDeprecationWarning('subversion', '2.1')
+
         SvnContext svnContext = new SvnContext(jobManagement)
         executeInContext(svnClosure, svnContext)
 
