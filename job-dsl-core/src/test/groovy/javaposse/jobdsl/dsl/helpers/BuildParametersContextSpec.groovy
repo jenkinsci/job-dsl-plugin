@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
@@ -93,14 +94,14 @@ class BuildParametersContextSpec extends Specification {
     def 'base listTagsParam usage'() {
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
-                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue',
-                'myListTagsParameterDescription')
+                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['myParameterName']) {
             name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 10
             name.text() == 'myParameterName'
             defaultValue.text() == 'theDefaultValue'
             tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
@@ -109,8 +110,37 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'true'
             maxTags.text() == 'maximumNumberOfTagsToDisplay'
             description.text() == 'myListTagsParameterDescription'
+            credentialsId.text().empty
+            !uuid.text().empty
         }
-        2 * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requirePlugin('subversion')
+    }
+
+    def 'base listTagsParam usage with older plugin version'() {
+        given:
+        jobManagement.getPluginVersion('subversion') >> new VersionNumber('2.0')
+
+        when:
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
+                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 9
+            name.text() == 'myParameterName'
+            defaultValue.text() == 'theDefaultValue'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text() == '^mytagsfilterregex'
+            reverseByDate.text() == 'true'
+            reverseByName.text() == 'true'
+            maxTags.text() == 'maximumNumberOfTagsToDisplay'
+            description.text() == 'myListTagsParameterDescription'
+            !uuid.text().empty
+        }
+        (1.._) * jobManagement.requirePlugin('subversion')
     }
 
     def 'simplified listTagsParam usage'() {
@@ -123,14 +153,19 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['myParameterName']) {
             name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 10
             name.text() == 'myParameterName'
+            defaultValue.text().empty
             tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
             tagsFilter.text() == '^mytagsfilterregex'
             reverseByDate.text() == 'true'
             reverseByName.text() == 'true'
             maxTags.text() == 'all'
+            description.text().empty
+            credentialsId.text().empty
+            !uuid.text().empty
         }
-        2 * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requirePlugin('subversion')
     }
 
     def 'simplest listTagsParam usage'() {
@@ -142,20 +177,24 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['myParameterName']) {
             name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 10
             name.text() == 'myParameterName'
+            defaultValue.text().empty
             tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
             tagsFilter.text() == '^mytagsfilterregex'
             reverseByDate.text() == 'false'
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
+            description.text().empty
+            credentialsId.text().empty
+            !uuid.text().empty
         }
-        2 * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requirePlugin('subversion')
     }
 
     def 'simplest closure listTagsParam usage'() {
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags') {
-          credentialsId('CREDENTIALS')
         }
 
         then:
@@ -163,9 +202,81 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['myParameterName']) {
             name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 10
             name.text() == 'myParameterName'
+            defaultValue.text().empty
             tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text().empty
+            reverseByDate.text() == 'false'
+            reverseByName.text() == 'false'
+            maxTags.text().empty
+            description.text().empty
+            credentialsId.text().empty
+            !uuid.text().empty
+        }
+        1 * jobManagement.requirePlugin('subversion')
+    }
+
+    def 'listTagsParam with all closure options'() {
+        when:
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags') {
+            description('lorem ipsum')
+            tagFilterRegex(/myfilter/)
+            sortNewestFirst()
+            sortZtoA()
+            maxTagsToDisplay('40')
+            defaultValue('test')
+            credentialsId('CREDENTIALS')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 10
+            name.text() == 'myParameterName'
+            defaultValue.text() == 'test'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text() == 'myfilter'
+            reverseByDate.text() == 'true'
+            reverseByName.text() == 'true'
+            maxTags.text() == '40'
+            description.text() == 'lorem ipsum'
             credentialsId.text() == 'CREDENTIALS'
+            !uuid.text().empty
+        }
+        1 * jobManagement.requirePlugin('subversion')
+    }
+
+    def 'listTagsParam with maxTagsToDisplay int argument'() {
+        when:
+        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags') {
+            description('lorem ipsum')
+            tagFilterRegex(/myfilter/)
+            sortNewestFirst()
+            sortZtoA()
+            maxTagsToDisplay(40)
+            defaultValue('test')
+            credentialsId('CREDENTIALS')
+        }
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        with(context.buildParameterNodes['myParameterName']) {
+            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 10
+            name.text() == 'myParameterName'
+            defaultValue.text() == 'test'
+            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
+            tagsFilter.text() == 'myfilter'
+            reverseByDate.text() == 'true'
+            reverseByName.text() == 'true'
+            maxTags.text() == '40'
+            description.text() == 'lorem ipsum'
+            credentialsId.text() == 'CREDENTIALS'
+            !uuid.text().empty
         }
         1 * jobManagement.requirePlugin('subversion')
     }
@@ -211,6 +322,7 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['myParameterName']) {
             name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
+            children().size() == 10
             name.text() == 'myParameterName'
             tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
             tagsFilter.text() == ''
@@ -218,7 +330,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
         }
-        2 * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requirePlugin('subversion')
 
         where:
         filter << [null, '']
