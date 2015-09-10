@@ -1108,7 +1108,7 @@ class PublisherContextSpec extends Specification {
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1124,7 +1124,7 @@ class PublisherContextSpec extends Specification {
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
@@ -1214,7 +1214,7 @@ class PublisherContextSpec extends Specification {
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
@@ -1229,7 +1229,7 @@ class PublisherContextSpec extends Specification {
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
@@ -1254,7 +1254,43 @@ class PublisherContextSpec extends Specification {
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+    }
+
+    def 'call parametrized downstream with FAILED_OR_BETTER condition'() {
+        given:
+        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.26')
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1') {
+                condition('FAILED_OR_BETTER')
+            }
+        }
+
+        then:
+        Node third = context.publisherNodes[0].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project1'
+        third.condition[0].value() == 'FAILED_OR_BETTER'
+        third.triggerWithNoParameters[0].value() == false
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+    }
+
+    def 'call parametrized downstream with FAILED_OR_BETTER condition and older plugin version'() {
+        given:
+        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.25')
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1') {
+                condition('FAILED_OR_BETTER')
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
     }
 
     def 'call violations plugin with no args has correct defaults'() {
@@ -2265,7 +2301,7 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call buildPipelineTrigger with parameters'() {
@@ -2294,7 +2330,7 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call buildPipelineTrigger with null argument'() {

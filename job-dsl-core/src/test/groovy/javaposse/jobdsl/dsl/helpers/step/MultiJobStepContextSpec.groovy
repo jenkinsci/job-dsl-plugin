@@ -236,7 +236,7 @@ class MultiJobStepContextSpec extends Specification {
 
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call phases with plugin version 1.11 options'() {

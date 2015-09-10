@@ -1661,7 +1661,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('git')
         1 * jobManagement.requirePlugin('nodelabelparameter')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
@@ -1677,7 +1677,7 @@ class StepContextSpec extends Specification {
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call downstream build step with all args'() {
@@ -1768,7 +1768,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('git')
         1 * jobManagement.requirePlugin('nodelabelparameter')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call downstream build step with no args'() {
@@ -1786,7 +1786,7 @@ class StepContextSpec extends Specification {
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call downstream build step with project list'() {
@@ -1804,7 +1804,7 @@ class StepContextSpec extends Specification {
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call downstream build step with no args and older plugin version'() {
@@ -1826,7 +1826,7 @@ class StepContextSpec extends Specification {
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call downstream build step with default blocking options'() {
@@ -1911,7 +1911,7 @@ class StepContextSpec extends Specification {
             }
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         where:
         threshold  || ordinalValue | colorValue
