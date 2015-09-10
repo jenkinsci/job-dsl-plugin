@@ -1,47 +1,41 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin
 
-import hudson.FilePath;
+import hudson.FilePath
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
+class WorkspaceUrlConnection extends URLConnection {
+    InputStream is
 
-public class WorkspaceUrlConnection extends URLConnection {
-    InputStream is;
-
-    public WorkspaceUrlConnection(URL url) {
-        super(url);
+    WorkspaceUrlConnection(URL url) {
+        super(url)
     }
 
     @Override
-    public void connect() throws IOException {
-        FilePath targetPath = WorkspaceProtocol.getFilePathFromUrl(url);
+    void connect() throws IOException {
+        FilePath targetPath = WorkspaceProtocol.getFilePathFromUrl(url)
 
         // Make sure we can find the file
         try {
             if (!targetPath.exists()) {
-                throw new FileNotFoundException("Unable to find file at " + targetPath);
+                throw new FileNotFoundException("Unable to find file at ${targetPath}")
             }
 
-            is = targetPath.read();
-            connected = true;
+            is = targetPath.read()
+            connected = true
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException(e);
+            Thread.currentThread().interrupt()
+            throw new IOException(e)
         }
     }
 
     @Override
-    synchronized public InputStream getInputStream() throws IOException {
+    InputStream getInputStream() throws IOException {
         if (!connected) {
-            connect();
+            connect()
         }
-        return ( is );
+        is
     }
 
-    public String getContentType() {
-        return guessContentTypeFromName( url.getFile() );
+    String getContentType() {
+        guessContentTypeFromName(url.file)
     }
 }

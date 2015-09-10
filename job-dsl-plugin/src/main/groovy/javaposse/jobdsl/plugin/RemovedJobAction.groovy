@@ -1,17 +1,13 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin
 
-public enum RemovedJobAction {
-    IGNORE("Ignore"),
-    DISABLE("Disable"),
-    DELETE("Delete");
+enum RemovedJobAction {
+    IGNORE('Ignore'),
+    DISABLE('Disable'),
+    DELETE('Delete')
 
-    String displayName;
+    final String displayName
 
     RemovedJobAction(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
+        this.displayName = displayName
     }
 }
