@@ -1789,6 +1789,24 @@ class StepContextSpec extends Specification {
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
     }
 
+    def 'call downstream build step with project list'() {
+        when:
+        context.downstreamParameterized {
+            trigger(['Project1', 'Project2']) {
+            }
+        }
+
+        then:
+        with(context.stepNodes[0].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
+            projects[0].value() == 'Project1, Project2'
+            condition[0].value() == 'ALWAYS'
+            triggerWithNoParameters[0].value() == false
+            configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        }
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+    }
+
     def 'call downstream build step with no args and older plugin version'() {
         setup:
         jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.24')

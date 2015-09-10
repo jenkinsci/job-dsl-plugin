@@ -1001,6 +1001,19 @@ class PublisherContextSpec extends Specification {
         publisherNode.threshold[0].color[0].value() == 'BLUE'
     }
 
+    def 'call trigger downstream with project list'() {
+        when:
+        context.downstream(['job1', 'job2'])
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.tasks.BuildTrigger'
+        publisherNode.childProjects[0].value() == 'job1, job2'
+        publisherNode.threshold[0].name[0].value() == 'SUCCESS'
+        publisherNode.threshold[0].ordinal[0].value() == 0
+        publisherNode.threshold[0].color[0].value() == 'BLUE'
+    }
+
     def 'call trigger downstream'() {
             when:
         context.downstream('THE-JOB', 'FAILURE')
@@ -1225,6 +1238,23 @@ class PublisherContextSpec extends Specification {
 
         then:
         thrown(DslScriptException)
+    }
+
+    def 'call parametrized downstream with project list'() {
+        when:
+        context.downstreamParameterized {
+            trigger(['Project1', 'Project2']) {
+            }
+        }
+
+        then:
+        Node third = context.publisherNodes[0].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project1, Project2'
+        third.condition[0].value() == 'SUCCESS'
+        third.triggerWithNoParameters[0].value() == false
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
     }
 
     def 'call violations plugin with no args has correct defaults'() {

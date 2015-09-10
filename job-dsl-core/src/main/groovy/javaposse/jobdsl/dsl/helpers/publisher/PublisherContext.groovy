@@ -503,6 +503,17 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Triggers builds on other projects.
+     *
+     * The {@code threshold} must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'} or {@code 'FAILURE'}.
+     *
+     * @since 1.39
+     */
+    void downstream(List<String> projectName, String thresholdName = 'SUCCESS') {
+        downstream(projectName.join(', '), thresholdName)
+    }
+
+    /**
      * Triggers parameterized builds on other projects.
      */
     @RequiresPlugin(id = 'parameterized-trigger')
