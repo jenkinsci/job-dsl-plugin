@@ -33,7 +33,11 @@ Marionette.Renderer.render = function(template, data) {
                 Backbone.history.start({pushState: false});
             }.bind(this));
 
-            $('.version-select').change(this.loadSelectedDsl.bind(this));
+            $('.version-select').change(function() {
+                this.loadSelectedDsl().then(function() {
+                    Backbone.history.loadUrl(Backbone.history.getHash());
+                });
+            }.bind(this));
             $('.toggle-plugins').click(function(e) {
                 if ($('.plugins-wrapper').is(':visible')) {
                     this.layout.hide('east');
