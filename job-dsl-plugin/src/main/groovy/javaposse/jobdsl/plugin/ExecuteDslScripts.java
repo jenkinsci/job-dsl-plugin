@@ -27,6 +27,7 @@ import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedUserContent;
 import javaposse.jobdsl.dsl.GeneratedView;
+import javaposse.jobdsl.dsl.JobManagement;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
@@ -197,8 +198,9 @@ public class ExecuteDslScripts extends Builder {
             EnvVars env = build.getEnvironment(listener);
             env.putAll(build.getBuildVariables());
 
-            // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-            JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy());
+            JobManagement jm = new InterruptibleJobManagement(
+                    new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy())
+            );
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
             try {

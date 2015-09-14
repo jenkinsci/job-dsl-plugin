@@ -4,6 +4,8 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
+import groovy.util.ResourceException;
+import groovy.util.ScriptException;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
@@ -84,12 +86,10 @@ public class DslScriptLoader {
             }
         } catch (CompilationFailedException e) {
             throw new DslException(e.getMessage(), e);
-        } catch (Exception e) { // ResourceException or ScriptException
-            if (e instanceof RuntimeException) {
-                throw ((RuntimeException) e);
-            } else {
-                throw new IOException("Unable to run script", e);
-            }
+        } catch (ResourceException e) {
+            throw new IOException("Unable to run script", e);
+        } catch (ScriptException e) {
+            throw new IOException("Unable to run script", e);
         }
         return jp;
     }
