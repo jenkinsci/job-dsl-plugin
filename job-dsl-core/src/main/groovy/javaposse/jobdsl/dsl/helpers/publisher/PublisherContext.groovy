@@ -1615,7 +1615,6 @@ class PublisherContext extends AbstractExtensibleContext {
      * closure is provided, the values from the closure will take effect.
      *
      * @since 1.39
-     * @see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
      */
     @RequiresPlugin(id = 'weblogic-deployer-plugin', minimumVersion = '2.9.1')
     void deployToWeblogic(Closure weblogicClosure) {

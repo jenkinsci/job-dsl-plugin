@@ -6,8 +6,6 @@ import org.apache.commons.lang.RandomStringUtils
 
 /**
  * DSL Support for the weblogic-deployment-plugin.
- *
- * https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
  */
 class WeblogicDeployerContext implements Context {
 
@@ -100,9 +98,6 @@ class WeblogicDeployerContext implements Context {
      *
      * These are the default values, which are used if they are not overridden by closure.
      * All other properties must be set via closure for each task definition, as there are no default values.
-     *
-     *
-     * @see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
      */
     void task(Closure taskClosure) {
 

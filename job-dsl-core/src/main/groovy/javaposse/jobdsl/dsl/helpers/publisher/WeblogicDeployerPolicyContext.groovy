@@ -4,8 +4,6 @@ import javaposse.jobdsl.dsl.Context
 
 /**
  * DSL Support for the weblogic-deployment-plugin's deployment policies subsection.
- *
- * https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
  */
 class WeblogicDeployerPolicyContext implements Context {
 

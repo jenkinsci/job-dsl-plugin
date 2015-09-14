@@ -6,8 +6,6 @@ import static javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.Web
 
 /**
  * DSL Support for the weblogic-deployment-plugin's task subsection.
- *
- * https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
  */
 class WeblogicDeployerTaskContext implements Context {
 
@@ -136,8 +134,7 @@ class WeblogicDeployerTaskContext implements Context {
      * Defines custom commands to be executed instead of the default ones (undeploy/deploy).
      * Defaults to {@code ''}.
      *
-     * Can contain tokens which will be replaced:
-     * https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
+     * Can contain tokens which will be replaced. See plugin website.
      *
      * @param commandLine commands to be executed separated by semicolon.
      */
@@ -146,9 +143,8 @@ class WeblogicDeployerTaskContext implements Context {
     }
 
     /**
-     * Path to the deployment plan to use. Must be referenced in command line.
-     * see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
-     * Defaults to {@code ''}.
+     * Path to the deployment plan to use. Must be referenced in command line
+     * (See plugin website). Defaults to {@code ''}.
      *
      * @param deploymentPlan deployment plan to use.
      */
