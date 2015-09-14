@@ -1653,6 +1653,7 @@ class PublisherContext extends AbstractExtensibleContext {
           *}
           * </pre>
           *
+          * @since 1.39
           * @see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
           */
         @RequiresPlugin(id = 'weblogic-deployer-plugin', minimumVersion = '2.9.1')
