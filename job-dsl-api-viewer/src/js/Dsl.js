@@ -47,7 +47,9 @@ _.extend(App.Dsl.prototype, {
             .pluck('plugin')
             .filter()
             .unique()
-            .sortBy('title')
+            .sortBy(function (item) {
+                return item.title.toLowerCase();
+            })
             .value();
     },
 
