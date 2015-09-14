@@ -44,6 +44,8 @@ public class DslScriptLoader {
         icz.addStaticStars("javaposse.jobdsl.dsl.ViewType");
         icz.addStaticStars("javaposse.jobdsl.dsl.ConfigFileType");
         icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes");
+        icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerPolicyContext.WeblogicDeploymentPolicies");
         config.addCompilationCustomizers(icz);
 
         GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
