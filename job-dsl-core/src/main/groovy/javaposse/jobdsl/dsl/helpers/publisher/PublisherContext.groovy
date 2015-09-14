@@ -1202,9 +1202,12 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
+    @Deprecated
     @RequiresPlugin(id = 'jshint-checkstyle')
     void jshint(String pattern,
                 @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
+        jobManagement.logDeprecationWarning()
+
         publisherNodes << createDefaultStaticAnalysisNode(
                 'hudson.plugins.jshint.CheckStylePublisher',
                 staticAnalysisClosure,
