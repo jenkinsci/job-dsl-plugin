@@ -5,13 +5,14 @@ import javaposse.jobdsl.dsl.ContextHelper
 import org.apache.commons.lang.RandomStringUtils
 
 /**
- * <p>DSL Support for the weblogic-deployment-plugin.</p>
- * <p><a href="https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin">WebLogic Deployer Plugin</a></p>
+ * DSL Support for the weblogic-deployment-plugin.
+ *
+ * https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
  */
 class WeblogicDeployerContext implements Context {
 
     /**
-     * <p>Enumeration of available deployment stage modes.</p>
+     * Enumeration of available deployment stage modes.
      */
     static enum WeblogicDeploymentStageModes {
 
@@ -44,7 +45,7 @@ class WeblogicDeployerContext implements Context {
     String deployedProjectsDependencies = ''
 
     /**
-     * <p>Fails the build if the deployment fails.</p>
+     * Fails the build if the deployment fails. Defaults to {@code false}.
      *
      * @param mustExitOnFailure true, false (default)
      */
@@ -53,8 +54,9 @@ class WeblogicDeployerContext implements Context {
     }
 
     /**
-     * <p>Stop the job on first deployment failure. No other defined
-     * deployment task of this job will be executed.</p>
+     * Stop the job on first deployment failure. No other defined deployment task of this job will be executed.
+     * Defaults to {@code false}.
+     *
      * @param forceStopOnFirstFailure true, false (default)
      */
     void forceStopOnFirstFailure(boolean forceStopOnFirstFailure = true) {
@@ -62,8 +64,9 @@ class WeblogicDeployerContext implements Context {
     }
 
     /**
-     * <p>Deploy only if the build was triggered by a parameterized
-     * cause AND the SCM detects changes.</p>
+     * Deploy only if the build was triggered by a parameterized cause AND the SCM detects changes.
+     * Defaults to {@code false}.
+     *
      * @param deployingOnlyWhenUpdates true, false (default)
      */
     void deployingOnlyWhenUpdates(boolean deployingOnlyWhenUpdates = true) {
@@ -71,8 +74,10 @@ class WeblogicDeployerContext implements Context {
     }
 
     /**
-     * <p>(experimental plugin feature) Defines a dependency to other deployment jobs.</p>
-     * @param deployedProjectsDependencies job name of an other deployment job
+     * (experimental plugin feature) Defines a dependency to other deployment jobs.
+     * Defaults to {@code ''}.
+     *
+     * @param deployedProjectsDependencies job name of an other deployment job.
      */
     void deployedProjectsDependencies(String deployedProjectsDependencies) {
         this.deployedProjectsDependencies = deployedProjectsDependencies
@@ -91,34 +96,13 @@ class WeblogicDeployerContext implements Context {
     }
 
     /**
-     * <p>Configures a Weblogic deployment task using the weblogic-deployer-plugin</p>
-     * <p>These are the default values, which are used if they are not overridden by closure.
-     * All other properties must be set via closure for each task definition, as there are no default values.</p>
+     * Configures a Weblogic deployment task using the weblogic-deployer-plugin.
      *
-     * <pre>
-     * {@code
-     * <org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
-     *     <id>_generated_</id>
+     * These are the default values, which are used if they are not overridden by closure.
+     * All other properties must be set via closure for each task definition, as there are no default values.
      *
-     *     <deploymentTargets>AdminServer</deploymentTargets>
-     *     <isLibrary>false</isLibrary>
      *
-     *     <jdk>
-     *         <!-- When leaving these tags empty, the default JDK should be used.
-     *              Otherwise name and home must be set. -->
-     *         <name></name>
-     *         <home></home>
-     *         <properties></properties>
-     *     </jdk>
-     *
-     *     <stageMode>bydefault</stageMode>
-     *     <commandLine></commandLine>
-     *     <deploymentPlan></deploymentPlan>
-     * </org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
-     *}
-     * </pre>
-     *
-     * @see <a href="https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin">WebLogic Deployer Plugin</a>
+     * @see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
      */
     void task(Closure taskClosure) {
 

@@ -1,6 +1,6 @@
 job('example') {
     publishers {
-        deployToWeblogic {
+        deployToWeblogic() {
             // these are the default values used for optional fields, when not overridden by closure
             mustExitOnFailure false
             forceStopOnFirstFailure false

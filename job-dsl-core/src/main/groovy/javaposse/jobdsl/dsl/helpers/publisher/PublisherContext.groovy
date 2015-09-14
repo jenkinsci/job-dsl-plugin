@@ -682,7 +682,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'description-setter')
     void buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '',
-                         String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
+                          String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
         publisherNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
             regexp(regularExpression)
             regexpForFailed(regularExpressionForFailed)
@@ -703,7 +703,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'text-finder')
     void textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false,
-                   boolean succeedIfFound = false, unstableIfFound = false) {
+                    boolean succeedIfFound = false, unstableIfFound = false) {
         publisherNodes << new NodeBuilder().'hudson.plugins.textfinder.TextFinderPublisher' {
             if (fileSet) {
                 delegate.fileSet(fileSet)
@@ -799,10 +799,10 @@ class PublisherContext extends AbstractExtensibleContext {
             if (jobManagement.getPluginVersion('groovy-postbuild')?.isOlderThan(new VersionNumber('2.2'))) {
                 groovyScript(groovyPostbuildContext.script ?: '')
             } else {
-              script {
-                script(groovyPostbuildContext.script ?: '')
-                sandbox(groovyPostbuildContext.sandbox)
-              }
+                script {
+                    script(groovyPostbuildContext.script ?: '')
+                    sandbox(groovyPostbuildContext.sandbox)
+                }
             }
             behavior(groovyPostbuildContext.behavior.value)
         }
@@ -1306,11 +1306,11 @@ class PublisherContext extends AbstractExtensibleContext {
     void warnings(List consoleParsers, Map parserConfigurations = [:],
                   @DslContext(WarningsContext) Closure warningsClosure = null) {
         WarningsContext warningsContext = new WarningsContext()
-        ContextHelper.executeInContext(warningsClosure,  warningsContext)
+        ContextHelper.executeInContext(warningsClosure, warningsContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
         publisherNodes << nodeBuilder.'hudson.plugins.warnings.WarningsPublisher' {
-            addStaticAnalysisContext(delegate,  warningsContext)
+            addStaticAnalysisContext(delegate, warningsContext)
             includePattern(warningsContext.includePattern)
             excludePattern(warningsContext.excludePattern)
             nodeBuilder.consoleParsers {
@@ -1339,7 +1339,7 @@ class PublisherContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'analysis-collector')
     void analysisCollector(@DslContext(AnalysisCollectorContext) Closure analysisCollectorClosure = null) {
         AnalysisCollectorContext analysisCollectorContext = new AnalysisCollectorContext()
-        ContextHelper.executeInContext(analysisCollectorClosure,  analysisCollectorContext)
+        ContextHelper.executeInContext(analysisCollectorClosure, analysisCollectorContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.analysis.collector.AnalysisPublisher' {
             addStaticAnalysisContext(delegate, analysisCollectorContext)
@@ -1608,77 +1608,38 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-        /**
-          * <p>Configures a Weblogic deployment using the weblogic-deployer-plugin</p>
-          * <p>By default the following values are applied. If an instance of a
-          * closure is provided, the values from the closure will take effect.</p>
-          *
-          * <pre>
-          * {@code
-          * <org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin>
-          *     <mustExitOnFailure>false</mustExitOnFailure>
-          *     <forceStopOnFirstFailure>false</forceStopOnFirstFailure>
-          *     <selectedDeploymentStrategyIds/>
-          *     <isDeployingOnlyWhenUpdates>false</isDeployingOnlyWhenUpdates>
-          *     <deployedProjectsDependencies></deployedProjectsDependencies>
-          *     <tasks>
-          *         <org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
-          *             <id>qGVVG2aOeF</id>
-          *             <taskName>Deploy myApp</taskName>
-          *
-          *             <weblogicEnvironmentTargetedName>environment name</weblogicEnvironmentTargetedName>
-          *             <deploymentName>application name</deploymentName>
-          *             <deploymentTargets>myManagedServer, AdminServer</deploymentTargets>
-          *             <isLibrary>false</isLibrary>
-          *             <builtResourceRegexToDeploy>myApp\.ear</builtResourceRegexToDeploy>
-          *             <baseResourcesGeneratedDirectory></baseResourcesGeneratedDirectory>
-          *
-          *             <jdk>
-          *               <!-- When leaving these tags empty, the default JDK should be used.
-          *                    Otherwise name and home must be set. -->
-          *               <name>JDK 7u51</name>
-          *               <home></home>
-          *               <properties/>
-          *             </jdk>
-          *
-          *             <stageMode>stage</stageMode>
-          *             <commandLine></commandLine>
-          *             <deploymentPlan></deploymentPlan>
-          *         </org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
-          *         <org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
-          *           ...
-          *         </org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask>
-          *     </tasks>
-          * </org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin>
-          *}
-          * </pre>
-          *
-          * @since 1.39
-          * @see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
-          */
-        @RequiresPlugin(id = 'weblogic-deployer-plugin', minimumVersion = '2.9.1')
-        void deployToWeblogic(Closure weblogicClosure) {
+    /**
+     * Configures a Weblogic deployment using the weblogic-deployer-plugin.
+     *
+     * By default the following values are applied. If an instance of a
+     * closure is provided, the values from the closure will take effect.
+     *
+     * @since 1.39
+     * @see https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin
+     */
+    @RequiresPlugin(id = 'weblogic-deployer-plugin', minimumVersion = '2.9.1')
+    void deployToWeblogic(Closure weblogicClosure) {
 
-            WeblogicDeployerContext context = new WeblogicDeployerContext()
-            ContextHelper.executeInContext(weblogicClosure, context)
+        WeblogicDeployerContext context = new WeblogicDeployerContext()
+        ContextHelper.executeInContext(weblogicClosure, context)
 
-            NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-            Node weblogicDeployerNode = nodeBuilder.'org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin' {
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+        Node weblogicDeployerNode = nodeBuilder.'org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin' {
 
-                mustExitOnFailure context.mustExitOnFailure
-                forceStopOnFirstFailure context.forceStopOnFirstFailure
-                isDeployingOnlyWhenUpdates context.deployingOnlyWhenUpdates
-                deployedProjectsDependencies context.deployedProjectsDependencies
+            mustExitOnFailure context.mustExitOnFailure
+            forceStopOnFirstFailure context.forceStopOnFirstFailure
+            isDeployingOnlyWhenUpdates context.deployingOnlyWhenUpdates
+            deployedProjectsDependencies context.deployedProjectsDependencies
 
-                selectedDeploymentStrategyIds context.deploymentPoliciesIdsNodes
+            selectedDeploymentStrategyIds context.deploymentPoliciesIdsNodes
 
-                if (context.taskNodes) {
-                    tasks context.taskNodes
-                }
+            if (context.taskNodes) {
+                tasks context.taskNodes
             }
-
-            publisherNodes << weblogicDeployerNode
         }
+
+        publisherNodes << weblogicDeployerNode
+    }
 
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
