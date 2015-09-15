@@ -1384,9 +1384,15 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'hudson.plugins.sonar.SonarPublisher' {
             jdk('(Inherit From Job)')
             branch(sonarContext.branch ?: '')
-            language()
-            mavenOpts()
-            jobAdditionalProperties()
+            if (sonarContext.language) {
+                language(sonarContext.language)
+            }
+            if (sonarContext.mavenOpts) {
+                mavenOpts(sonarContext.mavenOpts)
+            }
+            if (sonarContext.jobAdditionalProperties) {
+                jobAdditionalProperties(sonarContext.jobAdditionalProperties)
+            }
             if (sonarContext.overrideTriggers) {
                 triggers {
                     skipScmCause(false)
@@ -1395,7 +1401,9 @@ class PublisherContext extends AbstractExtensibleContext {
                 }
             }
             mavenInstallationName('(Inherit From Job)')
-            rootPom()
+            if (sonarContext.rootPom) {
+                rootPom(sonarContext.rootPom)
+            }
             settings(class: 'jenkins.mvn.DefaultSettingsProvider')
             globalSettings(class: 'jenkins.mvn.DefaultGlobalSettingsProvider')
             usePrivateRepository(false)
