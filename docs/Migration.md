@@ -12,6 +12,11 @@ Support for versions older than 2.26 of the
 [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### JSHint Checkstyle
+
+Support for the [JSHint Checkstyle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSHint+Checkstyle+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed. The plugin is no longer available in the Jenkins Update Center.
+
 ## Migrating to 1.38
 
 ### Parameterized Trigger
