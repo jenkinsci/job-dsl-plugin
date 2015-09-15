@@ -261,18 +261,17 @@ the `job` method is no longer available, so it is recommended to pass in the cur
 available to another context. For example, when making utility methods, you would call them like this:
 
 ```groovy
-BuildFramework.ant(this, arg1, arg2)
+BuildFramework.ant(this, 'my-ant-project', 'clean build')
 ```
 
 Then the `BuildFramework` class has everything it needs to make `job` calls:
 
 ```groovy
 class BuildFramework {
-    static ant(dslFactory, arg1, arg2) {
-        dslFactory.job {
-            name arg1
+    static ant(dslFactory, jobName, antTargets) {
+        dslFactory.job(jobName) {
             steps {
-                ant(arg2)
+                ant(antTargets)
             }
         }
     }
