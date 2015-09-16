@@ -42,6 +42,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Allow to abort DSL processing
  * Added support for the [Cron Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cron+Column+Plugin)
  * Added support for the [Progress Bar Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Progress+Bar+Column+Plugin)
+ * Added support for the [Rebuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rebuild+Plugin)
 * 1.38 (September 09 2015)
  * Replaced the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
