@@ -6,26 +6,12 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.View
 import javaposse.jobdsl.dsl.ViewFactory
-import javaposse.jobdsl.dsl.ViewType
 
 class NestedViewsContext extends AbstractContext implements ViewFactory {
     List<View> views = []
 
     NestedViewsContext(JobManagement jobManagement) {
         super(jobManagement)
-    }
-
-    @Deprecated
-    void view(Map<String, Object> arguments = [:], String name, @DslContext(View) Closure closure) {
-        jobManagement.logDeprecationWarning()
-
-        Preconditions.checkNotNullOrEmpty(name, 'name must be specified')
-
-        ViewType viewType = arguments['type'] as ViewType ?: ViewType.ListView
-        View view = viewType.viewClass.newInstance(jobManagement)
-        view.name = name
-        view.with(closure)
-        views << view
     }
 
     /**

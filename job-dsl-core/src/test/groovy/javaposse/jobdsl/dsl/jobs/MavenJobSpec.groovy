@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
-import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import spock.lang.Specification
 
 class MavenJobSpec extends Specification {
@@ -82,30 +81,6 @@ class MavenJobSpec extends Specification {
         then:
         job.node.runHeadless.size() == 1
         job.node.runHeadless[0].value() == true
-    }
-
-    def 'cannot run localRepository with null argument, deprecated variant'() {
-        when:
-        job.localRepository((MavenContext.LocalRepositoryLocation) null)
-
-        then:
-        thrown(DslScriptException)
-    }
-
-    def 'localRepository constructs xml for LocalToExecutor'() {
-        when:
-        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
-
-        then:
-        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'
-    }
-
-    def 'localRepository constructs xml for LocalToWorkspace'() {
-        when:
-        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToWorkspace)
-
-        then:
-        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
     }
 
     def 'cannot run localRepository with null argument'() {

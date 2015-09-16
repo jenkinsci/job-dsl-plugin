@@ -12,12 +12,6 @@ abstract class View extends AbstractContext {
         super(jobManagement)
     }
 
-    @Deprecated
-    void name(String name) {
-        jobManagement.logDeprecationWarning()
-        this.name = name
-    }
-
     /**
      * Sets a description for the view.
      */

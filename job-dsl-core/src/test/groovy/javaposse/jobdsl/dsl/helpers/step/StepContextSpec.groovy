@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 class StepContextSpec extends Specification {
@@ -398,21 +397,6 @@ class StepContextSpec extends Specification {
         mavenStep.jvmOptions[0].value() == ''
         mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
-        1 * jobManagement.requirePlugin('maven-plugin')
-    }
-
-    def 'call maven method with deprecated options'() {
-        when:
-        context.maven {
-            localRepository(LocalToWorkspace)
-        }
-
-        then:
-        with(context.stepNodes[0]) {
-            name() == 'hudson.tasks.Maven'
-            children().size() == 4
-            usePrivateRepository[0].value() == true
-        }
         1 * jobManagement.requirePlugin('maven-plugin')
     }
 

@@ -110,23 +110,6 @@ job('project-b') {
 
     }
 
-    def 'run engine that uses static import for LocalRepositoryLocation'() {
-        setup:
-        def scriptStr = '''mavenJob('test') {
-    localRepository LocalToExecutor
-}
-'''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
-
-        when:
-        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
-
-        then:
-        jp != null
-        def jobs = jp.referencedJobs
-        jobs.size() == 1
-    }
-
     def 'run engine with reference to other class from a string'() {
         setup:
         def scriptStr = '''job('test') {
