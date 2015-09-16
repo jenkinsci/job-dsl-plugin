@@ -228,7 +228,6 @@ public class DslScriptLoader {
         icz.addImports("javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy");
         icz.addImports("javaposse.jobdsl.dsl.helpers.scm.SvnDepth");
         icz.addImports("javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation");
-        icz.addStaticStars("javaposse.jobdsl.dsl.ConfigFileType");
         config.addCompilationCustomizers(icz);
 
         config.setOutput(new PrintWriter(jobManagement.getOutputStream())); // This seems to do nothing

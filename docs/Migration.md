@@ -53,6 +53,24 @@ Support for versions older than 2.26 of the
 Support for the [JSHint Checkstyle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSHint+Checkstyle+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed. The plugin is no longer available in the Jenkins Update Center.
 
+### ConfigFileType
+
+The implicit star import of `javaposse.jobdsl.dsl.ConfigFileType` in DSL scripts has been removed because the enum is
+no longer used by any DSL method. If the values are used in scripts nevertheless, they must be used fully qualified or
+imported explicitly.
+
+DSL prior to 1.39
+```groovy
+Custom
+MavenSettings
+```
+
+DSL since to 1.39
+```groovy
+javaposse.jobdsl.dsl.ConfigFileType.Custom
+javaposse.jobdsl.dsl.ConfigFileType.MavenSettings
+```
+
 ## Migrating to 1.38
 
 ### Parameterized Trigger

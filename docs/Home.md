@@ -56,6 +56,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added support for the [Rebuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rebuild+Plugin)
  * Added support for the [Global Variable String Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Global+Variable+String+Parameter+Plugin)
  * Added support for the [Phabricator Differential Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Phabricator+Differential+Plugin)
+ * Removed implicit star import of `javaposse.jobdsl.dsl.ConfigFileType` in scripts, see
+   [Migration](Migration#migrating-to-139)
  * Removed anything that has been deprecated in 1.31, see [Migration](Migration#migrating-to-131)
 * 1.38 (September 09 2015)
  * Replaced the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages by the
