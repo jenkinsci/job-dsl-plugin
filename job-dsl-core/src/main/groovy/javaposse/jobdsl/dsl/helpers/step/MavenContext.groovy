@@ -16,6 +16,7 @@ class MavenContext extends AbstractContext {
     String mavenInstallation = '(Default)'
     Closure configureBlock
     String providedSettingsId
+    String providedGlobalSettingsId
 
     MavenContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -93,6 +94,20 @@ class MavenContext extends AbstractContext {
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
 
         this.providedSettingsId = settingsId
+    }
+
+    /**
+     * Specifies the managed global Maven settings to be used.
+     *
+     * @param settings name of the managed global Maven settings
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'config-file-provider')
+    void providedGlobalSettings(String settingsName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName)
+        Preconditions.checkNotNull(settingsId, "Managed global Maven settings with name '${settingsName}' not found")
+
+        this.providedGlobalSettingsId = settingsId
     }
 
     /**

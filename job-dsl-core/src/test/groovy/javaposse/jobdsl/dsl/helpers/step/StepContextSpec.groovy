@@ -430,15 +430,33 @@ class StepContextSpec extends Specification {
         e.message.contains(settingsName)
     }
 
+    def 'call maven method with unknown provided global settings'() {
+        setup:
+        String settingsName = 'lalala'
+
+        when:
+        context.maven {
+            providedGlobalSettings(settingsName)
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message.contains(settingsName)
+    }
+
     def 'call maven method with provided settings'() {
         setup:
         String settingsName = 'maven-proxy'
         String settingsId = '123123415'
+        String globalSettingsName = 'maven-global'
+        String globalSettingsId = '123123416'
         jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
+        jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, globalSettingsName) >> globalSettingsId
 
         when:
         context.maven {
             providedSettings(settingsName)
+            providedGlobalSettings(globalSettingsName)
         }
 
         then:
@@ -446,14 +464,21 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'hudson.tasks.Maven'
-            children().size() == 5
+            children().size() == 6
             targets[0].value() == ''
             jvmOptions[0].value() == ''
             usePrivateRepository[0].value() == false
             mavenName[0].value() == '(Default)'
-            settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
-            settings[0].children().size() == 1
-            settings[0].settingsConfigId[0].value() == settingsId
+            with(settings[0]) {
+                attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+                children().size() == 1
+                settingsConfigId[0].value() == settingsId
+            }
+            with(globalSettings[0]) {
+                attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider'
+                children().size() == 1
+                settingsConfigId[0].value() == globalSettingsId
+            }
         }
         1 * jobManagement.requirePlugin('maven-plugin')
     }

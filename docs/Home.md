@@ -23,6 +23,9 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
  * Enhanced support for the
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+ * Enhanced support the
+   [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+   ([JENKINS-30493](https://issues.jenkins-ci.org/browse/JENKINS-30493))
  * Changed support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin), see
    [Migration](Migration#migrating-to-139)
    ([JENKINS-27921](https://issues.jenkins-ci.org/browse/JENKINS-27921))

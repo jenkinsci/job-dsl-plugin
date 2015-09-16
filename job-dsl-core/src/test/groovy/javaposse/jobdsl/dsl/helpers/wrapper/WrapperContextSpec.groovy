@@ -832,22 +832,26 @@ class WrapperContextSpec extends Specification {
         String configId2 = 'CustomConfig1417476679250'
         String configName3 = 'myMavenSetttings'
         String configId3 = 'CustomConfig1417476679251'
+        String configName4 = 'myGlobalMavenSetttings'
+        String configId4 = 'CustomConfig1417476679252'
         mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName1) >> configId1
         mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName2) >> configId2
         mockJobManagement.getConfigFileId(ConfigFileType.MavenSettings, configName3) >> configId3
+        mockJobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, configName4) >> configId4
 
         when:
         context.configFiles {
             file(configName1)
             custom(configName2)
             mavenSettings(configName3)
+            globalMavenSettings(configName4)
         }
 
         then:
         with(context.wrapperNodes[0]) {
             name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
             children().size() == 1
-            managedFiles[0].children().size() == 3
+            managedFiles[0].children().size() == 4
             with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
                 children().size() == 3
                 fileId[0].value() == configId1
@@ -863,6 +867,12 @@ class WrapperContextSpec extends Specification {
             with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[2]) {
                 children().size() == 3
                 fileId[0].value() == configId3
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[3]) {
+                children().size() == 3
+                fileId[0].value() == configId4
                 targetLocation[0].value() == ''
                 variable[0].value() == ''
             }
