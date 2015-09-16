@@ -23,8 +23,8 @@ class MultiJobStepContextSpec extends Specification {
 
         when:
         context.phase {
-            phaseName 'Second'
-            job('JobA')
+            phaseName('Second')
+            phaseJob('JobA')
         }
 
         then:
@@ -44,8 +44,8 @@ class MultiJobStepContextSpec extends Specification {
 
         when:
         context.phase {
-            phaseName 'Second'
-            job('JobA')
+            phaseName('Second')
+            phaseJob('JobA')
         }
 
         then:
@@ -160,7 +160,8 @@ class MultiJobStepContextSpec extends Specification {
     def 'call phases with jobs with complex parameters'() {
         when:
         context.phase('Fourth') {
-            job('JobA', false, true) {
+            phaseJob('JobA') {
+                currentJobParameters(false)
                 parameters {
                     booleanParam('aParam')
                     booleanParam('bParam', false)
@@ -246,7 +247,7 @@ class MultiJobStepContextSpec extends Specification {
         when:
         context.phase {
             phaseName 'Second'
-            job('JobA') {
+            phaseJob('JobA') {
                 disableJob()
                 abortAllJobs()
                 killPhaseCondition('UNSTABLE')
@@ -273,7 +274,7 @@ class MultiJobStepContextSpec extends Specification {
         when:
         context.phase {
             phaseName 'Second'
-            job('JobA') {
+            phaseJob('JobA') {
                 disableJob()
                 abortAllJobs()
                 killPhaseCondition('UNSTABLE')
@@ -292,7 +293,7 @@ class MultiJobStepContextSpec extends Specification {
         when:
         context.phase {
             phaseName 'Second'
-            job('JobA') {
+            phaseJob('JobA') {
                 killPhaseCondition('UNKNOWN')
             }
         }
@@ -349,8 +350,8 @@ class MultiJobStepContextSpec extends Specification {
             runner('Fail')
             steps {
                 phase {
-                    phaseName 'Second'
-                    job('JobA')
+                    phaseName('Second')
+                    phaseJob('JobA')
                 }
             }
         }

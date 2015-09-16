@@ -1,5 +1,41 @@
 ## Migrating to 1.39
 
+### MultiJob
+
+A `phaseJob` method has been added to `phase` context to fix
+([JENKINS-27921](https://issues.jenkins-ci.org/browse/JENKINS-27921)). The `job` method within that context has been
+[[deprecated|Deprecation-Policy]] and will be removed. The `jobName` method within the `phaseJob` context has deprecated
+and will also be removed.
+
+DSL prior to 1.39
+```groovy
+multiJob('example') {
+    steps {
+        phase('first') {
+            job {
+                jobName('job-a')
+            }
+            job('job-b', false, false)
+        }
+    }
+}
+```
+
+DSL since 1.39
+```groovy
+multiJob('example') {
+    steps {
+        phase('first') {
+            phaseJob('job-a')
+            phaseJob('job-b') {
+                currentJobParameters(false)
+                exposedScm(false)
+            }
+        }
+    }
+}
+```
+
 ### Subversion
 
 Support for versions older than 2.1 of the

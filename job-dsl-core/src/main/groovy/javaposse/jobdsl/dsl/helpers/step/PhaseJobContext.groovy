@@ -20,9 +20,14 @@ class PhaseJobContext extends AbstractContext {
     String killPhaseCondition = 'FAILURE'
     Closure configureClosure
 
-    PhaseJobContext(JobManagement jobManagement, String jobName, boolean currentJobParameters, boolean exposedScm) {
+    PhaseJobContext(JobManagement jobManagement, String jobName) {
         super(jobManagement)
         this.jobName = jobName
+    }
+
+    @Deprecated
+    PhaseJobContext(JobManagement jobManagement, String jobName, boolean currentJobParameters, boolean exposedScm) {
+        this(jobManagement, jobName)
         this.currentJobParameters = currentJobParameters
         this.exposedScm = exposedScm
     }
@@ -30,12 +35,15 @@ class PhaseJobContext extends AbstractContext {
     /**
      * Defines the name of the job.
      */
+    @Deprecated
     void jobName(String jobName) {
+        jobManagement.logDeprecationWarning()
+
         this.jobName = jobName
     }
 
     /**
-     * Copies parameters from the current build, except for file parameters.
+     * Copies parameters from the current build, except for file parameters. Defaults to [@code true}.
      */
     void currentJobParameters(boolean currentJobParameters = true) {
         this.currentJobParameters = currentJobParameters
@@ -43,7 +51,7 @@ class PhaseJobContext extends AbstractContext {
     }
 
     /**
-     *  Defaults to {@code true}.
+     * Defaults to {@code true}.
      */
     void exposedScm(boolean exposedScm = true) {
         this.exposedScm = exposedScm
@@ -138,7 +146,7 @@ class PhaseJobContext extends AbstractContext {
      * @since 1.26
      */
     @Deprecated
-    void nodeLabel(String paramName, String nodeLabel)  {
+    void nodeLabel(String paramName, String nodeLabel) {
         jobManagement.logDeprecationWarning()
         paramTrigger.nodeLabel(paramName, nodeLabel)
     }

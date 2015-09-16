@@ -1,20 +1,20 @@
 multiJob('example') {
     steps {
-        phase {
-            phaseName 'Second'
-            job('JobZ') {
+        phase('Second') {
+            phaseJob('JobZ') {
                 parameters {
                     propertiesFile('my1.properties')
                 }
             }
         }
         phase('Third') {
-            job('JobA')
-            job('JobB')
-            job('JobC')
+            phaseJob('JobA')
+            phaseJob('JobB')
+            phaseJob('JobC')
         }
         phase('Fourth') {
-            job('JobD', false, true) {
+            phaseJob('JobD') {
+                currentJobParameters(false)
                 parameters {
                     booleanParam('cParam', true)
                     propertiesFile('my.properties')
