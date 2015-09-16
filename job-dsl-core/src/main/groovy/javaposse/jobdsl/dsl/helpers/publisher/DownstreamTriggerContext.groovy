@@ -23,6 +23,8 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
      * Must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'UNSTABLE_OR_BETTER'}, {@code 'UNSTABLE_OR_WORSE'},
      * {@code 'FAILED'} or {@code 'ALWAYS'}. If version 2.26 or newer of the Parameterized Trigger Plugin is installed,
      * {@code 'FAILED_OR_BETTER'} can be used as well.
+     *
+     * @since 1.38
      */
     void condition(String condition) {
         Set<String> validConditions = new HashSet<>(VALID_DOWNSTREAM_CONDITIONS)
@@ -40,6 +42,8 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
 
     /**
      * Triggers a build even when there are currently no parameters defined.
+     *
+     * @since 1.38
      */
     void triggerWithNoParameters(boolean triggerWithNoParameters = true) {
         this.triggerWithNoParameters = triggerWithNoParameters
