@@ -16,6 +16,8 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
 
     /**
      * Blocks until the triggered projects finish their builds.
+     *
+     * @since 1.38
      */
     void block(@DslContext(DownstreamTriggerBlockContext) Closure closure = null) {
         blockContext = blockContext ?: new DownstreamTriggerBlockContext()
@@ -24,6 +26,8 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
 
     /**
      * Adds parameters factories.
+     *
+     * @since 1.38
      */
     @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
     void parameterFactories(@DslContext(DownstreamTriggerParameterFactoryContext) Closure closure) {

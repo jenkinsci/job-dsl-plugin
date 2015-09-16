@@ -59,6 +59,8 @@ class PhaseJobContext extends AbstractContext {
 
     /**
      * Adds parameter values for the job.
+     *
+     * @since 1.38
      */
     @RequiresPlugin(id = 'parameterized-trigger')
     void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {

@@ -15,6 +15,8 @@ abstract class AbstractDownstreamTriggerContext extends AbstractContext {
 
     /**
      * Adds parameter values for the projects to trigger.
+     *
+     * @since 1.38
      */
     void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {
         ContextHelper.executeInContext(closure, parameterContext)
