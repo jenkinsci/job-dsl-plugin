@@ -459,6 +459,22 @@ abstract class Job extends Item {
     }
 
     /**
+     * Provide an authorization token in the form of a string so that only those who know it would be able to remotely
+     * trigger this project's builds. Global security must be enabled to trigger builds remotely.
+     *
+     * For security reasons, do not use a hard-coded token. See
+     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
+     * details about handling credentials in DSL scripts.
+     *
+     * @since 1.39
+     */
+    void authenticationToken(String token) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / authToken(token)
+        }
+    }
+
+    /**
      * Creates permission records.
      */
     @RequiresPlugin(id = 'matrix-auth')
