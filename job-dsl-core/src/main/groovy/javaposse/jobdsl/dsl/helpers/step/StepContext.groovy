@@ -392,6 +392,11 @@ class StepContext extends AbstractExtensibleContext {
                     settingsConfigId(mavenContext.providedSettingsId)
                 }
             }
+            if (mavenContext.providedGlobalSettingsId) {
+                globalSettings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider') {
+                    settingsConfigId(mavenContext.providedGlobalSettingsId)
+                }
+            }
         }
 
         if (mavenContext.configureBlock) {

@@ -7,12 +7,14 @@ import jenkins.model.Jenkins
 import org.jenkinsci.lib.configprovider.ConfigProvider
 import org.jenkinsci.lib.configprovider.model.Config
 import org.jenkinsci.plugins.configfiles.custom.CustomConfig
+import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig
 import org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig
 
 class ConfigFileProviderHelper {
     private static final Map<ConfigFileType, Class<? extends ConfigProvider>> CONFIG_PROVIDERS = [
-            (ConfigFileType.Custom)       : CustomConfig.CustomConfigProvider,
-            (ConfigFileType.MavenSettings): MavenSettingsConfig.MavenSettingsConfigProvider,
+            (ConfigFileType.Custom)             : CustomConfig.CustomConfigProvider,
+            (ConfigFileType.MavenSettings)      : MavenSettingsConfig.MavenSettingsConfigProvider,
+            (ConfigFileType.GlobalMavenSettings): GlobalMavenSettingsConfig.GlobalMavenSettingsConfigProvider,
     ]
 
     static Config findConfig(ConfigProvider configProvider, String name) {
@@ -31,6 +33,15 @@ class ConfigFileProviderHelper {
                 return new Config(oldConfig.id, configFile.name, configFile.comment, configFile.content)
             case ConfigFileType.MavenSettings:
                 return new MavenSettingsConfig(
+                        oldConfig.id,
+                        configFile.name,
+                        configFile.comment,
+                        configFile.content,
+                        null,
+                        null
+                )
+            case ConfigFileType.GlobalMavenSettings:
+                return new GlobalMavenSettingsConfig(
                         oldConfig.id,
                         configFile.name,
                         configFile.comment,

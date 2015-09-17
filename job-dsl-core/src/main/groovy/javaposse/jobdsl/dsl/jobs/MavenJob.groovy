@@ -262,6 +262,23 @@ class MavenJob extends Job {
     }
 
     /**
+     * Use managed global Maven settings.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'config-file-provider')
+    void providedGlobalSettings(String settingsName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName)
+        Preconditions.checkNotNull(settingsId, "Managed global Maven settings with name '${settingsName}' not found")
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / globalSettings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider') {
+                settingsConfigId(settingsId)
+            }
+        }
+    }
+
+    /**
      * If set, Jenkins will not automatically trigger downstream builds, defaults to <code>false</code>.
      *
      * @param disableDownstreamTrigger set to <code>true</code> to disable automatic triggering of downstream builds

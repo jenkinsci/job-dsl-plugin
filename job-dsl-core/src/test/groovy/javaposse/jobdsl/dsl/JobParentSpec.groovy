@@ -271,6 +271,31 @@ class JobParentSpec extends Specification {
         1 * jobManagement.requirePlugin('config-file-provider')
     }
 
+    def 'global Maven settings config file'() {
+        when:
+        ConfigFile configFile = parent.globalMavenSettingsConfigFile('test') {
+            comment('foo')
+        }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.GlobalMavenSettings
+        configFile.comment == 'foo'
+        parent.referencedConfigFiles.contains(configFile)
+        1 * jobManagement.requirePlugin('config-file-provider')
+    }
+
+    def 'global Maven settings config file without closure'() {
+        when:
+        ConfigFile configFile = parent.globalMavenSettingsConfigFile('test')
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.GlobalMavenSettings
+        parent.referencedConfigFiles.contains(configFile)
+        1 * jobManagement.requirePlugin('config-file-provider')
+    }
+
     def 'readFileInWorkspace from seed job'() {
         jobManagement.readFileInWorkspace('foo.txt') >> 'hello'
 

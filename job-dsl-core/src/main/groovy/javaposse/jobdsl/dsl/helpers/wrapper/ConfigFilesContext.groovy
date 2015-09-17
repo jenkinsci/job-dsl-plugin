@@ -41,6 +41,15 @@ class ConfigFilesContext extends AbstractContext {
         configFile(fileName, ConfigFileType.MavenSettings, configFileClosure)
     }
 
+    /**
+     * Makes a global Maven settings file available to the build.
+     *
+     * @since 1.39
+     */
+    void globalMavenSettings(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileName, ConfigFileType.GlobalMavenSettings, configFileClosure)
+    }
+
     private void configFile(String fileName, ConfigFileType type, Closure configFileClosure) {
         String configFileId = jobManagement.getConfigFileId(type, fileName)
         Preconditions.checkNotNull(configFileId, "${type} config file with name '${fileName}' not found")
