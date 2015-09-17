@@ -780,22 +780,32 @@ class StepContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'vsphere-cloud')
     void vSpherePowerOff(String server, String vm) {
         vSphereBuildStep(server, 'PowerOff') {
-            delegate.vm vm
-            evenIfSuspended false
-            shutdownGracefully false
+            delegate.vm(vm)
+            evenIfSuspended(false)
+            shutdownGracefully(false)
         }
     }
 
     /**
-     * This build step will power on the specified VM.
+     * This build step will power on the specified VM. Uses a default timeout of 180 seconds.
      *
      * @since 1.25
      */
     @RequiresPlugin(id = 'vsphere-cloud')
     void vSpherePowerOn(String server, String vm) {
+        vSpherePowerOn(server, vm, 180)
+    }
+
+    /**
+     * This build step will power on the specified VM. The timeout must be specified in seconds.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'vsphere-cloud')
+    void vSpherePowerOn(String server, String vm, int timeout) {
         vSphereBuildStep(server, 'PowerOn') {
-            delegate.vm vm
-            timeoutInSeconds 180
+            delegate.vm(vm)
+            timeoutInSeconds(timeout)
         }
     }
 
@@ -807,8 +817,8 @@ class StepContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'vsphere-cloud')
     void vSphereRevertToSnapshot(String server, String vm, String snapshot) {
         vSphereBuildStep(server, 'RevertToSnapshot') {
-            delegate.vm vm
-            snapshotName snapshot
+            delegate.vm(vm)
+            snapshotName(snapshot)
         }
     }
 
@@ -818,8 +828,8 @@ class StepContext extends AbstractExtensibleContext {
 
         stepNodes << new NodeBuilder().'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer' {
             buildStep(class: "org.jenkinsci.plugins.vsphere.builders.${builder}", configuration)
-            serverName server
-            serverHash hash
+            serverName(server)
+            serverHash(hash)
         }
     }
 

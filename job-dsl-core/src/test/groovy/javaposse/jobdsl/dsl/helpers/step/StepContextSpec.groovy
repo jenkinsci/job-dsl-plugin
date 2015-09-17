@@ -2828,6 +2828,28 @@ class StepContextSpec extends Specification {
             serverName[0].value() == 'vsphere.acme.org'
             serverHash[0].value() == 4711
         }
+        (1.._) * jobManagement.requirePlugin('vsphere-cloud')
+    }
+
+    def 'vSphere power on with timeout'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
+        when:
+        context.vSpherePowerOn('vsphere.acme.org', 'foo', 300)
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 3
+            buildStep[0].attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.PowerOn'
+            buildStep[0].children().size() == 2
+            buildStep[0].vm[0].value() == 'foo'
+            buildStep[0].timeoutInSeconds[0].value() == 300
+            serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
+        }
         1 * jobManagement.requirePlugin('vsphere-cloud')
     }
 

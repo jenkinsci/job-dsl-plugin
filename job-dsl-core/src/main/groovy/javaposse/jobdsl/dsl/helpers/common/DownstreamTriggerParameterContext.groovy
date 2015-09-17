@@ -180,7 +180,7 @@ class DownstreamTriggerParameterContext extends AbstractContext {
 
         if (predefinedProps) {
             result << new NodeBuilder().'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters' {
-                'properties'(predefinedProps.join('\n'))
+                delegate.properties(predefinedProps.join('\n'))
             }
         }
 
