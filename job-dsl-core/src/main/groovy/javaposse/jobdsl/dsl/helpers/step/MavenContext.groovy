@@ -126,7 +126,7 @@ class MavenContext extends AbstractContext {
      * @since 1.21
      */
     void properties(Map props) {
-        properties = properties + props
+        properties.putAll(props)
     }
 
     /**
@@ -135,6 +135,6 @@ class MavenContext extends AbstractContext {
      * @since 1.21
      */
     void property(String key, String value) {
-        properties = properties + [(key): value]
+        properties[key] = value
     }
 }
