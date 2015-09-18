@@ -964,6 +964,46 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Builds and pushes a Docker based project to the Docker registry.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.0')
+    void dockerBuildAndPublish(@DslContext(DockerBuildAndPublishContext) Closure closure) {
+        DockerBuildAndPublishContext context = new DockerBuildAndPublishContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'com.cloudbees.dockerpublish.DockerBuilder' {
+            server {
+                if (context.dockerHostURI) {
+                    uri(context.dockerHostURI)
+                }
+                if (context.serverCredentials) {
+                    credentialsId(context.serverCredentials)
+                }
+            }
+            registry {
+                if (context.dockerRegistryURL) {
+                    url(context.dockerRegistryURL)
+                }
+                if (context.registryCredentials) {
+                    credentialsId(context.registryCredentials)
+                }
+            }
+            repoName(context.repositoryName ?: '')
+            noCache(context.noCache)
+            forcePull(context.forcePull)
+            dockerfilePath(context.dockerfileDirectory ?: '')
+            skipBuild(context.skipBuild)
+            skipDecorate(context.skipDecorate)
+            repoTag(context.tag ?: '')
+            skipPush(context.skipPush)
+            createFingerprint(context.createFingerprints)
+            skipTagLatest(context.skipTagAsLatest)
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
