@@ -545,6 +545,14 @@ class JobSpec extends Specification {
         job.node.canRoam[0].value() == true
     }
 
+    def 'authenticationToken constructs xml'() {
+        when:
+        job.authenticationToken('secret')
+
+        then:
+        job.node.authToken[0].value() == 'secret'
+    }
+
     def 'lockable resources simple'() {
         when:
         job.lockableResources('lock-resource')
