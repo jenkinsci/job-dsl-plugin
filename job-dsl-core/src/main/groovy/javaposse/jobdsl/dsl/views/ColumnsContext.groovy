@@ -128,4 +128,14 @@ class ColumnsContext extends AbstractContext {
     void customIcon() {
         columnNodes << new Node(null, 'jenkins.plugins.jobicon.CustomIconColumn')
     }
+
+    /**
+     * Adds a column showing showing job's cron trigger expression.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'cron_column', minimumVersion = '1.4')
+    void cronTrigger() {
+        columnNodes << new Node(null, 'hudson.plugins.CronViewColumn')
+    }
 }
