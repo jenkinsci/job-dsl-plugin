@@ -251,7 +251,7 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'git')
     void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
-               Closure closure = null) {
+                Closure closure = null) {
         git {
             remote {
                 delegate.github(ownerAndProject, protocol, host)

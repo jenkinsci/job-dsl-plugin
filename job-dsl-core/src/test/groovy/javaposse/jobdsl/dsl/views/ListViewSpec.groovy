@@ -387,7 +387,7 @@ class ListViewSpec extends Specification {
         1 * jobManagement.requirePlugin('view-job-filters')
 
         where:
-        regexType  || regexString
+        regexType           || regexString
         RegexMatchValue.NAME | '.*'
     }
 

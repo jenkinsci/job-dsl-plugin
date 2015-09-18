@@ -4,7 +4,7 @@ job('example') {
             trigger('Project1, Project2') {
                 block {
                     buildStepFailure('FAILURE')
-                    failure ('FAILURE')
+                    failure('FAILURE')
                     unstable('UNSTABLE')
                 }
                 parameters {

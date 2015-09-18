@@ -48,7 +48,7 @@ class Folder extends Item {
      * @since 1.31
      */
     void authorization(@DslContext(AuthorizationContext) Closure closure) {
-        AuthorizationContext context = new AuthorizationContext(jobManagement,  AUTHORIZATION_MATRIX_PROPERTY_NAME)
+        AuthorizationContext context = new AuthorizationContext(jobManagement, AUTHORIZATION_MATRIX_PROPERTY_NAME)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->

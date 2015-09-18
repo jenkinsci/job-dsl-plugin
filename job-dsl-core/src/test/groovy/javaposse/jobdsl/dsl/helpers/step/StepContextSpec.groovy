@@ -254,12 +254,12 @@ class StepContextSpec extends Specification {
             useWrapper true
             grailsWorkDir 'work'
             projectWorkDir 'project'
-            projectBaseDir  'base'
-            serverPort  '1111'
-            props  prop1: 'val1', prop2: 'val2'
+            projectBaseDir 'base'
+            serverPort '1111'
+            props prop1: 'val1', prop2: 'val2'
             prop 'prop3', 'val3'
-            forceUpgrade  true
-            nonInteractive  false
+            forceUpgrade true
+            nonInteractive false
         }
 
         then:
@@ -282,10 +282,10 @@ class StepContextSpec extends Specification {
             useWrapper true
             grailsWorkDir 'work'
             projectWorkDir 'project'
-            projectBaseDir  'base'
-            serverPort  '8080'
-            forceUpgrade  true
-            nonInteractive  false
+            projectBaseDir 'base'
+            serverPort '8080'
+            forceUpgrade true
+            nonInteractive false
         }
 
         then:
@@ -1033,7 +1033,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('repository-connector')
     }
 
-    def 'call resolveArtifacts with all arguments and two artifacts' () {
+    def 'call resolveArtifacts with all arguments and two artifacts'() {
         when:
         context.resolveArtifacts {
             failOnError()
@@ -1440,12 +1440,12 @@ class StepContextSpec extends Specification {
                 with(delegate.delegate[0]) {
                     with(publishers[0]) {
                         children().size() == 1
-                        with (delegate.'jenkins.plugins.publish__over__ssh.BapSshPublisher'[0]) {
+                        with(delegate.'jenkins.plugins.publish__over__ssh.BapSshPublisher'[0]) {
                             configName[0].value() == 'server-name'
                             verbose[0].value() == false
                             with(transfers[0]) {
                                 children().size() == 1
-                                with (delegate.'jenkins.plugins.publish__over__ssh.BapSshTransfer'[0]) {
+                                with(delegate.'jenkins.plugins.publish__over__ssh.BapSshTransfer'[0]) {
                                     remoteDirectory[0].value() == ''
                                     sourceFiles[0].value() == 'file'
                                     excludes[0].value() == ''
@@ -1656,9 +1656,9 @@ class StepContextSpec extends Specification {
                     'label=="${TARGET}"'
             configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
             configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
-                name[0].value() == 'nodeParam'
+                    name[0].value() == 'nodeParam'
             configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
-                nodeLabel[0].value() == 'node_label'
+                    nodeLabel[0].value() == 'node_label'
 
             block.size() == 1
             Node thresholds = block[0]
@@ -1940,10 +1940,10 @@ class StepContextSpec extends Specification {
 
         where:
         threshold  || ordinalValue | colorValue
-        'never'    || null         | null
-        'SUCCESS'  || 0            | 'BLUE'
-        'UNSTABLE' || 1            | 'YELLOW'
-        'FAILURE'  || 2            | 'RED'
+        'never'    || null | null
+        'SUCCESS'  || 0 | 'BLUE'
+        'UNSTABLE' || 1 | 'YELLOW'
+        'FAILURE'  || 2 | 'RED'
     }
 
     def 'call downstream build step with invalid blocking options'() {
@@ -2136,7 +2136,7 @@ class StepContextSpec extends Specification {
         Node notCondition = step.runCondition[0]
         notCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.logic.Not'
         Node matchCondition = notCondition.condition[0]
-        matchCondition.attribute('class') ==  'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+        matchCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
         matchCondition.arg1[0].value() == 'foo'
         matchCondition.arg2[0].value() == 'bar'
         matchCondition.ignoreCase[0].value() == 'false'

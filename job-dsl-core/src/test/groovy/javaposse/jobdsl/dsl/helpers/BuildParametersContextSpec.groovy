@@ -1093,11 +1093,11 @@ class BuildParametersContextSpec extends Specification {
                 scriptlerScriptId.text() == 'scriptler-1.groovy'
                 children().size() == 2
                 with(parameters[0]) {
-                  children().size() == 2
-                  entry[0].string[0].text() == 'param1'
-                  entry[0].string[1].text() == 'x1'
-                  entry[1].string[0].text() == 'param2'
-                  entry[1].string[1].text() == 'x2'
+                    children().size() == 2
+                    entry[0].string[0].text() == 'param1'
+                    entry[0].string[1].text() == 'x1'
+                    entry[1].string[0].text() == 'param2'
+                    entry[1].string[1].text() == 'x2'
                 }
             }
         }
@@ -1209,9 +1209,9 @@ class BuildParametersContextSpec extends Specification {
                 scriptlerScriptId.text() == 'scriptler-2.groovy'
                 children().size() == 2
                 with(parameters[0]) {
-                  children().size() == 1
-                  entry[0].string[0].text() == 'script-param'
-                  entry[0].string[1].text() == 'x1'
+                    children().size() == 1
+                    entry[0].string[0].text() == 'script-param'
+                    entry[0].string[1].text() == 'x1'
                 }
             }
             referencedParameters.text() == 'param3, param4'

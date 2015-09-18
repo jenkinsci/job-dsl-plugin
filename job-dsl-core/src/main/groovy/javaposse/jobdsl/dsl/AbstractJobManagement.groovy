@@ -13,7 +13,7 @@ abstract class AbstractJobManagement implements JobManagement {
 
     @Override
     boolean createOrUpdateConfig(String path, String config, boolean ignoreExisting) {
-         Item item = new Item(this) {
+        Item item = new Item(this) {
             @Override
             String getName() {
                 path

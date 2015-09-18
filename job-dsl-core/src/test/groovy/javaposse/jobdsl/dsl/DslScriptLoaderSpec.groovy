@@ -87,8 +87,9 @@ job('project-b') {
         // If this one fails periodically, then it is because the referenced jobs are
         // Not in definition order, but rather in hash order. Hence, predictability.
         job.name == 'project-a'
+
         where:
-          x << [1..25]
+        x << [1..25]
     }
 
     def 'run engine renaming existing jobs'() {

@@ -16,6 +16,7 @@ enum Permissions {
     ScmTag('hudson.scm.SCM.Tag')
 
     final String longForm
+
     Permissions(String longForm) {
         this.longForm = longForm
     }

@@ -11,7 +11,7 @@ class IrcContext implements Context {
 
     List<String> strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
 
-    List<String> notificationMessages = ['Default',  'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
+    List<String> notificationMessages = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
     String strategy
 

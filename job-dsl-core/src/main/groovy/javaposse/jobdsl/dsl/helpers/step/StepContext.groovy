@@ -615,7 +615,7 @@ class StepContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         stepNodes << new NodeBuilder().'hudson.plugins.parameterizedtrigger.TriggerBuilder' {
-          configs(downstreamContext.configs)
+            configs(downstreamContext.configs)
         }
     }
 

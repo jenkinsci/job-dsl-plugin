@@ -76,7 +76,7 @@ class AxisContext extends AbstractExtensibleContext {
     /**
      * Adds an axis that allows to build the project with multiple versions of Python.
      */
-    @RequiresPlugin(id='shiningpanda', minimumVersion = '0.21')
+    @RequiresPlugin(id = 'shiningpanda', minimumVersion = '0.21')
     void python(String... axisValues) {
         python(axisValues.toList())
     }
@@ -84,7 +84,7 @@ class AxisContext extends AbstractExtensibleContext {
     /**
      * Adds an axis that allows to build the project with multiple versions of Python.
      */
-    @RequiresPlugin(id='shiningpanda', minimumVersion = '0.21')
+    @RequiresPlugin(id = 'shiningpanda', minimumVersion = '0.21')
     void python(Iterable<String> axisValues) {
         NodeBuilder nodeBuilder = new NodeBuilder()
 

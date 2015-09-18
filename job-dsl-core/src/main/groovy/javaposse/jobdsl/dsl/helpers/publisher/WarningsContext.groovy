@@ -8,7 +8,7 @@ class WarningsContext extends StaticAnalysisContext {
      * Determines if relative paths in warnings should be resolved. Defaults to {@code false}.
      */
     void resolveRelativePaths(boolean resolveRelativePaths = true) {
-        this.doNotResolveRelativePaths = ! resolveRelativePaths
+        this.doNotResolveRelativePaths = !resolveRelativePaths
     }
 
     /**

@@ -1015,7 +1015,7 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call trigger downstream'() {
-            when:
+        when:
         context.downstream('THE-JOB', 'FAILURE')
 
         then:
@@ -1591,36 +1591,41 @@ class PublisherContextSpec extends Specification {
         context.cobertura('reportfilename') {
             target('invalid', 1, 2, 3)
         }
+
         then:
         thrown(DslScriptException)
     }
 
     def 'checking for invalid cobertura target treshold: negative'() {
         when:
-            context.cobertura('reportfilename') {
-                target('invalid', h, u, f)
-            }
+        context.cobertura('reportfilename') {
+            target('invalid', h, u, f)
+        }
+
         then:
-            thrown(DslScriptException)
+        thrown(DslScriptException)
+
         where:
-            h  |  u |  f
-            -1 |  1 |  1
-            1  | -1 |  1
-            1  |  1 | -1
+        h  | u  | f
+        -1 | 1  | 1
+        1  | -1 | 1
+        1  | 1  | -1
     }
 
     def 'checking for invalid cobertura target treshold: more than 100 percent'() {
         when:
-            context.cobertura('reportfilename') {
-                target('invalid', h, u, f)
-            }
+        context.cobertura('reportfilename') {
+            target('invalid', h, u, f)
+        }
+
         then:
-            thrown(DslScriptException)
+        thrown(DslScriptException)
+
         where:
-            h  |  u  |  f
-           101 |  1  |  1
-            1  | 101 |  1
-            1  |  1  | 101
+        h   | u   | f
+        101 | 1   | 1
+        1   | 101 | 1
+        1   | 1   | 101
     }
 
     def 'null source encoding for cobertura'() {

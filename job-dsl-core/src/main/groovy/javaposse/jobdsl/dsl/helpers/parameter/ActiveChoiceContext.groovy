@@ -27,6 +27,6 @@ class ActiveChoiceContext extends AbstractActiveChoiceContext {
                 VALID_CHOICE_TYPES.contains(choiceType),
                 "choiceType must be one of ${VALID_CHOICE_TYPES.join(', ')}"
         )
-      this.choiceType = choiceType
+        this.choiceType = choiceType
     }
 }
