@@ -38,9 +38,13 @@ class ScriptRequestGenerator implements Closeable {
             ScriptRequest request = new ScriptRequest(null, scriptText, urlRoots, ignoreExisting)
             scriptRequests.add(request)
         } else {
-            String targetsStr = env.expand(targets)
+            String targetStrCsv = env.expand(targets).replace('\n', ',');
+            FilePath[] filePaths = build.workspace.list(targetStrCsv)
 
-            FilePath[] filePaths = build.workspace.list(targetsStr.replace('\n', ','))
+            if (!isAntGlob(targetStrCsv) && filePaths.length != (targetStrCsv.split(',').length)) {
+                throw new IOException("Can't find all files from: " + targetsStr.replace('\n', ','));
+            }
+
             for (FilePath filePath : filePaths) {
                 URL[] urlRoots = ([createWorkspaceUrl(build, filePath.parent)] + classpath) as URL[]
                 ScriptRequest request = new ScriptRequest(filePath.name, null, urlRoots, ignoreExisting)
@@ -48,6 +52,14 @@ class ScriptRequestGenerator implements Closeable {
             }
         }
         scriptRequests
+    }
+
+    private static boolean isAntGlob(String str) {
+        if (str.contains('*') || str.contains('?')){
+            return true;
+        }
+
+        return false;
     }
 
     @Override
