@@ -209,12 +209,13 @@ class ListViewSpec extends Specification {
             lastBuildNode()
             categorizedJob()
             cronTrigger()
+            progressBar()
         }
 
         then:
         Node root = view.node
         root.columns.size() == 1
-        root.columns[0].value().size() == 11
+        root.columns[0].value().size() == 12
         root.columns[0].value()[0].name() == 'hudson.views.StatusColumn'
         root.columns[0].value()[1].name() == 'hudson.views.WeatherColumn'
         root.columns[0].value()[2].name() == 'hudson.views.JobColumn'
@@ -226,6 +227,7 @@ class ListViewSpec extends Specification {
         root.columns[0].value()[8].name() == 'org.jenkins.plugins.column.LastBuildNodeColumn'
         root.columns[0].value()[9].name() == 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn'
         root.columns[0].value()[10].name() == 'hudson.plugins.CronViewColumn'
+        root.columns[0].value()[11].name() == 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn'
         1 * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
         1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
         1 * jobManagement.requirePlugin('claim')

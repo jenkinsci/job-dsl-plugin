@@ -138,4 +138,14 @@ class ColumnsContext extends AbstractContext {
     void cronTrigger() {
         columnNodes << new Node(null, 'hudson.plugins.CronViewColumn')
     }
+
+    /**
+     * Adds a column showing job's progress bar.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'progress-bar-column-plugin', minimumVersion = '1.0')
+    void progressBar() {
+        columnNodes << new Node(null, 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn')
+    }
 }
