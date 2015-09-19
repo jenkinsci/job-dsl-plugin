@@ -3502,7 +3502,7 @@ class PublisherContextSpec extends Specification {
         when:
         context.sonar {
             branch('test')
-            jobAdditionalProperties('-Dtest=test')
+            additionalProperties('-Dtest=test')
             overrideTriggers {
                 skipIfEnvironmentVariable('FOO')
             }

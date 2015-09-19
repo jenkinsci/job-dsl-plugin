@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 
 class SonarContext implements Context {
     String branch
-    String jobAdditionalProperties
+    String additionalProperties
     boolean overrideTriggers
     final SonarTriggersContext sonarTriggersContext = new SonarTriggersContext()
 
@@ -18,10 +18,12 @@ class SonarContext implements Context {
     }
 
     /**
-     * Sets the additional properties for the SonarQube job.
+     * Sets the additional properties to pass to Maven.
+     *
+     * @since 1.39
      */
-    void jobAdditionalProperties(String jobAdditionalProperties) {
-        this.jobAdditionalProperties = jobAdditionalProperties
+    void additionalProperties(String additionalProperties) {
+        this.additionalProperties = additionalProperties
     }
 
     /**
