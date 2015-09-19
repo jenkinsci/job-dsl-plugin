@@ -44,6 +44,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -314,27 +315,35 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedJob> generatedJobs = extractGeneratedObjects(build.getProject(), GeneratedJobsAction.class);
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
-        Set<GeneratedJob> removed = Sets.difference(generatedJobs, freshJobs);
+        Set<GeneratedJob> unreferenced = Sets.difference(generatedJobs, freshJobs);
+        Set<GeneratedJob> removed = new HashSet<GeneratedJob>();
+        Set<GeneratedJob> disabled = new HashSet<GeneratedJob>();
 
-        logItems(listener, "Adding items", added);
+        logItems(listener, "Added items", added);
         logItems(listener, "Existing items", existing);
-        logItems(listener, "Removing items", removed);
+        logItems(listener, "Unreferenced items", unreferenced);
 
         // Update unreferenced jobs
-        for (GeneratedJob removedJob : removed) {
-            Item removedItem = getLookupStrategy().getItem(build.getProject(), removedJob.getJobName(), Item.class);
+        for (GeneratedJob unrefJob : unreferenced) {
+            Item removedItem = getLookupStrategy().getItem(build.getProject(), unrefJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     removedItem.delete();
+                    removed.add(unrefJob);
                 } else {
                     if (removedItem instanceof AbstractProject) {
                         ((AbstractProject) removedItem).disable();
+                        disabled.add(unrefJob);
                     }
                 }
             }
         }
 
-        updateGeneratedJobMap(build.getProject(), Sets.union(added, existing), removed);
+        // print what happened with unreferenced jobs
+        logItems(listener, "Disabled items", disabled);
+        logItems(listener, "Removed items", removed);
+
+        updateGeneratedJobMap(build.getProject(), Sets.union(added, existing), unreferenced);
     }
 
     private void updateGeneratedJobMap(AbstractProject<?, ?> seedJob, Set<GeneratedJob> createdOrUpdatedJobs,
