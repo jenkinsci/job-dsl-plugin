@@ -1094,7 +1094,7 @@ class JobSpec extends Specification {
         job.nextBuildNumber(33)
 
         then:
-        job.getNextBuildNumber() == 33
+        job.nextBuildNumber == 33
     }
 
     def 'next build number not negative'() {
