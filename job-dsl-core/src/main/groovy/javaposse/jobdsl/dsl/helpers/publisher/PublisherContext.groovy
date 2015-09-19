@@ -1386,7 +1386,7 @@ class PublisherContext extends AbstractExtensibleContext {
             branch(sonarContext.branch ?: '')
             language()
             mavenOpts()
-            jobAdditionalProperties()
+            jobAdditionalProperties(sonarContext.additionalProperties ?: '')
             if (sonarContext.overrideTriggers) {
                 triggers {
                     skipScmCause(false)

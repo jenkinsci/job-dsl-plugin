@@ -3507,6 +3507,7 @@ class PublisherContextSpec extends Specification {
         when:
         context.sonar {
             branch('test')
+            additionalProperties('-Dtest=test')
             overrideTriggers {
                 skipIfEnvironmentVariable('FOO')
             }
@@ -3520,7 +3521,7 @@ class PublisherContextSpec extends Specification {
             branch[0].value() == 'test'
             language[0].value().empty
             mavenOpts[0].value().empty
-            jobAdditionalProperties[0].value().empty
+            jobAdditionalProperties[0].value() == '-Dtest=test'
             mavenInstallationName[0].value() == '(Inherit From Job)'
             rootPom[0].value().empty
             settings[0].value().empty
