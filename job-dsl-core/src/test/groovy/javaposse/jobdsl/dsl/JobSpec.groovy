@@ -1089,7 +1089,6 @@ class JobSpec extends Specification {
         1 * jobManagement.requirePlugin('notification')
     }
 
-
     def 'next build number is set'() {
         when:
         job.nextBuildNumber(33)
@@ -1104,6 +1103,5 @@ class JobSpec extends Specification {
 
         then:
         thrown(DslScriptException)
-
     }
 }
