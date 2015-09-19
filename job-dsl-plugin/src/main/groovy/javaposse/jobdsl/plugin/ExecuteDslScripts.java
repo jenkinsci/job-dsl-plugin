@@ -324,16 +324,16 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Unreferenced items", unreferenced);
 
         // Update unreferenced jobs
-        for (GeneratedJob unrefJob : unreferenced) {
-            Item removedItem = getLookupStrategy().getItem(build.getProject(), unrefJob.getJobName(), Item.class);
+        for (GeneratedJob unreferencedJob : unreferenced) {
+            Item removedItem = getLookupStrategy().getItem(build.getProject(), unreferencedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     removedItem.delete();
-                    removed.add(unrefJob);
+                    removed.add(unreferencedJob);
                 } else {
                     if (removedItem instanceof AbstractProject) {
                         ((AbstractProject) removedItem).disable();
-                        disabled.add(unrefJob);
+                        disabled.add(unreferencedJob);
                     }
                 }
             }
@@ -390,21 +390,23 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedView> generatedViews = extractGeneratedObjects(build.getProject(), GeneratedViewsAction.class);
         Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
-        Set<GeneratedView> removed = Sets.difference(generatedViews, freshViews);
+        Set<GeneratedView> unreferenced = Sets.difference(generatedViews, freshViews);
+        Set<GeneratedView> removed = new HashSet<GeneratedView>();
 
-        logItems(listener, "Adding views", added);
+        logItems(listener, "Added views", added);
         logItems(listener, "Existing views", existing);
-        logItems(listener, "Removing views", removed);
+        logItems(listener, "Unreferenced views", unreferenced);
 
         // Delete views
         if (removedViewAction == RemovedViewAction.DELETE) {
-            for (GeneratedView removedView : removed) {
-                String viewName = removedView.getName();
+            for (GeneratedView unreferencedView : unreferenced) {
+                String viewName = unreferencedView.getName();
                 ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
                 if (parent instanceof ViewGroup) {
                     View view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
                     if (view != null) {
                         ((ViewGroup) parent).deleteView(view);
+                        removed.add(unreferencedView);
                     }
                 } else if (parent == null) {
                     LOGGER.log(Level.FINE, "Parent ViewGroup seems to have been already deleted");
@@ -413,6 +415,8 @@ public class ExecuteDslScripts extends Builder {
                 }
             }
         }
+
+        logItems(listener, "Removed views", removed);
     }
 
     private void updateGeneratedConfigFiles(AbstractBuild<?, ?> build, BuildListener listener,
@@ -420,11 +424,11 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedConfigFile> generatedConfigFiles = extractGeneratedObjects(build.getProject(), GeneratedConfigFilesAction.class);
         Set<GeneratedConfigFile> added = Sets.difference(freshConfigFiles, generatedConfigFiles);
         Set<GeneratedConfigFile> existing = Sets.intersection(generatedConfigFiles, freshConfigFiles);
-        Set<GeneratedConfigFile> removed = Sets.difference(generatedConfigFiles, freshConfigFiles);
+        Set<GeneratedConfigFile> unreferenced = Sets.difference(generatedConfigFiles, freshConfigFiles);
 
-        logItems(listener, "Adding config files", added);
+        logItems(listener, "Added config files", added);
         logItems(listener, "Existing config files", existing);
-        logItems(listener, "Removing config files", removed);
+        logItems(listener, "Unreferenced config files", unreferenced);
     }
 
     private void updateGeneratedUserContents(AbstractBuild<?, ?> build, BuildListener listener,
@@ -432,11 +436,11 @@ public class ExecuteDslScripts extends Builder {
         Set<GeneratedUserContent> generatedUserContents = extractGeneratedObjects(build.getProject(), GeneratedUserContentsAction.class);
         Set<GeneratedUserContent> added = Sets.difference(freshUserContents, generatedUserContents);
         Set<GeneratedUserContent> existing = Sets.intersection(generatedUserContents, freshUserContents);
-        Set<GeneratedUserContent> removed = Sets.difference(generatedUserContents, freshUserContents);
+        Set<GeneratedUserContent> unreferenced = Sets.difference(generatedUserContents, freshUserContents);
 
         logItems(listener, "Adding user content", added);
         logItems(listener, "Existing user content", existing);
-        logItems(listener, "Removing user content", removed);
+        logItems(listener, "Unreferenced user content", unreferenced);
     }
 
     private static void logItems(BuildListener listener, String message, Collection<?> collection) {
