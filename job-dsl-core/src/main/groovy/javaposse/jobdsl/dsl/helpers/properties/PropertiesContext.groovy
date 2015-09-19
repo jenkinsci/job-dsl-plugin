@@ -70,4 +70,20 @@ class PropertiesContext extends AbstractExtensibleContext {
             delegate.pattern(pattern)
         }
     }
+
+    /**
+     * Allows to configure job rebuild behaviour.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'rebuild', minimumVersion = '1.25')
+    void rebuild(@DslContext(RebuildContext) Closure rebuildClosure) {
+        RebuildContext rebuildContext = new RebuildContext()
+        ContextHelper.executeInContext(rebuildClosure, rebuildContext)
+
+        propertiesNodes << new NodeBuilder().'com.sonyericsson.rebuild.RebuildSettings' {
+            autoRebuild(rebuildContext.autoRebuild)
+            rebuildDisabled(rebuildContext.rebuildDisabled)
+        }
+    }
 }
