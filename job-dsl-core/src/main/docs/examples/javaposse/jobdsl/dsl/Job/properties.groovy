@@ -5,7 +5,7 @@ job('example') {
             link('https://jira.acme.org/', 'JIRA', 'notepad.png')
         }
         rebuild {
-            autoRebuild(true)
+            autoRebuild()
         }
     }
 }

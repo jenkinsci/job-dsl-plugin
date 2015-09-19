@@ -7,14 +7,14 @@ class RebuildContext implements Context {
     boolean rebuildDisabled = false
 
     /**
-     * Rebuilds job without asking for parameters.
+     * Rebuilds job without asking for parameters. Defaults to {@code false}.
      */
     void autoRebuild(boolean autoRebuild = true) {
         this.autoRebuild = autoRebuild
     }
 
     /**
-     * Disables job rebuilding.
+     * Disables job rebuilding. Defaults to {@code false}.
      */
     void rebuildDisabled(boolean rebuildDisabled = true) {
         this.rebuildDisabled = rebuildDisabled

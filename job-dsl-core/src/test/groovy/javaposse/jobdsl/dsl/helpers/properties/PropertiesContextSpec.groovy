@@ -121,10 +121,11 @@ class PropertiesContextSpec extends Specification {
         }
     }
 
-    def 'rebuild with auto-rebuild enabled'() {
+    def 'rebuild with all options'() {
         when:
         context.rebuild {
-            autoRebuild true
+            autoRebuild()
+            rebuildDisabled()
         }
 
         then:
@@ -132,21 +133,6 @@ class PropertiesContextSpec extends Specification {
             name() == 'com.sonyericsson.rebuild.RebuildSettings'
             children().size() == 2
             autoRebuild[0].value() == true
-            rebuildDisabled[0].value() == false
-        }
-    }
-
-    def 'disable rebuild'() {
-        when:
-        context.rebuild {
-            rebuildDisabled true
-        }
-
-        then:
-        with(context.propertiesNodes[0]) {
-            name() == 'com.sonyericsson.rebuild.RebuildSettings'
-            children().size() == 2
-            autoRebuild[0].value() == false
             rebuildDisabled[0].value() == true
         }
     }
