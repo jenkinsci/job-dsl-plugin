@@ -158,6 +158,7 @@ class WrapperContext extends AbstractExtensibleContext {
     /**
      * Allocate ports for build executions to prevent conflicts between build jobs competing for a single port number.
      */
+    @RequiresPlugin(id = 'port-allocator')
     void allocatePorts(@DslContext(PortsContext) Closure cl = null) {
         allocatePorts(new String[0], cl)
     }
@@ -400,6 +401,7 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.24
      */
+    @RequiresPlugin(id = 'Exclusion')
     void exclusionResources(String... resourceNames) {
         exclusionResources(resourceNames.toList())
     }
@@ -536,5 +538,35 @@ class WrapperContext extends AbstractExtensibleContext {
             buildSteps(context.stepContext.stepNodes)
             failOnError(context.failOnError)
         }
+    }
+
+    /**
+     * Builds inside a Docker container.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.5.1')
+    void buildInDocker(@DslContext(BuildInDockerContext) Closure closure) {
+        BuildInDockerContext context = new BuildInDockerContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node node = new NodeBuilder().'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper' {
+            dockerHost {
+                if (context.dockerHostURI) {
+                    uri(context.dockerHostURI)
+                }
+                if (context.serverCredentials) {
+                    credentialsId(context.serverCredentials)
+                }
+            }
+            dockerRegistryCredentials(context.registryCredentials ?: '')
+            verbose(context.verbose)
+            volumes(context.volumes)
+            privileged(context.privilegedMode)
+            group(context.userGroup ?: '')
+            command(context.startCommand ?: '')
+        }
+        node.append(context.selector)
+        wrapperNodes << node
     }
 }

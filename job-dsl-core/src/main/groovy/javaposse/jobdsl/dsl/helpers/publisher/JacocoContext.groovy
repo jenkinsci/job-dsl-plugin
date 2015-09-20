@@ -17,9 +17,9 @@ class JacocoContext extends AbstractContext {
     String minimumMethodCoverage = '0'
     String minimumClassCoverage = '0'
     String maximumInstructionCoverage = '0'
-    String maximumBranchCoverage  = '0'
+    String maximumBranchCoverage = '0'
     String maximumComplexityCoverage = '0'
-    String maximumLineCoverage  = '0'
+    String maximumLineCoverage = '0'
     String maximumMethodCoverage = '0'
     String maximumClassCoverage = '0'
     Boolean changeBuildStatus = null

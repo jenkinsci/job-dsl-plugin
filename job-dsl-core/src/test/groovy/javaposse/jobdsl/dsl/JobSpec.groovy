@@ -545,6 +545,14 @@ class JobSpec extends Specification {
         job.node.canRoam[0].value() == true
     }
 
+    def 'authenticationToken constructs xml'() {
+        when:
+        job.authenticationToken('secret')
+
+        then:
+        job.node.authToken[0].value() == 'secret'
+    }
+
     def 'lockable resources simple'() {
         when:
         job.lockableResources('lock-resource')
@@ -787,7 +795,7 @@ class JobSpec extends Specification {
         job.node.quietPeriod[0].value() == 10
     }
 
-    def 'add SCM retry count' () {
+    def 'add SCM retry count'() {
         when:
         job.checkoutRetryCount()
 
@@ -801,7 +809,7 @@ class JobSpec extends Specification {
         job.node.scmCheckoutRetryCount[0].value() == 6
     }
 
-    def 'add display name' () {
+    def 'add display name'() {
         when:
         job.displayName('FooBar')
 
@@ -809,7 +817,7 @@ class JobSpec extends Specification {
         job.node.displayName[0].value() == 'FooBar'
     }
 
-    def 'add custom workspace' () {
+    def 'add custom workspace'() {
         when:
         job.customWorkspace('/var/lib/jenkins/foobar')
 
@@ -817,7 +825,7 @@ class JobSpec extends Specification {
         job.node.customWorkspace[0].value() == '/var/lib/jenkins/foobar'
     }
 
-    def 'add block for up and downstream projects' () {
+    def 'add block for up and downstream projects'() {
         when:
         job.blockOnUpstreamProjects()
 

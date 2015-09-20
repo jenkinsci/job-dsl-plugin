@@ -94,4 +94,17 @@ class PropertiesContextSpec extends Specification {
         where:
         fileName << [null, '']
     }
+
+    def 'zenTimestamp'() {
+        when:
+        context.zenTimestamp('some-pattern')
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'hudson.plugins.zentimestamp.ZenTimestampJobProperty'
+            children().size() == 2
+            changeBUILDID[0].value() == true
+            pattern[0].value() == 'some-pattern'
+        }
+    }
 }

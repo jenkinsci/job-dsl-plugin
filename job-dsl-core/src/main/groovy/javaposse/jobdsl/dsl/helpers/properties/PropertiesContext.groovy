@@ -57,4 +57,17 @@ class PropertiesContext extends AbstractExtensibleContext {
             iconfile(iconFileName)
         }
     }
+
+    /**
+     * Changes the date pattern for the BUILD_ID or BUILD_TIMESTAMP variable.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'zentimestamp', minimumVersion = '3.3')
+    void zenTimestamp(String pattern) {
+        propertiesNodes << new NodeBuilder().'hudson.plugins.zentimestamp.ZenTimestampJobProperty' {
+            changeBUILDID(true)
+            delegate.pattern(pattern)
+        }
+    }
 }

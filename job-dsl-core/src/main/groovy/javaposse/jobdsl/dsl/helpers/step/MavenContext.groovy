@@ -16,6 +16,7 @@ class MavenContext extends AbstractContext {
     String mavenInstallation = '(Default)'
     Closure configureBlock
     String providedSettingsId
+    String providedGlobalSettingsId
 
     MavenContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -96,6 +97,20 @@ class MavenContext extends AbstractContext {
     }
 
     /**
+     * Specifies the managed global Maven settings to be used.
+     *
+     * @param settings name of the managed global Maven settings
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'config-file-provider')
+    void providedGlobalSettings(String settingsName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName)
+        Preconditions.checkNotNull(settingsId, "Managed global Maven settings with name '${settingsName}' not found")
+
+        this.providedGlobalSettingsId = settingsId
+    }
+
+    /**
      * Allows direct manipulation of the generated XML. The {@code hudson.tasks.Maven} node is passed into the configure
      * block.
      *
@@ -111,7 +126,7 @@ class MavenContext extends AbstractContext {
      * @since 1.21
      */
     void properties(Map props) {
-        properties = properties + props
+        properties.putAll(props)
     }
 
     /**
@@ -120,6 +135,6 @@ class MavenContext extends AbstractContext {
      * @since 1.21
      */
     void property(String key, String value) {
-        properties = properties + [(key): value]
+        properties[key] = value
     }
 }

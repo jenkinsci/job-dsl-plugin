@@ -1149,7 +1149,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0] != null
         context.scmNodes[0].userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == GIT_REPO_URL
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == '**'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1159,7 +1159,7 @@ class ScmContextSpec extends Specification {
 
         then:
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'feature-branch'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1331,7 +1331,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].gitTool.size() == 2
         context.scmNodes[0].gitTool[0].text() == 'Default'
         context.scmNodes[0].gitTool[1].text() == 'NotDefault'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1350,7 +1350,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].gitConfigEmail[0].text() == 'john@gmail.com'
         context.scmNodes[0].scmName.size() == 1
         context.scmNodes[0].scmName[0].text() == 'Kittner'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1366,7 +1366,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
         context.withXmlActions.size() == 1
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1383,7 +1383,7 @@ class ScmContextSpec extends Specification {
 
         then:
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1399,7 +1399,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
         context.withXmlActions.size() == 1
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1422,7 +1422,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
         context.withXmlActions.size() == 1
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1453,7 +1453,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
         context.withXmlActions.size() == 1
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1475,7 +1475,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].gitConfigName[0].text() == 'john'
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1491,7 +1491,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
         context.scmNodes[0].gitConfigName.size() == 1
         context.scmNodes[0].gitConfigName[0].text() == 'john'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1509,7 +1509,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
         context.scmNodes[0].gitConfigName.size() == 1
         context.scmNodes[0].gitConfigName[0].text() == 'john'
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
@@ -1529,7 +1529,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].gitConfigName.size() == 1
         context.scmNodes[0].gitConfigName[0].text() == 'john'
         context.withXmlActions.size() == 1
-        1 * mockJobManagement.requirePlugin('git')
+        (1.._) * mockJobManagement.requirePlugin('git')
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1553,7 +1553,7 @@ class ScmContextSpec extends Specification {
                 'http://svn.apache.org/repos/asf/xml/crimson/trunk/'
         context.scmNodes[0].excludedRegions.size() == 1
         context.scmNodes[0].excludedRegions[0].value() == '/trunk/.*'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requirePlugin('subversion')
     }
 
     def 'call svn with remote and local'() {
@@ -1564,7 +1564,7 @@ class ScmContextSpec extends Specification {
         with(context.scmNodes[0]) {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
         }
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requirePlugin('subversion')
     }
 
     def 'call svn with browser - Fisheye example'() {
@@ -1581,7 +1581,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].attributes()['class'] == 'hudson.scm.browsers.FishEyeSVN'
         context.scmNodes[0].browser[0].url[0].value() == 'http://mycompany.com/fisheye/repo_name'
         context.scmNodes[0].browser[0].rootModule[0].value() == 'my_root_module'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requirePlugin('subversion')
     }
 
     def 'call svn with browser - ViewSVN example'() {
@@ -1594,7 +1594,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0] != null
         context.scmNodes[0].browser[0].attributes()['class'] == 'hudson.scm.browsers.ViewSVN'
         context.scmNodes[0].browser[0].url[0].value() == 'http://mycompany.com/viewsvn/repo_name'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requirePlugin('subversion')
     }
 
     def 'call svn with no locations'() {
@@ -2045,7 +2045,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].alwaysForceSync[0].value() == 'false'
         context.scmNodes[0].projectPath.size() == 1
         context.scmNodes[0].projectPath[0].value().contains('//depot')
-        1 * mockJobManagement.requirePlugin('perforce')
+        (1.._) * mockJobManagement.requirePlugin('perforce')
     }
 
     def 'call cloneWorkspace'(parentJob, criteria) {

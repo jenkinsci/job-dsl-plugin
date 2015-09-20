@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import groovy.transform.ThreadInterrupt
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.IvyJob
@@ -18,6 +19,7 @@ import javaposse.jobdsl.dsl.views.SectionedView
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
+@ThreadInterrupt
 abstract class JobParent extends Script implements DslFactory {
     JobManagement jm
     Set<Item> referencedJobs = new LinkedHashSet<>()
@@ -202,6 +204,13 @@ abstract class JobParent extends Script implements DslFactory {
      */
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.MavenSettings, closure)
+    }
+
+    /**
+     * @since 1.39
+     */
+    ConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
+        processConfigFile(name, ConfigFileType.GlobalMavenSettings, closure)
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263

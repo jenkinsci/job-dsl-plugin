@@ -9,8 +9,10 @@ class StaticAnalysisContextSpec extends Specification {
     def 'computeNew is set correctly when setting thresholds'(thresholds, dontComputeNew) {
         when:
         context.thresholds(thresholds)
+
         then:
         context.dontComputeNew == dontComputeNew
+
         where:
         thresholds                                         || dontComputeNew
         [unstableNew: [low: 15], unstableTotal: [high: 5]] |  false
@@ -20,15 +22,16 @@ class StaticAnalysisContextSpec extends Specification {
     def 'failure on unknown threshold configuration'(thresholds) {
         when:
         context.thresholds(thresholds)
+
         then:
         Exception e = thrown(DslScriptException)
         e.message.contains(thresholds.toString())
+
         where:
-        thresholds  << [
+        thresholds << [
             [unstableNew: [low: 15], unstableTotalWhatever: [high: 5]],
             [unstableTotalOld: [low: 15], failedTotal: [all: 3]],
             [unstableTotal: [veryLow: 15], failedTotal: [all: 3]]
         ]
     }
-
 }

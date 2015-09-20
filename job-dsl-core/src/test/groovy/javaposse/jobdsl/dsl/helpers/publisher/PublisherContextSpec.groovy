@@ -899,7 +899,7 @@ class PublisherContextSpec extends Specification {
         publisherNode.criteria[0].value() == 'Not Failed'
         publisherNode.archiveMethod[0].value() == 'ZIP'
         publisherNode.overrideDefaultExcludes[0].value() == true
-        1 * jobManagement.requirePlugin('clone-workspace-scm')
+        (1.._) * jobManagement.requirePlugin('clone-workspace-scm')
     }
 
     def 'call scp publish with not enough entries'() {
@@ -1001,8 +1001,21 @@ class PublisherContextSpec extends Specification {
         publisherNode.threshold[0].color[0].value() == 'BLUE'
     }
 
+    def 'call trigger downstream with project list'() {
+        when:
+        context.downstream(['job1', 'job2'])
+
+        then:
+        Node publisherNode = context.publisherNodes[0]
+        publisherNode.name() == 'hudson.tasks.BuildTrigger'
+        publisherNode.childProjects[0].value() == 'job1, job2'
+        publisherNode.threshold[0].name[0].value() == 'SUCCESS'
+        publisherNode.threshold[0].ordinal[0].value() == 0
+        publisherNode.threshold[0].color[0].value() == 'BLUE'
+    }
+
     def 'call trigger downstream'() {
-            when:
+        when:
         context.downstream('THE-JOB', 'FAILURE')
 
         then:
@@ -1095,7 +1108,7 @@ class PublisherContextSpec extends Specification {
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
 
         when:
@@ -1111,7 +1124,7 @@ class PublisherContextSpec extends Specification {
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
@@ -1201,7 +1214,7 @@ class PublisherContextSpec extends Specification {
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
@@ -1216,11 +1229,64 @@ class PublisherContextSpec extends Specification {
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
             trigger('Project4', 'WRONG')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'call parametrized downstream with project list'() {
+        when:
+        context.downstreamParameterized {
+            trigger(['Project1', 'Project2']) {
+            }
+        }
+
+        then:
+        Node third = context.publisherNodes[0].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project1, Project2'
+        third.condition[0].value() == 'SUCCESS'
+        third.triggerWithNoParameters[0].value() == false
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+    }
+
+    def 'call parametrized downstream with FAILED_OR_BETTER condition'() {
+        given:
+        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.26')
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1') {
+                condition('FAILED_OR_BETTER')
+            }
+        }
+
+        then:
+        Node third = context.publisherNodes[0].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
+        third.projects[0].value() == 'Project1'
+        third.condition[0].value() == 'FAILED_OR_BETTER'
+        third.triggerWithNoParameters[0].value() == false
+        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
+        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+    }
+
+    def 'call parametrized downstream with FAILED_OR_BETTER condition and older plugin version'() {
+        given:
+        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.25')
+
+        when:
+        context.downstreamParameterized {
+            trigger('Project1') {
+                condition('FAILED_OR_BETTER')
+            }
         }
 
         then:
@@ -1248,7 +1314,7 @@ class PublisherContextSpec extends Specification {
         typeConfigNode.unstable[0].value() == '999'
         typeConfigNode.usePattern[0].value() == 'false'
         typeConfigNode.pattern[0].value() == ''
-        1 * jobManagement.requirePlugin('violations')
+        (1.._) * jobManagement.requirePlugin('violations')
     }
 
     def 'call violations plugin with all args'() {
@@ -1525,36 +1591,41 @@ class PublisherContextSpec extends Specification {
         context.cobertura('reportfilename') {
             target('invalid', 1, 2, 3)
         }
+
         then:
         thrown(DslScriptException)
     }
 
     def 'checking for invalid cobertura target treshold: negative'() {
         when:
-            context.cobertura('reportfilename') {
-                target('invalid', h, u, f)
-            }
+        context.cobertura('reportfilename') {
+            target('invalid', h, u, f)
+        }
+
         then:
-            thrown(DslScriptException)
+        thrown(DslScriptException)
+
         where:
-            h  |  u |  f
-            -1 |  1 |  1
-            1  | -1 |  1
-            1  |  1 | -1
+        h  | u  | f
+        -1 | 1  | 1
+        1  | -1 | 1
+        1  | 1  | -1
     }
 
     def 'checking for invalid cobertura target treshold: more than 100 percent'() {
         when:
-            context.cobertura('reportfilename') {
-                target('invalid', h, u, f)
-            }
+        context.cobertura('reportfilename') {
+            target('invalid', h, u, f)
+        }
+
         then:
-            thrown(DslScriptException)
+        thrown(DslScriptException)
+
         where:
-            h  |  u  |  f
-           101 |  1  |  1
-            1  | 101 |  1
-            1  |  1  | 101
+        h   | u   | f
+        101 | 1   | 1
+        1   | 101 | 1
+        1   | 1   | 101
     }
 
     def 'null source encoding for cobertura'() {
@@ -1859,7 +1930,7 @@ class PublisherContextSpec extends Specification {
             groovyScript[0].value() == 'foo'
             behavior[0].value() == 0
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
+        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
         1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
@@ -1877,7 +1948,7 @@ class PublisherContextSpec extends Specification {
             groovyScript[0].value() == 'foo'
             behavior[0].value() == 1
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
+        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
         1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
@@ -2235,7 +2306,7 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call buildPipelineTrigger with parameters'() {
@@ -2264,7 +2335,7 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call buildPipelineTrigger with null argument'() {
@@ -2760,7 +2831,7 @@ class PublisherContextSpec extends Specification {
                 entry[5].boolean[0].value() == false
             }
         }
-        1 * jobManagement.requirePlugin('jenkins-flowdock-plugin')
+        (1.._) * jobManagement.requirePlugin('jenkins-flowdock-plugin')
     }
 
     def 'flowdock with no tokens'() {

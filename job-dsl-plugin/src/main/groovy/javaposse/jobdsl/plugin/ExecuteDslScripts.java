@@ -27,6 +27,7 @@ import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
 import javaposse.jobdsl.dsl.GeneratedUserContent;
 import javaposse.jobdsl.dsl.GeneratedView;
+import javaposse.jobdsl.dsl.JobManagement;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
@@ -197,8 +198,9 @@ public class ExecuteDslScripts extends Builder {
             EnvVars env = build.getEnvironment(listener);
             env.putAll(build.getBuildVariables());
 
-            // We run the DSL, it'll need some way of grabbing a template config.xml and how to save it
-            JenkinsJobManagement jm = new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy());
+            JobManagement jm = new InterruptibleJobManagement(
+                    new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy())
+            );
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
             try {
@@ -307,7 +309,7 @@ public class ExecuteDslScripts extends Builder {
 
 
     private void updateGeneratedJobs(final AbstractBuild<?, ?> build, BuildListener listener,
-                                     Set<GeneratedJob> freshJobs) throws IOException {
+                                     Set<GeneratedJob> freshJobs) throws IOException, InterruptedException {
         // Update Project
         Set<GeneratedJob> generatedJobs = extractGeneratedObjects(build.getProject(), GeneratedJobsAction.class);
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
@@ -323,15 +325,7 @@ public class ExecuteDslScripts extends Builder {
             Item removedItem = getLookupStrategy().getItem(build.getProject(), removedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
-                    try {
-                        removedItem.delete();
-                    } catch (InterruptedException e) {
-                        listener.getLogger().println(String.format("Delete item failed: %s", removedJob));
-                        if (removedItem instanceof AbstractProject) {
-                            listener.getLogger().println(String.format("Disabling item instead: %s", removedJob));
-                            ((AbstractProject) removedItem).disable();
-                        }
-                    }
+                    removedItem.delete();
                 } else {
                     if (removedItem instanceof AbstractProject) {
                         ((AbstractProject) removedItem).disable();

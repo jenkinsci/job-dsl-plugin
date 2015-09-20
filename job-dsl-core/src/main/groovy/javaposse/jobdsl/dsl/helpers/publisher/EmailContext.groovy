@@ -44,8 +44,8 @@ class EmailContext implements Context {
      * Older versions of the Email-ext plugin do not support all triggers.
      */
     void trigger(String triggerName, String subject = null, String body = null, String recipientList = null,
-                Boolean sendToDevelopers = null, Boolean sendToRequester = null, Boolean includeCulprits = null,
-                Boolean sendToRecipientList = null) {
+                 Boolean sendToDevelopers = null, Boolean sendToRequester = null, Boolean includeCulprits = null,
+                 Boolean sendToRecipientList = null) {
         checkArgument(emailTriggerNames.contains(triggerName), "Possible values: ${emailTriggerNames.join(',')}")
 
         emailTriggers << new EmailTrigger(triggerName, recipientList, subject, body, sendToDevelopers, sendToRequester,

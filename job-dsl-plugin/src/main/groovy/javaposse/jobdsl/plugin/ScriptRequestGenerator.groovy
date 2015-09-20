@@ -40,7 +40,7 @@ class ScriptRequestGenerator implements Closeable {
         } else {
             String targetsStr = env.expand(targets)
 
-            FilePath[] filePaths =  build.workspace.list(targetsStr.replace('\n', ','))
+            FilePath[] filePaths = build.workspace.list(targetsStr.replace('\n', ','))
             for (FilePath filePath : filePaths) {
                 URL[] urlRoots = ([createWorkspaceUrl(build, filePath.parent)] + classpath) as URL[]
                 ScriptRequest request = new ScriptRequest(filePath.name, null, urlRoots, ignoreExisting)

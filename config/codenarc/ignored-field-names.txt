@@ -1,5 +1,6 @@
 Custom
 MavenSettings
+GlobalMavenSettings
 Freeform
 Maven
 Multijob

@@ -1,8 +1,9 @@
 Welcome to the jenkins-job-dsl wiki!
 
 * The high-level DSL concepts are documented in [[Job DSL Commands]].
-* See the [[Job Reference]] and the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for a full syntax reference
+* See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for a full syntax reference
 * There are also tips on [[more advanced usage and workflows|User Power Moves]].
+* An introduction to the DSL can be found in a collection of [[Talks and Blog Posts]].
 * [The forum](https://groups.google.com/forum/#!forum/job-dsl-plugin) has lots of information, some of which is making its way to the [[FAQ|Frequently Asked Questions]].
 * If you want to get more involved, here's [how to contribute](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md)...
 
@@ -17,9 +18,39 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
-* 1.38 (unreleased)
- * Replaced the [[View Reference]] and [[Folder Reference]] pages by the
+* 1.39 (unreleased)
+ * Increased the minimum supported Jenkins version to 1.596
+ * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
+ * Added support for the [CloudBees Docker Build and Publish
+   Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin)
+   ([JENKINS-29600](https://issues.jenkins-ci.org/browse/JENKINS-29600))
+ * Added support for remote trigger authentication token
+ * Added support for the [CloudBees Docker Custom Build Environment
+   Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin)
+ * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
+ * Enhanced support for the
+   [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+ * Enhanced support for the [vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin)
+ * Enhanced support the
+   [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+   ([JENKINS-30493](https://issues.jenkins-ci.org/browse/JENKINS-30493))
+ * Changed support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin), see
+   [Migration](Migration#migrating-to-139)
+   ([JENKINS-27921](https://issues.jenkins-ci.org/browse/JENKINS-27921))
+ * Support for older versions of the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-139)
+ * Support for older versions of the
+   [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-139)
+ * Support for the [JSHint Checkstyle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSHint+Checkstyle+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-139)
+ * Allow to abort DSL processing
+ * Added support for the [Cron Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cron+Column+Plugin)
+ * Added support for the [Progress Bar Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Progress+Bar+Column+Plugin)
+* 1.38 (September 09 2015)
+ * Replaced the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
+ * Added a collection of [[Talks and Blog Posts]]
  * Added support for [Crittercism dSYM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Crittercism+dSYM+Plugin)
    ([JENKINS-29501](https://issues.jenkins-ci.org/browse/JENKINS-29501))
  * Added support for the [ShiningPanda Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin)

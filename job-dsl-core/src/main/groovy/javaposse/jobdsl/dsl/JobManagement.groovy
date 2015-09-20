@@ -111,7 +111,7 @@ interface JobManagement {
      * @throws IOException if the file could not be read
      * @since 1.16
      */
-    InputStream streamFileInWorkspace(String filePath) throws IOException
+    InputStream streamFileInWorkspace(String filePath) throws IOException, InterruptedException
 
     /**
      * Streams a file from the workspace of the seed job.
@@ -121,7 +121,7 @@ interface JobManagement {
      * @throws IOException if the file could not be read
      * @since 1.16
      */
-    String readFileInWorkspace(String filePath) throws IOException
+    String readFileInWorkspace(String filePath) throws IOException, InterruptedException
 
     /**
      * Reads a file from the workspace of a job.
@@ -132,7 +132,7 @@ interface JobManagement {
      * @throws IOException if the file could not be read
      * @since 1.25
      */
-    String readFileInWorkspace(String jobName, String filePath) throws IOException
+    String readFileInWorkspace(String jobName, String filePath) throws IOException, InterruptedException
 
     /**
      * Stream to write to, for stdout.
