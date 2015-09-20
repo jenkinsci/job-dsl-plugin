@@ -66,6 +66,11 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
+    void updateNextBuildNumber(String jobName, int nextBuildNumber) throws IOException {
+        delegate.updateNextBuildNumber(jobName, nextBuildNumber)
+    }
+
+    @Override
     void queueJob(String jobName) throws NameNotProvidedException {
         delegate.queueJob(jobName)
     }
