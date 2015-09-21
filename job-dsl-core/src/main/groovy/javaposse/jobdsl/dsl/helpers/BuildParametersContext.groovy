@@ -328,6 +328,17 @@ class BuildParametersContext extends AbstractContext {
         buildParameterNodes[paramName] = node
     }
 
+    /**
+     * Defines a parameter that references a global variable.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'global-variable-string-parameter', minimumVersion = '1.2')
+    void globalVariableParam(String parameterName, String defaultValue = null, String description = null) {
+        simpleParam('hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition',
+                parameterName, defaultValue, description)
+    }
+
     private checkParameterName(String name) {
         checkNotNullOrEmpty(name, 'parameterName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(name), "parameter ${name} already defined")

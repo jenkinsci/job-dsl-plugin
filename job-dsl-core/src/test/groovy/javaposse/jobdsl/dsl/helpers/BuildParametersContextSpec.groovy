@@ -1289,4 +1289,72 @@ class BuildParametersContextSpec extends Specification {
         then:
         thrown(DslScriptException)
     }
+
+    def 'base globalVariableParam usage'() {
+        when:
+        context.globalVariableParam('myParameterName', '${MY_DEFAULT_GLOBAL_VARIABLE}',
+                'myGlobalVariableParameterDescription')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() ==
+                'hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == '${MY_DEFAULT_GLOBAL_VARIABLE}'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myGlobalVariableParameterDescription'
+    }
+
+    def 'simplified globalVariableParam usage'() {
+        when:
+        context.globalVariableParam('myParameterName', '${MY_DEFAULT_GLOBAL_VARIABLE}')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() ==
+                'hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == '${MY_DEFAULT_GLOBAL_VARIABLE}'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+    }
+
+    def 'simplest globalVariableParam usage'() {
+        when:
+        context.globalVariableParam('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() ==
+                'hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == ''
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+    }
+
+    def 'globalVariableParam name argument cant be null'() {
+        when:
+        context.globalVariableParam(null)
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'globalVariableParam name argument cant be empty'() {
+        when:
+        context.globalVariableParam('')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'globalVariableParam already defined'() {
+        when:
+        context.stringParam('one')
+        context.globalVariableParam('one')
+
+        then:
+        thrown(DslScriptException)
+    }
 }
