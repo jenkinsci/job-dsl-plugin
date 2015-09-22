@@ -45,6 +45,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    deprecated, see [Migration](Migration#migrating-to-139)
  * Support for the [JSHint Checkstyle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSHint+Checkstyle+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-139)
+ * Fixed `StackOverflowError` when using `downstreamParameterized` publisher
+   ([JENKINS-30504](https://issues.jenkins-ci.org/browse/JENKINS-30504))
  * Allow to abort DSL processing
  * Improved console output
  * Added support for the [Cron Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cron+Column+Plugin)
