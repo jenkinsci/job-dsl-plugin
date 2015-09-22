@@ -575,7 +575,7 @@ class WrapperContext extends AbstractExtensibleContext {
      * @since 1.39
      */
 
-    @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '@1.140')
+    @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.140')
     void sauceOnDemandConfig(@DslContext(SauceOnDemandContext) Closure sauceOnDemandclosure) {
         SauceOnDemandContext context = new SauceOnDemandContext()
         ContextHelper.executeInContext(sauceOnDemandclosure, context)
@@ -606,7 +606,7 @@ class WrapperContext extends AbstractExtensibleContext {
             httpsProtocol(context.httpsProtocol ?: '')
             options(context.options ?: '')
             verboseLogging(context.verboseLogging)
-            condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun', plugin: 'run-condition@1.0')
+            condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun')
         }
     }
 }

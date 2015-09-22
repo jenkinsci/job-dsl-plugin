@@ -19,70 +19,123 @@ class SauceOnDemandContext implements Context {
            httpsProtocol,
            options
 
-    List<String> webDriverBrowsers=[]
-    List<String> appiumBrowsers=[]
+    List<String> webDriverBrowsers = []
+    List<String> appiumBrowsers = []
 
+    /**
+     *  * Adds list of browsers to test with Appium.
+     * @param appiumBrowsers
+     */
     void appiumBrowsers(String... appiumBrowsers) {
         this.appiumBrowsers.addAll(appiumBrowsers)
     }
 
+    /**
+     * Adds list of browsers with Sauce.
+     * @param webDriverBrowsers
+     */
     void webDriverBrowsers(String... webDriverBrowsers) {
         this.webDriverBrowsers = webDriverBrowsers
     }
 
+    /**
+     * Adds options
+     * @param options
+     */
     void options(String options) {
         this.options = options
     }
 
+    /**
+     * adds https protocol
+     * @param httpsProtocol
+     */
     void httpsProtocol(String httpsProtocol) {
         this.httpsProtocol = httpsProtocol
     }
 
+    /**
+     * Adds port configuration
+     * @param seleniumPort
+     */
     void seleniumPort(String seleniumPort) {
         this.seleniumPort = seleniumPort
     }
-
+    /**
+     * Adds Selenium Host
+     * @param seleniumHost
+     */
     void seleniumHost(String seleniumHost) {
         this.seleniumHost = seleniumHost
     }
-
+    /**
+     * Adds SauceConnect Path
+     * @param sauceConnectPath
+     */
     void sauceConnectPath(String sauceConnectPath) {
         this.sauceConnectPath = sauceConnectPath
     }
-
+    /**
+     * Adds nativeApp package
+     * @param nativeAppPackage
+     */
     void nativeAppPackage(String nativeAppPackage) {
         this.nativeAppPackage = nativeAppPackage
     }
 
-    void verboseLogging(boolean verboseLogging) {
+    /**
+     * Adds Verbose loggin
+     */
+    void verboseLogging(boolean verboseLogging = true) {
         this.verboseLogging = verboseLogging
     }
-
-    void useLatestVersion(boolean useLatestVersion) {
+    /**
+     * adds latest version flag
+     * @param useLatestVersion
+     */
+    void useLatestVersion(boolean useLatestVersion = true) {
         this.useLatestVersion = useLatestVersion
     }
-
-    void launchSauceConnectOnSlave(boolean launchSauceConnectOnSlave) {
+    /**
+     * Adds launch sauce on slave flag
+     * @param launchSauceConnectOnSlave
+     */
+    void launchSauceConnectOnSlave(boolean launchSauceConnectOnSlave = true) {
         this.launchSauceConnectOnSlave = launchSauceConnectOnSlave
     }
-
-    void useOldSauceConnect(boolean useOldSauceConnect) {
+    /**
+     * adds use legacy sauce connect flag
+     * @param useOldSauceConnect
+     */
+    void useOldSauceConnect(boolean useOldSauceConnect = true) {
         this.useOldSauceConnect = useOldSauceConnect
     }
-
-    void enableSauceConnect(boolean enableSauceConnect) {
+    /**
+     * enables sauce connect
+     * @param enableSauceConnect
+     */
+    void enableSauceConnect(boolean enableSauceConnect = true) {
         this.enableSauceConnect = enableSauceConnect
     }
-
-    void useChromeForAndroid(boolean useChromeForAndroid) {
+    /**
+     * adds use Chrome for Android flag
+     * @param useChromeForAndroid
+     */
+    void useChromeForAndroid(boolean useChromeForAndroid = true) {
         this.useChromeForAndroid = useChromeForAndroid
     }
-
-    void sendUsageData(boolean sendUsageData) {
+    /**
+     * adds send usage flag
+     * @param sendUsageData
+     */
+    void sendUsageData(boolean sendUsageData = true) {
         this.sendUsageData = sendUsageData
     }
-
-    void useGeneratedTunnelIdentifier(boolean useGeneratedTunnelIdentifier) {
+    /**
+     * adds use Generated Tunnel Identifier
+     * @param useGeneratedTunnelIdentifier
+     */
+    void useGeneratedTunnelIdentifier(boolean useGeneratedTunnelIdentifier = true) {
         this.useGeneratedTunnelIdentifier = useGeneratedTunnelIdentifier
     }
 
