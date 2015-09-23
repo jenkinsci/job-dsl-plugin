@@ -426,6 +426,7 @@ class PublisherContextSpec extends Specification {
         'qTestLib'   | 'QTestLibType'
         'unitTest'   | 'UnitTestJunitHudsonTestType'
         'valgrind'   | 'ValgrindJunitHudsonTestType'
+        'xUnitDotNET'   | 'XUnitDotNetTestType'
     }
 
     def 'call archiveXUnit with combination of most options'() {
