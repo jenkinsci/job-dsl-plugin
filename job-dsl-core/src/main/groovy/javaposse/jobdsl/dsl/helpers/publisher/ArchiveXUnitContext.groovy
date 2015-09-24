@@ -174,7 +174,7 @@ class ArchiveXUnitContext extends AbstractContext {
     void valgrind(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
         addResultFile('ValgrindJunitHudsonTestType', resultFileClosure)
     }
-    
+
     /**
      * Adds an XUnit.NET v2 report.
      *
