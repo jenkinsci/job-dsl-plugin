@@ -9,6 +9,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
@@ -1000,6 +1001,34 @@ class StepContext extends AbstractExtensibleContext {
             skipPush(context.skipPush)
             createFingerprint(context.createFingerprints)
             skipTagLatest(context.skipTagAsLatest)
+        }
+    }
+
+    /**
+     * Deploys artifacts from the build workspace to remote locations.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
+    void artifactDeployer(@DslContext(ArtifactDeployerContext) Closure closure) {
+        ArtifactDeployerContext context = new ArtifactDeployerContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder' {
+            entry {
+                includes(context.includes ?: '')
+                basedir(context.baseDir ?: '')
+                excludes(context.excludes ?: '')
+                remote(context.remoteFileLocation ?: '')
+                flatten(context.flatten)
+                deleteRemote(context.cleanUp)
+                deleteRemoteArtifacts(context.deleteRemoteArtifacts)
+                deleteRemoteArtifactsByScript(context.deleteRemoteArtifactsByScript as boolean)
+                if (context.deleteRemoteArtifactsByScript) {
+                    groovyExpression(context.deleteRemoteArtifactsByScript)
+                }
+                failNoFilesDeploy(context.failIfNoFiles)
+            }
         }
     }
 

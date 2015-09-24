@@ -3237,4 +3237,66 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
     }
+
+    def 'call artifactDeployer with no options'() {
+        when:
+        context.artifactDeployer {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder'
+            children().size() == 1
+            with(entry[0]) {
+                children().size() == 9
+                includes[0].value().empty
+                basedir[0].value().empty
+                remote[0].value().empty
+                excludes[0].value().empty
+                flatten[0].value() == false
+                deleteRemote[0].value() == false
+                deleteRemoteArtifacts[0].value() == false
+                deleteRemoteArtifactsByScript[0].value() == false
+                failNoFilesDeploy[0].value() == false
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+    }
+
+    def 'call artifactDeployer with all options'() {
+        when:
+        context.artifactDeployer {
+            includes('test1')
+            baseDir('test2')
+            remoteFileLocation('test3')
+            excludes('test4')
+            flatten()
+            cleanUp()
+            deleteRemoteArtifacts()
+            deleteRemoteArtifactsByScript('test5')
+            failIfNoFiles()
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder'
+            children().size() == 1
+            with(entry[0]) {
+                children().size() == 10
+                includes[0].value() == 'test1'
+                basedir[0].value() == 'test2'
+                remote[0].value() == 'test3'
+                excludes[0].value() == 'test4'
+                flatten[0].value() == true
+                deleteRemote[0].value() == true
+                deleteRemoteArtifacts[0].value() == true
+                deleteRemoteArtifactsByScript[0].value() == true
+                groovyExpression[0].value() == 'test5'
+                failNoFilesDeploy[0].value() == true
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+    }
 }

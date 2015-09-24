@@ -4925,4 +4925,78 @@ class PublisherContextSpec extends Specification {
         ''                            | false
         'automatic commit by Jenkins' | true
     }
+
+    def 'call artifactDeployer with no options'() {
+        when:
+        context.artifactDeployer {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher'
+            children().size() == 2
+            deployEvenBuildFail[0].value() == false
+            entries[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+    }
+
+    def 'call artifactDeployer with all options'() {
+        when:
+        context.artifactDeployer {
+            artifactsToDeploy {
+                includes('test1')
+                baseDir('test2')
+                remoteFileLocation('test3')
+                excludes('test4')
+                flatten()
+                cleanUp()
+                deleteRemoteArtifacts()
+                deleteRemoteArtifactsByScript('test5')
+                failIfNoFiles()
+            }
+            artifactsToDeploy {}
+            deployIfFailed()
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher'
+            children().size() == 2
+            deployEvenBuildFail[0].value() == true
+            with(entries[0]) {
+                children().size() == 2
+                with(children()[0]) {
+                    name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry'
+                    children().size() == 10
+                    includes[0].value() == 'test1'
+                    basedir[0].value() == 'test2'
+                    remote[0].value() == 'test3'
+                    excludes[0].value() == 'test4'
+                    flatten[0].value() == true
+                    deleteRemote[0].value() == true
+                    deleteRemoteArtifacts[0].value() == true
+                    deleteRemoteArtifactsByScript[0].value() == true
+                    groovyExpression[0].value() == 'test5'
+                    failNoFilesDeploy[0].value() == true
+                }
+                with(children()[1]) {
+                    name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry'
+                    children().size() == 9
+                    includes[0].value().empty
+                    basedir[0].value().empty
+                    remote[0].value().empty
+                    excludes[0].value().empty
+                    flatten[0].value() == false
+                    deleteRemote[0].value() == false
+                    deleteRemoteArtifacts[0].value() == false
+                    deleteRemoteArtifactsByScript[0].value() == false
+                    failNoFilesDeploy[0].value() == false
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+    }
 }
