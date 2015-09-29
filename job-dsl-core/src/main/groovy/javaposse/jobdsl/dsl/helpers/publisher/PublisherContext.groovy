@@ -1579,7 +1579,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Sends build status and coverage information to Pharbicator
+     * Sends build status and coverage information to Pharbicator.
      *
      * @since 1.39
      */
@@ -1591,7 +1591,7 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'com.uber.jenkins.phabricator.PhabricatorNotifier' {
             commentOnSuccess(phabricatorNotifierContext.commentOnSuccess)
             commentWithConsoleLinkOnFailure(phabricatorNotifierContext.commentWithConsoleLinkOnFailure)
-            commentFile(phabricatorNotifierContext.commentFile)
+            commentFile(phabricatorNotifierContext.commentFile ?: '')
             commentSize(phabricatorNotifierContext.commentSize)
             preserveFormatting(phabricatorNotifierContext.preserveFormatting)
             uberallsEnabled(phabricatorNotifierContext.enableUberalls)

@@ -28,4 +28,3 @@ class PhabricatorContext implements Context {
         this.showBuildStartedMessage = showBuildStartedMessage
     }
 }
-

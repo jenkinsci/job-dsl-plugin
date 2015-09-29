@@ -590,7 +590,7 @@ class WrapperContextSpec extends Specification {
         context.phabricator {
             createCommit()
             applyToMaster()
-            showBuildStartedMessage()
+            showBuildStartedMessage(false)
         }
 
         then:
@@ -599,7 +599,7 @@ class WrapperContextSpec extends Specification {
             children().size() == 3
             createCommit[0].value() == true
             applyToMaster[0].value() == true
-            showBuildStartedMessage[0].value() == true
+            showBuildStartedMessage[0].value() == false
         }
         1 * mockJobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
     }

@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.Context
 
 class PhabricatorNotifierContext implements Context {
     boolean commentOnSuccess
-    boolean enableUberalls
+    boolean enableUberalls = true
     String commentFile = '.phabricator-comment'
     boolean preserveFormatting
     int commentSize = 1000
@@ -18,7 +18,7 @@ class PhabricatorNotifierContext implements Context {
     }
 
     /**
-     * Enable code coverage reporting. Defaults to {@code false}.
+     * Enable code coverage reporting. Defaults to {@code true}.
      */
     void enableUberalls(boolean enableUberalls = true) {
         this.enableUberalls = enableUberalls
@@ -53,6 +53,4 @@ class PhabricatorNotifierContext implements Context {
     void commentWithConsoleLinkOnFailure(boolean commentWithConsoleLinkOnFailure = true) {
         this.commentWithConsoleLinkOnFailure = commentWithConsoleLinkOnFailure
     }
-
 }
-
