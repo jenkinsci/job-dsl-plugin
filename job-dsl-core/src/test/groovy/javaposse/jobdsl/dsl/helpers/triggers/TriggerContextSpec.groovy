@@ -444,6 +444,7 @@ class TriggerContextSpec extends Specification {
                     delegate.context('Deploy to staging site')
                     triggeredStatus('deploy triggered')
                     startedStatus('deploy started')
+                    statusUrl('http://mysite.com')
                     completedStatus('SUCCESS', 'All is well')
                     completedStatus('FAILURE', 'Something has gone wrong')
                 }
@@ -470,10 +471,11 @@ class TriggerContextSpec extends Specification {
                 children().size() == 1
                 with(children()[0]) {
                     name() == 'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus'
-                    children().size() == 4
+                    children().size() == 5
                     commitStatusContext[0].value() == 'Deploy to staging site'
                     triggeredStatus[0].value() == 'deploy triggered'
                     startedStatus[0].value() == 'deploy started'
+                    statusUrl[0].value() == 'http://mysite.com'
                     with(completedStatus[0]) {
                         children().size() == 2
                         with(children()[0]) {
