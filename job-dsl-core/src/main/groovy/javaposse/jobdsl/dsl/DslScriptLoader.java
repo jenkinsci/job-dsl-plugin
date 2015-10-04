@@ -11,6 +11,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,53 +39,63 @@ public class DslScriptLoader {
 
         // Otherwise baseScript won't take effect
         GroovyClassLoader cl = new GroovyClassLoader(parentClassLoader, config);
-
-        GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
-
-        engine.setConfig(config);
-
-        Binding binding = createBinding(jobManagement);
-
-        JobParent jp;
         try {
-            Script script;
-            if (scriptRequest.getBody() != null) {
-                jobManagement.getOutputStream().println("Processing provided DSL script");
-                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody(), "script");
-                script = InvokerHelper.createScript(cls, binding);
-            } else {
-                jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
-                if (!isValidScriptName(scriptRequest.getLocation())) {
-                    jobManagement.logDeprecationWarning(
-                            "script names may only contain letters, digits and underscores, but may not start with a digit; support for arbitrary names",
-                            scriptRequest.getLocation(),
-                            -1
-                    );
-                }
-                script = engine.createScript(scriptRequest.getLocation(), binding);
-            }
-            assert script instanceof JobParent;
-
-            jp = (JobParent) script;
-            jp.setJm(jobManagement);
-
-            binding.setVariable("jobFactory", jp);
-
+            GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
             try {
-                script.run();
-            } catch (DslScriptException e) {
-                throw e;
-            } catch (RuntimeException e) {
-                throw new DslScriptException(e.getMessage(), e);
+                engine.setConfig(config);
+
+                Binding binding = createBinding(jobManagement);
+
+                JobParent jp;
+                try {
+                    Script script;
+                    if (scriptRequest.getBody() != null) {
+                        jobManagement.getOutputStream().println("Processing provided DSL script");
+                        Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody(), "script");
+                        script = InvokerHelper.createScript(cls, binding);
+                    } else {
+                        jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
+                        if (!isValidScriptName(scriptRequest.getLocation())) {
+                            jobManagement.logDeprecationWarning(
+                                    "script names may only contain letters, digits and underscores, but may not start with a digit; support for arbitrary names",
+                                    scriptRequest.getLocation(),
+                                    -1
+                            );
+                        }
+                        script = engine.createScript(scriptRequest.getLocation(), binding);
+                    }
+                    assert script instanceof JobParent;
+
+                    jp = (JobParent) script;
+                    jp.setJm(jobManagement);
+
+                    binding.setVariable("jobFactory", jp);
+
+                    try {
+                        script.run();
+                    } catch (DslScriptException e) {
+                        throw e;
+                    } catch (RuntimeException e) {
+                        throw new DslScriptException(e.getMessage(), e);
+                    }
+                } catch (CompilationFailedException e) {
+                    throw new DslException(e.getMessage(), e);
+                } catch (ResourceException e) {
+                    throw new IOException("Unable to run script", e);
+                } catch (ScriptException e) {
+                    throw new IOException("Unable to run script", e);
+                }
+                return jp;
+            } finally {
+                if (engine.getGroovyClassLoader() instanceof Closeable) {
+                    ((Closeable) engine.getGroovyClassLoader()).close();
+                }
             }
-        } catch (CompilationFailedException e) {
-            throw new DslException(e.getMessage(), e);
-        } catch (ResourceException e) {
-            throw new IOException("Unable to run script", e);
-        } catch (ScriptException e) {
-            throw new IOException("Unable to run script", e);
+        } finally {
+            if (cl instanceof Closeable) {
+                ((Closeable) cl).close();
+            }
         }
-        return jp;
     }
 
     private static boolean isValidScriptName(String scriptFile) {
