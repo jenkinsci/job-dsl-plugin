@@ -53,17 +53,6 @@ class MavenContext extends AbstractContext {
     }
 
     /**
-     * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LocalToExecutor}.
-     *
-     * @param location the local repository to use for isolation
-     */
-    @Deprecated
-    void localRepository(javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation location) {
-        jobManagement.logDeprecationWarning()
-        this.localRepositoryLocation = location.location
-    }
-
-    /**
      * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LOCAL_TO_EXECUTOR}.
      *
      * @param location the local repository to use for isolation

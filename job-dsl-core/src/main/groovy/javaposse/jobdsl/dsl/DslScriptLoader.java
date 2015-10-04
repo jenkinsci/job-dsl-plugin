@@ -39,13 +39,6 @@ public class DslScriptLoader {
         // Otherwise baseScript won't take effect
         GroovyClassLoader cl = new GroovyClassLoader(parentClassLoader, config);
 
-        // Add static imports of a few common types, like JobType
-        ImportCustomizer icz = new ImportCustomizer();
-        icz.addStaticStars("javaposse.jobdsl.dsl.ViewType");
-        icz.addStaticStars("javaposse.jobdsl.dsl.ConfigFileType");
-        icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
-        config.addCompilationCustomizers(icz);
-
         GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
 
         engine.setConfig(config);
@@ -223,7 +216,6 @@ public class DslScriptLoader {
 
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer();
-        icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
         icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");

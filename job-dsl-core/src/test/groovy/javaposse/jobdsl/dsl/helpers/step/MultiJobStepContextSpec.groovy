@@ -31,27 +31,6 @@ class MultiJobStepContextSpec extends Specification {
         def phaseNode2 = context.stepNodes[1]
         phaseNode2.phaseName[0].value() == 'Second'
         def jobNode = phaseNode2.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 4
-        jobNode.jobName[0].value() == 'JobA'
-        jobNode.currParams[0].value() == true
-        jobNode.exposedSCM[0].value() == true
-        jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-    }
-
-    def 'call phases with minimal arguments and plugin version 1.11'() {
-        setup:
-        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.11')
-
-        when:
-        context.phase {
-            phaseName('Second')
-            phaseJob('JobA')
-        }
-
-        then:
-        def phaseNode = context.stepNodes[0]
-        phaseNode.phaseName[0].value() == 'Second'
-        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
         jobNode.children().size() == 6
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == true
@@ -315,7 +294,6 @@ class MultiJobStepContextSpec extends Specification {
 
         where:
         condition | version
-        'FAILURE' | '1.10'
         'ALWAYS'  | '1.15'
     }
 
@@ -368,7 +346,7 @@ class MultiJobStepContextSpec extends Specification {
                 with(children()[0]) {
                     name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
                     with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
-                        children().size() == 4
+                        children().size() == 6
                         jobName[0].value() == 'JobA'
                     }
                 }

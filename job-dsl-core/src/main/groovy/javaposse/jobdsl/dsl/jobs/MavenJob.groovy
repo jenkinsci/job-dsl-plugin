@@ -10,7 +10,6 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
-import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext
@@ -144,21 +143,6 @@ class MavenJob extends Job {
             Node node = methodMissing('runHeadless', runHeadless)
             project / node
         }
-    }
-
-    /**
-     * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LocalToExecutor}.
-     *
-     * @param location the local repository to use for isolation
-     * @since 1.17
-     */
-    @Deprecated
-    void localRepository(MavenContext.LocalRepositoryLocation location) {
-        jobManagement.logDeprecationWarning()
-
-        Preconditions.checkNotNull(location, 'localRepository can not be null')
-
-        localRepository(location.location)
     }
 
     /**

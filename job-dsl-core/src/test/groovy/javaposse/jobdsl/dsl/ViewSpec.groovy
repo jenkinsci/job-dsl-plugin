@@ -8,15 +8,6 @@ class ViewSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     View view = new TestView(jobManagement)
 
-    def 'name'() {
-        when:
-        view.name('test')
-
-        then:
-        view.name == 'test'
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'description'() {
         when:
         view.description('test view')

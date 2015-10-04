@@ -10,8 +10,6 @@ import javaposse.jobdsl.dsl.helpers.step.MultiJobStepContext
 class MultiJob extends Job {
     MultiJob(JobManagement jobManagement) {
         super(jobManagement)
-
-        jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.13')
     }
 
     void steps(@DslContext(MultiJobStepContext) Closure closure) {
