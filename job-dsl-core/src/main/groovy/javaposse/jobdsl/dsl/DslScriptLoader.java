@@ -33,7 +33,7 @@ public class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.class.getName());
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator();
 
-    public static JobParent runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+    private static GeneratedItems runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.class.getClassLoader();
         CompilerConfiguration config = createCompilerConfiguration(jobManagement);
 
@@ -85,7 +85,16 @@ public class DslScriptLoader {
                 } catch (ScriptException e) {
                     throw new IOException("Unable to run script", e);
                 }
-                return jp;
+
+                GeneratedItems generatedItems = new GeneratedItems();
+                generatedItems.setConfigFiles(extractGeneratedConfigFiles(jp, scriptRequest.getIgnoreExisting()));
+                generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.getIgnoreExisting()));
+                generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.getIgnoreExisting()));
+                generatedItems.setUserContents(extractGeneratedUserContents(jp, scriptRequest.getIgnoreExisting()));
+
+                scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
+
+                return generatedItems;
             } finally {
                 if (engine.getGroovyClassLoader() instanceof Closeable) {
                     ((Closeable) engine.getGroovyClassLoader()).close();
@@ -123,18 +132,7 @@ public class DslScriptLoader {
     }
 
     public static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        JobParent jp = runDslEngineForParent(scriptRequest, jobManagement);
-        LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
-
-        GeneratedItems generatedItems = new GeneratedItems();
-        generatedItems.setConfigFiles(extractGeneratedConfigFiles(jp, scriptRequest.getIgnoreExisting()));
-        generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.getIgnoreExisting()));
-        generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.getIgnoreExisting()));
-        generatedItems.setUserContents(extractGeneratedUserContents(jp, scriptRequest.getIgnoreExisting()));
-
-        scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
-
-        return generatedItems;
+        return runDslEngineForParent(scriptRequest, jobManagement);
     }
 
     private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) throws IOException {
