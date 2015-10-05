@@ -18,7 +18,7 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
-* 1.39 (unreleased)
+* 1.39 (October 05 2015)
  * Increased the minimum supported Jenkins version to 1.596
  * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
  * Added support for the [CloudBees Docker Build and Publish
