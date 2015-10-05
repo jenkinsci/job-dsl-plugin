@@ -209,6 +209,14 @@ class JenkinsJobManagementSpec extends Specification {
         isXmlIdentical('extension.xml', result)
     }
 
+    def 'callExtension with no value'() {
+        when:
+        Node result = jobManagement.callExtension('withNoValue', Mock(Item), StepContext)
+
+        then:
+        result == JobManagement.NO_VALUE
+    }
+
     def 'extension is being notified'() {
         when:
         jobManagement.createOrUpdateConfig(createItem('test-123', '/config.xml'), false)

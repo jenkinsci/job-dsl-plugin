@@ -60,9 +60,9 @@ The parameters of the `@DslExtensionMethod` annotated method are the same parame
 Have a look at the [DSL Design](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md#dsl-design)
 section of the Job DSL contributing guide on how to use methods parameters.
 
-The method must return an object that will be saved as part of the job configuration. Usually that will be
+The method can return an object that will be saved as part of the job configuration. Usually that will be
 the `hudson.tasks.Builder`, `hudson.tasks.Publisher` or `hudson.tasks.BuildWrapper` subclass which is provided by the
-plugin.
+plugin. If the method should not contribute to the job configuration, it can simply return `null`.
 
 In the following example, a plugin provides an `ExampleBuilder` build step with two options, one with a string value and
 another one with an integer value. The Job DSL should be extended with an `example` method in the `steps` context so
