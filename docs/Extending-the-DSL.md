@@ -233,3 +233,7 @@ because build steps can be added multiple times.
 Instances of `ContextExtensionPoint` must be thread-safe. Each subclass will be instantiated only once and reused for
 all seed jobs. Since multiple seed jobs can run in parallel, any `@DslExtensionMethod` and the listener methods can be
 called in parallel.
+
+The following plugins implement the extension point and serve as examples:
+
+* [JGiven Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JGiven+Plugin)
