@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
-import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import spock.lang.Specification
 
 class MavenJobSpec extends Specification {
@@ -82,30 +81,6 @@ class MavenJobSpec extends Specification {
         then:
         job.node.runHeadless.size() == 1
         job.node.runHeadless[0].value() == true
-    }
-
-    def 'cannot run localRepository with null argument, deprecated variant'() {
-        when:
-        job.localRepository((MavenContext.LocalRepositoryLocation) null)
-
-        then:
-        thrown(DslScriptException)
-    }
-
-    def 'localRepository constructs xml for LocalToExecutor'() {
-        when:
-        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToExecutor)
-
-        then:
-        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerExecutorLocalRepositoryLocator'
-    }
-
-    def 'localRepository constructs xml for LocalToWorkspace'() {
-        when:
-        job.localRepository(MavenContext.LocalRepositoryLocation.LocalToWorkspace)
-
-        then:
-        job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
     }
 
     def 'cannot run localRepository with null argument'() {
@@ -221,9 +196,41 @@ class MavenJobSpec extends Specification {
 
         then:
         job.node.settings.size() == 1
-        job.node.settings[0].attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
-        job.node.settings[0].children().size() == 1
-        job.node.settings[0].settingsConfigId[0].value() == settingsId
+        with(job.node.settings[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+            children().size() == 1
+            settingsConfigId[0].value() == settingsId
+        }
+    }
+
+    def 'call maven method with unknown provided global settings'() {
+        setup:
+        String settingsName = 'lalala'
+
+        when:
+        job.providedGlobalSettings(settingsName)
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message.contains(settingsName)
+    }
+
+    def 'call maven method with provided global settings'() {
+        setup:
+        String settingsName = 'maven-proxy'
+        String settingsId = '123123415'
+        jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName) >> settingsId
+
+        when:
+        job.providedGlobalSettings(settingsName)
+
+        then:
+        job.node.globalSettings.size() == 1
+        with(job.node.globalSettings[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider'
+            children().size() == 1
+            settingsConfigId[0].value() == settingsId
+        }
     }
 
     def 'call publishers'() {

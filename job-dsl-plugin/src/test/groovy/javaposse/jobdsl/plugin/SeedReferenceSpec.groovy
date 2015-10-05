@@ -45,25 +45,6 @@ class SeedReferenceSpec extends Specification {
         seedReference.digest == 'test'
     }
 
-    def 'hashCode works as expected'() {
-        when:
-        SeedReference seedReference = new SeedReference(templateJobName, seedJobName, digest)
-
-        then:
-        seedReference.hashCode() == hashCode
-
-        where:
-        templateJobName | seedJobName | digest || hashCode
-        null            | null        | null   || 0
-        'foo'           | null        | null   || 97612614
-        null            | 'bar'       | null   || 3016269
-        'foo'           | 'bar'       | null   || 100628883
-        null            | null        | 'baz'  || 97307
-        'foo'           | null        | 'baz'  || 97709921
-        null            | 'bar'       | 'baz'  || 3113576
-        'foo'           | 'bar'       | 'baz'  || 100726190
-    }
-
     def 'equals works as expected'() {
         when:
         SeedReference seedReference = new SeedReference('foo', 'bar', 'baz')

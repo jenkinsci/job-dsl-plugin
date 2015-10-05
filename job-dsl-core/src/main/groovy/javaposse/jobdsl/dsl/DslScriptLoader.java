@@ -4,11 +4,14 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
+import groovy.util.ResourceException;
+import groovy.util.ScriptException;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,68 +33,78 @@ public class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.class.getName());
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator();
 
-    public static JobParent runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+    private static GeneratedItems runDslEngineForParent(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.class.getClassLoader();
         CompilerConfiguration config = createCompilerConfiguration(jobManagement);
 
         // Otherwise baseScript won't take effect
         GroovyClassLoader cl = new GroovyClassLoader(parentClassLoader, config);
-
-        // Add static imports of a few common types, like JobType
-        ImportCustomizer icz = new ImportCustomizer();
-        icz.addStaticStars("javaposse.jobdsl.dsl.ViewType");
-        icz.addStaticStars("javaposse.jobdsl.dsl.ConfigFileType");
-        icz.addStaticStars("javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation");
-        config.addCompilationCustomizers(icz);
-
-        GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
-
-        engine.setConfig(config);
-
-        Binding binding = createBinding(jobManagement);
-
-        JobParent jp;
         try {
-            Script script;
-            if (scriptRequest.getBody() != null) {
-                jobManagement.getOutputStream().println("Processing provided DSL script");
-                Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody(), "script");
-                script = InvokerHelper.createScript(cls, binding);
-            } else {
-                jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
-                if (!isValidScriptName(scriptRequest.getLocation())) {
-                    jobManagement.logDeprecationWarning(
-                            "script names may only contain letters, digits and underscores, but may not start with a digit; support for arbitrary names",
-                            scriptRequest.getLocation(),
-                            -1
-                    );
-                }
-                script = engine.createScript(scriptRequest.getLocation(), binding);
-            }
-            assert script instanceof JobParent;
-
-            jp = (JobParent) script;
-            jp.setJm(jobManagement);
-
-            binding.setVariable("jobFactory", jp);
-
+            GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.getUrlRoots(), cl);
             try {
-                script.run();
-            } catch (DslScriptException e) {
-                throw e;
-            } catch (RuntimeException e) {
-                throw new DslScriptException(e.getMessage(), e);
+                engine.setConfig(config);
+
+                Binding binding = createBinding(jobManagement);
+
+                JobParent jp;
+                try {
+                    Script script;
+                    if (scriptRequest.getBody() != null) {
+                        jobManagement.getOutputStream().println("Processing provided DSL script");
+                        Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody(), "script");
+                        script = InvokerHelper.createScript(cls, binding);
+                    } else {
+                        jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
+                        if (!isValidScriptName(scriptRequest.getLocation())) {
+                            jobManagement.logDeprecationWarning(
+                                    "script names may only contain letters, digits and underscores, but may not start with a digit; support for arbitrary names",
+                                    scriptRequest.getLocation(),
+                                    -1
+                            );
+                        }
+                        script = engine.createScript(scriptRequest.getLocation(), binding);
+                    }
+                    assert script instanceof JobParent;
+
+                    jp = (JobParent) script;
+                    jp.setJm(jobManagement);
+
+                    binding.setVariable("jobFactory", jp);
+
+                    try {
+                        script.run();
+                    } catch (DslScriptException e) {
+                        throw e;
+                    } catch (RuntimeException e) {
+                        throw new DslScriptException(e.getMessage(), e);
+                    }
+                } catch (CompilationFailedException e) {
+                    throw new DslException(e.getMessage(), e);
+                } catch (ResourceException e) {
+                    throw new IOException("Unable to run script", e);
+                } catch (ScriptException e) {
+                    throw new IOException("Unable to run script", e);
+                }
+
+                GeneratedItems generatedItems = new GeneratedItems();
+                generatedItems.setConfigFiles(extractGeneratedConfigFiles(jp, scriptRequest.getIgnoreExisting()));
+                generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.getIgnoreExisting()));
+                generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.getIgnoreExisting()));
+                generatedItems.setUserContents(extractGeneratedUserContents(jp, scriptRequest.getIgnoreExisting()));
+
+                scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
+
+                return generatedItems;
+            } finally {
+                if (engine.getGroovyClassLoader() instanceof Closeable) {
+                    ((Closeable) engine.getGroovyClassLoader()).close();
+                }
             }
-        } catch (CompilationFailedException e) {
-            throw new DslException(e.getMessage(), e);
-        } catch (Exception e) { // ResourceException or ScriptException
-            if (e instanceof RuntimeException) {
-                throw ((RuntimeException) e);
-            } else {
-                throw new IOException("Unable to run script", e);
+        } finally {
+            if (cl instanceof Closeable) {
+                ((Closeable) cl).close();
             }
         }
-        return jp;
     }
 
     private static boolean isValidScriptName(String scriptFile) {
@@ -119,18 +132,7 @@ public class DslScriptLoader {
     }
 
     public static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        JobParent jp = runDslEngineForParent(scriptRequest, jobManagement);
-        LOGGER.log(Level.FINE, String.format("Ran script and got back %s", jp));
-
-        GeneratedItems generatedItems = new GeneratedItems();
-        generatedItems.setConfigFiles(extractGeneratedConfigFiles(jp, scriptRequest.getIgnoreExisting()));
-        generatedItems.setJobs(extractGeneratedJobs(jp, scriptRequest.getIgnoreExisting()));
-        generatedItems.setViews(extractGeneratedViews(jp, scriptRequest.getIgnoreExisting()));
-        generatedItems.setUserContents(extractGeneratedUserContents(jp, scriptRequest.getIgnoreExisting()));
-
-        scheduleJobsToRun(jp.getQueueToBuild(), jobManagement);
-
-        return generatedItems;
+        return runDslEngineForParent(scriptRequest, jobManagement);
     }
 
     private static Set<GeneratedJob> extractGeneratedJobs(JobParent jp, boolean ignoreExisting) throws IOException {
@@ -223,7 +225,6 @@ public class DslScriptLoader {
 
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer();
-        icz.addImports("javaposse.jobdsl.dsl.helpers.Permissions");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode");
         icz.addImports("javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior");
         icz.addImports("javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir");

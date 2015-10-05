@@ -176,6 +176,16 @@ class ArchiveXUnitContext extends AbstractContext {
     }
 
     /**
+     * Adds an XUnit.NET v2 report.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'xunit', minimumVersion = '1.93')
+    void xUnitDotNET(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
+        addResultFile('XUnitDotNetTestType', resultFileClosure)
+    }
+
+    /**
      * Adds a report from a custom tool.
      */
     void customTool(@DslContext(ArchiveXUnitCustomToolContext) Closure resultFileClosure) {

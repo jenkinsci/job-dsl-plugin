@@ -1,0 +1,5 @@
+listView('example') {
+    columns {
+        cronTrigger()
+    }
+}

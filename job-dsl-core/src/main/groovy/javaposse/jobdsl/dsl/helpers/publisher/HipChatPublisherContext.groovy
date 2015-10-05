@@ -58,7 +58,7 @@ class HipChatPublisherContext implements Context {
      * Sends a notification when the build is not run. Defaults to {@code false}.
      */
     void notifyNotBuilt(boolean notifyNotBuilt = true) {
-        this.notifyNotBuilt  = notifyNotBuilt
+        this.notifyNotBuilt = notifyNotBuilt
     }
 
     /**

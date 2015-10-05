@@ -77,18 +77,19 @@ job('project-b') {
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
+        GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm)
 
         then:
-        jp != null
-        def jobs = jp.referencedJobs
+        generatedItems != null
+        def jobs = generatedItems.jobs
         jobs.size() == 2
         def job = jobs.first()
         // If this one fails periodically, then it is because the referenced jobs are
         // Not in definition order, but rather in hash order. Hence, predictability.
-        job.name == 'project-a'
+        job.jobName == 'project-a'
+
         where:
-          x << [1..25]
+        x << [1..25]
     }
 
     def 'run engine renaming existing jobs'() {
@@ -107,23 +108,6 @@ job('project-b') {
         then:
         1 * jm.renameJobMatching(/\d-project/, '5-project')
 
-    }
-
-    def 'run engine that uses static import for LocalRepositoryLocation'() {
-        setup:
-        def scriptStr = '''mavenJob('test') {
-    localRepository LocalToExecutor
-}
-'''
-        ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
-
-        when:
-        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
-
-        then:
-        jp != null
-        def jobs = jp.referencedJobs
-        jobs.size() == 1
     }
 
     def 'run engine with reference to other class from a string'() {

@@ -194,6 +194,22 @@ interface DslFactory extends ViewFactory {
     ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
+     * Creates a managed global Maven settings file.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'config-file-provider')
+    ConfigFile globalMavenSettingsConfigFile(String name)
+
+    /**
+     * Creates a managed global Maven settings file.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'config-file-provider')
+    ConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
+
+    /**
      * Upload the stream as <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
      * Use {@link DslFactory#streamFileFromWorkspace(java.lang.String)} to read the content from a file.
      *

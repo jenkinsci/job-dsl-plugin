@@ -9,7 +9,7 @@ class DownstreamTriggerBlockContext implements Context {
     private static final Set<String> VALID_THRESHOLDS = ['never'] + THRESHOLD_COLOR_MAP.keySet()
 
     String buildStepFailure = 'never'
-    String failure  = 'never'
+    String failure = 'never'
     String unstable = 'never'
 
     /**

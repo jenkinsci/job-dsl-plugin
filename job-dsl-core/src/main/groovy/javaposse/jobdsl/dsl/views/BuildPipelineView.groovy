@@ -142,7 +142,7 @@ class BuildPipelineView extends View {
         NewWindow('New Window'),
         ThisWindow('This Window')
 
-        final String  value
+        final String value
 
         OutputStyle(String value) {
             this.value = value

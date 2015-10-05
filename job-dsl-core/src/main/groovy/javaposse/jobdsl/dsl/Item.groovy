@@ -15,7 +15,7 @@ abstract class Item extends AbstractContext {
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void configure(Closure withXmlClosure) {
-        withXmlActions.add( new WithXmlAction(withXmlClosure) )
+        withXmlActions.add(new WithXmlAction(withXmlClosure))
     }
 
     /**

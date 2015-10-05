@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -10,6 +11,7 @@ import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveContext
 import javaposse.jobdsl.dsl.helpers.parameter.ActiveChoiceReactiveReferenceContext
 import javaposse.jobdsl.dsl.helpers.parameter.CredentialsParameterContext
+import javaposse.jobdsl.dsl.helpers.parameter.ListTagsParamContext
 
 import static java.util.UUID.randomUUID
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -35,27 +37,48 @@ class BuildParametersContext extends AbstractContext {
      */
     @RequiresPlugin(id = 'subversion')
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
-                      boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
-                      String description = null) {
+                       boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
+                       String description = null) {
+        listTagsParam(parameterName, scmUrl) {
+            delegate.tagFilterRegex(tagFilterRegex)
+            delegate.sortNewestFirst(sortNewestFirst)
+            delegate.sortZtoA(sortZtoA)
+            delegate.maxTagsToDisplay(maxTagsToDisplay)
+            delegate.defaultValue(defaultValue)
+            delegate.description(description)
+        }
+    }
+
+    /**
+     * Defines a parameter that allows to select a Subversion tag from which to create the working copy for the project.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'subversion')
+    void listTagsParam(String parameterName, String scmUrl, @DslContext(ListTagsParamContext) Closure closure = null) {
+        jobManagement.logPluginDeprecationWarning('subversion', '2.1')
+
         checkParameterName(parameterName)
         checkNotNullOrEmpty(scmUrl, 'scmUrl cannot be null or empty')
 
-        Node definitionNode = new Node(null, 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition')
-        definitionNode.appendNode('name', parameterName)
-        definitionNode.appendNode('tagsDir', scmUrl)
-        definitionNode.appendNode('tagsFilter', tagFilterRegex ?: '')
-        definitionNode.appendNode('reverseByDate', sortNewestFirst)
-        definitionNode.appendNode('reverseByName', sortZtoA)
-        definitionNode.appendNode('maxTags', maxTagsToDisplay)
-        if (defaultValue != null) {
-            definitionNode.appendNode('defaultValue', defaultValue)
-        }
-        if (description != null) {
-            definitionNode.appendNode('description', description)
-        }
-        definitionNode.appendNode('uuid', randomUUID())
+        ListTagsParamContext context = new ListTagsParamContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
 
-        buildParameterNodes[parameterName] = definitionNode
+        buildParameterNodes[parameterName] = NodeBuilder.newInstance().
+                'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition' {
+                    name(parameterName)
+                    tagsDir(scmUrl)
+                    tagsFilter(context.tagFilterRegex ?: '')
+                    reverseByDate(context.sortNewestFirst)
+                    reverseByName(context.sortZtoA)
+                    maxTags(context.maxTagsToDisplay ?: '')
+                    defaultValue(context.defaultValue ?: '')
+                    description(context.description ?: '')
+                    if (!jobManagement.getPluginVersion('subversion')?.isOlderThan(new VersionNumber('2.1'))) {
+                        credentialsId(context.credentialsId ?: '')
+                    }
+                    uuid(randomUUID())
+                }
     }
 
     /**
@@ -303,6 +326,17 @@ class BuildParametersContext extends AbstractContext {
             required(context.required)
         }
         buildParameterNodes[paramName] = node
+    }
+
+    /**
+     * Defines a parameter that references a global variable.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'global-variable-string-parameter', minimumVersion = '1.2')
+    void globalVariableParam(String parameterName, String defaultValue = null, String description = null) {
+        simpleParam('hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition',
+                parameterName, defaultValue, description)
     }
 
     private checkParameterName(String name) {

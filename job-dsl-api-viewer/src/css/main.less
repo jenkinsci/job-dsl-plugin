@@ -132,6 +132,13 @@
     margin-top: 8px;
     margin-right: 10px;
   }
+  .toggle-plugins {
+    margin-top: 8px;
+    background-color: #fff;
+    span {
+      line-height: 20px;
+    }
+  }
 }
 
 .plugins {
@@ -198,6 +205,11 @@ body {
   pre {
     padding: 0;
   }
+}
+
+.intro {
+  .method-doc;
+  margin-bottom: 30px;
 }
 
 .signatures {
@@ -370,12 +382,6 @@ ul.usages {
         display: inline-block;
         padding: 0px;
         line-height: 18px;
-        &.method {
-          background-color: #2E4057;
-        }
-        &.plugin {
-          background-color: #008000;
-        }
       }
     }
   }
@@ -388,7 +394,7 @@ ul.usages {
 
 .expand-closure {
   background-color: #ddd;
-  padding: 0px 4px;
+  padding: 0 4px;
   margin: 0 4px;
   cursor: pointer;
   color: #555;
@@ -400,10 +406,56 @@ ul.inline-context-methods {
   li {
     margin-top: 14px;
     list-style-type: none;
-
   }
 }
 
-.context-methods-section > ul.inline-context-methods {
+.context-methods-section > .context-view > ul.inline-context-methods {
   margin-left: 0;
+}
+
+.plugins-wrapper {
+  border-left: 1px solid #ddd;
+  background-color: #fff;
+  .plugins-header {
+    border-bottom: 1px solid #ddd;
+    background-color: #eee;
+    font-size: 16px;
+    label {
+      display: block;
+      line-height: 40px;
+      font-weight: normal;
+      margin: 0;
+    }
+    .checkbox-wrapper {
+      width: 35px;
+      text-align: center;
+      display: inline-block;
+    }
+  }
+  .plugins-body {
+    overflow: auto;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style-type: none;
+      border-bottom: 1px solid #eee;
+      a {
+        padding: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .checkbox-wrapper {
+        width: 35px;
+        display: inline-block;
+        text-align: center;
+        height: 30px;
+        input {
+          margin-top: 9px;
+        }
+      }
+    }
+  }
 }

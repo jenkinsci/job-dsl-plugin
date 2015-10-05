@@ -6,11 +6,8 @@ import spock.lang.Specification
 import static javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection.json
 import static javaposse.jobdsl.dsl.helpers.triggers.UrlTriggerInspectionContext.Inspection.text
 
-/**
- * UrlTriggerEntryContextSpec
- */
 class UrlTriggerInspectionContextSpec extends Specification {
-    def 'missing URL causes NullPointerException' () {
+    def 'missing URL causes NullPointerException'() {
         when:
         new UrlTriggerInspectionContext(null)
 
@@ -25,7 +22,8 @@ class UrlTriggerInspectionContextSpec extends Specification {
         when:
         ctx.path(null)
 
-        then: thrown(DslScriptException)
+        then:
+        thrown(DslScriptException)
     }
 
     def 'ensure that paths are not empty'() {
@@ -35,7 +33,8 @@ class UrlTriggerInspectionContextSpec extends Specification {
         when:
         ctx.path('')
 
-        then: thrown(DslScriptException)
+        then:
+        thrown(DslScriptException)
     }
 
     def 'ensure that RegExps are not null'() {
@@ -60,7 +59,7 @@ class UrlTriggerInspectionContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'ensure that RegExps are compileable' () {
+    def 'ensure that RegExps are compileable'() {
         setup:
         def ctx = new UrlTriggerInspectionContext(text)
 

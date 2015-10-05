@@ -47,7 +47,7 @@ class PullRequestPublisherContext extends AbstractContext {
     /**
      * Fails the build if the pull request can't be merged. Defaults to {@code false}.
      */
-    @RequiresPlugin(id='ghprb', minimumVersion='1.26')
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void failOnNonMerge(boolean failOnNonMerge = true) {
         this.failOnNonMerge = failOnNonMerge
     }
@@ -55,7 +55,7 @@ class PullRequestPublisherContext extends AbstractContext {
     /**
      * Deletes the branch after a successful merge. Defaults to {@code false}.
      */
-    @RequiresPlugin(id='ghprb', minimumVersion='1.26')
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void deleteOnMerge(boolean deleteOnMerge = true) {
         this.deleteOnMerge = deleteOnMerge
     }

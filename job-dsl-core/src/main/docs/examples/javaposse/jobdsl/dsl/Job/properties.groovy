@@ -4,5 +4,8 @@ job('example') {
         sidebarLinks {
             link('https://jira.acme.org/', 'JIRA', 'notepad.png')
         }
+        rebuild {
+            autoRebuild()
+        }
     }
 }

@@ -10,7 +10,6 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
-import javaposse.jobdsl.dsl.helpers.common.MavenContext
 import javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext
@@ -147,21 +146,6 @@ class MavenJob extends Job {
     }
 
     /**
-     * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LocalToExecutor}.
-     *
-     * @param location the local repository to use for isolation
-     * @since 1.17
-     */
-    @Deprecated
-    void localRepository(MavenContext.LocalRepositoryLocation location) {
-        jobManagement.logDeprecationWarning()
-
-        Preconditions.checkNotNull(location, 'localRepository can not be null')
-
-        localRepository(location.location)
-    }
-
-    /**
      * Set to use isolated local Maven repositories. Defaults to {@code LocalRepositoryLocation.LOCAL_TO_EXECUTOR}.
      *
      * @param location the local repository to use for isolation
@@ -256,6 +240,23 @@ class MavenJob extends Job {
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
+                settingsConfigId(settingsId)
+            }
+        }
+    }
+
+    /**
+     * Use managed global Maven settings.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'config-file-provider')
+    void providedGlobalSettings(String settingsName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName)
+        Preconditions.checkNotNull(settingsId, "Managed global Maven settings with name '${settingsName}' not found")
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / globalSettings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider') {
                 settingsConfigId(settingsId)
             }
         }

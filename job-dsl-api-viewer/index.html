@@ -15,6 +15,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.runtime.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.2/backbone.marionette.min.js"></script>
+
     <script src="build/dist/js/app.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
@@ -48,28 +51,31 @@
                     <li><a href="http://job-dsl.herokuapp.com">Playground</a></li>
                 </ul>
 
+                <button class="btn pull-right toggle-plugins"><span class="glyphicon glyphicon-filter"></span></button>
                 <select class="version-select form-control">
                     <!-- ADD VERSIONS HERE! -->
-                    <option value="build/data/dsl-1.38-SNAPSHOT.json">v1.38-SNAPSHOT</option>
+                    <option value="build/data/dsl-1.40-SNAPSHOT.json">v1.40-SNAPSHOT</option>
+                    <option value="build/data/dsl-1.39.json">v1.39</option>
+                    <option value="build/data/dsl-1.38.json">v1.38</option>
                 </select>
-
             </div>
         </nav>
     </div>
     <div class="tree">
         <div class="search-section">
             <div class="form-group">
-                <input class="search-input form-control" type="text" placeholder="Search...">
+                <input class="search-input form-control" type="text" placeholder="Search methods...">
                 <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
                 <span class="glyphicon glyphicon-remove-sign clear-search hide" aria-hidden="true"></span>
             </div>
         </div>
-        <div class="tree-wrapper">
-            <div class="tree-body"></div>
-            <div class="search-results" style="display: none"></div>
-        </div>
+        <div class="tree-wrapper"></div>
     </div>
     <div class="detail-wrapper"></div>
+    <div class="plugins-wrapper">
+        <div class="plugins-header"><label><span class="checkbox-wrapper"><input type="checkbox" /></span> Filter by Plugin</label></div>
+        <div class="plugins-body"></div>
+    </div>
 </div>
 </body>
 </html>

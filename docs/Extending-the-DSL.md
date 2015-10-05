@@ -3,7 +3,7 @@ are a DSL user, have a look at the [[configure block|The Configure Block]], the 
 and at the [[examples|Real World Examples]] for hints about extending the DSL as a user.
 
 Any Jenkins plugin can provide DSL methods for features they contribute to the job configuration by implementing the
-Job DSL extension point. The extension point is available with Job DSL plugin version 1.33 or later.
+Job DSL extension point. The extension point is available with Job DSL plugin version 1.35 or later.
 
 To be able to use the Job DSL extension point, the Job DSL plugin has to be added to the plugin's dependencies. The
 dependency should be marked as optional, so that the plugin can still be used without the Job DSL plugin.
@@ -17,7 +17,7 @@ Maven:
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>job-dsl</artifactId>
-                <version>1.33</version>
+                <version>1.39</version>
                 <optional>true</optional>
             </dependency>
             ...
@@ -30,7 +30,7 @@ Gradle:
     ...
     dependencies {
         ...
-        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.33@jar'
+        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.39@jar'
         ...
     }
     ...
@@ -233,3 +233,7 @@ because build steps can be added multiple times.
 Instances of `ContextExtensionPoint` must be thread-safe. Each subclass will be instantiated only once and reused for
 all seed jobs. Since multiple seed jobs can run in parallel, any `@DslExtensionMethod` and the listener methods can be
 called in parallel.
+
+The following plugins implement the extension point and serve as examples:
+
+* [JGiven Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JGiven+Plugin)

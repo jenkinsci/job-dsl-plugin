@@ -94,4 +94,46 @@ class PropertiesContextSpec extends Specification {
         where:
         fileName << [null, '']
     }
+
+    def 'zenTimestamp'() {
+        when:
+        context.zenTimestamp('some-pattern')
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'hudson.plugins.zentimestamp.ZenTimestampJobProperty'
+            children().size() == 2
+            changeBUILDID[0].value() == true
+            pattern[0].value() == 'some-pattern'
+        }
+    }
+
+    def 'rebuild with no options'() {
+        when:
+        context.rebuild {}
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.rebuild.RebuildSettings'
+            children().size() == 2
+            autoRebuild[0].value() == false
+            rebuildDisabled[0].value() == false
+        }
+    }
+
+    def 'rebuild with all options'() {
+        when:
+        context.rebuild {
+            autoRebuild()
+            rebuildDisabled()
+        }
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.rebuild.RebuildSettings'
+            children().size() == 2
+            autoRebuild[0].value() == true
+            rebuildDisabled[0].value() == true
+        }
+    }
 }

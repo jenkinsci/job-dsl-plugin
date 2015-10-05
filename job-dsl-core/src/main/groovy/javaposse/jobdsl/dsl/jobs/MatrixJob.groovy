@@ -24,7 +24,7 @@ class MatrixJob extends Job {
         withXmlActions << WithXmlAction.create { Node project ->
             Node axesNode = project / 'axes'
             context.axisNodes.each {
-                axesNode  << it
+                axesNode << it
             }
             context.configureBlocks.each {
                 new WithXmlAction(it).execute(axesNode)

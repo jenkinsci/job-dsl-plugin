@@ -15,7 +15,7 @@ class ListViewSectionContext extends AbstractContext {
     String width = 'FULL'
     String alignment = 'CENTER'
     JobsContext jobsContext = new JobsContext()
-    JobFiltersContext jobFiltersContext = new JobFiltersContext()
+    JobFiltersContext jobFiltersContext = new JobFiltersContext(jobManagement)
     ColumnsContext columnsContext = new ColumnsContext(jobManagement)
 
     ListViewSectionContext(JobManagement jobManagement) {

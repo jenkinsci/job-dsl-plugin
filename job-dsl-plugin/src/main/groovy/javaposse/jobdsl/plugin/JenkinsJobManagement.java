@@ -258,19 +258,19 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
 
     @Override
-    public InputStream streamFileInWorkspace(String relLocation) throws IOException {
+    public InputStream streamFileInWorkspace(String relLocation) throws IOException, InterruptedException {
         FilePath filePath = locateValidFileInWorkspace(build.getWorkspace(), relLocation);
         return filePath.read();
     }
 
     @Override
-    public String readFileInWorkspace(String relLocation) throws IOException {
+    public String readFileInWorkspace(String relLocation) throws IOException, InterruptedException {
         FilePath filePath = locateValidFileInWorkspace(build.getWorkspace(), relLocation);
         return filePath.readToString();
     }
 
     @Override
-    public String readFileInWorkspace(String jobName, String relLocation) throws IOException {
+    public String readFileInWorkspace(String jobName, String relLocation) throws IOException, InterruptedException {
         Item item = Jenkins.getInstance().getItemByFullName(jobName);
         if (item instanceof AbstractProject) {
             FilePath workspace = ((AbstractProject) item).getSomeWorkspace();
@@ -416,14 +416,10 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         build.setResult(UNSTABLE);
     }
 
-    private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation) throws IOException {
+    private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation) throws IOException, InterruptedException {
         FilePath filePath = workspace.child(relLocation);
-        try {
-            if (!filePath.exists()) {
-                throw new DslScriptException(format("File %s does not exist in workspace", relLocation));
-            }
-        } catch (InterruptedException ie) {
-            throw new IOException(ie);
+        if (!filePath.exists()) {
+            throw new DslScriptException(format("File %s does not exist in workspace", relLocation));
         }
         return filePath;
     }

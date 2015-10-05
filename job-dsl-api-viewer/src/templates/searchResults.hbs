@@ -1,20 +1,12 @@
 <ul>
     {{#each results}}
         <li>
-            {{# if clazz}}
-                <a href="#method/{{clazz}}.{{name}}">
-                    <div>
-                        <span class="method label" title="Method">M</span>
-                        {{name}} :
-                        <span class="simple-class-name">{{simpleClassName}}</span>
-                    </div>
-                </a>
-            {{else}}
-                <a href="#plugin/{{id}}">
-                    <span class="plugin label" title="Plugin">P</span>
-                    {{name}}
-                </a>
-            {{/if}}
+            <a href="#method/{{clazz}}.{{name}}">
+                <div>
+                    {{name}} :
+                    <span class="simple-class-name">{{simpleClassName}}</span>
+                </div>
+            </a>
         </li>
     {{/each}}
 </ul>

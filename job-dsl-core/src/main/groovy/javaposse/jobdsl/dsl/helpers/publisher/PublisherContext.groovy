@@ -10,6 +10,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -32,6 +33,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Sends customizable email notifications.
      */
+    @RequiresPlugin(id = 'email-ext')
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)
     }
@@ -39,6 +41,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Sends customizable email notifications.
      */
+    @RequiresPlugin(id = 'email-ext')
     void extendedEmail(String recipients, String subjectTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, subjectTemplate, null, emailClosure)
@@ -417,6 +420,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Archives files for Clone Workspace SCM source.
      */
+    @RequiresPlugin(id = 'clone-workspace-scm')
     void publishCloneWorkspace(String workspaceGlob, @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, '', 'Any', 'TAR', false, cloneWorkspaceClosure)
     }
@@ -424,6 +428,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Archives files for Clone Workspace SCM source.
      */
+    @RequiresPlugin(id = 'clone-workspace-scm')
     void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob,
                                @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(workspaceGlob, workspaceExcludeGlob, 'Any', 'TAR', false, cloneWorkspaceClosure)
@@ -432,6 +437,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Archives files for Clone Workspace SCM source.
      */
+    @RequiresPlugin(id = 'clone-workspace-scm')
     void publishCloneWorkspace(String workspaceGlob, String workspaceExcludeGlob, String criteria, String archiveMethod,
                                @DslContext(CloneWorkspaceContext) Closure cloneWorkspaceClosure) {
         publishCloneWorkspace(
@@ -498,11 +504,22 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Triggers builds on other projects.
+     *
+     * The {@code threshold} must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'} or {@code 'FAILURE'}.
+     *
+     * @since 1.39
+     */
+    void downstream(List<String> projectName, String thresholdName = 'SUCCESS') {
+        downstream(projectName.join(', '), thresholdName)
+    }
+
+    /**
      * Triggers parameterized builds on other projects.
      */
     @RequiresPlugin(id = 'parameterized-trigger')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
-        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.25')
+        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
@@ -515,6 +532,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Generates reports from static code violations detectors.
      */
+    @RequiresPlugin(id = 'violations')
     void violations(@DslContext(ViolationsContext) Closure violationsClosure = null) {
         violations(100, violationsClosure)
     }
@@ -665,7 +683,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'description-setter')
     void buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '',
-                         String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
+                          String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
         publisherNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
             regexp(regularExpression)
             regexpForFailed(regularExpressionForFailed)
@@ -686,7 +704,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'text-finder')
     void textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false,
-                   boolean succeedIfFound = false, unstableIfFound = false) {
+                    boolean succeedIfFound = false, unstableIfFound = false) {
         publisherNodes << new NodeBuilder().'hudson.plugins.textfinder.TextFinderPublisher' {
             if (fileSet) {
                 delegate.fileSet(fileSet)
@@ -758,6 +776,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.19
      */
+    @RequiresPlugin(id = 'groovy-postbuild')
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
         groovyPostBuild {
             delegate.script(script)
@@ -781,10 +800,10 @@ class PublisherContext extends AbstractExtensibleContext {
             if (jobManagement.getPluginVersion('groovy-postbuild')?.isOlderThan(new VersionNumber('2.2'))) {
                 groovyScript(groovyPostbuildContext.script ?: '')
             } else {
-              script {
-                script(groovyPostbuildContext.script ?: '')
-                sandbox(groovyPostbuildContext.sandbox)
-              }
+                script {
+                    script(groovyPostbuildContext.script ?: '')
+                    sandbox(groovyPostbuildContext.sandbox)
+                }
             }
             behavior(groovyPostbuildContext.behavior.value)
         }
@@ -991,6 +1010,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.23
      */
+    @RequiresPlugin(id = 'jenkins-flowdock-plugin')
     void flowdock(String[] tokens, @DslContext(FlowdockPublisherContext) Closure flowdockPublisherClosure = null) {
         checkArgument(tokens != null && tokens.length > 0, 'Flowdock publish requires at least one flow token')
 
@@ -1183,9 +1203,12 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
+    @Deprecated
     @RequiresPlugin(id = 'jshint-checkstyle')
     void jshint(String pattern,
                 @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
+        jobManagement.logDeprecationWarning()
+
         publisherNodes << createDefaultStaticAnalysisNode(
                 'hudson.plugins.jshint.CheckStylePublisher',
                 staticAnalysisClosure,
@@ -1287,11 +1310,11 @@ class PublisherContext extends AbstractExtensibleContext {
     void warnings(List consoleParsers, Map parserConfigurations = [:],
                   @DslContext(WarningsContext) Closure warningsClosure = null) {
         WarningsContext warningsContext = new WarningsContext()
-        ContextHelper.executeInContext(warningsClosure,  warningsContext)
+        ContextHelper.executeInContext(warningsClosure, warningsContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
         publisherNodes << nodeBuilder.'hudson.plugins.warnings.WarningsPublisher' {
-            addStaticAnalysisContext(delegate,  warningsContext)
+            addStaticAnalysisContext(delegate, warningsContext)
             includePattern(warningsContext.includePattern)
             excludePattern(warningsContext.excludePattern)
             nodeBuilder.consoleParsers {
@@ -1320,7 +1343,7 @@ class PublisherContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'analysis-collector')
     void analysisCollector(@DslContext(AnalysisCollectorContext) Closure analysisCollectorClosure = null) {
         AnalysisCollectorContext analysisCollectorContext = new AnalysisCollectorContext()
-        ContextHelper.executeInContext(analysisCollectorClosure,  analysisCollectorContext)
+        ContextHelper.executeInContext(analysisCollectorClosure, analysisCollectorContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.analysis.collector.AnalysisPublisher' {
             addStaticAnalysisContext(delegate, analysisCollectorContext)
@@ -1364,7 +1387,7 @@ class PublisherContext extends AbstractExtensibleContext {
             branch(sonarContext.branch ?: '')
             language()
             mavenOpts()
-            jobAdditionalProperties()
+            jobAdditionalProperties(sonarContext.additionalProperties ?: '')
             if (sonarContext.overrideTriggers) {
                 triggers {
                     skipScmCause(false)
@@ -1557,6 +1580,26 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends build status and coverage information to Pharbicator.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'phabricator-plugin', minimumVersion = '1.8.1')
+    void phabricatorNotifier(@DslContext(PhabricatorNotifierContext) Closure phabricatorNotifierClosure = null) {
+        PhabricatorNotifierContext phabricatorNotifierContext = new PhabricatorNotifierContext()
+        ContextHelper.executeInContext(phabricatorNotifierClosure, phabricatorNotifierContext)
+
+        publisherNodes << new NodeBuilder().'com.uber.jenkins.phabricator.PhabricatorNotifier' {
+            commentOnSuccess(phabricatorNotifierContext.commentOnSuccess)
+            commentWithConsoleLinkOnFailure(phabricatorNotifierContext.commentWithConsoleLinkOnFailure)
+            commentFile(phabricatorNotifierContext.commentFile ?: '')
+            commentSize(phabricatorNotifierContext.commentSize)
+            preserveFormatting(phabricatorNotifierContext.preserveFormatting)
+            uberallsEnabled(phabricatorNotifierContext.enableUberalls)
+        }
+    }
+
+    /**
      * Sends notifications to Slack.
      *
      * @since 1.36
@@ -1586,6 +1629,39 @@ class PublisherContext extends AbstractExtensibleContext {
                 includeCustomMessage(context.customMessage as boolean)
                 customMessage(context.customMessage ?: '')
             }
+        }
+    }
+
+    /**
+     * Deploys artifacts from the build workspace to remote locations.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
+    void artifactDeployer(@DslContext(ArtifactDeployerPublisherContext) Closure closure) {
+        ArtifactDeployerPublisherContext context = new ArtifactDeployerPublisherContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher' {
+            entries {
+                context.entries.each { ArtifactDeployerContext entry ->
+                    'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry' {
+                        includes(entry.includes ?: '')
+                        basedir(entry.baseDir ?: '')
+                        excludes(entry.excludes ?: '')
+                        remote(entry.remoteFileLocation ?: '')
+                        flatten(entry.flatten)
+                        deleteRemote(entry.cleanUp)
+                        deleteRemoteArtifacts(entry.deleteRemoteArtifacts)
+                        deleteRemoteArtifactsByScript(entry.deleteRemoteArtifactsByScript as boolean)
+                        if (entry.deleteRemoteArtifactsByScript) {
+                            groovyExpression(entry.deleteRemoteArtifactsByScript)
+                        }
+                        failNoFilesDeploy(entry.failIfNoFiles)
+                    }
+                }
+            }
+            deployEvenBuildFail(context.deployIfFailed)
         }
     }
 

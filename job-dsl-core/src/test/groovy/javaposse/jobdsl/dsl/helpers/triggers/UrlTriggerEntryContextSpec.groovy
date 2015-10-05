@@ -3,11 +3,8 @@ package javaposse.jobdsl.dsl.helpers.triggers
 import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
 
-/**
- * UrlTriggerEntryContextSpec
- */
 class UrlTriggerEntryContextSpec extends Specification {
-    def 'missing URL causes NullPointerException' () {
+    def 'missing URL causes NullPointerException'() {
         when:
         new UrlTriggerEntryContext(null)
 
@@ -15,7 +12,7 @@ class UrlTriggerEntryContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'empty URL causes IllegalArgumentException' () {
+    def 'empty URL causes IllegalArgumentException'() {
         when:
         new UrlTriggerEntryContext('')
 

@@ -11,11 +11,11 @@ class PluginASTTransformationSpec extends Specification {
     def 'require plugin'() {
         when:
         job.publishers {
-            extendedEmail('foo@bar.org')
+            mailer('foo@bar.org')
         }
 
         then:
-        1 * jobManagement.requirePlugin('email-ext')
+        1 * jobManagement.requirePlugin('mailer')
     }
 
     def 'require plugin with minimum version'() {

@@ -28,6 +28,15 @@ class DownstreamContext extends AbstractContext {
 
     /**
      * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
+     *
+     * @since 1.39
+     */
+    void trigger(List<String> projects, @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
+        addTrigger(projects.join(', '), null, false, downstreamTriggerClosure)
+    }
+
+    /**
+     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
      */
     @Deprecated
     @SuppressWarnings(['UnusedMethodParameter', 'GroovyUnusedDeclaration'])
