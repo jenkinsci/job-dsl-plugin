@@ -77,16 +77,16 @@ job('project-b') {
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        JobParent jp = DslScriptLoader.runDslEngineForParent(request, jm)
+        GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm)
 
         then:
-        jp != null
-        def jobs = jp.referencedJobs
+        generatedItems != null
+        def jobs = generatedItems.jobs
         jobs.size() == 2
         def job = jobs.first()
         // If this one fails periodically, then it is because the referenced jobs are
         // Not in definition order, but rather in hash order. Hence, predictability.
-        job.name == 'project-a'
+        job.jobName == 'project-a'
 
         where:
         x << [1..25]

@@ -71,6 +71,12 @@ javaposse.jobdsl.dsl.ConfigFileType.Custom
 javaposse.jobdsl.dsl.ConfigFileType.MavenSettings
 ```
 
+### DslScriptLoader
+
+The signature of `DslScriptLoader.runDslEngineForParent` has changed and the method is no longer public. The change was
+necessary to avoid a class loader leak and to fix ([JENKINS-30348](https://issues.jenkins-ci.org/browse/JENKINS-30348)).
+Use `DslScriptLoader.runDslEngine` instead.
+
 ## Migrating to 1.38
 
 ### Parameterized Trigger
