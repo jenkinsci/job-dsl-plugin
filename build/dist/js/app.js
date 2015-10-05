@@ -33,7 +33,11 @@ Marionette.Renderer.render = function(template, data) {
                 Backbone.history.start({pushState: false});
             }.bind(this));
 
-            $('.version-select').change(this.loadSelectedDsl.bind(this));
+            $('.version-select').change(function() {
+                this.loadSelectedDsl().then(function() {
+                    Backbone.history.loadUrl(Backbone.history.getHash());
+                });
+            }.bind(this));
             $('.toggle-plugins').click(function(e) {
                 if ($('.plugins-wrapper').is(':visible')) {
                     this.layout.hide('east');
@@ -281,7 +285,9 @@ _.extend(App.Dsl.prototype, {
             .pluck('plugin')
             .filter()
             .unique()
-            .sortBy('title')
+            .sortBy(function (item) {
+                return item.title.toLowerCase();
+            })
             .value();
     },
 
@@ -550,6 +556,19 @@ App.Settings = Marionette.Object.extend({
     }
 });
 
+App.ContextView = Marionette.ItemView.extend({
+
+    className: 'context-view',
+
+    template: 'context',
+
+    serializeData: function() {
+        return {
+            signatures: this.options.signatures
+        };
+    }
+});
+
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["context"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -727,9 +746,9 @@ this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["home"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "<div class=\"detail\">\r\n    <div class=\"method-detail\">\r\n        <h2>Jenkins Job DSL API</h2>\r\n\r\n        <div class=\"method-doc\">\r\n            <p>\r\n                Welcome to the Job DSL API Viewer. This is the Job DSL reference, showing all available DSL methods. Use the navigation\r\n                on the left to browse all methods starting from the methods available in the script context.\r\n            </p>\r\n            <p>\r\n                The Job DSL API currently supports "
+  return "<div class=\"detail\">\r\n    <div class=\"method-detail\">\r\n        <h2>Jenkins Job DSL API</h2>\r\n\r\n        <div class=\"intro\">\r\n            <p>\r\n                Welcome to the Job DSL API Viewer. This is the Job DSL reference, showing all available DSL methods. Use the navigation\r\n                on the left to browse all methods starting from the methods available in the script context.\r\n            </p>\r\n            <p>\r\n                The Job DSL API currently supports "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.plugins : depth0)) != null ? stack1.length : stack1), depth0))
-    + " Jenkins plugins. Click the <span class=\"glyphicon glyphicon-filter\"></span>\r\n                on the top-right to filter methods by plugin.\r\n            </p>\r\n            <p>\r\n                For further documentation, please go to the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki\">Job DSL Wiki</a>.\r\n            </p>\r\n        </div>\r\n\r\n        <h3 class=\"section-header\">Top-Level Methods</h3>\r\n        <div class=\"context-methods-section\"></div>\r\n    </div>\r\n</div>";
+    + " Jenkins plugins. Click the <span class=\"glyphicon glyphicon-filter\"></span>\r\n                on the top-right to filter methods by plugin.\r\n            </p>\r\n            <p>\r\n                For further documentation, please go to the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki\">Job DSL Wiki</a>.\r\n            </p>\r\n            <p>\r\n                Other Jenkins plugins can contribute DSL methods through extension points. Refer to the plugins'\r\n                wiki pages for documentation:\r\n            </p>\r\n            <ul>\r\n                <li><a href=\"https://wiki.jenkins-ci.org/display/JENKINS/JGiven+Plugin#JGivenPlugin-JobDSL\">JGiven Plugin</a></li>\r\n            </ul>\r\n        </div>\r\n\r\n        <h3 class=\"section-header\">Top-Level Methods</h3>\r\n        <div class=\"context-methods-section\"></div>\r\n    </div>\r\n</div>";
 },"useData":true});
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
@@ -804,17 +823,6 @@ this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["tree"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<div class=\"tree-body\"></div>\r\n<div class=\"search-results\" style=\"display: none\"></div>";
   },"useData":true});
-App.ContextView = Marionette.ItemView.extend({
-
-    template: 'context',
-
-    serializeData: function() {
-        return {
-            signatures: this.options.signatures
-        };
-    }
-});
-
 App.DetailView = Marionette.ItemView.extend({
 
     template: 'detail',
