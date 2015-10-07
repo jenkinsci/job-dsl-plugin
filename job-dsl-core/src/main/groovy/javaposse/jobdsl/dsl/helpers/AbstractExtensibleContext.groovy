@@ -19,7 +19,9 @@ abstract class AbstractExtensibleContext extends AbstractContext implements Exte
         if (node == null) {
             throw new MissingMethodException(name, contextType, args)
         }
-        addExtensionNode(node)
+        if (node != JobManagement.NO_VALUE) {
+            addExtensionNode(node)
+        }
         null
     }
 
