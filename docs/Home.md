@@ -19,6 +19,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 
 ## Release Notes
 * 1.40 (unreleased)
+ * Enhanced support for the [GitHub Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin)
+   ([JENKINS-29849](https://issues.jenkins-ci.org/browse/JENKINS-29849))
 * 1.39 (October 05 2015)
  * Increased the minimum supported Jenkins version to 1.596
  * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)

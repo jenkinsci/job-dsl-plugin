@@ -139,40 +139,20 @@ class PropertiesContextSpec extends Specification {
 
     def 'github project URL with value'() {
         when:
-        context.githubProjectUrl('https://github.com/jenkinsci/job-dsl-plugin')
+        context.githubProjectUrl(value)
 
         then:
         with(context.propertiesNodes[0]) {
             name() == 'com.coravy.hudson.plugins.github.GithubProjectProperty'
             children().size() == 1
-            projectUrl[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin'
+            projectUrl[0].value() == expected
         }
-        1 * jobManagement.logPluginDeprecationWarning('github', '1.12.0')
-    }
+        1 * jobManagement.requireMinimumPluginVersion('github', '1.12.0')
 
-    def 'github project URL with empty value'() {
-        when:
-        context.githubProjectUrl('')
-
-        then:
-        with(context.propertiesNodes[0]) {
-            name() == 'com.coravy.hudson.plugins.github.GithubProjectProperty'
-            children().size() == 1
-            projectUrl[0].value() == ''
-        }
-        1 * jobManagement.logPluginDeprecationWarning('github', '1.12.0')
-    }
-
-    def 'github project URL with null value'() {
-        when:
-        context.githubProjectUrl(null)
-
-        then:
-        with(context.propertiesNodes[0]) {
-            name() == 'com.coravy.hudson.plugins.github.GithubProjectProperty'
-            children().size() == 1
-            projectUrl[0].value() == null
-        }
-        1 * jobManagement.logPluginDeprecationWarning('github', '1.12.0')
+        where:
+        value                                         || expected
+        'https://github.com/jenkinsci/job-dsl-plugin' || 'https://github.com/jenkinsci/job-dsl-plugin'
+        ''                                            || ''
+        null                                          || ''
     }
 }
