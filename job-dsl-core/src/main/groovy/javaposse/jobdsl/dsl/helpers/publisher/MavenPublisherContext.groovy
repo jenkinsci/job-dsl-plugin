@@ -20,7 +20,10 @@ class MavenPublisherContext extends PublisherContext {
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'hudson.maven.RedeployPublisher' {
-            id()
+            id(context.repositoryId ?: '')
+            if (context.repositoryUrl) {
+                url(context.repositoryUrl)
+            }
             uniqueVersion(context.uniqueVersion)
             evenIfUnstable(context.evenIfUnstable)
         }

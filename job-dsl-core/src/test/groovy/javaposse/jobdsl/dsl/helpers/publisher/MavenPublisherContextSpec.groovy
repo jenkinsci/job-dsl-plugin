@@ -26,6 +26,8 @@ class MavenPublisherContextSpec extends Specification {
     def 'call deployArtifacts with all options'() {
         when:
         context.deployArtifacts {
+            repositoryUrl('foo')
+            repositoryId('bar')
             uniqueVersion(false)
             evenIfUnstable()
         }
@@ -33,8 +35,9 @@ class MavenPublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.maven.RedeployPublisher'
-            children().size() == 3
-            id[0].value().empty
+            children().size() == 4
+            url[0].value() == 'foo'
+            id[0].value() == 'bar'
             uniqueVersion[0].value() == false
             evenIfUnstable[0].value() == true
         }
