@@ -1357,4 +1357,71 @@ class BuildParametersContextSpec extends Specification {
         then:
         thrown(DslScriptException)
     }
+
+    def 'base matrixCombinationsParam usage'() {
+        when:
+        context.matrixCombinationsParam('myParameterName', 'default_value', 'myGlobalVariableParameterDescription')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() ==
+                'hudson.plugins.matrix__configuration__parameter.MatrixCombinationsParameterDefinition'
+        context.buildParameterNodes['myParameterName'].children().size() == 3
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultCombinationFilter.text() == 'default_value'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myGlobalVariableParameterDescription'
+        1 * jobManagement.requireMinimumPluginVersion('matrix-combinations-parameter', '1.0.9')
+    }
+
+    def 'simplified matrixCombinationsParam usage'() {
+        when:
+        context.matrixCombinationsParam('myParameterName', 'default_value')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() ==
+                'hudson.plugins.matrix__configuration__parameter.MatrixCombinationsParameterDefinition'
+        context.buildParameterNodes['myParameterName'].children().size() == 3
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultCombinationFilter.text() == 'default_value'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+        1 * jobManagement.requireMinimumPluginVersion('matrix-combinations-parameter', '1.0.9')
+    }
+
+    def 'simplest matrixCombinationsParam usage'() {
+        when:
+        context.matrixCombinationsParam('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() ==
+                'hudson.plugins.matrix__configuration__parameter.MatrixCombinationsParameterDefinition'
+        context.buildParameterNodes['myParameterName'].children().size() == 2
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+        1 * jobManagement.requireMinimumPluginVersion('matrix-combinations-parameter', '1.0.9')
+    }
+
+    def 'matrixCombinationsParam name argument can not be null or empty'() {
+        when:
+        context.matrixCombinationsParam(name)
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        name << [null, '']
+    }
+
+    def 'matrixCombinationsParam already defined'() {
+        when:
+        context.stringParam('one')
+        context.matrixCombinationsParam('one')
+
+        then:
+        thrown(DslScriptException)
+    }
 }

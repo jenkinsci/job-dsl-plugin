@@ -20,6 +20,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 ## Release Notes
 * 1.40 (unreleased)
  * Increased the minimum supported Jenkins version to 1.609
+ * Added support for the
+   [Matrix Combinations Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Combinations+Plugin)
  * Enhanced support for the [GitHub Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin)
    ([JENKINS-29849](https://issues.jenkins-ci.org/browse/JENKINS-29849))
  * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
