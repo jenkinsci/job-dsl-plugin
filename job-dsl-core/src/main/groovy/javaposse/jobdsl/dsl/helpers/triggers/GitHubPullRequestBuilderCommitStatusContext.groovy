@@ -32,7 +32,7 @@ class GitHubPullRequestBuilderCommitStatusContext implements Context {
     void startedStatus(String startedStatus) {
         this.startedStatus = startedStatus
     }
-    
+
     /**
      * Use a custom URL instead of the job default.
      *
