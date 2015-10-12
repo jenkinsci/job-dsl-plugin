@@ -24,6 +24,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-29849](https://issues.jenkins-ci.org/browse/JENKINS-29849))
  * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
    ([JENKINS-30544](https://issues.jenkins-ci.org/browse/JENKINS-30544))
+ * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+   ([JENKINS-30760](https://issues.jenkins-ci.org/browse/JENKINS-30760))
  * Allow `@DslExtensionMethod` annotated methods to return `null` to not contribute to the job configuration
 * 1.39 (October 05 2015)
  * Increased the minimum supported Jenkins version to 1.596

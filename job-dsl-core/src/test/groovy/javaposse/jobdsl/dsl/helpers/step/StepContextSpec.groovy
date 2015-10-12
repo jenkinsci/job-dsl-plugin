@@ -898,6 +898,17 @@ class StepContextSpec extends Specification {
         selectorNode8.attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
         selectorNode8.children().size() == 1
         selectorNode8.stable[0].value() == true
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            multiJobBuild()
+        }
+
+        then:
+        Node selectorNode9 = context.stepNodes[8].selector[0]
+        selectorNode9.attribute('class') == 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector'
+        selectorNode9.children().size() == 0
+        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
     }
 
     def 'call minimal copyArtifacts'() {

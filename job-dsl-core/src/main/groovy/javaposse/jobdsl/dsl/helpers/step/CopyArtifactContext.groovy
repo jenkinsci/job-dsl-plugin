@@ -13,7 +13,7 @@ class CopyArtifactContext extends AbstractContext {
     boolean flatten
     boolean optional
     boolean fingerprint = true
-    final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext()
+    final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext(jobManagement)
 
     CopyArtifactContext(JobManagement jobManagement) {
         super(jobManagement)
