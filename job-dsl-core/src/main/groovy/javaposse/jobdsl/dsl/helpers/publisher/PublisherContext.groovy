@@ -220,6 +220,28 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Publishes TestNG test result reports.
+     * Default report location - '{@literal **}/testng-results.xml'.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'testng-plugin')
+    void archiveTestNG(String glob = '**/testng-results.xml',
+                       @DslContext(ArchiveTestNGContext) Closure testNGClosure = null) {
+        ArchiveTestNGContext testNGContext = new ArchiveTestNGContext(jobManagement)
+        ContextHelper.executeInContext(testNGClosure, testNGContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.testng.Publisher' {
+            reportFilenamePattern(glob)
+            escapeTestDescp(testNGContext.escapeTestDescription)
+            escapeExceptionMsg(testNGContext.escapeExceptionMessages)
+            showFailedBuilds(testNGContext.showFailedBuildsInTrendGraph)
+            unstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
+            failureOnFailedTestConfig(testNGContext.markBuildAsFailureOnFailedConfiguration)
+        }
+    }
+
+    /**
      * Publishes a JaCoCo coverage report.
      *
      * @since 1.17

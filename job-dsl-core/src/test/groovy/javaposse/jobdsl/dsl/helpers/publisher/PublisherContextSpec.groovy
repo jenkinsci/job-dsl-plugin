@@ -538,6 +538,46 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('xunit')
     }
 
+    def 'call testng archive with all args'() {
+        when:
+        context.archiveTestNG('include/*') {
+            escapeTestDescription(false)
+            escapeExceptionMessages(false)
+            showFailedBuildsInTrendGraph(true)
+            markBuildAsUnstableOnSkippedTests(false)
+            markBuildAsFailureOnFailedConfiguration(true)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 6
+            reportFilenamePattern[0].value() == 'include/*'
+            escapeTestDescp[0].value() == false
+            escapeExceptionMsg[0].value() == false
+            showFailedBuilds[0].value() == true
+            unstableOnSkippedTests[0].value() == false
+            failureOnFailedTestConfig[0].value() == true
+        }
+    }
+
+    def 'call testng archive with minimal args'() {
+        when:
+        context.archiveTestNG()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 6
+            reportFilenamePattern[0].value() == '**/testng-results.xml'
+            escapeTestDescp[0].value() == true
+            escapeExceptionMsg[0].value() == true
+            showFailedBuilds[0].value() == false
+            unstableOnSkippedTests[0].value() == false
+            failureOnFailedTestConfig[0].value() == false
+        }
+    }
+
     def 'call jacoco code coverage with no args'() {
         when:
 
