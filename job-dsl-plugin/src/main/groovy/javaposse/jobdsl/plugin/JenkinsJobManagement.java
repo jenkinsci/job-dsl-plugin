@@ -381,6 +381,29 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    public void updateNextBuildNumber(final String jobName, int nextBuildNumber) throws IOException {
+        if (nextBuildNumber <= 0) {
+            return;
+        }
+        LOGGER.fine(getClass().getSimpleName() + ": looking for job  " + jobName + " to update next build number to " + nextBuildNumber);
+        final ItemGroup context = lookupStrategy.getContext(build.getProject());
+        Collection<Job> items = Jenkins.getInstance().getAllItems(Job.class);
+        Collection<Job> matchingJobs = Collections2.filter(items, new Predicate<Job>() {
+            @Override
+            public boolean apply(Job topLevelItem) {
+                return topLevelItem.getRelativeNameFrom(context).matches(jobName);
+            }
+        });
+        if (matchingJobs.size() == 1) {
+            Job job = matchingJobs.iterator().next();
+            LOGGER.fine(getClass().getSimpleName() + ": updating next build number for " + job.getFullDisplayName() + " to " + nextBuildNumber);
+            job.updateNextBuildNumber(nextBuildNumber);
+        } else {
+            LOGGER.warning(getClass().getSimpleName() + ": Job not found, skipping next build number");
+        }
+    }
+
+    @Override
     public Set<String> getPermissions(String descriptorId) {
         return PermissionsHelper.getPermissions(descriptorId);
     }

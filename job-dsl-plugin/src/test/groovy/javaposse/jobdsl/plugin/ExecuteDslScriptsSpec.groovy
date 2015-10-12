@@ -1069,6 +1069,34 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString().trim() == 'lorem ipsum'
     }
 
+    def 'check next build number not reduced'() {
+        setup:
+        String script = '''freeStyleJob('nbnJob') {
+    nextBuildNumber(100)
+}'''
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('true', null, script), true, RemovedJobAction.IGNORE
+        ))
+
+        when:
+        job.scheduleBuild2(0).get()
+        //now run the job once for build number 100 to get used
+        ((FreeStyleProject)jenkinsRule.instance.getItem('nbnJob')).scheduleBuild2(0).get()
+
+        then:
+        ((FreeStyleProject)jenkinsRule.instance.getItem('nbnJob')).nextBuildNumber == 101
+
+        when:
+        //now try to set it back to 100 by regenerating
+        job.scheduleBuild2(0).get()
+
+        then:
+        ((FreeStyleProject)jenkinsRule.instance.getItem('nbnJob')).nextBuildNumber == 101
+        //how to figure out the next build number?
+    }
+
     private static final String SCRIPT = """job('test-job') {
 }"""
 

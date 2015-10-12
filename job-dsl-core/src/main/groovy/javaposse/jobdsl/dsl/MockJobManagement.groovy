@@ -43,6 +43,10 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    void updateNextBuildNumber(String jobName, int nextBuildNumber) throws IOException {
+    }
+
+    @Override
     void queueJob(String jobName) throws NameNotProvidedException {
         validateNameArg(jobName)
     }

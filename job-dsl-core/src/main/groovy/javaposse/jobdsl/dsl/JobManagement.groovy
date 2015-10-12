@@ -96,6 +96,14 @@ interface JobManagement {
     void renameJobMatching(String previousNames, String destination) throws IOException
 
     /**
+     * modifies the BUILD_NUMBER to be used for the next build
+     *
+     * @param nextBuildNumber the BUILD_NUMBER to use for the next build
+     * @throws IOException
+     */
+    void updateNextBuildNumber(String jobName, int nextBuildNumber) throws IOException
+
+    /**
      * Queue a job to run. Useful for running jobs after they've been created.
      *
      * @since 1.16
