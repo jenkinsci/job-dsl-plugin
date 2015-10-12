@@ -30,6 +30,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-30760](https://issues.jenkins-ci.org/browse/JENKINS-30760))
  * Enhanced support for the
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
+ * Fixed a problem with deprecation warnings
+   ([JENKINS-30826](https://issues.jenkins-ci.org/browse/JENKINS-30826))
  * Allow `@DslExtensionMethod` annotated methods to return `null` to not contribute to the job configuration
 * 1.39 (October 05 2015)
  * Increased the minimum supported Jenkins version to 1.596

@@ -14,6 +14,7 @@ class DslScriptHelper {
             DslScriptHelper.name,
             JobManagement.name,
             AbstractJobManagement.name,
+            'javaposse.jobdsl.plugin.InterruptibleJobManagement',
     ]
 
     private DslScriptHelper() {
