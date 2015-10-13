@@ -1,20 +1,17 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
-import javaposse.jobdsl.dsl.ContextHelper
-import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 
-class ArchiveTestNGContext implements Context {
-    final TestNGDataPublishersContext testDataPublishersContext
+class ArchiveTestNGContext extends AbstractContext {
     boolean escapeTestDescription = true
     boolean escapeExceptionMessages = true
     boolean showFailedBuildsInTrendGraph = false
     boolean markBuildAsUnstableOnSkippedTests = false
     boolean markBuildAsFailureOnFailedConfiguration = false
 
-    ArchiveTestNGContext(JobManagement jobManagement) {
-        testDataPublishersContext = new TestNGDataPublishersContext(jobManagement)
+    protected ArchiveTestNGContext(JobManagement jobManagement) {
+        super(jobManagement)
     }
 
     /**
@@ -44,7 +41,7 @@ class ArchiveTestNGContext implements Context {
     /**
      * Mark the build as unstable if skipped configuration or test methods are found in results.
      * If build result is worse that UNSTABLE, this option has no effect.
-     * Defaults to {@code true}.
+     * Defaults to {@code false}.
      */
     void markBuildAsUnstableOnSkippedTests(boolean markBuildAsUnstableOnSkippedTests = true) {
         this.markBuildAsUnstableOnSkippedTests = markBuildAsUnstableOnSkippedTests
@@ -52,16 +49,10 @@ class ArchiveTestNGContext implements Context {
 
     /**
      * Distinguish between failing tests and failing configuration methods
-     * Defaults to {@code true}.
+     * Defaults to {@code false}.
      */
     void markBuildAsFailureOnFailedConfiguration(boolean markBuildAsFailureOnFailedConfiguration = true) {
         this.markBuildAsFailureOnFailedConfiguration = markBuildAsFailureOnFailedConfiguration
     }
 
-    /**
-     * Adds additional test report features provided by other Jenkins plugins.
-     */
-    void testDataPublishers(@DslContext(TestNGDataPublishersContext) Closure testDataPublishersClosure) {
-        ContextHelper.executeInContext(testDataPublishersClosure, testDataPublishersContext)
-    }
 }

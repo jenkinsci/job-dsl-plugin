@@ -238,7 +238,6 @@ class PublisherContext extends AbstractExtensibleContext {
             showFailedBuilds(testNGContext.showFailedBuildsInTrendGraph)
             unstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
             failureOnFailedTestConfig(testNGContext.markBuildAsFailureOnFailedConfiguration)
-            testDataPublishers(testNGContext.testDataPublishersContext.testDataPublishers)
         }
     }
 

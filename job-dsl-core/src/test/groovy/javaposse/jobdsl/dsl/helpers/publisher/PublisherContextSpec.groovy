@@ -541,21 +541,23 @@ class PublisherContextSpec extends Specification {
     def 'call testng archive with all args'() {
         when:
         context.archiveTestNG('include/*') {
-            escapeTestDescription()
-            escapeExceptionMessages()
-            showFailedBuildsInTrendGraph()
-            markBuildAsUnstableOnSkippedTests()
-            markBuildAsFailureOnFailedConfiguration()
+            escapeTestDescription(false)
+            escapeExceptionMessages(false)
+            showFailedBuildsInTrendGraph(true)
+            markBuildAsUnstableOnSkippedTests(false)
+            markBuildAsFailureOnFailedConfiguration(true)
         }
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.testng.Publisher'
-            children().size() == 7
+            children().size() == 6
             reportFilenamePattern[0].value() == 'include/*'
-            escapeTestDescp[0].value() == true
-            escapeExceptionMsg[0].value() == true
-            testDataPublishers[0].children().size() == 0
+            escapeTestDescp[0].value() == false
+            escapeExceptionMsg[0].value() == false
+            showFailedBuilds[0].value() == true
+            unstableOnSkippedTests[0].value() == false
+            failureOnFailedTestConfig[0].value() == true
         }
     }
 
@@ -566,11 +568,13 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.testng.Publisher'
-            children().size() == 7
+            children().size() == 6
             reportFilenamePattern[0].value() == '**/testng-results.xml'
             escapeTestDescp[0].value() == true
             escapeExceptionMsg[0].value() == true
-            testDataPublishers[0].children().size() == 0
+            showFailedBuilds[0].value() == false
+            unstableOnSkippedTests[0].value() == false
+            failureOnFailedTestConfig[0].value() == false
         }
     }
 
