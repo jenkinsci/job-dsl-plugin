@@ -222,7 +222,6 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Publishes TestNG test result reports.
      * Default report location - '{@literal **}/testng-results.xml'.
-     * Other options all default to {@code true}.
      *
      * @since 1.40
      */

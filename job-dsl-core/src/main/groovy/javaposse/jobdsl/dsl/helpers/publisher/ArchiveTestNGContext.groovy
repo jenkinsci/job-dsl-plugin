@@ -17,26 +17,50 @@ class ArchiveTestNGContext implements Context {
         testDataPublishersContext = new TestNGDataPublishersContext(jobManagement)
     }
 
-    void escapeTestDescription(boolean escape = true) {
-        escapeTestDescription = escape
+    /**
+     * Escape the description string associated with the test method in the report.
+     * Defaults to {@code true}.
+     */
+    void escapeTestDescription(boolean escapeTestDescription = true) {
+        this.escapeTestDescription = escapeTestDescription
     }
 
-    void escapeExceptionMessages(boolean escape = true) {
-        escapeExceptionMessages = escape
+    /**
+     * Escape the test method's exception messages. in the report.
+     * Defaults to {@code true}.
+     */
+    void escapeExceptionMessages(boolean escapeExceptionMessages = true) {
+        this.escapeExceptionMessages = escapeExceptionMessages
     }
 
-    void showFailedBuildsInTrendGraph(boolean show = true) {
-        showFailedBuildsInTrendGraph = show
+    /**
+     * Include results from failed builds in the trend graph.
+     * Defaults to {@code false}.
+     */
+    void showFailedBuildsInTrendGraph(boolean showFailedBuildsInTrendGraph = false) {
+        this.showFailedBuildsInTrendGraph = showFailedBuildsInTrendGraph
     }
 
-    void markBuildAsUnstableOnSkippedTests(boolean mark = true) {
-        markBuildAsUnstableOnSkippedTests = mark
+    /**
+     * Mark the build as unstable if skipped configuration or test methods are found in results.
+     * If build result is worse that UNSTABLE, this option has no effect.
+     * Defaults to {@code true}.
+     */
+    void markBuildAsUnstableOnSkippedTests(boolean markBuildAsUnstableOnSkippedTests = true) {
+        this.markBuildAsUnstableOnSkippedTests = markBuildAsUnstableOnSkippedTests
     }
 
-    void markBuildAsFailureOnFailedConfiguration(boolean mark = true) {
-        markBuildAsFailureOnFailedConfiguration = mark
+    /**
+     * Distinguish between failing tests and failing configuration methods
+     * Defaults to {@code true}.
+     */
+    void markBuildAsFailureOnFailedConfiguration(boolean markBuildAsFailureOnFailedConfiguration = true) {
+        this.markBuildAsFailureOnFailedConfiguration = markBuildAsFailureOnFailedConfiguration
     }
 
+    /**
+     * Adds additional test report features provided by other Jenkins plugins.
+     */
     void testDataPublishers(@DslContext(TestNGDataPublishersContext) Closure testDataPublishersClosure) {
         ContextHelper.executeInContext(testDataPublishersClosure, testDataPublishersContext)
     }

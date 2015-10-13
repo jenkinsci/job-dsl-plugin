@@ -538,14 +538,14 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('xunit')
     }
 
-	def 'call testng archive with all args'() {
+    def 'call testng archive with all args'() {
         when:
         context.archiveTestNG('include/*') {
             escapeTestDescription()
-			escapeExceptionMessages()
-			showFailedBuildsInTrendGraph()
-			markBuildAsUnstableOnSkippedTests()
-			markBuildAsFailureOnFailedConfiguration()
+            escapeExceptionMessages()
+            showFailedBuildsInTrendGraph()
+            markBuildAsUnstableOnSkippedTests()
+            markBuildAsFailureOnFailedConfiguration()
         }
 
         then:
@@ -558,7 +558,7 @@ class PublisherContextSpec extends Specification {
             testDataPublishers[0].children().size() == 0
         }
     }
-	
+
     def 'call testng archive with minimal args'() {
         when:
         context.archiveTestNG()
