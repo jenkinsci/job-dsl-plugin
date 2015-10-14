@@ -544,7 +544,7 @@ class PublisherContextSpec extends Specification {
             escapeTestDescription(false)
             escapeExceptionMessages(false)
             showFailedBuildsInTrendGraph(true)
-            markBuildAsUnstableOnSkippedTests(false)
+            markBuildAsUnstableOnSkippedTests(true)
             markBuildAsFailureOnFailedConfiguration(true)
         }
 
@@ -556,9 +556,10 @@ class PublisherContextSpec extends Specification {
             escapeTestDescp[0].value() == false
             escapeExceptionMsg[0].value() == false
             showFailedBuilds[0].value() == true
-            unstableOnSkippedTests[0].value() == false
+            unstableOnSkippedTests[0].value() == true
             failureOnFailedTestConfig[0].value() == true
         }
+        1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
     }
 
     def 'call testng archive with minimal args'() {
@@ -576,6 +577,7 @@ class PublisherContextSpec extends Specification {
             unstableOnSkippedTests[0].value() == false
             failureOnFailedTestConfig[0].value() == false
         }
+        1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
     }
 
     def 'call jacoco code coverage with no args'() {

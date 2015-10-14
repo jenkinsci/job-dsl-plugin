@@ -221,11 +221,10 @@ class PublisherContext extends AbstractExtensibleContext {
 
     /**
      * Publishes TestNG test result reports.
-     * Default report location - '{@literal **}/testng-results.xml'.
      *
      * @since 1.40
      */
-    @RequiresPlugin(id = 'testng-plugin')
+    @RequiresPlugin(id = 'testng-plugin', minimumVersion = '1.10')
     void archiveTestNG(String glob = '**/testng-results.xml',
                        @DslContext(ArchiveTestNGContext) Closure testNGClosure = null) {
         ArchiveTestNGContext testNGContext = new ArchiveTestNGContext(jobManagement)

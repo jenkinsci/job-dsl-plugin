@@ -6,11 +6,11 @@ import javaposse.jobdsl.dsl.JobManagement
 class ArchiveTestNGContext extends AbstractContext {
     boolean escapeTestDescription = true
     boolean escapeExceptionMessages = true
-    boolean showFailedBuildsInTrendGraph = false
-    boolean markBuildAsUnstableOnSkippedTests = false
-    boolean markBuildAsFailureOnFailedConfiguration = false
+    boolean showFailedBuildsInTrendGraph
+    boolean markBuildAsUnstableOnSkippedTests
+    boolean markBuildAsFailureOnFailedConfiguration
 
-    protected ArchiveTestNGContext(JobManagement jobManagement) {
+    ArchiveTestNGContext(JobManagement jobManagement) {
         super(jobManagement)
     }
 
@@ -23,7 +23,7 @@ class ArchiveTestNGContext extends AbstractContext {
     }
 
     /**
-     * Escape the test method's exception messages. in the report.
+     * Escape the test method's exception messages in the report.
      * Defaults to {@code true}.
      */
     void escapeExceptionMessages(boolean escapeExceptionMessages = true) {
@@ -34,7 +34,7 @@ class ArchiveTestNGContext extends AbstractContext {
      * Include results from failed builds in the trend graph.
      * Defaults to {@code false}.
      */
-    void showFailedBuildsInTrendGraph(boolean showFailedBuildsInTrendGraph = false) {
+    void showFailedBuildsInTrendGraph(boolean showFailedBuildsInTrendGraph = true) {
         this.showFailedBuildsInTrendGraph = showFailedBuildsInTrendGraph
     }
 
@@ -48,11 +48,10 @@ class ArchiveTestNGContext extends AbstractContext {
     }
 
     /**
-     * Distinguish between failing tests and failing configuration methods
+     * Distinguish between failing tests and failing configuration methods.
      * Defaults to {@code false}.
      */
     void markBuildAsFailureOnFailedConfiguration(boolean markBuildAsFailureOnFailedConfiguration = true) {
         this.markBuildAsFailureOnFailedConfiguration = markBuildAsFailureOnFailedConfiguration
     }
-
 }

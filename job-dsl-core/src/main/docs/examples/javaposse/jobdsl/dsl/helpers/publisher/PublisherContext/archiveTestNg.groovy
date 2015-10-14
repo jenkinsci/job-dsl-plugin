@@ -13,11 +13,11 @@ job('example-2') {
 job('example-3') {
     publishers {
         archiveTestNG('**/target/test-reports/*.xml') {
-            escapeTestDescription true
-            escapeExceptionMessages false
-            showFailedBuildsInTrendGraph true
-            markBuildAsUnstableOnSkippedTests false
-            markBuildAsFailureOnFailedConfiguration true
+            escapeTestDescription()
+            escapeExceptionMessages(false)
+            showFailedBuildsInTrendGraph()
+            markBuildAsUnstableOnSkippedTests(false)
+            markBuildAsFailureOnFailedConfiguration()
         }
     }
 }
