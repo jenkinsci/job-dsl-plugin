@@ -28,6 +28,49 @@ class StepContextSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello"'
     }
 
+    def 'call remoteShell method with all args (commands as variadic arguments)'() {
+        when:
+        context.remoteShell('root@example.com:22', 'echo Hello', 'echo World!')
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == 'echo Hello\necho World!'
+        }
+    }
+
+    def 'call remoteShell method with all args (commands as list)'() {
+        when:
+        context.remoteShell('root@example.com:22', ['echo Hello', 'echo World!'])
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == 'echo Hello\necho World!'
+        }
+    }
+
+    def 'call remoteShell method with closure'() {
+        when:
+        context.remoteShell('root@example.com:22') {
+            command('echo Hello', 'echo World!')
+            command('echo How are you?')
+            command(["echo I'm fine!", 'echo And you?'])
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == "echo Hello\necho World!\necho How are you?\necho I'm fine!\necho And you?"
+        }
+    }
+
     def 'call batchFile method'() {
         when:
         context.batchFile('echo "Hello from Windows"')
