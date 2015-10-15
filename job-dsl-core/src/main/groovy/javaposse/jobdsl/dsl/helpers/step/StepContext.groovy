@@ -43,9 +43,6 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Runs a remote shell script.
      *
-     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
-     * the script from a file.
-     *
      * @since 1.40
      */
     @RequiresPlugin(id = 'ssh', minimumVersion = '1.3')

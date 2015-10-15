@@ -12,6 +12,9 @@ class RemoteShellContext extends AbstractContext {
 
     /**
      * Adds remote shell commands.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
      */
     void command(String... commands) {
         this.commands.addAll(commands)
