@@ -40,7 +40,7 @@ abstract class WorkspaceCleanupContext implements Context {
         this.deleteCommand = deleteCommand
     }
 
-    private void addPattern(String type, String pattern) {
+    protected void addPattern(String type, String pattern) {
         patternNodes << new NodeBuilder().'hudson.plugins.ws__cleanup.Pattern' {
             delegate.pattern(pattern)
             delegate.type(type)
