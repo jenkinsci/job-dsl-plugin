@@ -28,6 +28,39 @@ class StepContextSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello"'
     }
 
+    def 'call remoteShell method with minimal options'() {
+        when:
+        context.remoteShell('root@example.com:22') {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
+    }
+
+    def 'call remoteShell method with all options'() {
+        when:
+        context.remoteShell('root@example.com:22') {
+            command('echo Hello', 'echo World!')
+            command('echo How are you?')
+            command(["echo I'm fine!", 'echo And you?'])
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == "echo Hello\necho World!\necho How are you?\necho I'm fine!\necho And you?"
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
+    }
+
     def 'call batchFile method'() {
         when:
         context.batchFile('echo "Hello from Windows"')

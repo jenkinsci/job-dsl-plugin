@@ -41,6 +41,22 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Runs a remote shell script.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'ssh', minimumVersion = '1.3')
+    void remoteShell(String siteName, @DslContext(RemoteShellContext) Closure remoteShellClosure) {
+        RemoteShellContext remoteShellContext = new RemoteShellContext(jobManagement)
+        ContextHelper.executeInContext(remoteShellClosure, remoteShellContext)
+
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.SSHBuilder' {
+            delegate.siteName(siteName)
+            command(remoteShellContext.commands.join('\n'))
+        }
+    }
+
+    /**
      * Runs a Windows batch script.
      *
      * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
