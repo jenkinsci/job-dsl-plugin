@@ -49,36 +49,6 @@ class StepContext extends AbstractExtensibleContext {
      * @since 1.40
      */
     @RequiresPlugin(id = 'ssh', minimumVersion = '1.3')
-    void remoteShell(String siteName, String... commands) {
-        remoteShell(siteName) {
-            command(commands)
-        }
-    }
-
-    /**
-     * Runs a remote shell script.
-     *
-     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
-     * the script from a file.
-     *
-     * @since 1.40
-     */
-    @RequiresPlugin(id = 'ssh', minimumVersion = '1.3')
-    void remoteShell(String siteName, List<String> commands) {
-        remoteShell(siteName) {
-            command(commands)
-        }
-    }
-
-    /**
-     * Runs a remote shell script.
-     *
-     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
-     * the script from a file.
-     *
-     * @since 1.40
-     */
-    @RequiresPlugin(id = 'ssh', minimumVersion = '1.3')
     void remoteShell(String siteName, @DslContext(RemoteShellContext) Closure remoteShellClosure) {
         RemoteShellContext remoteShellContext = new RemoteShellContext(jobManagement)
         ContextHelper.executeInContext(remoteShellClosure, remoteShellContext)

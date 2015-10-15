@@ -1,22 +1,4 @@
-job('example-1') {
-    steps {
-        remoteShell('root@example.com:22', 'echo Hello World!')
-    }
-}
-
-job('example-2') {
-    steps {
-        remoteShell('root@example.com:22', 'echo Hello', 'echo World!')
-    }
-}
-
-job('example-3') {
-    steps {
-        remoteShell('root@example.com:22', ['echo Hello', 'echo World!'])
-    }
-}
-
-job('example-4') {
+job('example') {
     steps {
         remoteShell('root@example.com:22') {
             command('echo Hello', 'echo World!')
