@@ -22,6 +22,7 @@ class GitContext extends AbstractContext {
     boolean pruneBranches = false
     boolean ignoreNotifyCommit = false
     boolean recursiveSubmodules = false
+    boolean trackingSubmodules = false
     String localBranch
     String relativeTargetDir
     String reference = ''
@@ -167,6 +168,14 @@ class GitContext extends AbstractContext {
      */
     void recursiveSubmodules(boolean recursive = true) {
         this.recursiveSubmodules = recursive
+    }
+
+    /**
+     * Update tracking submodules to tip of branch. Defaults to {@code false}
+     * @since 1.40
+     */
+    void trackingSubmodules(boolean tracking = true) {
+        this.trackingSubmodules = tracking
     }
 
     /**

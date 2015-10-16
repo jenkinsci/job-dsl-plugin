@@ -1294,6 +1294,43 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
+    def 'call git scm with trackingSubmodules with default true'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            trackingSubmodules()
+        }
+
+        then:
+        with(context.scmNodes[0]) {
+            trackingSubmodules[0].value() == true
+        }
+        1 * mockJobManagement.requirePlugin('git')
+        1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
+    }
+
+    def 'call git scm with trackingSubmodules with param'(boolean value) {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            trackingSubmodules(value)
+        }
+
+        then:
+        with(context.scmNodes[0]) {
+            trackingSubmodules[0].value() == value
+        }
+        1 * mockJobManagement.requirePlugin('git')
+        1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
+
+        where:
+        value << [true, false]
+    }
+
     def 'call git scm with recursiveSubmodules with param'(boolean value) {
         when:
         context.git {
