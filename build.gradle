@@ -8,7 +8,6 @@ buildscript {
     }
 }
 
-apply plugin: 'idea'
 
 defaultTasks 'build' // for BuildHive
 
@@ -18,7 +17,6 @@ configure(subprojects - project(':job-dsl-api-viewer')) {
     apply plugin: 'groovy'
     apply plugin: 'maven' // for publishing
     apply plugin: 'codenarc'
-    apply plugin: 'idea'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
