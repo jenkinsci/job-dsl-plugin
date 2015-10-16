@@ -8,7 +8,6 @@ buildscript {
     }
 }
 
-
 defaultTasks 'build' // for BuildHive
 
 configure(subprojects - project(':job-dsl-api-viewer')) {
