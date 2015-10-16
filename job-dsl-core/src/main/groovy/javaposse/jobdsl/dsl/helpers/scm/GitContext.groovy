@@ -171,9 +171,11 @@ class GitContext extends AbstractContext {
     }
 
     /**
-     * Update tracking submodules to tip of branch. Defaults to {@code false}
+     * Update tracking submodules to tip of branch. Defaults to {@code false}.
+     *
      * @since 1.40
      */
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.0')
     void trackingSubmodules(boolean tracking = true) {
         this.trackingSubmodules = tracking
     }

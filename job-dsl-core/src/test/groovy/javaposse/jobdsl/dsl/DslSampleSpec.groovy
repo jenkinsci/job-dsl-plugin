@@ -157,7 +157,6 @@ class DslSampleSpec extends Specification {
         <configVersion>2</configVersion>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>false</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
         <authorOrCommitter>false</authorOrCommitter>
         <clean>false</clean>
@@ -301,7 +300,6 @@ mavenJob('PROJ-maven-with-template') {
         <configVersion>2</configVersion>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>false</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
         <authorOrCommitter>false</authorOrCommitter>
         <clean>false</clean>
@@ -355,7 +353,6 @@ mavenJob('PROJ-maven-with-template') {
         <configVersion>2</configVersion>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>false</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
         <authorOrCommitter>false</authorOrCommitter>
         <clean>false</clean>

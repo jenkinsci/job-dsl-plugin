@@ -28,6 +28,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-30544](https://issues.jenkins-ci.org/browse/JENKINS-30544))
  * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
    ([JENKINS-30760](https://issues.jenkins-ci.org/browse/JENKINS-30760))
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([#645](https://github.com/jenkinsci/job-dsl-plugin/pull/645))
  * Enhanced support for the
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
  * Fixed a problem with deprecation warnings
