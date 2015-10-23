@@ -91,8 +91,19 @@ class PullRequestBuilderContext extends AbstractContext {
 
     /**
      * When filled, commenting this phrase in the pull request will trigger a build.
+     * This string is exactly matched against the comment
      */
     void triggerPhrase(String triggerPhrase) {
+        // Quote the phrase
+        this.triggerPhrase = "\\Q${triggerPhrase}\\E"
+    }
+
+    /**
+     * When filled, commenting this phrase in the pull request will trigger a build.
+     * This string is matched using regex against the comment
+     */
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.27')
+    void regexTriggerPhrase(String triggerPhrase) {
         this.triggerPhrase = triggerPhrase
     }
 

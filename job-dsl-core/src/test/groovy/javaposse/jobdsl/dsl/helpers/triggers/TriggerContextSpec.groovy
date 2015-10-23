@@ -307,6 +307,35 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            children().size() == 14
+            onlyTriggerPhrase[0].value() == false
+            useGitHubHooks[0].value() == false
+            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == false
+            permitAll[0].value() == false
+            autoCloseFailedPullRequests[0].value() == false
+            cron[0].value() == 'H/5 * * * *'
+            spec[0].value() == 'H/5 * * * *'
+            triggerPhrase[0].value() == ''
+            adminlist[0].value() == ''
+            whitelist[0].value() == ''
+            orgslist[0].value() == ''
+            commentFilePath[0].value() == ''
+            configVersion[0].value() == '3'
+        }
+        1 * mockJobManagement.requirePlugin('ghprb')
+    }
+
+    def 'call pull request trigger with plugin version 1.26'() {
+        setup:
+        mockJobManagement.getPluginVersion('ghprb') >> new VersionNumber('1.26')
+
+        when:
+        context.pullRequest {
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
             children().size() == 13
             onlyTriggerPhrase[0].value() == false
             useGitHubHooks[0].value() == false
@@ -390,7 +419,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 13
+            children().size() == 14
             adminlist[0].value() == 'test1\ntest2'
             whitelist[0].value() == 'test1\ntest2'
             orgslist[0].value() == 'test1\ntest2'
@@ -417,19 +446,61 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 13
+            children().size() == 14
             adminlist[0].value() == 'test'
             whitelist[0].value() == 'test'
             orgslist[0].value() == 'test'
             cron[0].value() == '*/5 * * * *'
             spec[0].value() == '*/5 * * * *'
-            triggerPhrase[0].value() == 'ok to test'
+            // Using trigger phrase on new plugin versions will quote the trigger phrase
+            triggerPhrase[0].value() == '\\Qok to test\\E'
             onlyTriggerPhrase[0].value() == true
             useGitHubHooks[0].value() == true
             allowMembersOfWhitelistedOrgsAsAdmin[0].value() == true
             permitAll[0].value() == true
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
+            configVersion[0].value() == '3'
+        }
+        1 * mockJobManagement.requirePlugin('ghprb')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.14')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
+    }
+
+    def 'call pull request trigger with regex trigger phrase'() {
+        when:
+        context.pullRequest {
+            admins(['test'])
+            userWhitelist(['test'])
+            orgWhitelist(['test'])
+            cron('*/5 * * * *')
+            regexTriggerPhrase('.*ok to test.*')
+            onlyTriggerPhrase(true)
+            useGitHubHooks(true)
+            allowMembersOfWhitelistedOrgsAsAdmin(true)
+            permitAll(true)
+            autoCloseFailedPullRequests(true)
+            commentFilePath('myCommentFile')
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
+            children().size() == 14
+            adminlist[0].value() == 'test'
+            whitelist[0].value() == 'test'
+            orgslist[0].value() == 'test'
+            cron[0].value() == '*/5 * * * *'
+            spec[0].value() == '*/5 * * * *'
+            // Using trigger phrase on new plugin versions will quote the trigger phrase
+            triggerPhrase[0].value() == '.*ok to test.*'
+            onlyTriggerPhrase[0].value() == true
+            useGitHubHooks[0].value() == true
+            allowMembersOfWhitelistedOrgsAsAdmin[0].value() == true
+            permitAll[0].value() == true
+            autoCloseFailedPullRequests[0].value() == true
+            commentFilePath[0].value() == 'myCommentFile'
+            configVersion[0].value() == '3'
         }
         1 * mockJobManagement.requirePlugin('ghprb')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.14')
@@ -454,7 +525,7 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 13
+            children().size() == 14
             adminlist[0].value() == ''
             whitelist[0].value() == ''
             orgslist[0].value() == ''
