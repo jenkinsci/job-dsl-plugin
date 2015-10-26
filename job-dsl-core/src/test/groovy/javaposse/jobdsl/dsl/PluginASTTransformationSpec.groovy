@@ -50,4 +50,15 @@ class PluginASTTransformationSpec extends Specification {
         then:
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
     }
+
+    def 'require plugin with minimum version and with failIfMissing on interface'() {
+        setup:
+        jobParent.jm = jobManagement
+
+        when:
+        jobParent.managedScriptConfigFile('test')
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
+    }
 }

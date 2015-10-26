@@ -187,10 +187,26 @@ interface JobManagement {
     void requirePlugin(String pluginShortName)
 
     /**
+     * Logs a warning and sets the build status to unstable or throws a {@link DslScriptException} if the given plugin
+     * is not installed.
+     *
+     * @since 1.40
+     */
+    void requirePlugin(String pluginShortName, boolean failIfMissing)
+
+    /**
      * Logs a warning and sets the build status to unstable if the installed version of the given plugin is older than
      * the given version.
      */
     void requireMinimumPluginVersion(String pluginShortName, String version)
+
+    /**
+     * Logs a warning and sets the build status to unstable or throws a {@link DslScriptException} if the installed
+     * version of the given plugin is older than the given version.
+     *
+     * @since 1.40
+     */
+    void requireMinimumPluginVersion(String pluginShortName, String version, boolean failIfMissing)
 
     /**
      * Logs a warning and sets the build status to unstable if the version of Jenkins core is older than the given

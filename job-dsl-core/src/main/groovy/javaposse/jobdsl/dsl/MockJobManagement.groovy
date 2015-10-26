@@ -57,11 +57,11 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    void requirePlugin(String pluginShortName) {
+    void requirePlugin(String pluginShortName, boolean failIfMissing) {
     }
 
     @Override
-    void requireMinimumPluginVersion(String pluginShortName, String version) {
+    void requireMinimumPluginVersion(String pluginShortName, String version, boolean failIfMissing) {
     }
 
     @Override

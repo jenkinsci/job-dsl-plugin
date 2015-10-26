@@ -49,6 +49,16 @@ abstract class AbstractJobManagement implements JobManagement {
         logDeprecationWarning(subject, DslScriptHelper.getSourceDetails(scriptName, lineNumber))
     }
 
+    @Override
+    void requirePlugin(String pluginShortName) {
+        requirePlugin(pluginShortName, false)
+    }
+
+    @Override
+    void requireMinimumPluginVersion(String pluginShortName, String version) {
+        requireMinimumPluginVersion(pluginShortName, version, false)
+    }
+
     protected void logDeprecationWarning(String subject, String details) {
         logWarning("${subject} is deprecated", details)
     }

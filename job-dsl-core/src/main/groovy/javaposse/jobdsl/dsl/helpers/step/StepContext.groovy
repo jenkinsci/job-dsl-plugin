@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -1045,6 +1046,30 @@ class StepContext extends AbstractExtensibleContext {
                 }
                 failNoFilesDeploy(context.failIfNoFiles)
             }
+        }
+    }
+
+    /**
+     * Executes a centrally managed script.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'managed-scripts', minimumVersion = '1.2.1')
+    void managedScript(String scriptName, @DslContext(ManagedScriptContext) Closure closure = null) {
+        String scriptId = jobManagement.getConfigFileId(ConfigFileType.ManagedScript, scriptName)
+        Preconditions.checkNotNull(scriptId, "managed script with name '${scriptName}' not found")
+
+        ManagedScriptContext context = new ManagedScriptContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.managedscripts.ScriptBuildStep' {
+            buildStepId(scriptId)
+            buildStepArgs {
+                context.arguments.each {
+                    string(it)
+                }
+            }
+            tokenized(context.tokenized)
         }
     }
 

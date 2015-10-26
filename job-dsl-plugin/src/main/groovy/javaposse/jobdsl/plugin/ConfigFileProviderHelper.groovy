@@ -3,18 +3,24 @@ package javaposse.jobdsl.plugin
 import hudson.ExtensionList
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.ParametrizedConfigFile
 import jenkins.model.Jenkins
 import org.jenkinsci.lib.configprovider.ConfigProvider
 import org.jenkinsci.lib.configprovider.model.Config
-import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig
 import org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig
+import org.jenkinsci.plugins.managedscripts.ScriptConfig
 
 class ConfigFileProviderHelper {
-    private static final Map<ConfigFileType, Class<? extends ConfigProvider>> CONFIG_PROVIDERS = [
-            (ConfigFileType.Custom)             : CustomConfig.CustomConfigProvider,
-            (ConfigFileType.MavenSettings)      : MavenSettingsConfig.MavenSettingsConfigProvider,
-            (ConfigFileType.GlobalMavenSettings): GlobalMavenSettingsConfig.GlobalMavenSettingsConfigProvider,
+    private static final Map<ConfigFileType, String> CONFIG_PROVIDERS = [
+            (ConfigFileType.Custom):
+                  'org.jenkinsci.plugins.configfiles.custom.CustomConfig$CustomConfigProvider',
+            (ConfigFileType.MavenSettings):
+                  'org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig$MavenSettingsConfigProvider',
+            (ConfigFileType.GlobalMavenSettings):
+                  'org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig$GlobalMavenSettingsConfigProvider',
+            (ConfigFileType.ManagedScript):
+                  'org.jenkinsci.plugins.managedscripts.ScriptConfig$ScriptConfigProvider',
     ]
 
     static Config findConfig(ConfigProvider configProvider, String name) {
@@ -48,6 +54,14 @@ class ConfigFileProviderHelper {
                         configFile.content,
                         null,
                         null
+                )
+            case ConfigFileType.ManagedScript:
+                return new ScriptConfig(
+                        oldConfig.id,
+                        configFile.name,
+                        configFile.comment,
+                        configFile.content,
+                        ((ParametrizedConfigFile) configFile).arguments.collect { new ScriptConfig.Arg(it) }
                 )
             default:
                 return null

@@ -1,6 +1,7 @@
 Custom
 MavenSettings
 GlobalMavenSettings
+ManagedScript
 change
 json
 text
