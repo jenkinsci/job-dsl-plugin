@@ -1,11 +1,13 @@
 package javaposse.jobdsl.dsl.helpers.common
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class DownstreamTriggerParameterContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    DownstreamTriggerParameterContext context = new DownstreamTriggerParameterContext(jobManagement)
+    Item item = Mock(Item)
+    DownstreamTriggerParameterContext context = new DownstreamTriggerParameterContext(jobManagement, item)
 
     def 'boolean parameters'() {
         when:
@@ -231,5 +233,21 @@ class DownstreamTriggerParameterContextSpec extends Specification {
 
         where:
         value << [true, false]
+    }
+
+    def 'extension point is called'() {
+        setup:
+        jobManagement.callExtension('foo', item, DownstreamTriggerParameterContext, 'bar') >>
+                new Node(null, 'org.example.TestParameters')
+
+        when:
+        context.foo('bar')
+
+        then:
+        context.configs.size() == 1
+        with(context.configs[0]) {
+            name() == 'org.example.TestParameters'
+            children().size() == 0
+        }
     }
 }

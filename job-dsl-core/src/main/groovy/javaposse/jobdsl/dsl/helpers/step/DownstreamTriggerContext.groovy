@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.common.AbstractDownstreamTriggerContext
@@ -10,8 +11,8 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
     DownstreamTriggerBlockContext blockContext
     DownstreamTriggerParameterFactoryContext parameterFactoryContext = new DownstreamTriggerParameterFactoryContext()
 
-    DownstreamTriggerContext(JobManagement jobManagement) {
-        super(jobManagement)
+    DownstreamTriggerContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     /**

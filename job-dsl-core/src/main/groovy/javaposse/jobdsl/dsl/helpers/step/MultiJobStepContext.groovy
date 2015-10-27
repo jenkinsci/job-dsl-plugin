@@ -37,7 +37,7 @@ class MultiJobStepContext extends StepContext {
      * can also be set to {@code 'ALWAYS'}.
      */
     void phase(String name, String continuationCondition, @DslContext(PhaseContext) Closure phaseClosure) {
-        PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationCondition)
+        PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
