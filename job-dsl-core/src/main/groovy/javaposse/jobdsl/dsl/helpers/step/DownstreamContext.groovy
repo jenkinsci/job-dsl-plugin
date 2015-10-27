@@ -4,6 +4,7 @@ import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 
@@ -13,10 +14,13 @@ import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MA
 class DownstreamContext extends AbstractContext {
     private static final Set<String> BLOCKING_THRESHOLD_TYPES = ['buildStepFailure', 'failure', 'unstable']
 
+    protected final Item item
+
     List<Node> configs = []
 
-    DownstreamContext(JobManagement jobManagement) {
+    DownstreamContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
+        this.item = item
     }
 
     /**
@@ -71,7 +75,7 @@ class DownstreamContext extends AbstractContext {
 
     private void addTrigger(String projects, Map<String, String> blockingThresholds, boolean triggerWithNoParameters,
                             @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        DownstreamTriggerContext context = new DownstreamTriggerContext(jobManagement)
+        DownstreamTriggerContext context = new DownstreamTriggerContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamTriggerClosure, context)
 
         if (blockingThresholds) {

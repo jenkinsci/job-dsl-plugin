@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -14,20 +15,22 @@ class PhaseJobContext extends AbstractContext {
     String jobName
     boolean currentJobParameters = true
     boolean exposedScm = true
-    DownstreamTriggerParameterContext paramTrigger = new DownstreamTriggerParameterContext(jobManagement)
+    DownstreamTriggerParameterContext paramTrigger
     boolean disableJob = false
     boolean abortAllJobs = false
     String killPhaseCondition = 'FAILURE'
     Closure configureClosure
 
-    PhaseJobContext(JobManagement jobManagement, String jobName) {
+    PhaseJobContext(JobManagement jobManagement, Item item, String jobName) {
         super(jobManagement)
         this.jobName = jobName
+        this.paramTrigger = new DownstreamTriggerParameterContext(jobManagement, item)
     }
 
     @Deprecated
-    PhaseJobContext(JobManagement jobManagement, String jobName, boolean currentJobParameters, boolean exposedScm) {
-        this(jobManagement, jobName)
+    PhaseJobContext(JobManagement jobManagement, Item item, String jobName, boolean currentJobParameters,
+                    boolean exposedScm) {
+        this(jobManagement, item, jobName)
         this.currentJobParameters = currentJobParameters
         this.exposedScm = exposedScm
     }

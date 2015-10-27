@@ -542,7 +542,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
-        DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
+        DownstreamContext downstreamContext = new DownstreamContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.parameterizedtrigger.BuildTrigger' {
@@ -925,7 +925,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'build-pipeline-plugin')
     void buildPipelineTrigger(String downstreamProjectNames, @DslContext(BuildPipelineContext) Closure closure = null) {
-        BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement)
+        BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement, item)
         ContextHelper.executeInContext(closure, buildPipelineContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
