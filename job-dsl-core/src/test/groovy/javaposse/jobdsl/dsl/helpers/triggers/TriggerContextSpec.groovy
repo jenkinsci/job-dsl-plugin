@@ -331,6 +331,8 @@ class TriggerContextSpec extends Specification {
 
         when:
         context.pullRequest {
+            // Trigger phrase should be unquoted.
+            triggerPhrase('unquoted trigger phrase')
         }
 
         then:
@@ -344,7 +346,7 @@ class TriggerContextSpec extends Specification {
             autoCloseFailedPullRequests[0].value() == false
             cron[0].value() == 'H/5 * * * *'
             spec[0].value() == 'H/5 * * * *'
-            triggerPhrase[0].value() == ''
+            triggerPhrase[0].value() == 'unquoted trigger phrase'
             adminlist[0].value() == ''
             whitelist[0].value() == ''
             orgslist[0].value() == ''

@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import hudson.util.VersionNumber
+
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -94,8 +96,12 @@ class PullRequestBuilderContext extends AbstractContext {
      * This string is exactly matched against the comment
      */
     void triggerPhrase(String triggerPhrase) {
-        // Quote the phrase
-        this.triggerPhrase = "\\Q${triggerPhrase}\\E"
+        // Quote the phrase if plugin version is new enough
+        if (this.jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.27'))) {
+            this.triggerPhrase = triggerPhrase
+        } else {
+            this.triggerPhrase = "\\Q${triggerPhrase}\\E"
+        }
     }
 
     /**
