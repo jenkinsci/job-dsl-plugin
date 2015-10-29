@@ -39,7 +39,7 @@ installation.
     repositories {
         mavenCentral()
         maven {
-            url 'http://repo.jenkins-ci.org/releases/'
+            url 'https://jenkins-ci.artifactoryonline.com/jenkinsci/releases/'
         }
     }
 
