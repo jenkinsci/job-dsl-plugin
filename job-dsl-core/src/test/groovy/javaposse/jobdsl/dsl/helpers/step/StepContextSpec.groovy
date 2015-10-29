@@ -165,6 +165,7 @@ class StepContextSpec extends Specification {
             gradleName[0].value() == '(Default)'
             fromRootBuildScriptDir[0].value() == true
             makeExecutable[0].value() == false
+            useWorkspaceAsHome[0].value() == false
         }
         (1.._) * jobManagement.requirePlugin('gradle')
 
@@ -184,6 +185,7 @@ class StepContextSpec extends Specification {
             gradleName[0].value() == '(Default)'
             fromRootBuildScriptDir[0].value() == true
             makeExecutable[0].value() == false
+            useWorkspaceAsHome[0].value() == false
         }
         (1.._) * jobManagement.requirePlugin('gradle')
     }
@@ -202,6 +204,7 @@ class StepContextSpec extends Specification {
             gradleName 'gn'
             fromRootBuildScriptDir true
             makeExecutable true
+            useWorkspaceAsHome true
         }
 
         then:
@@ -216,6 +219,7 @@ class StepContextSpec extends Specification {
             gradleName[0].value() == 'gn'
             fromRootBuildScriptDir[0].value() == true
             makeExecutable[0].value() == true
+            useWorkspaceAsHome[0].value() == true
         }
         1 * jobManagement.requirePlugin('gradle')
     }

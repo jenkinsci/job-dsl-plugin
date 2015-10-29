@@ -115,6 +115,7 @@ class StepContext extends AbstractExtensibleContext {
             useWrapper gradleContext.useWrapper
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
+            useWorkspaceAsHome gradleContext.useWorkspaceAsHome
         }
 
         if (gradleContext.configureBlock) {
