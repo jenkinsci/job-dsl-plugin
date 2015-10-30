@@ -42,6 +42,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added workaround for [GROOVY-6263](https://issues.apache.org/jira/browse/GROOVY-6263) to `WorkspaceCleanupContext`
  * Added support for the [SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+plugin)
    ([JENKINS-30957](https://issues.jenkins-ci.org/browse/JENKINS-30957))
+ * Added support for the `useWorkspaceAsHome` property of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)  
 * 1.39 (October 05 2015)
  * Increased the minimum supported Jenkins version to 1.596
  * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
@@ -86,7 +87,6 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Removed implicit star import of `javaposse.jobdsl.dsl.ConfigFileType` in scripts, see
    [Migration](Migration#migrating-to-139)
  * Removed anything that has been deprecated in 1.31, see [Migration](Migration#migrating-to-131)
- * Added support for the useWorkspaceAsHome property of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
 * 1.38 (September 09 2015)
  * Replaced the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
