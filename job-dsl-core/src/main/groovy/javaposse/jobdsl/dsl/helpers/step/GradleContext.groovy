@@ -11,7 +11,7 @@ class GradleContext implements Context {
     String buildFile = ''
     boolean fromRootBuildScriptDir = true
     boolean makeExecutable
-    boolean useWorkspaceAsHome = false
+    boolean useWorkspaceAsHome
     String gradleName = '(Default)'
     Closure configureBlock
 
@@ -81,7 +81,7 @@ class GradleContext implements Context {
     /**
      * Sets the useWorkspaceAsHome flag. Defaults to {@code false}.
      */
-    void useWorkspaceAsHome(boolean useWorkspaceAsHome = false) {
+    void useWorkspaceAsHome(boolean useWorkspaceAsHome = true) {
         this.useWorkspaceAsHome  = useWorkspaceAsHome
     }
 
