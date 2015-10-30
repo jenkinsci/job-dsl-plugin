@@ -570,6 +570,40 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('release')
     }
 
+    def 'phabricator with minimal options'() {
+        when:
+        context.phabricator()
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorBuildWrapper'
+            children().size() == 3
+            createCommit[0].value() == false
+            applyToMaster[0].value() == false
+            showBuildStartedMessage[0].value() == true
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
+    def 'phabricator with all options'() {
+        when:
+        context.phabricator {
+            createCommit()
+            applyToMaster()
+            showBuildStartedMessage(false)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorBuildWrapper'
+            children().size() == 3
+            createCommit[0].value() == true
+            applyToMaster[0].value() == true
+            showBuildStartedMessage[0].value() == false
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
     def 'call preBuildCleanup with minimal options'() {
         when:
         context.preBuildCleanup()

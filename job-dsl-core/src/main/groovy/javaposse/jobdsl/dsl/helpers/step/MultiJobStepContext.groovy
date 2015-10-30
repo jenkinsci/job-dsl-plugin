@@ -9,7 +9,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.WithXmlAction
 
 class MultiJobStepContext extends StepContext {
-    private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED']
+    private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED', 'FAILURE']
 
     MultiJobStepContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
@@ -31,17 +31,18 @@ class MultiJobStepContext extends StepContext {
 
     /**
      * Adds a MultiJob phase.
+     *
+     * {@code continuationCondition} must be one of {@code 'SUCCESSFUL'}, {@code 'UNSTABLE'}, {@code 'COMPLETED'} or
+     * {@code 'FAILURE'}. When version 1.16 or later of the MultiJob plugin is installed, {@code continuationCondition}
+     * can also be set to {@code 'ALWAYS'}.
      */
     void phase(String name, String continuationCondition, @DslContext(PhaseContext) Closure phaseClosure) {
-        PhaseContext phaseContext = new PhaseContext(jobManagement, name, continuationCondition)
+        PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
 
         Set<String> validContinuationConditions = new HashSet<String>(VALID_CONTINUATION_CONDITIONS)
-        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.10'))) {
-            validContinuationConditions << 'FAILURE'
-        }
         if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.15'))) {
             validContinuationConditions << 'ALWAYS'
         }
@@ -61,10 +62,8 @@ class MultiJobStepContext extends StepContext {
                         jobName jobInPhase.jobName
                         currParams jobInPhase.currentJobParameters
                         exposedSCM jobInPhase.exposedScm
-                        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.10'))) {
-                            disableJob jobInPhase.disableJob
-                            killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
-                        }
+                        disableJob jobInPhase.disableJob
+                        killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
                         if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.13'))) {
                             abortAllJob jobInPhase.abortAllJobs
                         }

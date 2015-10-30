@@ -1,13 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.common
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
 
 /**
  * @since 1.38
  */
-class DownstreamTriggerParameterContext extends AbstractContext {
+class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
     Map<String, Boolean> booleanParams = [:]
     boolean sameNode
     boolean currentBuild
@@ -21,9 +22,15 @@ class DownstreamTriggerParameterContext extends AbstractContext {
     String matrixSubsetFilter
     boolean subversionRevision
     boolean includeUpstreamParameters
+    List<Node> extensionNodes = []
 
-    DownstreamTriggerParameterContext(JobManagement jobManagement) {
-        super(jobManagement)
+    DownstreamTriggerParameterContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        extensionNodes << node
     }
 
     /**
@@ -195,6 +202,8 @@ class DownstreamTriggerParameterContext extends AbstractContext {
                 delegate.includeUpstreamParameters(includeUpstreamParameters)
             }
         }
+
+        result.addAll(extensionNodes)
 
         result
     }

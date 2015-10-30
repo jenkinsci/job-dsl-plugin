@@ -426,6 +426,7 @@ class PublisherContextSpec extends Specification {
         'qTestLib'   | 'QTestLibType'
         'unitTest'   | 'UnitTestJunitHudsonTestType'
         'valgrind'   | 'ValgrindJunitHudsonTestType'
+        'xUnitDotNET'   | 'XUnitDotNetTestType'
     }
 
     def 'call archiveXUnit with combination of most options'() {
@@ -535,6 +536,48 @@ class PublisherContextSpec extends Specification {
         skippedThresholds.failureNewThreshold[0].value() == 8
 
         1 * jobManagement.requirePlugin('xunit')
+    }
+
+    def 'call testng archive with all args'() {
+        when:
+        context.archiveTestNG('include/*') {
+            escapeTestDescription(false)
+            escapeExceptionMessages(false)
+            showFailedBuildsInTrendGraph(true)
+            markBuildAsUnstableOnSkippedTests(true)
+            markBuildAsFailureOnFailedConfiguration(true)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 6
+            reportFilenamePattern[0].value() == 'include/*'
+            escapeTestDescp[0].value() == false
+            escapeExceptionMsg[0].value() == false
+            showFailedBuilds[0].value() == true
+            unstableOnSkippedTests[0].value() == true
+            failureOnFailedTestConfig[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
+    }
+
+    def 'call testng archive with minimal args'() {
+        when:
+        context.archiveTestNG()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 6
+            reportFilenamePattern[0].value() == '**/testng-results.xml'
+            escapeTestDescp[0].value() == true
+            escapeExceptionMsg[0].value() == true
+            showFailedBuilds[0].value() == false
+            unstableOnSkippedTests[0].value() == false
+            failureOnFailedTestConfig[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
     }
 
     def 'call jacoco code coverage with no args'() {
@@ -3507,6 +3550,7 @@ class PublisherContextSpec extends Specification {
         when:
         context.sonar {
             branch('test')
+            additionalProperties('-Dtest=test')
             overrideTriggers {
                 skipIfEnvironmentVariable('FOO')
             }
@@ -3520,7 +3564,7 @@ class PublisherContextSpec extends Specification {
             branch[0].value() == 'test'
             language[0].value().empty
             mavenOpts[0].value().empty
-            jobAdditionalProperties[0].value().empty
+            jobAdditionalProperties[0].value() == '-Dtest=test'
             mavenInstallationName[0].value() == '(Inherit From Job)'
             rootPom[0].value().empty
             settings[0].value().empty
@@ -4411,6 +4455,49 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('build-publisher', '1.20')
     }
 
+    def 'phabricatorNotifier with no options'() {
+        when:
+        context.phabricatorNotifier()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorNotifier'
+            children().size() == 6
+            commentOnSuccess[0].value() == false
+            commentWithConsoleLinkOnFailure[0].value() == false
+            commentFile[0].value() == '.phabricator-comment'
+            commentSize[0].value() == 1000
+            preserveFormatting[0].value() == false
+            uberallsEnabled[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
+    def 'phabricatorNotifier with all options'() {
+        when:
+        context.phabricatorNotifier {
+            commentOnSuccess()
+            commentWithConsoleLinkOnFailure()
+            commentFile('.my-comment-file')
+            commentSize(2000)
+            preserveFormatting()
+            enableUberalls(false)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorNotifier'
+            children().size() == 6
+            commentOnSuccess[0].value() == true
+            commentWithConsoleLinkOnFailure[0].value() == true
+            commentFile[0].value() == '.my-comment-file'
+            commentSize[0].value() == 2000
+            preserveFormatting[0].value() == true
+            uberallsEnabled[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
     def 'publishBuild with all options'() {
         when:
         context.publishBuild {
@@ -4922,5 +5009,79 @@ class PublisherContextSpec extends Specification {
         message                       | commit
         ''                            | false
         'automatic commit by Jenkins' | true
+    }
+
+    def 'call artifactDeployer with no options'() {
+        when:
+        context.artifactDeployer {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher'
+            children().size() == 2
+            deployEvenBuildFail[0].value() == false
+            entries[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+    }
+
+    def 'call artifactDeployer with all options'() {
+        when:
+        context.artifactDeployer {
+            artifactsToDeploy {
+                includes('test1')
+                baseDir('test2')
+                remoteFileLocation('test3')
+                excludes('test4')
+                flatten()
+                cleanUp()
+                deleteRemoteArtifacts()
+                deleteRemoteArtifactsByScript('test5')
+                failIfNoFiles()
+            }
+            artifactsToDeploy {}
+            deployIfFailed()
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher'
+            children().size() == 2
+            deployEvenBuildFail[0].value() == true
+            with(entries[0]) {
+                children().size() == 2
+                with(children()[0]) {
+                    name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry'
+                    children().size() == 10
+                    includes[0].value() == 'test1'
+                    basedir[0].value() == 'test2'
+                    remote[0].value() == 'test3'
+                    excludes[0].value() == 'test4'
+                    flatten[0].value() == true
+                    deleteRemote[0].value() == true
+                    deleteRemoteArtifacts[0].value() == true
+                    deleteRemoteArtifactsByScript[0].value() == true
+                    groovyExpression[0].value() == 'test5'
+                    failNoFilesDeploy[0].value() == true
+                }
+                with(children()[1]) {
+                    name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry'
+                    children().size() == 9
+                    includes[0].value().empty
+                    basedir[0].value().empty
+                    remote[0].value().empty
+                    excludes[0].value().empty
+                    flatten[0].value() == false
+                    deleteRemote[0].value() == false
+                    deleteRemoteArtifacts[0].value() == false
+                    deleteRemoteArtifactsByScript[0].value() == false
+                    failNoFilesDeploy[0].value() == false
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
     }
 }

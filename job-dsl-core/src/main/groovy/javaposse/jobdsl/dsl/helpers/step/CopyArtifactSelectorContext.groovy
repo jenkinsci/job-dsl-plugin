@@ -1,11 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class CopyArtifactSelectorContext implements Context {
+class CopyArtifactSelectorContext extends AbstractContext {
     Node selector
 
-    CopyArtifactSelectorContext() {
+    CopyArtifactSelectorContext(JobManagement jobManagement) {
+        super(jobManagement)
         latestSuccessful()
     }
 
@@ -83,6 +86,16 @@ class CopyArtifactSelectorContext implements Context {
         createSelectorNode('ParameterizedBuild') {
             delegate.parameterName(parameterName)
         }
+    }
+
+    /**
+     * Selects a build triggered by the current MultiJob build.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.17')
+    void multiJobBuild() {
+        selector = new NodeBuilder().'selector'(class: 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector')
     }
 
     private void createSelectorNode(String type, Closure nodeBuilder = null) {

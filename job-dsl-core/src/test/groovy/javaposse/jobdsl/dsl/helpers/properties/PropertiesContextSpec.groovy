@@ -107,4 +107,52 @@ class PropertiesContextSpec extends Specification {
             pattern[0].value() == 'some-pattern'
         }
     }
+
+    def 'rebuild with no options'() {
+        when:
+        context.rebuild {}
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.rebuild.RebuildSettings'
+            children().size() == 2
+            autoRebuild[0].value() == false
+            rebuildDisabled[0].value() == false
+        }
+    }
+
+    def 'rebuild with all options'() {
+        when:
+        context.rebuild {
+            autoRebuild()
+            rebuildDisabled()
+        }
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.rebuild.RebuildSettings'
+            children().size() == 2
+            autoRebuild[0].value() == true
+            rebuildDisabled[0].value() == true
+        }
+    }
+
+    def 'github project URL with value'() {
+        when:
+        context.githubProjectUrl(value)
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.coravy.hudson.plugins.github.GithubProjectProperty'
+            children().size() == 1
+            projectUrl[0].value() == expected
+        }
+        1 * jobManagement.requireMinimumPluginVersion('github', '1.12.0')
+
+        where:
+        value                                         || expected
+        'https://github.com/jenkinsci/job-dsl-plugin' || 'https://github.com/jenkinsci/job-dsl-plugin'
+        ''                                            || ''
+        null                                          || ''
+    }
 }

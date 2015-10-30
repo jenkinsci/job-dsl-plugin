@@ -9,6 +9,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
@@ -36,6 +37,22 @@ class StepContext extends AbstractExtensibleContext {
     void shell(String command) {
         stepNodes << new NodeBuilder().'hudson.tasks.Shell' {
             delegate.command(command)
+        }
+    }
+
+    /**
+     * Runs a remote shell script.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'ssh', minimumVersion = '1.3')
+    void remoteShell(String siteName, @DslContext(RemoteShellContext) Closure remoteShellClosure) {
+        RemoteShellContext remoteShellContext = new RemoteShellContext(jobManagement)
+        ContextHelper.executeInContext(remoteShellClosure, remoteShellContext)
+
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.SSHBuilder' {
+            delegate.siteName(siteName)
+            command(remoteShellContext.commands.join('\n'))
         }
     }
 
@@ -611,7 +628,7 @@ class StepContext extends AbstractExtensibleContext {
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
-        DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
+        DownstreamContext downstreamContext = new DownstreamContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         stepNodes << new NodeBuilder().'hudson.plugins.parameterizedtrigger.TriggerBuilder' {
@@ -1000,6 +1017,34 @@ class StepContext extends AbstractExtensibleContext {
             skipPush(context.skipPush)
             createFingerprint(context.createFingerprints)
             skipTagLatest(context.skipTagAsLatest)
+        }
+    }
+
+    /**
+     * Deploys artifacts from the build workspace to remote locations.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
+    void artifactDeployer(@DslContext(ArtifactDeployerContext) Closure closure) {
+        ArtifactDeployerContext context = new ArtifactDeployerContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder' {
+            entry {
+                includes(context.includes ?: '')
+                basedir(context.baseDir ?: '')
+                excludes(context.excludes ?: '')
+                remote(context.remoteFileLocation ?: '')
+                flatten(context.flatten)
+                deleteRemote(context.cleanUp)
+                deleteRemoteArtifacts(context.deleteRemoteArtifacts)
+                deleteRemoteArtifactsByScript(context.deleteRemoteArtifactsByScript as boolean)
+                if (context.deleteRemoteArtifactsByScript) {
+                    groovyExpression(context.deleteRemoteArtifactsByScript)
+                }
+                failNoFilesDeploy(context.failIfNoFiles)
+            }
         }
     }
 

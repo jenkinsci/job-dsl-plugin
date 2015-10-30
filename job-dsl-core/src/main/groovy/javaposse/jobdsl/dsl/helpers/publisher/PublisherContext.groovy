@@ -10,6 +10,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -215,6 +216,27 @@ class PublisherContext extends AbstractExtensibleContext {
             extraConfiguration {
                 testTimeMargin xUnitContext.timeMargin
             }
+        }
+    }
+
+    /**
+     * Publishes TestNG test result reports.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'testng-plugin', minimumVersion = '1.10')
+    void archiveTestNG(String glob = '**/testng-results.xml',
+                       @DslContext(ArchiveTestNGContext) Closure testNGClosure = null) {
+        ArchiveTestNGContext testNGContext = new ArchiveTestNGContext(jobManagement)
+        ContextHelper.executeInContext(testNGClosure, testNGContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.testng.Publisher' {
+            reportFilenamePattern(glob)
+            escapeTestDescp(testNGContext.escapeTestDescription)
+            escapeExceptionMsg(testNGContext.escapeExceptionMessages)
+            showFailedBuilds(testNGContext.showFailedBuildsInTrendGraph)
+            unstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
+            failureOnFailedTestConfig(testNGContext.markBuildAsFailureOnFailedConfiguration)
         }
     }
 
@@ -520,7 +542,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
-        DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
+        DownstreamContext downstreamContext = new DownstreamContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.parameterizedtrigger.BuildTrigger' {
@@ -903,7 +925,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'build-pipeline-plugin')
     void buildPipelineTrigger(String downstreamProjectNames, @DslContext(BuildPipelineContext) Closure closure = null) {
-        BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement)
+        BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement, item)
         ContextHelper.executeInContext(closure, buildPipelineContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
@@ -1386,7 +1408,7 @@ class PublisherContext extends AbstractExtensibleContext {
             branch(sonarContext.branch ?: '')
             language()
             mavenOpts()
-            jobAdditionalProperties()
+            jobAdditionalProperties(sonarContext.additionalProperties ?: '')
             if (sonarContext.overrideTriggers) {
                 triggers {
                     skipScmCause(false)
@@ -1579,6 +1601,26 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends build status and coverage information to Pharbicator.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'phabricator-plugin', minimumVersion = '1.8.1')
+    void phabricatorNotifier(@DslContext(PhabricatorNotifierContext) Closure phabricatorNotifierClosure = null) {
+        PhabricatorNotifierContext phabricatorNotifierContext = new PhabricatorNotifierContext()
+        ContextHelper.executeInContext(phabricatorNotifierClosure, phabricatorNotifierContext)
+
+        publisherNodes << new NodeBuilder().'com.uber.jenkins.phabricator.PhabricatorNotifier' {
+            commentOnSuccess(phabricatorNotifierContext.commentOnSuccess)
+            commentWithConsoleLinkOnFailure(phabricatorNotifierContext.commentWithConsoleLinkOnFailure)
+            commentFile(phabricatorNotifierContext.commentFile ?: '')
+            commentSize(phabricatorNotifierContext.commentSize)
+            preserveFormatting(phabricatorNotifierContext.preserveFormatting)
+            uberallsEnabled(phabricatorNotifierContext.enableUberalls)
+        }
+    }
+
+    /**
      * Sends notifications to Slack.
      *
      * @since 1.36
@@ -1608,6 +1650,39 @@ class PublisherContext extends AbstractExtensibleContext {
                 includeCustomMessage(context.customMessage as boolean)
                 customMessage(context.customMessage ?: '')
             }
+        }
+    }
+
+    /**
+     * Deploys artifacts from the build workspace to remote locations.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
+    void artifactDeployer(@DslContext(ArtifactDeployerPublisherContext) Closure closure) {
+        ArtifactDeployerPublisherContext context = new ArtifactDeployerPublisherContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher' {
+            entries {
+                context.entries.each { ArtifactDeployerContext entry ->
+                    'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry' {
+                        includes(entry.includes ?: '')
+                        basedir(entry.baseDir ?: '')
+                        excludes(entry.excludes ?: '')
+                        remote(entry.remoteFileLocation ?: '')
+                        flatten(entry.flatten)
+                        deleteRemote(entry.cleanUp)
+                        deleteRemoteArtifacts(entry.deleteRemoteArtifacts)
+                        deleteRemoteArtifactsByScript(entry.deleteRemoteArtifactsByScript as boolean)
+                        if (entry.deleteRemoteArtifactsByScript) {
+                            groovyExpression(entry.deleteRemoteArtifactsByScript)
+                        }
+                        failNoFilesDeploy(entry.failIfNoFiles)
+                    }
+                }
+            }
+            deployEvenBuildFail(context.deployIfFailed)
         }
     }
 

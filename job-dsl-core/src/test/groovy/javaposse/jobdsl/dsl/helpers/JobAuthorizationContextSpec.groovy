@@ -23,24 +23,10 @@ class JobAuthorizationContextSpec extends Specification {
         context.permissions.contains('hudson.model.Item.Configure:jill')
 
         when:
-        context.permission(Permissions.ItemRead, 'jack')
-
-        then:
-        context.permissions.size() == 2
-        context.permissions.contains('hudson.model.Item.Read:jack')
-
-        when:
-        context.permission('RunUpdate', 'joe')
-
-        then:
-        context.permissions.size() == 3
-        context.permissions.contains('hudson.model.Run.Update:joe')
-
-        when:
         context.permission('hudson.model.Run.Update', 'john')
 
         then:
-        context.permissions.size() == 4
+        context.permissions.size() == 2
         context.permissions.contains('hudson.model.Run.Update:john')
     }
 

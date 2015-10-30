@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.12.2'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.13.0'
     }
 }
 
@@ -18,11 +18,11 @@ description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jo
 def generatedSourcesDir = 'generated'
 
 jenkinsPlugin {
-    coreVersion = '1.596'
+    coreVersion = '1.609'
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
-    compatibleSinceVersion = '1.38'
+    compatibleSinceVersion = '1.39'
     localizerOutputDir = "$generatedSourcesDir/localizer"
     developers {
         developer {

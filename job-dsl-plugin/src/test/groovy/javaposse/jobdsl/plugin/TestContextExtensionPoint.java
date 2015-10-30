@@ -43,6 +43,11 @@ public class TestContextExtensionPoint extends ContextExtensionPoint {
         return new SomeValueObject(arg1, arg2, arg3);
     }
 
+    @DslExtensionMethod(context = StepContext.class)
+    public Object withNoValue() {
+        return null;
+    }
+
     @Override
     public void notifyItemCreated(Item item, DslEnvironment dslEnvironment) {
         createdItems.add(item.getFullName());

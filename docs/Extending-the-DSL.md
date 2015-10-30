@@ -17,7 +17,7 @@ Maven:
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>job-dsl</artifactId>
-                <version>1.38</version>
+                <version>1.39</version>
                 <optional>true</optional>
             </dependency>
             ...
@@ -30,7 +30,7 @@ Gradle:
     ...
     dependencies {
         ...
-        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.38@jar'
+        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.39@jar'
         ...
     }
     ...
@@ -55,14 +55,16 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext` for the `wrappers` context, but only for Maven jobs 
 * `javaposse.jobdsl.dsl.helpers.AxisContext` for the `axes` context of matrix jobs
 * `javaposse.jobdsl.dsl.helpers.IvyBuilderContext` for the `ivyBuilder` context of Ivy jobs
+* `javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext` for the `parameters` context of parameterized
+  triggers
 
 The parameters of the `@DslExtensionMethod` annotated method are the same parameters that will be available in the DSL.
 Have a look at the [DSL Design](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md#dsl-design)
 section of the Job DSL contributing guide on how to use methods parameters.
 
-The method must return an object that will be saved as part of the job configuration. Usually that will be
+The method can return an object that will be saved as part of the job configuration. Usually that will be
 the `hudson.tasks.Builder`, `hudson.tasks.Publisher` or `hudson.tasks.BuildWrapper` subclass which is provided by the
-plugin.
+plugin. If the method should not contribute to the job configuration, it can simply return `null`.
 
 In the following example, a plugin provides an `ExampleBuilder` build step with two options, one with a string value and
 another one with an integer value. The Job DSL should be extended with an `example` method in the `steps` context so
@@ -233,3 +235,7 @@ because build steps can be added multiple times.
 Instances of `ContextExtensionPoint` must be thread-safe. Each subclass will be instantiated only once and reused for
 all seed jobs. Since multiple seed jobs can run in parallel, any `@DslExtensionMethod` and the listener methods can be
 called in parallel.
+
+The following plugins implement the extension point and serve as examples:
+
+* [JGiven Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JGiven+Plugin)

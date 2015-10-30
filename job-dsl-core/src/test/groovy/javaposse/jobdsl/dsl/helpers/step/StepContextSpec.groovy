@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 class StepContextSpec extends Specification {
@@ -27,6 +26,39 @@ class StepContextSpec extends Specification {
         def shellStep = context.stepNodes[0]
         shellStep.name() == 'hudson.tasks.Shell'
         shellStep.command[0].value() == 'echo "Hello"'
+    }
+
+    def 'call remoteShell method with minimal options'() {
+        when:
+        context.remoteShell('root@example.com:22') {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
+    }
+
+    def 'call remoteShell method with all options'() {
+        when:
+        context.remoteShell('root@example.com:22') {
+            command('echo Hello', 'echo World!')
+            command('echo How are you?')
+            command(["echo I'm fine!", 'echo And you?'])
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == "echo Hello\necho World!\necho How are you?\necho I'm fine!\necho And you?"
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
     }
 
     def 'call batchFile method'() {
@@ -398,21 +430,6 @@ class StepContextSpec extends Specification {
         mavenStep.jvmOptions[0].value() == ''
         mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
-        1 * jobManagement.requirePlugin('maven-plugin')
-    }
-
-    def 'call maven method with deprecated options'() {
-        when:
-        context.maven {
-            localRepository(LocalToWorkspace)
-        }
-
-        then:
-        with(context.stepNodes[0]) {
-            name() == 'hudson.tasks.Maven'
-            children().size() == 4
-            usePrivateRepository[0].value() == true
-        }
         1 * jobManagement.requirePlugin('maven-plugin')
     }
 
@@ -914,6 +931,17 @@ class StepContextSpec extends Specification {
         selectorNode8.attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
         selectorNode8.children().size() == 1
         selectorNode8.stable[0].value() == true
+
+        when:
+        context.copyArtifacts('upstream', '**/*.xml') {
+            multiJobBuild()
+        }
+
+        then:
+        Node selectorNode9 = context.stepNodes[8].selector[0]
+        selectorNode9.attribute('class') == 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector'
+        selectorNode9.children().size() == 0
+        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
     }
 
     def 'call minimal copyArtifacts'() {
@@ -3236,5 +3264,67 @@ class StepContextSpec extends Specification {
             skipTagLatest[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+    }
+
+    def 'call artifactDeployer with no options'() {
+        when:
+        context.artifactDeployer {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder'
+            children().size() == 1
+            with(entry[0]) {
+                children().size() == 9
+                includes[0].value().empty
+                basedir[0].value().empty
+                remote[0].value().empty
+                excludes[0].value().empty
+                flatten[0].value() == false
+                deleteRemote[0].value() == false
+                deleteRemoteArtifacts[0].value() == false
+                deleteRemoteArtifactsByScript[0].value() == false
+                failNoFilesDeploy[0].value() == false
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+    }
+
+    def 'call artifactDeployer with all options'() {
+        when:
+        context.artifactDeployer {
+            includes('test1')
+            baseDir('test2')
+            remoteFileLocation('test3')
+            excludes('test4')
+            flatten()
+            cleanUp()
+            deleteRemoteArtifacts()
+            deleteRemoteArtifactsByScript('test5')
+            failIfNoFiles()
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder'
+            children().size() == 1
+            with(entry[0]) {
+                children().size() == 10
+                includes[0].value() == 'test1'
+                basedir[0].value() == 'test2'
+                remote[0].value() == 'test3'
+                excludes[0].value() == 'test4'
+                flatten[0].value() == true
+                deleteRemote[0].value() == true
+                deleteRemoteArtifacts[0].value() == true
+                deleteRemoteArtifactsByScript[0].value() == true
+                groovyExpression[0].value() == 'test5'
+                failNoFilesDeploy[0].value() == true
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
     }
 }

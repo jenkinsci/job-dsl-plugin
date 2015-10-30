@@ -40,7 +40,8 @@ abstract class WorkspaceCleanupContext implements Context {
         this.deleteCommand = deleteCommand
     }
 
-    private void addPattern(String type, String pattern) {
+    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
+    protected void addPattern(String type, String pattern) {
         patternNodes << new NodeBuilder().'hudson.plugins.ws__cleanup.Pattern' {
             delegate.pattern(pattern)
             delegate.type(type)

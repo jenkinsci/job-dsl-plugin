@@ -328,6 +328,36 @@ class BuildParametersContext extends AbstractContext {
         buildParameterNodes[paramName] = node
     }
 
+    /**
+     * Defines a parameter that references a global variable.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'global-variable-string-parameter', minimumVersion = '1.2')
+    void globalVariableParam(String parameterName, String defaultValue = null, String description = null) {
+        simpleParam('hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition',
+                parameterName, defaultValue, description)
+    }
+
+    /**
+     * Defines a parameter that allows to choose which matrix combinations to run.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'matrix-combinations-parameter', minimumVersion = '1.0.9')
+    void matrixCombinationsParam(String parameterName, String defaultValue = null, String description = null) {
+        checkParameterName(parameterName)
+
+        buildParameterNodes[parameterName] = new NodeBuilder().
+                'hudson.plugins.matrix__configuration__parameter.MatrixCombinationsParameterDefinition' {
+                    name(parameterName)
+                    delegate.description(description ?: '')
+                    if (defaultValue) {
+                        defaultCombinationFilter(defaultValue)
+                    }
+                }
+    }
+
     private checkParameterName(String name) {
         checkNotNullOrEmpty(name, 'parameterName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(name), "parameter ${name} already defined")
