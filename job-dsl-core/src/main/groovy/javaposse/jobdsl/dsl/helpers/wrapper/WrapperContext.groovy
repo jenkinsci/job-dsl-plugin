@@ -586,7 +586,6 @@ class WrapperContext extends AbstractExtensibleContext {
             nativeAppPackage(context.nativeAppPackage)
             useChromeForAndroid(context.useChromeForAndroid)
             sauceConnectPath(context.sauceConnectPath ?: '')
-            useOldSauceConnect(context.useOldSauceConnect)
             enableSauceConnect(context.enableSauceConnect)
             seleniumHost(context.seleniumHost ?: '')
             seleniumPort(context.seleniumPort ?: '')
@@ -603,7 +602,6 @@ class WrapperContext extends AbstractExtensibleContext {
 
             useLatestVersion(context.useLatestVersion)
             launchSauceConnectOnSlave(context.launchSauceConnectOnSlave)
-            httpsProtocol(context.httpsProtocol ?: '')
             options(context.options ?: '')
             verboseLogging(context.verboseLogging)
             condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun')

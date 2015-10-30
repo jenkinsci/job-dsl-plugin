@@ -7,7 +7,6 @@ job('example') {
             nativeAppPackage()
             useChromeForAndroid(true)
             sauceConnectPath()
-            useOldSauceConnect(false)
             enableSauceConnect(false)
             seleniumHost()
             seleniumPort()
@@ -15,7 +14,6 @@ job('example') {
             appiumBrowsers('Amazon_Kindle_Fire_Emulatorlandscapeandroid2_3_7_')
             useLatestVersion(true)
             launchSauceConnectOnSlave(true)
-            httpsProtocol()
             options()
             verboseLogging(false)
         }

@@ -1000,7 +1000,6 @@ class WrapperContextSpec extends Specification {
             nativeAppPackage[0].value() == null
             useChromeForAndroid[0].value() == false
             sauceConnectPath[0].value() == ''
-            useOldSauceConnect[0].value() == false
             enableSauceConnect[0].value() == true
             seleniumHost[0].value() == ''
             seleniumPort[0].value() == ''
@@ -1013,7 +1012,6 @@ class WrapperContextSpec extends Specification {
             appiumBrowsers.'string'.size() == 3
             useLatestVersion[0].value() == false
             launchSauceConnectOnSlave[0].value() == false
-            httpsProtocol[0].value() == ''
             options[0].value() == ''
             verboseLogging[0].value() == false
             condition[0].value() == []
@@ -1028,7 +1026,6 @@ class WrapperContextSpec extends Specification {
             nativeAppPackage('nativeAppPackage')
             useChromeForAndroid(true)
             sauceConnectPath('sauceConnectPath')
-            useOldSauceConnect(true)
             enableSauceConnect(true)
             seleniumHost('seleniumHost')
             seleniumPort('seleniumPort')
@@ -1036,7 +1033,6 @@ class WrapperContextSpec extends Specification {
             appiumBrowsers('larry', 'curly', 'moe')
             useLatestVersion(true)
             launchSauceConnectOnSlave(true)
-            httpsProtocol('httpsProtocol')
             options('options')
             verboseLogging(true)
 
@@ -1051,7 +1047,6 @@ class WrapperContextSpec extends Specification {
             nativeAppPackage[0].value() == 'nativeAppPackage'
             useChromeForAndroid[0].value() == true
             sauceConnectPath[0].value() == 'sauceConnectPath'
-            useOldSauceConnect[0].value() == true
             enableSauceConnect[0].value() == true
             seleniumHost[0].value() == 'seleniumHost'
             seleniumPort[0].value() == 'seleniumPort'
@@ -1064,7 +1059,6 @@ class WrapperContextSpec extends Specification {
             appiumBrowsers.'string'.size() == 3
             useLatestVersion[0].value() == true
             launchSauceConnectOnSlave[0].value() == true
-            httpsProtocol[0].value() == 'httpsProtocol'
             options[0].value() == 'options'
             verboseLogging[0].value() == true
             condition[0].value() == []
