@@ -3,13 +3,17 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
 class DownstreamContext extends AbstractContext {
+    protected final Item item
+
     List<Node> configs = []
 
-    DownstreamContext(JobManagement jobManagement) {
+    DownstreamContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
+        this.item = item
     }
 
     /**
@@ -62,7 +66,7 @@ class DownstreamContext extends AbstractContext {
 
     private void addTrigger(String projects, String condition, boolean triggerWithNoParameters,
                             @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        DownstreamTriggerContext context = new DownstreamTriggerContext(jobManagement)
+        DownstreamTriggerContext context = new DownstreamTriggerContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamTriggerClosure, context)
 
         if (condition) {

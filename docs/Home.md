@@ -35,6 +35,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Fixed a problem with deprecation warnings
    ([JENKINS-30826](https://issues.jenkins-ci.org/browse/JENKINS-30826))
  * Allow `@DslExtensionMethod` annotated methods to return `null` to not contribute to the job configuration
+ * Allow `DownstreamTriggerParameterContext` to be extended
+   ([JENKINS-31111](https://issues.jenkins-ci.org/browse/JENKINS-31111))
  * Added support for the [TestNG Plugin](https://wiki.jenkins-ci.org/display/JENKINS/testng-plugin)
    ([JENKINS-30895](https://issues.jenkins-ci.org/browse/JENKINS-30895))
  * Added workaround for [GROOVY-6263](https://issues.apache.org/jira/browse/GROOVY-6263) to `WorkspaceCleanupContext`

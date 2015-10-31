@@ -55,6 +55,8 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext` for the `wrappers` context, but only for Maven jobs 
 * `javaposse.jobdsl.dsl.helpers.AxisContext` for the `axes` context of matrix jobs
 * `javaposse.jobdsl.dsl.helpers.IvyBuilderContext` for the `ivyBuilder` context of Ivy jobs
+* `javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext` for the `parameters` context of parameterized
+  triggers
 
 The parameters of the `@DslExtensionMethod` annotated method are the same parameters that will be available in the DSL.
 Have a look at the [DSL Design](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md#dsl-design)

@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.helpers.common.AbstractDownstreamTriggerContext
@@ -13,8 +14,8 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
     String condition = 'SUCCESS'
     boolean triggerWithNoParameters
 
-    DownstreamTriggerContext(JobManagement jobManagement) {
-        super(jobManagement)
+    DownstreamTriggerContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     /**
