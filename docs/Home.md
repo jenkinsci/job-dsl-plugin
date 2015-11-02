@@ -46,6 +46,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    ([JENKINS-31264](https://issues.jenkins-ci.org/browse/JENKINS-31264))
  * Support for older versions of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-140)
+ * Removed anything that has been deprecated in 1.33, see [Migration](Migration#migrating-to-133)
 * 1.39 (October 05 2015)
  * Increased the minimum supported Jenkins version to 1.596
  * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
