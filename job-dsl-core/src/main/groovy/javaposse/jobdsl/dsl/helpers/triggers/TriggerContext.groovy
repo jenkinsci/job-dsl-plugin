@@ -95,7 +95,7 @@ class TriggerContext extends AbstractExtensibleContext {
     /**
      * Triggers the job based on regular intervals.
      *
-     * To configure a multi-line entry, use a single trigger string with entries separated by \n.
+     * To configure a multi-line entry, use a single trigger string with entries separated by {@code \n}.
      */
     void cron(String cronString) {
         Preconditions.checkNotNull(cronString, 'cronString must be specified')
@@ -108,7 +108,7 @@ class TriggerContext extends AbstractExtensibleContext {
     /**
      * Polls source control for changes at regular intervals.
      *
-     * To configure a multi-line entry, use a single trigger string with entries separated by \n.
+     * To configure a multi-line entry, use a single trigger string with entries separated by {@code \n}.
      */
     void scm(String cronString, @DslContext(ScmTriggerContext) Closure scmTriggerClosure = null) {
         Preconditions.checkNotNull(cronString, 'cronString must be specified')
