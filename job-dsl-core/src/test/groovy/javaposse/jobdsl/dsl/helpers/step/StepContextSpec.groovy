@@ -3338,4 +3338,51 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
     }
+
+    def 'call managedScript with minimal options'() {
+        setup:
+        jobManagement.getConfigFileId(ConfigFileType.ManagedScript, 'foo') >> '0815'
+
+        when:
+        context.managedScript('foo')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.managedscripts.ScriptBuildStep'
+            children().size() == 3
+            buildStepId[0].value() == '0815'
+            buildStepArgs[0].value().empty
+            tokenized[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
+    }
+
+    def 'call managedScript with all options'() {
+        setup:
+        jobManagement.getConfigFileId(ConfigFileType.ManagedScript, 'foo') >> '0815'
+
+        when:
+        context.managedScript('foo') {
+            arguments('foo')
+            arguments('bar', 'baz')
+            tokenized()
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.managedscripts.ScriptBuildStep'
+            children().size() == 3
+            buildStepId[0].value() == '0815'
+            with(buildStepArgs[0]) {
+                children().size() == 3
+                string[0].value() == 'foo'
+                string[1].value() == 'bar'
+                string[2].value() == 'baz'
+            }
+            tokenized[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
+    }
 }

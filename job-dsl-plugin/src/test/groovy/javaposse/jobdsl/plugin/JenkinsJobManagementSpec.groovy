@@ -107,6 +107,36 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
+    def 'requirePlugin not installed'() {
+        when:
+        jobManagement.requirePlugin('foo')
+
+        then:
+        1 * build.setResult(UNSTABLE)
+        buffer.size() > 0
+    }
+
+    def 'fail requirePlugin not installed'() {
+        when:
+        jobManagement.requirePlugin('foo', true)
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'requirePlugin success'() {
+        when:
+        jobManagement.requirePlugin('ldap', failIfMissing)
+
+        then:
+        0 * build.setResult(UNSTABLE)
+        buffer.size() == 0
+        noExceptionThrown()
+
+        where:
+        failIfMissing << [true, false]
+    }
+
     def 'checkMinimumPluginVersion not installed'() {
         when:
         jobManagement.requireMinimumPluginVersion('foo', '1.2.3')
@@ -125,13 +155,33 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() > 0
     }
 
+    def 'fail checkMinimumPluginVersion not installed'() {
+        when:
+        jobManagement.requireMinimumPluginVersion('foo', '1.2.3', true)
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'fail checkMinimumPluginVersion too old'() {
+        when:
+        jobManagement.requireMinimumPluginVersion('ldap', '20.0', true)
+
+        then:
+        thrown(DslScriptException)
+    }
+
     def 'checkMinimumPluginVersion success'() {
         when:
-        jobManagement.requireMinimumPluginVersion('ldap', '1.1')
+        jobManagement.requireMinimumPluginVersion('ldap', '1.1', failIfMissing)
 
         then:
         0 * build.setResult(UNSTABLE)
         buffer.size() == 0
+        noExceptionThrown()
+
+        where:
+        failIfMissing << [true, false]
     }
 
     def 'requireMinimumCoreVersion success'() {

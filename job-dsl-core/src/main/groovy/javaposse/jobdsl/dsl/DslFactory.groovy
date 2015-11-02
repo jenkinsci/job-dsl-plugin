@@ -210,6 +210,22 @@ interface DslFactory extends ViewFactory {
     ConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
+     * Creates a managed script file.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'managed-scripts', minimumVersion = '1.2.1', failIfMissing = true)
+    ConfigFile managedScriptConfigFile(String name)
+
+    /**
+     * Creates a managed script file.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'managed-scripts', minimumVersion = '1.2.1', failIfMissing = true)
+    ParametrizedConfigFile managedScriptConfigFile(String name, @DslContext(ParametrizedConfigFile) Closure closure)
+
+    /**
      * Upload the stream as <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
      * Use {@link DslFactory#streamFileFromWorkspace(java.lang.String)} to read the content from a file.
      *

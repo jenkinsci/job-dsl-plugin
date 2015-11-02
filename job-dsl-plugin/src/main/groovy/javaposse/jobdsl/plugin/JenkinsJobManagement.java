@@ -301,26 +301,42 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void requirePlugin(String pluginShortName) {
+        requirePlugin(pluginShortName, false);
+    }
+
+    @Override
+    public void requirePlugin(String pluginShortName, boolean failIfMissing) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         if (plugin == null) {
-            markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be installed");
+            failOrMarkBuildAsUnstable("plugin '" + pluginShortName + "' needs to be installed", failIfMissing);
         }
     }
 
     @Override
     public void requireMinimumPluginVersion(String pluginShortName, String version) {
+        requireMinimumPluginVersion(pluginShortName, version, false);
+    }
+
+    @Override
+    public void requireMinimumPluginVersion(String pluginShortName, String version, boolean failIfMissing) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         if (plugin == null) {
-            markBuildAsUnstable("version " + version + " or later of plugin '" + pluginShortName + "' needs to be installed");
+            failOrMarkBuildAsUnstable(
+                    "version " + version + " or later of plugin '" + pluginShortName + "' needs to be installed",
+                    failIfMissing
+            );
         } else if (plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version))) {
-            markBuildAsUnstable("plugin '" + pluginShortName + "' needs to be updated to version " + version + " or later");
+            failOrMarkBuildAsUnstable(
+                    "plugin '" + pluginShortName + "' needs to be updated to version " + version + " or later",
+                    failIfMissing
+            );
         }
     }
 
     @Override
     public void requireMinimumCoreVersion(String version) {
         if (Jenkins.getVersion().isOlderThan(new VersionNumber(version))) {
-            markBuildAsUnstable("Jenkins needs to be updated to version " + version + " or later");
+            failOrMarkBuildAsUnstable("Jenkins needs to be updated to version " + version + " or later", false);
         }
     }
 
@@ -411,9 +427,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    private void markBuildAsUnstable(String message) {
-        logWarning(message);
-        build.setResult(UNSTABLE);
+    private void failOrMarkBuildAsUnstable(String message, boolean fail) {
+        if (fail) {
+            throw new DslScriptException(message);
+        } else {
+            logWarning(message);
+            build.setResult(UNSTABLE);
+        }
     }
 
     private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation) throws IOException, InterruptedException {
