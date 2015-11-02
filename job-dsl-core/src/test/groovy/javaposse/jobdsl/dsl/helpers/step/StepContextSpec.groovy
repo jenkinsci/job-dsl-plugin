@@ -156,6 +156,7 @@ class StepContextSpec extends Specification {
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
+            children().size() == 10
             tasks[0].value() == ''
             switches[0].value() == ''
             useWrapper[0].value() == true
@@ -176,6 +177,7 @@ class StepContextSpec extends Specification {
         then:
         context.stepNodes.size() == 2
         with(context.stepNodes[1]) {
+            children().size() == 10
             tasks[0].value() == ''
             switches[0].value() == ''
             useWrapper[0].value() == true
@@ -210,6 +212,7 @@ class StepContextSpec extends Specification {
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
+            children().size() == 10
             tasks[0].value() == 'clean build'
             switches[0].value() == '--info --stacktrace'
             useWrapper[0].value() == false
@@ -222,6 +225,45 @@ class StepContextSpec extends Specification {
             useWorkspaceAsHome[0].value() == true
         }
         1 * jobManagement.requirePlugin('gradle')
+        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
+        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.23')
+    }
+
+    def 'call gradle with old plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('gradle') >> new VersionNumber('1.22')
+
+        when:
+        context.gradle {
+            tasks 'clean'
+            tasks 'build'
+            switches '--info'
+            switches '--stacktrace'
+            useWrapper false
+            description 'desc'
+            rootBuildScriptDir 'rbsd'
+            buildFile 'bf'
+            gradleName 'gn'
+            fromRootBuildScriptDir true
+            makeExecutable true
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 9
+            tasks[0].value() == 'clean build'
+            switches[0].value() == '--info --stacktrace'
+            useWrapper[0].value() == false
+            description[0].value() == 'desc'
+            rootBuildScriptDir[0].value() == 'rbsd'
+            buildFile[0].value() == 'bf'
+            gradleName[0].value() == 'gn'
+            fromRootBuildScriptDir[0].value() == true
+            makeExecutable[0].value() == true
+        }
+        1 * jobManagement.requirePlugin('gradle')
+        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.23')
     }
 
     def 'call grails methods'() {

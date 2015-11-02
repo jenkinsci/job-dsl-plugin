@@ -1,3 +1,11 @@
+## Migrating to 1.40
+
+### Gradle
+
+Support for versions older than 1.23 of the
+[Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
 ## Migrating to 1.39
 
 ### MultiJob

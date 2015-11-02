@@ -102,7 +102,9 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'gradle')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
-        GradleContext gradleContext = new GradleContext()
+        jobManagement.logPluginDeprecationWarning('gradle', '1.23')
+
+        GradleContext gradleContext = new GradleContext(jobManagement)
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
         Node gradleNode = new NodeBuilder().'hudson.plugins.gradle.Gradle' {
@@ -115,7 +117,9 @@ class StepContext extends AbstractExtensibleContext {
             useWrapper gradleContext.useWrapper
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
-            useWorkspaceAsHome gradleContext.useWorkspaceAsHome
+            if (!jobManagement.getPluginVersion('gradle')?.isOlderThan(new VersionNumber('1.23'))) {
+                useWorkspaceAsHome gradleContext.useWorkspaceAsHome
+            }
         }
 
         if (gradleContext.configureBlock) {
