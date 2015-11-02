@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.JobManagement
 class ArchiveArtifactsContext extends AbstractContext {
     final List<String> patterns = []
     String excludes
-    boolean latestOnly
     boolean allowEmpty
     boolean fingerprint
     boolean onlyIfSuccessful
@@ -28,15 +27,6 @@ class ArchiveArtifactsContext extends AbstractContext {
      */
     void exclude(String glob) {
         excludes = glob
-    }
-
-    /**
-     * Keeps artifacts for the latest build only.
-     */
-    @Deprecated
-    void latestOnly(boolean latestOnly = true) {
-        jobManagement.logDeprecationWarning()
-        this.latestOnly = latestOnly
     }
 
     /**

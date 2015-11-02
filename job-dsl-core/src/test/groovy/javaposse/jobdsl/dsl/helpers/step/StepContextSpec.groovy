@@ -854,52 +854,12 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('groovy')
     }
 
-    def 'call minimal deprecated copyArtifacts'() {
+    def 'call copyArtifacts selector variants'() {
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            upstreamBuild()
-        }
-
-        then:
-        (1.._) * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
-        1 * jobManagement.logDeprecationWarning()
-        context.stepNodes.size() == 1
-        def copyEmptyNode = context.stepNodes[0]
-        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
-        copyEmptyNode.flatten.size() == 0
-        copyEmptyNode.optional.size() == 0
-        copyEmptyNode.filter[0].value() == '**/*.xml'
-        copyEmptyNode.target[0] != null
-        copyEmptyNode.target[0].value() == ''
-        Node selectorNode = copyEmptyNode.selector[0]
-        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
-        selectorNode.children().size() == 0
-    }
-
-    def 'call deprecated copyArtifacts all args'() {
-        when:
-        context.copyArtifacts('upstream', '**/*.xml', 'target/', true, true) {
-            upstreamBuild(true)
-        }
-
-        then:
-        (1.._) * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
-        1 * jobManagement.logDeprecationWarning()
-        context.stepNodes.size() == 1
-        def copyEmptyNode = context.stepNodes[0]
-        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
-        copyEmptyNode.flatten[0].value() == true
-        copyEmptyNode.optional[0].value() == true
-        copyEmptyNode.target[0].value() == 'target/'
-        Node selectorNode = copyEmptyNode.selector[0]
-        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
-        selectorNode.fallbackToLastSuccessful[0].value() == true
-    }
-
-    def 'call deprecated copyArtifacts selector variants'() {
-        when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            latestSuccessful()
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                latestSuccessful()
+            }
         }
 
         then:
@@ -908,8 +868,10 @@ class StepContextSpec extends Specification {
         selectorNode.children().size() == 0
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            latestSaved()
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                latestSaved()
+            }
         }
 
         then:
@@ -918,8 +880,10 @@ class StepContextSpec extends Specification {
         selectorNode2.children().size() == 0
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            permalink('lastBuild')
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                permalink('lastBuild')
+            }
         }
 
         then:
@@ -928,8 +892,10 @@ class StepContextSpec extends Specification {
         selectorNode3.id[0].value() == 'lastBuild'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            buildNumber(43)
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                buildNumber(43)
+            }
         }
 
         then:
@@ -938,8 +904,10 @@ class StepContextSpec extends Specification {
         selectorNode4.buildNumber[0].value() == '43'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            workspace()
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                workspace()
+            }
         }
 
         then:
@@ -948,8 +916,10 @@ class StepContextSpec extends Specification {
         selectorNode5.children().size() == 0
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            buildParameter('BUILD_PARAM')
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                buildParameter('BUILD_PARAM')
+            }
         }
 
         then:
@@ -958,8 +928,10 @@ class StepContextSpec extends Specification {
         selectorNode6.parameterName[0].value() == 'BUILD_PARAM'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            buildNumber('$SOME_PARAMTER')
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                buildNumber('$SOME_PARAMTER')
+            }
         }
 
         then:
@@ -968,8 +940,10 @@ class StepContextSpec extends Specification {
         selectorNode7.buildNumber[0].value() == '$SOME_PARAMTER'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            latestSuccessful(true)
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                latestSuccessful(true)
+            }
         }
 
         then:
@@ -979,8 +953,10 @@ class StepContextSpec extends Specification {
         selectorNode8.stable[0].value() == true
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            multiJobBuild()
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                multiJobBuild()
+            }
         }
 
         then:
@@ -991,17 +967,14 @@ class StepContextSpec extends Specification {
     }
 
     def 'call minimal copyArtifacts'() {
-        setup:
-        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.26')
-
         when:
         context.copyArtifacts('upstream')
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 4
+            children().size() == 5
             project[0].value() == 'upstream'
             filter[0].value() == ''
             target[0].value() == ''
@@ -1009,13 +982,11 @@ class StepContextSpec extends Specification {
                 attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
                 children().size() == 0
             }
+            doNotFingerprintArtifacts[0].value() == false
         }
     }
 
     def 'call copyArtifacts all options'() {
-        setup:
-        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.29')
-
         when:
         context.copyArtifacts('upstream') {
             includePatterns('*.xml', '*.txt')
@@ -1030,8 +1001,6 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.29')
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
@@ -1051,9 +1020,6 @@ class StepContextSpec extends Specification {
     }
 
     def 'call copyArtifacts all options no fingerprint'() {
-        setup:
-        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.31')
-
         when:
         context.copyArtifacts('upstream') {
             includePatterns('*.xml', '*.txt')
@@ -1067,7 +1033,6 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'

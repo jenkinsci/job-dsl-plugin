@@ -487,61 +487,11 @@ class StepContext extends AbstractExtensibleContext {
 
     /**
      * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
-    }
-
-    /**
-     * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob, String targetPath,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
-    }
-
-    /**
-     * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
-    }
-
-    /**
-     * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                       boolean optionalAllowed,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        jobManagement.logDeprecationWarning()
-        copyArtifacts(jobName) {
-            delegate.includePatterns(includeGlob)
-            delegate.targetDirectory(targetPath)
-            delegate.flatten(flattenFiles)
-            delegate.optional(optionalAllowed)
-            delegate.buildSelector(copyArtifactClosure)
-        }
-    }
-
-    /**
-     * Copies artifacts from another project.
      *
      * @since 1.33
      */
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.31')
     void copyArtifacts(String jobName, @DslContext(CopyArtifactContext) Closure copyArtifactClosure = null) {
-        jobManagement.logPluginDeprecationWarning('copyartifact', '1.31')
-
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement)
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
@@ -558,9 +508,7 @@ class StepContext extends AbstractExtensibleContext {
             if (copyArtifactContext.optional) {
                 optional(true)
             }
-            if (!jobManagement.getPluginVersion('copyartifact')?.isOlderThan(new VersionNumber('1.29'))) {
-                doNotFingerprintArtifacts(!copyArtifactContext.fingerprint)
-            }
+            doNotFingerprintArtifacts(!copyArtifactContext.fingerprint)
         }
         copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode
