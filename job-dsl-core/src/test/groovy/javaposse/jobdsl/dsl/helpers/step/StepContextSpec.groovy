@@ -2108,6 +2108,28 @@ class StepContextSpec extends Specification {
         runnerName << ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
     }
 
+    def 'call conditional steps without runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            steps {
+                shell('look at me')
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            children().size() == 3
+            name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+            runCondition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+            runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+            conditionalbuilders[0].children().size() == 1
+        }
+        1 * jobManagement.requirePlugin('conditional-buildstep')
+    }
+
     def 'call conditional steps with unknown runner'() {
         when:
         context.conditionalSteps {
