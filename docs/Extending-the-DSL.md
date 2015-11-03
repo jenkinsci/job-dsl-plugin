@@ -234,6 +234,9 @@ Instances of `ContextExtensionPoint` must be thread-safe. Each subclass will be 
 all seed jobs. Since multiple seed jobs can run in parallel, any `@DslExtensionMethod` and the listener methods can be
 called in parallel.
 
+To debug problems with Job DSL extensions, set the logger for `javaposse.jobdsl` to level `FINE`. The Jenkins log
+configuration can be changed at Manage Jenkins > System Log, e.g. by adding a new log recorder for `javaposse.jobdsl`.
+
 The following plugins implement the extension point and serve as examples:
 
 * [JGiven Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JGiven+Plugin)

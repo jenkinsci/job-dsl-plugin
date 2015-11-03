@@ -407,7 +407,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             Object result = Iterables.getOnlyElement(candidates).call(getSession(item), args);
             return result == null ? NO_VALUE : new XmlParser().parseText(Items.XSTREAM2.toXML(result));
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE,"Error calling extension", e);
             throw new RuntimeException("Error calling extension", e);
         }
     }
