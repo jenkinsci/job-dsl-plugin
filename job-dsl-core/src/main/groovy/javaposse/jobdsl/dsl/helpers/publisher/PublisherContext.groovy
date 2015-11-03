@@ -334,6 +334,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'htmlpublisher')
     void publishHtml(@DslContext(HtmlReportContext) Closure htmlReportContext) {
+        jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
+
         HtmlReportContext reportContext = new HtmlReportContext(jobManagement)
         ContextHelper.executeInContext(htmlReportContext, reportContext)
 
@@ -351,7 +353,9 @@ class PublisherContext extends AbstractExtensibleContext {
                         if (!jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.4'))) {
                             alwaysLinkToLastBuild(target.alwaysLinkToLastBuild)
                         }
-                        wrapperName('htmlpublisher-wrapper.html')
+                        if (jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.5'))) {
+                            wrapperName('htmlpublisher-wrapper.html')
+                        }
                     }
                 }
             }
