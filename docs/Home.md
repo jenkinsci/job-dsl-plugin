@@ -44,6 +44,8 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added workaround for [JENKINS-31366](https://issues.jenkins-ci.org/browse/JENKINS-31366)
  * Added support for the [SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+plugin)
    ([JENKINS-30957](https://issues.jenkins-ci.org/browse/JENKINS-30957))
+ * Set default runner for `conditionalSteps`
+   ([JENKINS-31373](https://issues.jenkins-ci.org/browse/JENKINS-31373))
  * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)  
    ([JENKINS-31264](https://issues.jenkins-ci.org/browse/JENKINS-31264))
  * Support for older versions of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is
