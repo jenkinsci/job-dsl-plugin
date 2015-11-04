@@ -16,11 +16,15 @@ class CopyArtifactSelectorContext extends AbstractContext {
      * Selects the upstream build that triggered this job.
      *
      * @param fallback Use "Last successful build" as fallback
+     * @param allowUpstream Allow upstream build whose artifacts feed into this build
      */
-    void upstreamBuild(boolean fallback = false) {
+    void upstreamBuild(boolean fallback = false, boolean allowUpstream = false) {
         createSelectorNode('TriggeredBuild') {
             if (fallback) {
                 fallbackToLastSuccessful(true)
+            }
+            if (allowUpstream) {
+                allowUpstreamDependencies(true)
             }
         }
     }
