@@ -575,7 +575,6 @@ class PublisherContextSpec extends Specification {
 
     def 'call jacoco code coverage with no args'() {
         when:
-
         context.jacocoCodeCoverage()
 
         then:
@@ -589,7 +588,6 @@ class PublisherContextSpec extends Specification {
 
     def 'call jacoco code coverage with closure, set changeBuildStatus'(change) {
         when:
-
         context.jacocoCodeCoverage {
             changeBuildStatus(change)
         }
@@ -599,6 +597,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.changeBuildStatus[0].value() == change ? 'true' : 'false'
         1 * jobManagement.requirePlugin('jacoco')
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.13')
 
         where:
         change << [true, false]
@@ -606,7 +605,6 @@ class PublisherContextSpec extends Specification {
 
     def 'call jacoco code coverage with closure, changeBuildStatus with no args defaults to true'() {
         when:
-
         context.jacocoCodeCoverage {
             changeBuildStatus()
         }
@@ -618,6 +616,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.minimumInstructionCoverage[0].value() == '0'
         jacocoNode.changeBuildStatus[0].value() == true
         1 * jobManagement.requirePlugin('jacoco')
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.13')
     }
 
     def 'call jacoco code coverage with all args'() {
@@ -665,6 +664,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.maximumClassCoverage[0].value() == '12'
         jacocoNode.changeBuildStatus[0].value() == true
         1 * jobManagement.requirePlugin('jacoco')
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.13')
     }
 
     def 'calling minimal html publisher closure'() {
