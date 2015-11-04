@@ -31,6 +31,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-30544](https://issues.jenkins-ci.org/browse/JENKINS-30544))
  * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
    ([JENKINS-30760](https://issues.jenkins-ci.org/browse/JENKINS-30760))
+ * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+   ([JENKINS-31387](https://issues.jenkins-ci.org/browse/JENKINS-31387))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([#645](https://github.com/jenkinsci/job-dsl-plugin/pull/645))
  * Enhanced support for the

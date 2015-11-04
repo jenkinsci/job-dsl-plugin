@@ -1013,8 +1013,39 @@ class StepContextSpec extends Specification {
             target[0].value() == 'target/'
             doNotFingerprintArtifacts[0].value() == true
             with(selector[0]) {
+                children().size() == 1
                 attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
                 fallbackToLastSuccessful[0].value() == true
+            }
+        }
+    }
+
+    def 'call copyArtifacts with upstreamBuild closure'() {
+        when:
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                upstreamBuild {
+                    fallbackToLastSuccessful()
+                    allowUpstreamDependencies()
+                }
+            }
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.37')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.copyartifact.CopyArtifact'
+            children().size() == 5
+            project[0].value() == 'upstream'
+            filter[0].value() == ''
+            target[0].value() == ''
+            doNotFingerprintArtifacts[0].value() == false
+            with(selector[0]) {
+                children().size() == 2
+                attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+                fallbackToLastSuccessful[0].value() == true
+                allowUpstreamDependencies[0].value() == true
             }
         }
     }
@@ -1045,6 +1076,7 @@ class StepContextSpec extends Specification {
             target[0].value() == 'target/'
             doNotFingerprintArtifacts[0].value() == false
             with(selector[0]) {
+                children().size() == 1
                 attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
                 fallbackToLastSuccessful[0].value() == true
             }
