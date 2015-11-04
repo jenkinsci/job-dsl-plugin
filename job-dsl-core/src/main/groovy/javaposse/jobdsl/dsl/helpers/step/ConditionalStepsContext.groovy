@@ -11,7 +11,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class ConditionalStepsContext extends AbstractContext {
     RunCondition runCondition
-    String runnerClass
+    String runnerClass = EvaluationRunners.Fail.longForm
     final StepContext stepContext
 
     ConditionalStepsContext(JobManagement jobManagement, StepContext stepContext) {
@@ -39,7 +39,7 @@ class ConditionalStepsContext extends AbstractContext {
 
     /**
      * Specifies the action to take if the evaluation of a run condition fails. Must be one of {@code 'Fail'},
-     * {@code 'Unstable'}, {@code 'RunUnstable'}, {@code 'Run'} or {@code 'DontRun'}.
+     * {@code 'Unstable'}, {@code 'RunUnstable'}, {@code 'Run'} or {@code 'DontRun'}. Defaults to {@code 'Fail'}.
      */
     void runner(String runnerName) {
         checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")

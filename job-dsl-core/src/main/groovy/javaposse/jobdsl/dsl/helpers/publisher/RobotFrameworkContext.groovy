@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class RobotFrameworkContext extends AbstractContext {
     double passThreshold = 100.0
@@ -83,7 +82,6 @@ class RobotFrameworkContext extends AbstractContext {
      *
      * @since 1.33
      */
-    @RequiresPlugin(id = 'robot', minimumVersion = '1.4.3')
     void disableArchiveOutput(boolean disableArchiveOutput = true) {
         this.disableArchiveOutput = disableArchiveOutput
     }
@@ -93,7 +91,6 @@ class RobotFrameworkContext extends AbstractContext {
      *
      * @since 1.33
      */
-    @RequiresPlugin(id = 'robot', minimumVersion = '1.2.1')
     void otherFiles(String... files) {
         for (String file : files) {
             Preconditions.checkNotNull(file, 'file cannot be null')

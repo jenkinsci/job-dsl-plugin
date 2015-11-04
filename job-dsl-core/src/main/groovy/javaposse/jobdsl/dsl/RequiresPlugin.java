@@ -27,4 +27,11 @@ public @interface RequiresPlugin {
      * The least acceptable version of the required plugin. Optional, any version will be accepted if none is given.
      */
     String minimumVersion() default "";
+
+    /**
+     * Aborts DSL processing when the plugin is not installed or must be updated.
+     *
+     * @since 1.40
+     */
+    boolean failIfMissing() default false;
 }

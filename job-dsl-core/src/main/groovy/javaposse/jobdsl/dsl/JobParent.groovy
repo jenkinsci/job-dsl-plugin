@@ -213,11 +213,20 @@ abstract class JobParent extends Script implements DslFactory {
         processConfigFile(name, ConfigFileType.GlobalMavenSettings, closure)
     }
 
+    /**
+     * @since 1.40
+     */
+    ParametrizedConfigFile managedScriptConfigFile(String name,
+                                                   @DslContext(ParametrizedConfigFile) Closure closure = null) {
+        processConfigFile(name, ConfigFileType.ManagedScript, ParametrizedConfigFile, closure)
+    }
+
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
-    protected ConfigFile processConfigFile(String name, ConfigFileType configFileType, Closure closure) {
+    protected <T extends ConfigFile> T processConfigFile(String name, ConfigFileType configFileType,
+                                                         Class<T> type = ConfigFile, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
 
-        ConfigFile configFile = new ConfigFile(configFileType, jm)
+        T configFile = type.newInstance(configFileType, jm)
         configFile.name = name
         if (closure) {
             configFile.with(closure)
