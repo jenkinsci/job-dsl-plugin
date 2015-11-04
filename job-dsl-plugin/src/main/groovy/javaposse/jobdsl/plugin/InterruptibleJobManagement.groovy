@@ -126,8 +126,18 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
+    void requirePlugin(String pluginShortName, boolean failIfMissing) {
+        delegate.requirePlugin(pluginShortName, failIfMissing)
+    }
+
+    @Override
     void requireMinimumPluginVersion(String pluginShortName, String version) {
         delegate.requireMinimumPluginVersion(pluginShortName, version)
+    }
+
+    @Override
+    void requireMinimumPluginVersion(String pluginShortName, String version, boolean failIfMissing) {
+        delegate.requireMinimumPluginVersion(pluginShortName, version, failIfMissing)
     }
 
     @Override

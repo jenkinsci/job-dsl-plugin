@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -102,7 +103,9 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'gradle')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
-        GradleContext gradleContext = new GradleContext()
+        jobManagement.logPluginDeprecationWarning('gradle', '1.23')
+
+        GradleContext gradleContext = new GradleContext(jobManagement)
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
         Node gradleNode = new NodeBuilder().'hudson.plugins.gradle.Gradle' {
@@ -115,6 +118,9 @@ class StepContext extends AbstractExtensibleContext {
             useWrapper gradleContext.useWrapper
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
+            if (!jobManagement.getPluginVersion('gradle')?.isOlderThan(new VersionNumber('1.23'))) {
+                useWorkspaceAsHome gradleContext.useWorkspaceAsHome
+            }
         }
 
         if (gradleContext.configureBlock) {
@@ -482,61 +488,11 @@ class StepContext extends AbstractExtensibleContext {
 
     /**
      * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        copyArtifacts(jobName, includeGlob, '', copyArtifactClosure)
-    }
-
-    /**
-     * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob, String targetPath,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        copyArtifacts(jobName, includeGlob, targetPath, false, copyArtifactClosure)
-    }
-
-    /**
-     * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        copyArtifacts(jobName, includeGlob, targetPath, flattenFiles, false, copyArtifactClosure)
-    }
-
-    /**
-     * Copies artifacts from another project.
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
-    void copyArtifacts(String jobName, String includeGlob, String targetPath = '', boolean flattenFiles,
-                       boolean optionalAllowed,
-                       @DslContext(CopyArtifactSelectorContext) Closure copyArtifactClosure) {
-        jobManagement.logDeprecationWarning()
-        copyArtifacts(jobName) {
-            delegate.includePatterns(includeGlob)
-            delegate.targetDirectory(targetPath)
-            delegate.flatten(flattenFiles)
-            delegate.optional(optionalAllowed)
-            delegate.buildSelector(copyArtifactClosure)
-        }
-    }
-
-    /**
-     * Copies artifacts from another project.
      *
      * @since 1.33
      */
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.26')
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.31')
     void copyArtifacts(String jobName, @DslContext(CopyArtifactContext) Closure copyArtifactClosure = null) {
-        jobManagement.logPluginDeprecationWarning('copyartifact', '1.31')
-
         CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement)
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
@@ -553,9 +509,7 @@ class StepContext extends AbstractExtensibleContext {
             if (copyArtifactContext.optional) {
                 optional(true)
             }
-            if (!jobManagement.getPluginVersion('copyartifact')?.isOlderThan(new VersionNumber('1.29'))) {
-                doNotFingerprintArtifacts(!copyArtifactContext.fingerprint)
-            }
+            doNotFingerprintArtifacts(!copyArtifactContext.fingerprint)
         }
         copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode
@@ -1045,6 +999,30 @@ class StepContext extends AbstractExtensibleContext {
                 }
                 failNoFilesDeploy(context.failIfNoFiles)
             }
+        }
+    }
+
+    /**
+     * Executes a centrally managed script.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'managed-scripts', minimumVersion = '1.2.1')
+    void managedScript(String scriptName, @DslContext(ManagedScriptContext) Closure closure = null) {
+        String scriptId = jobManagement.getConfigFileId(ConfigFileType.ManagedScript, scriptName)
+        Preconditions.checkNotNull(scriptId, "managed script with name '${scriptName}' not found")
+
+        ManagedScriptContext context = new ManagedScriptContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.managedscripts.ScriptBuildStep' {
+            buildStepId(scriptId)
+            buildStepArgs {
+                context.arguments.each {
+                    string(it)
+                }
+            }
+            tokenized(context.tokenized)
         }
     }
 

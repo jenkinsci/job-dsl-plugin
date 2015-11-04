@@ -296,6 +296,34 @@ class JobParentSpec extends Specification {
         1 * jobManagement.requirePlugin('config-file-provider')
     }
 
+    def 'managed script config file'() {
+        when:
+        ParametrizedConfigFile configFile = parent.managedScriptConfigFile('test') {
+            comment('foo')
+            arguments('bar')
+        }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.ManagedScript
+        configFile.comment == 'foo'
+        configFile.arguments == ['bar']
+        parent.referencedConfigFiles.contains(configFile)
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
+    }
+
+    def 'managed script config file without closure'() {
+        when:
+        ParametrizedConfigFile configFile = parent.managedScriptConfigFile('test')
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.ManagedScript
+        configFile.arguments == []
+        parent.referencedConfigFiles.contains(configFile)
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
+    }
+
     def 'readFileInWorkspace from seed job'() {
         jobManagement.readFileInWorkspace('foo.txt') >> 'hello'
 

@@ -39,32 +39,11 @@ class ScmContext extends AbstractExtensibleContext {
     /**
      * Adds a Mercurial SCM source.
      */
-    @RequiresPlugin(id = 'mercurial')
+    @RequiresPlugin(id = 'mercurial', minimumVersion = '1.50.1')
     void hg(String url, String branch = null, Closure configure = null) {
-        jobManagement.logPluginDeprecationWarning('mercurial', '1.50.1')
-
-        if (jobManagement.getPluginVersion('mercurial')?.isOlderThan(new VersionNumber('1.50.1'))) {
-            checkNotNull(url, 'url must not be null')
-
-            Node scmNode = new NodeBuilder().scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
-                source url
-                modules ''
-                clean false
-            }
-            scmNode.appendNode('branch', branch ?: '')
-
-            // Apply Context
-            if (configure) {
-                WithXmlAction action = new WithXmlAction(configure)
-                action.execute(scmNode)
-            }
-
-            scmNodes << scmNode
-        } else {
-            hg(url) {
-                delegate.branch(branch)
-                delegate.configure(configure)
-            }
+        hg(url) {
+            delegate.branch(branch)
+            delegate.configure(configure)
         }
     }
 
