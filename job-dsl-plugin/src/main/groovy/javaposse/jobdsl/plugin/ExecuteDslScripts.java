@@ -21,6 +21,7 @@ import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
+import javaposse.jobdsl.dsl.DslScriptException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;
@@ -239,7 +240,10 @@ public class ExecuteDslScripts extends Builder {
             } finally {
                 generator.close();
             }
-        } catch (DslException e) {
+        } catch (RuntimeException e) {
+            if (!(e instanceof DslException)) {
+                e.printStackTrace(listener.getLogger());
+            }
             LOGGER.log(Level.FINE, String.format("Exception while processing DSL scripts: %s", e.getMessage()), e);
             throw new AbortException(e.getMessage());
         }
