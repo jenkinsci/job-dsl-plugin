@@ -268,5 +268,6 @@ interface JobManagement {
      *         node or {@code null} if no extension has been found
      * @since 1.33
      */
-    Node callExtension(String name, Item item, Class<? extends ExtensibleContext> contextType, Object... args)
+    Node callExtension(String name, Item item, Class<? extends ExtensibleContext> contextType,
+                       Object... args) throws Throwable
 }
