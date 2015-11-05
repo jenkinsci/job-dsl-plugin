@@ -55,6 +55,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -403,7 +404,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public Node callExtension(String name, javaposse.jobdsl.dsl.Item item,
-                              Class<? extends ExtensibleContext> contextType, Object... args) {
+                              Class<? extends ExtensibleContext> contextType, Object... args) throws Throwable {
         Set<ExtensionPointMethod> candidates = ExtensionPointHelper.findExtensionPoints(name, contextType, args);
         if (candidates.isEmpty()) {
             LOGGER.fine(
@@ -422,8 +423,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             Object result = Iterables.getOnlyElement(candidates).call(getSession(item), args);
             return result == null ? NO_VALUE : new XmlParser().parseText(Items.XSTREAM2.toXML(result));
-        } catch (Exception e) {
-            throw new RuntimeException("Error calling extension", e);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
         }
     }
 
