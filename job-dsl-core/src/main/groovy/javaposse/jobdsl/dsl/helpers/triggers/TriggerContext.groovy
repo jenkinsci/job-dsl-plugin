@@ -169,6 +169,13 @@ class TriggerContext extends AbstractExtensibleContext {
             if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
                 extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
             }
+            // If ghprb is version 1.29, we can use regex in the trigger phrase.  If the configVersion is
+            // less than 3, then the phrase would be quoted automatically.
+            // To avoid issues with users depending on the quoted version, regexTriggerPhrase
+            // is used to indicate an unquoted triggerPhrase, while triggerPhrase is automatically quoted.
+            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.27'))) {
+                configVersion '3'
+            }
         }
     }
 

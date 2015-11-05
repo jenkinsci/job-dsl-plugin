@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
+import hudson.util.VersionNumber
+
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -91,8 +93,23 @@ class PullRequestBuilderContext extends AbstractContext {
 
     /**
      * When filled, commenting this phrase in the pull request will trigger a build.
+     * This string is exactly matched against the comment
      */
     void triggerPhrase(String triggerPhrase) {
+        // Quote the phrase if plugin version is new enough
+        if (this.jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.27'))) {
+            this.triggerPhrase = triggerPhrase
+        } else {
+            this.triggerPhrase = "\\Q${triggerPhrase}\\E"
+        }
+    }
+
+    /**
+     * When filled, commenting this phrase in the pull request will trigger a build.
+     * This string is matched using regex against the comment
+     */
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.27')
+    void regexTriggerPhrase(String triggerPhrase) {
         this.triggerPhrase = triggerPhrase
     }
 
