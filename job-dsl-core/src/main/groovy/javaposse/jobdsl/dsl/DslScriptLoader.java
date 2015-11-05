@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
 import groovy.util.ResourceException;
@@ -71,15 +72,11 @@ public class DslScriptLoader {
 
                     binding.setVariable("jobFactory", jp);
 
-                    try {
-                        script.run();
-                    } catch (DslScriptException e) {
-                        throw e;
-                    } catch (RuntimeException e) {
-                        throw new DslScriptException(e.getMessage(), e);
-                    }
+                    script.run();
                 } catch (CompilationFailedException e) {
                     throw new DslException(e.getMessage(), e);
+                } catch (GroovyRuntimeException e) {
+                    throw new DslScriptException(e.getMessage(), e);
                 } catch (ResourceException e) {
                     throw new IOException("Unable to run script", e);
                 } catch (ScriptException e) {
