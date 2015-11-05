@@ -12,11 +12,6 @@ Lightbox
 status
 etag
 lastModified
-Fail
-Unstable
-RunUnstable
-Run
-DontRun
 DoNothing
 MarkUnstable
 MarkFailed
