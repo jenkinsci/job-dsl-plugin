@@ -1024,8 +1024,8 @@ class WrapperContextSpec extends Specification {
             webDriverBrowsers('foo', 'bar')
             appiumBrowsers('larry', 'curly', 'moe')
         }
-        then:
 
+        then:
         context.wrapperNodes?.size == 1
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
@@ -1069,10 +1069,9 @@ class WrapperContextSpec extends Specification {
             launchSauceConnectOnSlave(true)
             options('options')
             verboseLogging(true)
-
         }
-        then:
 
+        then:
         context.wrapperNodes?.size == 1
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'

@@ -18,7 +18,6 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
 ## Release Notes
-
 * 1.40 (unreleased)
  * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  
  * Increased the minimum supported Jenkins version to 1.609
@@ -45,7 +44,6 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
  * Added support for the [SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+plugin)
    ([JENKINS-30957](https://issues.jenkins-ci.org/browse/JENKINS-30957))
 * 1.39 (October 05 2015)
->>>>>>> 2838648a1ae24b46d50f9e35a5af9d6f21eb543c
  * Increased the minimum supported Jenkins version to 1.596
  * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
  * Added support for the [CloudBees Docker Build and Publish

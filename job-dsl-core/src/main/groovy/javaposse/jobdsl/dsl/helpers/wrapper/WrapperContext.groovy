@@ -586,12 +586,12 @@ class WrapperContext extends AbstractExtensibleContext {
         node.append(context.selector)
         wrapperNodes << node
     }
+
     /**
      * Add support for SauceOnDemand plugin configuration
      *
      * @since 1.40
      */
-
     @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.140')
     void sauceOnDemandConfig(@DslContext(SauceOnDemandContext) Closure sauceOnDemandclosure) {
         SauceOnDemandContext context = new SauceOnDemandContext()
