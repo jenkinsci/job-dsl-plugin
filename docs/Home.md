@@ -39,6 +39,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
  * Fixed a problem with deprecation warnings
    ([JENKINS-30826](https://issues.jenkins-ci.org/browse/JENKINS-30826))
+ * Fixed a problem with the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
+   ([JENKINS-31427](https://issues.jenkins-ci.org/browse/JENKINS-31427))
  * Allow `@DslExtensionMethod` annotated methods to return `null` to not contribute to the job configuration
  * Allow `DownstreamTriggerParameterContext` to be extended
    ([JENKINS-31111](https://issues.jenkins-ci.org/browse/JENKINS-31111))
