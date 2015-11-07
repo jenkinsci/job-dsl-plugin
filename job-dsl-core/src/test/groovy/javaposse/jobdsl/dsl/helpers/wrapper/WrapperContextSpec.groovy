@@ -1020,81 +1020,76 @@ class WrapperContextSpec extends Specification {
 
     def 'call sauce on demand with defaults'() {
         when:
-        context.sauceOnDemandConfig {
-            webDriverBrowsers('foo', 'bar')
-            appiumBrowsers('larry', 'curly', 'moe')
+        context.sauceOnDemand {
         }
 
         then:
-        context.wrapperNodes?.size == 1
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
+            children().size() == 15
             useGeneratedTunnelIdentifier[0].value() == false
             sendUsageData[0].value() == false
-            nativeAppPackage[0].value() == null
+            nativeAppPackage[0].value() == ''
             useChromeForAndroid[0].value() == false
             sauceConnectPath[0].value() == ''
-            enableSauceConnect[0].value() == true
+            enableSauceConnect[0].value() == false
             seleniumHost[0].value() == ''
             seleniumPort[0].value() == ''
-            webDriverBrowsers.'string'.any { br -> br.value() == 'foo' }
-            webDriverBrowsers.'string'.any { br -> br.value() == 'bar' }
-            webDriverBrowsers.'string'.size() == 2
-            appiumBrowsers.'string'.any { app -> app.value() == 'larry' }
-            appiumBrowsers.'string'.any { app -> app.value() == 'curly' }
-            appiumBrowsers.'string'.any { app -> app.value() == 'moe' }
-            appiumBrowsers.'string'.size() == 3
+            webDriverBrowsers[0].value().empty
+            appiumBrowsers[0].value().empty
             useLatestVersion[0].value() == false
             launchSauceConnectOnSlave[0].value() == false
             options[0].value() == ''
             verboseLogging[0].value() == false
-            condition[0].value() == []
+            condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
         }
     }
 
-    def 'call sauce on demand with values'() {
+    def 'call sauce on demand with all options'() {
         when:
-        context.sauceOnDemandConfig {
-            useGeneratedTunnelIdentifier(true)
-            sendUsageData(true)
+        context.sauceOnDemand {
+            useGeneratedTunnelIdentifier()
+            sendUsageData()
             nativeAppPackage('nativeAppPackage')
-            useChromeForAndroid(true)
             sauceConnectPath('sauceConnectPath')
-            enableSauceConnect(true)
+            enableSauceConnect()
             seleniumHost('seleniumHost')
             seleniumPort('seleniumPort')
             webDriverBrowsers('foo', 'bar')
-            appiumBrowsers('larry', 'curly', 'moe')
-            useLatestVersion(true)
-            launchSauceConnectOnSlave(true)
+            webDriverBrowsers('test')
+            appiumBrowsers('larry', 'curly')
+            appiumBrowsers('moe')
+            useLatestVersion()
+            launchSauceConnectOnSlave()
             options('options')
-            verboseLogging(true)
+            verboseLogging()
         }
 
         then:
-        context.wrapperNodes?.size == 1
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
+            children().size() == 15
             useGeneratedTunnelIdentifier[0].value() == true
             sendUsageData[0].value() == true
             nativeAppPackage[0].value() == 'nativeAppPackage'
-            useChromeForAndroid[0].value() == true
+            useChromeForAndroid[0].value() == false
             sauceConnectPath[0].value() == 'sauceConnectPath'
             enableSauceConnect[0].value() == true
             seleniumHost[0].value() == 'seleniumHost'
             seleniumPort[0].value() == 'seleniumPort'
-            webDriverBrowsers.'string'.any { br -> br.value() == 'foo' }
-            webDriverBrowsers.'string'.any { br -> br.value() == 'bar' }
-            webDriverBrowsers.'string'.size() == 2
-            appiumBrowsers.'string'.any { app -> app.value() == 'larry' }
-            appiumBrowsers.'string'.any { app -> app.value() == 'curly' }
-            appiumBrowsers.'string'.any { app -> app.value() == 'moe' }
-            appiumBrowsers.'string'.size() == 3
+            webDriverBrowsers[0].string.any { it.value() == 'foo' }
+            webDriverBrowsers[0].string.any { it.value() == 'bar' }
+            webDriverBrowsers[0].string.any { it.value() == 'test' }
+            webDriverBrowsers[0].string.size() == 3
+            appiumBrowsers[0].string.any { it.value() == 'larry' }
+            appiumBrowsers[0].string.any { it.value() == 'curly' }
+            appiumBrowsers[0].string.any { it.value() == 'moe' }
+            appiumBrowsers[0].string.size() == 3
             useLatestVersion[0].value() == true
             launchSauceConnectOnSlave[0].value() == true
             options[0].value() == 'options'
             verboseLogging[0].value() == true
-            condition[0].value() == []
+            condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
         }
     }
 

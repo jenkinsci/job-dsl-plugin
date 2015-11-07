@@ -22,6 +22,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 ## Release Notes
 * 1.40 (unreleased)
  * Increased the minimum supported Jenkins version to 1.609
+ * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  
  * Added support for the
    [Matrix Combinations Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Combinations+Plugin)
  * Added support for the [Managed Scripts Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Managed+Script+Plugin)
@@ -62,7 +63,6 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Removed anything that has been deprecated in 1.33, see [Migration](Migration#migrating-to-133)
  * Removed anything that has been deprecated in 1.34, see [Migration](Migration#migrating-to-134)
 * 1.39 (October 05 2015)
- * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  
  * Increased the minimum supported Jenkins version to 1.596
  * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
  * Added support for the [CloudBees Docker Build and Publish

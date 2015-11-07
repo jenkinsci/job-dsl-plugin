@@ -588,35 +588,34 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Add support for SauceOnDemand plugin configuration
+     * Integrates SauceLabs Selenium testing.
      *
-     * @since 1.39
+     * @since 1.40
      */
-    @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.140')
-    void sauceOnDemandConfig(@DslContext(SauceOnDemandContext) Closure sauceOnDemandclosure) {
+    @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.142')
+    void sauceOnDemand(@DslContext(SauceOnDemandContext) Closure closure) {
         SauceOnDemandContext context = new SauceOnDemandContext()
-        ContextHelper.executeInContext(sauceOnDemandclosure, context)
+        ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper' {
             useGeneratedTunnelIdentifier(context.useGeneratedTunnelIdentifier)
             sendUsageData(context.sendUsageData)
-            nativeAppPackage(context.nativeAppPackage)
-            useChromeForAndroid(context.useChromeForAndroid)
+            nativeAppPackage(context.nativeAppPackage ?: '')
+            useChromeForAndroid(false)
             sauceConnectPath(context.sauceConnectPath ?: '')
             enableSauceConnect(context.enableSauceConnect)
             seleniumHost(context.seleniumHost ?: '')
             seleniumPort(context.seleniumPort ?: '')
             webDriverBrowsers {
                 context.webDriverBrowsers.each { browserName ->
-                    'string'(browserName)
+                    string(browserName)
                 }
             }
             appiumBrowsers {
                 context.appiumBrowsers.each { browserName ->
-                    'string'(browserName)
+                    string(browserName)
                 }
             }
-
             useLatestVersion(context.useLatestVersion)
             launchSauceConnectOnSlave(context.launchSauceConnectOnSlave)
             options(context.options ?: '')
