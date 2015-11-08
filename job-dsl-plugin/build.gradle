@@ -52,11 +52,6 @@ clean {
     delete generatedSourcesDir
 }
 
-test {
-    // workaround for JENKINS-4409 to avoid leaking files into the system temp directory
-    systemProperty 'java.io.tmpdir', temporaryDir.absolutePath
-}
-
 dependencies {
     compile project(':job-dsl-core')
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
