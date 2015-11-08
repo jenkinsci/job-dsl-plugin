@@ -22,7 +22,7 @@ jenkinsPlugin {
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
-    compatibleSinceVersion = '1.39'
+    compatibleSinceVersion = '1.40'
     localizerOutputDir = "$generatedSourcesDir/localizer"
     developers {
         developer {
