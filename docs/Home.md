@@ -20,6 +20,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.41 (unreleased)
 * 1.40 (November 08 2015)
  * Increased the minimum supported Jenkins version to 1.609
  * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  
