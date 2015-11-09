@@ -2,7 +2,7 @@ Jenkins Job DSL / Plugin
 ========================
 
 The Jenkins "Job DSL / Plugin" is made up of two parts: The Domain Specific Language (DSL) itself that allows users to
-describe jobs using in a Groovy-based language, and a Jenkins plugin which manages the scripts and the updating of the
+describe jobs using a Groovy-based language, and a Jenkins plugin which manages the scripts and the updating of the
 Jenkins jobs which are created and maintained as a result.
 
 Background
