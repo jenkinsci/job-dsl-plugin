@@ -1,3 +1,11 @@
+## Migrating to 1.41
+
+### Folders
+
+Support for versions older than 5.0 of the
+[CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.40
 
 ### Gradle

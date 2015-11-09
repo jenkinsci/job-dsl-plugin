@@ -21,6 +21,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.41 (unreleased)
+ * Support for the older versions of the
+   [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-141)
 * 1.40 (November 08 2015)
  * Increased the minimum supported Jenkins version to 1.609
  * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  
