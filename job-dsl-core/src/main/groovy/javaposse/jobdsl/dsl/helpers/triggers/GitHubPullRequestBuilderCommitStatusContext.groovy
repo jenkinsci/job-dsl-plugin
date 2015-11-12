@@ -9,6 +9,7 @@ class GitHubPullRequestBuilderCommitStatusContext implements Context {
     String context
     String triggeredStatus
     String startedStatus
+    String statusUrl
     List<Node> completedStatus = []
 
     /**
@@ -30,6 +31,15 @@ class GitHubPullRequestBuilderCommitStatusContext implements Context {
      */
     void startedStatus(String startedStatus) {
         this.startedStatus = startedStatus
+    }
+
+    /**
+     * Use a custom URL instead of the job default.
+     *
+     * @since 1.40
+     */
+    void statusUrl(String statusUrl) {
+        this.statusUrl = statusUrl
     }
 
     /**

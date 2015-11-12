@@ -150,7 +150,7 @@ class JacocoContext extends AbstractContext {
     /**
      * If set, changes the build status according to the thresholds. Defaults to {@code false}.
      */
-    @RequiresPlugin(id = 'jacoco', minimumVersion = '10.0.13')
+    @RequiresPlugin(id = 'jacoco', minimumVersion = '1.0.13')
     void changeBuildStatus(boolean change = true) {
         this.changeBuildStatus = change
     }

@@ -1069,6 +1069,19 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString().trim() == 'lorem ipsum'
     }
 
+    def 'deprecation warning in DSL script'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(this.class.getResourceAsStream('deprecation.groovy').text))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.getLog(25).join('\n') =~ /Warning: \(script, line 4\) job is deprecated/
+    }
+
     private static final String SCRIPT = """job('test-job') {
 }"""
 

@@ -3,16 +3,20 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
 class PhaseContext extends AbstractContext {
+    protected final Item item
+
     String phaseName
     String continuationCondition
 
     List<PhaseJobContext> jobsInPhase = []
 
-    PhaseContext(JobManagement jobManagement, String phaseName, String continuationCondition) {
+    PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition) {
         super(jobManagement)
+        this.item = item
         this.phaseName = phaseName
         this.continuationCondition = continuationCondition
     }
@@ -56,7 +60,9 @@ class PhaseContext extends AbstractContext {
              @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
         jobManagement.logDeprecationWarning()
 
-        PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, jobName, currentJobParameters, exposedScm)
+        PhaseJobContext phaseJobContext = new PhaseJobContext(
+                jobManagement, item, jobName, currentJobParameters, exposedScm
+        )
         ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext
@@ -68,7 +74,7 @@ class PhaseContext extends AbstractContext {
      * @since 1.39
      */
     void phaseJob(String jobName, @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
-        PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, jobName)
+        PhaseJobContext phaseJobContext = new PhaseJobContext(jobManagement, item, jobName)
         ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext

@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
+import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
@@ -75,6 +76,25 @@ class BuildPipelineViewSpec extends Specification {
 
         then:
         Node root = view.node
+        root.children().size() == 15
+        root.selectedJob.size() == 1
+        root.selectedJob[0].text() == 'foo'
+        root.gridBuilder[0].attribute('class') ==
+                'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder'
+        root.gridBuilder[0].children().size() == 1
+        root.gridBuilder[0].firstJob[0].text() == 'foo'
+    }
+
+    def 'selectedJob with older plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('build-pipeline-plugin') >> new VersionNumber('1.3.3')
+
+        when:
+        view.selectedJob('foo')
+
+        then:
+        Node root = view.node
+        root.children().size() == 14
         root.selectedJob.size() == 1
         root.selectedJob[0].text() == 'foo'
     }

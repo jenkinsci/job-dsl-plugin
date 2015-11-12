@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -124,7 +123,6 @@ class PublisherContext extends AbstractExtensibleContext {
             if (artifactsContext.excludes) {
                 excludes(artifactsContext.excludes)
             }
-            latestOnly(artifactsContext.latestOnly)
             allowEmptyArchive(artifactsContext.allowEmpty)
             defaultExcludes(artifactsContext.defaultExcludes)
             delegate.fingerprint(artifactsContext.fingerprint)
@@ -139,20 +137,6 @@ class PublisherContext extends AbstractExtensibleContext {
         archiveArtifacts {
             pattern(glob)
             exclude(excludeGlob)
-        }
-    }
-
-    /**
-     * Archives artifacts with each build.
-     */
-    @Deprecated
-    void archiveArtifacts(String glob, String excludeGlob, boolean latestOnly) {
-        jobManagement.logDeprecationWarning()
-
-        archiveArtifacts {
-            pattern(glob)
-            exclude(excludeGlob)
-            delegate.latestOnly(latestOnly)
         }
     }
 
@@ -216,6 +200,27 @@ class PublisherContext extends AbstractExtensibleContext {
             extraConfiguration {
                 testTimeMargin xUnitContext.timeMargin
             }
+        }
+    }
+
+    /**
+     * Publishes TestNG test result reports.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'testng-plugin', minimumVersion = '1.10')
+    void archiveTestNG(String glob = '**/testng-results.xml',
+                       @DslContext(ArchiveTestNGContext) Closure testNGClosure = null) {
+        ArchiveTestNGContext testNGContext = new ArchiveTestNGContext(jobManagement)
+        ContextHelper.executeInContext(testNGClosure, testNGContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.testng.Publisher' {
+            reportFilenamePattern(glob)
+            escapeTestDescp(testNGContext.escapeTestDescription)
+            escapeExceptionMsg(testNGContext.escapeExceptionMessages)
+            showFailedBuilds(testNGContext.showFailedBuildsInTrendGraph)
+            unstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
+            failureOnFailedTestConfig(testNGContext.markBuildAsFailureOnFailedConfiguration)
         }
     }
 
@@ -329,6 +334,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'htmlpublisher')
     void publishHtml(@DslContext(HtmlReportContext) Closure htmlReportContext) {
+        jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
+
         HtmlReportContext reportContext = new HtmlReportContext(jobManagement)
         ContextHelper.executeInContext(htmlReportContext, reportContext)
 
@@ -346,7 +353,9 @@ class PublisherContext extends AbstractExtensibleContext {
                         if (!jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.4'))) {
                             alwaysLinkToLastBuild(target.alwaysLinkToLastBuild)
                         }
-                        wrapperName('htmlpublisher-wrapper.html')
+                        if (jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.5'))) {
+                            wrapperName('htmlpublisher-wrapper.html')
+                        }
                     }
                 }
             }
@@ -521,7 +530,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
-        DownstreamContext downstreamContext = new DownstreamContext(jobManagement)
+        DownstreamContext downstreamContext = new DownstreamContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.parameterizedtrigger.BuildTrigger' {
@@ -869,9 +878,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.21
      */
-    @RequiresPlugin(id = 'robot')
+    @RequiresPlugin(id = 'robot', minimumVersion = '1.4.3')
     void publishRobotFrameworkReports(@DslContext(RobotFrameworkContext) Closure robotClosure = null) {
-        jobManagement.logPluginDeprecationWarning('robot', '1.4.3')
 
         RobotFrameworkContext context = new RobotFrameworkContext(jobManagement)
         ContextHelper.executeInContext(robotClosure, context)
@@ -884,14 +892,10 @@ class PublisherContext extends AbstractExtensibleContext {
             reportFileName(context.reportFileName)
             logFileName(context.logFileName)
             outputFileName(context.outputFileName)
-            if (!jobManagement.getPluginVersion('robot')?.isOlderThan(new VersionNumber('1.4.3'))) {
-                disableArchiveOutput(context.disableArchiveOutput)
-            }
-            if (!jobManagement.getPluginVersion('robot')?.isOlderThan(new VersionNumber('1.2.1'))) {
-                otherFiles {
-                    context.otherFiles.each { String file ->
-                        string(file)
-                    }
+            disableArchiveOutput(context.disableArchiveOutput)
+            otherFiles {
+                context.otherFiles.each { String file ->
+                    string(file)
                 }
             }
         }
@@ -904,7 +908,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'build-pipeline-plugin')
     void buildPipelineTrigger(String downstreamProjectNames, @DslContext(BuildPipelineContext) Closure closure = null) {
-        BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement)
+        BuildPipelineContext buildPipelineContext = new BuildPipelineContext(jobManagement, item)
         ContextHelper.executeInContext(closure, buildPipelineContext)
 
         NodeBuilder nodeBuilder = new NodeBuilder()
@@ -1046,10 +1050,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.26
      */
-    @RequiresPlugin(id = 'flexible-publish')
+    @RequiresPlugin(id = 'flexible-publish', minimumVersion = '0.13')
     void flexiblePublish(@DslContext(FlexiblePublisherContext) Closure flexiblePublishClosure) {
-        jobManagement.logPluginDeprecationWarning('flexible-publish', '0.13')
-
         FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement, item)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
 
@@ -1061,14 +1063,7 @@ class PublisherContext extends AbstractExtensibleContext {
                     condition(class: context.condition.conditionClass) {
                         context.condition.addArgs(delegate)
                     }
-                    if (jobManagement.getPluginVersion('flexible-publish')?.isOlderThan(new VersionNumber('0.13'))) {
-                        publisher(
-                                class: new XmlFriendlyNameCoder().decodeAttribute(context.actions[0].name().toString()),
-                                context.actions[0].value()
-                        )
-                    } else {
-                        publisherList(context.actions)
-                    }
+                    publisherList(context.actions)
                     runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                 }
             }
@@ -1576,6 +1571,26 @@ class PublisherContext extends AbstractExtensibleContext {
 
         new NodeBuilder()."${publisherClassName}" {
             addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
+        }
+    }
+
+    /**
+     * Sends build status and coverage information to Pharbicator.
+     *
+     * @since 1.39
+     */
+    @RequiresPlugin(id = 'phabricator-plugin', minimumVersion = '1.8.1')
+    void phabricatorNotifier(@DslContext(PhabricatorNotifierContext) Closure phabricatorNotifierClosure = null) {
+        PhabricatorNotifierContext phabricatorNotifierContext = new PhabricatorNotifierContext()
+        ContextHelper.executeInContext(phabricatorNotifierClosure, phabricatorNotifierContext)
+
+        publisherNodes << new NodeBuilder().'com.uber.jenkins.phabricator.PhabricatorNotifier' {
+            commentOnSuccess(phabricatorNotifierContext.commentOnSuccess)
+            commentWithConsoleLinkOnFailure(phabricatorNotifierContext.commentWithConsoleLinkOnFailure)
+            commentFile(phabricatorNotifierContext.commentFile ?: '')
+            commentSize(phabricatorNotifierContext.commentSize)
+            preserveFormatting(phabricatorNotifierContext.preserveFormatting)
+            uberallsEnabled(phabricatorNotifierContext.enableUberalls)
         }
     }
 

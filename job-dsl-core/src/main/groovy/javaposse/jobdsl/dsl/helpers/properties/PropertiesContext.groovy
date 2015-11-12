@@ -86,4 +86,20 @@ class PropertiesContext extends AbstractExtensibleContext {
             rebuildDisabled(rebuildContext.rebuildDisabled)
         }
     }
+
+    /**
+     * Configures the GitHub project URL.
+     *
+     * The URL will be set automatically when using the
+     * {@link javaposse.jobdsl.dsl.helpers.ScmContext#github(java.lang.String)} or
+     * {@link javaposse.jobdsl.dsl.helpers.scm.RemoteContext#github(java.lang.String)} methods.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'github', minimumVersion = '1.12.0')
+    void githubProjectUrl(String projectUrl) {
+        propertiesNodes << new NodeBuilder().'com.coravy.hudson.plugins.github.GithubProjectProperty' {
+            delegate.projectUrl(projectUrl ?: '')
+        }
+    }
 }

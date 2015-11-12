@@ -127,21 +127,19 @@ class PublisherContextSpec extends Specification {
 
     def 'call archive artifacts with all args'() {
         when:
-        context.archiveArtifacts('include/*', 'exclude/*', true)
+        context.archiveArtifacts('include/*', 'exclude/*')
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 7
+            children().size() == 6
             artifacts[0].value() == 'include/*'
             excludes[0].value() == 'exclude/*'
-            latestOnly[0].value() == true
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
             defaultExcludes[0].value() == true
         }
-        2 * jobManagement.logDeprecationWarning()
     }
 
     def 'call archive artifacts least args'() {
@@ -151,9 +149,8 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 6
+            children().size() == 5
             artifacts[0].value() == 'include/*'
-            latestOnly[0].value() == false
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
@@ -167,7 +164,6 @@ class PublisherContextSpec extends Specification {
             pattern('include/*')
             exclude('exclude/*')
             allowEmpty()
-            latestOnly()
             fingerprint()
             onlyIfSuccessful()
             defaultExcludes(false)
@@ -176,16 +172,14 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 7
+            children().size() == 6
             artifacts[0].value() == 'include/*'
             excludes[0].value() == 'exclude/*'
-            latestOnly[0].value() == true
             allowEmptyArchive[0].value() == true
             fingerprint[0].value() == true
             onlyIfSuccessful[0].value() == true
             defaultExcludes[0].value() == false
         }
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call archive artifacts with multiple patterns'() {
@@ -198,9 +192,8 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 6
+            children().size() == 5
             artifacts[0].value() == 'include1/*,include2/*'
-            latestOnly[0].value() == false
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
@@ -538,9 +531,50 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('xunit')
     }
 
+    def 'call testng archive with all args'() {
+        when:
+        context.archiveTestNG('include/*') {
+            escapeTestDescription(false)
+            escapeExceptionMessages(false)
+            showFailedBuildsInTrendGraph(true)
+            markBuildAsUnstableOnSkippedTests(true)
+            markBuildAsFailureOnFailedConfiguration(true)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 6
+            reportFilenamePattern[0].value() == 'include/*'
+            escapeTestDescp[0].value() == false
+            escapeExceptionMsg[0].value() == false
+            showFailedBuilds[0].value() == true
+            unstableOnSkippedTests[0].value() == true
+            failureOnFailedTestConfig[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
+    }
+
+    def 'call testng archive with minimal args'() {
+        when:
+        context.archiveTestNG()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.testng.Publisher'
+            children().size() == 6
+            reportFilenamePattern[0].value() == '**/testng-results.xml'
+            escapeTestDescp[0].value() == true
+            escapeExceptionMsg[0].value() == true
+            showFailedBuilds[0].value() == false
+            unstableOnSkippedTests[0].value() == false
+            failureOnFailedTestConfig[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
+    }
+
     def 'call jacoco code coverage with no args'() {
         when:
-
         context.jacocoCodeCoverage()
 
         then:
@@ -554,7 +588,6 @@ class PublisherContextSpec extends Specification {
 
     def 'call jacoco code coverage with closure, set changeBuildStatus'(change) {
         when:
-
         context.jacocoCodeCoverage {
             changeBuildStatus(change)
         }
@@ -564,6 +597,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.name() == 'hudson.plugins.jacoco.JacocoPublisher'
         jacocoNode.changeBuildStatus[0].value() == change ? 'true' : 'false'
         1 * jobManagement.requirePlugin('jacoco')
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.13')
 
         where:
         change << [true, false]
@@ -571,7 +605,6 @@ class PublisherContextSpec extends Specification {
 
     def 'call jacoco code coverage with closure, changeBuildStatus with no args defaults to true'() {
         when:
-
         context.jacocoCodeCoverage {
             changeBuildStatus()
         }
@@ -583,6 +616,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.minimumInstructionCoverage[0].value() == '0'
         jacocoNode.changeBuildStatus[0].value() == true
         1 * jobManagement.requirePlugin('jacoco')
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.13')
     }
 
     def 'call jacoco code coverage with all args'() {
@@ -630,6 +664,7 @@ class PublisherContextSpec extends Specification {
         jacocoNode.maximumClassCoverage[0].value() == '12'
         jacocoNode.changeBuildStatus[0].value() == true
         1 * jobManagement.requirePlugin('jacoco')
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.13')
     }
 
     def 'calling minimal html publisher closure'() {
@@ -644,15 +679,15 @@ class PublisherContextSpec extends Specification {
         publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
         !publisherHtmlNode.reportTargets.isEmpty()
         def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
-        target.children().size() == 7
+        target.children().size() == 6
         target.reportName[0].value() == ''
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'index.html'
         target.keepAll[0].value() == false
         target.allowMissing[0].value() == false
         target.alwaysLinkToLastBuild[0].value() == false
-        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
         1 * jobManagement.requirePlugin('htmlpublisher')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
     }
 
     def 'calling minimal html publisher closure, plugin version older than 1.3'() {
@@ -677,6 +712,7 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
         1 * jobManagement.requirePlugin('htmlpublisher')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
     }
 
     def 'calling minimal html publisher closure, plugin version older than 1.4'() {
@@ -702,6 +738,7 @@ class PublisherContextSpec extends Specification {
         target.allowMissing[0].value() == false
         target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
         1 * jobManagement.requirePlugin('htmlpublisher')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
     }
 
     def 'calling html publisher closure with all options'() {
@@ -722,15 +759,15 @@ class PublisherContextSpec extends Specification {
         publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
         !publisherHtmlNode.reportTargets.isEmpty()
         def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
-        target.children().size() == 7
+        target.children().size() == 6
         target.reportName[0].value() == 'foo'
         target.reportDir[0].value() == 'build/*'
         target.reportFiles[0].value() == 'test.html'
         target.keepAll[0].value() == true
         target.allowMissing[0].value() == true
         target.alwaysLinkToLastBuild[0].value() == true
-        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
         1 * jobManagement.requirePlugin('htmlpublisher')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
     }
 
     def 'calling html publisher with multiple reports'() {
@@ -757,6 +794,7 @@ class PublisherContextSpec extends Specification {
         target2.reportDir[0].value() == 'test/*'
 
         1 * jobManagement.requirePlugin('htmlpublisher')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
     }
 
     def 'call Jabber publish with minimal args'() {
@@ -2189,54 +2227,7 @@ class PublisherContextSpec extends Specification {
             disableArchiveOutput[0].value() == false
             otherFiles[0].value().empty
         }
-        1 * jobManagement.requirePlugin('robot')
-    }
-
-    def 'publish Robot framework report using default values and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('robot') >> new VersionNumber('1.4.2')
-
-        when:
-        context.publishRobotFrameworkReports()
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.robot.RobotPublisher'
-            children().size() == 8
-            outputPath[0].value() == 'target/robotframework-reports'
-            passThreshold[0].value() == 100.0
-            unstableThreshold[0].value() == 0.0
-            onlyCritical[0].value() == false
-            reportFileName[0].value() == 'report.html'
-            logFileName[0].value() == 'log.html'
-            outputFileName[0].value() == 'output.xml'
-            otherFiles[0].value().empty
-        }
-        1 * jobManagement.requirePlugin('robot')
-        1 * jobManagement.logPluginDeprecationWarning('robot', '1.4.3')
-    }
-
-    def 'publish Robot framework report using default values and very old plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('robot') >> new VersionNumber('1.2.0')
-
-        when:
-        context.publishRobotFrameworkReports()
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.robot.RobotPublisher'
-            children().size() == 7
-            outputPath[0].value() == 'target/robotframework-reports'
-            passThreshold[0].value() == 100.0
-            unstableThreshold[0].value() == 0.0
-            onlyCritical[0].value() == false
-            reportFileName[0].value() == 'report.html'
-            logFileName[0].value() == 'log.html'
-            outputFileName[0].value() == 'output.xml'
-        }
-        1 * jobManagement.requirePlugin('robot')
-        1 * jobManagement.logPluginDeprecationWarning('robot', '1.4.3')
+        1 * jobManagement.requireMinimumPluginVersion('robot', '1.4.3')
     }
 
     def 'publish Robot framework report using all options'() {
@@ -2268,8 +2259,6 @@ class PublisherContextSpec extends Specification {
             otherFiles[0].string[0].value() == 'screenshot-1.png'
             otherFiles[0].string[1].value() == 'screenshot-2.png'
         }
-        1 * jobManagement.requirePlugin('robot')
-        1 * jobManagement.requireMinimumPluginVersion('robot', '1.2.1')
         1 * jobManagement.requireMinimumPluginVersion('robot', '1.4.3')
     }
 
@@ -3269,9 +3258,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call flexible publish'() {
-        setup:
-        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
-
         when:
         context.flexiblePublish {
             condition {
@@ -3294,50 +3280,17 @@ class PublisherContextSpec extends Specification {
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
-                publisher[0].attribute('class') == 'hudson.tasks.Mailer'
-                publisher[0].recipients[0].value() == 'test@test.com'
+                publisherList[0].children().size() == 1
+                with(publisherList[0]) {
+                    children()[0].name() == 'hudson.tasks.Mailer'
+                    children()[0].recipients[0].value() == 'test@test.com'
+                }
             }
         }
-        1 * jobManagement.requirePlugin('flexible-publish')
-    }
-
-    def 'call flexible publish and test escaping'() {
-        setup:
-        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
-
-        when:
-        context.flexiblePublish {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            publisher {
-                wsCleanup()
-            }
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
-            children().size() == 1
-            publishers[0].children().size == 1
-
-            with(publishers[0].children()[0]) {
-                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
-                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
-                condition[0].arg1[0].value() == 'foo'
-                condition[0].arg2[0].value() == 'bar'
-                condition[0].ignoreCase[0].value() == 'false'
-                publisher[0].attribute('class') == 'hudson.plugins.ws_cleanup.WsCleanup'
-                publisher[0].children().size() > 0
-            }
-        }
-        1 * jobManagement.requirePlugin('flexible-publish')
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
     }
 
     def 'call flexible publish with build step'() {
-        setup:
-        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
-
         when:
         context.flexiblePublish {
             condition {
@@ -3360,18 +3313,18 @@ class PublisherContextSpec extends Specification {
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
-                publisher[0].attribute('class') == 'hudson.tasks.Shell'
-                publisher[0].command[0].value() == 'echo hello'
+                publisherList[0].children().size() == 1
+                with(publisherList[0]) {
+                    children()[0].name() == 'hudson.tasks.Shell'
+                    children()[0].command[0].value() == 'echo hello'
+                }
             }
         }
-        1 * jobManagement.requirePlugin('flexible-publish')
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
     }
 
     def 'call flexible publish with multiple actions'() {
-        setup:
-        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.13')
-
         when:
         context.flexiblePublish {
             condition {
@@ -3404,14 +3357,11 @@ class PublisherContextSpec extends Specification {
                 }
             }
         }
-        1 * jobManagement.requirePlugin('flexible-publish')
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
     }
 
     def 'call flexible publish without condition'() {
-        setup:
-        jobManagement.getPluginVersion('flexible-publish') >> new VersionNumber('0.12')
-
         when:
         context.flexiblePublish {
             step {
@@ -3429,11 +3379,14 @@ class PublisherContextSpec extends Specification {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
                 condition[0].children().size() == 0
-                publisher[0].attribute('class') == 'hudson.tasks.Shell'
-                publisher[0].command[0].value() == 'echo hello'
+                publisherList[0].children().size() == 1
+                with(publisherList[0]) {
+                    children()[0].name() == 'hudson.tasks.Shell'
+                    children()[0].command[0].value() == 'echo hello'
+                }
             }
         }
-        1 * jobManagement.requirePlugin('flexible-publish')
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
     }
 
     def 'call flexible publish without action'() {
@@ -4411,6 +4364,49 @@ class PublisherContextSpec extends Specification {
             publishFailedBuilds[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('build-publisher', '1.20')
+    }
+
+    def 'phabricatorNotifier with no options'() {
+        when:
+        context.phabricatorNotifier()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorNotifier'
+            children().size() == 6
+            commentOnSuccess[0].value() == false
+            commentWithConsoleLinkOnFailure[0].value() == false
+            commentFile[0].value() == '.phabricator-comment'
+            commentSize[0].value() == 1000
+            preserveFormatting[0].value() == false
+            uberallsEnabled[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
+    def 'phabricatorNotifier with all options'() {
+        when:
+        context.phabricatorNotifier {
+            commentOnSuccess()
+            commentWithConsoleLinkOnFailure()
+            commentFile('.my-comment-file')
+            commentSize(2000)
+            preserveFormatting()
+            enableUberalls(false)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorNotifier'
+            children().size() == 6
+            commentOnSuccess[0].value() == true
+            commentWithConsoleLinkOnFailure[0].value() == true
+            commentFile[0].value() == '.my-comment-file'
+            commentSize[0].value() == 2000
+            preserveFormatting[0].value() == true
+            uberallsEnabled[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
     }
 
     def 'publishBuild with all options'() {

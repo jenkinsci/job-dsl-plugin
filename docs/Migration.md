@@ -1,3 +1,25 @@
+## Migrating to 1.41
+
+### Folders
+
+Support for versions older than 5.0 of the
+[CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+## Migrating to 1.40
+
+### Gradle
+
+Support for versions older than 1.23 of the
+[Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
+### HTML Publisher
+
+Support for versions older than 1.5 of the
+[HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.39
 
 ### MultiJob
@@ -52,6 +74,30 @@ Support for versions older than 2.26 of the
 
 Support for the [JSHint Checkstyle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSHint+Checkstyle+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed. The plugin is no longer available in the Jenkins Update Center.
+
+### ConfigFileType
+
+The implicit star import of `javaposse.jobdsl.dsl.ConfigFileType` in DSL scripts has been removed because the enum is
+no longer used by any DSL method. If the values are used in scripts nevertheless, they must be used fully qualified or
+imported explicitly.
+
+DSL prior to 1.39
+```groovy
+Custom
+MavenSettings
+```
+
+DSL since to 1.39
+```groovy
+javaposse.jobdsl.dsl.ConfigFileType.Custom
+javaposse.jobdsl.dsl.ConfigFileType.MavenSettings
+```
+
+### DslScriptLoader
+
+The signature of `DslScriptLoader.runDslEngineForParent` has changed and the method is no longer public. The change was
+necessary to avoid a class loader leak and to fix ([JENKINS-30348](https://issues.jenkins-ci.org/browse/JENKINS-30348)).
+Use `DslScriptLoader.runDslEngine` instead.
 
 ## Migrating to 1.38
 

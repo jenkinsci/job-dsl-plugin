@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class CopyArtifactContext extends AbstractContext {
     final List<String> includePatterns = []
@@ -13,7 +12,7 @@ class CopyArtifactContext extends AbstractContext {
     boolean flatten
     boolean optional
     boolean fingerprint = true
-    final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext()
+    final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext(jobManagement)
 
     CopyArtifactContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -30,7 +29,6 @@ class CopyArtifactContext extends AbstractContext {
     /**
      * Specify paths or patterns of artifacts to exclude. Can be called multiple times to add more patterns.
      */
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.31')
     void excludePatterns(String... excludePatterns) {
         this.excludePatterns.addAll(excludePatterns)
     }
@@ -59,7 +57,6 @@ class CopyArtifactContext extends AbstractContext {
     /**
      * Automatically fingerprints all artifacts that are copied.
      */
-    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.29')
     void fingerprintArtifacts(boolean fingerprint = true) {
         this.fingerprint = fingerprint
     }

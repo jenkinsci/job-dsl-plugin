@@ -8,6 +8,13 @@ import javaposse.jobdsl.dsl.helpers.ExtensibleContext
  */
 interface JobManagement {
     /**
+     * Marker value returned by
+     * {@link #callExtension(java.lang.String, javaposse.jobdsl.dsl.Item, java.lang.Class, java.lang.Object[])} to
+     * indicate that an extension method does not produce a node.
+     */
+    Node NO_VALUE = new Node(null, 'no-value')
+
+    /**
      * Gets (loads) the job configuration for the Jenkins job with the specified name.  If no name is supplied, an empty
      * configuration is returned.
      *
@@ -180,10 +187,26 @@ interface JobManagement {
     void requirePlugin(String pluginShortName)
 
     /**
+     * Logs a warning and sets the build status to unstable or throws a {@link DslScriptException} if the given plugin
+     * is not installed.
+     *
+     * @since 1.40
+     */
+    void requirePlugin(String pluginShortName, boolean failIfMissing)
+
+    /**
      * Logs a warning and sets the build status to unstable if the installed version of the given plugin is older than
      * the given version.
      */
     void requireMinimumPluginVersion(String pluginShortName, String version)
+
+    /**
+     * Logs a warning and sets the build status to unstable or throws a {@link DslScriptException} if the installed
+     * version of the given plugin is older than the given version.
+     *
+     * @since 1.40
+     */
+    void requireMinimumPluginVersion(String pluginShortName, String version, boolean failIfMissing)
 
     /**
      * Logs a warning and sets the build status to unstable if the version of Jenkins core is older than the given
@@ -241,8 +264,10 @@ interface JobManagement {
      * @param item the {@link Item} which is being built
      * @param contextType type of the context which is extended by the method to be called
      * @param args arguments for the method to be called
-     * @return a node to be appended to the given context or <code>null</code> if no extension has been found
+     * @return a node to be appended to the given context, {@link #NO_VALUE} if the extension method does not produce a
+     *         node or {@code null} if no extension has been found
      * @since 1.33
      */
-    Node callExtension(String name, Item item, Class<? extends ExtensibleContext> contextType, Object... args)
+    Node callExtension(String name, Item item, Class<? extends ExtensibleContext> contextType,
+                       Object... args) throws Throwable
 }

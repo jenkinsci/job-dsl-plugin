@@ -209,6 +209,7 @@ class JobParentSpec extends Specification {
         parent.referencedJobs.contains(folder)
         folder.node.displayName[0].text() == 'foo'
         1 * jobManagement.requirePlugin('cloudbees-folder')
+        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.0')
     }
 
     def 'folder without closure'() {
@@ -219,6 +220,7 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         1 * jobManagement.requirePlugin('cloudbees-folder')
+        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.0')
     }
 
     def 'custom config file'() {
@@ -294,6 +296,34 @@ class JobParentSpec extends Specification {
         configFile.type == ConfigFileType.GlobalMavenSettings
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider')
+    }
+
+    def 'managed script config file'() {
+        when:
+        ParametrizedConfigFile configFile = parent.managedScriptConfigFile('test') {
+            comment('foo')
+            arguments('bar')
+        }
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.ManagedScript
+        configFile.comment == 'foo'
+        configFile.arguments == ['bar']
+        parent.referencedConfigFiles.contains(configFile)
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
+    }
+
+    def 'managed script config file without closure'() {
+        when:
+        ParametrizedConfigFile configFile = parent.managedScriptConfigFile('test')
+
+        then:
+        configFile.name == 'test'
+        configFile.type == ConfigFileType.ManagedScript
+        configFile.arguments == []
+        parent.referencedConfigFiles.contains(configFile)
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
     }
 
     def 'readFileInWorkspace from seed job'() {

@@ -17,8 +17,56 @@ If you want to get fancy you'll want to read up on [[configure block|The Configu
 
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
 
+Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
+
 ## Release Notes
-* 1.39 (unreleased)
+* 1.41 (unreleased)
+ * Support for the older versions of the
+   [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-141)
+* 1.40 (November 08 2015)
+ * Increased the minimum supported Jenkins version to 1.609
+ * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  
+ * Added support for the
+   [Matrix Combinations Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Combinations+Plugin)
+ * Added support for the [Managed Scripts Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Managed+Script+Plugin)
+ * Enhanced support for the [GitHub Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin)
+   ([JENKINS-29849](https://issues.jenkins-ci.org/browse/JENKINS-29849))
+ * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
+   ([JENKINS-30544](https://issues.jenkins-ci.org/browse/JENKINS-30544))
+ * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+   ([JENKINS-30760](https://issues.jenkins-ci.org/browse/JENKINS-30760))
+ * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+   ([JENKINS-31387](https://issues.jenkins-ci.org/browse/JENKINS-31387))
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([#645](https://github.com/jenkinsci/job-dsl-plugin/pull/645))
+ * Enhanced support for the
+   [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
+ * Fixed a problem with deprecation warnings
+   ([JENKINS-30826](https://issues.jenkins-ci.org/browse/JENKINS-30826))
+ * Fixed a problem with the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
+   ([JENKINS-31427](https://issues.jenkins-ci.org/browse/JENKINS-31427))
+ * Allow `@DslExtensionMethod` annotated methods to return `null` to not contribute to the job configuration
+ * Allow `DownstreamTriggerParameterContext` to be extended
+   ([JENKINS-31111](https://issues.jenkins-ci.org/browse/JENKINS-31111))
+ * Added support for the [TestNG Plugin](https://wiki.jenkins-ci.org/display/JENKINS/testng-plugin)
+   ([JENKINS-30895](https://issues.jenkins-ci.org/browse/JENKINS-30895))
+ * Added workaround for [GROOVY-6263](https://issues.apache.org/jira/browse/GROOVY-6263) to `WorkspaceCleanupContext`
+ * Added workaround for [JENKINS-31366](https://issues.jenkins-ci.org/browse/JENKINS-31366)
+ * Added support for the [SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+plugin)
+   ([JENKINS-30957](https://issues.jenkins-ci.org/browse/JENKINS-30957))
+ * Set default runner for `conditionalSteps`
+   ([JENKINS-31373](https://issues.jenkins-ci.org/browse/JENKINS-31373))
+ * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)  
+   ([JENKINS-31264](https://issues.jenkins-ci.org/browse/JENKINS-31264))
+ * Support for older versions of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-140)
+ * Support for older versions of the
+   [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-140)
+ * Removed anything that has been deprecated in 1.33, see [Migration](Migration#migrating-to-133)
+ * Removed anything that has been deprecated in 1.34, see [Migration](Migration#migrating-to-134)
+* 1.39 (October 05 2015)
  * Increased the minimum supported Jenkins version to 1.596
  * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
  * Added support for the [CloudBees Docker Build and Publish
@@ -49,12 +97,19 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
    deprecated, see [Migration](Migration#migrating-to-139)
  * Fixed `StackOverflowError` when using `downstreamParameterized` publisher
    ([JENKINS-30504](https://issues.jenkins-ci.org/browse/JENKINS-30504))
+ * Fixed problem with additional classpath
+   ([JENKINS-30348](https://issues.jenkins-ci.org/browse/JENKINS-30348))
  * Allow to abort DSL processing
  * Improved console output
  * Added support for the [Cron Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cron+Column+Plugin)
  * Added support for the [Progress Bar Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Progress+Bar+Column+Plugin)
  * Added support for the [Rebuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Rebuild+Plugin)
  * Added support for the [Global Variable String Parameter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Global+Variable+String+Parameter+Plugin)
+ * Added support for the [Phabricator Differential Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Phabricator+Differential+Plugin)
+ * The signature of `DslScriptLoader.runDslEngineForParent` has changed, see [Migration](Migration#migrating-to-139)
+ * Removed implicit star import of `javaposse.jobdsl.dsl.ConfigFileType` in scripts, see
+   [Migration](Migration#migrating-to-139)
+ * Removed anything that has been deprecated in 1.31, see [Migration](Migration#migrating-to-131)
 * 1.38 (September 09 2015)
  * Replaced the [[Job Reference]], [[View Reference]] and [[Folder Reference]] pages by the
    [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)

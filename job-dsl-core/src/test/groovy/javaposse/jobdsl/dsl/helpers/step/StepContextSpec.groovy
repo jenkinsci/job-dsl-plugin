@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static javaposse.jobdsl.dsl.helpers.common.MavenContext.LocalRepositoryLocation.LocalToWorkspace
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 class StepContextSpec extends Specification {
@@ -27,6 +26,39 @@ class StepContextSpec extends Specification {
         def shellStep = context.stepNodes[0]
         shellStep.name() == 'hudson.tasks.Shell'
         shellStep.command[0].value() == 'echo "Hello"'
+    }
+
+    def 'call remoteShell method with minimal options'() {
+        when:
+        context.remoteShell('root@example.com:22') {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
+    }
+
+    def 'call remoteShell method with all options'() {
+        when:
+        context.remoteShell('root@example.com:22') {
+            command('echo Hello', 'echo World!')
+            command('echo How are you?')
+            command(["echo I'm fine!", 'echo And you?'])
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.SSHBuilder'
+            children().size() == 2
+            siteName[0].value() == 'root@example.com:22'
+            command[0].value() == "echo Hello\necho World!\necho How are you?\necho I'm fine!\necho And you?"
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
     }
 
     def 'call batchFile method'() {
@@ -124,6 +156,7 @@ class StepContextSpec extends Specification {
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
+            children().size() == 10
             tasks[0].value() == ''
             switches[0].value() == ''
             useWrapper[0].value() == true
@@ -133,6 +166,7 @@ class StepContextSpec extends Specification {
             gradleName[0].value() == '(Default)'
             fromRootBuildScriptDir[0].value() == true
             makeExecutable[0].value() == false
+            useWorkspaceAsHome[0].value() == false
         }
         (1.._) * jobManagement.requirePlugin('gradle')
 
@@ -143,6 +177,7 @@ class StepContextSpec extends Specification {
         then:
         context.stepNodes.size() == 2
         with(context.stepNodes[1]) {
+            children().size() == 10
             tasks[0].value() == ''
             switches[0].value() == ''
             useWrapper[0].value() == true
@@ -152,6 +187,7 @@ class StepContextSpec extends Specification {
             gradleName[0].value() == '(Default)'
             fromRootBuildScriptDir[0].value() == true
             makeExecutable[0].value() == false
+            useWorkspaceAsHome[0].value() == false
         }
         (1.._) * jobManagement.requirePlugin('gradle')
     }
@@ -170,11 +206,52 @@ class StepContextSpec extends Specification {
             gradleName 'gn'
             fromRootBuildScriptDir true
             makeExecutable true
+            useWorkspaceAsHome true
         }
 
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
+            children().size() == 10
+            tasks[0].value() == 'clean build'
+            switches[0].value() == '--info --stacktrace'
+            useWrapper[0].value() == false
+            description[0].value() == 'desc'
+            rootBuildScriptDir[0].value() == 'rbsd'
+            buildFile[0].value() == 'bf'
+            gradleName[0].value() == 'gn'
+            fromRootBuildScriptDir[0].value() == true
+            makeExecutable[0].value() == true
+            useWorkspaceAsHome[0].value() == true
+        }
+        1 * jobManagement.requirePlugin('gradle')
+        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
+        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.23')
+    }
+
+    def 'call gradle with old plugin version'() {
+        setup:
+        jobManagement.getPluginVersion('gradle') >> new VersionNumber('1.22')
+
+        when:
+        context.gradle {
+            tasks 'clean'
+            tasks 'build'
+            switches '--info'
+            switches '--stacktrace'
+            useWrapper false
+            description 'desc'
+            rootBuildScriptDir 'rbsd'
+            buildFile 'bf'
+            gradleName 'gn'
+            fromRootBuildScriptDir true
+            makeExecutable true
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 9
             tasks[0].value() == 'clean build'
             switches[0].value() == '--info --stacktrace'
             useWrapper[0].value() == false
@@ -186,6 +263,7 @@ class StepContextSpec extends Specification {
             makeExecutable[0].value() == true
         }
         1 * jobManagement.requirePlugin('gradle')
+        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.23')
     }
 
     def 'call grails methods'() {
@@ -398,21 +476,6 @@ class StepContextSpec extends Specification {
         mavenStep.jvmOptions[0].value() == ''
         mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
-        1 * jobManagement.requirePlugin('maven-plugin')
-    }
-
-    def 'call maven method with deprecated options'() {
-        when:
-        context.maven {
-            localRepository(LocalToWorkspace)
-        }
-
-        then:
-        with(context.stepNodes[0]) {
-            name() == 'hudson.tasks.Maven'
-            children().size() == 4
-            usePrivateRepository[0].value() == true
-        }
         1 * jobManagement.requirePlugin('maven-plugin')
     }
 
@@ -791,52 +854,12 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('groovy')
     }
 
-    def 'call minimal deprecated copyArtifacts'() {
+    def 'call copyArtifacts selector variants'() {
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            upstreamBuild()
-        }
-
-        then:
-        (1.._) * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
-        1 * jobManagement.logDeprecationWarning()
-        context.stepNodes.size() == 1
-        def copyEmptyNode = context.stepNodes[0]
-        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
-        copyEmptyNode.flatten.size() == 0
-        copyEmptyNode.optional.size() == 0
-        copyEmptyNode.filter[0].value() == '**/*.xml'
-        copyEmptyNode.target[0] != null
-        copyEmptyNode.target[0].value() == ''
-        Node selectorNode = copyEmptyNode.selector[0]
-        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
-        selectorNode.children().size() == 0
-    }
-
-    def 'call deprecated copyArtifacts all args'() {
-        when:
-        context.copyArtifacts('upstream', '**/*.xml', 'target/', true, true) {
-            upstreamBuild(true)
-        }
-
-        then:
-        (1.._) * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
-        1 * jobManagement.logDeprecationWarning()
-        context.stepNodes.size() == 1
-        def copyEmptyNode = context.stepNodes[0]
-        copyEmptyNode.name() == 'hudson.plugins.copyartifact.CopyArtifact'
-        copyEmptyNode.flatten[0].value() == true
-        copyEmptyNode.optional[0].value() == true
-        copyEmptyNode.target[0].value() == 'target/'
-        Node selectorNode = copyEmptyNode.selector[0]
-        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
-        selectorNode.fallbackToLastSuccessful[0].value() == true
-    }
-
-    def 'call deprecated copyArtifacts selector variants'() {
-        when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            latestSuccessful()
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                latestSuccessful()
+            }
         }
 
         then:
@@ -845,8 +868,10 @@ class StepContextSpec extends Specification {
         selectorNode.children().size() == 0
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            latestSaved()
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                latestSaved()
+            }
         }
 
         then:
@@ -855,8 +880,10 @@ class StepContextSpec extends Specification {
         selectorNode2.children().size() == 0
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            permalink('lastBuild')
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                permalink('lastBuild')
+            }
         }
 
         then:
@@ -865,8 +892,10 @@ class StepContextSpec extends Specification {
         selectorNode3.id[0].value() == 'lastBuild'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            buildNumber(43)
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                buildNumber(43)
+            }
         }
 
         then:
@@ -875,8 +904,10 @@ class StepContextSpec extends Specification {
         selectorNode4.buildNumber[0].value() == '43'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            workspace()
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                workspace()
+            }
         }
 
         then:
@@ -885,8 +916,10 @@ class StepContextSpec extends Specification {
         selectorNode5.children().size() == 0
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            buildParameter('BUILD_PARAM')
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                buildParameter('BUILD_PARAM')
+            }
         }
 
         then:
@@ -895,8 +928,10 @@ class StepContextSpec extends Specification {
         selectorNode6.parameterName[0].value() == 'BUILD_PARAM'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            buildNumber('$SOME_PARAMTER')
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                buildNumber('$SOME_PARAMTER')
+            }
         }
 
         then:
@@ -905,8 +940,10 @@ class StepContextSpec extends Specification {
         selectorNode7.buildNumber[0].value() == '$SOME_PARAMTER'
 
         when:
-        context.copyArtifacts('upstream', '**/*.xml') {
-            latestSuccessful(true)
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                latestSuccessful(true)
+            }
         }
 
         then:
@@ -914,20 +951,30 @@ class StepContextSpec extends Specification {
         selectorNode8.attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
         selectorNode8.children().size() == 1
         selectorNode8.stable[0].value() == true
+
+        when:
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                multiJobBuild()
+            }
+        }
+
+        then:
+        Node selectorNode9 = context.stepNodes[8].selector[0]
+        selectorNode9.attribute('class') == 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector'
+        selectorNode9.children().size() == 0
+        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
     }
 
     def 'call minimal copyArtifacts'() {
-        setup:
-        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.26')
-
         when:
         context.copyArtifacts('upstream')
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 4
+            children().size() == 5
             project[0].value() == 'upstream'
             filter[0].value() == ''
             target[0].value() == ''
@@ -935,13 +982,11 @@ class StepContextSpec extends Specification {
                 attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
                 children().size() == 0
             }
+            doNotFingerprintArtifacts[0].value() == false
         }
     }
 
     def 'call copyArtifacts all options'() {
-        setup:
-        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.29')
-
         when:
         context.copyArtifacts('upstream') {
             includePatterns('*.xml', '*.txt')
@@ -956,8 +1001,6 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.29')
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
@@ -970,16 +1013,44 @@ class StepContextSpec extends Specification {
             target[0].value() == 'target/'
             doNotFingerprintArtifacts[0].value() == true
             with(selector[0]) {
+                children().size() == 1
                 attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
                 fallbackToLastSuccessful[0].value() == true
             }
         }
     }
 
-    def 'call copyArtifacts all options no fingerprint'() {
-        setup:
-        jobManagement.getPluginVersion('copyartifact') >> new VersionNumber('1.31')
+    def 'call copyArtifacts with upstreamBuild closure'() {
+        when:
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                upstreamBuild {
+                    fallbackToLastSuccessful()
+                    allowUpstreamDependencies()
+                }
+            }
+        }
 
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.37')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.copyartifact.CopyArtifact'
+            children().size() == 5
+            project[0].value() == 'upstream'
+            filter[0].value() == ''
+            target[0].value() == ''
+            doNotFingerprintArtifacts[0].value() == false
+            with(selector[0]) {
+                children().size() == 2
+                attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+                fallbackToLastSuccessful[0].value() == true
+                allowUpstreamDependencies[0].value() == true
+            }
+        }
+    }
+
+    def 'call copyArtifacts all options no fingerprint'() {
         when:
         context.copyArtifacts('upstream') {
             includePatterns('*.xml', '*.txt')
@@ -993,7 +1064,6 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.26')
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
@@ -1006,6 +1076,7 @@ class StepContextSpec extends Specification {
             target[0].value() == 'target/'
             doNotFingerprintArtifacts[0].value() == false
             with(selector[0]) {
+                children().size() == 1
                 attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
                 fallbackToLastSuccessful[0].value() == true
             }
@@ -2067,6 +2138,28 @@ class StepContextSpec extends Specification {
 
         where:
         runnerName << ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
+    }
+
+    def 'call conditional steps without runner'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                alwaysRun()
+            }
+            steps {
+                shell('look at me')
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            children().size() == 3
+            name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+            runCondition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+            runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+            conditionalbuilders[0].children().size() == 1
+        }
+        1 * jobManagement.requirePlugin('conditional-buildstep')
     }
 
     def 'call conditional steps with unknown runner'() {
@@ -3298,5 +3391,52 @@ class StepContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+    }
+
+    def 'call managedScript with minimal options'() {
+        setup:
+        jobManagement.getConfigFileId(ConfigFileType.ManagedScript, 'foo') >> '0815'
+
+        when:
+        context.managedScript('foo')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.managedscripts.ScriptBuildStep'
+            children().size() == 3
+            buildStepId[0].value() == '0815'
+            buildStepArgs[0].value().empty
+            tokenized[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
+    }
+
+    def 'call managedScript with all options'() {
+        setup:
+        jobManagement.getConfigFileId(ConfigFileType.ManagedScript, 'foo') >> '0815'
+
+        when:
+        context.managedScript('foo') {
+            arguments('foo')
+            arguments('bar', 'baz')
+            tokenized()
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.managedscripts.ScriptBuildStep'
+            children().size() == 3
+            buildStepId[0].value() == '0815'
+            with(buildStepArgs[0]) {
+                children().size() == 3
+                string[0].value() == 'foo'
+                string[1].value() == 'bar'
+                string[2].value() == 'baz'
+            }
+            tokenized[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
     }
 }

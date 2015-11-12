@@ -10,6 +10,8 @@ import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class ConditionalStepsContext extends AbstractContext {
+    private static final Set<String> VALID_RUNNERS = ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
+
     RunCondition runCondition
     String runnerClass
     final StepContext stepContext
@@ -17,6 +19,7 @@ class ConditionalStepsContext extends AbstractContext {
     ConditionalStepsContext(JobManagement jobManagement, StepContext stepContext) {
         super(jobManagement)
         this.stepContext = stepContext
+        runner('Fail')
     }
 
     Object methodMissing(String name, args) {
@@ -39,36 +42,14 @@ class ConditionalStepsContext extends AbstractContext {
 
     /**
      * Specifies the action to take if the evaluation of a run condition fails. Must be one of {@code 'Fail'},
-     * {@code 'Unstable'}, {@code 'RunUnstable'}, {@code 'Run'} or {@code 'DontRun'}.
+     * {@code 'Unstable'}, {@code 'RunUnstable'}, {@code 'Run'} or {@code 'DontRun'}. Defaults to {@code 'Fail'}.
      */
     void runner(String runnerName) {
-        checkArgument(EvaluationRunners.find(runnerName) != null, "${runnerName} not a valid runner.")
-        runnerClass = EvaluationRunners.find(runnerName).longForm
-    }
-
-    @Deprecated
-    void runner(EvaluationRunners runner) {
-        jobManagement.logDeprecationWarning()
-        runnerClass = runner.longForm
-    }
-
-    @Deprecated
-    static enum EvaluationRunners {
-        Fail('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'),
-        Unstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Unstable'),
-        RunUnstable('org.jenkins_ci.plugins.run_condition.BuildStepRunner$RunUnstable'),
-        Run('org.jenkins_ci.plugins.run_condition.BuildStepRunner$Run'),
-        DontRun('org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun')
-
-        final String longForm
-
-        EvaluationRunners(String longForm) {
-            this.longForm = longForm
-        }
-
-        static find(String enumName) {
-            values().find { it.name().toLowerCase() == enumName.toLowerCase() }
-        }
+        checkArgument(
+                VALID_RUNNERS.contains(runnerName),
+                "${runnerName} not a valid runner, must be one of ${VALID_RUNNERS.join(', ')}"
+        )
+        runnerClass = "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$${runnerName}"
     }
 
     /**

@@ -1,8 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class GradleContext implements Context {
+class GradleContext extends AbstractContext {
     final List<String> tasks = []
     final List<String> switches = []
     boolean useWrapper = true
@@ -11,8 +13,13 @@ class GradleContext implements Context {
     String buildFile = ''
     boolean fromRootBuildScriptDir = true
     boolean makeExecutable
+    boolean useWorkspaceAsHome
     String gradleName = '(Default)'
     Closure configureBlock
+
+    protected GradleContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Specifies the Gradle tasks to be invoked. Can be called multiple times to add more tasks.
@@ -75,6 +82,16 @@ class GradleContext implements Context {
      */
     void makeExecutable(boolean makeExecutable = true) {
         this.makeExecutable = makeExecutable
+    }
+
+    /**
+     * If set, uses the workspace as {@code GRADLE_USER_HOME}. Defaults to {@code false}.
+     *
+     * @since 1.40
+     */
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.23')
+    void useWorkspaceAsHome(boolean useWorkspaceAsHome = true) {
+        this.useWorkspaceAsHome  = useWorkspaceAsHome
     }
 
     /**

@@ -18,6 +18,7 @@ class GitHubPullRequestBuilderExtensionContext implements Context {
             commitStatusContext(context.context ?: '')
             triggeredStatus(context.triggeredStatus ?: '')
             startedStatus(context.startedStatus ?: '')
+            statusUrl(context.statusUrl ?: '')
             completedStatus(context.completedStatus)
         }
     }

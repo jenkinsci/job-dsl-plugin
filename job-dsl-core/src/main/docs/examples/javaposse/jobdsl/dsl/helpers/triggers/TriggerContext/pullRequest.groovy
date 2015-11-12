@@ -24,6 +24,7 @@ job('example') {
                 commitStatus {
                     context('deploy to staging site')
                     startedStatus('deploying to staging site...')
+                    statusUrl('http://mystatussite.com/prs')
                     completedStatus('SUCCESS', 'All is well')
                     completedStatus('FAILURE', 'Something went wrong. Investigate!')
                 }

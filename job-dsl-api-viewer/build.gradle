@@ -28,15 +28,18 @@ task copyData(type: Copy) {
     into "${project.buildDir}/data"
 }
 
-task downloadData(type: Download) {
-    src 'http://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/1.38/job-dsl-core-1.38-apidoc.json'
-    dest "${project.buildDir}/data/dsl-1.38.json"
-    onlyIfNewer true
+(38..40).each { minorVersion ->
+    def version = "1.${minorVersion}"
+    task "downloadData-${version}"(type: Download) {
+        src "http://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/${version}/job-dsl-core-${version}-apidoc.json"
+        dest "${project.buildDir}/data/dsl-${version}.json"
+        onlyIfNewer true
+    }
+    tasks.gulp_build.dependsOn("downloadData-${version}")
 }
 
 tasks.gulp_build.dependsOn('npmInstall')
 tasks.gulp_build.dependsOn('copyData')
-tasks.gulp_build.dependsOn('downloadData')
 tasks.publishGhPages.dependsOn('gulp_build')
 
 task clean(type: Delete) {

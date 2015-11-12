@@ -36,52 +36,7 @@ class ScmContextSpec extends Specification {
         }
     }
 
-    def 'call hg simple configuration with deprecated plugin version'() {
-        setup:
-        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50')
-
-        when:
-        context.hg('http://selenic.com/repo/hello')
-
-        then:
-        context.scmNodes[0].@class == 'hudson.plugins.mercurial.MercurialSCM'
-        with(context.scmNodes[0]) {
-            name() == 'scm'
-            children().size() == 4
-            source[0].text() == 'http://selenic.com/repo/hello'
-            modules[0].text() == ''
-            clean[0].text() == 'false'
-            branch[0].text() == ''
-        }
-        1 * mockJobManagement.requirePlugin('mercurial')
-        1 * mockJobManagement.logPluginDeprecationWarning('mercurial', '1.50.1')
-    }
-
-    def 'call hg simple with branch and deprecated plugin version'() {
-        setup:
-        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50')
-
-        when:
-        context.hg('http://selenic.com/repo/hello', 'not-default')
-
-        then:
-        context.scmNodes[0].@class == 'hudson.plugins.mercurial.MercurialSCM'
-        with(context.scmNodes[0]) {
-            name() == 'scm'
-            children().size() == 4
-            source[0].text() == 'http://selenic.com/repo/hello'
-            modules[0].text() == ''
-            branch[0].text() == 'not-default'
-            clean[0].text() == 'false'
-        }
-        1 * mockJobManagement.requirePlugin('mercurial')
-        1 * mockJobManagement.logPluginDeprecationWarning('mercurial', '1.50.1')
-    }
-
     def 'call hg simple configuration'() {
-        setup:
-        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50.1')
-
         when:
         context.hg('http://selenic.com/repo/hello')
 
@@ -98,13 +53,10 @@ class ScmContextSpec extends Specification {
             credentialsId[0].text() == ''
             disableChangeLog[0].text() == 'false'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
     def 'call hg simple with branch'() {
-        setup:
-        mockJobManagement.getPluginVersion('mercurial') >> new VersionNumber('1.50.1')
-
         when:
         context.hg('http://selenic.com/repo/hello', 'not-default')
 
@@ -121,7 +73,7 @@ class ScmContextSpec extends Specification {
             credentialsId[0].text() == ''
             disableChangeLog[0].text() == 'false'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('mercurial', '1.50.1')
     }
 
     def 'call hg without url disallowed'() {
@@ -1312,6 +1264,24 @@ class ScmContextSpec extends Specification {
 
         where:
         value << [true, false]
+    }
+
+    def 'call git scm with trackingSubmodules with default true'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            trackingSubmodules()
+        }
+
+        then:
+        with(context.scmNodes[0]) {
+            trackingSubmodules[0].value() == true
+        }
+        1 * mockJobManagement.requirePlugin('git')
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.0')
+        1 * mockJobManagement.logPluginDeprecationWarning('git', '2.2.6')
     }
 
     def 'call git scm with configure appending'() {

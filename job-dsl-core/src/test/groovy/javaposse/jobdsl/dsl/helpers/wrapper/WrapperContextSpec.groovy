@@ -570,6 +570,40 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('release')
     }
 
+    def 'phabricator with minimal options'() {
+        when:
+        context.phabricator()
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorBuildWrapper'
+            children().size() == 3
+            createCommit[0].value() == false
+            applyToMaster[0].value() == false
+            showBuildStartedMessage[0].value() == true
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
+    def 'phabricator with all options'() {
+        when:
+        context.phabricator {
+            createCommit()
+            applyToMaster()
+            showBuildStartedMessage(false)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.uber.jenkins.phabricator.PhabricatorBuildWrapper'
+            children().size() == 3
+            createCommit[0].value() == true
+            applyToMaster[0].value() == true
+            showBuildStartedMessage[0].value() == false
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
+    }
+
     def 'call preBuildCleanup with minimal options'() {
         when:
         context.preBuildCleanup()
@@ -982,6 +1016,81 @@ class WrapperContextSpec extends Specification {
             nodeJSInstallationName[0].value() == 'NodeJS 0.10.26'
         }
         1 * mockJobManagement.requirePlugin('nodejs')
+    }
+
+    def 'call sauce on demand with defaults'() {
+        when:
+        context.sauceOnDemand {
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
+            children().size() == 15
+            useGeneratedTunnelIdentifier[0].value() == false
+            sendUsageData[0].value() == false
+            nativeAppPackage[0].value() == ''
+            useChromeForAndroid[0].value() == false
+            sauceConnectPath[0].value() == ''
+            enableSauceConnect[0].value() == false
+            seleniumHost[0].value() == ''
+            seleniumPort[0].value() == ''
+            webDriverBrowsers[0].value().empty
+            appiumBrowsers[0].value().empty
+            useLatestVersion[0].value() == false
+            launchSauceConnectOnSlave[0].value() == false
+            options[0].value() == ''
+            verboseLogging[0].value() == false
+            condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+        }
+    }
+
+    def 'call sauce on demand with all options'() {
+        when:
+        context.sauceOnDemand {
+            useGeneratedTunnelIdentifier()
+            sendUsageData()
+            nativeAppPackage('nativeAppPackage')
+            sauceConnectPath('sauceConnectPath')
+            enableSauceConnect()
+            seleniumHost('seleniumHost')
+            seleniumPort('seleniumPort')
+            webDriverBrowsers('foo', 'bar')
+            webDriverBrowsers('test')
+            appiumBrowsers('larry', 'curly')
+            appiumBrowsers('moe')
+            useLatestVersion()
+            launchSauceConnectOnSlave()
+            options('options')
+            verboseLogging()
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
+            children().size() == 15
+            useGeneratedTunnelIdentifier[0].value() == true
+            sendUsageData[0].value() == true
+            nativeAppPackage[0].value() == 'nativeAppPackage'
+            useChromeForAndroid[0].value() == false
+            sauceConnectPath[0].value() == 'sauceConnectPath'
+            enableSauceConnect[0].value() == true
+            seleniumHost[0].value() == 'seleniumHost'
+            seleniumPort[0].value() == 'seleniumPort'
+            webDriverBrowsers[0].string.any { it.value() == 'foo' }
+            webDriverBrowsers[0].string.any { it.value() == 'bar' }
+            webDriverBrowsers[0].string.any { it.value() == 'test' }
+            webDriverBrowsers[0].string.size() == 3
+            appiumBrowsers[0].string.any { it.value() == 'larry' }
+            appiumBrowsers[0].string.any { it.value() == 'curly' }
+            appiumBrowsers[0].string.any { it.value() == 'moe' }
+            appiumBrowsers[0].string.size() == 3
+            useLatestVersion[0].value() == true
+            launchSauceConnectOnSlave[0].value() == true
+            options[0].value() == 'options'
+            verboseLogging[0].value() == true
+            condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+        }
     }
 
     def 'call golang'() {
