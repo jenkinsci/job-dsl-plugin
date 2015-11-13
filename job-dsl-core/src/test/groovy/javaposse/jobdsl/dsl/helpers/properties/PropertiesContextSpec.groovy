@@ -155,4 +155,46 @@ class PropertiesContextSpec extends Specification {
         ''                                            || ''
         null                                          || ''
     }
+
+    def 'jobOwnership with no options'() {
+        when:
+        context.jobOwnership {}
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty'
+            children().size() == 1
+            with(ownership[0]) {
+              children().size() == 3
+              ownershipEnabled[0].value() == true
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ownership', '0.8')
+    }
+
+    def 'jobOwnership with all options'() {
+        when:
+        context.jobOwnership {
+            primaryOwnerId('user')
+            coOwnerIds('user1', 'user2')
+        }
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty'
+            children().size() == 1
+            with(ownership[0]) {
+                children().size() == 3
+                ownershipEnabled[0].value() == true
+                primaryOwnerId[0].value() == 'user'
+                coownersIds[0].'@class' == 'sorted-set'
+                with(coownersIds[0]) {
+                    children().size() == 2
+                    string[0].value() == 'user1'
+                    string[1].value() == 'user2'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ownership', '0.8')
+    }
 }

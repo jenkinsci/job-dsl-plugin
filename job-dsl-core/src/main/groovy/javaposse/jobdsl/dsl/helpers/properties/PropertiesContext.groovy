@@ -88,6 +88,29 @@ class PropertiesContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Allows to configure job ownership.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'ownership', minimumVersion = '0.8')
+    void jobOwnership(@DslContext(JobOwnershipContext) Closure jobOwnershipClosure) {
+        JobOwnershipContext jobOwnershipContext = new JobOwnershipContext()
+        ContextHelper.executeInContext(jobOwnershipClosure, jobOwnershipContext)
+
+        propertiesNodes << new NodeBuilder().'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty' {
+            ownership {
+                ownershipEnabled(true)
+                primaryOwnerId(jobOwnershipContext.primaryOwnerId)
+                coownersIds(class: 'sorted-set') {
+                    jobOwnershipContext.coOwnerIds.each { String coOwnersId ->
+                        string(coOwnersId)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Configures the GitHub project URL.
      *
      * The URL will be set automatically when using the
