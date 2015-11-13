@@ -102,4 +102,16 @@ class PropertiesContext extends AbstractExtensibleContext {
             delegate.projectUrl(projectUrl ?: '')
         }
     }
+
+    /**
+     * Configures the Build Failure Analyzer.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'build-failure-analyzer', minimumVersion = '1.13')
+    void scannerJobProperty(Boolean doNotScan = false) {
+        propertiesNodes << new NodeBuilder().'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty' {
+            delegate.doNotScan(doNotScan)
+        }
+    }
 }

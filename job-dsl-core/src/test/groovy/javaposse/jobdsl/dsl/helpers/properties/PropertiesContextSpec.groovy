@@ -155,4 +155,34 @@ class PropertiesContextSpec extends Specification {
         ''                                            || ''
         null                                          || ''
     }
+
+    def 'scannerJobProperty'() {
+        when:
+        context.scannerJobProperty()
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty'
+            children().size() == 1
+            doNotScan[0].value() == false
+        }
+    }
+
+    def 'scannerJobProperty with value'() {
+        when:
+        context.scannerJobProperty(value)
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty'
+            children().size() == 1
+            doNotScan[0].value() == expected
+        }
+
+        where:
+        value || expected
+        true  || true
+        false || false
+        null  || null
+    }
 }
