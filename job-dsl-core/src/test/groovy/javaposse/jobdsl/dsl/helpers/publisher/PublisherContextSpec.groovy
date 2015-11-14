@@ -4995,4 +4995,149 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
     }
+
+    def 'jiraIssueUpdater'() {
+        when:
+        context.jira {
+            jiraIssueUpdater()
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraIssueUpdater'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+    }
+
+    def 'jiraReleaseVersionUpdater'() {
+        when:
+        context.jira {
+            jiraReleaseVersionUpdater {
+                jiraProjectKey(projectKey)
+                jiraRelease(release)
+            }
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraReleaseVersionUpdater'
+            children().size() == 2
+            with(entries[0]) {
+                jiraProjectKey[0].value() == expectedKey
+                jiraRelease[0].value() == expectedRelease
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+
+        where:
+        projectKey | release | expectedKey | expectedRelease
+        null       | null    | ''          | ''
+        'key'      | null    | 'key'       | ''
+        null       | 'key2'  | ''          | 'key2'
+        'key1'     | 'key2'  | 'key1'      | 'key2'
+    }
+
+    def 'jiraIssueMigrator'() {
+        when:
+        context.jira {
+            jiraIssueMigrator {
+                jiraProjectKey(projectKey)
+                jiraRelease(release)
+                jiraReplaceVersion(replace)
+                jiraQuery(query)
+            }
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraIssueMigrator'
+            children().size() == 4
+            with(entries[0]) {
+                jiraProjectKey[0].value() == expectedKey
+                jiraRelease[0].value() == expectedRelease
+                jiraReplaceVersion[0].value() == expectedReplace
+                jiraQuery[0].value() == expectedQuery
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+
+        where:
+        projectKey | release | replace | query | expectedKey | expectedRelease | expectedReplace | expectedQuery
+        null       | null    | null    | null  | ''          | ''              | ''              | ''
+        'key'      | null    | null    | null  | 'key'       | ''              | ''              | ''
+        'key1'     | 'key2'  | null    | null  | 'key1'      | 'key2'          | ''              | ''
+        'key1'     | 'key2'  | 'key3'  | null  | 'key1'      | 'key2'          | 'key3'          | ''
+        'key1'     | 'key2'  | 'key3'  | 'key' | 'key1'      | 'key2'          | 'key3'          | 'key'
+    }
+
+    def 'jiraVersionCreator'() {
+        when:
+        context.jira {
+            jiraVersionCreator {
+                jiraProjectKey(projectKey)
+                jiraVersion(version)
+            }
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraVersionCreator'
+            children().size() == 2
+            with(entries[0]) {
+                jiraProjectKey[0].value() == expectedKey
+                jiraVersion[0].value() == expectedVersion
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+
+        where:
+        projectKey | version | expectedKey | expectedVersion
+        null       | null    | ''          | ''
+        'key'      | null    | 'key'       | ''
+        null       | 'key2'  | ''          | 'key2'
+        'key1'     | 'key2'  | 'key1'      | 'key2'
+    }
+
+    def 'jiraCreateIssueNotifier'() {
+        when:
+        context.jira {
+            jiraCreateIssueNotifier {
+                projectKey(key)
+                testDescription(desc)
+                assignee(assig)
+                component(comp)
+            }
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraCreateIssueNotifier'
+            children().size() == 4
+            with(entries[0]) {
+                projectKey[0].value() == expectedKey
+                testDescription[0].value() == expectedDesc
+                assignee[0].value() == expectedAssignee
+                component[0].value() == expectedComponent
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+
+        where:
+        key    | desc   | assig  | comp  | expectedKey | expectedDesc | expectedAssignee | expectedComponent
+        null   | null   | null   | null  | ''          | ''           | ''               | ''
+        'key'  | null   | null   | null  | 'key'       | ''           | ''               | ''
+        'key1' | 'key2' | null   | null  | 'key1'      | 'key2'       | ''               | ''
+        'key1' | 'key2' | 'key3' | null  | 'key1'      | 'key2'       | 'key3'           | ''
+        'key1' | 'key2' | 'key3' | 'key' | 'key1'      | 'key2'       | 'key3'           | 'key'
+    }
 }

@@ -3439,4 +3439,35 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
     }
+
+    def 'call jiraIssueUpdateBuilder with all options'() {
+        when:
+        context.jira {
+            jiraIssueUpdateBuilder {
+                jqlSearch(jql)
+                workflowActionName(work)
+                comment(com)
+            }
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraIssueUpdateBuilder'
+            children().size() == 3
+            with(entries[0]) {
+                jqlSearch[0].value() == expectedJql
+                workflowActionName[0].value() == expectedWork
+                comment[0].value() == expectedCom
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+
+        where:
+        jql    | work   | com    | expectedJql | expectedWork | expectedCom
+        null   | null   | null   | ''          | ''           | ''
+        'key'  | null   | null   | 'key'       | ''           | ''
+        'key1' | 'key2' | null   | 'key1'      | 'key2'       | ''
+        'key1' | 'key2' | 'key3' | 'key1'      | 'key2'       | 'key3'
+    }
 }
