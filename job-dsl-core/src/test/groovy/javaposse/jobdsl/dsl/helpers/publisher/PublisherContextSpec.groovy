@@ -5879,4 +5879,118 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
     }
+
+    def 'call cloverPHP with no options'() {
+        when:
+        context.cloverPHP(xmlLocation)
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        xmlLocation << [null, '']
+    }
+
+    def 'call cloverPHP with argument'() {
+        when:
+        context.cloverPHP('html')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cloverphp.CloverPHPPublisher'
+            children().size() == 6
+            publishHtmlReport[0].value() == false
+            xmlLocation[0].value() == 'html'
+            disableArchiving[0].value() == false
+            with(healthyTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 70
+                statementCoverage[0].value() == 80
+            }
+            unhealthyTarget[0].value().empty
+            failingTarget[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cloverphp', '0.4')
+    }
+
+    def 'call cloverPHP with healthy options'() {
+        when:
+        context.cloverPHP('html') {
+            publishHtmlReport {
+                reportDir('html')
+                disableArchiving(disable)
+            }
+            healthyTarget(1, 2)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cloverphp.CloverPHPPublisher'
+            children().size() == 7
+            publishHtmlReport[0].value() == true
+            reportDir[0].value() == 'html'
+            xmlLocation[0].value() == 'html'
+            disableArchiving[0].value() == expected
+            with(healthyTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 1
+                statementCoverage[0].value() == 2
+            }
+            unhealthyTarget[0].value().empty
+            failingTarget[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cloverphp', '0.4')
+
+        where:
+        disable | expected
+        false   | false
+        true    | true
+    }
+
+    def 'call cloverPHP with all options'() {
+        when:
+        context.cloverPHP('html') {
+            publishHtmlReport {
+                reportDir('html')
+                disableArchiving(disable)
+            }
+            healthyTarget(1, 2)
+            unhealthyTarget(3, 4)
+            failingTarget(5, 6)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cloverphp.CloverPHPPublisher'
+            children().size() == 7
+            publishHtmlReport[0].value() == true
+            reportDir[0].value() == 'html'
+            xmlLocation[0].value() == 'html'
+            disableArchiving[0].value() == expected
+            with(healthyTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 1
+                statementCoverage[0].value() == 2
+            }
+            with(unhealthyTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 3
+                statementCoverage[0].value() == 4
+            }
+            with(failingTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 5
+                statementCoverage[0].value() == 6
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cloverphp', '0.4')
+
+        where:
+        disable | expected
+        false   | false
+        true    | true
+    }
 }
