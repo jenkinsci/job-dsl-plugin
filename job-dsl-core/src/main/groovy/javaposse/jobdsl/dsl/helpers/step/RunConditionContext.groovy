@@ -14,6 +14,7 @@ import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.StatusCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.NodeCondition
 
 class RunConditionContext implements Context {
     RunCondition condition
@@ -90,6 +91,14 @@ class RunConditionContext implements Context {
      */
     void status(String worstResult, String bestResult) {
         this.condition = new StatusCondition(worstResult, bestResult)
+    }
+
+    /**
+     * Run only on selected nodes.
+     *
+     */
+    void node(List<String> allowedNodes) {
+        this.condition = new NodeCondition(allowedNodes)
     }
 
     /**
