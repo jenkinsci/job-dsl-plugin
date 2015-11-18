@@ -156,9 +156,9 @@ class PropertiesContextSpec extends Specification {
         null                                          || ''
     }
 
-    def 'scannerJobProperty'() {
+    def 'buildFailureAnalyzer'() {
         when:
-        context.scannerJobProperty()
+        context.buildFailureAnalyzer()
 
         then:
         with(context.propertiesNodes[0]) {
@@ -168,9 +168,9 @@ class PropertiesContextSpec extends Specification {
         }
     }
 
-    def 'scannerJobProperty with value'() {
+    def 'buildFailureAnalyzer with value'() {
         when:
-        context.scannerJobProperty(value)
+        context.buildFailureAnalyzer(value)
 
         then:
         with(context.propertiesNodes[0]) {
@@ -181,8 +181,7 @@ class PropertiesContextSpec extends Specification {
 
         where:
         value || expected
-        true  || true
-        false || false
-        null  || null
+        true  || false
+        false || true
     }
 }

@@ -1,11 +1,11 @@
 job('example1') {
     properties {
-        scannerJobProperty()
+        buildFailureAnalyzer()
     }
 }
 
 job('example2') {
     properties {
-        scannerJobProperty(false)
+        buildFailureAnalyzer(false)
     }
 }
