@@ -37,7 +37,7 @@ class ConditionalStepsContext extends AbstractContext {
      * Specifies the condition to evaluate before executing the build steps.
      */
     void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
-        this.runCondition = RunConditionFactory.of(conditionClosure)
+        this.runCondition = RunConditionFactory.of(jobManagement, conditionClosure)
     }
 
     /**
