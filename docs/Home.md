@@ -26,6 +26,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-141)
  * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
    ([JENKINS-31581](https://issues.jenkins-ci.org/browse/JENKINS-31581))
+ * Fixed support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
+   ([JENKINS-31604](https://issues.jenkins-ci.org/browse/JENKINS-31604))
 * 1.40 (November 08 2015)
  * Increased the minimum supported Jenkins version to 1.609
  * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  

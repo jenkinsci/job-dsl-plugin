@@ -57,10 +57,10 @@ class RunConditionContext extends AbstractContext {
     /**
      * Runs the build steps if the current build has a specific cause.
      */
-    void cause(String buildCause, boolean exclusiveCondition) {
+    void cause(String buildCause, boolean exclusiveCause) {
         this.condition = new SimpleCondition(
                 name: 'Cause',
-                args: ['buildCause': buildCause, 'exclusiveCondition': exclusiveCondition.toString()])
+                args: ['buildCause': buildCause, 'exclusiveCause': exclusiveCause.toString()])
     }
 
     /**
