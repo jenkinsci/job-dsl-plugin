@@ -56,7 +56,7 @@ job('PROJ-integration-tests') {
         cron('15 1,13 * * *')
     }
     steps {
-        maven('-e clean integration-test)
+        maven('-e clean integration-test')
     }
 }
 
