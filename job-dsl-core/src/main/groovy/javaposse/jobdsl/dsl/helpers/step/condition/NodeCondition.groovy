@@ -1,24 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.step.condition
 
-/**
- * Generate config for a node condition.
- *
- * https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin
- */
 class NodeCondition extends SimpleCondition {
-    private final List<String> allowedNodes
+    final Iterable<String> allowedNodes
 
-    NodeCondition(List<String> allowedNodes) {
+    NodeCondition(Iterable<String> allowedNodes) {
         this.name = 'Node'
-	this.allowedNodes = allowedNodes
+        this.allowedNodes = allowedNodes
     }
 
     @Override
     void addArgs(NodeBuilder builder) {
         builder.'allowedNodes' {
-	    allowedNodes.each { node ->
-                'string' node
+            allowedNodes.each { node ->
+                'string'(node)
             }
-	}
+        }
     }
 }

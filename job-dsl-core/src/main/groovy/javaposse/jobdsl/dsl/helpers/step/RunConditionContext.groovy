@@ -1,8 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.BinaryLogicOperation
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
@@ -16,10 +18,13 @@ import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.StatusCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.NodeCondition
 
-class RunConditionContext implements Context {
+class RunConditionContext extends AbstractContext {
     RunCondition condition
 
-    /**
+    RunConditionContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+/**
      * Runs the build steps no matter what.
      */
     void alwaysRun() {
@@ -96,8 +101,10 @@ class RunConditionContext implements Context {
     /**
      * Run only on selected nodes.
      *
+     * @since 1.41
      */
-    void node(List<String> allowedNodes) {
+    @RequiresPlugin(id = 'run-condition', minimumVersion = '1.0')
+    void nodes(Iterable<String> allowedNodes) {
         this.condition = new NodeCondition(allowedNodes)
     }
 
@@ -149,7 +156,7 @@ class RunConditionContext implements Context {
      * @since 1.23
      */
     void not(@DslContext(RunConditionContext) Closure conditionClosure) {
-        this.condition = new NotCondition(RunConditionFactory.of(conditionClosure))
+        this.condition = new NotCondition(RunConditionFactory.of(jobManagement, conditionClosure))
     }
 
     /**
@@ -158,7 +165,7 @@ class RunConditionContext implements Context {
      * @since 1.23
      */
     void and(@DslContext(RunConditionContext) Closure... conditionClosures) {
-        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
+        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(jobManagement, it) }
         this.condition = new BinaryLogicOperation('And', conditions)
     }
 
@@ -168,7 +175,7 @@ class RunConditionContext implements Context {
      * @since 1.23
      */
     void or(@DslContext(RunConditionContext) Closure... conditionClosures) {
-        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(it) }
+        List<RunCondition> conditions = conditionClosures.collect { RunConditionFactory.of(jobManagement, it) }
         this.condition = new BinaryLogicOperation('Or', conditions)
     }
 }

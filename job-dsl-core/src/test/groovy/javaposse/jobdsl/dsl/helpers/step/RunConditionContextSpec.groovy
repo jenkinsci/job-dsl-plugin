@@ -1,17 +1,21 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.FilesMatchCondition
+import javaposse.jobdsl.dsl.helpers.step.condition.NodeCondition
 import javaposse.jobdsl.dsl.helpers.step.condition.SimpleCondition
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
 
 class RunConditionContextSpec extends Specification {
+    JobManagement jobManagement = Mock(JobManagement)
+
     def 'time condition validation'(def args) {
         setup:
-        RunConditionContext context = new RunConditionContext()
+        RunConditionContext context = new RunConditionContext(jobManagement)
 
         when:
         context.time(*args)
@@ -34,7 +38,7 @@ class RunConditionContextSpec extends Specification {
 
     def 'time condition'() {
         setup:
-        RunConditionContext context = new RunConditionContext()
+        RunConditionContext context = new RunConditionContext(jobManagement)
 
         when:
         context.time(9, 30, 10, 0, true)
@@ -55,7 +59,7 @@ class RunConditionContextSpec extends Specification {
 
     def 'file exists'() {
         setup:
-        RunConditionContext context = new RunConditionContext()
+        RunConditionContext context = new RunConditionContext(jobManagement)
 
         when:
         context.fileExists('some_file.txt', WORKSPACE)
@@ -71,7 +75,7 @@ class RunConditionContextSpec extends Specification {
 
     def 'files match'() {
         setup:
-        RunConditionContext context = new RunConditionContext()
+        RunConditionContext context = new RunConditionContext(jobManagement)
 
         when:
         context.filesMatch(/incl.*udes/, /excl.*udes/, WORKSPACE)
@@ -83,6 +87,21 @@ class RunConditionContextSpec extends Specification {
             includes == /incl.*udes/
             excludes == /excl.*udes/
             baseDir == WORKSPACE
+        }
+    }
+
+    def 'allowed nodes'() {
+        setup:
+        RunConditionContext context = new RunConditionContext(jobManagement)
+
+        when:
+        context.nodes(['foo', 'bar'])
+
+        then:
+        context.condition instanceof NodeCondition
+        with(context.condition as NodeCondition) {
+            name == 'Node'
+            allowedNodes == ['foo', 'bar']
         }
     }
 }
