@@ -2098,7 +2098,7 @@ class StepContextSpec extends Specification {
         ]
         testConditionArgs << [
                 ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
-                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
+                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCause': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
                 ['earliestHours': 9, 'earliestMinutes': 10,
                  'latestHours': 14, 'latestMinutes': 45,
@@ -2477,8 +2477,8 @@ class StepContextSpec extends Specification {
         'alwaysRun'        | []                       | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
         'neverRun'         | []                       | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
         'booleanCondition' | ['someToken']            | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
-        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
-                                                                                                                                 exclusiveCondition: 'true']
+        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause    : 'userCause',
+                                                                                                                                 exclusiveCause: 'true']
         'stringsMatch'     | ['some1', 'some2', true] | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
                                                                                                                                  arg2      : 'some2',
                                                                                                                                  ignoreCase: 'true']
