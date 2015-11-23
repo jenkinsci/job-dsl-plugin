@@ -54,6 +54,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-31818](https://issues.jenkins-ci.org/browse/JENKINS-31818))
  * Fixed support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
    ([JENKINS-31604](https://issues.jenkins-ci.org/browse/JENKINS-31604))
+ * Added support for the [Workflow Plugin](https://github.com/jenkinsci/workflow-plugin) Multi Branch
 * 1.40 (November 08 2015)
  * Increased the minimum supported Jenkins version to 1.609
  * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)  

@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.jobs.WorkflowMultiBranchJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
@@ -92,6 +93,15 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
         processJob(name, WorkflowJob, closure)
+    }
+
+    /**
+     * @since 1.41
+     */
+    @Override
+    WorkflowMultiBranchJob workflowMultiBranchJob(String name,
+                                                  @DslContext(WorkflowMultiBranchJob) Closure closure = null) {
+        processJob(name, WorkflowMultiBranchJob, closure)
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
