@@ -26,7 +26,7 @@ class FlexiblePublisherContext extends AbstractContext {
      * Specifies the condition to evaluate before executing publishers or build steps.
      */
     void condition(@DslContext(RunConditionContext) Closure closure) {
-        condition = RunConditionFactory.of(closure)
+        condition = RunConditionFactory.of(jobManagement, closure)
     }
 
     /**

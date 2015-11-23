@@ -2098,7 +2098,7 @@ class StepContextSpec extends Specification {
         ]
         testConditionArgs << [
                 ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
-                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
+                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCause': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
                 ['earliestHours': 9, 'earliestMinutes': 10,
                  'latestHours': 14, 'latestMinutes': 45,
@@ -2108,6 +2108,40 @@ class StepContextSpec extends Specification {
                 'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
                 'ExpressionCondition', 'TimeCondition'
         ]
+    }
+
+    def 'call conditional steps with nodes condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                nodes(['foo', 'bar'])
+            }
+            steps {
+                shell('look at me')
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+            children().size() == 3
+            with(runCondition[0]) {
+                attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.NodeCondition'
+                children().size() == 1
+                allowedNodes[0].children().size() == 2
+                allowedNodes[0].string[0].value() == 'foo'
+                allowedNodes[0].string[1].value() == 'bar'
+            }
+            runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+            conditionalbuilders[0].children().size() == 1
+            with(conditionalbuilders[0].children()[0]) {
+                name() == 'hudson.tasks.Shell'
+                children().size() == 1
+                command[0].value() == 'look at me'
+            }
+        }
+        1 * jobManagement.requirePlugin('conditional-buildstep')
+        1 * jobManagement.requireMinimumPluginVersion('run-condition', '1.0')
     }
 
     @Unroll
@@ -2443,8 +2477,8 @@ class StepContextSpec extends Specification {
         'alwaysRun'        | []                       | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
         'neverRun'         | []                       | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
         'booleanCondition' | ['someToken']            | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
-        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
-                                                                                                                                 exclusiveCondition: 'true']
+        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause    : 'userCause',
+                                                                                                                                 exclusiveCause: 'true']
         'stringsMatch'     | ['some1', 'some2', true] | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
                                                                                                                                  arg2      : 'some2',
                                                                                                                                  ignoreCase: 'true']
