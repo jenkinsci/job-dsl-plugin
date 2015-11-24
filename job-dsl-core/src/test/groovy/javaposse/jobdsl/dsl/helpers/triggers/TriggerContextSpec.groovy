@@ -299,6 +299,22 @@ class TriggerContextSpec extends Specification {
         }
     }
 
+    def 'call periodic folder trigger'() {
+        when:
+        context.periodicFolderTrigger {
+            spec('*/5 * * * *')
+            interval(60000)
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'
+            children().size() == 2
+            spec[0].value() == '*/5 * * * *'
+            interval[0].value() == 60000
+        }
+    }
+
     def 'call pull request trigger with no args'() {
         when:
         context.pullRequest {

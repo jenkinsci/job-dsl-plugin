@@ -123,6 +123,22 @@ class TriggerContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Polls source control for changes at regular intervals.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'cloudbees-folder')
+    void periodicFolderTrigger(@DslContext(PeriodicFolderTriggerContext) Closure periodicFolderTriggerClosure = null) {
+        PeriodicFolderTriggerContext periodicFolderTriggerContext = new PeriodicFolderTriggerContext()
+        ContextHelper.executeInContext(periodicFolderTriggerClosure, periodicFolderTriggerContext)
+
+        triggerNodes << new NodeBuilder().'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger' {
+            spec periodicFolderTriggerContext.spec
+            interval periodicFolderTriggerContext.interval
+        }
+    }
+
+    /**
      * Trigger that runs jobs on push notifications from GitHub.
      *
      * @since 1.16
