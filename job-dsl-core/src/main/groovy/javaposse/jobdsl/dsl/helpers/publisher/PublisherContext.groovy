@@ -1660,6 +1660,25 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Generates trend report for SLOCCount and cloc.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'sloccount', minimumVersion = '1.20')
+    void slocCount(@DslContext(SlocCountContext) Closure closure) {
+        SlocCountContext context = new SlocCountContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.sloccount.SloccountPublisher' {
+            pattern(context.pattern ?: '')
+            encoding(context.encoding ?: '')
+            numBuildsInGraph(context.buildsInGraph)
+            commentIsCode(context.commentIsCode)
+            ignoreBuildFailure(context.ignoreBuildFailure)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {

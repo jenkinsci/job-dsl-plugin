@@ -4995,4 +4995,51 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
     }
+
+    def 'slocCount with no options'() {
+        when:
+        context.slocCount {}
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.sloccount.SloccountPublisher'
+            children().size() == 5
+            pattern[0].value().empty
+            encoding[0].value().empty
+            commentIsCode[0].value() == false
+            ignoreBuildFailure[0].value() == false
+            numBuildsInGraph[0].value() == 0
+        }
+        1 * jobManagement.requireMinimumPluginVersion('sloccount', '1.20')
+    }
+
+    def 'slocCount with all options'() {
+        when:
+        context.slocCount {
+            pattern('build/result.xml')
+            encoding('UTF-8')
+            commentIsCode(value)
+            buildsInGraph(10)
+            ignoreBuildFailure(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.sloccount.SloccountPublisher'
+            children().size() == 5
+            pattern[0].value() == 'build/result.xml'
+            encoding[0].value() == 'UTF-8'
+            numBuildsInGraph[0].value() == 10
+            commentIsCode[0].value() == expected
+            ignoreBuildFailure[0].value() == expected
+        }
+        1 * jobManagement.requireMinimumPluginVersion('sloccount', '1.20')
+
+        where:
+        value | expected
+        false | false
+        true  | true
+    }
 }
