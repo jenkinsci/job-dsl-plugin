@@ -4995,4 +4995,72 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
     }
+
+    def 'call cucumberReports with no options'() {
+        when:
+        context.cucumberReports {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'net.masterthought.jenkins.CucumberReportPublisher'
+            children().size() == 11
+            jsonReportDirectory[0].value().empty
+            pluginUrlPath[0].value().empty
+            fileIncludePattern[0].value().empty
+            fileExcludePattern[0].value().empty
+            skippedFails[0].value() == false
+            pendingFails[0].value() == false
+            undefinedFails[0].value() == false
+            missingFails[0].value() == false
+            noFlashCharts[0].value() == false
+            ignoreFailedTests[0].value() == false
+            parallelTesting[0].value() == false
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6')
+    }
+
+    def 'call cucumberReports with all options'() {
+        when:
+        context.cucumberReports {
+            jsonReportPath('files.json')
+            pluginUrlPath('url')
+            fileIncludePattern('included')
+            fileExcludePattern('excluded')
+            skippedFails(value)
+            pendingFails(value)
+            undefinedFails(value)
+            missingFails(value)
+            turnOffFlashCharts(value)
+            ignoreFailedTests(value)
+            parallelTesting(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'net.masterthought.jenkins.CucumberReportPublisher'
+            children().size() == 11
+            jsonReportDirectory[0].value() == 'files.json'
+            pluginUrlPath[0].value() == 'url'
+            fileIncludePattern[0].value() == 'included'
+            fileExcludePattern[0].value() == 'excluded'
+            skippedFails[0].value() == expected
+            pendingFails[0].value() == expected
+            undefinedFails[0].value() == expected
+            missingFails[0].value() == expected
+            noFlashCharts[0].value() == expected
+            ignoreFailedTests[0].value() == expected
+            parallelTesting[0].value() == expected
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6')
+
+        where:
+        value  | expected
+        false  | false
+        true   | true
+    }
 }
