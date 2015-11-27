@@ -28,6 +28,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Added support for the
    [Build Failure Analyzer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Failure+Analyzer)
    ([JENKINS-31544](https://issues.jenkins-ci.org/browse/JENKINS-31544))
+ * Added support for the [SLOCCount Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SLOCCount+Plugin)
+   ([JENKINS-29740](https://issues.jenkins-ci.org/browse/JENKINS-29740))
  * Support for the older versions of the
    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-141)
