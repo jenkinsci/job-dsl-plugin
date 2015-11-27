@@ -203,4 +203,33 @@ class PropertiesContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('ownership', '0.8')
     }
+
+    def 'buildFailureAnalyzer'() {
+        when:
+        context.buildFailureAnalyzer()
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty'
+            children().size() == 1
+            doNotScan[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('build-failure-analyzer', '1.13.2')
+    }
+
+    def 'buildFailureAnalyzer with value'() {
+        when:
+        context.buildFailureAnalyzer(scan)
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty'
+            children().size() == 1
+            doNotScan[0].value() == !scan
+        }
+        1 * jobManagement.requireMinimumPluginVersion('build-failure-analyzer', '1.13.2')
+
+        where:
+        scan << [true, false]
+    }
 }

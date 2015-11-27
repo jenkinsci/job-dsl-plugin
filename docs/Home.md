@@ -25,6 +25,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-31512](https://issues.jenkins-ci.org/browse/JENKINS-31512))
  * Added support for the [Ownership Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ownership+Plugin)
    ([JENKINS-31531](https://issues.jenkins-ci.org/browse/JENKINS-31531))
+ * Added support for the
+   [Build Failure Analyzer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Failure+Analyzer)
+   ([JENKINS-31544](https://issues.jenkins-ci.org/browse/JENKINS-31544))
  * Support for the older versions of the
    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-141)
