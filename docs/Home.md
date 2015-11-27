@@ -22,6 +22,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 ## Release Notes
 * 1.41 (unreleased)
  * Added support for the [XShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/XShell+Plugin)
+   ([JENKINS-31512](https://issues.jenkins-ci.org/browse/JENKINS-31512))
+ * Added support for the [Ownership Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ownership+Plugin)
+   ([JENKINS-31531](https://issues.jenkins-ci.org/browse/JENKINS-31531))
  * Support for the older versions of the
    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-141)
