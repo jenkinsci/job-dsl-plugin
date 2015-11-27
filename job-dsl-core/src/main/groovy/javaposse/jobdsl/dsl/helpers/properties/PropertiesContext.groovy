@@ -93,17 +93,17 @@ class PropertiesContext extends AbstractExtensibleContext {
      * @since 1.41
      */
     @RequiresPlugin(id = 'ownership', minimumVersion = '0.8')
-    void jobOwnership(@DslContext(JobOwnershipContext) Closure jobOwnershipClosure) {
-        JobOwnershipContext jobOwnershipContext = new JobOwnershipContext()
-        ContextHelper.executeInContext(jobOwnershipClosure, jobOwnershipContext)
+    void ownership(@DslContext(OwnershipContext) Closure ownershipClosure) {
+        OwnershipContext ownershipContext = new OwnershipContext()
+        ContextHelper.executeInContext(ownershipClosure, ownershipContext)
 
         propertiesNodes << new NodeBuilder().'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty' {
-            ownership {
+            delegate.ownership {
                 ownershipEnabled(true)
-                primaryOwnerId(jobOwnershipContext.primaryOwnerId)
+                primaryOwnerId(ownershipContext.primaryOwnerId ?: '')
                 coownersIds(class: 'sorted-set') {
-                    jobOwnershipContext.coOwnerIds.each { String coOwnersId ->
-                        string(coOwnersId)
+                    ownershipContext.coOwnerIds.each { String coOwnerId ->
+                        string(coOwnerId ?: '')
                     }
                 }
             }

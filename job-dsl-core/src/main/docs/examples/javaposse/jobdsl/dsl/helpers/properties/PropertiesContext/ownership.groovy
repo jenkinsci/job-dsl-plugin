@@ -1,6 +1,6 @@
 job('example') {
     properties {
-        jobOwnership {
+        ownership {
             primaryOwnerId('User_ID')
             coOwnerIds('User1', 'User2')
             coOwnerIds('User3')
