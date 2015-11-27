@@ -5001,7 +5001,6 @@ class PublisherContextSpec extends Specification {
         context.slocCount {}
 
         then:
-        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.sloccount.SloccountPublisher'
             children().size() == 5
@@ -5025,21 +5024,18 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.sloccount.SloccountPublisher'
             children().size() == 5
             pattern[0].value() == 'build/result.xml'
             encoding[0].value() == 'UTF-8'
             numBuildsInGraph[0].value() == 10
-            commentIsCode[0].value() == expected
-            ignoreBuildFailure[0].value() == expected
+            commentIsCode[0].value() == value
+            ignoreBuildFailure[0].value() == value
         }
         1 * jobManagement.requireMinimumPluginVersion('sloccount', '1.20')
 
         where:
-        value | expected
-        false | false
-        true  | true
+        value << [true, false]
     }
 }

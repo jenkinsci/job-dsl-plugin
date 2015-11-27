@@ -2,15 +2,12 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 
-/**
- * DSL for https://wiki.jenkins-ci.org/display/JENKINS/SLOCCount+Plugin
- */
 class SlocCountContext implements Context {
     String pattern
     String encoding
-    int buildsInGraph = 0
-    boolean commentIsCode = false
-    boolean ignoreBuildFailure = false
+    int buildsInGraph
+    boolean commentIsCode
+    boolean ignoreBuildFailure
 
     /**
      * Specifies the generated raw SLOCCount or cloc report files to publish.
@@ -34,14 +31,14 @@ class SlocCountContext implements Context {
     }
 
     /**
-     * If set, results of counting blank lines and comments to code lines by default. Defaults to {@code false}.
+     * If set, counts blank lines and comments to code lines. Defaults to {@code false}.
      */
     void commentIsCode(boolean commentIsCode = true) {
         this.commentIsCode = commentIsCode
     }
 
     /**
-     * If set, process the report files even if the build is not successful Defaults to {@code false}.
+     * If set, processes the report files even if the build is not successful. Defaults to {@code false}.
      */
     void ignoreBuildFailure(boolean ignoreBuildFailure = true) {
         this.ignoreBuildFailure = ignoreBuildFailure
