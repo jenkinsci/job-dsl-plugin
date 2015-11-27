@@ -61,6 +61,42 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
     }
 
+    def 'call xshell method with defaults'() {
+        when:
+        context.xShell()
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.xshell.XShellBuilder'
+            children().size() == 3
+            commandLine[0].value() == ''
+            executeFromWorkingDir[0].value() == false
+            regexToKill[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('xshell', '0.10')
+    }
+
+    def 'call xshell method with all options'() {
+        when:
+        context.xShell {
+            commandLine('echo "Hello"')
+            executableInWorkspaceDir()
+            regexToKill('.*regexp.*')
+            timeAllocated(10)
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.xshell.XShellBuilder'
+            children().size() == 4
+            commandLine[0].value() == 'echo "Hello"'
+            executeFromWorkingDir[0].value() == true
+            regexToKill[0].value() == '.*regexp.*'
+            timeAllocated[0].value() == 10
+        }
+        1 * jobManagement.requireMinimumPluginVersion('xshell', '0.10')
+    }
+
     def 'call batchFile method'() {
         when:
         context.batchFile('echo "Hello from Windows"')
