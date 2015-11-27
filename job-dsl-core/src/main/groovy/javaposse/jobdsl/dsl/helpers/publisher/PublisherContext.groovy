@@ -1679,6 +1679,23 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Performs subversion tagging (technically speaking svn copy) on successful build.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'svn-tag', minimumVersion = '1.18')
+    void svnTag(@DslContext(SubversionTagContext) Closure closure) {
+        SubversionTagContext context = new SubversionTagContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.svn__tag.SvnTagPublisher' {
+            tagBaseURL(context.tagBaseUrl)
+            tagComment(context.tagComment)
+            tagDeleteComment(context.tagDeleteComment)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
