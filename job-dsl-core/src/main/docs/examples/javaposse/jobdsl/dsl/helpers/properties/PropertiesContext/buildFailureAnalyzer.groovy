@@ -1,10 +1,10 @@
-job('example1') {
+job('example-1') {
     properties {
         buildFailureAnalyzer()
     }
 }
 
-job('example2') {
+job('example-2') {
     properties {
         buildFailureAnalyzer(false)
     }

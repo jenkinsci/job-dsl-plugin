@@ -104,14 +104,14 @@ class PropertiesContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Configures the Build Failure Analyzer.
+     * Analyzes the causes of failed builds and presents the causes on the build page.
      *
      * @since 1.41
      */
-    @RequiresPlugin(id = 'build-failure-analyzer', minimumVersion = '1.13')
+    @RequiresPlugin(id = 'build-failure-analyzer', minimumVersion = '1.13.2')
     void buildFailureAnalyzer(boolean scan = true) {
         propertiesNodes << new NodeBuilder().'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty' {
-            delegate.doNotScan(!scan)
+            doNotScan(!scan)
         }
     }
 }

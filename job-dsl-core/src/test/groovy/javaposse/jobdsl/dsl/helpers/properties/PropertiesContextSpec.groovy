@@ -166,22 +166,22 @@ class PropertiesContextSpec extends Specification {
             children().size() == 1
             doNotScan[0].value() == false
         }
+        1 * jobManagement.requireMinimumPluginVersion('build-failure-analyzer', '1.13.2')
     }
 
     def 'buildFailureAnalyzer with value'() {
         when:
-        context.buildFailureAnalyzer(value)
+        context.buildFailureAnalyzer(scan)
 
         then:
         with(context.propertiesNodes[0]) {
             name() == 'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty'
             children().size() == 1
-            doNotScan[0].value() == expected
+            doNotScan[0].value() == !scan
         }
+        1 * jobManagement.requireMinimumPluginVersion('build-failure-analyzer', '1.13.2')
 
         where:
-        value || expected
-        true  || false
-        false || true
+        scan << [true, false]
     }
 }
