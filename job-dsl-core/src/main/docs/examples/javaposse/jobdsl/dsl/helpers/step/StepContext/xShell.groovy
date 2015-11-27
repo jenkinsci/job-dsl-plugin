@@ -1,21 +1,21 @@
 job('example') {
     steps {
-        xshell {
+        xShell {
             commandLine('echo Hi!')
         }
-        xshell {
+        xShell {
             commandLine('echo Hi!')
             executableInWorkspaceDir()
         }
-        xshell {
+        xShell {
             commandLine('echo Hi!')
             executableInWorkspaceDir()
-            regexToKill('.*regexp.*')
+            regexToKill(/.*regexp.*/)
         }
-        xshell {
+        xShell {
             commandLine('echo Hi!')
             executableInWorkspaceDir()
-            regexToKill('.*regexp.*')
+            regexToKill(/.*regexp.*/)
             timeAllocated(10)
         }
     }

@@ -42,22 +42,21 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Runs a xshell script.
+     * Runs a XShell command.
      *
      * @since 1.41
      */
     @RequiresPlugin(id = 'xshell', minimumVersion = '0.10')
-    void xshell(@DslContext(XShellContext) Closure xShellClosure) {
+    void xShell(@DslContext(XShellContext) Closure xShellClosure) {
         XShellContext xShellContext = new XShellContext(jobManagement)
         ContextHelper.executeInContext(xShellClosure, xShellContext)
+
         stepNodes << new NodeBuilder().'hudson.plugins.xshell.XShellBuilder' {
-            delegate.executeFromWorkingDir(xShellContext.executableInWorkspaceDir)
-            delegate.commandLine(xShellContext.commandLine)
-            if (xShellContext.regexToKill != null) {
-                delegate.regexToKill(xShellContext.regexToKill)
-            }
+            executeFromWorkingDir(xShellContext.executableInWorkspaceDir)
+            commandLine(xShellContext.commandLine ?: '')
+            regexToKill(xShellContext.regexToKill ?: '')
             if (xShellContext.timeAllocated > 0) {
-                delegate.timeAllocated(xShellContext.timeAllocated)
+                timeAllocated(xShellContext.timeAllocated)
             }
         }
     }

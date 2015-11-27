@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 
 class XShellContext extends AbstractContext {
     String commandLine
-    boolean executableInWorkspaceDir = false
-    String regexToKill = null
-    int timeAllocated = 0
+    boolean executableInWorkspaceDir
+    String regexToKill
+    int timeAllocated
 
     XShellContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -21,7 +21,7 @@ class XShellContext extends AbstractContext {
     }
 
     /**
-     * Sets if the executable runs from current working directory. Defaults to {@code true}.
+     * Sets if the executable runs from current working directory. Defaults to {@code false}.
      */
     void executableInWorkspaceDir(boolean executableInWorkspaceDir = true) {
         this.executableInWorkspaceDir = executableInWorkspaceDir
@@ -36,7 +36,7 @@ class XShellContext extends AbstractContext {
     }
 
     /**
-     * Sets the amount of time to run this step.. If it goes over then the step is killed.
+     * Sets the amount of time to run this step. If it goes over then the step is killed.
      */
     void timeAllocated(int timeAllocated) {
         this.timeAllocated = timeAllocated

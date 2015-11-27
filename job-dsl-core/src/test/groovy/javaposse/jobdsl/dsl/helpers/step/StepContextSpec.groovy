@@ -61,23 +61,26 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
     }
 
-    def 'call xshell method with default'() {
+    def 'call xshell method with defaults'() {
         when:
-        context.xshell()
+        context.xShell()
 
         then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def xshellStep = context.stepNodes[0]
-        xshellStep.name() == 'hudson.plugins.xshell.XShellBuilder'
-        xshellStep.executeFromWorkingDir[0].value() == false
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.xshell.XShellBuilder'
+            children().size() == 3
+            commandLine[0].value() == ''
+            executeFromWorkingDir[0].value() == false
+            regexToKill[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('xshell', '0.10')
     }
 
     def 'call xshell method with all options'() {
         when:
-        context.xshell {
+        context.xShell {
             commandLine('echo "Hello"')
-            executableInWorkspaceDir(true)
+            executableInWorkspaceDir()
             regexToKill('.*regexp.*')
             timeAllocated(10)
         }
@@ -85,6 +88,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.xshell.XShellBuilder'
+            children().size() == 4
             commandLine[0].value() == 'echo "Hello"'
             executeFromWorkingDir[0].value() == true
             regexToKill[0].value() == '.*regexp.*'
