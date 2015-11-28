@@ -786,4 +786,17 @@ class TriggerContextSpec extends Specification {
         then:
         thrown(DslScriptException)
     }
+
+    def 'call bitbucket trigger'() {
+        when:
+        context.bitbucketPush()
+
+        then:
+        context.triggerNodes.size() == 1
+        with(context.triggerNodes[0]) {
+            name() == 'com.cloudbees.jenkins.plugins.BitBucketTrigger'
+            spec[0].value() == ''
+        }
+        1 * mockJobManagement.requirePlugin('bitbucket')
+    }
 }
