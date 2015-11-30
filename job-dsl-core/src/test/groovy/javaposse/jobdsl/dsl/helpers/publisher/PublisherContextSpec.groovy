@@ -5058,9 +5058,9 @@ class PublisherContextSpec extends Specification {
     def 'svnTag with all options'() {
         when:
         context.svnTag {
-            tagBaseUrl('http://subversion.com')
-            tagComment('tag comment')
-            tagDeleteComment('delete comment')
+            baseUrl('http://subversion.com')
+            comment('tag comment')
+            deleteComment('delete comment')
         }
 
         then:

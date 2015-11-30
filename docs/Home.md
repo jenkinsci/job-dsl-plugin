@@ -21,6 +21,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.41 (unreleased)
+ * Added support for the
+   [Subversion Tagging Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Tagging+Plugin)
+   ([JENKINS-31784](https://issues.jenkins-ci.org/browse/JENKINS-31784))
  * Added support for the [XShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/XShell+Plugin)
    ([JENKINS-31512](https://issues.jenkins-ci.org/browse/JENKINS-31512))
  * Added support for the [Ownership Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ownership+Plugin)
