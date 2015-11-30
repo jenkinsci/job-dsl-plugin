@@ -795,8 +795,9 @@ class TriggerContextSpec extends Specification {
         context.triggerNodes.size() == 1
         with(context.triggerNodes[0]) {
             name() == 'com.cloudbees.jenkins.plugins.BitBucketTrigger'
-            spec[0].value() == ''
+            children().size() == 1
+            spec[0].value().empty
         }
-        1 * mockJobManagement.requirePlugin('bitbucket')
+        1 * mockJobManagement.requireMinimumPluginVersion('bitbucket', '1.1.2')
     }
 }
