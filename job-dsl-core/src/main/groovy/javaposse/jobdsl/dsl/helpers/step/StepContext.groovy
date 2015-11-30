@@ -813,6 +813,26 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * This build step will create a VM from the specified template.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'vsphere-cloud')
+    void vSphereDeployFromTemplate(String server, String template, String clone, String cluster) {
+        Preconditions.checkNotNullOrEmpty(template, 'template must be specified')
+        Preconditions.checkNotNullOrEmpty(clone, 'clone must be specified')
+        Preconditions.checkNotNullOrEmpty(cluster, 'cluster must be specified')
+        vSphereBuildStep(server, 'Deploy') {
+            delegate.template(template)
+            delegate.clone(clone)
+            delegate.cluster(cluster)
+            linkedClone(false)
+            resourcePool('')
+            datastore('')
+        }
+    }
+
     private vSphereBuildStep(String server, String builder, Closure configuration) {
         Integer hash = jobManagement.getVSphereCloudHash(server)
         Preconditions.checkNotNull(hash, "vSphere server ${server} does not exist")
