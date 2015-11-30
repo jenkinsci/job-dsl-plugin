@@ -32,6 +32,14 @@ class PublisherContext extends AbstractExtensibleContext {
      * Sends customizable email notifications.
      */
     @RequiresPlugin(id = 'email-ext')
+    void extendedEmail(@DslContext(EmailContext) Closure emailClosure) {
+        extendedEmail(null, emailClosure)
+    }
+
+    /**
+     * Sends customizable email notifications.
+     */
+    @RequiresPlugin(id = 'email-ext')
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)
     }
@@ -56,29 +64,39 @@ class PublisherContext extends AbstractExtensibleContext {
 
         // Validate that we have the typical triggers, if nothing is provided
         if (emailContext.emailTriggers.isEmpty()) {
-            emailContext.emailTriggers << new EmailContext.EmailTrigger('Failure')
-            emailContext.emailTriggers << new EmailContext.EmailTrigger('Success')
+            emailContext.emailTriggers << new EmailTriggerContext('Failure')
+            emailContext.emailTriggers << new EmailTriggerContext('Success')
         }
 
         // Now that the context has what we need
         Node emailNode = new NodeBuilder().'hudson.plugins.emailext.ExtendedEmailPublisher' {
-            recipientList recipients != null ? recipients : '$DEFAULT_RECIPIENTS'
+            recipientList recipients != null ? recipients : emailContext.emailRecipients ?: '$DEFAULT_RECIPIENTS'
             contentType 'default'
-            defaultSubject subjectTemplate ?: '$DEFAULT_SUBJECT'
-            defaultContent contentTemplate ?: '$DEFAULT_CONTENT'
+            defaultSubject subjectTemplate ?: emailContext.emailSubject ?: '$DEFAULT_SUBJECT'
+            defaultContent contentTemplate ?: emailContext.emailContent ?: '$DEFAULT_CONTENT'
             attachmentsPattern ''
+            presendScript '$DEFAULT_PRESEND_SCRIPT'
+            attachBuildLog emailContext.emailAttachBuildLog
+            compressBuildLog false
+            replyTo emailContext.emailReplyTo ?: '$DEFAULT_REPLYTO'
+            saveOutput false
 
             configuredTriggers {
-                emailContext.emailTriggers.each { EmailContext.EmailTrigger trigger ->
+                emailContext.emailTriggers.each { EmailTriggerContext trigger ->
                     "hudson.plugins.emailext.plugins.trigger.${trigger.triggerShortName}Trigger" {
                         email {
-                            recipientList trigger.recipientList
-                            subject trigger.subject
-                            body trigger.body
-                            sendToDevelopers trigger.sendToDevelopers as String
-                            sendToRequester trigger.sendToRequester as String
-                            includeCulprits trigger.includeCulprits as String
-                            sendToRecipientList trigger.sendToRecipientList as String
+                            recipientList trigger.triggerRecipientList
+                            subject trigger.triggerSubject
+                            body trigger.triggerBody
+                            sendToDevelopers trigger.triggerSendToDevelopers as String
+                            sendToRequester trigger.triggerSendToRequester as String
+                            includeCulprits trigger.triggerIncludeCulprits as String
+                            sendToRecipientList trigger.triggerSendToRecipientList as String
+                            attachmentsPattern ''
+                            attachBuildLog false
+                            compressBuildLog false
+                            replyTo trigger.triggerReplyTo
+                            contentType 'project'
                         }
                     }
                 }
