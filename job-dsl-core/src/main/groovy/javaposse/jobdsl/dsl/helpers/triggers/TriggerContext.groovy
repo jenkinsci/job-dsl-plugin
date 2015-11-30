@@ -315,4 +315,16 @@ class TriggerContext extends AbstractExtensibleContext {
             }
         }
     }
+
+    /**
+     * Trigger that runs jobs on push notifications from Bitbucket.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'bitbucket', minimumVersion = '1.1.2')
+    void bitbucketPush() {
+        triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.BitBucketTrigger' {
+            spec()
+        }
+    }
 }
