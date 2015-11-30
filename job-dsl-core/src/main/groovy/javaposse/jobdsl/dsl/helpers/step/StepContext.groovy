@@ -1051,12 +1051,13 @@ class StepContext extends AbstractExtensibleContext {
      *
      * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
      * the script from a file.
+     *
      * @since 1.41
      */
     @RequiresPlugin(id = 'ruby', minimumVersion = '1.2')
     void ruby(String command) {
         stepNodes << new NodeBuilder().'hudson.plugins.ruby.Ruby' {
-            delegate.command(command)
+            delegate.command(command ?: '')
         }
     }
 

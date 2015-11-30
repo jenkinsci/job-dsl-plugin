@@ -3518,9 +3518,9 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.ruby.Ruby'
-            command[0].value() == 'puts \'Hello\''
+            children().size() == 1
+            command[0].value() == "puts 'Hello'"
         }
         1 * jobManagement.requireMinimumPluginVersion('ruby', '1.2')
     }
-
 }
