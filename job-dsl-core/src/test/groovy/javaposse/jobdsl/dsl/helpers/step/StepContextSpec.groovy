@@ -3509,4 +3509,18 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
     }
+
+    def 'call ruby method'() {
+        when:
+        context.ruby('puts \'Hello\'')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.ruby.Ruby'
+            children().size() == 1
+            command[0].value() == "puts 'Hello'"
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ruby', '1.2')
+    }
 }
