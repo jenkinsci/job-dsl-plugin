@@ -21,6 +21,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.41 (unreleased)
+ * Added support for the [Cucumber+Reports+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Reports+Plugin)
+   ([JENKINS-31762](https://issues.jenkins-ci.org/browse/JENKINS-31762))
  * Support for the older versions of the
    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-141)

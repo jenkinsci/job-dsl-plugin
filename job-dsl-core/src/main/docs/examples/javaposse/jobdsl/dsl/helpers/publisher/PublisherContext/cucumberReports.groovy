@@ -5,13 +5,13 @@ job('example') {
             pluginUrlPath('url')
             fileIncludePattern('included')
             fileExcludePattern('excluded')
-            skippedFails(false)
-            pendingFails(false)
-            undefinedFails(false)
-            missingFails(false)
-            turnOffFlashCharts(false)
-            ignoreFailedTests(false)
-            parallelTesting(false)
+            failOnSkipSteps()
+            failOnPendingSteps()
+            failOnUndefinedSteps()
+            failOnMissingSteps()
+            turnOffFlashCharts()
+            ignoreFailedTests()
+            parallelTesting()
         }
     }
 }

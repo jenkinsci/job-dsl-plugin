@@ -7,23 +7,23 @@ class CucumberReportsContext implements Context {
     String pluginUrlPath
     String fileIncludePattern
     String fileExcludePattern
-    boolean skippedFails = false
-    boolean pendingFails = false
-    boolean undefinedFails = false
-    boolean missingFails = false
-    boolean turnOffFlashCharts = false
-    boolean ignoreFailedTests = false
-    boolean parallelTesting = false
+    boolean failOnSkippedSteps
+    boolean failOnPendingSteps
+    boolean failOnUndefinedSteps
+    boolean failOnMissingSteps
+    boolean turnOffFlashCharts
+    boolean ignoreFailedTests
+    boolean parallelTesting
 
     /**
-     * Sets the path to the Json Report directory in the workspace.
+     * Sets the path to the JSON report directory in the workspace.
      */
     void jsonReportPath(String jsonReportPath) {
         this.jsonReportPath = jsonReportPath
     }
 
     /**
-     * Sets the path to the jenkins user content url.
+     * Sets the path to the Jenkins user content URL.
      */
     void pluginUrlPath(String pluginUrlPath) {
         this.pluginUrlPath = pluginUrlPath
@@ -44,35 +44,35 @@ class CucumberReportsContext implements Context {
     }
 
     /**
-     * Fails builds if there were skipped steps. Defaults to {@code false}.
+     * Fails the build if there were skipped steps. Defaults to {@code false}.
      */
-    void skippedFails(boolean skippedFails = true) {
-        this.skippedFails = skippedFails
+    void failOnSkipSteps(boolean skippedFails = true) {
+        this.failOnSkippedSteps = skippedFails
     }
 
     /**
-     * Fails builds if there were pending steps. Defaults to {@code false}.
+     * Fails the build if there were pending steps. Defaults to {@code false}.
      */
-    void pendingFails(boolean pendingFails = true) {
-        this.pendingFails = pendingFails
+    void failOnPendingSteps(boolean pendingFails = true) {
+        this.failOnPendingSteps = pendingFails
     }
 
     /**
-     * Fails builds if there were undefined steps. Defaults to {@code false}.
+     * Fails the build if there were undefined steps. Defaults to {@code false}.
      */
-    void undefinedFails(boolean undefinedFails = true) {
-        this.undefinedFails = undefinedFails
+    void failOnUndefinedSteps(boolean undefinedFails = true) {
+        this.failOnUndefinedSteps = undefinedFails
     }
 
     /**
-     * Fails builds if there were missing steps. Defaults to {@code false}.
+     * Fails the build if there were missing steps. Defaults to {@code false}.
      */
-    void missingFails(boolean missingFails = true) {
-        this.missingFails = missingFails
+    void failOnMissingSteps(boolean missingFails = true) {
+        this.failOnMissingSteps = missingFails
     }
 
     /**
-     * If set, uses javascript charts instead of flash charts. Defaults to {@code false}.
+     * If set, uses JavaScript charts instead of Flash charts. Defaults to {@code false}.
      */
     void turnOffFlashCharts(boolean turnOffFlashCharts = true) {
         this.turnOffFlashCharts = turnOffFlashCharts

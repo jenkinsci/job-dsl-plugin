@@ -1661,11 +1661,11 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Publishes pretty html reports showing the results of cucumber-jvm runs
+     * Publishes Cucumber results as HTML reports
      *
      * @since 1.41
      */
-    @RequiresPlugin(id = 'cucumber-reports', minimumVersion = '0.6')
+    @RequiresPlugin(id = 'cucumber-reports', minimumVersion = '0.6.0')
     void cucumberReports(@DslContext(CucumberReportsContext) Closure closure) {
         CucumberReportsContext context = new CucumberReportsContext()
         ContextHelper.executeInContext(closure, context)
@@ -1675,10 +1675,10 @@ class PublisherContext extends AbstractExtensibleContext {
             pluginUrlPath(context.pluginUrlPath ?: '')
             fileIncludePattern(context.fileIncludePattern ?: '')
             fileExcludePattern(context.fileExcludePattern ?: '')
-            skippedFails(context.skippedFails)
-            pendingFails(context.pendingFails)
-            undefinedFails(context.undefinedFails)
-            missingFails(context.missingFails)
+            skippedFails(context.failOnSkippedSteps)
+            pendingFails(context.failOnPendingSteps)
+            undefinedFails(context.failOnUndefinedSteps)
+            missingFails(context.failOnMissingSteps)
             noFlashCharts(context.turnOffFlashCharts)
             ignoreFailedTests(context.ignoreFailedTests)
             parallelTesting(context.parallelTesting)

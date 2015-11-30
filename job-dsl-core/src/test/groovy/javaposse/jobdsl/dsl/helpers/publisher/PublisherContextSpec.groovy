@@ -5018,8 +5018,7 @@ class PublisherContextSpec extends Specification {
             ignoreFailedTests[0].value() == false
             parallelTesting[0].value() == false
         }
-
-        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6')
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
     }
 
     def 'call cucumberReports with all options'() {
@@ -5029,10 +5028,10 @@ class PublisherContextSpec extends Specification {
             pluginUrlPath('url')
             fileIncludePattern('included')
             fileExcludePattern('excluded')
-            skippedFails(value)
-            pendingFails(value)
-            undefinedFails(value)
-            missingFails(value)
+            failOnSkipSteps(value)
+            failOnPendingSteps(value)
+            failOnUndefinedSteps(value)
+            failOnMissingSteps(value)
             turnOffFlashCharts(value)
             ignoreFailedTests(value)
             parallelTesting(value)
@@ -5047,20 +5046,17 @@ class PublisherContextSpec extends Specification {
             pluginUrlPath[0].value() == 'url'
             fileIncludePattern[0].value() == 'included'
             fileExcludePattern[0].value() == 'excluded'
-            skippedFails[0].value() == expected
-            pendingFails[0].value() == expected
-            undefinedFails[0].value() == expected
-            missingFails[0].value() == expected
-            noFlashCharts[0].value() == expected
-            ignoreFailedTests[0].value() == expected
-            parallelTesting[0].value() == expected
+            skippedFails[0].value() == value
+            pendingFails[0].value() == value
+            undefinedFails[0].value() == value
+            missingFails[0].value() == value
+            noFlashCharts[0].value() == value
+            ignoreFailedTests[0].value() == value
+            parallelTesting[0].value() == value
         }
-
-        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6')
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
 
         where:
-        value  | expected
-        false  | false
-        true   | true
+        value << [true, false]
     }
 }
