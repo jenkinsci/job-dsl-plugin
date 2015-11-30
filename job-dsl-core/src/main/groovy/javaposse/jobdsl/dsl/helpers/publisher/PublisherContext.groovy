@@ -1721,6 +1721,23 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /*
+     * Publishes Cucumber results as Test reports
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'cucumber-testresult-plugin', minimumVersion = '0.8.2')
+    void cucumberTestResult(@DslContext(CucumberTestResultContext) Closure closure) {
+        CucumberTestResultContext context = new CucumberTestResultContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().
+                'org.jenkinsci.plugins.cucumber.jsontestsupport.CucumberTestResultArchiver' {
+            testResults(context.jsonReportFiles ?: '')
+            ignoreBadSteps(context.ignoreBadSteps)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
