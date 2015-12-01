@@ -97,6 +97,76 @@ To ease navigation, two key operators have been overridden. Try to use them as m
 * `<<` - appends as a child. If a Node is provided, it is directly added. A string is created as a node. A closure is
   processed like a NodeBuilder, allowing many nodes to be appended.
 
+# Reusable Configure Blocks
+
+To reuse an configure block for many jobs, the configure block can be refactored into a helper function.
+
+```groovy
+def switchOn = {
+    it / 'properties' / 'com.example.Test' {
+        'switch'('on')
+    }
+}
+               
+job('example-1') {
+    configure switchOn
+}
+
+job('example-2') {
+    configure switchOn
+}
+```
+
+To create a reusable, parametrized configure block, the configure block can be recreated in a parametrized function.
+
+```groovy
+Closure switchOnOrOff(String value) {
+    return {
+        it / 'properties' / 'com.example.Test' {
+            'switch'(value)
+        }
+    }
+}
+               
+job('example-1') {
+    configure switchOnOrOff('on')
+}
+
+job('example-2') {
+    configure switchOnOrOff('off')
+}
+```
+
+To reuse an configure block for many scripts, the configure block can be moved to a helper class.
+
+```groovy
+package helpers
+
+class JobHelper {
+    static Closure switchOnOrOff(String value) {
+        return {
+            it / 'properties' / 'com.example.Test' {
+                'switch'(value)
+            }
+        }
+    }
+}
+```
+
+In the job script you can then import the helper method and use it create several matrix jobs.
+
+```groovy
+import static helpers.JobHelper.switchOnOrOff
+
+job('example-1') {
+    configure switchOnOrOff('on')
+}
+
+job('example-2') {
+    configure switchOnOrOff('off')
+}
+```
+
 # Troubleshooting
 
 ## ConcurrentModificationException
@@ -799,47 +869,4 @@ Result:
         </org.jfrog.hudson.ArtifactoryRedeployPublisher>
     </publishers>
 </project>
-```
-
-# Reusable Configure Blocks
-
-To reuse an configure block for many jobs, the configure block can be moved to a helper class.
-
-The following example shows how to refactor the Matrix job sample above into a reusable helper class.
-
-```groovy
-package helpers
-
-class MatrixProjectHelper {
-    static Closure matrixProject(Iterable<String> labels) {
-        return { project ->
-            project.name = 'matrix-project'
-            project / axes / 'hudson.matrix.LabelAxis' {
-                name 'label'
-                values {
-                     labels.each { string it }
-                }
-            }
-            project / executionStrategy(class: 'hudson.matrix.DefaultMatrixExecutionStrategyImpl') {
-                runSequentially false
-            }
-        }
-    }
-}
-```
-
-In the job script you can then import the helper method and use it create several matrix jobs.
-
-```groovy
-import static helpers.MatrixProjectHelper.matrixProject
-
-job('example-1') {
-    name 'matrix-job-A'
-    configure matrixProject(['label-1', 'label-2'])
-}
-
-job('example-2') {
-    name 'matrix-job-B'
-    configure matrixProject(['label-3', 'label-4'])
-}
 ```
