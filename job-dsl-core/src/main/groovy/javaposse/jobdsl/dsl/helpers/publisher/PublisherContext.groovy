@@ -1738,6 +1738,30 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /*
+     * Measures code complexity.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void flog(@DslContext(FlogContext) Closure closure) {
+        FlogContext context = new FlogContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.rubyMetrics.flog.FlogPublisher' {
+            rbDirectories(context.rubyDirectories ?: '')
+            splittedDirectories {
+                if (context.rubyDirectories != null) {
+                    context.rubyDirectories.split().each {
+                        delegate.string(it)
+                    }
+                } else {
+                    delegate.string(context.rubyDirectories ?: '.')
+                }
+            }
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
