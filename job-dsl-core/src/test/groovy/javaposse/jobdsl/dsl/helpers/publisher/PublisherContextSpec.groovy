@@ -5139,9 +5139,9 @@ class PublisherContextSpec extends Specification {
         value << [true, false]
     }
 
-    def 'call cucumberTestResult with no options'() {
+    def 'call cucumberTestResults with no options'() {
         when:
-        context.cucumberTestResult {
+        context.cucumberTestResults {
         }
 
         then:
@@ -5155,9 +5155,9 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('cucumber-testresult-plugin', '0.8.2')
     }
 
-    def 'call cucumberTestResult with all options'() {
+    def 'call cucumberTestResults with all options'() {
         when:
-        context.cucumberTestResult {
+        context.cucumberTestResults {
             jsonReportFiles('file.json')
             ignoreBadSteps(value)
         }

@@ -1,8 +1,8 @@
 job('example') {
     publishers {
-        cucumberTestResult {
+        cucumberTestResults {
             jsonReportFiles('files.json')
-            ignoreBadSteps(false)
+            ignoreBadSteps()
         }
     }
 }

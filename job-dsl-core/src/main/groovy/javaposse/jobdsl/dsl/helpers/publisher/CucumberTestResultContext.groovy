@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.Context
 
 class CucumberTestResultContext implements Context {
     String jsonReportFiles
-    boolean ignoreBadSteps = false
+    boolean ignoreBadSteps
 
     /**
      * Sets the path to Cucumber JSON files in the Ant glob syntax.
@@ -14,7 +14,7 @@ class CucumberTestResultContext implements Context {
     }
 
     /**
-     * If set, ignores Bad Steps. Defaults to {@code false}.
+     * If set, ignores bad steps. Defaults to {@code false}.
      */
     void ignoreBadSteps(boolean ignoreBadSteps = true) {
         this.ignoreBadSteps = ignoreBadSteps

@@ -1697,7 +1697,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /*
-     * Publishes Cucumber results as HTML reports
+     * Publishes Cucumber results as HTML reports.
      *
      * @since 1.41
      */
@@ -1722,12 +1722,12 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /*
-     * Publishes Cucumber results as Test reports
+     * Publishes Cucumber test results.
      *
      * @since 1.41
      */
     @RequiresPlugin(id = 'cucumber-testresult-plugin', minimumVersion = '0.8.2')
-    void cucumberTestResult(@DslContext(CucumberTestResultContext) Closure closure) {
+    void cucumberTestResults(@DslContext(CucumberTestResultContext) Closure closure) {
         CucumberTestResultContext context = new CucumberTestResultContext()
         ContextHelper.executeInContext(closure, context)
 
