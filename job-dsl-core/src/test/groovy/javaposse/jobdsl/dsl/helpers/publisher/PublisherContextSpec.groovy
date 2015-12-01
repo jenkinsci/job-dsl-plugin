@@ -5138,4 +5138,41 @@ class PublisherContextSpec extends Specification {
         where:
         value << [true, false]
     }
+
+    def 'call cucumberTestResults with no options'() {
+        when:
+        context.cucumberTestResults {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cucumber.jsontestsupport.CucumberTestResultArchiver'
+            children().size() == 2
+            testResults[0].value().empty
+            ignoreBadSteps[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-testresult-plugin', '0.8.2')
+    }
+
+    def 'call cucumberTestResults with all options'() {
+        when:
+        context.cucumberTestResults {
+            jsonReportFiles('file.json')
+            ignoreBadSteps(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cucumber.jsontestsupport.CucumberTestResultArchiver'
+            children().size() == 2
+            testResults[0].value() == 'file.json'
+            ignoreBadSteps[0].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-testresult-plugin', '0.8.2')
+
+        where:
+        value << [true, false]
+    }
 }

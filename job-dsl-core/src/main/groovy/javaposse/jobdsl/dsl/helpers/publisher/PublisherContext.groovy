@@ -1697,7 +1697,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /*
-     * Publishes Cucumber results as HTML reports
+     * Publishes Cucumber results as HTML reports.
      *
      * @since 1.41
      */
@@ -1718,6 +1718,23 @@ class PublisherContext extends AbstractExtensibleContext {
             noFlashCharts(context.turnOffFlashCharts)
             ignoreFailedTests(context.ignoreFailedTests)
             parallelTesting(context.parallelTesting)
+        }
+    }
+
+    /*
+     * Publishes Cucumber test results.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'cucumber-testresult-plugin', minimumVersion = '0.8.2')
+    void cucumberTestResults(@DslContext(CucumberTestResultContext) Closure closure) {
+        CucumberTestResultContext context = new CucumberTestResultContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().
+                'org.jenkinsci.plugins.cucumber.jsontestsupport.CucumberTestResultArchiver' {
+            testResults(context.jsonReportFiles ?: '')
+            ignoreBadSteps(context.ignoreBadSteps)
         }
     }
 
