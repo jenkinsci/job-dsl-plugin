@@ -1846,6 +1846,30 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /*
+     * Publishes Rails Stats.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void railsStats(@DslContext(RailsStatsContext) Closure closure) {
+        RailsStatsContext context = new RailsStatsContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher' {
+            rakeInstallation(context.rakeVersion)
+            rakeWorkingDir(context.rakeWorkingDir ?: '')
+            task('stats')
+            rake {
+                rakeInstallation(context.rakeVersion)
+                rakeWorkingDir(context.rakeWorkingDir ?: '')
+                delegate.tasks('stats')
+                silent(true)
+                bundleExec(true)
+            }
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
