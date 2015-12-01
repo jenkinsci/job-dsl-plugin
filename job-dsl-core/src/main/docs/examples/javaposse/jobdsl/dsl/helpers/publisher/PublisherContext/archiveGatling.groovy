@@ -6,7 +6,7 @@ job('example-1') {
 
 job('example-2') {
     publishers {
-        archiveGatling() {
+        archiveGatling {
             enabled(false)
         }
     }
