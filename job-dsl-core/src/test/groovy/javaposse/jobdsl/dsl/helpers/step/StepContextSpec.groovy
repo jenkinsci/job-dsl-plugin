@@ -3038,6 +3038,78 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('vsphere-cloud')
     }
 
+    def 'vSphere deploy from template'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            template('template')
+            clone('clone')
+            cluster('cluster')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 3
+            with(buildStep[0]) {
+                attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.Deploy'
+                children().size() == 6
+                template[0].value() == 'template'
+                clone[0].value() == 'clone'
+                cluster[0].value() == 'cluster'
+                datastore[0].value().empty
+                resourcePool[0].value().empty
+                linkedClone[0].value() == false
+            }
+            serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
+        }
+        1 * jobManagement.requireMinimumPluginVersion('vsphere-cloud', '2.7')
+    }
+
+    def 'vSphere deploy from template without template'() {
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            clone('clone')
+            cluster('cluster')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'template must be specified'
+    }
+
+    def 'vSphere deploy from template without clone'() {
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            template('template')
+            cluster('cluster')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'clone must be specified'
+    }
+
+    def 'vSphere deploy from template without cluster'() {
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            template('template')
+            clone('clone')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'cluster must be specified'
+    }
+
     def 'vSphere server not found'() {
         when:
         context.vSpherePowerOff('vsphere.acme.org', 'foo')
