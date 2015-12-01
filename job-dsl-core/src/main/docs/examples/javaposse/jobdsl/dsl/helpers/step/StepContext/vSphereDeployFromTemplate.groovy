@@ -1,5 +1,10 @@
 job('example') {
     steps {
-        vSphereDeployFromTemplate('vsphere.acme.org', 'template', 'clone', 'cluster')
+        vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            template('template')
+            clone('clone')
+            cluster('cluster')
+        }
     }
 }

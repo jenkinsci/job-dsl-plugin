@@ -818,18 +818,22 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.41
      */
-    @RequiresPlugin(id = 'vsphere-cloud')
-    void vSphereDeployFromTemplate(String server, String template, String clone, String cluster) {
-        Preconditions.checkNotNullOrEmpty(template, 'template must be specified')
-        Preconditions.checkNotNullOrEmpty(clone, 'clone must be specified')
-        Preconditions.checkNotNullOrEmpty(cluster, 'cluster must be specified')
-        vSphereBuildStep(server, 'Deploy') {
-            delegate.template(template)
-            delegate.clone(clone)
-            delegate.cluster(cluster)
+    @RequiresPlugin(id = 'vsphere-cloud', minimumVersion = '2.7')
+    void vSphereDeployFromTemplate(@DslContext(VSphereDeployFromTemplateContext) Closure closure) {
+        VSphereDeployFromTemplateContext context = new VSphereDeployFromTemplateContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Preconditions.checkNotNullOrEmpty(context.template, 'template must be specified')
+        Preconditions.checkNotNullOrEmpty(context.clone, 'clone must be specified')
+        Preconditions.checkNotNullOrEmpty(context.cluster, 'cluster must be specified')
+
+        vSphereBuildStep(context.server, 'Deploy') {
+            template(context.template)
+            clone(context.clone)
+            cluster(context.cluster)
             linkedClone(false)
-            resourcePool('')
-            datastore('')
+            resourcePool()
+            datastore()
         }
     }
 
