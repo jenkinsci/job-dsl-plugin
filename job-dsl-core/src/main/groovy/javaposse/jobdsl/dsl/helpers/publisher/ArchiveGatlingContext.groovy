@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 
-
 class ArchiveGatlingContext extends AbstractContext {
     boolean enabled = true
 

@@ -581,12 +581,12 @@ class PublisherContextSpec extends Specification {
         gatlingNode.name() == 'io.gatling.jenkins.GatlingPublisher'
         gatlingNode.children().size == 1
         gatlingNode.enabled[0].value() == true
-        1 * jobManagement.requirePlugin("gatling")
+        1 * jobManagement.requirePlugin('gatling')
     }
 
     def 'calling gatling archive with all args'() {
         when:
-        context.archiveGatling(){
+        context.archiveGatling {
             enabled(false)
         }
         then:
@@ -594,7 +594,7 @@ class PublisherContextSpec extends Specification {
         gatlingNode.name() == 'io.gatling.jenkins.GatlingPublisher'
         gatlingNode.children().size == 1
         gatlingNode.enabled[0].value() == false
-        1 * jobManagement.requirePlugin("gatling")
+        1 * jobManagement.requirePlugin('gatling')
     }
 
     def 'call jacoco code coverage with no args'() {

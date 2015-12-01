@@ -237,7 +237,6 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-
     /**
      * Publishes a JaCoCo coverage report.
      *
