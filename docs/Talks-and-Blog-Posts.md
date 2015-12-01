@@ -1,6 +1,13 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* November 2015
+    * eBay Dev Blog: Taming the Hydra ([part 3](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-3.html))
+      by [Marc Günther](https://github.com/marc-guenther)
 * August 2015
+    * Gradle Summit 2015:
+      [Leveraging Gradle and the Jenkins Groovy DSL for a CI Pipeline at Mutual of Omaha](http://gradle.org/leveraging-gradle-and-the-jenkins-groovy-dsl-for-a-ci-pipeline-at-mutual-of-omaha/)
+      ([Video](https://www.youtube.com/watch?v=1mTve31Svh8))
+      by [Scott Hickey](https://twitter.com/jshickey)
     * eBay Dev Blog: Taming the Hydra ([part 1](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-1.html)
       and [part 2](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-2.html))
       by [Marc Günther](https://github.com/marc-guenther)
