@@ -346,4 +346,30 @@ class TriggerContext extends AbstractExtensibleContext {
             nextBuildNum(0)
         }
     }
+
+    /**
+     * Trigger that runs jobs on push notifications from GitLab.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.1.28')
+    void gitlabPush(@DslContext(GitlabTriggerContext) Closure closure) {
+        GitlabTriggerContext context = new GitlabTriggerContext()
+        ContextHelper.executeInContext(closure, context)
+        triggerNodes << new NodeBuilder().'com.dabsquared.gitlabjenkins.GitLabPushTrigger' {
+            spec()
+            triggerOnPush(context.buildOnPushEvents)
+            triggerOnMergeRequest(context.buildOnMergeRequestEvents)
+            triggerOpenMergeRequestOnPush(context.rebuildOpenMergeRequest)
+            ciSkip(context.enableCiSkip)
+            setBuildDescription(context.setBuildDescription)
+            addNoteOnMergeRequest(context.addNoteOnMergeRequest)
+            addCiMessage(context.useCiFeatures)
+            addVoteOnMergeRequest(context.addVoteOnMergeRequest)
+            allowAllBranches(context.allowAllBranches)
+            includeBranchesSpec(context.includeBranches ?: '')
+            excludeBranchesSpec(context.excludeBranches ?: '')
+            acceptMergeRequestOnSuccess(context.acceptMergeRequestOnSuccess)
+        }
+    }
 }
