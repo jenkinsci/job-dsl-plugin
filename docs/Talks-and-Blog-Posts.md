@@ -5,6 +5,10 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
       by [Marc Günther](https://github.com/marc-guenther)
 * August 2015
     * Gradle Summit 2015:
+      [Managing Jenkins with Gradle](http://gradle.org/managing-jenkins-with-gradle/)
+      ([Video](https://www.youtube.com/watch?v=uV8XG3sX_is))
+      by [Gary Hale](https://github.com/ghale)
+    * Gradle Summit 2015:
       [Leveraging Gradle and the Jenkins Groovy DSL for a CI Pipeline at Mutual of Omaha](http://gradle.org/leveraging-gradle-and-the-jenkins-groovy-dsl-for-a-ci-pipeline-at-mutual-of-omaha/)
       ([Video](https://www.youtube.com/watch?v=1mTve31Svh8))
       by [Scott Hickey](https://twitter.com/jshickey)
