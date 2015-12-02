@@ -1,5 +1,44 @@
 ## Migrating to 1.42
 
+### PostBuildScript Plugin
+
+Support for versions older than 0.17 of the
+[PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+The DSL syntax of the `postBuildScripts` context has been changed in order to add new
+methods ([JENKINS-31853](https://issues.jenkins-ci.org/browse/JENKINS-31853)).
+
+DSL prior to 1.42
+```groovy
+job('example') {
+    publishers {
+        postBuildScripts {
+            steps {
+                shell('echo Hello World')
+            }
+            onlyIfBuildSucceeds(false)
+        }
+    }
+}
+```
+
+DSL since 1.42
+```groovy
+job('example') {
+    publishers {
+        postBuildScripts {
+            steps {
+                shell('echo Hello World')
+            }
+            onlyIfBuildSucceeds(false)
+            onlyIfBuildFails(false)
+            markBuildUnstable(false)
+        }
+    }
+}
+```
+
 ### Flexible Publish
 
 The DSL syntax of the `flexiblePublish` context has been changed to fix

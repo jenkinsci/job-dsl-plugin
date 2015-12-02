@@ -5,6 +5,8 @@ job('example') {
                 shell('echo Hello World')
             }
             onlyIfBuildSucceeds(false)
+            onlyIfBuildFails(false)
+            markBuildUnstable(false)
         }
     }
 }

@@ -1382,12 +1382,18 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'postbuildscript')
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
+        jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
+
         PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
             buildSteps(context.stepContext.stepNodes)
             scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
+            if (!jobManagement.getPluginVersion('postbuildscript')?.isOlderThan(new VersionNumber('0.17'))) {
+                scriptOnlyIfFailure(context.onlyIfBuildFails)
+                markBuildUnstable(context.markBuildUnstable)
+            }
         }
     }
 
