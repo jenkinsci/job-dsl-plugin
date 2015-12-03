@@ -3595,4 +3595,48 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('ruby', '1.2')
     }
+
+    def 'call nant with no options'() {
+        when:
+        context.nant {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.nant.NantBuilder'
+            targets[0].value().empty
+            nantBuildFile[0].value().empty
+            nantName[0].value() == '(Default)'
+            !children().any { it.name() == 'properties' }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('nant', '1.4.3')
+
+    }
+
+    def 'call nant with all options'() {
+        when:
+        context.nant {
+            target('test')
+            target('integTest')
+            targets(['publish', 'deploy'])
+            prop('test.size', 4)
+            prop('logging', 'info')
+            props('test.threads': 10, 'input.status': 'release')
+            buildFile('dir2/nant.build')
+            buildFile('dir1/nant.build')
+            nantInstallation('NAnt 1.6')
+            nantInstallation('NAnt 1.7')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with (context.stepNodes[0]) {
+            nantBuildFile[0].value() == 'dir1/nant.build'
+            nantName[0].value() == 'NAnt 1.7'
+            targets[0].value() == 'test integTest publish deploy'
+            properties[0].value() == 'test.size=4\nlogging=info\ntest.threads=10\ninput.status=release'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('nant', '1.4.3')
+    }
 }
