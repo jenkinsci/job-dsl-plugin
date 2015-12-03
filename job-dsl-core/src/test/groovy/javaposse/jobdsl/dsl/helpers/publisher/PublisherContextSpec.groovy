@@ -5665,4 +5665,39 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
     }
+
+    def 'call seleniumReport with no options'() {
+        when:
+        context.seleniumReport()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.seleniumhq.SeleniumhqPublisher'
+            children().size() == 2
+            testResults[0].value().empty
+            useTestCommands[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhq', '0.4')
+    }
+
+    def 'call seleniumReport with all options'() {
+        when:
+        context.seleniumReport('./selenium*') {
+            useTestCommands(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.seleniumhq.SeleniumhqPublisher'
+            children().size() == 2
+            testResults[0].value() == './selenium*'
+            useTestCommands[0].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhq', '0.4')
+
+        where:
+        value << [true, false]
+    }
 }
