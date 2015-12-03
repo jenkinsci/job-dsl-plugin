@@ -1846,6 +1846,23 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+     /**
+     * Publishes Selenium Html reports.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'seleniumhtmlreport', minimumVersion = '1.0')
+    void seleniumHtml(String testResultsDir = 'target', @DslContext(SeleniumHtmlContext) Closure closure = null) {
+        SeleniumHtmlContext context = new SeleniumHtmlContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.seleniumhtmlreport.SeleniumHtmlReportPublisher' {
+            SELENIUM__REPORTS__TARGET('seleniumReports')
+            delegate.testResultsDir(testResultsDir ?: 'target')
+            failureIfExceptionOnParsingResultFiles(context.failOnExceptions)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
