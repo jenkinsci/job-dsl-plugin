@@ -1,5 +1,9 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* December 2015
+    * Under the hood blog:
+      [Jenkins job DSL](http://kamilszymanski.github.io/jenkins-job-dsl/)
+      by [Kamil Szymanski](https://twitter.com/kszdev)
 * November 2015
     * eBay Dev Blog: Taming the Hydra ([part 3](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-3.html))
       by [Marc Günther](https://github.com/marc-guenther)
