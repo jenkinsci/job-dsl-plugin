@@ -1738,6 +1738,22 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /*
+     * Updates relevant Mantis issues.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'mantis', minimumVersion = '0.26')
+    void mantis(@DslContext(MantisContext) Closure closure) {
+        MantisContext context = new MantisContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.mantis.MantisIssueUpdater' {
+            keepNotePrivate(context.keepNotePrivate)
+            recordChangelog(context.recordChangelogToNote)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
