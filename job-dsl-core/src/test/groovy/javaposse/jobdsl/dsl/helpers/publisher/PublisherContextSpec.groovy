@@ -573,6 +573,34 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
     }
 
+    def 'calling gatling archive with minimal args'() {
+        when:
+        context.archiveGatling()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'io.gatling.jenkins.GatlingPublisher'
+            children().size == 1
+            enabled[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('gatling', '1.1.1')
+    }
+
+    def 'calling gatling archive with all args'() {
+        when:
+        context.archiveGatling {
+            enabled(false)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'io.gatling.jenkins.GatlingPublisher'
+            children().size == 1
+            enabled[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('gatling', '1.1.1')
+    }
+
     def 'call jacoco code coverage with no args'() {
         when:
         context.jacocoCodeCoverage()

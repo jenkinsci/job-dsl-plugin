@@ -225,6 +225,21 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Publishes Gatling load simulation reports.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'gatling', minimumVersion = '1.1.1')
+    void archiveGatling(@DslContext(ArchiveGatlingContext) Closure gatlingClosure = null) {
+        ArchiveGatlingContext gatlingContext = new ArchiveGatlingContext(jobManagement)
+        ContextHelper.executeInContext(gatlingClosure, gatlingContext)
+
+        publisherNodes << new NodeBuilder().'io.gatling.jenkins.GatlingPublisher' {
+            enabled(gatlingContext.enabled)
+        }
+    }
+
+    /**
      * Publishes a JaCoCo coverage report.
      *
      * @since 1.17
