@@ -21,6 +21,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.41 (unreleased)
+ * Added support for the [Gatling Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gatling+Plugin)
  * Added support for the
    [Cucumber Test Result Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Test+Result+Plugin)
    ([JENKINS-31815](https://issues.jenkins-ci.org/browse/JENKINS-31815))

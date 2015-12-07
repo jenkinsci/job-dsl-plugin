@@ -12,7 +12,7 @@ class ArchiveGatlingContext extends AbstractContext {
 
     /**
      * Enables tracking of gatling load simulation results.
-     * Defaults to {@code true}
+     * Defaults to {@code true}.
      */
     void enabled(boolean enabled = true) {
         this.enabled = enabled

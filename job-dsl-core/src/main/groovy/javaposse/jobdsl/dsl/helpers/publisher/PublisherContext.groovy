@@ -225,9 +225,11 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Publishes gatling.io load simulation reports
+     * Publishes Gatling load simulation reports.
+     *
+     * @since 1.41
      */
-    @RequiresPlugin(id = 'gatling')
+    @RequiresPlugin(id = 'gatling', minimumVersion = '1.1.1')
     void archiveGatling(@DslContext(ArchiveGatlingContext) Closure gatlingClosure = null) {
         ArchiveGatlingContext gatlingContext = new ArchiveGatlingContext(jobManagement)
         ContextHelper.executeInContext(gatlingClosure, gatlingContext)
