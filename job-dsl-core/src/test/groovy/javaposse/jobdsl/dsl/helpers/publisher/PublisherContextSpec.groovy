@@ -5175,4 +5175,41 @@ class PublisherContextSpec extends Specification {
         where:
         value << [true, false]
     }
+
+    def 'call mantis with no options'() {
+        when:
+        context.mantis {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.mantis.MantisIssueUpdater'
+            children().size() == 2
+            keepNotePrivate[0].value() == false
+            recordChangelog[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mantis', '0.26')
+    }
+
+    def 'call mantis with all options'() {
+        when:
+        context.mantis {
+            keepNotePrivate(value)
+            recordChangelogToNote(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.mantis.MantisIssueUpdater'
+            children().size() == 2
+            keepNotePrivate[0].value() == value
+            recordChangelog[0].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mantis', '0.26')
+
+        where:
+        value << [true, false]
+    }
 }
