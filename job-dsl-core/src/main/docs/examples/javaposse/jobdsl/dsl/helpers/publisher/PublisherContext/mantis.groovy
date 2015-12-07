@@ -1,7 +1,7 @@
 job('example') {
     publishers {
         mantis {
-            keepNotePrivate(false)
+            keepNotePrivate()
             recordChangelogToNote()
         }
     }

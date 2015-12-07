@@ -1738,7 +1738,7 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    /*
+    /**
      * Updates relevant Mantis issues.
      *
      * @since 1.41

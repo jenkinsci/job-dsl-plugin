@@ -3,11 +3,11 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class MantisContext implements Context {
-    boolean keepNotePrivate = false
-    boolean recordChangelogToNote = false
+    boolean keepNotePrivate
+    boolean recordChangelogToNote
 
     /**
-     * If set, it keeps note private. Defaults to {@code false}
+     * If set, keeps the note private. Defaults to {@code false}.
      */
     void keepNotePrivate(boolean keepNotePrivate = true) {
         this.keepNotePrivate = keepNotePrivate
