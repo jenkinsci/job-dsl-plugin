@@ -1696,7 +1696,7 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    /*
+    /**
      * Publishes Cucumber results as HTML reports.
      *
      * @since 1.41
@@ -1721,7 +1721,7 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    /*
+    /**
      * Publishes Cucumber test results.
      *
      * @since 1.41
@@ -1787,5 +1787,4 @@ class PublisherContext extends AbstractExtensibleContext {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }
-
 }
