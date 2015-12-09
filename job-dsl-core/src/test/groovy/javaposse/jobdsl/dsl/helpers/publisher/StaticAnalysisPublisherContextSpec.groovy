@@ -23,8 +23,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         def pmdNode = context.publisherNodes[0]
         assertValues(pmdNode, [], extraNodes,
                 pattern: 'somewhere',
-                healthy: null,
-                unHealthy: null,
+                healthy: '',
+                unHealthy: '',
                 thresholdLimit: 'low',
                 defaultEncoding: '',
                 canRunOnFailed: false,
@@ -59,8 +59,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         def warningsNode = context.publisherNodes[0]
         assertValues(warningsNode, ['consoleParsers'], [:],
-                healthy: null,
-                unHealthy: null,
+                healthy: '',
+                unHealthy: '',
                 thresholdLimit: 'low',
                 defaultEncoding: '',
                 canRunOnFailed: false,
@@ -214,8 +214,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         def analysisCollectorNode = context.publisherNodes[0]
         assertValues(
                 analysisCollectorNode,
-                healthy: null,
-                unHealthy: null,
+                healthy: '',
+                unHealthy: '',
                 thresholdLimit: 'low',
                 defaultEncoding: '',
                 canRunOnFailed: false,
