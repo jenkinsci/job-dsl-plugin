@@ -849,6 +849,68 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
     }
 
+    def 'call Jabber publish with group chat'() {
+        when:
+        context.publishJabber('*@gmail.com')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
+                    children().size() == 2
+                    name[0].value() == '@gmail.com'
+                    notificationOnly[0].value() == false
+                }
+            }
+            strategy[0].value() == 'ALL'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
+        1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+    }
+
+    def 'call Jabber publish with conference room'() {
+        when:
+        context.publishJabber('room@conference.gmail.com')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
+                    children().size() == 2
+                    name[0].value() == 'room@conference.gmail.com'
+                    notificationOnly[0].value() == false
+                }
+            }
+            strategy[0].value() == 'ALL'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
+        1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+    }
+
     def 'call Jabber publish with closure args'() {
         when:
         context.publishJabber('me@gmail.com') {

@@ -390,11 +390,9 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'hudson.plugins.jabber.im.transport.JabberPublisher' {
             delegate.targets {
                 targets.split().each { target ->
-                    boolean isGroup = target.startsWith('*') || target.contains('@conference.')
-                    if (isGroup) {
-                        String targetClean = target[1..-1]
+                    if (target.startsWith('*') || target.contains('@conference.')) {
                         'hudson.plugins.im.GroupChatIMMessageTarget' {
-                            delegate.createNode('name', targetClean)
+                            name(target.startsWith('*') ? target[1..-1] : target)
                             notificationOnly 'false'
                         }
                     } else {
