@@ -830,21 +830,27 @@ class PublisherContextSpec extends Specification {
         context.publishJabber('me@gmail.com')
 
         then:
-        Node publisherNode = context.publisherNodes[0]
-        publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
-        targetNode.value[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly.size() == 0 // No noficationOnly when not a group
-        publisherNode.strategy[0].value() == 'ALL'
-        publisherNode.notifyOnBuildStart[0].value() == false
-        publisherNode.notifySuspects[0].value() == false
-        publisherNode.notifyCulprits[0].value() == false
-        publisherNode.notifyFixers[0].value() == false
-        publisherNode.notifyUpstreamCommitters[0].value() == false
-        Node buildToNode = publisherNode.buildToChatNotifier[0]
-        buildToNode.attributes().containsKey('class')
-        buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
-        publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.DefaultIMMessageTarget'
+                    children().size() == 1
+                    value[0].value() == 'me@gmail.com'
+                }
+            }
+            strategy[0].value() == 'ALL'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
         1 * jobManagement.requirePlugin('jabber')
         1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
     }
@@ -924,21 +930,28 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        Node publisherNode = context.publisherNodes[0]
-        publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
-        targetNode.value[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly.size() == 0
-        publisherNode.strategy[0].value() == 'FAILURE_AND_FIXED'
-        publisherNode.notifyOnBuildStart[0].value() == true
-        publisherNode.notifySuspects[0].value() == true
-        publisherNode.notifyCulprits[0].value() == true
-        publisherNode.notifyFixers[0].value() == true
-        publisherNode.notifyUpstreamCommitters[0].value() == true
-        Node buildToNode = publisherNode.buildToChatNotifier[0]
-        buildToNode.attributes().containsKey('class')
-        buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
-        publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.DefaultIMMessageTarget'
+                    children().size() == 1
+                    value[0].value() == 'me@gmail.com'
+                }
+            }
+            strategy[0].value() == 'FAILURE_AND_FIXED'
+            notifyOnBuildStart[0].value() == true
+            notifySuspects[0].value() == true
+            notifyCulprits[0].value() == true
+            notifyFixers[0].value() == true
+            notifyUpstreamCommitters[0].value() == true
+            buildToChatNotifier[0].attribute('class') ==
+                    'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
         1 * jobManagement.requirePlugin('jabber')
         1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
     }

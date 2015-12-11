@@ -393,25 +393,25 @@ class PublisherContext extends AbstractExtensibleContext {
                     if (target.startsWith('*') || target.contains('@conference.')) {
                         'hudson.plugins.im.GroupChatIMMessageTarget' {
                             name(target.startsWith('*') ? target[1..-1] : target)
-                            notificationOnly 'false'
+                            notificationOnly(false)
                         }
                     } else {
                         'hudson.plugins.im.DefaultIMMessageTarget' {
-                            delegate.createNode('value', target)
+                            value(target)
                         }
                     }
                 }
             }
-            strategy jabberContext.strategyName
-            notifyOnBuildStart jabberContext.notifyOnBuildStart
-            notifySuspects jabberContext.notifySuspects
-            notifyCulprits jabberContext.notifyCulprits
-            notifyFixers jabberContext.notifyFixers
-            notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters
+            strategy(jabberContext.strategyName)
+            notifyOnBuildStart(jabberContext.notifyOnBuildStart)
+            notifySuspects(jabberContext.notifySuspects)
+            notifyCulprits(jabberContext.notifyCulprits)
+            notifyFixers(jabberContext.notifyFixers)
+            notifyUpstreamCommitters(jabberContext.notifyUpstreamCommitters)
             buildToChatNotifier(
                     class: "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier"
             )
-            matrixMultiplier 'ONLY_CONFIGURATIONS'
+            matrixMultiplier('ONLY_CONFIGURATIONS')
         }
     }
 
