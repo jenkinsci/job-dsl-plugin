@@ -846,6 +846,7 @@ class PublisherContextSpec extends Specification {
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
         publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
         1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
     }
 
     def 'call Jabber publish with closure args'() {
@@ -877,6 +878,7 @@ class PublisherContextSpec extends Specification {
         buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
         publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
         1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
     }
 
     def 'call Jabber publish with invalid strategy'() {

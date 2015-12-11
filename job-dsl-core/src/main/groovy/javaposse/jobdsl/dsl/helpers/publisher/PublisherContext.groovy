@@ -382,6 +382,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'jabber')
     void publishJabber(String targets, @DslContext(JabberContext) Closure jabberClosure = null) {
+        jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+
         JabberContext jabberContext = new JabberContext()
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
