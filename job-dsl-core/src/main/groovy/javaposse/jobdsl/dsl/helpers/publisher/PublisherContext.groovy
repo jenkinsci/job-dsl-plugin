@@ -1802,4 +1802,37 @@ class PublisherContext extends AbstractExtensibleContext {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }
+
+    /**
+     * Configures a Weblogic deployment using the weblogic-deployer-plugin.
+     *
+     * By default the following values are applied. If an instance of a
+     * closure is provided, the values from the closure will take effect.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'weblogic-deployer-plugin', minimumVersion = '2.9.1')
+    void deployToWeblogic(@DslContext(WeblogicDeployerContext) Closure weblogicClosure) {
+
+        WeblogicDeployerContext context = new WeblogicDeployerContext()
+        ContextHelper.executeInContext(weblogicClosure, context)
+
+        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
+        Node weblogicDeployerNode = nodeBuilder.'org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin' {
+
+            mustExitOnFailure(context.mustExitOnFailure)
+            forceStopOnFirstFailure(context.forceStopOnFirstFailure)
+            isDeployingOnlyWhenUpdates(context.deployingOnlyWhenUpdates)
+            deployedProjectsDependencies(context.deployedProjectsDependencies)
+
+            selectedDeploymentStrategyIds(context.deploymentPoliciesIdsNodes)
+
+            if (context.taskNodes) {
+                tasks(context.taskNodes)
+            }
+        }
+
+        publisherNodes << weblogicDeployerNode
+    }
+
 }
