@@ -48,10 +48,14 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the
    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-141)
+ * Support for the older versions of the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-141)
  * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
    ([JENKINS-31581](https://issues.jenkins-ci.org/browse/JENKINS-31581))
  * Enhanced support for the [vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin)
    ([JENKINS-31818](https://issues.jenkins-ci.org/browse/JENKINS-31818))
+ * Enhanced support for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
+   ([#697](https://github.com/jenkinsci/job-dsl-plugin/pull/697))
  * Fixed support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
    ([JENKINS-31604](https://issues.jenkins-ci.org/browse/JENKINS-31604))
 * 1.40 (November 08 2015)

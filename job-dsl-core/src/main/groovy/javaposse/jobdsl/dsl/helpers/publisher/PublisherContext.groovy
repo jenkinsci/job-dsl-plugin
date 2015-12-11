@@ -382,36 +382,36 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'jabber')
     void publishJabber(String targets, @DslContext(JabberContext) Closure jabberClosure = null) {
+        jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+
         JabberContext jabberContext = new JabberContext()
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.jabber.im.transport.JabberPublisher' {
             delegate.targets {
                 targets.split().each { target ->
-                    boolean isGroup = target.startsWith('*')
-                    if (isGroup) {
-                        String targetClean = target[1..-1]
+                    if (target.startsWith('*') || target.contains('@conference.')) {
                         'hudson.plugins.im.GroupChatIMMessageTarget' {
-                            delegate.createNode('name', targetClean)
-                            notificationOnly 'false'
+                            name(target.startsWith('*') ? target[1..-1] : target)
+                            notificationOnly(false)
                         }
                     } else {
                         'hudson.plugins.im.DefaultIMMessageTarget' {
-                            delegate.createNode('value', target)
+                            value(target)
                         }
                     }
                 }
             }
-            strategy jabberContext.strategyName
-            notifyOnBuildStart jabberContext.notifyOnBuildStart
-            notifySuspects jabberContext.notifySuspects
-            notifyCulprits jabberContext.notifyCulprits
-            notifyFixers jabberContext.notifyFixers
-            notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters
+            strategy(jabberContext.strategyName)
+            notifyOnBuildStart(jabberContext.notifyOnBuildStart)
+            notifySuspects(jabberContext.notifySuspects)
+            notifyCulprits(jabberContext.notifyCulprits)
+            notifyFixers(jabberContext.notifyFixers)
+            notifyUpstreamCommitters(jabberContext.notifyUpstreamCommitters)
             buildToChatNotifier(
                     class: "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier"
             )
-            matrixMultiplier 'ONLY_CONFIGURATIONS'
+            matrixMultiplier('ONLY_CONFIGURATIONS')
         }
     }
 
