@@ -1063,6 +1063,11 @@ class PublisherContext extends AbstractExtensibleContext {
      * installed, build steps can be used along with publishers. When using versions older then 0.13 of the Flexible
      * Publish Plugin, only one build step or one publisher can be used.
      *
+     * <br />
+     *
+     * Subsequent invocations will result in publisher(s) being added to the existing <em>Flexible Publish</em>
+     * instance.
+     *
      * @since 1.26
      */
     @RequiresPlugin(id = 'flexible-publish', minimumVersion = '0.13')
@@ -1072,15 +1077,24 @@ class PublisherContext extends AbstractExtensibleContext {
 
         checkArgument(!context.actions.empty, 'no publisher or build step specified')
 
-        publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-            delegate.publishers {
-                'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-                    condition(class: context.condition.conditionClass) {
-                        context.condition.addArgs(delegate)
-                    }
-                    publisherList(context.actions)
-                    runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
+        Closure conditionalPublisher = {
+            'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+                condition(class: context.condition.conditionClass) {
+                    context.condition.addArgs(delegate)
                 }
+                publisherList(context.actions)
+                runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
+            }
+        }
+
+        Node flexiblePublisherNode = publisherNodes.find {
+            it.name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+        }
+        if (flexiblePublisherNode) {
+            flexiblePublisherNode.publishers[0].children().with { it[size() - 1] } + conditionalPublisher
+        } else {
+            publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+                 delegate.publishers conditionalPublisher
             }
         }
     }
