@@ -5317,4 +5317,76 @@ class PublisherContextSpec extends Specification {
         where:
         value << [true, false]
     }
+
+    def 'call flexiblePublish multiple times'() {
+        when:
+        context.flexiblePublish {
+            publisher {
+                archiveArtifacts('include1/*')
+            }
+        }
+        context.flexiblePublish {
+            publisher {
+                archiveArtifacts('include2/*')
+            }
+        }
+        context.flexiblePublish {
+            publisher {
+                archiveArtifacts('include3/*')
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            with(children()[0]) {
+                name() == 'publishers'
+                children().size() == 3
+                with(children()[0]) {
+                    name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                    children().size() == 3
+                    condition.size() == 1
+                    publisherList.size() == 1
+                    with(publisherList[0]) {
+                        children().size() == 1
+                        with(children()[0]) {
+                            name() == 'hudson.tasks.ArtifactArchiver'
+                            artifacts[0].value() == 'include1/*'
+                        }
+                    }
+                    runner.size() == 1
+                }
+                with(children()[1]) {
+                    name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                    children().size() == 3
+                    condition.size() == 1
+                    publisherList.size() == 1
+                    with(publisherList[0]) {
+                        children().size() == 1
+                        with(children()[0]) {
+                            name() == 'hudson.tasks.ArtifactArchiver'
+                            artifacts[0].value() == 'include2/*'
+                        }
+                    }
+                    runner.size() == 1
+                }
+                with(children()[2]) {
+                    name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                    children().size() == 3
+                    condition.size() == 1
+                    publisherList.size() == 1
+                    with(publisherList[0]) {
+                        children().size() == 1
+                        with(children()[0]) {
+                            name() == 'hudson.tasks.ArtifactArchiver'
+                            artifacts[0].value() == 'include3/*'
+                        }
+                    }
+                    runner.size() == 1
+                }
+            }
+        }
+    }
 }
