@@ -10,9 +10,22 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class S3BucketPublisherContext extends AbstractContext {
+    /**
+     * This has to match com.amazonaws.regions.Regions enum:
+     * http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/regions/Regions.html
+     */
     private static final List<String> REGIONS = [
-            'us-gov-west-1', 'us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', 'eu-central-1', 'ap-southeast-1',
-            'ap-southeast-2', 'ap-northeast-1', 'sa-east-1', 'cn-north-1'
+        'AP_NORTHEAST_1',
+        'AP_SOUTHEAST_1',
+        'AP_SOUTHEAST_2',
+        'CN_NORTH_1',
+        'EU_CENTRAL_1',
+        'EU_WEST_1',
+        'GovCloud',
+        'SA_EAST_1',
+        'US_EAST_1',
+        'US_WEST_1',
+        'US_WEST_2'
     ]
 
     List<Node> entries = []
