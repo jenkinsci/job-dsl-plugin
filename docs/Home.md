@@ -22,6 +22,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 ## Release Notes
 * 1.41 (unreleased)
  * Added support for the [WebLogic Deployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin)
+   ([JENKINS-21880](https://issues.jenkins-ci.org/browse/JENKINS-21880))
  * Added support for the [Mantis Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mantis+Plugin)
    ([JENKINS-31911](https://issues.jenkins-ci.org/browse/JENKINS-31911))
  * Added support for the [Gatling Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gatling+Plugin)
