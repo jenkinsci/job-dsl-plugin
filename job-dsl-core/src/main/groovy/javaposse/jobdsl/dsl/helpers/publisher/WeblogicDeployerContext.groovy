@@ -3,45 +3,19 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import org.apache.commons.lang.RandomStringUtils
 
-/**
- * DSL Support for the weblogic-deployment-plugin.
- */
+import java.security.SecureRandom
+
 class WeblogicDeployerContext implements Context {
-
-    /**
-     * Enumeration of available deployment stage modes.
-     */
-    static enum WeblogicDeploymentStageModes {
-
-        BY_DEFAULT('bydefault'),
-
-        STAGE('stage'),
-
-        NO_STAGE('nostage'),
-
-        EXTERNAL_STAGE('external_stage')
-
-        private final String stringRepresentation
-
-        WeblogicDeploymentStageModes(String stringRepresentation) {
-            this.stringRepresentation = stringRepresentation
-        }
-
-        @Override
-        String toString() {
-            this.stringRepresentation
-        }
-    }
+    private final Random random = new SecureRandom()
 
     List<Node> taskNodes = []
-    List<Node> deploymentPoliciesIdsNodes = []
+    WeblogicDeployerPolicyContext weblogicDeployerPolicyContext = new WeblogicDeployerPolicyContext()
 
-    boolean mustExitOnFailure = false
-    boolean forceStopOnFirstFailure = false
-    boolean deployingOnlyWhenUpdates = false
-    String deployedProjectsDependencies = ''
+    boolean mustExitOnFailure
+    boolean forceStopOnFirstFailure
+    boolean deployingOnlyWhenUpdates
+    String deployedProjectsDependencies
 
     /**
      * Fails the build if the deployment fails. Defaults to {@code false}.
@@ -51,7 +25,7 @@ class WeblogicDeployerContext implements Context {
     }
 
     /**
-     * Stop the job on first deployment failure. No other defined deployment task of this job will be executed.
+     * Stops the job on first deployment failure. No other defined deployment task of this job will be executed.
      * Defaults to {@code false}.
      */
     void forceStopOnFirstFailure(boolean forceStopOnFirstFailure = true) {
@@ -59,7 +33,7 @@ class WeblogicDeployerContext implements Context {
     }
 
     /**
-     * Deploy only if the build was triggered by a parameterized cause AND the SCM detects changes.
+     * Deploys only if the build was triggered by a parameterized cause and the SCM detects changes.
      * Defaults to {@code false}.
      */
     void deployingOnlyWhenUpdates(boolean deployingOnlyWhenUpdates = true) {
@@ -67,59 +41,58 @@ class WeblogicDeployerContext implements Context {
     }
 
     /**
-     * (experimental plugin feature) Defines a dependency to other deployment jobs.
-     * Defaults to {@code ''}.
+     * Defines a dependency to other deployment jobs.
      */
     void deployedProjectsDependencies(String deployedProjectsDependencies) {
         this.deployedProjectsDependencies = deployedProjectsDependencies
     }
 
     /**
-     * Deploy only when the deployment policy is fulfilled. Defaults to {@code <Empty>}
+     * Deploys only when the deployment policy is fulfilled.
      */
     void deploymentPolicies(@DslContext(WeblogicDeployerPolicyContext) Closure deploymentPoliciesClosure = null) {
+        ContextHelper.executeInContext(deploymentPoliciesClosure, weblogicDeployerPolicyContext)
+    }
 
-        WeblogicDeployerPolicyContext context = new WeblogicDeployerPolicyContext()
-        ContextHelper.executeInContext(deploymentPoliciesClosure, context)
+    /**
+     * Adds a deployment tasks. Can be called multiple times to add more tasks.
+     */
+    void task(@DslContext(WeblogicDeployerTaskContext) Closure taskClosure) {
+        WeblogicDeployerTaskContext context = new WeblogicDeployerTaskContext()
+        ContextHelper.executeInContext(taskClosure, context)
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-
-        context.deploymentPolicies.each {
-            policy -> deploymentPoliciesIdsNodes << nodeBuilder.createNode('string', policy)
+        this.taskNodes << new NodeBuilder().'org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask' {
+            id(new BigInteger(50, random).toString(32))
+            weblogicEnvironmentTargetedName(context.weblogicEnvironmentTargetedName ?: '')
+            deploymentName(context.deploymentName ?: '')
+            deploymentTargets(context.deploymentTargets ?: '')
+            isLibrary(context.isLibrary)
+            builtResourceRegexToDeploy(context.builtResourceRegexToDeploy ?: '')
+            baseResourcesGeneratedDirectory(context.baseResourcesGeneratedDirectory ?: '')
+            taskName(context.taskName ?: '')
+            jdk {
+                name(context.jdkName ?: '')
+                home(context.jdkHome ?: '')
+            }
+            stageMode(context.stageMode.mode)
+            commandLine(context.commandLine.join('\n'))
+            deploymentPlan(context.deploymentPlan ?: '')
         }
     }
 
     /**
-     * Configures a Weblogic deployment task using the weblogic-deployer-plugin.
-     *
-     * These are the default values, which are used if they are not overridden by closure.
-     * All other properties must be set via closure for each task definition, as there are no default values.
+     * Enumeration of available deployment stage modes.
      */
-    void task(@DslContext(WeblogicDeployerTaskContext) Closure taskClosure) {
+    static enum WeblogicDeploymentStageModes {
+        BY_DEFAULT('bydefault'),
+        STAGE('stage'),
+        NO_STAGE('nostage'),
+        EXTERNAL_STAGE('external_stage')
 
-        WeblogicDeployerTaskContext context = new WeblogicDeployerTaskContext()
-        ContextHelper.executeInContext(taskClosure, context)
+        final String mode
 
-        NodeBuilder nodeBuilder = NodeBuilder.newInstance()
-        Node tasksNode = nodeBuilder.'org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask' {
-            id(RandomStringUtils.randomAlphanumeric(10))
-            weblogicEnvironmentTargetedName(context.weblogicEnvironmentTargetedName)
-            deploymentName(context.deploymentName)
-            deploymentTargets(context.deploymentTargets)
-            isLibrary(context.isLibrary)
-            builtResourceRegexToDeploy(context.builtResourceRegexToDeploy)
-            baseResourcesGeneratedDirectory(context.baseResourcesGeneratedDirectory)
-            taskName(context.taskName)
-
-            jdk {
-                name(context.jdkName)
-                home(context.jdkHome)
-            }
-            stageMode(context.stageMode.toString())
-            commandLine(context.commandLine)
-            deploymentPlan(context.deploymentPlan)
+        WeblogicDeploymentStageModes(String mode) {
+            this.mode = mode
         }
-
-        this.taskNodes << tasksNode
     }
 }
