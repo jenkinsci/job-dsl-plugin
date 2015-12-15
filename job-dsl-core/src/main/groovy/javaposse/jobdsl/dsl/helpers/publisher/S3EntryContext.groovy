@@ -20,7 +20,7 @@ class S3EntryContext extends AbstractContext {
     }
 
     /**
-     * Specifies the S3 storage class. Must be either {@code 'STANDARRD'} (default) or {@code 'REDUCED_REDUNDANCY'}.
+     * Specifies the S3 storage class. Must be either {@code 'STANDARD'} (default) or {@code 'REDUCED_REDUNDANCY'}.
      */
     void storageClass(String storageClass) {
         Preconditions.checkArgument(
