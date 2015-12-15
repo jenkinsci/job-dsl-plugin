@@ -1,3 +1,50 @@
+## Migrating to 1.42
+
+### Flexible Publish
+
+The DSL syntax of the `flexiblePublish` context has been changed to fix
+([JENKINS-30010](https://issues.jenkins-ci.org/browse/JENKINS-30010)).
+
+DSL prior to 1.42
+```groovy
+job('example') {
+    publishers {
+        flexiblePublish {
+            condition {
+                status('ABORTED', 'FAILURE')
+            }
+            publisher {
+                wsCleanup()
+            }
+            step {
+                shell('echo hello!')
+            }
+        }
+    }
+}
+```
+
+DSL since 1.42
+```groovy
+job('example') {
+    publishers {
+        flexiblePublish {
+            conditionalAction {
+                condition {
+                    status('ABORTED', 'FAILURE')
+                }
+                publishers {
+                    wsCleanup()
+                }
+                steps {
+                    shell('echo hello!')
+                }
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.41
 
 ### Folders

@@ -1070,16 +1070,25 @@ class PublisherContext extends AbstractExtensibleContext {
         FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement, item)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
 
-        checkArgument(!context.actions.empty, 'no publisher or build step specified')
-
         publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
             delegate.publishers {
-                'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-                    condition(class: context.condition.conditionClass) {
-                        context.condition.addArgs(delegate)
+                if (context.actions) {
+                    'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+                        condition(class: context.condition.conditionClass) {
+                            context.condition.addArgs(delegate)
+                        }
+                        publisherList(context.actions)
+                        runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                     }
-                    publisherList(context.actions)
-                    runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
+                }
+                context.conditionalActions.each { ConditionalActionsContext conditionalActionsContext ->
+                    'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+                        condition(class: conditionalActionsContext.runCondition.conditionClass) {
+                            conditionalActionsContext.runCondition.addArgs(delegate)
+                        }
+                        publisherList(conditionalActionsContext.actions)
+                        runner(class: conditionalActionsContext.runnerClass)
+                    }
                 }
             }
         }
