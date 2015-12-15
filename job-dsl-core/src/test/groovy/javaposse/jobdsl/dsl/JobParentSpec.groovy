@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.IvyJob
@@ -476,21 +475,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        1 * jobManagement.requirePlugin('maven-plugin')
-    }
-
-    def 'mavenJob with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('maven-plugin') >> new VersionNumber('2.2')
-
-        when:
-        MavenJob job = parent.mavenJob('test') {
-        }
-
-        then:
-        job.name == 'test'
-        parent.referencedJobs.contains(job)
-        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'multiJob'() {

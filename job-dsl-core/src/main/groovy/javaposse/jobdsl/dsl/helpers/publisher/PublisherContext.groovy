@@ -1147,10 +1147,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.26
      */
-    @RequiresPlugin(id = 's3')
+    @RequiresPlugin(id = 's3', minimumVersion = '0.7')
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
-        jobManagement.logPluginDeprecationWarning('s3', '0.7')
-
         checkNotNullOrEmpty(profile, 'profile must be specified')
 
         S3BucketPublisherContext context = new S3BucketPublisherContext(jobManagement)

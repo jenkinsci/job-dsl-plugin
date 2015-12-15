@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -321,62 +320,7 @@ class TriggerContextSpec extends Specification {
             orgslist[0].value() == ''
             commentFilePath[0].value() == ''
         }
-        1 * mockJobManagement.requirePlugin('ghprb')
-    }
-
-    def 'call pull request trigger with plugin version 1.13'() {
-        setup:
-        mockJobManagement.getPluginVersion('ghprb') >> new VersionNumber('1.13')
-
-        when:
-        context.pullRequest {
-        }
-
-        then:
-        with(context.triggerNodes[0]) {
-            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 10
-            onlyTriggerPhrase[0].value() == false
-            useGitHubHooks[0].value() == false
-            permitAll[0].value() == false
-            autoCloseFailedPullRequests[0].value() == false
-            cron[0].value() == 'H/5 * * * *'
-            spec[0].value() == 'H/5 * * * *'
-            triggerPhrase[0].value() == ''
-            adminlist[0].value() == ''
-            whitelist[0].value() == ''
-            orgslist[0].value() == ''
-        }
-        1 * mockJobManagement.requirePlugin('ghprb')
-        1 * mockJobManagement.logPluginDeprecationWarning('ghprb', '1.26')
-    }
-
-    def 'call pull request trigger with plugin version 1.14'() {
-        setup:
-        mockJobManagement.getPluginVersion('ghprb') >> new VersionNumber('1.14')
-
-        when:
-        context.pullRequest {
-        }
-
-        then:
-        with(context.triggerNodes[0]) {
-            name() == 'org.jenkinsci.plugins.ghprb.GhprbTrigger'
-            children().size() == 11
-            onlyTriggerPhrase[0].value() == false
-            useGitHubHooks[0].value() == false
-            permitAll[0].value() == false
-            autoCloseFailedPullRequests[0].value() == false
-            cron[0].value() == 'H/5 * * * *'
-            spec[0].value() == 'H/5 * * * *'
-            triggerPhrase[0].value() == ''
-            adminlist[0].value() == ''
-            whitelist[0].value() == ''
-            orgslist[0].value() == ''
-            commentFilePath[0].value() == ''
-        }
-        1 * mockJobManagement.requirePlugin('ghprb')
-        1 * mockJobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
     }
 
     def 'call pull request trigger with multiple admins and orgs'() {
@@ -395,7 +339,7 @@ class TriggerContextSpec extends Specification {
             whitelist[0].value() == 'test1\ntest2'
             orgslist[0].value() == 'test1\ntest2'
         }
-        1 * mockJobManagement.requirePlugin('ghprb')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
     }
 
     def 'call pull request trigger with all args'() {
@@ -431,8 +375,6 @@ class TriggerContextSpec extends Specification {
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
         }
-        1 * mockJobManagement.requirePlugin('ghprb')
-        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.14')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
     }
 
@@ -494,7 +436,7 @@ class TriggerContextSpec extends Specification {
                 }
             }
         }
-        1 * mockJobManagement.requirePlugin('ghprb')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.26')
         1 * mockJobManagement.logPluginDeprecationWarning('ghprb', '1.26')
     }

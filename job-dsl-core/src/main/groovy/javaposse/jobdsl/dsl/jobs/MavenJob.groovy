@@ -26,8 +26,6 @@ class MavenJob extends Job {
 
     MavenJob(JobManagement jobManagement) {
         super(jobManagement)
-
-        jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
     }
 
     @Override

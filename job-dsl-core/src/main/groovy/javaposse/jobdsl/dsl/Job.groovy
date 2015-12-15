@@ -477,18 +477,14 @@ abstract class Job extends Item {
     /**
      * Creates permission records.
      */
-    @RequiresPlugin(id = 'matrix-auth')
+    @RequiresPlugin(id = 'matrix-auth', minimumVersion = '1.2')
     void authorization(@DslContext(JobAuthorizationContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('matrix-auth', '1.2')
-
         JobAuthorizationContext context = new JobAuthorizationContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         withXmlActions << WithXmlAction.create { Node project ->
             Node authorizationMatrixProperty = project / 'properties' / 'hudson.security.AuthorizationMatrixProperty'
-            if (!jobManagement.getPluginVersion('matrix-auth')?.isOlderThan(new VersionNumber('1.2'))) {
-                authorizationMatrixProperty / blocksInheritance(context.blocksInheritance)
-            }
+            authorizationMatrixProperty / blocksInheritance(context.blocksInheritance)
             context.permissions.each { String perm ->
                 authorizationMatrixProperty.appendNode('permission', perm)
             }

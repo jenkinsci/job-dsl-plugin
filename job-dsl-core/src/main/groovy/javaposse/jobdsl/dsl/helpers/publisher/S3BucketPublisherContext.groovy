@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -28,10 +27,7 @@ class S3BucketPublisherContext extends AbstractContext {
     void entry(String source, String bucketName, String region, @DslContext(S3EntryContext) Closure closure = null) {
         checkNotNullOrEmpty(source, 'source must be specified')
         checkNotNullOrEmpty(bucketName, 'bucket must be specified')
-
-        if (!jobManagement.getPluginVersion('s3')?.isOlderThan(new VersionNumber('0.7'))) {
-            checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")
-        }
+        checkArgument(REGIONS.contains(region), "region must be one of ${REGIONS.join(', ')}")
 
         S3EntryContext context = new S3EntryContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
@@ -44,11 +40,8 @@ class S3BucketPublisherContext extends AbstractContext {
             noUploadOnFailure(context.noUploadOnFailure)
             uploadFromSlave(context.uploadFromSlave)
             managedArtifacts(context.managedArtifacts)
-
-            if (!jobManagement.getPluginVersion('s3')?.isOlderThan(new VersionNumber('0.7'))) {
-                useServerSideEncryption(context.useServerSideEncryption)
-                flatten(context.flatten)
-            }
+            useServerSideEncryption(context.useServerSideEncryption)
+            flatten(context.flatten)
         }
     }
 

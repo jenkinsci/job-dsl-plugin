@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class S3EntryContext extends AbstractContext {
     private static final List<String> STORAGE_CLASSES = ['STANDARD', 'REDUCED_REDUNDANCY']
@@ -58,7 +57,6 @@ class S3EntryContext extends AbstractContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 's3', minimumVersion = '0.7')
     void useServerSideEncryption(boolean useServerSideEncryption = true) {
         this.useServerSideEncryption = useServerSideEncryption
     }
@@ -69,7 +67,6 @@ class S3EntryContext extends AbstractContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 's3', minimumVersion = '0.7')
     void flatten(boolean flatten = true) {
         this.flatten = flatten
     }

@@ -10,14 +10,6 @@ class MavenJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
     private final MavenJob job = new MavenJob(jobManagement)
 
-    def 'deprecation warning'() {
-        when:
-        new MavenJob(jobManagement)
-
-        then:
-        1 * jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
-    }
-
     def 'construct simple Maven job and generate xml from it'() {
         when:
         def xml = job.node
