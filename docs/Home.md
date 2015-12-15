@@ -20,7 +20,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.41 (unreleased)
+* 1.41 (December 15 2015)
  * Added support for the [WebLogic Deployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin)
    ([JENKINS-21880](https://issues.jenkins-ci.org/browse/JENKINS-21880))
  * Added support for the [Mantis Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mantis+Plugin)
