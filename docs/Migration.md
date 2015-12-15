@@ -369,7 +369,7 @@ DSL since to 1.35
 job('example') {
     publishers {
         s3('example') {
-            entry('foo', 'bar', 'eu-west-1')
+            entry('foo', 'bar', 'EU_WEST_1')
         }
     }
 }
