@@ -556,19 +556,6 @@ App.Settings = Marionette.Object.extend({
     }
 });
 
-App.ContextView = Marionette.ItemView.extend({
-
-    className: 'context-view',
-
-    template: 'context',
-
-    serializeData: function() {
-        return {
-            signatures: this.options.signatures
-        };
-    }
-});
-
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["context"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -823,6 +810,19 @@ this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["tree"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<div class=\"tree-body\"></div>\r\n<div class=\"search-results\" style=\"display: none\"></div>";
   },"useData":true});
+App.ContextView = Marionette.ItemView.extend({
+
+    className: 'context-view',
+
+    template: 'context',
+
+    serializeData: function() {
+        return {
+            signatures: this.options.signatures
+        };
+    }
+});
+
 App.DetailView = Marionette.ItemView.extend({
 
     template: 'detail',
