@@ -5612,4 +5612,57 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
     }
+
+    def 'call railsNotes with no options'() {
+        when:
+        context.railsNotes()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == '(Default)'
+                rakeWorkingDir[0].value().empty
+                tasks[0].value() == 'notes'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == '(Default)'
+            rakeWorkingDir[0].value().empty
+            task[0].value() == 'notes'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call railsNotes with all options'() {
+        when:
+        context.railsNotes {
+            rakeVersion('rake_2')
+            rakeWorkingDirectory('src')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == 'rake_2'
+                rakeWorkingDir[0].value() == 'src'
+                tasks[0].value() == 'notes'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == 'rake_2'
+            rakeWorkingDir[0].value() == 'src'
+            task[0].value() == 'notes'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
 }
