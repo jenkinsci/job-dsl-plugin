@@ -5571,4 +5571,45 @@ class PublisherContextSpec extends Specification {
         WeblogicDeploymentStageModes.NO_STAGE       || 'nostage'
         WeblogicDeploymentStageModes.STAGE          || 'stage'
     }
+
+    def 'call flog with no options'() {
+        when:
+        context.flog()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.flog.FlogPublisher'
+            children().size() == 2
+            rbDirectories[0].value().empty
+            with(splittedDirectories[0]) {
+                children().size() == 1
+                string[0].value() == '.'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call flog with all options'() {
+        when:
+        context.flog {
+            rubyDirectories('a', 'b')
+            rubyDirectories('c')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.flog.FlogPublisher'
+            children().size() == 2
+            rbDirectories[0].value() == 'a\nb\nc'
+            with(splittedDirectories[0]) {
+                children().size() == 3
+                string[0].value() == 'a'
+                string[1].value() == 'b'
+                string[2].value() == 'c'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
 }
