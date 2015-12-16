@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin
 import hudson.EnvVars
 import hudson.FilePath
 import hudson.model.AbstractBuild
+import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.ScriptRequest
 
 import static javaposse.jobdsl.plugin.WorkspaceProtocol.createWorkspaceUrl
@@ -38,13 +39,16 @@ class ScriptRequestGenerator implements Closeable {
             ScriptRequest request = new ScriptRequest(null, scriptText, urlRoots, ignoreExisting)
             scriptRequests.add(request)
         } else {
-            String targetsStr = env.expand(targets)
-
-            FilePath[] filePaths = build.workspace.list(targetsStr.replace('\n', ','))
-            for (FilePath filePath : filePaths) {
-                URL[] urlRoots = ([createWorkspaceUrl(build, filePath.parent)] + classpath) as URL[]
-                ScriptRequest request = new ScriptRequest(filePath.name, null, urlRoots, ignoreExisting)
-                scriptRequests.add(request)
+            targets.split('\n').each { String target ->
+                FilePath[] filePaths = build.workspace.list(env.expand(target))
+                if (filePaths.length == 0) {
+                    throw new DslException("no Job DSL script(s) found at ${target}")
+                }
+                for (FilePath filePath : filePaths) {
+                    URL[] urlRoots = ([createWorkspaceUrl(build, filePath.parent)] + classpath) as URL[]
+                    ScriptRequest request = new ScriptRequest(filePath.name, null, urlRoots, ignoreExisting)
+                    scriptRequests.add(request)
+                }
             }
         }
         scriptRequests
