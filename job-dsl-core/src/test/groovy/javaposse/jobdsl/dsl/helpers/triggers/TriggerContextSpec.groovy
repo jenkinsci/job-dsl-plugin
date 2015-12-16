@@ -801,7 +801,7 @@ class TriggerContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('bitbucket', '1.1.2')
     }
 
-    def 'call dos trigger methods'() {
+    def 'call dos trigger with all options'() {
         when:
         context.dos('*/10 * * * *') {
             triggerScript('set CAUSE=Build successfully triggered by dostrigger.')
@@ -816,7 +816,36 @@ class TriggerContextSpec extends Specification {
             script[0].value() == 'set CAUSE=Build successfully triggered by dostrigger.'
             nextBuildNum[0].value() == 0
         }
-
         1 * mockJobManagement.requireMinimumPluginVersion('dos-trigger', '1.23')
+    }
+
+    def 'call dos trigger with minimal options'() {
+        when:
+        context.dos('*/10 * * * *') {
+        }
+
+        then:
+        context.triggerNodes.size() == 1
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.dostrigger.DosTrigger'
+            children().size() == 3
+            spec[0].value() == '*/10 * * * *'
+            script[0].value() == ''
+            nextBuildNum[0].value() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('dos-trigger', '1.23')
+    }
+
+    def 'call dos trigger without schedule'() {
+        when:
+        context.dos(schedule) {
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message ==~ /\(.+, line \d+\) cronString must be specified/
+
+        where:
+        schedule << [null, '']
     }
 }
