@@ -3365,27 +3365,23 @@ class PublisherContextSpec extends Specification {
 
     def 'call flexible publish'() {
         when:
-        context.flexiblePublish {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            publisher {
-                mailer('test@test.com')
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Mailer'
@@ -3394,31 +3390,49 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
+
+        where:
+        closure << [
+                {
+                    condition {
+                        stringsMatch('foo', 'bar', false)
+                    }
+                    publisher {
+                        mailer('test@test.com')
+                    }
+                },
+                {
+                    conditionalAction {
+                        condition {
+                            stringsMatch('foo', 'bar', false)
+                        }
+                        publishers {
+                            mailer('test@test.com')
+                        }
+                    }
+                }
+        ]
     }
 
     def 'call flexible publish with build step'() {
         when:
-        context.flexiblePublish {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            step {
-                shell('echo hello')
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3428,34 +3442,49 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
+
+        where:
+        closure << [
+                {
+                    condition {
+                        stringsMatch('foo', 'bar', false)
+                    }
+                    step {
+                        shell('echo hello')
+                    }
+                },
+                {
+                    conditionalAction {
+                        condition {
+                            stringsMatch('foo', 'bar', false)
+                        }
+                        steps {
+                            shell('echo hello')
+                        }
+                    }
+                }
+        ]
     }
 
     def 'call flexible publish with multiple actions'() {
         when:
-        context.flexiblePublish {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            step {
-                shell('echo hello')
-            }
-            publisher {
-                wsCleanup()
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 2
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3465,30 +3494,129 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
+
+        where:
+        closure << [
+                {
+                    condition {
+                        stringsMatch('foo', 'bar', false)
+                    }
+                    step {
+                        shell('echo hello')
+                    }
+                    publisher {
+                        wsCleanup()
+                    }
+                },
+                {
+                    conditionalAction {
+                        condition {
+                            stringsMatch('foo', 'bar', false)
+                        }
+                        steps {
+                            shell('echo hello')
+                        }
+                        publishers {
+                            wsCleanup()
+                        }
+                    }
+                }
+        ]
     }
 
     def 'call flexible publish without condition'() {
         when:
-        context.flexiblePublish {
-            step {
-                shell('echo hello')
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
                 condition[0].children().size() == 0
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
                     children()[0].command[0].value() == 'echo hello'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
+
+        where:
+        closure << [
+                {
+                    step {
+                        shell('echo hello')
+                    }
+                },
+                {
+                    conditionalAction {
+                        steps {
+                            shell('echo hello')
+                        }
+                    }
+                }
+        ]
+    }
+
+    def 'call flexible publish with multiple conditional actions'() {
+        when:
+        context.flexiblePublish {
+            conditionalAction {
+                steps {
+                    shell('echo hello')
+                }
+            }
+            conditionalAction {
+                condition {
+                    stringsMatch('foo', 'bar', false)
+                }
+                runner('DontRun')
+                publishers {
+                    wsCleanup()
+                }
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 2
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+                condition[0].children().size() == 0
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
+                with(publisherList[0]) {
+                    children().size() == 1
+                    children()[0].name() == 'hudson.tasks.Shell'
+                    children()[0].command[0].value() == 'echo hello'
+                }
+            }
+            with(publishers[0].children()[1]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun'
+                runner[0].value().empty
+                with(publisherList[0]) {
+                    children().size() == 1
+                    children()[0].name() == 'hudson.plugins.ws__cleanup.WsCleanup'
                 }
             }
         }
@@ -3501,7 +3629,13 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        thrown(DslScriptException)
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
     }
 
     def 'call post build scripts with minimal options'() {
