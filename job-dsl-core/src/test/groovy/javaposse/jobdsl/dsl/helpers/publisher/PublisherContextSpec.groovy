@@ -5178,8 +5178,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call railsNotes with no options'() {
         when:
-        context.railsNotes {
-        }
+        context.railsNotes()
 
         then:
         context.publisherNodes.size() == 1
@@ -5206,7 +5205,7 @@ class PublisherContextSpec extends Specification {
         when:
         context.railsNotes {
             rakeVersion('rake_2')
-            rakeWorkingDir('src')
+            rakeWorkingDirectory('src')
         }
 
         then:

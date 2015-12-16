@@ -4,19 +4,19 @@ import javaposse.jobdsl.dsl.Context
 
 class RailsNotesContext implements Context {
     String rakeVersion = '(Default)'
-    String rakeWorkingDir
+    String rakeWorkingDirectory
 
     /**
-     * Sets the Rake Version.
+     * Sets the Rake version. Defaults to {@code '(Default)'}.
      */
     void rakeVersion(String rakeVersion) {
         this.rakeVersion = rakeVersion
     }
 
     /**
-     * Sets the rake working directory.
+     * Sets the working directory for Rake.
      */
-    void rakeWorkingDir(String rakeWorkingDir) {
-        this.rakeWorkingDir = rakeWorkingDir
+    void rakeWorkingDirectory(String rakeWorkingDirectory) {
+        this.rakeWorkingDirectory = rakeWorkingDirectory
     }
 }

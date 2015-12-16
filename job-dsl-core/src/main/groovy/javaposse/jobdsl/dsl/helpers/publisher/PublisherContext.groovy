@@ -1738,23 +1738,23 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    /*
+    /**
      * Publishes Rails notes.
      *
-     * @since 1.41
+     * @since 1.42
      */
     @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
-    void railsNotes(@DslContext(RailsNotesContext) Closure closure) {
+    void railsNotes(@DslContext(RailsNotesContext) Closure closure = null) {
         RailsNotesContext context = new RailsNotesContext()
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher' {
-            rakeInstallation(context.rakeVersion)
-            rakeWorkingDir(context.rakeWorkingDir ?: '')
+            rakeInstallation(context.rakeVersion ?: '')
+            rakeWorkingDir(context.rakeWorkingDirectory ?: '')
             task('notes')
             rake {
-                rakeInstallation(context.rakeVersion)
-                rakeWorkingDir(context.rakeWorkingDir ?: '')
+                rakeInstallation(context.rakeVersion ?: '')
+                rakeWorkingDir(context.rakeWorkingDirectory ?: '')
                 delegate.tasks('notes')
                 silent(true)
                 bundleExec(true)

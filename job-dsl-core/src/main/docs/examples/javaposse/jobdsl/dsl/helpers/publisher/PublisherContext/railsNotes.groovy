@@ -1,8 +1,8 @@
 job('example') {
     publishers {
         railsNotes {
-            rakeVersion('(Default)')
-            rakeWorkingDir('src')
+            rakeVersion('v10.2.2')
+            rakeWorkingDirectory('src')
         }
     }
 }
