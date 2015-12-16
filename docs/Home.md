@@ -21,6 +21,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.42 (unreleased)
+ * Added support for the [DOS Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/DOS+Trigger)
+   ([JENKINS-31879](https://issues.jenkins-ci.org/browse/JENKINS-31879))
  * Enhanced support for the
    [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
    ([JENKINS-30010](https://issues.jenkins-ci.org/browse/JENKINS-30010))

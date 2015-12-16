@@ -327,4 +327,23 @@ class TriggerContext extends AbstractExtensibleContext {
             spec()
         }
     }
+
+    /**
+     * Trigger a build with a DOS script.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'dos-trigger', minimumVersion = '1.23')
+    void dos(String cronString, @DslContext(DosTriggerContext) Closure closure) {
+        Preconditions.checkNotNullOrEmpty(cronString, 'cronString must be specified')
+
+        DosTriggerContext context = new DosTriggerContext()
+        ContextHelper.executeInContext(closure, context)
+
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.dostrigger.DosTrigger' {
+            spec(cronString)
+            script(context.triggerScript ?: '')
+            nextBuildNum(0)
+        }
+    }
 }
