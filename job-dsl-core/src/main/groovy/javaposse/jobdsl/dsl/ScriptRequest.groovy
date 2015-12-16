@@ -1,5 +1,8 @@
 package javaposse.jobdsl.dsl
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class ScriptRequest {
     // Starting Object
     final String location
