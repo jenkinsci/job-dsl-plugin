@@ -3,12 +3,12 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class FlogContext implements Context {
-    String rubyDirectories
+    List<String> rubyDirectories = []
 
     /**
-     * Specifies the ruby directories to monitorize with Flog, relative to the workspace.
+     * Specifies the Ruby directories to monitorize with Flog, relative to the workspace.
      */
-    void rubyDirectories(String rubyDirectories) {
-        this.rubyDirectories = rubyDirectories
+    void rubyDirectories(String... rubyDirectories) {
+        this.rubyDirectories.addAll(rubyDirectories)
     }
 }

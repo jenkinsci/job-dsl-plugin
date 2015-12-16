@@ -5178,8 +5178,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call flog with no options'() {
         when:
-        context.flog {
-        }
+        context.flog()
 
         then:
         context.publisherNodes.size() == 1
@@ -5198,7 +5197,8 @@ class PublisherContextSpec extends Specification {
     def 'call flog with all options'() {
         when:
         context.flog {
-            rubyDirectories('a b c')
+            rubyDirectories('a', 'b')
+            rubyDirectories('c')
         }
 
         then:
@@ -5206,7 +5206,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.rubyMetrics.flog.FlogPublisher'
             children().size() == 2
-            rbDirectories[0].value() == 'a b c'
+            rbDirectories[0].value() == 'a\nb\nc'
             with(splittedDirectories[0]) {
                 children().size() == 3
                 string[0].value() == 'a'

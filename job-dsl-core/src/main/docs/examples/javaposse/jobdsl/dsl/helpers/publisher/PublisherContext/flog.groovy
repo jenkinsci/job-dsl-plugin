@@ -1,7 +1,7 @@
 job('example') {
     publishers {
         flog {
-            rubyDirectories('folder')
+            rubyDirectories('folderA', 'folderB')
         }
     }
 }
