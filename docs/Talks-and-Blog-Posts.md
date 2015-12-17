@@ -6,7 +6,7 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
       by [Kamil Szymanski](https://twitter.com/kszdev)
 * November 2015
     * eBay Dev Blog: Taming the Hydra ([part 3](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-3.html))
-      by [Marc Günther](https://github.com/marc-guenther)
+      by [Marc Gï¿½nther](https://github.com/marc-guenther)
 * August 2015
     * Gradle Summit 2015:
       [Managing Jenkins with Gradle](http://gradle.org/managing-jenkins-with-gradle/)
@@ -18,7 +18,7 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
       by [Scott Hickey](https://twitter.com/jshickey)
     * eBay Dev Blog: Taming the Hydra ([part 1](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-1.html)
       and [part 2](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-2.html))
-      by [Marc Günther](https://github.com/marc-guenther)
+      by [Marc Gï¿½nther](https://github.com/marc-guenther)
     * JUES 15: [Configuration as code and JobDSL](http://www.code-conf.com/jues15/program/#configuration-as-code-and-jobdsl)
       by [Niels Bech Nielsen](https://twitter.com/nielsbech)
       ([Slides](https://drive.google.com/file/d/0B7COmBHPVvgEcGdsY1dXMFgtNUE/view?usp=sharing))
@@ -31,6 +31,14 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
 * June 2015
     * JUC Europe: [Configuration as Code: The Job DSL Plugin](https://www.cloudbees.com/jenkins/juc-2015/abstracts/europe/01-01-1500-spilker)
       by [Daniel Spilker](https://github.com/daspilker)
+* April 2015
+    * codecentric Blog:
+      [Generated Jenkins Jobs and automatic Branch Merging for Feature Branches](https://blog.codecentric.de/en/2015/04/generated-jenkins-jobs-and-automatic-branch-merging-for-feature-branches/)
+      by [Daniel Reuter](https://github.com/ReuDa)
+* January 2015
+    * codecentric Blog:
+      [Continuous Delivery for Microservices with Jenkins and the Job DSL Plugin](https://blog.codecentric.de/en/2015/01/continuous-delivery-microservices-jenkins-job-dsl-plugin/)
+      by [Dennis Schulte](https://github.com/denschu)
 * June 2014
     * JUC Berlin: [Configuration as Code: The Job DSL Plugin](https://www.cloudbees.com/event/topic/lightning-talk-2-configuration-code-job-dsl-plugin)
       by [Daniel Spilker](https://github.com/daspilker)
