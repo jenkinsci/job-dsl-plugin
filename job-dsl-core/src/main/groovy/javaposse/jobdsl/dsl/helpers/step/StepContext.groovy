@@ -1086,6 +1086,26 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes a NAnt build script.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'nant', minimumVersion = '1.4.3')
+    void nant(@DslContext(NAntContext) Closure closure = null) {
+        NAntContext context = new NAntContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.nant.NantBuilder' {
+            targets(context.targets.join(' '))
+            nantName(context.nantInstallation ?: '')
+            nantBuildFile(context.buildFile ?: '')
+            if (context.props) {
+                properties(context.props.join('\n'))
+            }
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {

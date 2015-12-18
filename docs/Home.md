@@ -28,6 +28,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Added support for the
    [Selenium HTML Report Plugin](https://wiki.jenkins-ci.org/display/JENKINS/seleniumhtmlreport+Plugin)
    ([JENKINS-31886](https://issues.jenkins-ci.org/browse/JENKINS-31886))
+ * Added support for the [NAnt Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NAnt+Plugin)
+   ([JENKINS-31883](https://issues.jenkins-ci.org/browse/JENKINS-31883))
  * Added support for the [Ruby Metrics Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RubyMetrics+plugin)
    ([JENKINS-31830](https://issues.jenkins-ci.org/browse/JENKINS-31830))
  * Added support for the [DOS Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/DOS+Trigger)
