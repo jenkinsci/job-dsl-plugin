@@ -25,6 +25,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-32135](https://issues.jenkins-ci.org/browse/JENKINS-32135))
  * Added support for the [SeleniumHQ Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Seleniumhq+Plugin)
    ([JENKINS-31887](https://issues.jenkins-ci.org/browse/JENKINS-31887))
+ * Added support for the
+   [Selenium HTML Report Plugin](https://wiki.jenkins-ci.org/display/JENKINS/seleniumhtmlreport+Plugin)
+   ([JENKINS-31886](https://issues.jenkins-ci.org/browse/JENKINS-31886))
  * Added support for the [Ruby Metrics Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RubyMetrics+plugin)
    ([JENKINS-31830](https://issues.jenkins-ci.org/browse/JENKINS-31830))
  * Added support for the [DOS Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/DOS+Trigger)

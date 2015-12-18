@@ -5700,4 +5700,41 @@ class PublisherContextSpec extends Specification {
         where:
         value << [true, false]
     }
+
+    def 'call seleniumHtmlReport with no options'() {
+        when:
+        context.seleniumHtmlReport()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.seleniumhtmlreport.SeleniumHtmlReportPublisher'
+            children().size() == 3
+            testResultsDir[0].value() == 'target'
+            failureIfExceptionOnParsingResultFiles[0].value() == true
+            SELENIUM__REPORTS__TARGET[0].value() == 'seleniumReports'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhtmlreport', '1.0')
+    }
+
+    def 'call seleniumHtmlReport with all options'() {
+        when:
+        context.seleniumHtmlReport('./selenium') {
+            failOnExceptions(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.seleniumhtmlreport.SeleniumHtmlReportPublisher'
+            children().size() == 3
+            testResultsDir[0].value() == './selenium'
+            failureIfExceptionOnParsingResultFiles[0].value() == value
+            SELENIUM__REPORTS__TARGET[0].value() == 'seleniumReports'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhtmlreport', '1.0')
+
+        where:
+        value << [true, false]
+    }
 }
