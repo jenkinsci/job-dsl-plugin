@@ -848,4 +848,81 @@ class TriggerContextSpec extends Specification {
         where:
         schedule << [null, '']
     }
+
+    def 'call gitlabPush trigger with no options'() {
+        when:
+        context.gitlabPush {
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
+            children().size() == 13
+            spec[0].value().empty
+            triggerOnPush[0].value() == true
+            triggerOnMergeRequest[0].value() == true
+            triggerOpenMergeRequestOnPush[0].value() == 'never'
+            ciSkip[0].value() == true
+            setBuildDescription[0].value() == true
+            addNoteOnMergeRequest[0].value() == true
+            addCiMessage[0].value() == false
+            addVoteOnMergeRequest[0].value() == true
+            allowAllBranches[0].value() == false
+            includeBranchesSpec[0].value().empty
+            excludeBranchesSpec[0].value().empty
+            acceptMergeRequestOnSuccess[0].value() == false
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.1.28')
+    }
+
+    def 'call gitlabPush trigger with all options'() {
+        when:
+        context.gitlabPush {
+            buildOnMergeRequestEvents(value)
+            buildOnPushEvents(value)
+            enableCiSkip(value)
+            setBuildDescription(value)
+            addNoteOnMergeRequest(value)
+            rebuildOpenMergeRequest('both')
+            addVoteOnMergeRequest(value)
+            useCiFeatures(value)
+            acceptMergeRequestOnSuccess(value)
+            allowAllBranches(value)
+            includeBranches('include1,include2')
+            excludeBranches('exclude1,exclude2')
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
+            children().size() == 13
+            spec[0].value().empty
+            triggerOnPush[0].value() == value
+            triggerOnMergeRequest[0].value() == value
+            triggerOpenMergeRequestOnPush[0].value() == 'both'
+            ciSkip[0].value() == value
+            setBuildDescription[0].value() == value
+            addNoteOnMergeRequest[0].value() == value
+            addCiMessage[0].value() == value
+            addVoteOnMergeRequest[0].value() == value
+            allowAllBranches[0].value() == value
+            includeBranchesSpec[0].value() == 'include1,include2'
+            excludeBranchesSpec[0].value() == 'exclude1,exclude2'
+            acceptMergeRequestOnSuccess[0].value() == value
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.1.28')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'call gitlabPush trigger with invalid rebuildOpenMergeRequest'() {
+        when:
+        context.gitlabPush {
+            rebuildOpenMergeRequest('FOO')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
 }
