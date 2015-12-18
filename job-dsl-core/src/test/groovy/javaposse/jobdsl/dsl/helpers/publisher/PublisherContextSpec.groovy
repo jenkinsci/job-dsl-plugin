@@ -5666,6 +5666,61 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
     }
 
+    def 'call railsStats with no options'() {
+        when:
+        context.railsStats {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == '(Default)'
+                rakeWorkingDir[0].value().empty
+                tasks[0].value() == 'stats'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == '(Default)'
+            rakeWorkingDir[0].value().empty
+            task[0].value() == 'stats'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call railsStats with all options'() {
+        when:
+        context.railsStats {
+            rakeVersion('rake_2')
+            rakeWorkingDirectory('src')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == 'rake_2'
+                rakeWorkingDir[0].value() == 'src'
+                tasks[0].value() == 'stats'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == 'rake_2'
+            rakeWorkingDir[0].value() == 'src'
+            task[0].value() == 'stats'
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
     def 'call seleniumReport with no options'() {
         when:
         context.seleniumReport()

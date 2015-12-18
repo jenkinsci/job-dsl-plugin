@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
 
-class RailsNotesContext implements Context {
+class RailsTaskContext implements Context {
     String rakeVersion = '(Default)'
     String rakeWorkingDirectory
 

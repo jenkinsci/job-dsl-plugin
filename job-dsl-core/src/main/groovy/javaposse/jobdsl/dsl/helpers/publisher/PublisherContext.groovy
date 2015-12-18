@@ -1828,18 +1828,37 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.42
      */
     @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
-    void railsNotes(@DslContext(RailsNotesContext) Closure closure = null) {
-        RailsNotesContext context = new RailsNotesContext()
+    void railsNotes(@DslContext(RailsTaskContext) Closure closure = null) {
+        RailsTaskContext context = new RailsTaskContext()
         ContextHelper.executeInContext(closure, context)
 
-        publisherNodes << new NodeBuilder().'hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher' {
+        publisherNodes <<
+                createRailsTaskNode('hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher', 'notes', context)
+    }
+
+    /**
+     * Publishes Rails stats.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void railsStats(@DslContext(RailsTaskContext) Closure closure) {
+        RailsTaskContext context = new RailsTaskContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes <<
+                createRailsTaskNode('hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher', 'stats', context)
+    }
+
+    private Node createRailsTaskNode(String publisherName, String task, RailsTaskContext context) {
+        new NodeBuilder()."$publisherName" {
             rakeInstallation(context.rakeVersion ?: '')
             rakeWorkingDir(context.rakeWorkingDirectory ?: '')
-            task('notes')
+            delegate.task(task)
             rake {
                 rakeInstallation(context.rakeVersion ?: '')
                 rakeWorkingDir(context.rakeWorkingDirectory ?: '')
-                delegate.tasks('notes')
+                delegate.tasks(task)
                 silent(true)
                 bundleExec(true)
             }
