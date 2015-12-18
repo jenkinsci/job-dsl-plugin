@@ -1846,6 +1846,22 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Publishes Selenium reports.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'seleniumhq', minimumVersion = '0.4')
+    void seleniumReport(String testReportPattern = null, @DslContext(SeleniumReportContext) Closure closure = null) {
+        SeleniumReportContext context = new SeleniumReportContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.seleniumhq.SeleniumhqPublisher' {
+            testResults(testReportPattern ?: '')
+            useTestCommands(context.useTestCommands)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {

@@ -23,6 +23,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.42 (unreleased)
  * Fixed documentation for the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin)
    ([JENKINS-32135](https://issues.jenkins-ci.org/browse/JENKINS-32135))
+ * Added support for the [SeleniumHQ Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Seleniumhq+Plugin)
+   ([JENKINS-31887](https://issues.jenkins-ci.org/browse/JENKINS-31887))
  * Added support for the [Ruby Metrics Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RubyMetrics+plugin)
    ([JENKINS-31830](https://issues.jenkins-ci.org/browse/JENKINS-31830))
  * Added support for the [DOS Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/DOS+Trigger)
