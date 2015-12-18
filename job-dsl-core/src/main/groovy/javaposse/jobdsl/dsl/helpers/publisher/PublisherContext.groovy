@@ -93,7 +93,7 @@ class PublisherContext extends AbstractExtensibleContext {
                             includeCulprits trigger.triggerIncludeCulprits as String
                             sendToRecipientList trigger.triggerSendToRecipientList as String
                             attachmentsPattern ''
-                            attachBuildLog false
+                            attachBuildLog trigger.triggerAttachBuildLog as String
                             compressBuildLog false
                             replyTo trigger.triggerReplyTo
                             contentType 'project'

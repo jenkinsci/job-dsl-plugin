@@ -111,6 +111,7 @@ class PublisherContextSpec extends Specification {
                 sendToDevelopers()
                 includeCulprits()
                 sendToRequester()
+                attachBuildLog()
             }
             trigger('Fixed') {
                 subject('Build status: fixed')
@@ -147,7 +148,7 @@ class PublisherContextSpec extends Specification {
         emailFailure.includeCulprits[0].value() as String == 'true'
         emailFailure.sendToRecipientList[0].value() as String == 'true'
         emailFailure.attachmentsPattern[0].value() == ''
-        emailFailure.attachBuildLog[0].value() as String == 'false'
+        emailFailure.attachBuildLog[0].value() as String == 'true'
         emailFailure.compressBuildLog[0].value() as String == 'false'
         emailFailure.replyTo[0].value() == '$PROJECT_DEFAULT_REPLYTO'
         emailFailure.contentType[0].value() == 'project'

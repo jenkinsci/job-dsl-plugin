@@ -11,6 +11,7 @@ class EmailTriggerContext implements Context {
     boolean triggerSendToRequester
     boolean triggerIncludeCulprits
     boolean triggerSendToRecipientList
+    boolean triggerAttachBuildLog
     String triggerReplyTo
 
     /**
@@ -18,12 +19,13 @@ class EmailTriggerContext implements Context {
      *
      * By default, {@code recipientList} is an empty list, {@code subject} is $PROJECT_DEFAULT_SUBJECT,
      * {@code body} is $PROJECT_DEFAULT_CONTENT, {@code sendToDevelopers} is false, {@code sendToRequester} is false,
-     * {@code includeCulprits} is false, {@code sendToRecipientList} is true,
+     * {@code includeCulprits} is false, {@code sendToRecipientList} is true, {@code attachBuildLog} is false,
      * and {@code replyTo} is $PROJECT_DEFAULT_REPLYTO
      */
     EmailTriggerContext(String shortName, String recipientList = null, String subject = null, String body = null,
                         Boolean sendToDevelopers = null, Boolean sendToRequester = null,
-                        Boolean includeCulprits = null, Boolean sendToRecipientList = null, String replyTo = null) {
+                        Boolean includeCulprits = null, Boolean sendToRecipientList = null,
+                        Boolean attachBuildLog = null, String replyTo = null) {
         triggerShortName = shortName
         triggerRecipientList = recipientList ?: ''
         triggerSubject = subject ?: '$PROJECT_DEFAULT_SUBJECT'
@@ -32,6 +34,7 @@ class EmailTriggerContext implements Context {
         triggerSendToRequester = sendToRequester == null ? false : sendToRequester
         triggerIncludeCulprits = includeCulprits == null ? false : includeCulprits
         triggerSendToRecipientList = sendToRecipientList == null ? true : sendToRecipientList
+        triggerAttachBuildLog = attachBuildLog == null ? false : attachBuildLog
         triggerReplyTo = replyTo ?: '$PROJECT_DEFAULT_REPLYTO'
     }
 
@@ -91,6 +94,13 @@ class EmailTriggerContext implements Context {
      */
     void sendToRecipientList(boolean sendToRecipientList = true) {
         triggerSendToRecipientList = sendToRecipientList
+    }
+
+    /**
+     * Specifies whether or not to attach the build log to the email.
+     */
+    void attachBuildLog(boolean attachBuildLog = true) {
+        triggerAttachBuildLog = attachBuildLog
     }
 
     /**
