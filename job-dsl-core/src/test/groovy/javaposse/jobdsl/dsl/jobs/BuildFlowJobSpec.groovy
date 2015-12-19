@@ -24,4 +24,20 @@ class BuildFlowJobSpec extends Specification {
         job.node.dsl.size() == 1
         job.node.dsl[0].value() == 'build Flow Block'
     }
+
+    def 'buildNeedsWorkspace constructs xml'() {
+        when:
+        job.buildNeedsWorkspace()
+
+        then:
+        job.node.buildNeedsWorkspace.size() == 1
+        job.node.buildNeedsWorkspace[0].value() == true
+
+        when:
+        job.buildNeedsWorkspace(false)
+
+        then:
+        job.node.buildNeedsWorkspace.size() == 1
+        job.node.buildNeedsWorkspace[0].value() == false
+    }
 }

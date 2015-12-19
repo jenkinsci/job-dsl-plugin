@@ -23,6 +23,17 @@ class BuildFlowJob extends Job {
         }
     }
 
+    /**
+     * Sets whether the build flow run needs a workspace. Defaults to {@code true}
+     * @since 1.42
+     */
+    void buildNeedsWorkspace(boolean needsWorkspace = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('buildNeedsWorkspace', needsWorkspace)
+            project / node
+        }
+    }
+
     @Override
     void publishers(@DslContext(BuildFlowPublisherContext) Closure closure) {
         BuildFlowPublisherContext context = new BuildFlowPublisherContext(jobManagement, this)
