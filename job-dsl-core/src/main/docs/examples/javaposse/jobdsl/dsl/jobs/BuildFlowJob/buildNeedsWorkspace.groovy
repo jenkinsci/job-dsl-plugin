@@ -1,0 +1,3 @@
+buildFlowJob('example') {
+    buildNeedsWorkspace()
+}

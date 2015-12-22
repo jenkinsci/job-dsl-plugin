@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.publisher.BuildFlowPublisherContext
 
@@ -20,6 +21,19 @@ class BuildFlowJob extends Job {
     void buildFlow(String buildFlowText) {
         withXmlActions << WithXmlAction.create { Node project ->
             project / dsl(buildFlowText)
+        }
+    }
+
+    /**
+     * Sets whether the build flow run needs a workspace. Defaults to {@code false}.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'build-flow-plugin', minimumVersion = '0.12')
+    void buildNeedsWorkspace(boolean needsWorkspace = true) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('buildNeedsWorkspace', needsWorkspace)
+            project / node
         }
     }
 

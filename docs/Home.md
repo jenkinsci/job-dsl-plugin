@@ -42,6 +42,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Changed the DSL syntax for `flexiblePublish`, see [Migration](Migration#migrating-to-142)
  * Check DSL scripts for existence
    ([JENKINS-30541](https://issues.jenkins-ci.org/browse/JENKINS-30541))
+ * Added support for `buildNeedsWorkspace` option for 
+   [Build Flow Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin)
 * 1.41 (December 15 2015)
  * Added support for the [WebLogic Deployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin)
    ([JENKINS-21880](https://issues.jenkins-ci.org/browse/JENKINS-21880))
