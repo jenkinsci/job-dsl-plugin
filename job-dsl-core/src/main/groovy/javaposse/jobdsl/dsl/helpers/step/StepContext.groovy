@@ -1106,6 +1106,24 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes a JSLint build script.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'jslint', minimumVersion = '0.8.2')
+    void jslint(@DslContext(JSLintContext) Closure closure = null) {
+        JSLintContext context = new JSLintContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'com.boxuk.jenkins.jslint.JSLintBuilder' {
+            includePattern(context.includePattern ?: '')
+            excludePattern(context.excludePattern ?: '')
+            logfile(context.logFile ?: '')
+            arguments(context.arguments ?: '')
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
