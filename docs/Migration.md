@@ -1,5 +1,11 @@
 ## Migrating to 1.42
 
+### PostBuildScript
+
+Support for versions older than 0.17 of the
+[PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### Flexible Publish
 
 The DSL syntax of the `flexiblePublish` context has been changed to fix

@@ -5,6 +5,7 @@ job('example') {
                 shell('echo Hello World')
             }
             onlyIfBuildSucceeds(false)
+            onlyIfBuildFails()
         }
     }
 }

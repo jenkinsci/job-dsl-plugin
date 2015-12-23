@@ -21,6 +21,12 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.42 (unreleased)
+ * Enhanced support for the
+   [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
+   ([JENKINS-31853](https://issues.jenkins-ci.org/browse/JENKINS-31853))
+ * Support for the older versions of the
+   [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-142)
  * Fixed documentation for the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin)
    ([JENKINS-32135](https://issues.jenkins-ci.org/browse/JENKINS-32135))
  * Added support for the [SeleniumHQ Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Seleniumhq+Plugin)
@@ -275,9 +281,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-28458](https://issues.jenkins-ci.org/browse/JENKINS-28458))
  * Fixed [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) build step
    ([JENKINS-28353](https://issues.jenkins-ci.org/browse/JENKINS-28353))
- * Fixed problem with implementing the extension point 
+ * Fixed problem with implementing the extension point
    ([JENKINS-28408](https://issues.jenkins-ci.org/browse/JENKINS-28408))
- * Provide better error message when trying to move a job into a non-existing folder 
+ * Provide better error message when trying to move a job into a non-existing folder
    ([JENKINS-29100](https://issues.jenkins-ci.org/browse/JENKINS-29100))
  * Fixed problem that caused a changing order of elements not to trigger a job update
    ([JENKINS-29107](https://issues.jenkins-ci.org/browse/JENKINS-29107))

@@ -3638,7 +3638,10 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
     }
 
-    def 'call post build scripts with minimal options'() {
+    def 'call post build scripts with minimal options with plugin version 0.14'() {
+        setup:
+        jobManagement.getPluginVersion('postbuildscript') >> new VersionNumber('0.14')
+
         when:
         context.postBuildScripts {
         }
@@ -3651,15 +3654,19 @@ class PublisherContextSpec extends Specification {
             scriptOnlyIfSuccess[0].value() == true
         }
         1 * jobManagement.requirePlugin('postbuildscript')
+        1 * jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
     }
 
-    def 'call post build scripts with all options'() {
+    def 'call post build scripts with all options with plugin version 0.14'() {
+        setup:
+        jobManagement.getPluginVersion('postbuildscript') >> new VersionNumber('0.14')
+
         when:
         context.postBuildScripts {
             steps {
                 shell('echo TEST')
             }
-            onlyIfBuildSucceeds(false)
+            onlyIfBuildSucceeds(value)
         }
 
         then:
@@ -3668,9 +3675,57 @@ class PublisherContextSpec extends Specification {
             children().size() == 2
             buildSteps[0].children().size == 1
             buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
-            scriptOnlyIfSuccess[0].value() == false
+            scriptOnlyIfSuccess[0].value() == value
         }
         1 * jobManagement.requirePlugin('postbuildscript')
+        1 * jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'call post build scripts with minimal options'() {
+        when:
+        context.postBuildScripts {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 4
+            buildSteps[0].children().size == 0
+            scriptOnlyIfSuccess[0].value() == true
+            scriptOnlyIfFailure[0].value() == false
+            markBuildUnstable[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('postbuildscript')
+    }
+
+    def 'call post build scripts with all options'() {
+        when:
+        context.postBuildScripts {
+            steps {
+                shell('echo TEST')
+            }
+            onlyIfBuildSucceeds(value)
+            onlyIfBuildFails(value)
+            markBuildUnstable(value)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 4
+            buildSteps[0].children().size == 1
+            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            scriptOnlyIfSuccess[0].value() == value
+            scriptOnlyIfFailure[0].value() == value
+            markBuildUnstable[0].value() == value
+        }
+        1 * jobManagement.requirePlugin('postbuildscript')
+
+        where:
+        value << [true, false]
     }
 
     def 'call sonar with no options'() {
