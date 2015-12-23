@@ -61,6 +61,15 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Runs a shell script.
+     */
+    void shell(Closure closure) {
+        ShellScriptContext context = new ShellScriptContext()
+        ContextHelper.executeInContext(closure, context)
+        shell(context.blocks.join('\n'))
+    }
+
+    /**
      * Runs a remote shell script.
      *
      * @since 1.40

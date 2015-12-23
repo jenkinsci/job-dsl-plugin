@@ -27,6 +27,21 @@ class StepContextSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello"'
     }
 
+    def 'call shell method with closure'() {
+        when:
+        context.shell {
+            block('echo "A"')
+            block(['echo "B"', 'echo "C"'])
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def shellStep = context.stepNodes[0]
+        shellStep.name() == 'hudson.tasks.Shell'
+        shellStep.command[0].value() == 'echo "A"\necho "B"\necho "C"'
+    }
+
     def 'call remoteShell method with minimal options'() {
         when:
         context.remoteShell('root@example.com:22') {
