@@ -149,7 +149,7 @@ public class DslScriptLoader {
                 }
                 jp.getJm().createOrUpdateConfig(item, ignoreExisting);
                 String templateName = item instanceof Job ? ((Job) item).getTemplateName() : null;
-                generatedJobs.add(new GeneratedJob(templateName, item.getName()));
+                generatedJobs.add(new GeneratedJob(templateName, item));
             }
         }
         return generatedJobs;
@@ -161,7 +161,7 @@ public class DslScriptLoader {
             String xml = view.getXml();
             LOGGER.log(Level.FINE, String.format("Saving view %s as %s", view.getName(), xml));
             jp.getJm().createOrUpdateView(view.getName(), xml, ignoreExisting);
-            GeneratedView gv = new GeneratedView(view.getName());
+            GeneratedView gv = new GeneratedView(view);
             generatedViews.add(gv);
         }
         return generatedViews;
@@ -172,7 +172,7 @@ public class DslScriptLoader {
         for (ConfigFile configFile : jp.getReferencedConfigFiles()) {
             LOGGER.log(Level.FINE, String.format("Saving config file %s", configFile.getName()));
             String id = jp.getJm().createOrUpdateConfigFile(configFile, ignoreExisting);
-            generatedConfigFiles.add(new GeneratedConfigFile(id, configFile.getName()));
+            generatedConfigFiles.add(new GeneratedConfigFile(id, configFile));
         }
         return generatedConfigFiles;
     }
@@ -182,7 +182,7 @@ public class DslScriptLoader {
         for (UserContent userContent : jp.getReferencedUserContents()) {
             LOGGER.log(Level.FINE, String.format("Saving user content %s", userContent.getPath()));
             jp.getJm().createOrUpdateUserContent(userContent, ignoreExisting);
-            generatedUserContents.add(new GeneratedUserContent(userContent.getPath()));
+            generatedUserContents.add(new GeneratedUserContent(userContent));
         }
         return generatedUserContents;
     }
