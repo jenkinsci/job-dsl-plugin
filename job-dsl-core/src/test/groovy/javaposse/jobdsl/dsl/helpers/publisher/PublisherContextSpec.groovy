@@ -5808,4 +5808,75 @@ class PublisherContextSpec extends Specification {
         where:
         value << [true, false]
     }
+
+    def 'call rcov with no options'() {
+        when:
+        context.rcov {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.rcov.RcovPublisher'
+            children().size() == 2
+            reportDir[0].value().empty
+            with(targets[0]) {
+                children().size() == 2
+                with(children()[0]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'TOTAL_COVERAGE'
+                    healthy[0].value() == 80
+                    unhealthy[0].value() == 0
+                    unstable[0].value() == 0
+                }
+                with(children()[1]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'CODE_COVERAGE'
+                    healthy[0].value() == 80
+                    unhealthy[0].value() == 0
+                    unstable[0].value() == 0
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call rcov with all options'() {
+        when:
+        context.rcov {
+            reportDirectory('folder')
+            totalCoverage(90, 50, 10)
+            codeCoverage(91, 51, 11)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.rcov.RcovPublisher'
+            children().size() == 2
+            reportDir[0].value() == 'folder'
+            with(targets[0]) {
+                children().size() == 2
+                with(children()[0]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'TOTAL_COVERAGE'
+                    healthy[0].value() == 90
+                    unhealthy[0].value() == 50
+                    unstable[0].value() == 10
+                }
+                with(children()[1]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'CODE_COVERAGE'
+                    healthy[0].value() == 91
+                    unhealthy[0].value() == 51
+                    unstable[0].value() == 11
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
 }

@@ -1903,6 +1903,31 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Parses RCov HTML report files and shows them in Jenkins with a trend graph.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void rcov(@DslContext(RcovContext) Closure closure) {
+        RcovContext context = new RcovContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.rubyMetrics.rcov.RcovPublisher' {
+            reportDir(context.reportDirectory ?: '')
+            targets {
+                context.entries.each { String key, RcovContext.MetricEntry entry ->
+                    'hudson.plugins.rubyMetrics.rcov.model.MetricTarget' {
+                        metric(key)
+                        healthy(entry.healthy)
+                        unhealthy(entry.unhealthy)
+                        unstable(entry.unstable)
+                    }
+                }
+            }
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
