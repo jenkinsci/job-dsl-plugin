@@ -3553,4 +3553,44 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('nant', '1.4.3')
     }
+
+    def 'call jsLint with no options'() {
+        when:
+        context.jsLint {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'com.boxuk.jenkins.jslint.JSLintBuilder'
+            children().size() == 4
+            includePattern[0].value().empty
+            excludePattern[0].value().empty
+            logfile[0].value().empty
+            arguments[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jslint', '0.8.2')
+    }
+
+    def 'call jsLint with all options'() {
+        when:
+        context.jsLint {
+            includePattern('**/*.js')
+            excludePattern('**/*Tests.js')
+            logFile('target/jslint.xml')
+            arguments('-Dadsafe=true, -Dcontinue=true')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'com.boxuk.jenkins.jslint.JSLintBuilder'
+            children().size() == 4
+            includePattern[0].value() == '**/*.js'
+            excludePattern[0].value() == '**/*Tests.js'
+            logfile[0].value() == 'target/jslint.xml'
+            arguments[0].value() == '-Dadsafe=true, -Dcontinue=true'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jslint', '0.8.2')
+    }
 }
