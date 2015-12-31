@@ -97,7 +97,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.30
      * @see #mavenJob(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'maven-plugin')
+    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     MavenJob mavenJob(String name)
 
     /**
@@ -105,7 +105,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'maven-plugin')
+    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure)
 
     /**

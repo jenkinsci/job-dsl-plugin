@@ -142,7 +142,7 @@ class TriggerContext extends AbstractExtensibleContext {
      *
      * @since 1.22
      */
-    @RequiresPlugin(id = 'ghprb')
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
         jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
 
@@ -160,12 +160,8 @@ class TriggerContext extends AbstractExtensibleContext {
             useGitHubHooks pullRequestBuilderContext.useGitHubHooks
             permitAll pullRequestBuilderContext.permitAll
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.14'))) {
-                commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
-            }
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
-                allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
-            }
+            commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
+            allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
             if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
                 extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
             }

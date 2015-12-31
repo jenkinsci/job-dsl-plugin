@@ -50,6 +50,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-30541](https://issues.jenkins-ci.org/browse/JENKINS-30541))
  * Added support for `buildNeedsWorkspace` option for 
    [Build Flow Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin)
+ * Removed anything that has been deprecated in 1.35, see [Migration](Migration#migrating-to-135)
 * 1.41 (December 15 2015)
  * Added support for the [WebLogic Deployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin)
    ([JENKINS-21880](https://issues.jenkins-ci.org/browse/JENKINS-21880))

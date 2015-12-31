@@ -3229,9 +3229,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call s3 with some options'() {
-        setup:
-        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.7')
-
         when:
         context.s3('profile') {
             entry('foo', 'bar', 'us-east-1')
@@ -3266,13 +3263,10 @@ class PublisherContextSpec extends Specification {
                 value[0].value() == 'value'
             }
         }
-        1 * jobManagement.requirePlugin('s3')
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
     }
 
     def 'call s3 with more options'() {
-        setup:
-        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.7')
-
         when:
         context.s3('profile') {
             entry('foo', 'bar', 'eu-west-1')
@@ -3327,40 +3321,7 @@ class PublisherContextSpec extends Specification {
                 value[0].value() == 'value'
             }
         }
-        1 * jobManagement.requirePlugin('s3')
-    }
-
-    def 'call s3 with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.6')
-
-        when:
-        context.s3('profile') {
-            entry('foo', 'bar', 'EU_WEST_1')
-        }
-
-        then:
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.s3.S3BucketPublisher'
-            children().size() == 3
-            profileName[0].value() == 'profile'
-            entries.size() == 1
-            entries[0].'hudson.plugins.s3.Entry'.size() == 1
-            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
-                children().size() == 7
-                sourceFile[0].value() == 'foo'
-                bucket[0].value() == 'bar'
-                storageClass[0].value() == 'STANDARD'
-                selectedRegion[0].value() == 'EU_WEST_1'
-                noUploadOnFailure[0].value() == false
-                uploadFromSlave[0].value() == false
-                managedArtifacts[0].value() == false
-            }
-            userMetadata[0].value().empty
-        }
-        1 * jobManagement.requirePlugin('s3')
-        1 * jobManagement.logPluginDeprecationWarning('s3', '0.7')
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
     }
 
     def 'call flexible publish'() {

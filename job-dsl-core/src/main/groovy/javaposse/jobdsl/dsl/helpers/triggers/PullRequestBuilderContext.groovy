@@ -84,7 +84,6 @@ class PullRequestBuilderContext extends AbstractContext {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.14')
     void commentFilePath(String commentFilePath) {
         this.commentFilePath = commentFilePath
     }
@@ -129,7 +128,6 @@ class PullRequestBuilderContext extends AbstractContext {
      *
      * @since 1.35
      */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
     void allowMembersOfWhitelistedOrgsAsAdmin(boolean allowMembersOfWhitelistedOrgsAsAdmin = true) {
         this.allowMembersOfWhitelistedOrgsAsAdmin = allowMembersOfWhitelistedOrgsAsAdmin
     }

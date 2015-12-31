@@ -448,7 +448,7 @@ class StepContextSpec extends Specification {
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
         mavenStep.pom[0] == null
-        (1.._) * jobManagement.requirePlugin('maven-plugin')
+        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
@@ -461,7 +461,7 @@ class StepContextSpec extends Specification {
         def mavenStep2 = context.stepNodes[1]
         mavenStep2.pom[0].value() == 'pom.xml'
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
-        (1.._) * jobManagement.requirePlugin('maven-plugin')
+        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with full context'() {
@@ -494,7 +494,7 @@ class StepContextSpec extends Specification {
         mavenStep.mavenName[0].value() == 'Maven 3.0.5'
         mavenStep.settingsConfigId[0].value() == 'foo-bar'
         mavenStep.properties[0].value() == 'skipTests=true\nother=some\nevenAnother=One'
-        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with minimal context'() {
@@ -512,7 +512,7 @@ class StepContextSpec extends Specification {
         mavenStep.jvmOptions[0].value() == ''
         mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
-        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with unknown provided settings'() {
@@ -579,27 +579,7 @@ class StepContextSpec extends Specification {
                 settingsConfigId[0].value() == globalSettingsId
             }
         }
-        1 * jobManagement.requirePlugin('maven-plugin')
-    }
-
-    def 'call maven with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('maven-plugin') >> new VersionNumber('2.2')
-
-        when:
-        context.maven('install')
-
-        then:
-        with(context.stepNodes[0]) {
-            name() == 'hudson.tasks.Maven'
-            children().size() == 4
-            targets[0].value() == 'install'
-            mavenName[0].value() == '(Default)'
-            jvmOptions[0].value() == ''
-            usePrivateRepository[0].value() == false
-        }
-        (1.._) * jobManagement.requirePlugin('maven-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call ant methods'() {
@@ -2547,72 +2527,6 @@ class StepContextSpec extends Specification {
         'FOO'       | 'SUCCESS'
         'FAILURE'   | 'BAR'
         'SUCCESS'   | 'ABORTED'
-    }
-
-    def 'call conditional steps for multiple steps in deprecated variant'() {
-        when:
-        context.conditionalSteps {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            runner('Fail')
-            shell('look at me')
-            groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
-                groovyParam('foo')
-                groovyParams(['bar', 'baz'])
-                classpath('/foo/acme.jar')
-                classpath('/foo/test.jar')
-                scriptParam('alfa')
-                scriptParams(['bravo', 'charlie'])
-                prop('one', 'two')
-                props([three: 'four', five: 'six'])
-                javaOpt('test')
-                javaOpts(['me', 'too'])
-            }
-        }
-
-        then:
-        Node step = context.stepNodes[0]
-        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
-        step.runCondition[0].children().size() == 3
-
-        Node condition = step.runCondition[0]
-        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
-        condition.arg1[0].value() == 'foo'
-        condition.arg2[0].value() == 'bar'
-        condition.ignoreCase[0].value() == 'false'
-
-        step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-
-        step.conditionalbuilders[0].children().size() == 2
-
-        Node shellStep = step.conditionalbuilders[0].children()[0]
-        shellStep.name() == 'hudson.tasks.Shell'
-        shellStep.command[0].value() == 'look at me'
-
-        def acmeGroovyNode = step.conditionalbuilders[0].children()[1]
-        acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
-        acmeGroovyNode.groovyName.size() == 1
-        acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
-        acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == 'foo bar baz'
-        acmeGroovyNode.classPath.size() == 1
-        acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
-        acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == 'alfa bravo charlie'
-        acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
-        acmeGroovyNode.javaOpts.size() == 1
-        acmeGroovyNode.javaOpts[0].value() == 'test me too'
-        acmeGroovyNode.scriptSource.size() == 1
-        def acmeScriptSourceNode = acmeGroovyNode.scriptSource[0]
-        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
-        acmeScriptSourceNode.command.size() == 1
-        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
-        1 * jobManagement.requirePlugin('conditional-buildstep')
-        2 * jobManagement.logDeprecationWarning(
-                'using build steps outside the nested steps context of conditionalSteps'
-        )
     }
 
     @Unroll
