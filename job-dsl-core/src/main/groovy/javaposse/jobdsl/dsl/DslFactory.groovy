@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 
 interface DslFactory extends ViewFactory {
     /**
@@ -141,6 +142,23 @@ interface DslFactory extends ViewFactory {
      */
     @RequiresPlugin(id = 'workflow-aggregator')
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
+
+    /**
+     * Create or updates a multibranch workflow job.
+     *
+     * @since 1.42
+     * @see #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure)
+     */
+    @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '1.12')
+    MultibranchWorkflowJob multibranchWorkflowJob(String name)
+
+    /**
+     * Creates or updates a multibranch workflow job.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '1.12')
+    MultibranchWorkflowJob multibranchWorkflowJob(String name, @DslContext(MultibranchWorkflowJob) Closure closure)
 
     /**
      * Creates or updates a folder.

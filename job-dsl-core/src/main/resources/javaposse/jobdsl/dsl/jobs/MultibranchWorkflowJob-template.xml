@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject>
+    <actions/>
+    <description/>
+    <properties/>
+    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+    <views>
+        <hudson.model.AllView>
+            <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../../.."/>
+            <name>All</name>
+            <filterExecutors>false</filterExecutors>
+            <filterQueue>false</filterQueue>
+            <properties class="hudson.model.View$PropertyList"/>
+        </hudson.model.AllView>
+    </views>
+    <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+    <primaryView>All</primaryView>
+    <healthMetrics>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
+    </healthMetrics>
+    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+    <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy">
+        <pruneDeadBranches>false</pruneDeadBranches>
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>-1</numToKeep>
+    </orphanedItemStrategy>
+    <triggers/>
+    <sources class="jenkins.branch.MultiBranchProject$BranchSourceList">
+        <data/>
+        <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+    </sources>
+    <factory class="org.jenkinsci.plugins.workflow.multibranch.WorkflowBranchProjectFactory">
+        <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+    </factory>
+</org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject>

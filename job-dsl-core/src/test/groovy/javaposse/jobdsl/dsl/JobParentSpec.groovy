@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
@@ -499,5 +500,16 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('workflow-aggregator')
+    }
+
+    def 'multibranchWorkflowJob'() {
+        when:
+        MultibranchWorkflowJob job = parent.multibranchWorkflowJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        1 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12')
     }
 }
