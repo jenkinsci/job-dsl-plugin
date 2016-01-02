@@ -37,6 +37,23 @@ class BuildFlowJob extends Job {
         }
     }
 
+    /**
+     * Specifies a file path relative to the workspace from where the DSL will be read. Also sets
+     * {@code buildNeedsWorkspace} to {@code true}.
+     *
+     * @since 1.42
+     * @see #buildNeedsWorkspace(boolean)
+     */
+    @RequiresPlugin(id = 'build-flow-plugin', minimumVersion = '0.12')
+    void dslFile(String fileName) {
+        buildNeedsWorkspace()
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            Node node = methodMissing('dslFile', fileName)
+            project / node
+        }
+    }
+
     @Override
     void publishers(@DslContext(BuildFlowPublisherContext) Closure closure) {
         BuildFlowPublisherContext context = new BuildFlowPublisherContext(jobManagement, this)
