@@ -1,5 +1,11 @@
 ## Migrating to 1.42
 
+### Task Scanner
+
+Support for versions older than 4.41 of the
+[Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### PostBuildScript
 
 Support for versions older than 0.17 of the

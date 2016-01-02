@@ -1258,17 +1258,22 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'tasks')
     void tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false,
-               @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
-        StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
-        ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
+               @DslContext(TaskScannerContext) Closure closure = null) {
+        jobManagement.logPluginDeprecationWarning('tasks', '4.41')
+
+        TaskScannerContext context = new TaskScannerContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.tasks.TasksPublisher' {
-            addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
+            addStaticAnalysisContextAndPattern(delegate, context, pattern)
             delegate.high(high)
             delegate.normal(normal)
             delegate.low(low)
             delegate.ignoreCase(ignoreCase)
             delegate.excludePattern(excludePattern)
+            if (!jobManagement.getPluginVersion('tasks')?.isOlderThan(new VersionNumber('4.41'))) {
+                asRegexp(context.regularExpression)
+            }
         }
     }
 
