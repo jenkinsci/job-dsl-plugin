@@ -18,7 +18,6 @@
     <healthMetrics>
         <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
     </healthMetrics>
-    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
     <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy">
         <pruneDeadBranches>false</pruneDeadBranches>
         <daysToKeep>-1</daysToKeep>

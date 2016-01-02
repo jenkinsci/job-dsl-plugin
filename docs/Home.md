@@ -22,7 +22,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 ## Release Notes
 * 1.42 (unreleased)
  * Added support for the [Workflow Multibranch Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workflow+Plugin)
-   ([JENKINS-31671](https://issues.jenkins-ci.org/browse/JENKINS-31671))
+   ([JENKINS-31671](https://issues.jenkins-ci.org/browse/JENKINS-31671),
+   [JENKINS-31719](https://issues.jenkins-ci.org/browse/JENKINS-31719))
  * Added support for the [JSLint Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSLint+plugin)
    ([JENKINS-32195](https://issues.jenkins-ci.org/browse/JENKINS-32195))
  * Enhanced support for the

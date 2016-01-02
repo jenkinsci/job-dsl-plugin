@@ -13,7 +13,7 @@ class MultibranchWorkflowJobSpec extends Specification {
 
         then:
         xml.name() == 'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject'
-        xml.children().size() == 13
+        xml.children().size() == 12
     }
 
     def 'can add branchSource'() {
@@ -42,5 +42,18 @@ class MultibranchWorkflowJobSpec extends Specification {
                 .attribute('class') == 'com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy'
         job.node.orphanedItemStrategy[0].children().size() == 3
         job.node.orphanedItemStrategy[0].daysToKeep[0].value() == 20
+    }
+
+    def 'call triggers'() {
+        when:
+        job.triggers {
+            periodic(2)
+        }
+
+        then:
+        with(job.node) {
+            triggers[0].'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'[0].interval[0].text() ==
+                    '120000'
+        }
     }
 }

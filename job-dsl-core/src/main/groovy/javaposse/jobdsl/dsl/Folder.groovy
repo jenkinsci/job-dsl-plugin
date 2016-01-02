@@ -60,7 +60,7 @@ class Folder extends Item {
     }
 
     Node getNode() {
-        Node root = new XmlParser().parse(this.class.getResourceAsStream('Folder-template.xml'))
+        Node root = new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
         withXmlActions.each { it.execute(root) }
         root
     }

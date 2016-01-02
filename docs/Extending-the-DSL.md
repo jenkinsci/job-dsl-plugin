@@ -47,6 +47,8 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.ScmContext` for the `scm` and `multiscm` contexts
 * `javaposse.jobdsl.dsl.helpers.step.StepsContext` for the `steps` context
 * `javaposse.jobdsl.dsl.helpers.triggers.TriggerContext` for the `triggers` context
+* `javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext` for the `triggers` context, but only for
+  multibranch workflow jobs
 * `javaposse.jobdsl.dsl.helpers.properties.PropertiesContext` for the `properties` context
 * `javaposse.jobdsl.dsl.helpers.publisher.PublisherContext` for the `publisher` context
 * `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext` for the `wrappers` context

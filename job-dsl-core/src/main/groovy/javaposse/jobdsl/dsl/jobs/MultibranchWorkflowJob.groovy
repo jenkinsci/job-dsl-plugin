@@ -2,15 +2,30 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Job
+import javaposse.jobdsl.dsl.Folder
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext
 import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
 import javaposse.jobdsl.dsl.helpers.workflow.BranchSourcesContext
 
-class MultibranchWorkflowJob extends Job {
+class MultibranchWorkflowJob extends Folder {
     MultibranchWorkflowJob(JobManagement jobManagement) {
         super(jobManagement)
+    }
+
+    /**
+     * Adds build triggers to the job.
+     */
+    void triggers(@DslContext(MultibranchWorkflowTriggerContext) Closure closure) {
+        MultibranchWorkflowTriggerContext context = new MultibranchWorkflowTriggerContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            context.triggerNodes.each {
+                project / 'triggers' << it
+            }
+        }
     }
 
     /**
