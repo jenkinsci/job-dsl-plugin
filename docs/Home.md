@@ -50,6 +50,11 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
    ([JENKINS-30010](https://issues.jenkins-ci.org/browse/JENKINS-30010))
+ * Enhanced support for the [Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin)
+   ([JENKINS-30543](https://issues.jenkins-ci.org/browse/JENKINS-30543))
+ * Support for the older versions of the
+   [Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-142)
  * Changed the DSL syntax for `flexiblePublish`, see [Migration](Migration#migrating-to-142)
  * Check DSL scripts for existence
    ([JENKINS-30541](https://issues.jenkins-ci.org/browse/JENKINS-30541))
