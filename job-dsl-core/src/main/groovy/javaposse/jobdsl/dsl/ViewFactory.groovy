@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
+import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -111,4 +112,21 @@ interface ViewFactory {
      */
     @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure)
+
+    /**
+     * Creates or updates a dashboard / portal-like view.
+     *
+     * @see #dashboardView(java.lang.String, groovy.lang.Closure)
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'dashboard-view', minimumVersion = '2.9.7')
+    DashboardView dashboardView(String name)
+
+    /**
+     * Creates or updates a dashboard / portal-like view.
+
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'dashboard-view', minimumVersion = '2.9.7')
+    DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure)
 }

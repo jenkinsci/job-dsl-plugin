@@ -11,6 +11,7 @@ import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
+import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -196,6 +197,31 @@ class JobParentSpec extends Specification {
         view instanceof CategorizedJobsView
         parent.referencedViews.contains(view)
         1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
+    }
+
+    def 'should add dashboard view'() {
+        when:
+        View view = parent.dashboardView('test') {
+            description('foo')
+        }
+
+        then:
+        view.name == 'test'
+        view instanceof DashboardView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+        1 * jobManagement.requireMinimumPluginVersion('dashboard-view', '2.9.7')
+    }
+
+    def 'should add dashboard view without closure'() {
+        when:
+        View view = parent.dashboardView('test')
+
+        then:
+        view.name == 'test'
+        view instanceof DashboardView
+        parent.referencedViews.contains(view)
+        1 * jobManagement.requireMinimumPluginVersion('dashboard-view', '2.9.7')
     }
 
     def 'folder'() {

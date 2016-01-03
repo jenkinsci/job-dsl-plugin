@@ -227,6 +227,37 @@ class NestedViewSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
+    def 'nested dashboard view'() {
+        when:
+        View dashboardView
+        view.views {
+            dashboardView = delegate.dashboardView('test') {
+                description('foo')
+            }
+        }
+
+        then:
+        dashboardView.name == 'test'
+        dashboardView instanceof DashboardView
+        view.node.views[0].children()[0].name() == 'hudson.plugins.view.dashboard.Dashboard'
+        view.node.views[0].children()[0].description[0].text() == 'foo'
+        1 * jobManagement.requireMinimumPluginVersion('dashboard-view', '2.9.7')
+    }
+
+    def 'nested dashboard view without closure'() {
+        when:
+        View dashboardView
+        view.views {
+            dashboardView = delegate.dashboardView('test')
+        }
+
+        then:
+        dashboardView.name == 'test'
+        dashboardView instanceof DashboardView
+        view.node.views[0].children()[0].name() == 'hudson.plugins.view.dashboard.Dashboard'
+        1 * jobManagement.requireMinimumPluginVersion('dashboard-view', '2.9.7')
+    }
+
     def 'nested delivery pipeline view'() {
         when:
         View nestedView
