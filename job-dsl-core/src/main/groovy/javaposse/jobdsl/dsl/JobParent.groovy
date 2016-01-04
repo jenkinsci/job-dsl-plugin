@@ -12,6 +12,7 @@ import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
+import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -171,6 +172,14 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
         processView(name, CategorizedJobsView, closure)
+    }
+
+    /**
+     * @since 1.42
+     */
+    @Override
+    DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure = null) {
+        processView(name, DashboardView, closure)
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263

@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
-class CategorizedJobsViewSpec extends ListViewSpec {
+class CategorizedJobsViewSpec extends ListViewSpec<CategorizedJobsView> {
     def setup() {
         view = new CategorizedJobsView(jobManagement)
     }
@@ -23,7 +23,7 @@ class CategorizedJobsViewSpec extends ListViewSpec {
 
     def 'do nothing on empty categorization criteria'() {
         when:
-        ((CategorizedJobsView) view).categorizationCriteria {
+        view.categorizationCriteria {
         }
 
         then:
@@ -35,7 +35,7 @@ class CategorizedJobsViewSpec extends ListViewSpec {
 
     def 'group by regex with naming'() {
         when:
-        ((CategorizedJobsView) view).categorizationCriteria {
+        view.categorizationCriteria {
             regexGroupingRule('regex', 'naming')
         }
 
@@ -52,7 +52,7 @@ class CategorizedJobsViewSpec extends ListViewSpec {
 
     def 'group by regex without naming'() {
         when:
-        ((CategorizedJobsView) view).categorizationCriteria {
+        view.categorizationCriteria {
             regexGroupingRule('regex')
         }
 
@@ -69,7 +69,7 @@ class CategorizedJobsViewSpec extends ListViewSpec {
 
     def 'add more than one group'() {
         when:
-        ((CategorizedJobsView) view).categorizationCriteria {
+        view.categorizationCriteria {
             regexGroupingRule('regex1', 'naming1')
             regexGroupingRule('regex2', 'naming2')
         }

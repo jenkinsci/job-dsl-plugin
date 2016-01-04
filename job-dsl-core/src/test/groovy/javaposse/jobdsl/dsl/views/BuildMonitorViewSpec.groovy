@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl.views
 
-class BuildMonitorViewSpec extends ListViewSpec {
+class BuildMonitorViewSpec extends ListViewSpec<BuildMonitorView> {
     def setup() {
         view = new BuildMonitorView(jobManagement)
     }
