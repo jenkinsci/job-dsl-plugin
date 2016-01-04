@@ -2,12 +2,14 @@ package javaposse.jobdsl.dsl.helpers
 
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BuildParametersContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    BuildParametersContext context = new BuildParametersContext(jobManagement)
+    Item item = Mock(Item)
+    BuildParametersContext context = new BuildParametersContext(jobManagement, item)
 
     def 'base booleanParam usage'() {
         when:
@@ -1420,6 +1422,36 @@ class BuildParametersContextSpec extends Specification {
         when:
         context.stringParam('one')
         context.matrixCombinationsParam('one')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'extension parameter'() {
+        given:
+        def paramNode = NodeBuilder.newInstance().'my.custom.ParamDefinition' {
+            name 'myParameterName'
+        }
+
+        when:
+        context.addExtensionNode(paramNode)
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() ==
+                'my.custom.ParamDefinition'
+        context.buildParameterNodes['myParameterName'].children().size() == 1
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+    }
+
+    def 'extension parameter must have a name'() {
+        given:
+        def paramNode = NodeBuilder.newInstance().'my.custom.ParamDefinition' {
+        }
+
+        when:
+        context.addExtensionNode(paramNode)
 
         then:
         thrown(DslScriptException)

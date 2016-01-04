@@ -96,7 +96,7 @@ class ReleaseContext extends AbstractContext {
      * Add parameters for the release.
      */
     void parameters(@DslContext(BuildParametersContext) Closure parametersClosure) {
-        BuildParametersContext parametersContext = new BuildParametersContext(jobManagement)
+        BuildParametersContext parametersContext = new BuildParametersContext(jobManagement, this.item)
         ContextHelper.executeInContext(parametersClosure, parametersContext)
         params.addAll(parametersContext.buildParameterNodes.values())
     }

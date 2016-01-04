@@ -1,9 +1,10 @@
 package javaposse.jobdsl.dsl.helpers
 
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.parameter.AbstractActiveChoiceContext
@@ -18,11 +19,30 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
-class BuildParametersContext extends AbstractContext {
+class BuildParametersContext extends AbstractExtensibleContext {
     Map<String, Node> buildParameterNodes = [:]
 
-    BuildParametersContext(JobManagement jobManagement) {
-        super(jobManagement)
+    BuildParametersContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
+
+    /**
+     * We expect any paramater definition node to have a <code>name</code> field containing
+     * the name of the parameter so we can add it in the map of nodes.
+     * @param node Parameter definition node
+     */
+    @Override
+    protected void addExtensionNode(Node node) {
+        String name = null
+        Object nameFields = node.get('name')
+        if (nameFields instanceof NodeList && nameFields.size() > 0) {
+            name = nameFields[0].text()
+        }
+        if (name) {
+            buildParameterNodes[name] = node
+        } else {
+            throw new DslScriptException("Can only add nodes with a 'name' field.")
+        }
     }
 
     /**
