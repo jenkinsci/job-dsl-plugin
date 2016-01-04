@@ -183,16 +183,24 @@ class PublisherContext extends AbstractExtensibleContext {
             }
             thresholds {
                 'org.jenkinsci.plugins.xunit.threshold.FailedThreshold' {
-                    unstableThreshold xUnitContext.failedThresholdsContext.unstable
-                    unstableNewThreshold xUnitContext.failedThresholdsContext.unstableNew
-                    failureThreshold xUnitContext.failedThresholdsContext.failure
-                    failureNewThreshold xUnitContext.failedThresholdsContext.failureNew
+                    unstableThreshold xUnitContext.failedThresholdsContext.unstable == null ? ''
+                            : xUnitContext.failedThresholdsContext.unstable
+                    unstableNewThreshold xUnitContext.failedThresholdsContext.unstableNew == null ? ''
+                            : xUnitContext.failedThresholdsContext.unstableNew
+                    failureThreshold xUnitContext.failedThresholdsContext.failure == null ? ''
+                            : xUnitContext.failedThresholdsContext.failure
+                    failureNewThreshold xUnitContext.failedThresholdsContext.failureNew == null ? ''
+                            : xUnitContext.failedThresholdsContext.failureNew
                 }
                 'org.jenkinsci.plugins.xunit.threshold.SkippedThreshold' {
-                    unstableThreshold xUnitContext.skippedThresholdsContext.unstable
-                    unstableNewThreshold xUnitContext.skippedThresholdsContext.unstableNew
-                    failureThreshold xUnitContext.skippedThresholdsContext.failure
-                    failureNewThreshold xUnitContext.skippedThresholdsContext.failureNew
+                    unstableThreshold xUnitContext.skippedThresholdsContext.unstable == null ? ''
+                            : xUnitContext.skippedThresholdsContext.unstable
+                    unstableNewThreshold xUnitContext.skippedThresholdsContext.unstableNew == null ? ''
+                            : xUnitContext.skippedThresholdsContext.unstableNew
+                    failureThreshold xUnitContext.skippedThresholdsContext.failure == null ? ''
+                            : xUnitContext.skippedThresholdsContext.failure
+                    failureNewThreshold xUnitContext.skippedThresholdsContext.failureNew == null ? ''
+                            : xUnitContext.skippedThresholdsContext.failureNew
                 }
             }
             thresholdMode xUnitContext.thresholdMode.xmlValue

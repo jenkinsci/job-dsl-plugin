@@ -3,16 +3,16 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class ArchiveXUnitThresholdContext implements Context {
-    int unstable = 0
-    int unstableNew = 0
-    int failure = 0
-    int failureNew = 0
+    Integer unstable = 0
+    Integer unstableNew = 0
+    Integer failure = 0
+    Integer failureNew = 0
 
     /**
      * Sets the build to unstable if the number or percentage of test failures or skiped tests exceeds the threshold.
      * Defaults to 0.
      */
-    void unstable(int unstable) {
+    void unstable(Integer unstable) {
         this.unstable = unstable
     }
 
@@ -20,7 +20,7 @@ class ArchiveXUnitThresholdContext implements Context {
      * Sets the build to unstable if the number or percentage of new test failures or skiped tests exceeds the
      * threshold. Defaults to 0.
      */
-    void unstableNew(int unstableNew) {
+    void unstableNew(Integer unstableNew) {
         this.unstableNew = unstableNew
     }
 
@@ -28,7 +28,7 @@ class ArchiveXUnitThresholdContext implements Context {
      * Fails the build if the number or percentage of test failures or skiped tests exceeds the threshold.
      * Defaults to 0.
      */
-    void failure(int failure) {
+    void failure(Integer failure) {
         this.failure = failure
     }
 
@@ -36,7 +36,7 @@ class ArchiveXUnitThresholdContext implements Context {
      * Fails the build if the number or percentage of test failures or skiped tests exceeds the threshold.
      * Defaults to 0.
      */
-    void failureNew(int failureNew) {
+    void failureNew(Integer failureNew) {
         this.failureNew = failureNew
     }
 }
