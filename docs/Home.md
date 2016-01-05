@@ -20,7 +20,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.42 (unreleased)
+* 1.42 (January 05 2016)
  * Added support for the [Dashboard View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View)
    ([JENKINS-29146](https://issues.jenkins-ci.org/browse/JENKINS-29146))
  * Added support for the [Workflow Multibranch Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workflow+Plugin)
