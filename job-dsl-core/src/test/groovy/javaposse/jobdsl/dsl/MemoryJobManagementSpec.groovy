@@ -162,14 +162,6 @@ class MemoryJobManagementSpec extends Specification {
         e.message.contains('foo')
     }
 
-    def 'getCredentialsId returns null'() {
-        when:
-        String id = jobManagement.getCredentialsId('foo')
-
-        then:
-        id == null
-    }
-
     def 'isMinimumPluginVersionInstalled returns false'() {
         when:
         boolean result = jobManagement.isMinimumPluginVersionInstalled('foo', '0.1')

@@ -250,10 +250,8 @@ abstract class Job extends Item {
      *
      * @since 1.36
      */
-    @RequiresPlugin(id = 'build-blocker-plugin')
+    @RequiresPlugin(id = 'build-blocker-plugin', minimumVersion = '1.7.1')
     void blockOn(String projectName, @DslContext(BuildBlockerContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
-
         BuildBlockerContext context = new BuildBlockerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -261,10 +259,8 @@ abstract class Job extends Item {
             project / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
                 useBuildBlocker(true)
                 blockingJobs(projectName)
-                if (jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1')) {
-                    blockLevel(context.blockLevel)
-                    scanQueueFor(context.scanQueueFor)
-                }
+                blockLevel(context.blockLevel)
+                scanQueueFor(context.scanQueueFor)
             }
         }
     }

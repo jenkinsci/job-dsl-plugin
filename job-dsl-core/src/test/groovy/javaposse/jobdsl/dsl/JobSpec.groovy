@@ -634,8 +634,7 @@ class JobSpec extends Specification {
             blockLevel[0].value() == 'NODE'
             scanQueueFor[0].value() == 'DISABLED'
         }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+        1 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
     }
 
     def 'build blocker with all options'() {
@@ -656,9 +655,7 @@ class JobSpec extends Specification {
             blockLevel[0].value() == level
             scanQueueFor[0].value() == queue
         }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        2 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+        1 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
 
         where:
         level    | queue
@@ -711,22 +708,7 @@ class JobSpec extends Specification {
             blockLevel[0].value() == 'GLOBAL'
             scanQueueFor[0].value() == 'ALL'
         }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
-    }
-
-    def 'build blocker with older plugin version'() {
-        when:
-        job.blockOn('MyProject')
-
-        then:
-        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
-            children().size() == 2
-            useBuildBlocker[0].value() == true
-            blockingJobs[0].value() == 'MyProject'
-        }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+        1 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
     }
 
     def 'can run jdk'() {
