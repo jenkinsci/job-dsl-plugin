@@ -21,6 +21,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.43 (unreleased)
+ * Allow `BuildParametersContext` to be extended
+   ([JENKINS-32285](https://issues.jenkins-ci.org/browse/JENKINS-32285))
 * 1.42 (January 05 2016)
  * Added support for the [Dashboard View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View)
    ([JENKINS-29146](https://issues.jenkins-ci.org/browse/JENKINS-29146))
