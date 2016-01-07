@@ -1933,6 +1933,52 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Publishes Clover PHP coverage reports.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'cloverphp', minimumVersion = '0.5')
+    void cloverPHP(String xmlLocation, @DslContext(CloverPhpContext) Closure closure = null) {
+        checkNotNullOrEmpty(xmlLocation, 'xmlLocation must be specified')
+
+        CloverPhpContext context = new CloverPhpContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.cloverphp.CloverPHPPublisher' {
+            delegate.xmlLocation(xmlLocation)
+            publishHtmlReport(context.publishHtmlReport)
+            if (context.reportDirectory) {
+                reportDir(context.reportDirectory)
+            }
+            disableArchiving(context.publishHtmlReportContext.disableArchiving)
+            healthyTarget {
+                if (context.healthyMethodCoverage != null) {
+                    methodCoverage(context.healthyMethodCoverage)
+                }
+                if (context.healthyStatementCoverage != null) {
+                    statementCoverage(context.healthyStatementCoverage)
+                }
+            }
+            unhealthyTarget {
+                if (context.unhealthyMethodCoverage != null) {
+                    methodCoverage(context.unhealthyMethodCoverage)
+                }
+                if (context.unhealthyStatementCoverage != null) {
+                    statementCoverage(context.unhealthyStatementCoverage)
+                }
+            }
+            failingTarget {
+                if (context.unstableMethodCoverage != null) {
+                    methodCoverage(context.unstableMethodCoverage)
+                }
+                if (context.unstableStatementCoverage != null) {
+                    statementCoverage(context.unstableStatementCoverage)
+                }
+            }
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
