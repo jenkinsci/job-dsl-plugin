@@ -114,9 +114,10 @@ class ItemTriggerContext extends AbstractExtensibleContext {
      *
      * @since 1.22
      */
+    @Deprecated
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
-        jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+        jobManagement.logDeprecationWarning()
 
         PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)

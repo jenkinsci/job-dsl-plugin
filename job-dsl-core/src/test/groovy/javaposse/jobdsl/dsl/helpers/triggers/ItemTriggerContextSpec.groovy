@@ -396,7 +396,7 @@ class ItemTriggerContextSpec extends Specification {
         }
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.26')
-        1 * mockJobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call pull request trigger invalid build result'() {

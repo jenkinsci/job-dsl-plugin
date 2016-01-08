@@ -25,6 +25,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-31557](https://issues.jenkins-ci.org/browse/JENKINS-31557))
  * Allow `BuildParametersContext` to be extended
    ([JENKINS-32285](https://issues.jenkins-ci.org/browse/JENKINS-32285))
+ * Built-in support for the
+   [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
+   is deprecated, see [Migration](Migration#migrating-to-143)
+   ([JENKINS-31214](https://issues.jenkins-ci.org/browse/JENKINS-31214))
 * 1.42 (January 05 2016)
  * Added support for the [Dashboard View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View)
    ([JENKINS-29146](https://issues.jenkins-ci.org/browse/JENKINS-29146))
