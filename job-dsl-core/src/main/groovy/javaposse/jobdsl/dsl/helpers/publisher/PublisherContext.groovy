@@ -1458,9 +1458,10 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.33
      */
+    @Deprecated
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.17')
     void mergePullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure = null) {
-        jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+        jobManagement.logDeprecationWarning()
 
         PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestPublisherContext)
