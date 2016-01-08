@@ -564,7 +564,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.5.1')
     void buildInDocker(@DslContext(BuildInDockerContext) Closure closure) {
-        BuildInDockerContext context = new BuildInDockerContext()
+        BuildInDockerContext context = new BuildInDockerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         Node node = new NodeBuilder().'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper' {
@@ -580,6 +580,11 @@ class WrapperContext extends AbstractExtensibleContext {
             verbose(context.verbose)
             volumes(context.volumes)
             privileged(context.privilegedMode)
+            if (jobManagement.getPluginVersion('docker-custom-build-environment')?.isNewerThan(
+                    new VersionNumber('1.6.1'))
+            ) {
+                forcePull(context.forcePull)
+            }
             group(context.userGroup ?: '')
             command(context.startCommand ?: '')
         }
