@@ -35,6 +35,12 @@ job('example') {
 }
 ```
 
+### Docker Custom Build Environment
+
+Support for versions older than 1.6.2 of the [CloudBees Docker Custom Build Environment
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.42
 
 ### Task Scanner

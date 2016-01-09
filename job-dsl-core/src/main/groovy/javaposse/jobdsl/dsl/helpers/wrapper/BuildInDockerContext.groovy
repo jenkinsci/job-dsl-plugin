@@ -63,10 +63,10 @@ class BuildInDockerContext extends AbstractContext {
         this.verbose = verbose
     }
 
-    /***
+    /**
      * Always pull the image from the repository. Defaults to {@code false}.
      *
-     * @since 1.4.3
+     * @since 1.43
      */
     @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.6.2')
     void forcePull(boolean forcePull = true) {
