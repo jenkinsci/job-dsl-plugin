@@ -472,6 +472,26 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Type of item "my-job" does not match existing type, item type can not be changed'
     }
 
+    def isMinimumPluginVersionInstalled() {
+        when:
+        boolean result = jobManagement.isMinimumPluginVersionInstalled('cvs', '0.1')
+
+        then:
+        result
+
+        when:
+        result = jobManagement.isMinimumPluginVersionInstalled('cvs', '10.0')
+
+        then:
+        !result
+
+        when:
+        result = jobManagement.isMinimumPluginVersionInstalled('foo', '0.1')
+
+        then:
+        !result
+    }
+
     def 'get plugin version'() {
         when:
         VersionNumber version = jobManagement.getPluginVersion('cvs')

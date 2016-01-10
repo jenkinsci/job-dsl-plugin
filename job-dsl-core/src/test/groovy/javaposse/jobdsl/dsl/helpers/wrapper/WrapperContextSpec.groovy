@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
@@ -334,7 +333,7 @@ class WrapperContextSpec extends Specification {
 
     def 'xvnc'() {
         setup:
-        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+        mockJobManagement.isMinimumPluginVersionInstalled('xvnc', '1.16') >> true
 
         when:
         context.xvnc()
@@ -350,7 +349,7 @@ class WrapperContextSpec extends Specification {
 
     def 'xvnc with closure'() {
         setup:
-        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+        mockJobManagement.isMinimumPluginVersionInstalled('xvnc', '1.16') >> true
 
         when:
         context.xvnc {
@@ -367,9 +366,6 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'xvnc with older plugin'() {
-        setup:
-        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.15')
-
         when:
         context.xvnc()
 
@@ -1257,6 +1253,9 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'buildInDocker with no options'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
+
         when:
         context.buildInDocker {
         }
@@ -1283,6 +1282,9 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'buildInDocker with dockerfile selector and all options'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
+
         when:
         context.buildInDocker {
             dockerfile('test1', 'test2')
@@ -1329,6 +1331,9 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'buildInDocker with image selector and all options'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
+
         when:
         context.buildInDocker {
             image('test1')
@@ -1374,9 +1379,6 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'buildInDocker with no options with 1.6.1'() {
-        setup:
-        mockJobManagement.getPluginVersion('docker-custom-build-environment') >> new VersionNumber('1.6.1')
-
         when:
         context.buildInDocker {
         }

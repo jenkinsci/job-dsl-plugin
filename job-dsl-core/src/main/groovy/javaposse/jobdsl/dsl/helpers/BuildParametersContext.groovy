@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.DslScriptException
@@ -90,7 +89,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
                     maxTags(context.maxTagsToDisplay ?: '')
                     defaultValue(context.defaultValue ?: '')
                     description(context.description ?: '')
-                    if (!jobManagement.getPluginVersion('subversion')?.isOlderThan(new VersionNumber('2.1'))) {
+                    if (jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1')) {
                         credentialsId(context.credentialsId ?: '')
                     }
                     uuid(randomUUID())

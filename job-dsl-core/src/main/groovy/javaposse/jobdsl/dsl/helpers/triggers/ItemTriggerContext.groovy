@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -135,7 +134,7 @@ class ItemTriggerContext extends AbstractExtensibleContext {
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
             commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
             allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26')) {
                 extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
             }
         }

@@ -170,6 +170,14 @@ class MemoryJobManagementSpec extends Specification {
         id == null
     }
 
+    def 'isMinimumPluginVersionInstalled returns false'() {
+        when:
+        boolean result = jobManagement.isMinimumPluginVersionInstalled('foo', '0.1')
+
+        then:
+        !result
+    }
+
     def 'getPluginVersion returns null'() {
         when:
         String id = jobManagement.getPluginVersion('foo')

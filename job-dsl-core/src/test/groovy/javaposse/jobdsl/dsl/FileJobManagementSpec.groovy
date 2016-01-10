@@ -185,6 +185,14 @@ class FileJobManagementSpec extends Specification {
         id == null
     }
 
+    def 'isMinimumPluginVersionInstalled returns null'() {
+        when:
+        boolean result = jobManagement.isMinimumPluginVersionInstalled('foo', '1.0')
+
+        then:
+        !result
+    }
+
     def 'getPluginVersion returns null'() {
         when:
         String id = jobManagement.getPluginVersion('foo')

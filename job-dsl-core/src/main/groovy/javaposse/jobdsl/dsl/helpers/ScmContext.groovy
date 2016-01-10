@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -98,7 +97,7 @@ class ScmContext extends AbstractExtensibleContext {
             gitContext.branches << '**'
         }
 
-        if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
+        if (jobManagement.isMinimumPluginVersionInstalled('git', '2.0.0')) {
             if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
                 gitContext.extensions << new NodeBuilder().'hudson.plugins.git.extensions.impl.CloneOption' {
                     shallow gitContext.shallowClone
@@ -140,16 +139,16 @@ class ScmContext extends AbstractExtensibleContext {
                 localBranch gitContext.localBranch
             }
             skipTag !gitContext.createTag
-            if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.0.0')) {
+                if (gitContext.extensions) {
+                    extensions gitContext.extensions
+                }
+            } else {
                 if (gitContext.reference) {
                     reference gitContext.reference
                 }
                 if (gitContext.shallowClone) {
                     useShallowClone gitContext.shallowClone
-                }
-            } else {
-                if (gitContext.extensions) {
-                    extensions gitContext.extensions
                 }
             }
         }

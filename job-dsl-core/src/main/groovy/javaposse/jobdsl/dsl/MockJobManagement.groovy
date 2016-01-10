@@ -75,11 +75,18 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
+        false
+    }
+
+    @Override
+    @Deprecated
     VersionNumber getPluginVersion(String pluginShortName) {
         null
     }
 
     @Override
+    @Deprecated
     VersionNumber getJenkinsVersion() {
         new VersionNumber('1.565')
     }

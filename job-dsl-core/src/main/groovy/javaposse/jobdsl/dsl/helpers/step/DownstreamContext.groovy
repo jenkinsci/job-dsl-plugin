@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -93,7 +92,7 @@ class DownstreamContext extends AbstractContext {
             condition('ALWAYS')
             delegate.triggerWithNoParameters(triggerWithNoParameters)
             delegate.configs(context.parameterContext.configs ?: [class: 'java.util.Collections$EmptyList'])
-            if (!jobManagement.getPluginVersion('parameterized-trigger')?.isOlderThan(new VersionNumber('2.25')) &&
+            if (jobManagement.isMinimumPluginVersionInstalled('parameterized-trigger', '2.25') &&
                     context.parameterFactoryContext.configFactories) {
                 configFactories(context.parameterFactoryContext.configFactories)
             }

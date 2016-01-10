@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -40,10 +39,8 @@ class MultiJobStepContext extends StepContext {
         PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
-        VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
-
         Set<String> validContinuationConditions = new HashSet<String>(VALID_CONTINUATION_CONDITIONS)
-        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.15'))) {
+        if (jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.16')) {
             validContinuationConditions << 'ALWAYS'
         }
 
@@ -64,7 +61,7 @@ class MultiJobStepContext extends StepContext {
                         exposedSCM jobInPhase.exposedScm
                         disableJob jobInPhase.disableJob
                         killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
-                        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.13'))) {
+                        if (jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.14')) {
                             abortAllJob jobInPhase.abortAllJobs
                         }
                         configs(jobInPhase.paramTrigger.configs ?: [class: 'java.util.Collections$EmptyList'])

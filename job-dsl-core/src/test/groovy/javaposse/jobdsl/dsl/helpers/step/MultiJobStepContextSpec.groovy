@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -220,9 +219,6 @@ class MultiJobStepContextSpec extends Specification {
     }
 
     def 'call phases with plugin version 1.11 options'() {
-        setup:
-        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.11')
-
         when:
         context.phase {
             phaseName 'Second'
@@ -248,7 +244,7 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phases with plugin version 1.14 options'() {
         setup:
-        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber('1.14')
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.14') >> true
 
         when:
         context.phase {
@@ -281,25 +277,18 @@ class MultiJobStepContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'call phase with unsupported condition'(String condition, String version) {
-        setup:
-        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber(version)
-
+    def 'call phase with unsupported condition'() {
         when:
-        context.phase('test', condition) {
+        context.phase('test', 'ALWAYS') {
         }
 
         then:
         thrown(DslScriptException)
-
-        where:
-        condition | version
-        'ALWAYS'  | '1.15'
     }
 
-    def 'call phase with supported condition'(String condition, String version) {
+    def 'call phase with supported condition'(String condition) {
         setup:
-        jobManagement.getPluginVersion('jenkins-multijob-plugin') >> new VersionNumber(version)
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.16') >> true
 
         when:
         context.phase('test', condition) {
@@ -314,9 +303,7 @@ class MultiJobStepContextSpec extends Specification {
         }
 
         where:
-        condition | version
-        'FAILURE' | '1.11'
-        'ALWAYS'  | '1.16'
+        condition << ['FAILURE', 'ALWAYS']
     }
 
     def 'phase works inside conditionalSteps'() {
