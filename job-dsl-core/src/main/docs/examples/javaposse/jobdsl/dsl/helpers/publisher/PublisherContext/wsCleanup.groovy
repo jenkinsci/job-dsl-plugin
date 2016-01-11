@@ -14,3 +14,19 @@ job('example-2') {
         }
     }
 }
+
+// always remove the 'output' directory and don't fail the build for any errors
+job('example-3') {
+    publishers {
+        wsCleanup {
+            includePattern("${projectRoot}/output/**")
+            deleteDirectories(true)
+            cleanWhenSuccess(true)
+            cleanWhenUnstable(true)
+            cleanWhenFailure(true)
+            cleanWhenNotBuilt(true)
+            cleanWhenAborted(true)
+            setFailBuild(false)
+        }
+    }
+}
