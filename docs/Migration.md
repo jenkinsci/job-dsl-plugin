@@ -41,6 +41,24 @@ Support for versions older than 1.6.2 of the [CloudBees Docker Custom Build Envi
 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### JobManagement
+
+Two methods in the `JobManagement` interface, `getPluginVersion` and `getJenkinsVersion`, are
+[[deprecated|Deprecation-Policy]] and will be removed to get rid of the `org.jenkins-ci:version-number` dependency in
+`job-dsl-core`. Use `isMinimumPluginVersionInstalled` as a replacement for `getPluginVersion`.
+
+API prior to 1.43
+```groovy
+if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.4.0'))) {
+}
+```
+
+API since 1.43
+```groovy
+if (jobManagement.isMinimumPluginVersionInstalled('git', '2.4.0')) {
+}
+```
+
 ## Migrating to 1.42
 
 ### Task Scanner

@@ -1,8 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
-import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.Lightbox
@@ -71,6 +70,9 @@ class BuildPipelineViewSpec extends Specification {
     }
 
     def 'selectedJob'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-pipeline-plugin', '1.3.4') >> true
+
         when:
         view.selectedJob('foo')
 
@@ -86,9 +88,6 @@ class BuildPipelineViewSpec extends Specification {
     }
 
     def 'selectedJob with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('build-pipeline-plugin') >> new VersionNumber('1.3.3')
-
         when:
         view.selectedJob('foo')
 

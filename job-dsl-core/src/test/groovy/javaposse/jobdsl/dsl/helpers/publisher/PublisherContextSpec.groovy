@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -697,6 +696,11 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'calling minimal html publisher closure'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5') >> true
+
         when:
         context.publishHtml {
             report('build/*') {
@@ -720,9 +724,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'calling minimal html publisher closure, plugin version older than 1.3'() {
-        setup:
-        jobManagement.getPluginVersion('htmlpublisher') >> new VersionNumber('1.2')
-
         when:
         context.publishHtml {
             report('build/*') {
@@ -746,7 +747,7 @@ class PublisherContextSpec extends Specification {
 
     def 'calling minimal html publisher closure, plugin version older than 1.4'() {
         setup:
-        jobManagement.getPluginVersion('htmlpublisher') >> new VersionNumber('1.3')
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
 
         when:
         context.publishHtml {
@@ -771,6 +772,11 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'calling html publisher closure with all options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5') >> true
+
         when:
         context.publishHtml {
             report('build/*') {
@@ -1404,7 +1410,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call parametrized downstream with FAILED_OR_BETTER condition'() {
         given:
-        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.26')
+        jobManagement.isMinimumPluginVersionInstalled('parameterized-trigger', '2.26') >> true
 
         when:
         context.downstreamParameterized {
@@ -1424,9 +1430,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call parametrized downstream with FAILED_OR_BETTER condition and older plugin version'() {
-        given:
-        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.25')
-
         when:
         context.downstreamParameterized {
             trigger('Project1') {
@@ -2062,9 +2065,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call groovyPostBuild with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('1.10')
-
         when:
         context.groovyPostBuild('foo')
 
@@ -2080,9 +2080,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call groovyPostBuild with overriden failure behavior and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('1.10')
-
         when:
         context.groovyPostBuild('foo', MarkUnstable)
 
@@ -2099,7 +2096,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call groovyPostBuild with no options and newer plugin version'() {
         setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('2.2')
+        jobManagement.isMinimumPluginVersionInstalled('groovy-postbuild', '2.2') >> true
 
         when:
         context.groovyPostBuild {
@@ -2122,7 +2119,7 @@ class PublisherContextSpec extends Specification {
 
     def 'call groovyPostBuild with all options and newer plugin version'() {
         setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('2.2')
+        jobManagement.isMinimumPluginVersionInstalled('groovy-postbuild', '2.2') >> true
 
         when:
         context.groovyPostBuild {
@@ -2463,6 +2460,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call git with minimal options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6') >> true
+
         when:
         context.git {
         }
@@ -2480,9 +2480,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call git with minimal options pre 2.2.6'() {
-        setup:
-        jobManagement.getPluginVersion('git') >> new VersionNumber('2.2.5')
-
         when:
         context.git {
         }
@@ -2499,6 +2496,8 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call git with all options'() {
+        jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6') >> true
+
         when:
         context.git {
             pushOnlyIfSuccess()
@@ -2541,6 +2540,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call git with minimal tag options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6') >> true
+
         when:
         context.git {
             tag('origin', 'test')
@@ -3600,9 +3602,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call post build scripts with minimal options with plugin version 0.14'() {
-        setup:
-        jobManagement.getPluginVersion('postbuildscript') >> new VersionNumber('0.14')
-
         when:
         context.postBuildScripts {
         }
@@ -3619,9 +3618,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call post build scripts with all options with plugin version 0.14'() {
-        setup:
-        jobManagement.getPluginVersion('postbuildscript') >> new VersionNumber('0.14')
-
         when:
         context.postBuildScripts {
             steps {
@@ -3646,6 +3642,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call post build scripts with minimal options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17') >> true
+
         when:
         context.postBuildScripts {
         }
@@ -3663,6 +3662,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call post build scripts with all options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17') >> true
+
         when:
         context.postBuildScripts {
             steps {
@@ -4543,6 +4545,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'mergePullRequest with no options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26') >> true
+
         when:
         context.mergePullRequest()
 
@@ -4562,6 +4567,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'mergePullRequest with all options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26') >> true
+
         when:
         context.mergePullRequest {
             mergeComment('Test comment')
@@ -4589,9 +4597,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'mergePullRequest with no options and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('ghprb') >> new VersionNumber('1.25')
-
         when:
         context.mergePullRequest()
 

@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.toplevel
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
@@ -47,7 +46,7 @@ class NotificationContext extends AbstractContext {
             delegate.url(url)
             delegate.protocol(protocol)
             delegate.format(format)
-            if (jobManagement.getPluginVersion('notification')?.isNewerThan(new VersionNumber('1.5'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('notification', '1.6')) {
                 event(notificationEndpointContext.event)
                 timeout(notificationEndpointContext.timeout)
             }

@@ -217,8 +217,15 @@ interface JobManagement {
     void requireMinimumCoreVersion(String version)
 
     /**
+     * Returns {@code true} if the currently installed version of the given plugin is equal to or greater than the
+     * specified version.
+     */
+    boolean isMinimumPluginVersionInstalled(String pluginShortName, String version)
+
+    /**
      * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
      */
+    @Deprecated
     VersionNumber getPluginVersion(String pluginShortName)
 
     /**
@@ -226,6 +233,7 @@ interface JobManagement {
      *
      * @since 1.33
      */
+    @Deprecated
     VersionNumber getJenkinsVersion()
 
     /**

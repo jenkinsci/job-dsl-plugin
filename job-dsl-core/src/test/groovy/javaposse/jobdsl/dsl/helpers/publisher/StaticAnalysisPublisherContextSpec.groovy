@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
@@ -13,6 +12,9 @@ class StaticAnalysisPublisherContextSpec extends Specification {
 
     @Unroll
     def 'add #analysisTool with default values'(String analysisTool, Map extraNodes, String pluginId) {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
         when:
         context."${analysisTool}"('somewhere')
 
@@ -81,6 +83,9 @@ class StaticAnalysisPublisherContextSpec extends Specification {
 
     @Unroll
     def 'add #analysisTool with all values'(String analysisTool, String nodeName, List extraArgs, Map extraValues) {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
         when:
         context."${analysisTool}"('somewhere', *extraArgs) {
             healthLimits 3, 20
@@ -289,9 +294,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
     }
 
     def 'task scanner with minimal options and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('tasks') >> new VersionNumber('4.40')
-
         when:
         context.tasks('foo')
 
@@ -320,6 +322,9 @@ class StaticAnalysisPublisherContextSpec extends Specification {
     }
 
     def 'task scanner with minimal options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
         when:
         context.tasks('foo')
 
@@ -349,6 +354,9 @@ class StaticAnalysisPublisherContextSpec extends Specification {
     }
 
     def 'task scanner with extra options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
         when:
         context.tasks('foo', 'bar', 'one', 'two', 'three', true) {
             regularExpression()

@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -201,7 +200,7 @@ class WrapperContext extends AbstractExtensibleContext {
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.xvnc.Xvnc' {
             takeScreenshot(xvncContext.takeScreenshot)
-            if (!jobManagement.getPluginVersion('xvnc')?.isOlderThan(new VersionNumber('1.16'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('xvnc', '1.16')) {
                 useXauthority(xvncContext.useXauthority)
             }
         }
@@ -582,8 +581,7 @@ class WrapperContext extends AbstractExtensibleContext {
             verbose(context.verbose)
             volumes(context.volumes)
             privileged(context.privilegedMode)
-            if (!jobManagement.getPluginVersion('docker-custom-build-environment')?.
-                    isOlderThan(new VersionNumber('1.6.2'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2')) {
                 forcePull(context.forcePull)
             }
             group(context.userGroup ?: '')

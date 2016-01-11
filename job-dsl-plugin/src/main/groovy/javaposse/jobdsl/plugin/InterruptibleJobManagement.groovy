@@ -146,11 +146,18 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
+    boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
+        delegate.isMinimumPluginVersionInstalled(pluginShortName, version)
+    }
+
+    @Override
+    @Deprecated
     VersionNumber getPluginVersion(String pluginShortName) {
         delegate.getPluginVersion(pluginShortName)
     }
 
     @Override
+    @Deprecated
     VersionNumber getJenkinsVersion() {
         delegate.jenkinsVersion
     }

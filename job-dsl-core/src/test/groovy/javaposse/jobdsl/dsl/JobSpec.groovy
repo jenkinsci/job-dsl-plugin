@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -621,6 +620,9 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn('MyProject')
 
@@ -637,6 +639,9 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker with all options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn('MyProject2') {
             blockLevel(level)
@@ -666,6 +671,9 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker with invalid options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn('MyProject2') {
             blockLevel(level)
@@ -686,6 +694,9 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker with iterator'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn(['MyProject', 'MyProject2', 'MyProject3']) {
             blockLevel('GLOBAL')
@@ -705,9 +716,6 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('build-blocker-plugin') >> new VersionNumber('1.7.0')
-
         when:
         job.blockOn('MyProject')
 
@@ -960,7 +968,7 @@ class JobSpec extends Specification {
 
     def 'set notification with invalid parameters'(String url, String protocol, String format, String event) {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {
@@ -990,7 +998,7 @@ class JobSpec extends Specification {
 
     def 'set notification with default properties and using a closure'() {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {
@@ -1015,7 +1023,7 @@ class JobSpec extends Specification {
 
     def 'set notification with all required properties and using a closure'() {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {
@@ -1040,7 +1048,7 @@ class JobSpec extends Specification {
 
     def 'set notification with multiple endpoints'() {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {

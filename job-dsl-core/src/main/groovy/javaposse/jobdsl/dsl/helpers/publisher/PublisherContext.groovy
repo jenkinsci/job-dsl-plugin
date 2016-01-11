@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -362,13 +361,13 @@ class PublisherContext extends AbstractExtensibleContext {
                         reportDir(target.reportDir)
                         reportFiles(target.reportFiles)
                         keepAll(target.keepAll)
-                        if (!jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.3'))) {
+                        if (jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3')) {
                             allowMissing(target.allowMissing)
                         }
-                        if (!jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.4'))) {
+                        if (jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4')) {
                             alwaysLinkToLastBuild(target.alwaysLinkToLastBuild)
                         }
-                        if (jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.5'))) {
+                        if (!jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5')) {
                             wrapperName('htmlpublisher-wrapper.html')
                         }
                     }
@@ -821,13 +820,13 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(groovyPostbuildClosure, groovyPostbuildContext)
 
         publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
-            if (jobManagement.getPluginVersion('groovy-postbuild')?.isOlderThan(new VersionNumber('2.2'))) {
-                groovyScript(groovyPostbuildContext.script ?: '')
-            } else {
+            if (jobManagement.isMinimumPluginVersionInstalled('groovy-postbuild', '2.2')) {
                 script {
                     script(groovyPostbuildContext.script ?: '')
                     sandbox(groovyPostbuildContext.sandbox)
                 }
+            } else {
+                groovyScript(groovyPostbuildContext.script ?: '')
             }
             behavior(groovyPostbuildContext.behavior.value)
         }
@@ -959,7 +958,7 @@ class PublisherContext extends AbstractExtensibleContext {
             configVersion(2)
             pushMerge(context.pushMerge)
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
-            if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.2.6'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6')) {
                 forcePush(context.forcePush)
             }
             tagsToPush(context.tags)
@@ -1271,7 +1270,7 @@ class PublisherContext extends AbstractExtensibleContext {
             delegate.low(low)
             delegate.ignoreCase(ignoreCase)
             delegate.excludePattern(excludePattern)
-            if (!jobManagement.getPluginVersion('tasks')?.isOlderThan(new VersionNumber('4.41'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41')) {
                 asRegexp(context.regularExpression)
             }
         }
@@ -1393,7 +1392,7 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
             buildSteps(context.stepContext.stepNodes)
             scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
-            if (!jobManagement.getPluginVersion('postbuildscript')?.isOlderThan(new VersionNumber('0.17'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17')) {
                 scriptOnlyIfFailure(context.onlyIfBuildFails)
                 markBuildUnstable(context.markBuildUnstable)
             }
@@ -1471,7 +1470,7 @@ class PublisherContext extends AbstractExtensibleContext {
             disallowOwnCode(pullRequestPublisherContext.disallowOwnCode)
             onlyTriggerPhrase(pullRequestPublisherContext.onlyTriggerPhrase)
             mergeComment(pullRequestPublisherContext.mergeComment ?: '')
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26')) {
                 failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
                 deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
             }

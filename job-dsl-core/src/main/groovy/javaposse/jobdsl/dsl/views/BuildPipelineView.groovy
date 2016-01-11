@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.views
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
@@ -41,7 +40,7 @@ class BuildPipelineView extends View {
 
         execute {
             it / methodMissing('selectedJob', selectedJob)
-            if (!jobManagement.getPluginVersion('build-pipeline-plugin')?.isOlderThan(new VersionNumber('1.3.4'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('build-pipeline-plugin', '1.3.4')) {
                 it / gridBuilder(
                         class: 'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder',
                 ) {

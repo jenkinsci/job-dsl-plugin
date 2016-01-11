@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -94,6 +93,9 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'base listTagsParam usage'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1') >> true
+
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
                 true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
@@ -119,9 +121,6 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'base listTagsParam usage with older plugin version'() {
-        given:
-        jobManagement.getPluginVersion('subversion') >> new VersionNumber('2.0')
-
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
                 true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
@@ -147,6 +146,9 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'simplified listTagsParam usage'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1') >> true
+
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
                 true)
@@ -172,6 +174,9 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'simplest listTagsParam usage'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1') >> true
+
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex')
 
@@ -196,6 +201,9 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'simplest closure listTagsParam usage'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1') >> true
+
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags') {
         }
@@ -221,6 +229,9 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'listTagsParam with all closure options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1') >> true
+
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags') {
             description('lorem ipsum')
@@ -253,6 +264,9 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'listTagsParam with maxTagsToDisplay int argument'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1') >> true
+
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags') {
             description('lorem ipsum')
@@ -317,6 +331,9 @@ class BuildParametersContextSpec extends Specification {
     }
 
     def 'listTagsParam tagFilterRegex argument can be null or empty'(String filter) {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('subversion', '2.1') >> true
+
         when:
         context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', filter)
 

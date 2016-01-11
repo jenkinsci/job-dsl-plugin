@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.JobAuthorizationContext
 import javaposse.jobdsl.dsl.helpers.ScmContext
@@ -262,7 +261,7 @@ abstract class Job extends Item {
             project / 'properties' / 'hudson.plugins.buildblocker.BuildBlockerProperty' {
                 useBuildBlocker(true)
                 blockingJobs(projectName)
-                if (!jobManagement.getPluginVersion('build-blocker-plugin')?.isOlderThan(new VersionNumber('1.7.1'))) {
+                if (jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1')) {
                     blockLevel(context.blockLevel)
                     scanQueueFor(context.scanQueueFor)
                 }

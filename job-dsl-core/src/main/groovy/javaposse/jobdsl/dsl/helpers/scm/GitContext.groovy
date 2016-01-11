@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
@@ -92,18 +91,18 @@ class GitContext extends AbstractContext {
         GitMergeOptionsContext gitMergeOptionsContext = new GitMergeOptionsContext(jobManagement)
         executeInContext(gitMergeOptionsClosure, gitMergeOptionsContext)
 
-        if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
-            mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
-                mergeRemote(gitMergeOptionsContext.remote ?: '')
-                mergeTarget(gitMergeOptionsContext.branch)
-            }
-        } else {
+        if (jobManagement.isMinimumPluginVersionInstalled('git', '2.0.0')) {
             extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.PreBuildMerge' {
                 options {
                     mergeRemote(gitMergeOptionsContext.remote ?: '')
                     mergeTarget(gitMergeOptionsContext.branch)
                     mergeStrategy(gitMergeOptionsContext.strategy)
                 }
+            }
+        } else {
+            mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
+                mergeRemote(gitMergeOptionsContext.remote ?: '')
+                mergeTarget(gitMergeOptionsContext.branch)
             }
         }
     }

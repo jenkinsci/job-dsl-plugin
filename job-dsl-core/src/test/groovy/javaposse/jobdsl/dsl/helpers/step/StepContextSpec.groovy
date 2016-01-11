@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
@@ -151,6 +150,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle methods'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23') >> true
+
         when:
         context.gradle('build')
 
@@ -186,6 +188,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle methods with defaults'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23') >> true
+
         when:
         context.gradle()
 
@@ -229,6 +234,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle methods with context'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23') >> true
+
         when:
         context.gradle {
             tasks 'clean'
@@ -266,9 +274,6 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle with old plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('gradle') >> new VersionNumber('1.22')
-
         when:
         context.gradle {
             tasks 'clean'
@@ -1793,6 +1798,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call downstream build step with all args'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('parameterized-trigger', '2.25') >> true
+
         when:
         context.downstreamParameterized {
             trigger('Project1, Project2') {
@@ -1920,9 +1928,6 @@ class StepContextSpec extends Specification {
     }
 
     def 'call downstream build step with no args and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.24')
-
         when:
         context.downstreamParameterized {
             trigger('Project3') {
