@@ -21,6 +21,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.43 (unreleased)
+ * Added support for the [P4 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/P4+Plugin)
+   ([JENKINS-32391](https://issues.jenkins-ci.org/browse/JENKINS-32391))
  * Added support for the [Clover PHP Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clover+PHP+Plugin)
    ([JENKINS-31557](https://issues.jenkins-ci.org/browse/JENKINS-31557))
  * Allow `BuildParametersContext` to be extended

@@ -1993,6 +1993,73 @@ class ScmContextSpec extends Specification {
         (1.._) * mockJobManagement.requirePlugin('perforce')
     }
 
+    def 'call perforcep4 with manual workspace'() {
+        when:
+        context.perforcep4('p4-user-creds') {
+            manual('ws', '//depot/Tools/build/...\n//ws/webapplications/helloworld/...')
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            attributes()['class'] == 'org.jenkinsci.plugins.p4.PerforceScm'
+            credential[0].value() == 'p4-user-creds'
+            workspace.size() == 1
+            with(workspace[0]) {
+                attributes()['class'] == 'org.jenkinsci.plugins.p4.workspace.ManualWorkspaceImpl'
+                charset[0].value() == 'none'
+                pinHost[0].value() == 'false'
+                name[0].value() == 'ws'
+                spec.size() == 1
+                with(spec[0]) {
+                    allwrite[0].value() == 'false'
+                    clobber[0].value() == 'false'
+                    compress[0].value() == 'false'
+                    locked[0].value() == 'false'
+                    modtime[0].value() == 'false'
+                    rmdir[0].value() == 'false'
+                    streamName[0].value() == ''
+                    line[0].value() == 'LOCAL'
+                    view[0].value() == '//depot/Tools/build/...\n//ws/webapplications/helloworld/...'
+                }
+            }
+            with(populate[0]) {
+                attributes()['class'] == 'org.jenkinsci.plugins.p4.populate.AutoCleanImpl'
+                have[0].value() == 'true'
+                force[0].value() == 'false'
+                modtime[0].value() == 'false'
+                quiet[0].value() == 'true'
+                pin[0].value() == ''
+                replace[0].value() == 'true'
+                delete[0].value() == 'true'
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('p4', '1.3.5')
+    }
+
+    def 'call perforcep4 with manual workspace and configure'() {
+        when:
+        context.perforcep4('p4-user-creds') {
+            manual('ws', '//depot/Tools/build/...\n//ws/webapplications/helloworld/...')
+            configure { node ->
+                node / workspace / spec / clobber('true')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            workspace.size() == 1
+            with(workspace[0]) {
+                spec.size() == 1
+                with(spec[0]) {
+                    clobber[0].value() == 'true'
+                }
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('p4', '1.3.5')
+    }
+
     def 'call cloneWorkspace'(parentJob, criteria) {
         when:
         context.cloneWorkspace(parentJob, criteria)
