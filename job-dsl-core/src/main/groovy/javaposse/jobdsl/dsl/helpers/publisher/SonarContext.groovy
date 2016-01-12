@@ -5,10 +5,20 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 
 class SonarContext implements Context {
+    String installationName
     String branch
     String additionalProperties
     boolean overrideTriggers
     final SonarTriggersContext sonarTriggersContext = new SonarTriggersContext()
+
+    /**
+     * Sets the Sonar installation, only applicable when multiple Sonar installations are defined.
+     *
+     * @since 1.43
+     */
+    void installationName(String installationName) {
+        this.installationName = installationName
+    }
 
     /**
      * Sets the {@code sonar.branch} property.

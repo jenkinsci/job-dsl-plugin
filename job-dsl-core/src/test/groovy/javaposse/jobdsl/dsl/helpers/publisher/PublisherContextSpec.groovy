@@ -3698,7 +3698,8 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.sonar.SonarPublisher'
-            children().size() == 10
+            children().size() == 11
+            installationName[0].value() == ''
             jdk[0].value() == '(Inherit From Job)'
             branch[0].value() == ''
             language[0].value().empty
@@ -3718,6 +3719,7 @@ class PublisherContextSpec extends Specification {
     def 'call sonar with all options'() {
         when:
         context.sonar {
+            installationName('sonarTest')
             branch('test')
             additionalProperties('-Dtest=test')
             overrideTriggers {
@@ -3728,7 +3730,8 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.sonar.SonarPublisher'
-            children().size() == 11
+            children().size() == 12
+            installationName[0].value() == 'sonarTest'
             jdk[0].value() == '(Inherit From Job)'
             branch[0].value() == 'test'
             language[0].value().empty
