@@ -26,6 +26,7 @@ class PublisherContextSpec extends Specification {
         emailPublisher.name() == 'hudson.plugins.emailext.ExtendedEmailPublisher'
         emailPublisher.recipientList[0].value() == '$DEFAULT_RECIPIENTS'
         emailPublisher.defaultSubject[0].value() == '$DEFAULT_SUBJECT'
+        emailPublisher.presendScript[0].value() == '$DEFAULT_PRESEND_SCRIPT'
         emailPublisher.contentType[0].value() == 'default'
         Node triggers = emailPublisher.configuredTriggers[0]
         triggers.children().size() == 2

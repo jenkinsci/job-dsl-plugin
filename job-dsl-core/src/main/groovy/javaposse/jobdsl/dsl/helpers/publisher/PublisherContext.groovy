@@ -67,6 +67,7 @@ class PublisherContext extends AbstractExtensibleContext {
             defaultSubject subjectTemplate ?: '$DEFAULT_SUBJECT'
             defaultContent contentTemplate ?: '$DEFAULT_CONTENT'
             attachmentsPattern ''
+            presendScript '$DEFAULT_PRESEND_SCRIPT'
 
             configuredTriggers {
                 emailContext.emailTriggers.each { EmailContext.EmailTrigger trigger ->
