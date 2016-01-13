@@ -28,6 +28,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the [CloudBees Docker Custom Build Environment
    Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin)
    ([JENKINS-32363](https://issues.jenkins-ci.org/browse/JENKINS-32363))
+ * Enhanced support for the [SonarQube Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SonarQube+plugin)
+   ([JENKINS-32419](https://issues.jenkins-ci.org/browse/JENKINS-32419))
  * Built-in support for the
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
    is deprecated, see [Migration](Migration#migrating-to-143)

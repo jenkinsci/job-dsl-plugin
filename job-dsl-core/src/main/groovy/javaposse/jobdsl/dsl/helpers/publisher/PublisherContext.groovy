@@ -1410,6 +1410,9 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(sonarClosure, sonarContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.sonar.SonarPublisher' {
+            if (sonarContext.installationName) {
+                installationName(sonarContext.installationName)
+            }
             jdk('(Inherit From Job)')
             branch(sonarContext.branch ?: '')
             language()
