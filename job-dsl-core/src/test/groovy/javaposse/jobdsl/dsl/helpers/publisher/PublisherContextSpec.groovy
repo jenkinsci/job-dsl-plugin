@@ -95,6 +95,80 @@ class PublisherContextSpec extends Specification {
         emailDefault.sendToRequester[0].value() == 'true'
     }
 
+    def 'call extended email with structured triggers'() {
+        when:
+        def recipients = ['a@example.com', 'b@example.com']
+        context.extendedEmail {
+            recipientList(recipients)
+            defaultSubject('Build status: failed')
+            defaultContent('The build is broken')
+            attachBuildLog()
+            replyTo(recipients)
+
+            trigger('Failure') {
+                subject('$PROJECT_DEFAULT_SUBJECT')
+                body('$PROJECT_DEFAULT_CONTENT')
+                sendToDevelopers()
+                includeCulprits()
+                sendToRequester()
+                attachBuildLog()
+            }
+            trigger('Fixed') {
+                subject('Build status: fixed')
+                body('The build has been fixed')
+                recipientList(recipients)
+                replyTo(recipients)
+                sendToDevelopers()
+                sendToRequester()
+            }
+        }
+
+        then:
+        Node emailPublisher = context.publisherNodes[0]
+        emailPublisher.recipientList[0].value() == 'a@example.com,b@example.com'
+        emailPublisher.contentType[0].value() == 'default'
+        emailPublisher.defaultSubject[0].value() == 'Build status: failed'
+        emailPublisher.defaultContent[0].value() == 'The build is broken'
+        emailPublisher.attachmentsPattern[0].value() == ''
+        emailPublisher.presendScript[0].value() == '$DEFAULT_PRESEND_SCRIPT'
+        emailPublisher.attachBuildLog[0].value() as String == 'true'
+        emailPublisher.compressBuildLog[0].value() as String == 'false'
+        emailPublisher.replyTo[0].value() == 'a@example.com,b@example.com'
+        emailPublisher.saveOutput[0].value() as String == 'false'
+
+        Node triggers = emailPublisher.configuredTriggers[0]
+        triggers.children().size() == 2
+        triggers.children()[0].name() == 'hudson.plugins.emailext.plugins.trigger.FailureTrigger'
+        Node emailFailure = triggers.children()[0].email[0]
+        emailFailure.recipientList[0].value() == ''
+        emailFailure.subject[0].value() == '$PROJECT_DEFAULT_SUBJECT'
+        emailFailure.body[0].value() == '$PROJECT_DEFAULT_CONTENT'
+        emailFailure.sendToDevelopers[0].value() as String == 'true'
+        emailFailure.sendToRequester[0].value() as String == 'true'
+        emailFailure.includeCulprits[0].value() as String == 'true'
+        emailFailure.sendToRecipientList[0].value() as String == 'true'
+        emailFailure.attachmentsPattern[0].value() == ''
+        emailFailure.attachBuildLog[0].value() as String == 'true'
+        emailFailure.compressBuildLog[0].value() as String == 'false'
+        emailFailure.replyTo[0].value() == '$PROJECT_DEFAULT_REPLYTO'
+        emailFailure.contentType[0].value() == 'project'
+
+        triggers.children()[0].name() == 'hudson.plugins.emailext.plugins.trigger.FailureTrigger'
+        Node emailFixed = triggers.children()[1].email[0]
+        emailFixed.recipientList[0].value() == 'a@example.com,b@example.com'
+        emailFixed.subject[0].value() == 'Build status: fixed'
+        emailFixed.body[0].value() == 'The build has been fixed'
+        emailFixed.sendToDevelopers[0].value() as String == 'true'
+        emailFixed.sendToRequester[0].value() as String == 'true'
+        emailFixed.includeCulprits[0].value() as String == 'false'
+        emailFixed.sendToRecipientList[0].value() as String == 'true'
+        emailFixed.attachmentsPattern[0].value() == ''
+        emailFixed.attachBuildLog[0].value() as String == 'false'
+        emailFixed.compressBuildLog[0].value() as String == 'false'
+        emailFixed.replyTo[0].value() == 'a@example.com,b@example.com'
+        emailFixed.contentType[0].value() == 'project'
+    }
+
     def 'call standard mailer method'() {
         when:
         context.mailer('recipient')
