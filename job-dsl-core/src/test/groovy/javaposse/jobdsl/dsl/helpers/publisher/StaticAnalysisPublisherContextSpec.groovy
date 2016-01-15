@@ -307,8 +307,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             low[0].value().empty
             ignoreCase[0].value() == false
             excludePattern[0].value().empty
-            healthy[0].value() == null
-            unHealthy[0].value() == null
+            healthy[0].value() == ''
+            unHealthy[0].value() == ''
             thresholdLimit[0].value() == 'low'
             defaultEncoding[0].value().empty
             thresholds[0].value().empty
@@ -338,8 +338,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             low[0].value().empty
             ignoreCase[0].value() == false
             excludePattern[0].value().empty
-            healthy[0].value() == null
-            unHealthy[0].value() == null
+            healthy[0].value() == ''
+            unHealthy[0].value() == ''
             thresholdLimit[0].value() == 'low'
             defaultEncoding[0].value().empty
             thresholds[0].value().empty
@@ -372,8 +372,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             low[0].value() == 'three'
             ignoreCase[0].value() == true
             excludePattern[0].value() == 'bar'
-            healthy[0].value() == null
-            unHealthy[0].value() == null
+            healthy[0].value() == ''
+            unHealthy[0].value() == ''
             thresholdLimit[0].value() == 'low'
             defaultEncoding[0].value().empty
             thresholds[0].value().empty
