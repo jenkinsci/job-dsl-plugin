@@ -2015,4 +2015,26 @@ class PublisherContext extends AbstractExtensibleContext {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }
+
+    /**
+     * Publishes Image Gallery
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'image-gallery', minimumVersion = '1.2')
+    void publishImageGallery(String imageGalleryTitle, String imageGalleryPath, @DslContext(ImageGalleryContext) Closure imageGalleryClosure = null) {
+        ImageGalleryContext galleryContext = new ImageGalleryContext(jobManagement, imageGalleryTitle, imageGalleryPath)
+        ContextHelper.executeInContext(imageGalleryClosure, galleryContext)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.imagegallery.ImageGalleryRecorder' {
+            imageGalleries {
+                'org.jenkinsci.plugins.imagegallery.imagegallery.ArchivedImagesGallery' {
+                    title galleryContext.imageGalleryTitle
+                    imageWidthText galleryContext.imageWidthText
+                    markBuildAsUnstableIfNoArchivesFound galleryContext.markBuildAsUnstableIfNoArchivesFound
+                    includes galleryContext.imageGalleryPath
+                }
+            }
+        }
+    }
 }
