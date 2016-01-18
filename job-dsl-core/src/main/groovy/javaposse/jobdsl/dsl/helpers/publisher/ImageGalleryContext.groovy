@@ -1,9 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.AbstractContext;
-import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
 
-public class ImageGalleryContext extends AbstractContext {
+class ImageGalleryContext extends AbstractContext {
 
   String imageGalleryTitle
   String imageGalleryPath

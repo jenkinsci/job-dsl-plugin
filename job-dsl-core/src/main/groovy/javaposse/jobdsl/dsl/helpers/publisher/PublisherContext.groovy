@@ -2022,7 +2022,8 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.43
      */
     @RequiresPlugin(id = 'image-gallery', minimumVersion = '1.2')
-    void publishImageGallery(String imageGalleryTitle, String imageGalleryPath, @DslContext(ImageGalleryContext) Closure imageGalleryClosure = null) {
+    void publishImageGallery(String imageGalleryTitle, String imageGalleryPath,
+                             @DslContext(ImageGalleryContext) Closure imageGalleryClosure = null) {
         ImageGalleryContext galleryContext = new ImageGalleryContext(jobManagement, imageGalleryTitle, imageGalleryPath)
         ContextHelper.executeInContext(imageGalleryClosure, galleryContext)
 
