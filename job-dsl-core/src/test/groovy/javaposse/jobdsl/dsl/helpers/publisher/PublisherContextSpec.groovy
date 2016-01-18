@@ -5977,19 +5977,19 @@ class PublisherContextSpec extends Specification {
 
     def 'publish Image Gallery plugin with minimum options'() {
         when:
-        context.publishImageGallery("some title", "./some/path/*.png")
+        context.publishImageGallery('some title', './some/path/*.png')
 
         then:
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
-            name() == "org.jenkinsci.plugins.imagegallery.ImageGalleryRecorder"
+            name() == 'org.jenkinsci.plugins.imagegallery.ImageGalleryRecorder'
             children().size() == 1
             with(imageGalleries[0]) {
                 with(it.value()[0]) {
-                    name() == "org.jenkinsci.plugins.imagegallery.imagegallery.ArchivedImagesGallery"
+                    name() == 'org.jenkinsci.plugins.imagegallery.imagegallery.ArchivedImagesGallery'
                     children().size() == 4
-                    title[0].value() == "some title"
-                    includes[0].value() == "./some/path/*.png"
+                    title[0].value() == 'some title'
+                    includes[0].value() == './some/path/*.png'
                     markBuildAsUnstableIfNoArchivesFound[0].value() == false
                     imageWidthText[0].value() == ''
                 }
@@ -6000,7 +6000,7 @@ class PublisherContextSpec extends Specification {
 
     def 'publish Image Gallery plugin with all options'() {
         when:
-        context.publishImageGallery("some title", "./some/path/*.png") {
+        context.publishImageGallery('some title', './some/path/*.png') {
             imageWidthText '15'
             markBuildAsUnstableIfNoArchivesFound true
         }
@@ -6008,14 +6008,14 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
-            name() == "org.jenkinsci.plugins.imagegallery.ImageGalleryRecorder"
+            name() == 'org.jenkinsci.plugins.imagegallery.ImageGalleryRecorder'
             children().size() == 1
             with(imageGalleries[0]) {
                 with(it.value()[0]) {
-                    name() == "org.jenkinsci.plugins.imagegallery.imagegallery.ArchivedImagesGallery"
+                    name() == 'org.jenkinsci.plugins.imagegallery.imagegallery.ArchivedImagesGallery'
                     children().size() == 4
-                    title[0].value() == "some title"
-                    includes[0].value() == "./some/path/*.png"
+                    title[0].value() == 'some title'
+                    includes[0].value() == './some/path/*.png'
                     markBuildAsUnstableIfNoArchivesFound[0].value() == true
                     imageWidthText[0].value() == '15'
                 }
