@@ -1,5 +1,52 @@
 ## Migrating to 1.43
 
+### Extended Email
+
+The DSL support for the [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin) has changed to
+address several issues.
+
+DSL prior to 1.43
+```groovy
+job('example') {
+    publishers {
+        extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
+            trigger('PreBuild')
+            trigger(triggerName: 'StillUnstable', subject: 'Subject', body: 'Body', recipientList: 'RecipientList',
+                    sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
+            configure { node ->
+                node / contentType << 'text/html'
+            }
+        }
+    }
+}
+```
+
+DSL since 1.43
+```groovy
+job('example') {
+    publishers {
+        extendedEmail {
+            recipientList('me@halfempty.org')
+            defaultSubject('Oops')
+            defaultContent('Something broken')
+            contentType('text/html')
+            triggers {
+                beforeBuild()
+                stillUnstable {
+                    subject('Subject')
+                    content('Body')
+                    sendTo {
+                        developers()
+                        requester()
+                        culprits()
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
 ### GitHub Pull Request Builder
 
 Built-in support for the

@@ -30,8 +30,48 @@ class PublisherContext extends AbstractExtensibleContext {
 
     /**
      * Sends customizable email notifications.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'email-ext', minimumVersion = '2.40.5')
+    void extendedEmail(@DslContext(ExtendedEmailContext) Closure closure) {
+        ExtendedEmailContext context = new ExtendedEmailContext()
+        ContextHelper.executeInContext(closure, context)
+
+        if (!context.triggersContext.configuredTriggers) {
+            context.triggers {
+                failure()
+            }
+        }
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.emailext.ExtendedEmailPublisher' {
+            recipientList(context.recipientList ? context.recipientList.join(', ') : '$DEFAULT_RECIPIENTS')
+            configuredTriggers(context.triggersContext.configuredTriggers)
+            contentType(context.contentType)
+            defaultSubject(context.defaultSubject ?: '')
+            defaultContent(context.defaultContent ?: '')
+            attachmentsPattern(context.attachmentPatterns.join(', '))
+            presendScript(context.preSendScript ?: '')
+            classpath {
+                context.additionalGroovyClasspath.each { classpath ->
+                    'hudson.plugins.emailext.GroovyScriptPath' {
+                        path(classpath ?: '')
+                    }
+                }
+            }
+            attachBuildLog(context.attachBuildLog)
+            compressBuildLog(context.compressBuildLog)
+            replyTo(context.replyToList ? context.replyToList.join(', ') : '$DEFAULT_REPLYTO')
+            saveOutput(context.saveToWorkspace)
+            disabled(context.disabled)
+        }
+    }
+
+    /**
+     * Sends customizable email notifications.
      */
     @RequiresPlugin(id = 'email-ext')
+    @Deprecated
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)
     }
@@ -40,6 +80,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * Sends customizable email notifications.
      */
     @RequiresPlugin(id = 'email-ext')
+    @Deprecated
     void extendedEmail(String recipients, String subjectTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, subjectTemplate, null, emailClosure)
@@ -49,8 +90,11 @@ class PublisherContext extends AbstractExtensibleContext {
      * Sends customizable email notifications.
      */
     @RequiresPlugin(id = 'email-ext')
+    @Deprecated
     void extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
+        jobManagement.logDeprecationWarning()
+
         EmailContext emailContext = new EmailContext()
         ContextHelper.executeInContext(emailClosure, emailContext)
 
