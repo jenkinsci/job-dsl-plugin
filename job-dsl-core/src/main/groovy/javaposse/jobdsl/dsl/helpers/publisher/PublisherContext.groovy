@@ -1985,8 +1985,8 @@ class PublisherContext extends AbstractExtensibleContext {
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
-            healthy(context.healthy)
-            unHealthy(context.unHealthy)
+            healthy(context.healthy ?: '')
+            unHealthy(context.unHealthy ?: '')
             thresholdLimit(context.thresholdLimit)
             defaultEncoding(context.defaultEncoding)
             canRunOnFailed(context.canRunOnFailed)
