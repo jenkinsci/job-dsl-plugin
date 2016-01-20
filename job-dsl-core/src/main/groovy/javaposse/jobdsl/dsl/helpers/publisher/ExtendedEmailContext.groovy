@@ -21,6 +21,7 @@ class ExtendedEmailContext implements Context {
     final List<String> replyToList = []
     boolean saveToWorkspace
     boolean disabled
+    Closure configureClosure
 
     /**
      * Adds email addresses that should receive emails. Defaults to {@code '$DEFAULT_RECIPIENTS'}. Can be called
@@ -124,5 +125,15 @@ class ExtendedEmailContext implements Context {
      */
     void disabled(boolean disabled = true) {
         this.disabled = disabled
+    }
+
+    /**
+     * Allows direct manipulation of the generated XML. The {@code hudson.plugins.emailext.ExtendedEmailPublisher} node
+     * is passed into the configure block.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
+     */
+    void configure(Closure configureClosure) {
+        this.configureClosure = configureClosure
     }
 }

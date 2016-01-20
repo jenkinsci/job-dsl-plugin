@@ -44,7 +44,7 @@ class PublisherContext extends AbstractExtensibleContext {
             }
         }
 
-        publisherNodes << new NodeBuilder().'hudson.plugins.emailext.ExtendedEmailPublisher' {
+        Node emailNode = new NodeBuilder().'hudson.plugins.emailext.ExtendedEmailPublisher' {
             recipientList(context.recipientList ? context.recipientList.join(', ') : '$DEFAULT_RECIPIENTS')
             configuredTriggers(context.triggersContext.configuredTriggers)
             contentType(context.contentType)
@@ -65,6 +65,12 @@ class PublisherContext extends AbstractExtensibleContext {
             saveOutput(context.saveToWorkspace)
             disabled(context.disabled)
         }
+
+        if (context.configureClosure) {
+            new WithXmlAction(context.configureClosure).execute(emailNode)
+        }
+
+        publisherNodes << emailNode
     }
 
     /**

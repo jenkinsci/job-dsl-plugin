@@ -215,13 +215,16 @@ class PublisherContextSpec extends Specification {
                     replyToList('two@example.org', 'three@example.org')
                 }
             }
+            configure {
+                it / foo('bar')
+            }
         }
 
         then:
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.emailext.ExtendedEmailPublisher'
-            children().size() == 13
+            children().size() == 14
             recipientList[0].value() == 'me@example.org, you@example.org, other@example.org'
             contentType[0].value() == 'text/plain'
             defaultSubject[0].value() == 'Important'
@@ -286,6 +289,7 @@ class PublisherContextSpec extends Specification {
                     }
                 }
             }
+            foo[0].value() == 'bar'
         }
 
         where:
