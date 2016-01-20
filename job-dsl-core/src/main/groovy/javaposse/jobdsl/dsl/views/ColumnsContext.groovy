@@ -154,7 +154,7 @@ class ColumnsContext extends AbstractContext {
      *
      * @since 1.43
      */
-    @RequiresPlugin(id = 'jacoco-column', minimumVersion = '1.0')
+    @RequiresPlugin(id = 'jacoco', minimumVersion = '1.0')
     void jacoco() {
         columnNodes << new Node(null, 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn')
     }

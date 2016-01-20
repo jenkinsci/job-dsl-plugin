@@ -428,7 +428,7 @@ class ListViewSpec<T extends ListView> extends Specification {
         root.columns.size() == 1
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn'
-        1 * jobManagement.requireMinimumPluginVersion('jacoco-column', '1.0')
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0')
     }
 
     protected String getDefaultXml() {
