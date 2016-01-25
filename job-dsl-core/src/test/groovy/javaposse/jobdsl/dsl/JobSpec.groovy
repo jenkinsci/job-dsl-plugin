@@ -536,10 +536,32 @@ class JobSpec extends Specification {
             resourceNumber.size() == 0
             resourceNames[0].value() == 'lock-resource'
         }
+        notThrown IllegalArgumentException
         1 * jobManagement.requirePlugin('lockable-resources')
     }
 
     def 'lockable resources with all parameters'() {
+        when:
+        job.lockableResources('res0 res1 res2') {
+            resourcesVariable('RESOURCES')
+            resourceNumber(1)
+        }
+
+        then:
+        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 3
+            resourceNames.size() == 1
+            resourceNamesVar.size() == 1
+            resourceNumber.size() == 1
+            resourceNames[0].value() == 'res0 res1 res2'
+            resourceNamesVar[0].value() == 'RESOURCES'
+            resourceNumber[0].value() == 1
+        }
+        notThrown IllegalArgumentException
+        1 * jobManagement.requirePlugin('lockable-resources')
+    }
+
+    def 'lockable resources with all parameters + label '() {
         when:
         job.lockableResources('res0 res1 res2') {
             resourcesVariable('RESOURCES')
@@ -559,6 +581,7 @@ class JobSpec extends Specification {
             resourceNumber[0].value() == 1
             labelName[0].value() == 'HEAVY_RESOURCE'
         }
+        notThrown IllegalArgumentException
         1 * jobManagement.requirePlugin('lockable-resources')
     }
 
@@ -574,6 +597,19 @@ class JobSpec extends Specification {
             labelName.size() == 1
             labelName[0].value() == 'HEAVY_RESOURCE'
         }
+        notThrown IllegalArgumentException
+        1 * jobManagement.requirePlugin('lockable-resources')
+    }
+
+    def 'lockable resources resource or label have to be defined'() {
+        when:
+        job.lockableResources {
+          resourceNumber(1)
+        }
+
+        then:
+        def ex = thrown(IllegalArgumentException)
+        ex.message == 'Either resource or label have to be specified.'
         1 * jobManagement.requirePlugin('lockable-resources')
     }
 

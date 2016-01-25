@@ -142,12 +142,18 @@ abstract class Job extends Item {
      * @since 1.25
      */
     @RequiresPlugin(id = 'lockable-resources')
-    void lockableResources(String resources , @DslContext(LockableResourcesContext) Closure lockClosure = null) {
+    void lockableResources(String resources , @DslContext(LockableResourcesContext) Closure lockClosure = null) 
+    throws IllegalArgumentException {
         LockableResourcesContext lockContext = new LockableResourcesContext()
         ContextHelper.executeInContext(lockClosure, lockContext)
 
+        if (!resources && !lockContext.labelName) {
+            throw new IllegalArgumentException('Either resource or label have to be specified.')
+        }
+
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
+
                 if (resources != null) {
                     resourceNames resources
                 }
@@ -167,11 +173,11 @@ abstract class Job extends Item {
     }
 
     /**
-     * Locks resources while a job is running by resource label
+     * Locks resources while a job is running
      *
-     * @since 1.43
      */
-    void lockableResources(@DslContext(LockableResourcesContext) Closure lockClosure = null) {
+    void lockableResources(@DslContext(LockableResourcesContext) Closure lockClosure = null) 
+    throws IllegalArgumentException {
          lockableResources(null, lockClosure )
     }
 
