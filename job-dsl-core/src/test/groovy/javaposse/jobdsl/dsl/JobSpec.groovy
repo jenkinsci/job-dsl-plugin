@@ -543,18 +543,36 @@ class JobSpec extends Specification {
         when:
         job.lockableResources('res0 res1 res2') {
             resourcesVariable('RESOURCES')
+            labelName('HEAVY_RESOURCE')
             resourceNumber(1)
         }
 
         then:
         with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
-            children().size() == 3
+            children().size() == 4
             resourceNames.size() == 1
             resourceNamesVar.size() == 1
             resourceNumber.size() == 1
+            labelName.size() == 1
             resourceNames[0].value() == 'res0 res1 res2'
             resourceNamesVar[0].value() == 'RESOURCES'
             resourceNumber[0].value() == 1
+            labelName[0].value() == 'HEAVY_RESOURCE'
+        }
+        1 * jobManagement.requirePlugin('lockable-resources')
+    }
+
+    def 'lockable resources by label only'() {
+        when:
+        job.lockableResources {
+            labelName('HEAVY_RESOURCE')
+        }
+
+        then:
+        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 1
+            labelName.size() == 1
+            labelName[0].value() == 'HEAVY_RESOURCE'
         }
         1 * jobManagement.requirePlugin('lockable-resources')
     }

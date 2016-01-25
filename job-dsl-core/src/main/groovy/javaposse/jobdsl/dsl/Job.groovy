@@ -142,22 +142,39 @@ abstract class Job extends Item {
      * @since 1.25
      */
     @RequiresPlugin(id = 'lockable-resources')
-    void lockableResources(String resources, @DslContext(LockableResourcesContext) Closure lockClosure = null) {
+    void lockableResources(String resources , @DslContext(LockableResourcesContext) Closure lockClosure = null) {
         LockableResourcesContext lockContext = new LockableResourcesContext()
         ContextHelper.executeInContext(lockClosure, lockContext)
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
-                resourceNames resources
+                if (resources != null) { 
+                    resourceNames resources
+                }
                 if (lockContext.resourcesVariable) {
                     resourceNamesVar lockContext.resourcesVariable
                 }
+
+                if (lockContext.labelName) {
+                    labelName lockContext.labelName
+                }
+
                 if (lockContext.resourceNumber != null) {
                     resourceNumber lockContext.resourceNumber
                 }
             }
         }
     }
+
+    /**
+     * Locks resources while a job is running by resource label
+     *
+     * @since 1.43
+     */
+    void lockableResources(@DslContext(LockableResourcesContext) Closure lockClosure = null) {
+         lockableResources(null, lockClosure )
+    }
+
 
     /**
      * Specifies the number of executors to block for this job.
