@@ -142,21 +142,43 @@ abstract class Job extends Item {
      * @since 1.25
      */
     @RequiresPlugin(id = 'lockable-resources')
-    void lockableResources(String resources, @DslContext(LockableResourcesContext) Closure lockClosure = null) {
-        LockableResourcesContext lockContext = new LockableResourcesContext()
+    void lockableResources(String resources , @DslContext(LockableResourcesContext) Closure lockClosure = null) {
+        LockableResourcesContext lockContext = new LockableResourcesContext(jobManagement)
         ContextHelper.executeInContext(lockClosure, lockContext)
+
+        checkArgument(resources || lockContext.labelName, 'Either resource or label have to be specified.')
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
-                resourceNames resources
+
+                if (resources != null) {
+                    resourceNames resources
+                }
                 if (lockContext.resourcesVariable) {
                     resourceNamesVar lockContext.resourcesVariable
                 }
+
+                if (lockContext.labelName) {
+                    labelName lockContext.labelName
+                }
+
                 if (lockContext.resourceNumber != null) {
                     resourceNumber lockContext.resourceNumber
                 }
             }
         }
+    }
+
+    /**
+     * Locks resources while a job is running
+     *
+     * @since 1.43
+     *
+     */
+    @RequiresPlugin(id = 'lockable-resources', minimumVersion = '1.7')
+    void lockableResources(@DslContext(LockableResourcesContext) Closure lockClosure = null)
+    throws DslScriptException {
+         lockableResources(null, lockClosure )
     }
 
     /**
