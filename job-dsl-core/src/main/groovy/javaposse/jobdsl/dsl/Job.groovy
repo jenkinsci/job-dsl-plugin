@@ -148,7 +148,7 @@ abstract class Job extends Item {
 
         withXmlActions << WithXmlAction.create { Node project ->
             project / 'properties' / 'org.jenkins.plugins.lockableresources.RequiredResourcesProperty' {
-                if (resources != null) { 
+                if (resources != null) {
                     resourceNames resources
                 }
                 if (lockContext.resourcesVariable) {
