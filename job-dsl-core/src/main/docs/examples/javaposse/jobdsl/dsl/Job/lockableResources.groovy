@@ -18,3 +18,11 @@ job('example-3') {
         shell('echo Following resources are locked: $LOCKED_RESOURCES')
     }
 }
+
+// notation that locks resource by Label
+job('example-4') {
+    lockableResources {
+        labelName('heavy_resource')
+        resourceNumber(1)
+    }
+}
