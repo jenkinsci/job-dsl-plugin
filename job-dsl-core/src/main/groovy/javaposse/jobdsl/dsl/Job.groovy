@@ -175,7 +175,6 @@ abstract class Job extends Item {
          lockableResources(null, lockClosure )
     }
 
-
     /**
      * Specifies the number of executors to block for this job.
      *
