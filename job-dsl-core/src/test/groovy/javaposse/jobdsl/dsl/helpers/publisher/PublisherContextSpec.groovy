@@ -15,7 +15,7 @@ class PublisherContextSpec extends Specification {
     Item item = new FreeStyleJob(jobManagement)
     PublisherContext context = new PublisherContext(jobManagement, item)
 
-    def 'empty call extended email method'() {
+    def 'empty call deprecated extended email method'() {
         when:
         context.extendedEmail()
 
@@ -35,7 +35,7 @@ class PublisherContextSpec extends Specification {
         email.body[0].value() == '$PROJECT_DEFAULT_CONTENT'
     }
 
-    def 'call extended email with args'() {
+    def 'call deprecated extended email with args'() {
         when:
         context.extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
             trigger('PreBuild')
@@ -75,7 +75,7 @@ class PublisherContextSpec extends Specification {
         email.sendToRecipientList[0].value() as String == 'false'
     }
 
-    def 'loop triggers to set send to requester'() {
+    def 'call deprecated extendedEmail with triggers to set send to requester'() {
         when:
         // Given by Thaddeus Diamond <thaddeus@hadapt.com> in mailing list
         def triggerNames = ['Unstable', 'Aborted', 'Success', 'Failure']
@@ -93,6 +93,224 @@ class PublisherContextSpec extends Specification {
         Node emailDefault = triggers.children()[0].email[0]
         emailDefault.sendToDevelopers[0].value() == 'false'
         emailDefault.sendToRequester[0].value() == 'true'
+    }
+
+    def 'call extendedEmail with no options'() {
+        when:
+        context.extendedEmail {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.emailext.ExtendedEmailPublisher'
+            children().size() == 13
+            recipientList[0].value() == '$DEFAULT_RECIPIENTS'
+            contentType[0].value() == 'default'
+            defaultSubject[0].value() == '$DEFAULT_SUBJECT'
+            defaultContent[0].value() == '$DEFAULT_CONTENT'
+            attachmentsPattern[0].value().empty
+            presendScript[0].value() == '$DEFAULT_PRESEND_SCRIPT'
+            classpath[0].value().empty
+            attachBuildLog[0].value() == false
+            compressBuildLog[0].value() == false
+            replyTo[0].value() == '$DEFAULT_REPLYTO'
+            saveOutput[0].value() == false
+            disabled[0].value() == false
+            with(configuredTriggers[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.emailext.plugins.trigger.FailureTrigger'
+                    children().size() == 1
+                    with(email[0]) {
+                        children().size() == 9
+                        recipientList[0].value().empty
+                        subject[0].value() == '$PROJECT_DEFAULT_SUBJECT'
+                        body[0].value() == '$PROJECT_DEFAULT_CONTENT'
+                        with(recipientProviders[0]) {
+                            children().size() == 1
+                            children()[0].name() == 'hudson.plugins.emailext.plugins.recipients.ListRecipientProvider'
+                        }
+                        attachmentsPattern[0].value().empty
+                        attachBuildLog[0].value() == false
+                        compressBuildLog[0].value() == false
+                        replyTo[0].value() == '$PROJECT_DEFAULT_REPLYTO'
+                        contentType[0].value() == 'project'
+                    }
+                }
+            }
+        }
+    }
+
+    def 'call extendedEmail with invalid content type'() {
+        when:
+        context.extendedEmail {
+            contentType(value)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        value << ['', null, 'project']
+    }
+
+    def 'call extendedEmail with invalid trigger content type'() {
+        when:
+        context.extendedEmail {
+            triggers {
+                failure {
+                    contentType(value)
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        value << ['', null, 'default']
+    }
+
+    def 'call extendedEmail with all options'() {
+        when:
+        context.extendedEmail {
+            recipientList('me@example.org', 'you@example.org')
+            recipientList('other@example.org')
+            contentType('text/plain')
+            defaultSubject('Important')
+            defaultContent('read me')
+            attachmentPatterns('*.log', '**/report.html')
+            attachmentPatterns('foo.txt')
+            preSendScript('a script')
+            additionalGroovyClasspath('foo.jar', 'bar.jar')
+            additionalGroovyClasspath('my.jar')
+            attachBuildLog()
+            compressBuildLog()
+            replyToList('someone@example.org')
+            replyToList('test@example.org', 'ci@example.org')
+            saveToWorkspace()
+            disabled()
+            triggers {
+                "${trigger}" {
+                    sendTo {
+                        culprits()
+                        developers()
+                        recipientList()
+                        requester()
+                        failingTestSuspects()
+                        firstFailingBuildSuspects()
+                        upstreamCommitter()
+                    }
+                    recipientList('test@example.org', 'foo@example.org')
+                    recipientList('lala@example.org')
+                    contentType('text/html')
+                    subject('Lorem')
+                    content('Ipsum')
+                    attachmentPatterns('test*.html', '*.xml')
+                    attachmentPatterns('hello.txt')
+                    attachBuildLog()
+                    compressBuildLog()
+                    replyToList('one@example.org')
+                    replyToList('two@example.org', 'three@example.org')
+                }
+            }
+            configure {
+                it / foo('bar')
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.emailext.ExtendedEmailPublisher'
+            children().size() == 14
+            recipientList[0].value() == 'me@example.org, you@example.org, other@example.org'
+            contentType[0].value() == 'text/plain'
+            defaultSubject[0].value() == 'Important'
+            defaultContent[0].value() == 'read me'
+            attachmentsPattern[0].value() == '*.log, **/report.html, foo.txt'
+            presendScript[0].value() == 'a script'
+            with(classpath[0]) {
+                children().size() == 3
+                with(children()[0]) {
+                    name() == 'hudson.plugins.emailext.GroovyScriptPath'
+                    children().size() == 1
+                    path[0].value() == 'foo.jar'
+                }
+                with(children()[1]) {
+                    name() == 'hudson.plugins.emailext.GroovyScriptPath'
+                    children().size() == 1
+                    path[0].value() == 'bar.jar'
+                }
+                with(children()[2]) {
+                    name() == 'hudson.plugins.emailext.GroovyScriptPath'
+                    children().size() == 1
+                    path[0].value() == 'my.jar'
+                }
+            }
+            attachBuildLog[0].value() == true
+            compressBuildLog[0].value() == true
+            replyTo[0].value() == 'someone@example.org, test@example.org, ci@example.org'
+            saveOutput[0].value() == true
+            disabled[0].value() == true
+            with(configuredTriggers[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == "hudson.plugins.emailext.plugins.trigger.${className}"
+                    children().size() == 1
+                    with(email[0]) {
+                        children().size() == 9
+                        recipientList[0].value() == 'test@example.org, foo@example.org, lala@example.org'
+                        subject[0].value() == 'Lorem'
+                        body[0].value() == 'Ipsum'
+                        with(recipientProviders[0]) {
+                            children().size() == 7
+                            children()[0].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider'
+                            children()[1].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider'
+                            children()[2].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.ListRecipientProvider'
+                            children()[3].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.RequesterRecipientProvider'
+                            children()[4].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.FailingTestSuspectsRecipientProvider'
+                            children()[5].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.FirstFailingBuildSuspectsRecipientProvider'
+                            children()[6].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.UpstreamComitterRecipientProvider'
+                        }
+                        attachmentsPattern[0].value() == 'test*.html, *.xml, hello.txt'
+                        attachBuildLog[0].value() == true
+                        compressBuildLog[0].value() == true
+                        replyTo[0].value() == 'one@example.org, two@example.org, three@example.org'
+                        contentType[0].value() == 'text/html'
+                    }
+                }
+            }
+            foo[0].value() == 'bar'
+        }
+
+        where:
+        trigger          || className
+        'aborted'        || 'AbortedTrigger'
+        'always'         || 'AlwaysTrigger'
+        'beforeBuild'    || 'PreBuildTrigger'
+        'firstFailure'   || 'FirstFailureTrigger'
+        'secondFailure'  || 'SecondFailureTrigger'
+        'failure'        || 'FailureTrigger'
+        'stillFailing'   || 'StillFailingTrigger'
+        'fixed'          || 'FixedTrigger'
+        'notBuilt'       || 'NotBuiltTrigger'
+        'statusChanged'  || 'StatusChangedTrigger'
+        'success'        || 'SuccessTrigger'
+        'improvement'    || 'ImprovementTrigger'
+        'regression'     || 'RegressionTrigger'
+        'unstable'       || 'UnstableTrigger'
+        'firstUnstable'  || 'FirstUnstableTrigger'
+        'stillUnstable'  || 'StillUnstableTrigger'
+        'fixedUnhealthy' || 'FixedUnhealthyTrigger'
     }
 
     def 'call standard mailer method'() {

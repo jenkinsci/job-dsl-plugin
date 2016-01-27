@@ -1,11 +1,21 @@
 job('example') {
     publishers {
-        extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
-            trigger('PreBuild')
-            trigger(triggerName: 'StillUnstable', subject: 'Subject', body: 'Body', recipientList: 'RecipientList',
-                    sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
-            configure { node ->
-                node / contentType << 'text/html'
+        extendedEmail {
+            recipientList('me@halfempty.org')
+            defaultSubject('Oops')
+            defaultContent('Something broken')
+            contentType('text/html')
+            triggers {
+                beforeBuild()
+                stillUnstable {
+                    subject('Subject')
+                    content('Body')
+                    sendTo {
+                        developers()
+                        requester()
+                        culprits()
+                    }
+                }
             }
         }
     }
