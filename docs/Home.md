@@ -42,6 +42,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#493](https://github.com/jenkinsci/job-dsl-plugin/pull/493))
  * Enhanced support for the [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin)
    ([#734](https://github.com/jenkinsci/job-dsl-plugin/pull/734))
+ * Enhanced support for the [Workflow Plugin](https://github.com/jenkinsci/workflow-plugin)
+   ([JENKINS-32678](https://issues.jenkins-ci.org/browse/JENKINS-32678))
  * Fixed support for the
    [Static Code Analysis Plugins](https://wiki.jenkins-ci.org/display/JENKINS/Static+Code+Analysis+Plug-ins)
    ([#724](https://github.com/jenkinsci/job-dsl-plugin/pull/724))
