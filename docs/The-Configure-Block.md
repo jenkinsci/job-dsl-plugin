@@ -870,3 +870,90 @@ Result:
     </publishers>
 </project>
 ```
+
+
+## Configure Post Build Confluence Publisher
+
+In order to update Confluence Pages, you can use the Confluence Publisher.
+The requirements are:
+
+* Have a Confluence Wiki installed.
+* Install Confluence Publisher plugin in Jenkins.
+* Configure access to Confluence in Jenkins (Jenkins >> Manage Jenkins >> configure >> Confluence Publisher)
+
+Configure block:
+```groovy
+/**
+ * Jenkins Job DSL configure block for Confluence Publisher
+ * Open Feature Request, see https://issues.jenkins-ci.org/browse/JENKINS-31786
+ *
+ * siteName = Link to your Confluence Installation
+ * spaceName = Confluence Space
+ * pageName = Confluence Page Name
+ *
+ */
+job('confluence-publisher-job') {
+  configure { project ->
+    project / publishers << 'com.myyearbook.hudson.plugins.confluence.ConfluencePublisher' {
+      siteName 'confluence.company.com'
+      attachArchivedArtifacts 'false'
+      buildIfUnstable 'false'
+      spaceName 'TEST'
+      pageName 'Jenkins Confluence Publisher Integration Test'
+      editors {
+        'com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor' {
+          generator(class: "com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator") {
+            text 'Jenkins Publisher Job Build Number: $BUILD_NUMBER'
+          }                
+        }
+        'com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor' {
+          generator(class: "com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator") {
+            text 'Jenkins Publisher Job Build Number: $BUILD_NUMBER'
+          }                
+        }
+      }
+    }
+  }
+}
+```
+
+Result:
+```xml
+<!-- 1. confluence-publisher-job -->
+<project>
+    <actions></actions>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties></properties>
+    <scm class='hudson.scm.NullSCM'></scm>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class='vector'></triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <builders></builders>
+    <publishers>
+        <com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
+            <siteName>confluence.company.com</siteName>
+            <attachArchivedArtifacts>false</attachArchivedArtifacts>
+            <buildIfUnstable>false</buildIfUnstable>
+            <spaceName>TEST</spaceName>
+            <pageName>Jenkins Confluence Publisher Integration Test</pageName>
+            <editors>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+            </editors>
+        </com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
+    </publishers>
+    <buildWrappers></buildWrappers>
+</project>
+```
