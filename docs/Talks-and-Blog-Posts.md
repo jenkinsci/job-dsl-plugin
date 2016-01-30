@@ -6,7 +6,11 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
       by [Kamil Szymanski](https://twitter.com/kszdev)
 * November 2015
     * eBay Dev Blog: Taming the Hydra ([part 3](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-3.html))
-      by [Marc G�nther](https://github.com/marc-guenther)
+      by [Marc Günther](https://github.com/marc-guenther)
+* October 2015
+    * codecentric Blog:
+    [Using Jenkins Job DSL for Job Lifecycle Management](https://blog.codecentric.de/en/2015/10/using-jenkins-job-dsl-for-job-lifecycle-management/)
+    by [Marcel Birkner](https://github.com/MarcelBirkner)
 * August 2015
     * Gradle Summit 2015:
       [Managing Jenkins with Gradle](http://gradle.org/managing-jenkins-with-gradle/)
@@ -18,7 +22,7 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
       by [Scott Hickey](https://twitter.com/jshickey)
     * eBay Dev Blog: Taming the Hydra ([part 1](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-1.html)
       and [part 2](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-2.html))
-      by [Marc G�nther](https://github.com/marc-guenther)
+      by [Marc Günther](https://github.com/marc-guenther)
     * JUES 15: [Configuration as code and JobDSL](http://www.code-conf.com/jues15/program/#configuration-as-code-and-jobdsl)
       by [Niels Bech Nielsen](https://twitter.com/nielsbech)
       ([Slides](https://drive.google.com/file/d/0B7COmBHPVvgEcGdsY1dXMFgtNUE/view?usp=sharing))
