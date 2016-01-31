@@ -18,6 +18,8 @@ class ArchiveJUnitContext extends AbstractContext {
 
     /**
      * If set, does not fail the build on empty test results.
+     *
+     * @since 1.43
      */
     @RequiresPlugin(id = 'junit', minimumVersion = '1.10')
     void allowEmptyResults(boolean allow = true) {
