@@ -1994,9 +1994,13 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call perforcep4 with manual workspace'() {
+        setup:
+        def viewspec = '//depot/Tools/build/... //ws/build/...\n' +
+            '//depot/webapplications/helloworld/... //ws/helloworld/...'
+
         when:
         context.perforcep4('p4-user-creds') {
-            manual('ws', '//depot/Tools/build/...\n//ws/webapplications/helloworld/...')
+            manual('ws', viewspec)
         }
 
         then:
@@ -2020,7 +2024,7 @@ class ScmContextSpec extends Specification {
                     rmdir[0].value() == 'false'
                     streamName[0].value() == ''
                     line[0].value() == 'LOCAL'
-                    view[0].value() == '//depot/Tools/build/...\n//ws/webapplications/helloworld/...'
+                    view[0].value() == viewspec
                 }
             }
             with(populate[0]) {
@@ -2038,9 +2042,13 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call perforcep4 with manual workspace and configure'() {
+        setup:
+        def viewspec = '//depot/Tools/build/... //ws/build/...\n' +
+            '//depot/webapplications/helloworld/... //ws/helloworld/...'
+
         when:
         context.perforcep4('p4-user-creds') {
-            manual('ws', '//depot/Tools/build/...\n//ws/webapplications/helloworld/...')
+            manual('ws', viewspec)
             configure { node ->
                 node / workspace / spec / clobber('true')
             }
