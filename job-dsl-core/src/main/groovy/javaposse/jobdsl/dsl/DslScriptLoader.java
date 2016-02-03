@@ -56,9 +56,10 @@ public class DslScriptLoader {
                         script = InvokerHelper.createScript(cls, binding);
                     } else {
                         String scriptLocation = scriptRequest.getLocation();
+                        File scriptFile = new File(scriptLocation);
 
                         jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptLocation);
-                        if (!isValidScriptName(scriptLocation)) {
+                        if (!isValidScriptName(scriptFile.getName())) {
                             jobManagement.logDeprecationWarning(
                                     "script names may only contain letters, digits and underscores, but may not start with a digit; support for arbitrary names",
                                     scriptLocation,
