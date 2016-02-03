@@ -55,15 +55,18 @@ public class DslScriptLoader {
                         Class cls = engine.getGroovyClassLoader().parseClass(scriptRequest.getBody(), "script");
                         script = InvokerHelper.createScript(cls, binding);
                     } else {
-                        jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptRequest.getLocation());
-                        if (!isValidScriptName(scriptRequest.getLocation())) {
+                        String scriptLocation = scriptRequest.getLocation();
+                        File scriptFile = new File(scriptLocation);
+
+                        jobManagement.getOutputStream().printf("Processing DSL script %s\n", scriptLocation);
+                        if (!isValidScriptName(scriptFile.getName())) {
                             jobManagement.logDeprecationWarning(
                                     "script names may only contain letters, digits and underscores, but may not start with a digit; support for arbitrary names",
-                                    scriptRequest.getLocation(),
+                                    scriptLocation,
                                     -1
                             );
                         }
-                        script = engine.createScript(scriptRequest.getLocation(), binding);
+                        script = engine.createScript(scriptLocation, binding);
                     }
                     assert script instanceof JobParent;
 
