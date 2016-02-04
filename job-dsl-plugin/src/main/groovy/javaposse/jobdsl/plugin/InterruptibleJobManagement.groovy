@@ -96,11 +96,6 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    String getCredentialsId(String credentialsDescription) {
-        delegate.getCredentialsId(credentialsDescription)
-    }
-
-    @Override
     void logDeprecationWarning() {
         delegate.logDeprecationWarning()
     }

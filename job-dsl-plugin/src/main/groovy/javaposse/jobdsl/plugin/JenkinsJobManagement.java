@@ -1,8 +1,6 @@
 package javaposse.jobdsl.plugin;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
-import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -66,7 +64,6 @@ import java.util.logging.Logger;
 
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
-import static hudson.security.ACL.SYSTEM;
 import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
@@ -228,23 +225,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public Map<String, String> getParameters() {
         return envVars;
-    }
-
-    @Override
-    @Deprecated
-    public String getCredentialsId(String credentialsDescription) {
-        Jenkins jenkins = Jenkins.getInstance();
-        Plugin credentialsPlugin = jenkins.getPlugin("credentials");
-        if (credentialsPlugin != null && !credentialsPlugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber("1.6"))) {
-            for (CredentialsProvider credentialsProvider : jenkins.getExtensionList(CredentialsProvider.class)) {
-                for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, jenkins, SYSTEM)) {
-                    if (credentials.getId().equals(credentialsDescription)) {
-                        return credentials.getId();
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     @Override

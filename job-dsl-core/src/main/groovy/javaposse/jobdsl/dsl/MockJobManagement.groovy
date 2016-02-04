@@ -69,12 +69,6 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    @Deprecated
-    String getCredentialsId(String credentialsDescription) {
-        null
-    }
-
-    @Override
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
         false
     }

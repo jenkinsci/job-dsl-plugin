@@ -604,14 +604,6 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(NameNotProvidedException)
     }
 
-    def 'getCredentialsId without Credentials Plugin'() {
-        when:
-        String id = jobManagement.getCredentialsId('test')
-
-        then:
-        id == null
-    }
-
     def 'create view'() {
         when:
         jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)

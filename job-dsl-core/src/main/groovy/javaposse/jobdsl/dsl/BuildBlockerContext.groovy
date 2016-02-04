@@ -16,7 +16,6 @@ class BuildBlockerContext extends AbstractContext {
     /**
      * Possible values are {@code 'GLOBAL'} and {@code 'NODE'} (default).
      */
-    @RequiresPlugin(id = 'build-blocker-plugin', minimumVersion = '1.7.1')
     void blockLevel(String blockLevel) {
         checkArgument(
                 VALID_BLOCK_LEVELS.contains(blockLevel),
@@ -28,7 +27,6 @@ class BuildBlockerContext extends AbstractContext {
     /**
      * Possible values are {@code 'ALL'}, {@code 'BUILDABLE'} and {@code 'DISABLED'} (default).
      */
-    @RequiresPlugin(id = 'build-blocker-plugin', minimumVersion = '1.7.1')
     void scanQueueFor(String scanQueueFor) {
         checkArgument(
                 VALID_QUEUE_SCAN_SCOPES.contains(scanQueueFor),
