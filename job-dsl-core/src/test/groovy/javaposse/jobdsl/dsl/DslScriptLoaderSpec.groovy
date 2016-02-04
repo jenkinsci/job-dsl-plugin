@@ -230,9 +230,9 @@ folder('folder-b') {
         DslScriptLoader.runDslEngine(request, jm)
 
         then:
-        noExceptionThrown()
-        baos.toString() =~ /support for arbitrary names is deprecated/
-        baos.toString() =~ /test-script\.dsl/
+        Exception e = thrown(DslException)
+        e.message =~ /invalid script name/
+        e.message =~ /test-script\.dsl/
     }
 
     def 'script with method'() {
