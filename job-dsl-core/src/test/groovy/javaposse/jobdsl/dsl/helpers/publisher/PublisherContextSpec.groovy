@@ -4971,6 +4971,77 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
     }
 
+    def 'mattermost notification with no options'() {
+        when:
+        context.mattermost()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.mattermost.MattermostNotifier'
+            children().size() == 15
+            endpoint[0].value() == ''
+            room[0].value() == ''
+            icon[0].value() == ''
+            customMessage[0].value() == ''
+
+            startNotification[0].value() == false
+            notifySuccess[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyUnstable[0].value() == false
+            notifyFailure[0].value() == false
+            notifyBackToNormal[0].value() == false
+            notifyRepeatedFailure[0].value() == false
+            includeTestSummary[0].value() == false
+            showCommitList[0].value() == false
+            includeCustomMessage[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
+    }
+
+    def 'mattermost notification with all options'() {
+        when:
+        context.mattermost {
+            endpoint('foo')
+            room('bar')
+            icon('foo')
+            customMessage('bar')
+            startNotification()
+            notifySuccess()
+            notifyAborted()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyFailure()
+            notifyBackToNormal()
+            notifyRepeatedFailure()
+            includeTestSummary()
+            showCommitList()
+            includeCustomMessage()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.mattermost.MattermostNotifier'
+            children().size() == 15
+            endpoint[0].value() == 'foo'
+            room[0].value() == 'bar'
+            icon[0].value() == 'foo'
+            customMessage[0].value() == 'bar'
+            startNotification[0].value() == true
+            notifySuccess[0].value() == true
+            notifyAborted[0].value() == true
+            notifyNotBuilt[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyFailure[0].value() == true
+            notifyBackToNormal[0].value() == true
+            notifyRepeatedFailure[0].value() == true
+            includeTestSummary[0].value() == true
+            showCommitList[0].value() == true
+            includeCustomMessage[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
+    }
+
     def 'call publishOverSsh without server'() {
         when:
         context.publishOverSsh(null)

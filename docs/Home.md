@@ -23,6 +23,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.43 (unreleased)
  * Added support for the [Clover PHP Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clover+PHP+Plugin)
    ([JENKINS-31557](https://issues.jenkins-ci.org/browse/JENKINS-31557))
+  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
+    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
  * Allow `BuildParametersContext` to be extended
    ([JENKINS-32285](https://issues.jenkins-ci.org/browse/JENKINS-32285))
  * Enhanced support for the [CloudBees Docker Custom Build Environment

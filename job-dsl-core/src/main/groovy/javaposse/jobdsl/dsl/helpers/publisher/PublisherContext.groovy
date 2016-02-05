@@ -1580,6 +1580,35 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sends notifications to Mattermost.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'mattermost', minimumVersion = '1.5.0')
+    void mattermost(@DslContext(MattermostPublisherContext) Closure mattermostClosure = null) {
+        MattermostPublisherContext mattermostContext = new MattermostPublisherContext()
+        ContextHelper.executeInContext(mattermostClosure, mattermostContext)
+
+        publisherNodes << new NodeBuilder().'jenkins.plugins.mattermost.MattermostNotifier' {
+            startNotification(mattermostContext.startNotification)
+            notifySuccess(mattermostContext.notifySuccess)
+            notifyAborted(mattermostContext.notifyAborted)
+            notifyNotBuilt(mattermostContext.notifyNotBuilt)
+            notifyUnstable(mattermostContext.notifyUnstable)
+            notifyFailure(mattermostContext.notifyFailure)
+            notifyBackToNormal(mattermostContext.notifyBackToNormal)
+            notifyRepeatedFailure(mattermostContext.notifyRepeatedFailure)
+            includeTestSummary(mattermostContext.includeTestSummary)
+            showCommitList(mattermostContext.showCommitList)
+            includeCustomMessage(mattermostContext.includeCustomMessage)
+            endpoint(mattermostContext.endpoint ?: '')
+            room(mattermostContext.room ?: '')
+            icon(mattermostContext.icon ?: '')
+            customMessage(mattermostContext.customMessage ?: '')
+        }
+    }
+
+    /**
      * Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
      *
      * @since 1.34
