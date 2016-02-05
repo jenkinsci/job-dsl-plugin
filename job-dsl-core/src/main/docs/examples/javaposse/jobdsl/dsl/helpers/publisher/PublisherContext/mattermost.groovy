@@ -1,5 +1,3 @@
-package javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
-
 job('example') {
     publishers {
         mattermost {
