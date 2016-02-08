@@ -97,7 +97,7 @@ Features
 * DSL - Helper methods for common job configurations, e.g. scm, triggers, build steps
 * Plugin - DSL can be put directly in a job
 * Plugin - DSL can be put into SCM and polled using standard SCM triggering
-* Plugin - Multiple DSLs can be referenced as a time
+* Plugin - Multiple DSLs can be referenced at a time
 
 Basic Usage
 -----------
