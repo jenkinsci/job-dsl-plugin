@@ -39,6 +39,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Fixed support for the
    [Static Code Analysis Plugins](https://wiki.jenkins-ci.org/display/JENKINS/Static+Code+Analysis+Plug-ins)
    ([#724](https://github.com/jenkinsci/job-dsl-plugin/pull/724))
+ * Fixed support for scripts in directories when using the command line runner
+   ([#740](https://github.com/jenkinsci/job-dsl-plugin/pull/740))
  * Built-in support for the
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
    is deprecated, see [Migration](Migration#migrating-to-143)
