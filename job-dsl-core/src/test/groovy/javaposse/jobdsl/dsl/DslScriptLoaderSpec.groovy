@@ -235,6 +235,17 @@ folder('folder-b') {
         e.message =~ /test-script\.dsl/
     }
 
+    def 'script in directory'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('foo/test.dsl', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        noExceptionThrown()
+    }
+
     def 'script with method'() {
         setup:
         ScriptRequest request = new ScriptRequest(

@@ -86,8 +86,9 @@ class DslScriptLoader {
     }
 
     private static boolean isValidScriptName(String scriptFile) {
-        int idx = scriptFile.lastIndexOf('.')
-        String normalizedName = idx > -1 ? scriptFile[0..idx - 1] : scriptFile
+        String fileName = new File(scriptFile).name
+        int idx = fileName.lastIndexOf('.')
+        String normalizedName = idx > -1 ? fileName[0..idx - 1] : fileName
         if (normalizedName.length() == 0 || !Character.isJavaIdentifierStart(normalizedName.charAt(0))) {
             return false
         }
