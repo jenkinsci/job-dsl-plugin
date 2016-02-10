@@ -870,3 +870,66 @@ Result:
     </publishers>
 </project>
 ```
+
+## Configure Post Build Confluence Publisher
+
+In order to update Confluence Pages, you can use the Confluence Publisher.
+The requirements are:
+
+* Have a Confluence Wiki installed.
+* Install Confluence Publisher plugin in Jenkins.
+* Configure access to Confluence in Jenkins (Jenkins >> Manage Jenkins >> configure >> Confluence Publisher)
+
+Configure block:
+```groovy
+job('example') {
+    configure { project ->
+        project / publishers << 'com.myyearbook.hudson.plugins.confluence.ConfluencePublisher' {
+            siteName('confluence.company.com')
+            attachArchivedArtifacts(false)
+            buildIfUnstable(false)
+            spaceName('TEST')
+            pageName('Jenkins Confluence Publisher Integration Test')
+            editors {
+                'com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor' {
+                    generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
+                        text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
+                    }                
+                }
+                'com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor' {
+                    generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
+                        text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
+                    }                
+                }
+            }
+        }
+    }
+}
+```
+
+Result:
+```xml
+<project>
+    <publishers>
+        <com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
+            <siteName>confluence.company.com</siteName>
+            <attachArchivedArtifacts>false</attachArchivedArtifacts>
+            <buildIfUnstable>false</buildIfUnstable>
+            <spaceName>TEST</spaceName>
+            <pageName>Jenkins Confluence Publisher Integration Test</pageName>
+            <editors>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+            </editors>
+        </com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
+    </publishers>
+</project>
+```
