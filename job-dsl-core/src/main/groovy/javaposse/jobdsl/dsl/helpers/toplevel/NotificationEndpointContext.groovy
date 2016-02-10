@@ -11,6 +11,7 @@ class NotificationEndpointContext extends AbstractContext {
 
     String event = 'all'
     int timeout = 30000
+    int loglines = 0
 
     NotificationEndpointContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -35,4 +36,14 @@ class NotificationEndpointContext extends AbstractContext {
     void timeout(int timeout) {
         this.timeout = timeout
     }
+
+    /**
+     * Sets a loglines.
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'notification', minimumVersion = '1.8')
+    void loglines(int loglines) {
+        this.loglines = loglines
+    }
+
 }
