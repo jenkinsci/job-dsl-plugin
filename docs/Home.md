@@ -21,6 +21,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.43 (unreleased)
+ * Added support for the [Image Gallery Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Image+Gallery+Plugin)
  * Added support for the [Clover PHP Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clover+PHP+Plugin)
    ([JENKINS-31557](https://issues.jenkins-ci.org/browse/JENKINS-31557))
  * Allow `BuildParametersContext` to be extended
