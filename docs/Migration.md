@@ -98,6 +98,12 @@ is [[deprecated|Deprecation-Policy]] and will be removed.
 Support for versions older than 1.10 of the [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin)
 is [[deprecated|Deprecation-Policy]] and will be removed.
 
+### Notification
+
+Support for versions older than 1.8 of the
+[Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### JobManagement
 
 Two methods in the `JobManagement` interface, `getPluginVersion` and `getJenkinsVersion`, are

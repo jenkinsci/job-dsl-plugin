@@ -45,6 +45,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#724](https://github.com/jenkinsci/job-dsl-plugin/pull/724))
  * Fixed support for scripts in directories when using the command line runner
    ([#740](https://github.com/jenkinsci/job-dsl-plugin/pull/740))
+ * Enhanced support for the [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
+   ([#741](https://github.com/jenkinsci/job-dsl-plugin/pull/741))
  * Built-in support for the
    [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
    is deprecated, see [Migration](Migration#migrating-to-143)
@@ -56,6 +58,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    deprecated, see [Migration](Migration#migrating-to-143)
  * Support for the older versions of the [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-143)
+ * Support for the older versions of the
+   [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-143)
  * Deprecated some methods in `JobManagement` interface, see [Migration](Migration#migrating-to-143)
  * Removed anything that has been deprecated in 1.36, see [Migration](Migration#migrating-to-136)
 * 1.42 (January 05 2016)

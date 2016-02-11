@@ -50,6 +50,9 @@ class NotificationContext extends AbstractContext {
                 event(notificationEndpointContext.event)
                 timeout(notificationEndpointContext.timeout)
             }
+            if (jobManagement.isMinimumPluginVersionInstalled('notification', '1.8')) {
+                loglines(notificationEndpointContext.logLines)
+            }
         }
     }
 }
