@@ -45,6 +45,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#724](https://github.com/jenkinsci/job-dsl-plugin/pull/724))
  * Fixed support for scripts in directories when using the command line runner
    ([#740](https://github.com/jenkinsci/job-dsl-plugin/pull/740))
+ * Fixed NPE when checking available permissions
+   ([JENKINS-32598](https://issues.jenkins-ci.org/browse/JENKINS-32598))
  * Enhanced support for the [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
    ([#741](https://github.com/jenkinsci/job-dsl-plugin/pull/741))
  * Built-in support for the
