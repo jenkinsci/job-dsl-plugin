@@ -854,7 +854,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.19
      */
-    @RequiresPlugin(id = 'groovy-postbuild')
+    @RequiresPlugin(id = 'groovy-postbuild', minimumVersion = '2.2')
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
         groovyPostBuild {
             delegate.script(script)
@@ -867,21 +867,15 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.37
      */
-    @RequiresPlugin(id = 'groovy-postbuild')
+    @RequiresPlugin(id = 'groovy-postbuild', minimumVersion = '2.2')
     void groovyPostBuild(@DslContext(GroovyPostbuildContext) Closure groovyPostbuildClosure) {
-        jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
-
         GroovyPostbuildContext groovyPostbuildContext = new GroovyPostbuildContext(jobManagement)
         ContextHelper.executeInContext(groovyPostbuildClosure, groovyPostbuildContext)
 
         publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
-            if (jobManagement.isMinimumPluginVersionInstalled('groovy-postbuild', '2.2')) {
-                script {
-                    script(groovyPostbuildContext.script ?: '')
-                    sandbox(groovyPostbuildContext.sandbox)
-                }
-            } else {
-                groovyScript(groovyPostbuildContext.script ?: '')
+            script {
+                script(groovyPostbuildContext.script ?: '')
+                sandbox(groovyPostbuildContext.sandbox)
             }
             behavior(groovyPostbuildContext.behavior.value)
         }
@@ -1002,10 +996,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.22
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(@DslContext(GitPublisherContext) Closure gitPublisherClosure) {
-        jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-
         GitPublisherContext context = new GitPublisherContext(jobManagement)
         ContextHelper.executeInContext(gitPublisherClosure, context)
 
@@ -1013,9 +1005,7 @@ class PublisherContext extends AbstractExtensibleContext {
             configVersion(2)
             pushMerge(context.pushMerge)
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
-            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6')) {
-                forcePush(context.forcePush)
-            }
+            forcePush(context.forcePush)
             tagsToPush(context.tags)
             branchesToPush(context.branches)
         }

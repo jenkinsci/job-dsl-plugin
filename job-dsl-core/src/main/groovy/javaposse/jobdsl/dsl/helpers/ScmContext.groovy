@@ -86,10 +86,8 @@ class ScmContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(@DslContext(GitContext) Closure gitClosure) {
-        jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-
         GitContext gitContext = new GitContext(withXmlActions, jobManagement)
         executeInContext(gitClosure, gitContext)
 
@@ -97,14 +95,12 @@ class ScmContext extends AbstractExtensibleContext {
             gitContext.branches << '**'
         }
 
-        if (jobManagement.isMinimumPluginVersionInstalled('git', '2.0.0')) {
-            if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
-                gitContext.extensions << new NodeBuilder().'hudson.plugins.git.extensions.impl.CloneOption' {
-                    shallow gitContext.shallowClone
-                    reference gitContext.reference
-                    if (gitContext.cloneTimeout) {
-                        timeout gitContext.cloneTimeout
-                    }
+        if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
+            gitContext.extensions << new NodeBuilder().'hudson.plugins.git.extensions.impl.CloneOption' {
+                shallow(gitContext.shallowClone)
+                reference(gitContext.reference)
+                if (gitContext.cloneTimeout) {
+                    timeout(gitContext.cloneTimeout)
                 }
             }
         }
@@ -139,17 +135,8 @@ class ScmContext extends AbstractExtensibleContext {
                 localBranch gitContext.localBranch
             }
             skipTag !gitContext.createTag
-            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.0.0')) {
-                if (gitContext.extensions) {
-                    extensions gitContext.extensions
-                }
-            } else {
-                if (gitContext.reference) {
-                    reference gitContext.reference
-                }
-                if (gitContext.shallowClone) {
-                    useShallowClone gitContext.shallowClone
-                }
+            if (gitContext.extensions) {
+                extensions(gitContext.extensions)
             }
         }
 
@@ -157,9 +144,6 @@ class ScmContext extends AbstractExtensibleContext {
             gitNode.children().add(gitContext.gitBrowserContext.browser)
         }
 
-        if (gitContext.mergeOptions) {
-            gitNode.children().add(gitContext.mergeOptions)
-        }
         if (gitContext.strategyContext.buildChooser) {
             gitNode.children().add(gitContext.strategyContext.buildChooser)
         }
@@ -178,7 +162,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(String url, Closure configure = null) {
         git(url, null, configure)
     }
@@ -189,7 +173,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(String url, String branch, Closure configure = null) {
         git {
             remote {
@@ -211,7 +195,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @since 1.15
      * @see #github(java.lang.String, java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
         github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
@@ -230,7 +214,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @since 1.15
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
                 Closure closure = null) {
         git {

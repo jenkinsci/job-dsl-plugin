@@ -83,8 +83,6 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
-        jm.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
-
         processItem(name, MultiJob, closure)
     }
 

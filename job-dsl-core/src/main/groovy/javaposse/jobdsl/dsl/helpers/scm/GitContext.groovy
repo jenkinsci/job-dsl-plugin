@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.scm
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.WithXmlAction
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -27,7 +26,6 @@ class GitContext extends AbstractContext {
     String reference = ''
     Closure withXmlClosure
     final GitBrowserContext gitBrowserContext = new GitBrowserContext()
-    Node mergeOptions
     Integer cloneTimeout
     List<Node> extensions = []
     final StrategyContext strategyContext = new StrategyContext(jobManagement)
@@ -91,18 +89,11 @@ class GitContext extends AbstractContext {
         GitMergeOptionsContext gitMergeOptionsContext = new GitMergeOptionsContext(jobManagement)
         executeInContext(gitMergeOptionsClosure, gitMergeOptionsContext)
 
-        if (jobManagement.isMinimumPluginVersionInstalled('git', '2.0.0')) {
-            extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.PreBuildMerge' {
-                options {
-                    mergeRemote(gitMergeOptionsContext.remote ?: '')
-                    mergeTarget(gitMergeOptionsContext.branch)
-                    mergeStrategy(gitMergeOptionsContext.strategy)
-                }
-            }
-        } else {
-            mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
+        extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.PreBuildMerge' {
+            options {
                 mergeRemote(gitMergeOptionsContext.remote ?: '')
                 mergeTarget(gitMergeOptionsContext.branch)
+                mergeStrategy(gitMergeOptionsContext.strategy)
             }
         }
     }
@@ -174,7 +165,6 @@ class GitContext extends AbstractContext {
      *
      * @since 1.40
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.2.0')
     void trackingSubmodules(boolean tracking = true) {
         this.trackingSubmodules = tracking
     }
@@ -213,7 +203,6 @@ class GitContext extends AbstractContext {
      *
      * @since 1.28
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.0.0')
     void cloneTimeout(int cloneTimeout) {
         this.cloneTimeout = cloneTimeout
     }
