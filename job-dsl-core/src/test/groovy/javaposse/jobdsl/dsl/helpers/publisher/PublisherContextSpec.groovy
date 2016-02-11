@@ -1508,7 +1508,7 @@ class PublisherContextSpec extends Specification {
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
 
         when:
         context.downstreamParameterized {
@@ -1612,7 +1612,7 @@ class PublisherContextSpec extends Specification {
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
@@ -2312,7 +2312,7 @@ class PublisherContextSpec extends Specification {
         aggregateNode.includeFailedBuilds[0].value() == true
     }
 
-    def 'call groovyPostBuild with older plugin version'() {
+    def 'call groovyPostBuild'() {
         when:
         context.groovyPostBuild('foo')
 
@@ -2320,14 +2320,17 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
             children().size() == 2
-            groovyScript[0].value() == 'foo'
+            with(script[0]) {
+                children().size() == 2
+                script[0].value() == 'foo'
+                sandbox[0].value() == false
+            }
             behavior[0].value() == 0
         }
-        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+        (1.._) * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with overriden failure behavior and older plugin version'() {
+    def 'call groovyPostBuild with overridden failure behavior'() {
         when:
         context.groovyPostBuild('foo', MarkUnstable)
 
@@ -2335,17 +2338,17 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
             children().size() == 2
-            groovyScript[0].value() == 'foo'
+            with(script[0]) {
+                children().size() == 2
+                script[0].value() == 'foo'
+                sandbox[0].value() == false
+            }
             behavior[0].value() == 1
         }
-        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+        (1.._) * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with no options and newer plugin version'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('groovy-postbuild', '2.2') >> true
-
+    def 'call groovyPostBuild with closure and no options'() {
         when:
         context.groovyPostBuild {
         }
@@ -2361,14 +2364,10 @@ class PublisherContextSpec extends Specification {
             }
             behavior[0].value() == 0
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+        1 * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with all options and newer plugin version'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('groovy-postbuild', '2.2') >> true
-
+    def 'call groovyPostBuild with closure and all options'() {
         when:
         context.groovyPostBuild {
             script('foo')
@@ -2387,9 +2386,7 @@ class PublisherContextSpec extends Specification {
             }
             behavior[0].value() == 2
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
         1 * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
     def 'call javadoc archiver with no args'() {
@@ -2708,9 +2705,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call git with minimal options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6') >> true
-
         when:
         context.git {
         }
@@ -2723,29 +2717,10 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         context.publisherNodes[0].forcePush[0].value() == false
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-    }
-
-    def 'call git with minimal options pre 2.2.6'() {
-        when:
-        context.git {
-        }
-
-        then:
-        context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'hudson.plugins.git.GitPublisher'
-        context.publisherNodes[0].children().size() == 5
-        context.publisherNodes[0].configVersion[0].value() == 2
-        context.publisherNodes[0].pushMerge[0].value() == false
-        context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'call git with all options'() {
-        jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6') >> true
-
         when:
         context.git {
             pushOnlyIfSuccess()
@@ -2783,14 +2758,10 @@ class PublisherContextSpec extends Specification {
                 branchName[0].value() == 'master'
             }
         }
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'call git with minimal tag options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('git', '2.2.6') >> true
-
         when:
         context.git {
             tag('origin', 'test')
@@ -2814,8 +2785,7 @@ class PublisherContextSpec extends Specification {
                 updateTag[0].value() == false
             }
         }
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'call git without tag targetRepoName'() {

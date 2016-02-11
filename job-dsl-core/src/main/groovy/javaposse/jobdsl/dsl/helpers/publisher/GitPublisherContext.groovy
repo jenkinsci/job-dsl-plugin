@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
@@ -38,7 +37,6 @@ class GitPublisherContext extends AbstractContext {
      *
      * @since 1.27
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void forcePush(boolean forcePush = true) {
         this.forcePush = forcePush
     }

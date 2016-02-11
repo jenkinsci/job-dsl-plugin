@@ -30,12 +30,13 @@ class MultiJobStepContextSpec extends Specification {
         def phaseNode2 = context.stepNodes[1]
         phaseNode2.phaseName[0].value() == 'Second'
         def jobNode = phaseNode2.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 6
+        jobNode.children().size() == 7
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == true
         jobNode.exposedSCM[0].value() == true
         jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         jobNode.disableJob[0].value() == false
+        jobNode.abortAllJob[0].value() == false
         jobNode.killPhaseOnJobResultCondition[0].value() == 'FAILURE'
     }
 
@@ -132,7 +133,7 @@ class MultiJobStepContextSpec extends Specification {
         nodeLabel.name[0].value() == 'nodeParam'
         nodeLabel.nodeLabel[0].value() == 'node_label'
 
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'call phases with jobs with complex parameters'() {
@@ -213,33 +214,9 @@ class MultiJobStepContextSpec extends Specification {
         nodeLabel.name[0].value() == 'nodeParam'
         nodeLabel.nodeLabel[0].value() == 'node_label'
 
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
         1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-    }
-
-    def 'call phases with plugin version 1.11 options'() {
-        when:
-        context.phase {
-            phaseName 'Second'
-            phaseJob('JobA') {
-                disableJob()
-                abortAllJobs()
-                killPhaseCondition('UNSTABLE')
-            }
-        }
-
-        then:
-        def phaseNode = context.stepNodes[0]
-        phaseNode.phaseName[0].value() == 'Second'
-        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 6
-        jobNode.jobName[0].value() == 'JobA'
-        jobNode.currParams[0].value() == true
-        jobNode.exposedSCM[0].value() == true
-        jobNode.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        jobNode.disableJob[0].value() == true
-        jobNode.killPhaseOnJobResultCondition[0].value() == 'UNSTABLE'
     }
 
     def 'call phases with plugin version 1.14 options'() {
@@ -279,7 +256,7 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phase with unsupported condition'() {
         when:
-        context.phase('test', 'ALWAYS') {
+        context.phase('test', 'FOO') {
         }
 
         then:
@@ -333,8 +310,9 @@ class MultiJobStepContextSpec extends Specification {
                 with(children()[0]) {
                     name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
                     with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
-                        children().size() == 6
+                        children().size() == 7
                         jobName[0].value() == 'JobA'
+                        abortAllJob[0].value() == false
                     }
                 }
             }

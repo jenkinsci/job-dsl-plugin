@@ -161,7 +161,6 @@ class PhaseJobContext extends AbstractContext {
      *
      * @since 1.25
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void disableJob(boolean disableJob = true) {
         this.disableJob = disableJob
     }
@@ -171,7 +170,6 @@ class PhaseJobContext extends AbstractContext {
      *
      * @since 1.37
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.14')
     void abortAllJobs(boolean abortAllJob = true) {
         this.abortAllJobs = abortAllJob
     }
@@ -182,7 +180,6 @@ class PhaseJobContext extends AbstractContext {
      * Must be one of {@code 'FAILURE'} (default), {@code 'NEVER'} or [@code 'UNSTABLE'}.
      * @since 1.25
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void killPhaseCondition(String killPhaseCondition) {
         Preconditions.checkArgument(
                 VALID_KILL_CONDITIONS.contains(killPhaseCondition),

@@ -1775,9 +1775,8 @@ class StepContextSpec extends Specification {
             block.isEmpty()
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.requirePlugin('git')
         1 * jobManagement.requirePlugin('nodelabelparameter')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
@@ -1885,9 +1884,8 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.requirePlugin('git')
         1 * jobManagement.requirePlugin('nodelabelparameter')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
