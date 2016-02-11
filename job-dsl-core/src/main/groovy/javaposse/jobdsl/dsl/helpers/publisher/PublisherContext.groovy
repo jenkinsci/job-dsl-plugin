@@ -196,6 +196,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'junit')
     void archiveJunit(String glob, @DslContext(ArchiveJUnitContext) Closure junitClosure = null) {
+        jobManagement.logPluginDeprecationWarning('junit', '1.10')
+
         ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         ContextHelper.executeInContext(junitClosure, junitContext)
 
@@ -203,6 +205,9 @@ class PublisherContext extends AbstractExtensibleContext {
             testResults(glob)
             keepLongStdio(junitContext.retainLongStdout)
             testDataPublishers(junitContext.testDataPublishersContext.testDataPublishers)
+            if (jobManagement.isMinimumPluginVersionInstalled('junit', '1.10')) {
+                allowEmptyResults(junitContext.allowEmptyResults)
+            }
         }
     }
 
