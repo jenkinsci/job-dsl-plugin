@@ -2032,6 +2032,16 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Changes the expression of Mr. Jenkins in the background when your builds fail.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'emotional-jenkins-plugin', minimumVersion = '1.2')
+    void emotional() {
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher'()
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {

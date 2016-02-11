@@ -6256,4 +6256,16 @@ class PublisherContextSpec extends Specification {
         where:
         disable << [true, false]
     }
+
+    def 'call emotional with no options'() {
+        when:
+        context.emotional()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        def emotionalNode = context.publisherNodes[0]
+        emotionalNode.name() == 'org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher'
+        1 * jobManagement.requireMinimumPluginVersion('emotional-jenkins-plugin', '1.2')
+    }
 }
