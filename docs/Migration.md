@@ -88,6 +88,11 @@ Support for versions older than 1.6.2 of the [CloudBees Docker Custom Build Envi
 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### Rundeck
+
+Support for versions older than 3.4 of the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
 ### JobManagement
 
 Two methods in the `JobManagement` interface, `getPluginVersion` and `getJenkinsVersion`, are

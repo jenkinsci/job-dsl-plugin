@@ -36,6 +36,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-32419](https://issues.jenkins-ci.org/browse/JENKINS-32419))
  * Enhanced support for the [JaCoCo Plugins](https://wiki.jenkins-ci.org/display/JENKINS/JaCoCo+Plugin)
    ([#729](https://github.com/jenkinsci/job-dsl-plugin/pull/729))
+ * Enchanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+   ([#493](https://github.com/jenkinsci/job-dsl-plugin/pull/493))
  * Fixed support for the
    [Static Code Analysis Plugins](https://wiki.jenkins-ci.org/display/JENKINS/Static+Code+Analysis+Plug-ins)
    ([#724](https://github.com/jenkinsci/job-dsl-plugin/pull/724))
@@ -48,6 +50,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the [CloudBees Docker Custom Build Environment
    Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is deprecated,
    see [Migration](Migration#migrating-to-143)
+ * Support for the older versions of the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-143)
  * Deprecated some methods in `JobManagement` interface, see [Migration](Migration#migrating-to-143)
  * Removed anything that has been deprecated in 1.36, see [Migration](Migration#migrating-to-136)
 * 1.42 (January 05 2016)

@@ -1185,18 +1185,23 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'rundeck')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
+        jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
+
         checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
-        RundeckContext rundeckContext = new RundeckContext()
+        RundeckContext rundeckContext = new RundeckContext(jobManagement)
         ContextHelper.executeInContext(rundeckClosure, rundeckContext)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
-            jobId jobIdentifier
-            options rundeckContext.options.collect { key, value -> "${key}=${value}" }.join('\n')
-            nodeFilters rundeckContext.nodeFilters.collect { key, value -> "${key}=${value}" }.join('\n')
-            tag rundeckContext.tag
-            shouldWaitForRundeckJob rundeckContext.shouldWaitForRundeckJob
-            shouldFailTheBuild rundeckContext.shouldFailTheBuild
+            jobId(jobIdentifier)
+            options(rundeckContext.options.collect { key, value -> "${key}=${value}" }.join('\n'))
+            nodeFilters(rundeckContext.nodeFilters.collect { key, value -> "${key}=${value}" }.join('\n'))
+            tag(rundeckContext.tag ?: '')
+            shouldWaitForRundeckJob(rundeckContext.shouldWaitForRundeckJob)
+            shouldFailTheBuild(rundeckContext.shouldFailTheBuild)
+            if (jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4')) {
+                includeRundeckLogs(rundeckContext.includeRundeckLogs)
+            }
         }
     }
 

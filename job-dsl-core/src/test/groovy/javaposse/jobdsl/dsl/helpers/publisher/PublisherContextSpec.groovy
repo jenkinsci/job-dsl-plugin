@@ -3349,27 +3349,30 @@ class PublisherContextSpec extends Specification {
     def 'call rundeck with all args should create valid rundeck node'() {
         when:
         context.rundeck('jobId') {
-            options key1: 'value1', key2: 'value2'
-            options key4: 'value4'
-            option 'key3', 'value3'
-            nodeFilters key1: 'value1', key2: 'value2'
-            nodeFilters key4: 'value4'
-            nodeFilter 'key3', 'value3'
-            tag 'tag'
+            options(key1: 'value1', key2: 'value2')
+            options(key4: 'value4')
+            option('key3', 'value3')
+            nodeFilters(key1: 'value1', key2: 'value2')
+            nodeFilters(key4: 'value4')
+            nodeFilter('key3', 'value3')
+            tag('tag')
             shouldWaitForRundeckJob()
-            shouldFailTheBuild false
+            shouldFailTheBuild()
         }
 
         then:
-        Node rundeckNode = context.publisherNodes[0]
-        rundeckNode.name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-        rundeckNode.jobId[0].value() == 'jobId'
-        rundeckNode.options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-        rundeckNode.nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-        rundeckNode.tag[0].value() == 'tag'
-        rundeckNode.shouldWaitForRundeckJob[0].value() == true
-        rundeckNode.shouldFailTheBuild[0].value() == false
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 6
+            jobId[0].value() == 'jobId'
+            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            tag[0].value() == 'tag'
+            shouldWaitForRundeckJob[0].value() == true
+            shouldFailTheBuild[0].value() == true
+        }
         1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
     }
 
     def 'call rundeck with invalid jobId should fail'() {
@@ -3381,9 +3384,7 @@ class PublisherContextSpec extends Specification {
         exception.message =~ /\(.+, line \d+\) jobIdentifier cannot be null or empty/
 
         where:
-        id   | _
-        null | _
-        ''   | _
+        id << [null, '']
     }
 
     def 'call rundeck with default values'() {
@@ -3391,13 +3392,76 @@ class PublisherContextSpec extends Specification {
         context.rundeck('jobId')
 
         then:
-        Node rundeckNode = context.publisherNodes[0]
-        rundeckNode.options[0].value().isEmpty()
-        rundeckNode.nodeFilters[0].value().isEmpty()
-        rundeckNode.tag[0].value() == ''
-        rundeckNode.shouldWaitForRundeckJob[0].value() == false
-        rundeckNode.shouldFailTheBuild[0].value() == false
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 6
+            jobId[0].value() == 'jobId'
+            options[0].value().isEmpty()
+            nodeFilters[0].value().isEmpty()
+            tag[0].value() == ''
+            shouldWaitForRundeckJob[0].value() == false
+            shouldFailTheBuild[0].value() == false
+        }
         1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
+    }
+
+    def 'call rundeck with all args should create valid rundeck node (version 3.4)'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4') >> true
+
+        when:
+        context.rundeck('jobId') {
+            options(key1: 'value1', key2: 'value2')
+            options(key4: 'value4')
+            option('key3', 'value3')
+            nodeFilters(key1: 'value1', key2: 'value2')
+            nodeFilters(key4: 'value4')
+            nodeFilter('key3', 'value3')
+            tag('tag')
+            shouldWaitForRundeckJob()
+            shouldFailTheBuild()
+            includeRundeckLogs()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 7
+            jobId[0].value() == 'jobId'
+            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            tag[0].value() == 'tag'
+            shouldWaitForRundeckJob[0].value() == true
+            shouldFailTheBuild[0].value() == true
+            includeRundeckLogs[0].value() == true
+        }
+        1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
+    }
+
+    def 'call rundeck with default values (version 3.4)'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4') >> true
+
+        when:
+        context.rundeck('jobId')
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 7
+            jobId[0].value() == 'jobId'
+            options[0].value().isEmpty()
+            nodeFilters[0].value().isEmpty()
+            tag[0].value() == ''
+            shouldWaitForRundeckJob[0].value() == false
+            shouldFailTheBuild[0].value() == false
+            includeRundeckLogs[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
     }
 
     def 'call s3 without profile'(String profile) {
