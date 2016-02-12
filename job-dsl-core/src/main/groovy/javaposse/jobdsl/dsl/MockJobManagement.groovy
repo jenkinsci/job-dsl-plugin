@@ -97,7 +97,7 @@ abstract class MockJobManagement extends AbstractJobManagement {
 
     @Override
     Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
-        permissions[authorizationMatrixPropertyClassName]
+        permissions[authorizationMatrixPropertyClassName] ?: []
     }
 
     @Override
