@@ -4,6 +4,8 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Folder
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.LogRotatorContext
+import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext
 import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
 import javaposse.jobdsl.dsl.helpers.workflow.BranchSourcesContext
@@ -38,6 +40,32 @@ class MultibranchWorkflowJob extends Folder {
             context.branchSourceNodes.each {
                 project / sources / data << it
             }
+        }
+    }
+
+    /**
+     * Adds a logRotator.
+     */
+    void logRotator(@DslContext(LogRotatorContext) Closure closure) {
+        LogRotatorContext context = new LogRotatorContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node propertiesNode = new NodeBuilder().'properties'(class: 'java.util.Arrays$ArrayList') {
+            a(class: 'jenkins.branch.BranchProperty-array') {
+                'jenkins.branch.BuildRetentionBranchProperty' {
+                    buildDiscarder(class: 'hudson.tasks.LogRotator') {
+                        daysToKeep(context.daysToKeep ?: -1)
+                        numToKeep(context.numToKeep ?: -1)
+                        artifactDaysToKeep(context.artifactDaysToKeep ?: -1)
+                        artifactNumToKeep(context.artifactNumToKeep ?: -1)
+                    }
+                }
+            }
+        }
+        Node strategyNode = new NodeBuilder().strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy')
+
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / sources / data / 'jenkins.branch.BranchSource' / strategyNode / propertiesNode
         }
     }
 

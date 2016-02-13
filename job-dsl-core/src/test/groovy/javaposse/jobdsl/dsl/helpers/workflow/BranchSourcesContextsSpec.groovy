@@ -13,7 +13,7 @@ class BranchSourcesContextsSpec extends Specification {
         context.branchSourceNodes.size() == 1
         with(context.branchSourceNodes[0]) {
             name() == 'jenkins.branch.BranchSource'
-            children().size() == 2
+            children().size() == 1
             with(source[0]) {
                 children().size() == 6
                 id[0].value() instanceof UUID
@@ -22,12 +22,6 @@ class BranchSourcesContextsSpec extends Specification {
                 includes[0].value() == '*'
                 excludes[0].value().empty
                 ignoreOnPushNotifications[0].value() == false
-            }
-            with(strategy[0]) {
-                children().size() == 1
-                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
-                properties[0].attribute('class') == 'empty-list'
             }
         }
     }
@@ -46,7 +40,7 @@ class BranchSourcesContextsSpec extends Specification {
         context.branchSourceNodes.size() == 1
         with(context.branchSourceNodes[0]) {
             name() == 'jenkins.branch.BranchSource'
-            children().size() == 2
+            children().size() == 1
             with(source[0]) {
                 children().size() == 6
                 id[0].value() instanceof UUID
@@ -55,12 +49,6 @@ class BranchSourcesContextsSpec extends Specification {
                 includes[0].value() == 'lorem'
                 excludes[0].value() == 'ipsum'
                 ignoreOnPushNotifications[0].value() == true
-            }
-            with(strategy[0]) {
-                children().size() == 1
-                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
-                properties[0].attribute('class') == 'empty-list'
             }
         }
     }

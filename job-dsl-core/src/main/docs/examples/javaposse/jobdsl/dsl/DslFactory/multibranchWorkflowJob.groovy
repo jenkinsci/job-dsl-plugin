@@ -11,4 +11,8 @@ multibranchWorkflowJob('example') {
             numToKeep(20)
         }
     }
+    logRotator {
+        daysToKeep(5)
+        numToKeep(1)
+    }
 }

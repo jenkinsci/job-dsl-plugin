@@ -23,9 +23,6 @@ class BranchSourcesContext implements Context {
                 excludes(context.excludes ?: '')
                 ignoreOnPushNotifications(context.ignoreOnPushNotifications)
             }
-            strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
-                properties(class: 'empty-list')
-            }
         }
     }
 }

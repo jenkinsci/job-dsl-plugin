@@ -24,7 +24,7 @@ class MultibranchWorkflowJobSpec extends Specification {
 
         then:
         job.node.sources[0].data.size() == 1
-        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0].children().size() == 2
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0].children().size() == 1
         job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0]
                 .'source'[0].attribute('class') == 'jenkins.plugins.git.GitSCMSource'
     }
@@ -42,6 +42,27 @@ class MultibranchWorkflowJobSpec extends Specification {
                 .attribute('class') == 'com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy'
         job.node.orphanedItemStrategy[0].children().size() == 3
         job.node.orphanedItemStrategy[0].daysToKeep[0].value() == 20
+    }
+
+    def 'can add logRotator'() {
+        when:
+        job.logRotator {
+            daysToKeep(5)
+            numToKeep(1)
+        }
+
+        then:
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0]
+                .'strategy'[0].attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0]
+                .'strategy'[0].'properties'[0].a[0].'jenkins.branch.BuildRetentionBranchProperty'[0]
+                .'buildDiscarder'[0].attribute('class') == 'hudson.tasks.LogRotator'
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0]
+                .'strategy'[0].'properties'[0].a[0].'jenkins.branch.BuildRetentionBranchProperty'[0]
+                .'buildDiscarder'[0].children().size() == 4
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0]
+                .'strategy'[0].'properties'[0].a[0].'jenkins.branch.BuildRetentionBranchProperty'[0]
+                .'buildDiscarder'[0].numToKeep[0].value() == 1
     }
 
     def 'call triggers'() {
