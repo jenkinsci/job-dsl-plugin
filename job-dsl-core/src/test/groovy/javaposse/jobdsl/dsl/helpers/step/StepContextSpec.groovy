@@ -984,7 +984,7 @@ class StepContextSpec extends Specification {
         Node selectorNode9 = context.stepNodes[8].selector[0]
         selectorNode9.attribute('class') == 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector'
         selectorNode9.children().size() == 0
-        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
+        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.23')
     }
 
     def 'call minimal copyArtifacts'() {

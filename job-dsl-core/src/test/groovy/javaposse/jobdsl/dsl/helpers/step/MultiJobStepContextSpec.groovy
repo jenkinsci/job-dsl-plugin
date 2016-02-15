@@ -221,7 +221,7 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phases with plugin version 1.14 options'() {
         setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.14') >> true
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.23') >> true
 
         when:
         context.phase {
@@ -256,7 +256,7 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phase with unsupported condition'() {
         when:
-        context.phase('test', 'FOO') {
+        context.phase('test', 'FOO', 'BAR') {
         }
 
         then:
@@ -265,10 +265,10 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phase with supported condition'(String condition) {
         setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.16') >> true
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.23') >> true
 
         when:
-        context.phase('test', condition) {
+        context.phase('test', condition, 'PARALLEL') {
         }
 
         then:
@@ -277,6 +277,7 @@ class MultiJobStepContextSpec extends Specification {
             children().size() == 3
             phaseName[0].value() == 'test'
             continuationCondition[0].value() == condition
+
         }
 
         where:
