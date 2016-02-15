@@ -579,7 +579,7 @@ class JobSpec extends Specification {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message =~ /Either resource or label have to be specified./
+        e.message =~ /Either resource or label have to be specified/
     }
 
     def 'compress build log'() {
