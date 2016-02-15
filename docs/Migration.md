@@ -1,3 +1,11 @@
+## Migrating to 1.44
+
+### Lockable Resources
+
+Support for versions older than 1.7 of the
+[Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.43
 
 ### Extended Email

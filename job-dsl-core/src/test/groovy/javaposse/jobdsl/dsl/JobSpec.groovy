@@ -531,9 +531,6 @@ class JobSpec extends Specification {
         then:
         with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
             children().size() == 1
-            resourceNames.size() == 1
-            resourceNamesVar.size() == 0
-            resourceNumber.size() == 0
             resourceNames[0].value() == 'lock-resource'
         }
         1 * jobManagement.requirePlugin('lockable-resources')
@@ -544,19 +541,45 @@ class JobSpec extends Specification {
         job.lockableResources('res0 res1 res2') {
             resourcesVariable('RESOURCES')
             resourceNumber(1)
+            label('foo')
         }
 
         then:
         with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
-            children().size() == 3
-            resourceNames.size() == 1
-            resourceNamesVar.size() == 1
-            resourceNumber.size() == 1
+            children().size() == 4
             resourceNames[0].value() == 'res0 res1 res2'
             resourceNamesVar[0].value() == 'RESOURCES'
             resourceNumber[0].value() == 1
+            labelName[0].value() == 'foo'
         }
         1 * jobManagement.requirePlugin('lockable-resources')
+        1 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
+        1 * jobManagement.logPluginDeprecationWarning('lockable-resources', '1.7')
+    }
+
+    def 'lockable resources with label only'() {
+        when:
+        job.lockableResources {
+            label('HEAVY_RESOURCE')
+        }
+
+        then:
+        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 1
+            labelName[0].value() == 'HEAVY_RESOURCE'
+        }
+        1 * jobManagement.requirePlugin('lockable-resources')
+        1 * jobManagement.logPluginDeprecationWarning('lockable-resources', '1.7')
+    }
+
+    def 'lockable resources resource or label have to be defined'() {
+        when:
+        job.lockableResources {
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ /Either resource or label have to be specified./
     }
 
     def 'compress build log'() {
