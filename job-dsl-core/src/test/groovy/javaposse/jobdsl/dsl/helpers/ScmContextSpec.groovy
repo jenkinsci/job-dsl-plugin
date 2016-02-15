@@ -1655,6 +1655,107 @@ class ScmContextSpec extends Specification {
         (1.._) * mockJobManagement.requirePlugin('perforce')
     }
 
+    def 'call perforceP4 with all options'() {
+        when:
+        context.perforceP4('p4-user-creds') {
+            workspace {
+                manual('ws', 'view')
+            }
+            configure { node ->
+                node / foo('bar')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            children().size() == 4
+            attributes()['class'] == 'org.jenkinsci.plugins.p4.PerforceScm'
+            credential[0].value() == 'p4-user-creds'
+            workspace.size() == 1
+            with(workspace[0]) {
+                children().size() == 4
+                attributes()['class'] == 'org.jenkinsci.plugins.p4.workspace.ManualWorkspaceImpl'
+                charset[0].value() == 'none'
+                pinHost[0].value() == false
+                name[0].value() == 'ws'
+                spec.size() == 1
+                with(spec[0]) {
+                    children().size() == 9
+                    allwrite[0].value() == false
+                    clobber[0].value() == false
+                    compress[0].value() == false
+                    locked[0].value() == false
+                    modtime[0].value() == false
+                    rmdir[0].value() == false
+                    streamName[0].value().empty
+                    line[0].value() == 'LOCAL'
+                    view[0].value() == 'view'
+                }
+            }
+            with(populate[0]) {
+                children().size() == 7
+                attributes()['class'] == 'org.jenkinsci.plugins.p4.populate.AutoCleanImpl'
+                have[0].value() == true
+                force[0].value() == false
+                modtime[0].value() == false
+                quiet[0].value() == true
+                pin[0].value().empty
+                replace[0].value() == true
+                delete[0].value() == true
+            }
+            foo[0].value() == 'bar'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('p4', '1.3.5')
+    }
+
+    def 'call perforcep4 with no options'() {
+        when:
+        context.perforceP4('p4-user-creds') {
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            children().size() == 3
+            attributes()['class'] == 'org.jenkinsci.plugins.p4.PerforceScm'
+            credential[0].value() == 'p4-user-creds'
+            workspace.size() == 1
+            with(workspace[0]) {
+                children().size() == 4
+                attributes()['class'] == 'org.jenkinsci.plugins.p4.workspace.ManualWorkspaceImpl'
+                charset[0].value() == 'none'
+                pinHost[0].value() == false
+                name[0].value().empty
+                spec.size() == 1
+                with(spec[0]) {
+                    children().size() == 9
+                    allwrite[0].value() == false
+                    clobber[0].value() == false
+                    compress[0].value() == false
+                    locked[0].value() == false
+                    modtime[0].value() == false
+                    rmdir[0].value() == false
+                    streamName[0].value().empty
+                    line[0].value() == 'LOCAL'
+                    view[0].value().empty
+                }
+            }
+            with(populate[0]) {
+                children().size() == 7
+                attributes()['class'] == 'org.jenkinsci.plugins.p4.populate.AutoCleanImpl'
+                have[0].value() == true
+                force[0].value() == false
+                modtime[0].value() == false
+                quiet[0].value() == true
+                pin[0].value().empty
+                replace[0].value() == true
+                delete[0].value() == true
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('p4', '1.3.5')
+    }
+
     def 'call cloneWorkspace'(parentJob, criteria) {
         when:
         context.cloneWorkspace(parentJob, criteria)

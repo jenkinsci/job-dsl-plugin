@@ -23,6 +23,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.44 (unreleased)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
+ * Added support for the [P4 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/P4+Plugin)
+   ([JENKINS-32391](https://issues.jenkins-ci.org/browse/JENKINS-32391))
  * Enhanced support for the
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
    ([JENKINS-32906](https://issues.jenkins-ci.org/browse/JENKINS-32906))

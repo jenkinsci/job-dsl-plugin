@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.HgContext
+import javaposse.jobdsl.dsl.helpers.scm.P4Context
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.SvnContext
@@ -370,6 +371,44 @@ class ScmContext extends AbstractExtensibleContext {
             WithXmlAction action = new WithXmlAction(configure)
             action.execute(p4Node)
         }
+        scmNodes << p4Node
+    }
+
+    /**
+     * Add Perforce SCM source using Perforce p4 plugin.
+     *
+     * This must use Jenkins credentials.
+     *
+     * The configure block must be used to set additional options.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'p4', minimumVersion = '1.3.5')
+    void perforceP4(String credentials, @DslContext(P4Context) Closure p4Closure) {
+        checkNotNull(credentials, 'credentials must not be null')
+
+        P4Context p4Context = new P4Context()
+        executeInContext(p4Closure, p4Context)
+
+        Node p4Node = new NodeBuilder().scm(class: 'org.jenkinsci.plugins.p4.PerforceScm') {
+            credential(credentials)
+            populate(class: 'org.jenkinsci.plugins.p4.populate.AutoCleanImpl') {
+                have(true)
+                force(false)
+                modtime(false)
+                quiet(true)
+                pin()
+                replace(true)
+                delete(true)
+            }
+        }
+        p4Node.children().add(p4Context.workspaceContext.workspaceConfig)
+
+        if (p4Context.withXmlClosure) {
+            WithXmlAction action = new WithXmlAction(p4Context.withXmlClosure)
+            action.execute(p4Node)
+        }
+
         scmNodes << p4Node
     }
 
