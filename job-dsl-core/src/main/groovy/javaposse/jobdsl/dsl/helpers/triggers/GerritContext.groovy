@@ -94,18 +94,19 @@ class GerritContext implements Context {
     /**
      * Specifies on which Gerrit projects to trigger a build on.
      */
-    void project(String projectName, List<String> branches) {
+    void project(String projectName, List<String> branches, List<String> filePaths = [])  {
         projects << [
                 new GerritSpec(projectName),
-                branches.collect { new GerritSpec(it) }
+                branches.collect { new GerritSpec(it) },
+                filePaths.collect { new GerritSpec(it) }
         ]
     }
 
     /**
      * Specifies on which Gerrit projects to trigger a build on.
      */
-    void project(String projectName, String branch) {
-        project(projectName, [branch])
+    void project(String projectName, String branch, String filePath = '') {
+        project(projectName, [branch], [filePath].findAll())
     }
 
     static class GerritSpec {
