@@ -23,6 +23,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.44 (unreleased)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
+ * Removed anything that has been deprecated in 1.38, see [Migration](Migration#migrating-to-138)
 * 1.43 (February 13 2016)
  * Add support for the [Emotional Jenkins Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Emotional+Jenkins+Plugin)
    ([JENKINS-32907](https://issues.jenkins-ci.org/browse/JENKINS-32907))

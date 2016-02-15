@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.common.AbstractDownstreamTriggerContext
 
 class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
@@ -30,7 +29,6 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
     void parameterFactories(@DslContext(DownstreamTriggerParameterFactoryContext) Closure closure) {
         ContextHelper.executeInContext(closure, parameterFactoryContext)
     }

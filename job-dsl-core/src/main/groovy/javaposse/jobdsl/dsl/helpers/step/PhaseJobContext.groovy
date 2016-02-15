@@ -65,7 +65,7 @@ class PhaseJobContext extends AbstractContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'parameterized-trigger')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
     void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
