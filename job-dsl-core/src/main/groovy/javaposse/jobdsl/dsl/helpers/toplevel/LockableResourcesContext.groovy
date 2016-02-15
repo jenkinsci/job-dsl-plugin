@@ -30,7 +30,7 @@ class LockableResourcesContext extends AbstractContext {
     /**
      * Label assigned to a group of lockable resources.
      *
-     * @since 1.43
+     * @since 1.44
      */
     @RequiresPlugin(id = 'lockable-resources', minimumVersion = '1.7')
     void label(String label) {
