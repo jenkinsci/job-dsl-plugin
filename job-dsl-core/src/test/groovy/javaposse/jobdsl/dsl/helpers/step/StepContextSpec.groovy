@@ -3596,4 +3596,19 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('jslint', '0.8.2')
     }
+
+    def 'xcodeDeveloperProfile'() {
+        when:
+        context.xcodeDeveloperProfile {
+            profile('foo')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'au.com.rayh.DeveloperProfileLoader'
+            children().size() == 1
+            id[0].value() == 'foo'
+        }
+    }
 }
