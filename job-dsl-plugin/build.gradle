@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.14.1'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.14.3'
     }
 }
 
@@ -50,6 +50,11 @@ jenkinsPlugin {
 
 clean {
     delete generatedSourcesDir
+}
+
+configurations {
+    // workaround for JENKINS-32978
+    compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
 }
 
 dependencies {

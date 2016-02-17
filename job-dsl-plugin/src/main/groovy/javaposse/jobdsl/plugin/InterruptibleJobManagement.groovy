@@ -34,12 +34,6 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException,
-            ConfigurationMissingException {
-        delegate.createOrUpdateConfig(jobName, config, ignoreExisting)
-    }
-
-    @Override
     boolean createOrUpdateConfig(Item item, boolean ignoreExisting) throws NameNotProvidedException {
         delegate.createOrUpdateConfig(item, ignoreExisting)
     }

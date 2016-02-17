@@ -21,7 +21,6 @@ import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
-import javaposse.jobdsl.dsl.DslScriptException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;
@@ -44,6 +43,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -53,7 +53,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGeneratedObjects;
 
 /**
@@ -181,7 +180,7 @@ public class ExecuteDslScripts extends Builder {
 
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
-        return asList(
+        return Arrays.<Action>asList(
                 new GeneratedJobsAction(project),
                 new GeneratedViewsAction(project),
                 new GeneratedConfigFilesAction(project),

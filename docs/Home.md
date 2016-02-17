@@ -31,6 +31,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-144)
+ * Removed a method in `JobManagement` interface, see [Migration](Migration#migrating-to-144)
 * 1.43 (February 13 2016)
  * Add support for the [Emotional Jenkins Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Emotional+Jenkins+Plugin)
    ([JENKINS-32907](https://issues.jenkins-ci.org/browse/JENKINS-32907))

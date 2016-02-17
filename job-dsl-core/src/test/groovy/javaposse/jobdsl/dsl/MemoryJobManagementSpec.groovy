@@ -26,8 +26,12 @@ class MemoryJobManagementSpec extends Specification {
     }
 
     def 'createOrUpdateConfig complains about missing name'(String name) {
+        setup:
+        Item item = Mock(Item)
+        item.name >> name
+
         when:
-        jobManagement.createOrUpdateConfig(name, 'bar', false)
+        jobManagement.createOrUpdateConfig(item, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -37,8 +41,13 @@ class MemoryJobManagementSpec extends Specification {
     }
 
     def 'createOrUpdateConfig complains about missing config'(String config) {
+        setup:
+        Item item = Mock(Item)
+        item.name >> 'foo'
+        item.xml >> config
+
         when:
-        jobManagement.createOrUpdateConfig('foo', config, false)
+        jobManagement.createOrUpdateConfig(item, false)
 
         then:
         thrown(ConfigurationMissingException)
@@ -48,8 +57,13 @@ class MemoryJobManagementSpec extends Specification {
     }
 
     def 'createOrUpdateConfig creates config'() {
+        setup:
+        Item item = Mock(Item)
+        item.name >> 'foo'
+        item.xml >> 'bar'
+
         when:
-        boolean result = jobManagement.createOrUpdateConfig('foo', 'bar', false)
+        boolean result = jobManagement.createOrUpdateConfig(item, false)
 
         then:
         result
