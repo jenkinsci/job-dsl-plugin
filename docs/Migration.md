@@ -6,6 +6,12 @@ Support for versions older than 1.7 of the
 [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+## JobManagement
+
+The method `JobManagement#createOrUpdateConfig(String path, String config, boolean ignoreExisting)` has been
+[[deprecated|Deprecation-Policy]] since 1.33 and has been removed. Use
+`JobManagement#createOrUpdateConfig(Item item, boolean ignoreExisting)` instead.
+
 ## Migrating to 1.43
 
 ### Extended Email
