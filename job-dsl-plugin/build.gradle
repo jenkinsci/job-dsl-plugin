@@ -52,6 +52,11 @@ clean {
     delete generatedSourcesDir
 }
 
+configurations {
+    // workaround for JENKINS-32978
+    compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
+}
+
 dependencies {
     compile project(':job-dsl-core')
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
