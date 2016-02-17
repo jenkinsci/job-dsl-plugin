@@ -24,11 +24,11 @@ import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 @ThreadInterrupt
 abstract class JobParent extends Script implements DslFactory {
     JobManagement jm
-    Set<Item> referencedJobs = new LinkedHashSet<>()
-    Set<View> referencedViews = new LinkedHashSet<>()
-    Set<ConfigFile> referencedConfigFiles = new LinkedHashSet<>()
-    Set<UserContent> referencedUserContents = new LinkedHashSet<>()
-    List<String> queueToBuild = []
+    Set<Item> referencedJobs = new LinkedHashSet<>().asSynchronized()
+    Set<View> referencedViews = new LinkedHashSet<>().asSynchronized()
+    Set<ConfigFile> referencedConfigFiles = new LinkedHashSet<>().asSynchronized()
+    Set<UserContent> referencedUserContents = new LinkedHashSet<>().asSynchronized()
+    List<String> queueToBuild = [].asSynchronized()
 
     /**
      * @since 1.30
