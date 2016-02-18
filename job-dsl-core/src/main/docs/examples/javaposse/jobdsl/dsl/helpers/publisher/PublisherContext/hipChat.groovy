@@ -2,11 +2,11 @@ job('example') {
     publishers {
         hipChat {
             rooms('Dev Team A', 'QA')
-            notifyAborted()
-            notifyNotBuilt()
-            notifyUnstable()
-            notifyFailure()
-            notifyBackToNormal()
+            notification(NotificationType.STARTED, NotificationColor.YELLOW) {}
+            notification(NotificationType.SUCCESS, NotificationColor.GREEN) {}
+            notification(NotificationType.FAILURE, NotificationColor.RED) {}
+            notification(NotificationType.UNSTABLE, NotificationColor.RED) {}
+            notification(NotificationType.ABORTED, NotificationColor.GRAY) {}
         }
     }
 }
