@@ -24,6 +24,7 @@ jenkinsPlugin {
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
     compatibleSinceVersion = '1.43'
     localizerOutputDir = "$generatedSourcesDir/localizer"
+    disabledTestInjection = false
     developers {
         developer {
             id 'quidryan'
