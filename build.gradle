@@ -184,7 +184,7 @@ private Map loadCredentialsForJenkinsCommunityRepository() {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.5'
 }
 
 apply plugin: 'org.ajoberstar.github-pages'
