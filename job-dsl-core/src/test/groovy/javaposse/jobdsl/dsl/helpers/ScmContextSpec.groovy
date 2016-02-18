@@ -852,6 +852,25 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
+    def 'call git scm with gitilesBrowser'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            browser {
+                gitiles('http://gitiles')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.Gitiles'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://gitiles'
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+    }
+
     def 'call git scm with ignoreNotifyCommit'() {
         when:
         context.git {

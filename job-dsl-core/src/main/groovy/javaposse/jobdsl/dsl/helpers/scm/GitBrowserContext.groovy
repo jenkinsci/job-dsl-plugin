@@ -37,4 +37,15 @@ class GitBrowserContext implements Context {
             delegate.version(version)
         }
     }
+
+    /**
+     * Use Gitiles as repository browser.
+     *
+     * @since 1.44
+     */
+    void gitiles(String url) {
+        browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.Gitiles') {
+            delegate.url(url)
+        }
+    }
 }
