@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.14.3'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.15.0'
     }
 }
 
@@ -24,6 +24,7 @@ jenkinsPlugin {
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
     compatibleSinceVersion = '1.43'
     localizerOutputDir = "$generatedSourcesDir/localizer"
+    disabledTestInjection = false
     developers {
         developer {
             id 'quidryan'
