@@ -1475,7 +1475,7 @@ class BuildParametersContextSpec extends Specification {
 
     def 'base nonStoredPasswordParameter usage'() {
         when:
-        context.nonStoredPasswordParameter('myParameterName', 'my parameter description')
+        context.nonStoredPasswordParam('myParameterName', 'my parameter description')
 
         then:
         context.buildParameterNodes != null
@@ -1489,7 +1489,7 @@ class BuildParametersContextSpec extends Specification {
 
     def 'simplified nonStoredPasswordParameter usage'() {
         when:
-        context.nonStoredPasswordParameter('myParameterName')
+        context.nonStoredPasswordParam('myParameterName')
 
         then:
         context.buildParameterNodes != null
@@ -1503,7 +1503,7 @@ class BuildParametersContextSpec extends Specification {
 
     def 'nonStoredPasswordParameter name argument cant be null'() {
         when:
-        context.nonStoredPasswordParameter(null)
+        context.nonStoredPasswordParam(null)
 
         then:
         thrown(DslScriptException)
@@ -1511,7 +1511,7 @@ class BuildParametersContextSpec extends Specification {
 
     def 'nonStoredPasswordParameter name argument cant be empty'() {
         when:
-        context.nonStoredPasswordParameter('')
+        context.nonStoredPasswordParam('')
 
         then:
         thrown(DslScriptException)
@@ -1520,7 +1520,7 @@ class BuildParametersContextSpec extends Specification {
     def 'nonStoredPasswordParameter already defined'() {
         when:
         context.booleanParam('one')
-        context.nonStoredPasswordParameter('one')
+        context.nonStoredPasswordParam('one')
 
         then:
         thrown(DslScriptException)

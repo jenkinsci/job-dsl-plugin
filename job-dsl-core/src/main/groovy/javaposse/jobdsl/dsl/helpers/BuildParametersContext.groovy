@@ -379,7 +379,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
      * @since 1.44
      */
     @RequiresPlugin(id = 'mask-passwords', minimumVersion = '2.6')
-    void nonStoredPasswordParameter(String parameterName, String description = null) {
+    void nonStoredPasswordParam(String parameterName, String description = null) {
         checkParameterName(parameterName)
 
         buildParameterNodes[parameterName] = new NodeBuilder().
