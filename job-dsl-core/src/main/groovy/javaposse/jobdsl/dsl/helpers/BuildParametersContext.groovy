@@ -373,6 +373,22 @@ class BuildParametersContext extends AbstractExtensibleContext {
                 }
     }
 
+    /**
+     * Defines a parameter that allows you to take in a users password.
+     *
+     * @since 1.44
+     */
+    @RequiresPlugin(id = 'mask-passwords', minimumVersion = '2.6')
+    void nonStoredPasswordParameter(String parameterName, String description = null) {
+        checkParameterName(parameterName)
+
+        buildParameterNodes[parameterName] = new NodeBuilder().
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition' {
+                    name(parameterName)
+                    delegate.description(description ?: '')
+                }
+    }
+
     private checkParameterName(String name) {
         checkNotNullOrEmpty(name, 'parameterName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(name), "parameter ${name} already defined")

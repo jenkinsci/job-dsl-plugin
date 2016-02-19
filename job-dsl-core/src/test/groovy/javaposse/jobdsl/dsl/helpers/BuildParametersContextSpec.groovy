@@ -1472,4 +1472,57 @@ class BuildParametersContextSpec extends Specification {
         then:
         thrown(DslScriptException)
     }
+
+    def 'base nonStoredPasswordParameter usage'() {
+        when:
+        context.nonStoredPasswordParameter('myParameterName', 'my parameter description')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].children().size() == 2
+        context.buildParameterNodes['myParameterName'].name() ==
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == 'my parameter description'
+    }
+
+    def 'simplified nonStoredPasswordParameter usage'() {
+        when:
+        context.nonStoredPasswordParameter('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].children().size() == 2
+        context.buildParameterNodes['myParameterName'].name() ==
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+    }
+
+    def 'nonStoredPasswordParameter name argument cant be null'() {
+        when:
+        context.nonStoredPasswordParameter(null)
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'nonStoredPasswordParameter name argument cant be empty'() {
+        when:
+        context.nonStoredPasswordParameter('')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'nonStoredPasswordParameter already defined'() {
+        when:
+        context.booleanParam('one')
+        context.nonStoredPasswordParameter('one')
+
+        then:
+        thrown(DslScriptException)
+    }
 }
