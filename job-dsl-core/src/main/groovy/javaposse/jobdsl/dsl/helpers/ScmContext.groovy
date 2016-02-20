@@ -300,7 +300,7 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'perforce')
     void p4(String viewspec, Closure configure = null) {
-        p4(viewspec, 'rolem', '', configure)
+        p4(viewspec, '', '', configure)
     }
 
     /**
