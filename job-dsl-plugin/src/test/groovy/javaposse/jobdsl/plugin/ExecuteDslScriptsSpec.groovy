@@ -1082,6 +1082,27 @@ class ExecuteDslScriptsSpec extends Specification {
         freeStyleBuild.getLog(25).join('\n') =~ /Warning: \(script, line 4\) job is deprecated/
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
+    def 'JENKINS-32995'() {
+        setup:
+        jenkinsRule.instance.createProject(Folder, 'Foo')
+        Folder folder = jenkinsRule.instance.createProject(Folder, 'Bar')
+        FreeStyleProject job = folder.createProject(FreeStyleProject, 'seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation(null, null, 'job("Foo")'),
+                false,
+                RemovedJobAction.DISABLE,
+                LookupStrategy.SEED_JOB
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+    }
+
     private static final String SCRIPT = """job('test-job') {
 }"""
 
