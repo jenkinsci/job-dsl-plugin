@@ -1472,4 +1472,52 @@ class BuildParametersContextSpec extends Specification {
         then:
         thrown(DslScriptException)
     }
+
+    def 'base nonStoredPasswordParameter usage'() {
+        when:
+        context.nonStoredPasswordParam('myParameterName', 'my parameter description')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].children().size() == 2
+        context.buildParameterNodes['myParameterName'].name() ==
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == 'my parameter description'
+    }
+
+    def 'simplified nonStoredPasswordParameter usage'() {
+        when:
+        context.nonStoredPasswordParam('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].children().size() == 2
+        context.buildParameterNodes['myParameterName'].name() ==
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+    }
+
+    def 'nonStoredPasswordParameter name argument cant be null or empty'() {
+        when:
+        context.nonStoredPasswordParam(name)
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        name << [null, '']
+    }
+
+    def 'nonStoredPasswordParameter already defined'() {
+        when:
+        context.booleanParam('one')
+        context.nonStoredPasswordParam('one')
+
+        then:
+        thrown(DslScriptException)
+    }
 }
