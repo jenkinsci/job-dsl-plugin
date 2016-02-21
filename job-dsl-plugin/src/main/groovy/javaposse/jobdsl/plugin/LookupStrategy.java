@@ -33,7 +33,8 @@ public enum LookupStrategy {
     SEED_JOB("Seed Job") {
         @Override
         public <T extends Item> T getItem(Item seedJob, String path, Class<T> type) {
-            return Jenkins.getInstance().getItem(path, seedJob.getParent(), type);
+            String fullName = path.startsWith("/") ? path : seedJob.getParent().getFullName() + "/" + path;
+            return Jenkins.getInstance().getItemByFullName(fullName, type);
         }
 
         @Override
