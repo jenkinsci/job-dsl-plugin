@@ -25,7 +25,7 @@ class GitContext extends AbstractContext {
     String relativeTargetDir
     String reference = ''
     Closure withXmlClosure
-    final GitBrowserContext gitBrowserContext = new GitBrowserContext()
+    final GitBrowserContext gitBrowserContext = new GitBrowserContext(jobManagement)
     Integer cloneTimeout
     List<Node> extensions = []
     final StrategyContext strategyContext = new StrategyContext(jobManagement)

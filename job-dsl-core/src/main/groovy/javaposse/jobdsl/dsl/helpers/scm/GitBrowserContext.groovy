@@ -1,9 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class GitBrowserContext implements Context {
+class GitBrowserContext extends AbstractContext {
     Node browser
+
+    protected GitBrowserContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Use Stash as repository browser.
@@ -35,6 +41,18 @@ class GitBrowserContext implements Context {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GitLab') {
             delegate.url(url)
             delegate.version(version)
+        }
+    }
+
+    /**
+     * Use Gitiles as repository browser.
+     *
+     * @since 1.44
+     */
+    @RequiresPlugin(id = 'git', minimumVersion = '2.3')
+    void gitiles(String url) {
+        browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.Gitiles') {
+            delegate.url(url)
         }
     }
 }
