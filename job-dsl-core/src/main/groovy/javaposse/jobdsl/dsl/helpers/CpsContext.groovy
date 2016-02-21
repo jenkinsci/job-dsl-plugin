@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.Context
 
 class CpsContext implements Context {
     String script
+    String scriptPath
     boolean sandbox
 
     /**
@@ -12,6 +13,13 @@ class CpsContext implements Context {
      */
     void script(String script) {
         this.script = script
+    }
+
+    /**
+     * ScriptPath for Jenkinsfile which declares pipeline.
+     */
+    void scriptPath(String scriptPath) {
+        this.scriptPath = scriptPath
     }
 
     /**

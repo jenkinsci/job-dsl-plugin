@@ -49,4 +49,28 @@ class WorkflowJobSpec extends Specification {
             sandbox[0].value() == true
         }
     }
+
+    def 'full cps scm workflow'() {
+        when:
+        job.definitionScm {
+            cps {
+                scriptPath('Jenkinsfile')
+            }
+        }
+        job.scm {
+            git {
+                remote {
+                    url('https://github.com/jenkinsci/job-dsl-plugin.git')
+                }
+            }
+        }
+
+        then:
+        with(job.node.definition[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
+            children().size() == 2
+            scriptPath[0].value() == 'Jenkinsfile'
+            scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
+        }
+    }
 }
