@@ -6,11 +6,16 @@ Support for versions older than 1.7 of the
 [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
-## JobManagement
+### JobManagement
 
 The method `JobManagement#createOrUpdateConfig(String path, String config, boolean ignoreExisting)` has been
 [[deprecated|Deprecation-Policy]] since 1.33 and has been removed. Use
 `JobManagement#createOrUpdateConfig(Item item, boolean ignoreExisting)` instead.
+
+### Moved Classes
+
+The classes `javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext` and `javaposse.jobdsl.dsl.helpers.CpsContext` have
+been moved to the `javaposse.jobdsl.dsl.helpers.workflow` package.
 
 ## Migrating to 1.43
 

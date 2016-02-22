@@ -28,6 +28,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
    ([JENKINS-32906](https://issues.jenkins-ci.org/browse/JENKINS-32906))
+ * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
+   ([JENKINS-32678](https://issues.jenkins-ci.org/browse/JENKINS-32678))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([#753](https://github.com/jenkinsci/job-dsl-plugin/pull/753))
  * Enhanced support for the [Mask Passwords Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin)
@@ -38,6 +40,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-144)
  * Removed a method in `JobManagement` interface, see [Migration](Migration#migrating-to-144)
+ * Moved two classes, see [Migration](Migration#migrating-to-144)
 * 1.43 (February 13 2016)
  * Add support for the [Emotional Jenkins Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Emotional+Jenkins+Plugin)
    ([JENKINS-32907](https://issues.jenkins-ci.org/browse/JENKINS-32907))
