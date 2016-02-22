@@ -14,6 +14,7 @@ class GradleContext extends AbstractContext {
     boolean fromRootBuildScriptDir = true
     boolean makeExecutable
     boolean useWorkspaceAsHome
+    boolean passAsProperties
     String gradleName = '(Default)'
     Closure configureBlock
 
@@ -82,6 +83,13 @@ class GradleContext extends AbstractContext {
      */
     void makeExecutable(boolean makeExecutable = true) {
         this.makeExecutable = makeExecutable
+    }
+
+    /**
+     * Passes job parameters as Gradle properties. Defaults to {@code false}.
+     */
+    void passAsProperties(boolean passAsProperties = false) {
+        this.passAsProperties = passAsProperties
     }
 
     /**

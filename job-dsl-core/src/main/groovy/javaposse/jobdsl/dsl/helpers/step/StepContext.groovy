@@ -140,6 +140,9 @@ class StepContext extends AbstractExtensibleContext {
             if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23')) {
                 useWorkspaceAsHome gradleContext.useWorkspaceAsHome
             }
+            if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25')) {
+                passAsProperties gradleContext.passAsProperties
+            }
         }
 
         if (gradleContext.configureBlock) {
