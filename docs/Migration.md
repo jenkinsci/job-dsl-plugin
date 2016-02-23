@@ -17,6 +17,29 @@ The method `JobManagement#createOrUpdateConfig(String path, String config, boole
 The classes `javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext` and `javaposse.jobdsl.dsl.helpers.CpsContext` have
 been moved to the `javaposse.jobdsl.dsl.helpers.workflow` package.
 
+### Perforce
+
+The method `p4(String viewSpec, Closure closure)` in the SCM context is [[deprecated|Deprecation-Policy]] and will be
+removed.
+
+DSL prior to 1.44
+```groovy
+job('example') {
+    scm {
+        p4('//depot/example/... //workspace/...')
+    }
+}
+```
+
+DSL since 1.44
+```groovy
+job('example') {
+    scm {
+        p4('//depot/example/... //workspace/...', 'rolem')
+    }
+}
+```
+
 ## Migrating to 1.43
 
 ### Extended Email

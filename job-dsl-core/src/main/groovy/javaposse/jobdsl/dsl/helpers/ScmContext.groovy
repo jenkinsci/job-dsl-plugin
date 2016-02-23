@@ -299,7 +299,9 @@ class ScmContext extends AbstractExtensibleContext {
      * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'perforce')
+    @Deprecated
     void p4(String viewspec, Closure configure = null) {
+        jobManagement.logDeprecationWarning()
         p4(viewspec, 'rolem', '', configure)
     }
 
