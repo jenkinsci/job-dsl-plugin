@@ -37,8 +37,8 @@ class MultiJobStepContext extends StepContext {
     /**
      * Adds a MultiJob phase.
      */
-    void phase(String phaseName, String executionType, @DslContext(PhaseContext) Closure phaseContext = null) {
-        phase(phaseName, 'SUCCESSFUL', executionType, phaseContext)
+    void phase(String phaseName, String continuationCondition, @DslContext(PhaseContext) Closure phaseContext = null) {
+        phase(phaseName, continuationCondition, 'PARALLEL', phaseContext)
     }
 
     /**
