@@ -1,0 +1,30 @@
+<project>
+    <actions></actions>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties></properties>
+    <scm class='hudson.scm.NullSCM'></scm>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers class='vector'></triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder>
+            <runCondition class='org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'>
+                <arg1>${SOME_PARAMETER}</arg1>
+                <arg2>pants</arg2>
+                <ignoreCase>false</ignoreCase>
+            </runCondition>
+            <runner class='org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'></runner>
+            <conditionalbuilders>
+                <hudson.tasks.Shell>
+                    <command>echo Hello</command>
+                </hudson.tasks.Shell>
+            </conditionalbuilders>
+        </org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder>
+    </builders>
+    <publishers></publishers>
+    <buildWrappers></buildWrappers>
+</project>
