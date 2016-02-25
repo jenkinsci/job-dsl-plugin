@@ -222,6 +222,18 @@ folder('folder-b') {
         jobs.any { it.jobName == 'folder-b' }
     }
 
+    def 'JENKINS-32941'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('JENKINS_32941.groovy', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        jm.savedConfigs['example'] ==
+                getClass().getResource('/JENKINS_32941.xml').text.replace(System.getProperty('line.separator'), '\n')
+    }
+
     def 'script name which is not a valid class name'() {
         setup:
         ScriptRequest request = new ScriptRequest('test-script.dsl', null, resourcesDir, false)

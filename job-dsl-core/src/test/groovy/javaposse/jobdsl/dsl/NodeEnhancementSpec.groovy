@@ -46,6 +46,64 @@ class NodeEnhancementSpec extends Specification {
         root.triggers[0].attributes()['class'] == 'vector'
     }
 
+    def 'left shift clones node'() {
+        setup:
+        Node node = new NodeBuilder().'test' {
+            foo('bar')
+        }
+
+        when:
+        execute {
+            it << node
+        }
+        node.appendNode('baz')
+
+        then:
+        root.test.size() == 1
+        root.test[0].foo[0].value() == 'bar'
+        root.test.baz.size() == 0
+    }
+
+    def 'div clones children when replacing'() {
+        setup:
+        Node node = new NodeBuilder().'actions' {
+            foo('bar')
+        }
+
+        when:
+        Node result = execute {
+            it / node
+        }
+        node.appendNode('baz')
+
+        then:
+        root.actions.size() == 1
+        root.actions[0].foo[0].value() == 'bar'
+        root.actions.baz.size() == 0
+        result != node
+        result == root.actions[0]
+    }
+
+    def 'div clones node when appending'() {
+        setup:
+        Node node = new NodeBuilder().'test' {
+            foo('bar')
+        }
+
+        when:
+        Node result = execute {
+            it / node
+        }
+        node.appendNode('baz')
+
+        then:
+        root.test.size() == 1
+        root.test[0].foo[0].value() == 'bar'
+        root.test.baz.size() == 0
+        result != node
+        result == root.test[0]
+    }
+
     private Node execute(Closure closure) {
         closure.delegate = new MissingPropertyToStringDelegate(root)
 
