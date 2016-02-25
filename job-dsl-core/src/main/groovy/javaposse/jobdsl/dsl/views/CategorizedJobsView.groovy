@@ -17,7 +17,7 @@ class CategorizedJobsView extends ListView {
         CategorizationCriteriaContext context = new CategorizationCriteriaContext()
         executeInContext(categorizationCriteriaClosure, context)
 
-        execute {
+        configure {
             context.groupingRules.each { groupingRule ->
                 it / 'categorizationCriteria' << groupingRule
             }

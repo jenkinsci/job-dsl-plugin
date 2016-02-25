@@ -21,7 +21,7 @@ class ListView extends View {
     void statusFilter(StatusFilter filter) {
         checkNotNull(filter, 'filter must not be null')
 
-        execute {
+        configure {
             if (filter == StatusFilter.ALL) {
                 it.children().removeAll { it instanceof Node && it.name() == 'statusFilter' }
             } else {
@@ -39,7 +39,7 @@ class ListView extends View {
         List<String> jobs = jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER) // see GROOVY-6900
         String regex = jobsContext.regex
 
-        execute {
+        configure {
             it / 'jobNames' {
                 comparator(class: 'hudson.util.CaseInsensitiveComparator')
                 for (String job : jobs) {
@@ -59,7 +59,7 @@ class ListView extends View {
         ColumnsContext context = new ColumnsContext(jobManagement)
         executeInContext(columnsClosure, context)
 
-        execute {
+        configure {
             for (Node columnNode : context.columnNodes) {
                 it / 'columns' << columnNode
             }
@@ -75,7 +75,7 @@ class ListView extends View {
         JobFiltersContext context = new JobFiltersContext(jobManagement)
         executeInContext(jobFiltersClosure, context)
 
-        execute {
+        configure {
             context.filterNodes.each { filterNode ->
                 it / 'jobFilters' << filterNode
             }
@@ -89,7 +89,7 @@ class ListView extends View {
      * @since 1.31
      */
     void recurse(boolean shouldRecurse = true) {
-        execute {
+        configure {
             it / 'recurse' << shouldRecurse
         }
     }

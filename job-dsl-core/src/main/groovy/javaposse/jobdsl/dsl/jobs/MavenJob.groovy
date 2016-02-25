@@ -8,7 +8,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -36,10 +35,10 @@ class MavenJob extends Job {
 
     @Override
     void triggers(@DslContext(MavenTriggerContext) Closure closure) {
-        TriggerContext context = new MavenTriggerContext(withXmlActions, jobManagement, this)
+        TriggerContext context = new MavenTriggerContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             context.triggerNodes.each {
                 project / 'triggers' << it
             }
@@ -54,7 +53,7 @@ class MavenJob extends Job {
         WrapperContext context = new MavenWrapperContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             context.wrapperNodes.each {
                 project / 'buildWrappers' << it
             }
@@ -66,7 +65,7 @@ class MavenJob extends Job {
         MavenPublisherContext context = new MavenPublisherContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             context.publisherNodes.each {
                 project / 'publishers' << it
             }
@@ -79,7 +78,7 @@ class MavenJob extends Job {
      * @param rootPOM path to the root POM
      */
     void rootPOM(String rootPOM) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('rootPOM', rootPOM)
             project / node
         }
@@ -93,7 +92,7 @@ class MavenJob extends Job {
      */
     void goals(String goals) {
         if (mavenGoals.empty) {
-            withXmlActions << WithXmlAction.create { Node project ->
+            configure { Node project ->
                 Node node = methodMissing('goals', this.mavenGoals.join(' '))
                 project / node
             }
@@ -110,7 +109,7 @@ class MavenJob extends Job {
      */
     void mavenOpts(String mavenOpts) {
         if (this.mavenOpts.empty) {
-            withXmlActions << WithXmlAction.create { Node project ->
+            configure { Node project ->
                 Node node = methodMissing('mavenOpts', this.mavenOpts.join(' '))
                 project / node
             }
@@ -125,7 +124,7 @@ class MavenJob extends Job {
      * @param archivingDisabled set to <code>true</code> to disable automatic archiving
      */
     void archivingDisabled(boolean archivingDisabled) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('archivingDisabled', archivingDisabled)
             project / node
         }
@@ -137,7 +136,7 @@ class MavenJob extends Job {
      * @param runHeadless set to <code>true</code> to run the build process in headless mode
      */
     void runHeadless(boolean runHeadless) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('runHeadless', runHeadless)
             project / node
         }
@@ -152,7 +151,7 @@ class MavenJob extends Job {
     void localRepository(LocalRepositoryLocation location) {
         Preconditions.checkNotNull(location, 'localRepository can not be null')
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('localRepository', [class: location.type])
             project / node
         }
@@ -167,7 +166,7 @@ class MavenJob extends Job {
         StepContext preBuildContext = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(preBuildClosure, preBuildContext)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             preBuildContext.stepNodes.each {
                 project / 'prebuilders' << it
             }
@@ -200,7 +199,7 @@ class MavenJob extends Job {
         StepContext postBuildContext = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(postBuildClosure, postBuildContext)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / runPostStepsIfResult {
                 delegate.name(thresholdName)
                 ordinal(THRESHOLD_ORDINAL_MAP[thresholdName])
@@ -221,7 +220,7 @@ class MavenJob extends Job {
     void mavenInstallation(String name) {
         Preconditions.checkNotNull(name, 'name can not be null')
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / 'mavenName'(name)
         }
     }
@@ -236,7 +235,7 @@ class MavenJob extends Job {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
                 settingsConfigId(settingsId)
             }
@@ -253,7 +252,7 @@ class MavenJob extends Job {
         String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName)
         Preconditions.checkNotNull(settingsId, "Managed global Maven settings with name '${settingsName}' not found")
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / globalSettings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider') {
                 settingsConfigId(settingsId)
             }
@@ -267,7 +266,7 @@ class MavenJob extends Job {
      * @since 1.35
      */
     void disableDownstreamTrigger(boolean disableDownstreamTrigger = true) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / 'disableTriggerDownstreamProjects'(disableDownstreamTrigger)
         }
     }
