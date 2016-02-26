@@ -131,7 +131,7 @@ class GitContext extends AbstractContext {
     }
 
     /**
-     * Clean up the workspace before every checkout by deleting all untracked files and directories, including those
+     * Clean up the workspace after every checkout by deleting all untracked files and directories, including those
      * which are specified in {@code .gitignore}. Defaults to {@code false}.
      */
     void clean(boolean clean = true) {
