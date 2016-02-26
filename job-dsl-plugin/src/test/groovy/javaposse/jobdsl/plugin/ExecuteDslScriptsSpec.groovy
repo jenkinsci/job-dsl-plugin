@@ -1103,6 +1103,27 @@ class ExecuteDslScriptsSpec extends Specification {
         freeStyleBuild.result == SUCCESS
     }
 
+    def 'JENKINS-32628 script name which collides with package name'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.scheduleBuild2(0).get() // run a build to create a workspace
+        job.someWorkspace.child('jenkins.dsl').write('job("test")', 'UTF-8')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('false', 'jenkins.dsl', null),
+                true,
+                RemovedJobAction.IGNORE
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        freeStyleBuild.getLog(25).join('\n') =~ /identical to a package name/
+        freeStyleBuild.getLog(25).join('\n') =~ /jenkins.dsl/
+    }
+
     private static final String SCRIPT = """job('test-job') {
 }"""
 

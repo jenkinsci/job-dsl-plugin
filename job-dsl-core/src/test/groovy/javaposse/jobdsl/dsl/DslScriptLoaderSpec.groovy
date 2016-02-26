@@ -247,6 +247,18 @@ folder('folder-b') {
         e.message =~ /test-script\.dsl/
     }
 
+    def 'JENKINS-32628 script name which collides with package name'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('java.dsl', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        content =~ /identical to a package name/
+        content =~ /java\.dsl/
+    }
+
     def 'script in directory'() {
         setup:
         ScriptRequest request = new ScriptRequest('foo/test.dsl', null, resourcesDir, false)
