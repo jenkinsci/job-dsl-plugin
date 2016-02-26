@@ -17,6 +17,8 @@ class DslScriptLoader {
 
     private static GeneratedItems runDslEngineForParent(ScriptRequest scriptRequest,
                                                         JobManagement jobManagement) throws IOException {
+        PrintStream logger = jobManagement.outputStream
+
         ClassLoader parentClassLoader = DslScriptLoader.classLoader
         CompilerConfiguration config = createCompilerConfiguration(jobManagement)
 
@@ -33,17 +35,18 @@ class DslScriptLoader {
                 try {
                     Script script
                     if (scriptRequest.body != null) {
-                        jobManagement.outputStream.println('Processing provided DSL script')
+                        logger.println('Processing provided DSL script')
                         Class cls = engine.groovyClassLoader.parseClass(scriptRequest.body, 'script')
                         script = InvokerHelper.createScript(cls, binding)
                     } else {
-                        jobManagement.outputStream.println("Processing DSL script ${scriptRequest.location}")
+                        logger.println("Processing DSL script ${scriptRequest.location}")
                         if (!isValidScriptName(scriptRequest.location)) {
                             throw new DslException(
                                     "invalid script name '${scriptRequest.location}; script names may only contain " +
                                             'letters, digits and underscores, but may not start with a digit'
                             )
                         }
+                        checkCollidingScriptName(scriptRequest.location, engine.groovyClassLoader, logger)
                         script = engine.createScript(scriptRequest.location, binding)
                     }
                     assert script instanceof JobParent
@@ -86,9 +89,7 @@ class DslScriptLoader {
     }
 
     private static boolean isValidScriptName(String scriptFile) {
-        String fileName = new File(scriptFile).name
-        int idx = fileName.lastIndexOf('.')
-        String normalizedName = idx > -1 ? fileName[0..idx - 1] : fileName
+        String normalizedName = getScriptName(scriptFile)
         if (normalizedName.length() == 0 || !Character.isJavaIdentifierStart(normalizedName.charAt(0))) {
             return false
         }
@@ -98,6 +99,23 @@ class DslScriptLoader {
             }
         }
         true
+    }
+
+    private static void checkCollidingScriptName(String scriptFile, ClassLoader classLoader, PrintStream logger) {
+        String scriptName = getScriptName(scriptFile)
+        Package[] packages = new SnitchingClassLoader(classLoader).packages
+        if (packages.any { it.name == scriptName || it.name.startsWith("${scriptName}.") }) {
+            logger.println(
+                    "Warning: the script name '${scriptFile} is identical to a package name; choose a different " +
+                            'script name to avoid problems'
+            )
+        }
+    }
+
+    private static String getScriptName(String scriptFile) {
+        String fileName = new File(scriptFile).name
+        int idx = fileName.lastIndexOf('.')
+        idx > -1 ? fileName[0..idx - 1] : fileName
     }
 
     /**
@@ -219,5 +237,16 @@ class DslScriptLoader {
 
         config.output = new PrintWriter(jobManagement.outputStream) // This seems to do nothing
         config
+    }
+
+    private static class SnitchingClassLoader extends ClassLoader {
+        SnitchingClassLoader(ClassLoader parent) {
+            super(parent)
+        }
+
+        @Override
+        Package[] getPackages() {
+            super.packages
+        }
     }
 }
