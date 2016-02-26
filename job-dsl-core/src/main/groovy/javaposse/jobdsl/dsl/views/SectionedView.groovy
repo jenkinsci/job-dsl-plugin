@@ -18,7 +18,7 @@ class SectionedView extends View {
         SectionsContext context = new SectionsContext(jobManagement)
         executeInContext(sectionsClosure, context)
 
-        execute {
+        configure {
             for (Node sectionNode : context.sectionNodes) {
                 it / 'sections' << sectionNode
             }

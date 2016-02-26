@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.publisher.BuildFlowPublisherContext
 
 class BuildFlowJob extends Job {
@@ -19,7 +18,7 @@ class BuildFlowJob extends Job {
      * files.
      */
     void buildFlow(String buildFlowText) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / dsl(buildFlowText)
         }
     }
@@ -31,7 +30,7 @@ class BuildFlowJob extends Job {
      */
     @RequiresPlugin(id = 'build-flow-plugin', minimumVersion = '0.12')
     void buildNeedsWorkspace(boolean needsWorkspace = true) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('buildNeedsWorkspace', needsWorkspace)
             project / node
         }
@@ -48,7 +47,7 @@ class BuildFlowJob extends Job {
     void dslFile(String fileName) {
         buildNeedsWorkspace()
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('dslFile', fileName)
             project / node
         }
@@ -59,7 +58,7 @@ class BuildFlowJob extends Job {
         BuildFlowPublisherContext context = new BuildFlowPublisherContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             context.publisherNodes.each {
                 project / 'publishers' << it
             }

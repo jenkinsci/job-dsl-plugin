@@ -2,19 +2,22 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 
 class MavenTriggerContextSpec extends Specification {
-    Item item = Mock(Item)
     JobManagement mockJobManagement = Mock(JobManagement)
+    Item item = new FreeStyleJob(mockJobManagement)
+    MavenTriggerContext context = new MavenTriggerContext(mockJobManagement, item)
 
     def 'call snapshotDependencies for Maven job succeeds'() {
         when:
-        MavenTriggerContext context = new MavenTriggerContext([], mockJobManagement, item)
-        context.snapshotDependencies(false)
+        context.snapshotDependencies(value)
 
         then:
-        context.withXmlActions != null
-        context.withXmlActions.size() == 1
+        item.node.ignoreUpstremChanges[0].value() == !value
+
+        where:
+        value << [true, false]
     }
 }

@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.workflow.WorkflowDefinitionContext
 
 class WorkflowJob extends Job {
@@ -19,7 +18,7 @@ class WorkflowJob extends Job {
         WorkflowDefinitionContext context = new WorkflowDefinitionContext(jobManagement, this)
         ContextHelper.executeInContext(definitionClosure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node definition = project / definition
             if (definition) {
                 project.remove(definition)

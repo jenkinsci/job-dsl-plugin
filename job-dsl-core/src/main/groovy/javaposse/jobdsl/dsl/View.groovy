@@ -16,7 +16,7 @@ abstract class View extends AbstractContext {
      * Sets a description for the view.
      */
     void description(String description) {
-        execute {
+        configure {
             it / methodMissing('description', description)
         }
     }
@@ -25,7 +25,7 @@ abstract class View extends AbstractContext {
      * If set to {@code true}. only jobs in this view will be shown in the build queue. Defaults to {@code false}.
      */
     void filterBuildQueue(boolean filterBuildQueue = true) {
-        execute {
+        configure {
             it / methodMissing('filterQueue', filterBuildQueue)
         }
     }
@@ -35,7 +35,7 @@ abstract class View extends AbstractContext {
      * Defaults to {@code false}.
      */
     void filterExecutors(boolean filterExecutors = true) {
-        execute {
+        configure {
             it / methodMissing('filterExecutors', filterExecutors)
         }
     }
@@ -73,7 +73,9 @@ abstract class View extends AbstractContext {
         root
     }
 
+    @Deprecated
     protected void execute(Closure rootClosure) {
+        jobManagement.logDeprecationWarning()
         withXmlActions << new WithXmlAction(rootClosure)
     }
 }

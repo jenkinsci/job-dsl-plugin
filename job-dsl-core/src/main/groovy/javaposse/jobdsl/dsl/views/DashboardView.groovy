@@ -43,7 +43,7 @@ class DashboardView extends ListView {
         DashboardPortletContext context = new DashboardPortletContext()
         executeInContext(closure, context)
 
-        execute {
+        configure {
             context.portletNodes.each { node ->
                 it / "$elementName" << node
             }

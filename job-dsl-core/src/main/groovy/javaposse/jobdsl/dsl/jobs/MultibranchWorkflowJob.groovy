@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Folder
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext
 import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
 import javaposse.jobdsl.dsl.helpers.workflow.BranchSourcesContext
@@ -21,7 +20,7 @@ class MultibranchWorkflowJob extends Folder {
         MultibranchWorkflowTriggerContext context = new MultibranchWorkflowTriggerContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             context.triggerNodes.each {
                 project / 'triggers' << it
             }
@@ -35,7 +34,7 @@ class MultibranchWorkflowJob extends Folder {
         BranchSourcesContext context = new BranchSourcesContext()
         ContextHelper.executeInContext(sourcesClosure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             context.branchSourceNodes.each {
                 project / sources / data << it
             }
@@ -50,7 +49,7 @@ class MultibranchWorkflowJob extends Folder {
         ContextHelper.executeInContext(closure, context)
 
         if (context.orphanedItemStrategyNode != null) {
-            withXmlActions << WithXmlAction.create { Node project ->
+            configure { Node project ->
                 Node orphanedItemStrategy = project / 'orphanedItemStrategy'
                 if (orphanedItemStrategy) {
                     // there can only be only one orphanedItemStrategy, so remove if there
