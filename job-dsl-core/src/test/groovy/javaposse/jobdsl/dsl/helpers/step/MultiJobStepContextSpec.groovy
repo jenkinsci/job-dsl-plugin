@@ -279,7 +279,7 @@ class MultiJobStepContextSpec extends Specification {
             continuationCondition[0].value() == condition
             executionType[0].value() == 'PARALLEL'
             resumeCondition[0].value() == 'SKIP'
-            script[0].value == ''
+            script[0].value() == ''
         }
 
         where:
