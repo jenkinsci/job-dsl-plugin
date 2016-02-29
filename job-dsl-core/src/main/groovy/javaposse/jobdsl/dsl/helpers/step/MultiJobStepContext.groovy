@@ -17,7 +17,7 @@ class MultiJobStepContext extends StepContext {
     ]
 
     private static final List<String> VALID_RESUME_CONDITIONS = [
-            'SKIP', 'NEVER', 'SCRIPT'
+            'SKIP', 'NEVER', 'EXPRESSION'
     ]
 
     MultiJobStepContext(JobManagement jobManagement, Item item) {
@@ -28,21 +28,21 @@ class MultiJobStepContext extends StepContext {
      * Adds a MultiJob phase.
      */
     void phase(@DslContext(PhaseContext) Closure phaseContext) {
-        phase(null, 'SUCCESSFUL', 'PARALLEL', 'SKIP', '', phaseContext)
+        phase(null, 'SUCCESSFUL', 'PARALLEL', phaseContext)
     }
 
     /**
      * Adds a MultiJob phase.
      */
     void phase(String phaseName, @DslContext(PhaseContext) Closure phaseContext = null) {
-        phase(phaseName, 'SUCCESSFUL', 'PARALLEL', 'SKIP', '', phaseContext)
+        phase(phaseName, 'SUCCESSFUL', 'PARALLEL', phaseContext)
     }
 
     /**
      * Adds a MultiJob phase.
      */
     void phase(String phaseName, String continuationCondition, @DslContext(PhaseContext) Closure phaseContext = null) {
-        phase(phaseName, continuationCondition, 'PARALLEL', 'SKIP', '', phaseContext)
+        phase(phaseName, continuationCondition, 'PARALLEL', phaseContext)
     }
 
     /**
@@ -53,10 +53,10 @@ class MultiJobStepContext extends StepContext {
      * can also be set to {@code 'ALWAYS'}.
      * {@code executionType} must be one of {@code 'PARALLEL'}, {@code 'SEQUENTIAL'}.
      */
-    void phase(String name, String continuationCondition, String executionType, String resumeCondition, String script,
+    void phase(String name, String continuationCondition, String executionType,
                @DslContext(PhaseContext) Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition, executionType,
-                resumeCondition, script)
+                'SKIP', '')
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         Preconditions.checkNotNullOrEmpty(phaseContext.phaseName, 'A phase needs a name')
@@ -78,7 +78,9 @@ class MultiJobStepContext extends StepContext {
             delegate.continuationCondition(phaseContext.continuationCondition)
             delegate.executionType(phaseContext.executionType)
             delegate.resumeCondition(phaseContext.resumeCondition)
-            delegate.script(phaseContext.script)
+            delegate.resumeExpression(phaseContext.expression)
+            //delegate.script(phaseContext.script)
+            //delegate.script(phaseContext.enableScript, phaseContext.script)
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {

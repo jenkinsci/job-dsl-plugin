@@ -256,7 +256,7 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phase with unsupported condition'() {
         when:
-        context.phase('test', 'FOO', 'BAR', 'BAZ', '') {
+        context.phase('test', 'FOO', 'BAR') {
         }
 
         then:
@@ -274,12 +274,9 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 6
+            children().size() == 3
             phaseName[0].value() == 'test'
             continuationCondition[0].value() == condition
-            executionType[0].value() == 'PARALLEL'
-            resumeCondition[0].value() == 'SKIP'
-            script[0].value() == ''
         }
 
         where:
