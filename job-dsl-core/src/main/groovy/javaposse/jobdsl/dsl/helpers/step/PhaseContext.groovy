@@ -12,16 +12,20 @@ class PhaseContext extends AbstractContext {
     String phaseName
     String continuationCondition
     String executionType
+    String resumeCondition
+    String script
 
     List<PhaseJobContext> jobsInPhase = []
 
     PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
-                 String executionType) {
+                 String executionType, String resumeCondition, String script) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
         this.continuationCondition = continuationCondition
         this.executionType = executionType
+        this.resumeCondition = resumeCondition
+        this.script = script
     }
 
     /**
@@ -88,5 +92,21 @@ class PhaseContext extends AbstractContext {
         ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext
+    }
+
+    /**
+     * Adds a groovy script source to the phase (for resume condition)
+     * @param script
+     */
+    void script(String script) {
+        this.script = script
+    }
+
+    /**
+     * Defines how to run jobs in a phase after resuming the failed multijob buld.
+     * @param resumeCondition
+     */
+    void resumeCondition(String resumeCondition) {
+        this.resumeCondition = resumeCondition
     }
 }
