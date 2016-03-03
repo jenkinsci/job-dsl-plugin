@@ -43,6 +43,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-144)
  * Deprecated a method for the [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin), see
    [Migration](Migration#migrating-to-144) 
+ * Deprecated several methods for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin), see
+   [Migration](Migration#migrating-to-144)
  * Removed a method in `JobManagement` interface, see [Migration](Migration#migrating-to-144)
  * Moved two classes, see [Migration](Migration#migrating-to-144)
 * 1.43 (February 13 2016)

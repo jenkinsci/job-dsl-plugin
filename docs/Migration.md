@@ -1,5 +1,76 @@
 ## Migrating to 1.44
 
+### Git
+
+DSL support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) has been changed to reflect the
+configuration style of version 2.0 of the Git plugin.
+
+DSL prior to 1.44
+```groovy
+job('example') {
+    scm {
+        git {
+            strategy {
+                inverse()
+            }
+            mergeOptions {
+                remote('origin')
+                branch('feature')
+            }
+            createTag()
+            clean()
+            wipeOutWorkspace()
+            remotePoll(false)
+            shallowClone()
+            reference('/git/repo.git')
+            cloneTimeout(10)
+            recursiveSubmodules()
+            trackingSubmodules()
+            pruneBranches()
+            localBranch('ci')
+            relativeTargetDir('ws')
+            ignoreNotifyCommit()
+        }
+    }
+}
+```
+
+DSL since 1.44
+```groovy
+job('example') {
+    scm {
+        git {
+            extensions {
+                choosingStrategy {
+                    inverse()
+                }
+                mergeOptions {
+                    remote('origin')
+                    branch('feature')
+                }
+                perBuildTag()
+                cleanAfterCheckout()
+                wipeOutWorkspace()
+                disableRemotePoll()
+                cloneOptions {
+                    shallow()
+                    reference('/git/repo.git')
+                    timeout(10)
+                }
+                submoduleOptions {
+                    recursive()
+                    tracking()
+                }
+                pruneBranches()
+                localBranch('ci')
+                relativeTargetDirectory('ws')
+                ignoreNotifyCommit()
+            }
+        }
+    }
+}
+```
+
 ### Lockable Resources
 
 Support for versions older than 1.7 of the

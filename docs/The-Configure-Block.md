@@ -572,7 +572,6 @@ Result:
 
 DSL:
 ```groovy
-// this creates XML for version 1.x of the Git Plugin, but version 2.x is backwards compatible
 job('example') {
     scm {
         git {
@@ -580,8 +579,10 @@ job('example') {
                 name 'remoteB'
                 url 'git@server:account/repo1.git'
             }
-            clean()
-            relativeTargetDir('repo1')
+            extensions {
+                relativeTargetDirectory('repo1')
+                cleanAfterCheckout()
+            }
         }
     }
 }

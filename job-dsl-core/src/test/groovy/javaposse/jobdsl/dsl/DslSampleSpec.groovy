@@ -308,7 +308,7 @@ mavenJob('PROJ-maven-with-template') {
         <remotePoll>false</remotePoll>
         <ignoreNotifyCommit>false</ignoreNotifyCommit>
         <gitTool>Default</gitTool>
-        <skipTag>false</skipTag>
+        <skipTag>true</skipTag>
         <userRemoteConfigs>
             <hudson.plugins.git.UserRemoteConfig>
                 <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>
@@ -319,6 +319,9 @@ mavenJob('PROJ-maven-with-template') {
                 <name>**</name>
             </hudson.plugins.git.BranchSpec>
         </branches>
+        <extensions>
+            <hudson.plugins.git.extensions.impl.PerBuildTag/>
+        </extensions>
     </scm>
 </maven2-moduleset>
 '''
