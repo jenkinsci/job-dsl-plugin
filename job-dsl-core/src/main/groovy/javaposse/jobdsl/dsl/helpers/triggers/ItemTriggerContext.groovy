@@ -114,7 +114,7 @@ class ItemTriggerContext extends AbstractExtensibleContext {
      * @since 1.22
      */
     @Deprecated
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.15-0')
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
         jobManagement.logDeprecationWarning()
 
@@ -134,9 +134,7 @@ class ItemTriggerContext extends AbstractExtensibleContext {
             autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
             commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
             allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
-            if (jobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26')) {
-                extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
-            }
+            extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
         }
     }
 

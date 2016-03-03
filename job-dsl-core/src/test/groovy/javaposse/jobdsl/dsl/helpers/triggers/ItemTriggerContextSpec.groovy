@@ -257,9 +257,6 @@ class ItemTriggerContextSpec extends Specification {
     }
 
     def 'call pull request trigger with no args'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26') >> true
-
         when:
         context.pullRequest {
         }
@@ -281,13 +278,10 @@ class ItemTriggerContextSpec extends Specification {
             orgslist[0].value() == ''
             commentFilePath[0].value() == ''
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.26')
     }
 
     def 'call pull request trigger with multiple admins and orgs'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26') >> true
-
         when:
         context.pullRequest {
             admins(['test1', 'test2'])
@@ -303,13 +297,10 @@ class ItemTriggerContextSpec extends Specification {
             whitelist[0].value() == 'test1\ntest2'
             orgslist[0].value() == 'test1\ntest2'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.26')
     }
 
     def 'call pull request trigger with all args'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26') >> true
-
         when:
         context.pullRequest {
             admins(['test'])
@@ -342,13 +333,10 @@ class ItemTriggerContextSpec extends Specification {
             autoCloseFailedPullRequests[0].value() == true
             commentFilePath[0].value() == 'myCommentFile'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
+        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.26')
     }
 
     def 'call pull request trigger with commit status extension'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26') >> true
-
         when:
         context.pullRequest {
             extensions {
@@ -406,7 +394,6 @@ class ItemTriggerContextSpec extends Specification {
                 }
             }
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.15-0')
         1 * mockJobManagement.requireMinimumPluginVersion('ghprb', '1.26')
         1 * mockJobManagement.logDeprecationWarning()
     }

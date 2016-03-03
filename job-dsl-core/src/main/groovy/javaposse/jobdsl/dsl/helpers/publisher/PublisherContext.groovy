@@ -595,7 +595,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Triggers parameterized builds on other projects.
      */
-    @RequiresPlugin(id = 'parameterized-trigger')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
@@ -1511,7 +1511,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.33
      */
     @Deprecated
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.17')
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void mergePullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure = null) {
         jobManagement.logDeprecationWarning()
 
@@ -1523,10 +1523,8 @@ class PublisherContext extends AbstractExtensibleContext {
             disallowOwnCode(pullRequestPublisherContext.disallowOwnCode)
             onlyTriggerPhrase(pullRequestPublisherContext.onlyTriggerPhrase)
             mergeComment(pullRequestPublisherContext.mergeComment ?: '')
-            if (jobManagement.isMinimumPluginVersionInstalled('ghprb', '1.26')) {
-                failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
-                deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
-            }
+            failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
+            deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
         }
     }
 

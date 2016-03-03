@@ -5,14 +5,11 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.Preconditions
 
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MAP
 
 class DownstreamContext extends AbstractContext {
-    private static final Set<String> BLOCKING_THRESHOLD_TYPES = ['buildStepFailure', 'failure', 'unstable']
-
     protected final Item item
 
     List<Node> configs = []
@@ -26,74 +23,15 @@ class DownstreamContext extends AbstractContext {
      * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
      */
     void trigger(String projects, @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        addTrigger(projects, null, false, downstreamTriggerClosure)
-    }
-
-    /**
-     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
-     *
-     * @since 1.39
-     */
-    void trigger(List<String> projects, @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        addTrigger(projects.join(', '), null, false, downstreamTriggerClosure)
-    }
-
-    /**
-     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
-     */
-    @Deprecated
-    @SuppressWarnings(['UnusedMethodParameter', 'GroovyUnusedDeclaration'])
-    void trigger(String projects, String condition,
-                 @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        jobManagement.logDeprecationWarning()
-        addTrigger(projects, null, false, downstreamTriggerClosure)
-    }
-
-    /**
-     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
-     */
-    @Deprecated
-    @SuppressWarnings(['UnusedMethodParameter', 'GroovyUnusedDeclaration'])
-    void trigger(String projects, String condition, boolean triggerWithNoParameters,
-                 @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        jobManagement.logDeprecationWarning()
-        addTrigger(projects, null, triggerWithNoParameters, downstreamTriggerClosure)
-    }
-
-    /**
-     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
-     */
-    @Deprecated
-    @SuppressWarnings(['UnusedMethodParameter', 'GroovyUnusedDeclaration'])
-    void trigger(String projects, String condition, boolean triggerWithNoParameters,
-                 Map<String, String> blockingThresholds,
-                 @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
-        jobManagement.logDeprecationWarning()
-        addTrigger(projects, blockingThresholds, triggerWithNoParameters, downstreamTriggerClosure)
-    }
-
-    private void addTrigger(String projects, Map<String, String> blockingThresholds, boolean triggerWithNoParameters,
-                            @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
         DownstreamTriggerContext context = new DownstreamTriggerContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamTriggerClosure, context)
-
-        if (blockingThresholds) {
-            blockingThresholds.each { String thresholdType, String threshold ->
-                Preconditions.checkArgument(BLOCKING_THRESHOLD_TYPES.contains(thresholdType),
-                        "thresholdType must be one of these values: ${BLOCKING_THRESHOLD_TYPES}")
-                context.block {
-                    "${thresholdType}"(threshold)
-                }
-            }
-        }
 
         configs << new NodeBuilder().'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig' {
             delegate.projects(projects)
             condition('ALWAYS')
-            delegate.triggerWithNoParameters(triggerWithNoParameters)
+            triggerWithNoParameters(false)
             delegate.configs(context.parameterContext.configs ?: [class: 'java.util.Collections$EmptyList'])
-            if (jobManagement.isMinimumPluginVersionInstalled('parameterized-trigger', '2.25') &&
-                    context.parameterFactoryContext.configFactories) {
+            if (context.parameterFactoryContext.configFactories) {
                 configFactories(context.parameterFactoryContext.configFactories)
             }
             if (context.blockContext) {
@@ -109,6 +47,15 @@ class DownstreamContext extends AbstractContext {
                 }
             }
         }
+    }
+
+    /**
+     * Adds a trigger for parametrized builds. Can be called multiple times to add more triggers.
+     *
+     * @since 1.39
+     */
+    void trigger(List<String> projects, @DslContext(DownstreamTriggerContext) Closure downstreamTriggerClosure = null) {
+        trigger(projects.join(', '), downstreamTriggerClosure)
     }
 
     private Node createThresholdNode(String thresholdName, String threshold) {

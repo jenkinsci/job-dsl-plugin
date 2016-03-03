@@ -58,84 +58,6 @@ class MultiJobStepContextSpec extends Specification {
         jobNodeC.jobName[0].value() == 'JobC'
     }
 
-    def 'call phases with jobs with complex parameters using deprecated methods'() {
-        when:
-        context.phase('Fourth') {
-            job('JobA', false, true) {
-                boolParam('aParam')
-                boolParam('bParam', false)
-                boolParam('cParam', true)
-                fileParam('my.properties')
-                sameNode()
-                matrixParam('it.name=="hello"')
-                subversionRevision()
-                gitRevision()
-                prop('prop1', 'value1')
-                prop('prop2', 'value2')
-                props([
-                        prop3: 'value3',
-                        prop4: 'value4'
-                ])
-                nodeLabel('nodeParam', 'node_label')
-                configure { phaseJobConfig ->
-                    phaseJobConfig / customConfig << 'foobar'
-                }
-            }
-        }
-
-        then:
-        def phaseNode = context.stepNodes[0]
-        def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.currParams[0].value() == false
-        jobNode.exposedSCM[0].value() == true
-
-        def customConfigNode = jobNode.customConfig[0]
-        customConfigNode.value() == 'foobar'
-
-        def configsNode = jobNode.configs[0]
-        def boolParams = configsNode.'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
-        boolParams.children().size() == 3
-        def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
-        boolNode.name[0].value() == 'aParam'
-        boolNode.value[0].value() == false
-        def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
-        boolNode1.name[0].value() == 'bParam'
-        boolNode1.value[0].value() == false
-        def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
-        boolNode2.name[0].value() == 'cParam'
-        boolNode2.value[0].value() == true
-
-        def fileNode = configsNode.'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0]
-        fileNode.propertiesFile[0].value() == 'my.properties'
-        fileNode.failTriggerOnMissing[0].value() == false
-
-        def nodeNode = configsNode.'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
-        nodeNode != null
-
-        def matrixNode = configsNode.'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0]
-        matrixNode.filter[0].value() == 'it.name=="hello"'
-
-        def svnNode = configsNode.'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0]
-        svnNode.includeUpstreamParameters[0].value() == false
-
-        def gitNode = configsNode.'hudson.plugins.git.GitRevisionBuildParameters'[0]
-        gitNode.combineQueuedCommits[0].value() == false
-
-        def propNode = configsNode.'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0]
-        def propStr = propNode.'properties'[0].value()
-        propStr.contains('prop1=value1')
-        propStr.contains('prop2=value2')
-        propStr.contains('prop3=value3')
-        propStr.contains('prop4=value4')
-
-        def nodeLabel = configsNode.
-            'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
-        nodeLabel.name[0].value() == 'nodeParam'
-        nodeLabel.nodeLabel[0].value() == 'node_label'
-
-        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
-    }
-
     def 'call phases with jobs with complex parameters'() {
         when:
         context.phase('Fourth') {
@@ -215,7 +137,7 @@ class MultiJobStepContextSpec extends Specification {
         nodeLabel.nodeLabel[0].value() == 'node_label'
 
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 

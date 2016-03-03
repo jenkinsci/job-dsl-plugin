@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class PullRequestBuilderContext extends AbstractContext {
     List admins = []
@@ -137,7 +136,6 @@ class PullRequestBuilderContext extends AbstractContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void extensions(@DslContext(GitHubPullRequestBuilderExtensionContext) Closure closure) {
         ContextHelper.executeInContext(closure, extensionContext)
     }

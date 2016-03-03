@@ -36,15 +36,6 @@ class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
     /**
      * Adds a boolean parameter. Can be called multiple times to add more parameters.
      */
-    @Deprecated
-    void boolParam(String name, boolean defaultValue = false) {
-        jobManagement.logDeprecationWarning()
-        booleanParam(name, defaultValue)
-    }
-
-    /**
-     * Adds a boolean parameter. Can be called multiple times to add more parameters.
-     */
     void booleanParam(String name, boolean defaultValue = false) {
         this.booleanParams[name] = defaultValue
     }
@@ -54,15 +45,6 @@ class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
      */
     void sameNode() {
         this.sameNode = true
-    }
-
-    /**
-     * Uses the same node for the triggered builds that was used for this build.
-     */
-    @Deprecated
-    void sameNode(boolean sameNode) {
-        jobManagement.logDeprecationWarning()
-        this.sameNode = sameNode
     }
 
     /**
@@ -111,15 +93,6 @@ class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
     void predefinedProps(Map<String, String> predefinedPropsMap) {
         List<String> props = predefinedPropsMap.collect { "${it.key}=${it.value}" }
         this.predefinedProps.addAll(props)
-    }
-
-    /**
-     * Adds parameters. Can be called multiple times to add more parameters.
-     */
-    @Deprecated
-    void predefinedProps(String predefinedProps) {
-        jobManagement.logDeprecationWarning()
-        this.predefinedProps.addAll(predefinedProps.split('\n'))
     }
 
     /**
