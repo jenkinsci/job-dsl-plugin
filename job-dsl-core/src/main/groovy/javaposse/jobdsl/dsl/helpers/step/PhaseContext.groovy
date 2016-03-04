@@ -12,20 +12,20 @@ class PhaseContext extends AbstractContext {
     String phaseName
     String continuationCondition
     String executionType
-    String resumeCondition
-    String expression
+    Boolean enableGroovyScript
+    String groovyScript
 
     List<PhaseJobContext> jobsInPhase = []
 
     PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
-                 String executionType, String resumeCondition, String expression) {
+                 String executionType, Boolean enableGroovyScript, String groovyScript) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
         this.continuationCondition = continuationCondition
         this.executionType = executionType
-        this.resumeCondition = resumeCondition
-        this.expression = expression
+        this.enableGroovyScript = enableGroovyScript
+        this.groovyScript = groovyScript
     }
 
     /**
@@ -47,6 +47,21 @@ class PhaseContext extends AbstractContext {
      */
     void executionType(String executionType) {
         this.executionType = executionType
+    }
+
+    /**
+     * Defines groovy script
+     * @param script
+     */
+    void groovyScript(String script) {
+        if (null == enableGroovyScript) {
+            this.enableGroovyScript = true
+        }
+        this.groovyScript = script
+    }
+
+    void enableGroovyScript(boolean enableGroovyScript) {
+        this.enableGroovyScript = enableGroovyScript
     }
 
     /**
@@ -92,17 +107,5 @@ class PhaseContext extends AbstractContext {
         ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
 
         jobsInPhase << phaseJobContext
-    }
-
-    /**
-     * Defines how to run jobs in a phase after resuming the failed multijob buld.
-     * @param resumeCondition
-     */
-    void resumeCondition(String resumeCondition) {
-        this.resumeCondition = resumeCondition
-    }
-
-    void resumeExpression(String expression) {
-        this.expression = expression
     }
 }

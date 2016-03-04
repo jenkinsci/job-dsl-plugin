@@ -16,10 +16,6 @@ class MultiJobStepContext extends StepContext {
             'PARALLEL', 'SEQUENTIAL'
     ]
 
-    private static final List<String> VALID_RESUME_CONDITIONS = [
-            'SKIP', 'NEVER', 'EXPRESSION'
-    ]
-
     MultiJobStepContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
     }
@@ -56,7 +52,7 @@ class MultiJobStepContext extends StepContext {
     void phase(String name, String continuationCondition, String executionType,
                @DslContext(PhaseContext) Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition, executionType,
-                'SKIP', '')
+                null, '')
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         Preconditions.checkNotNullOrEmpty(phaseContext.phaseName, 'A phase needs a name')
@@ -68,19 +64,12 @@ class MultiJobStepContext extends StepContext {
                 VALID_EXECUTION_TYPES.contains(phaseContext.executionType),
                 "Execution type needs to be one of these values: ${VALID_EXECUTION_TYPES.join(', ')}"
         )
-        Preconditions.checkArgument(
-                VALID_RESUME_CONDITIONS.contains(phaseContext.resumeCondition),
-                "Resume condition needs to be one of these values: ${VALID_RESUME_CONDITIONS.join(', ')}"
-        )
-
         stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName
             delegate.continuationCondition(phaseContext.continuationCondition)
             delegate.executionType(phaseContext.executionType)
-            delegate.resumeCondition(phaseContext.resumeCondition)
-            delegate.resumeExpression(phaseContext.expression)
-            //delegate.script(phaseContext.script)
-            //delegate.script(phaseContext.enableScript, phaseContext.script)
+            delegate.enableGroovyScript(phaseContext.enableGroovyScript)
+            delegate.groovyScript(phaseContext.groovyScript)
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {

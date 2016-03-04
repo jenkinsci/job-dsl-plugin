@@ -28,6 +28,10 @@ multiJob('example') {
                 configure { phaseJobConfig ->
                     phaseJobConfig / enableCondition << 'true'
                     phaseJobConfig / condition << '${RUN_JOB} == "true"'
+                    phaseJobConfig / resumeCondition << 'SKIP'
+                    phaseJobConfig / resumeExpression << '1 == 1'
+                    phaseJobConfig / enableJobScript << 'true'
+                    phaseJobConfig / jobScript << 'return true'
                 }
             }
         }
