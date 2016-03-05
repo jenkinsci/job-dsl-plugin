@@ -31,7 +31,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
    ([JENKINS-32678](https://issues.jenkins-ci.org/browse/JENKINS-32678))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-   ([#753](https://github.com/jenkinsci/job-dsl-plugin/pull/753))
+   ([#753](https://github.com/jenkinsci/job-dsl-plugin/pull/753),
+   [#769](https://github.com/jenkinsci/job-dsl-plugin/pull/769))
  * Enhanced support for the [Mask Passwords Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin)
    ([#755](https://github.com/jenkinsci/job-dsl-plugin/pull/755))
  * Fixed a problem with relative job names
