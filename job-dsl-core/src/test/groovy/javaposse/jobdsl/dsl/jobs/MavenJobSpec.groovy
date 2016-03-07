@@ -99,6 +99,15 @@ class MavenJobSpec extends Specification {
         job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
     }
 
+    def 'incrementalBuild constructs xml'() {
+        when:
+        job.incrementalBuild(true)
+
+        then:
+        job.node.incrementalBuild.size() == 1
+        job.node.incrementalBuild[0].value() == true
+    }
+
     def 'can add preBuildSteps'() {
         when:
         job.preBuildSteps {

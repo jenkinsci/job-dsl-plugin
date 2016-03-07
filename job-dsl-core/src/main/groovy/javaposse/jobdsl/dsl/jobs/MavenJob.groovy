@@ -158,6 +158,20 @@ class MavenJob extends Job {
     }
 
     /**
+     * Set to build only changed modules of a Maven multi module build.
+     * Defaults to {@code false} which means to build all modules.
+     *
+     * @param incrementalBuild set to <code>true</code> to enable building of changed modules.
+     * @since 1.44
+     */
+    void incrementalBuild(boolean incrementalBuild) {
+        configure { Node project ->
+            Node node = methodMissing('incrementalBuild', incrementalBuild)
+            project / node
+        }
+    }
+
+    /**
      * Adds build steps to run before the Maven execution.
      *
      * @since 1.20
