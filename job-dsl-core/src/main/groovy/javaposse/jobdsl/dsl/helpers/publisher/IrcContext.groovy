@@ -9,7 +9,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 class IrcContext implements Context {
     List<IrcPublisherChannel> channels = []
 
-    List<String> strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
+    List<String> strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'NEW_FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
 
     List<String> notificationMessages = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
@@ -65,7 +65,7 @@ class IrcContext implements Context {
 
     /**
      * Specifies when to send notifications. Must be one of {@code 'ALL'}, {@code 'FAILURE_AND_FIXED'},
-     * {@code 'ANY_FAILURE'} or {@code 'STATECHANGE_ONLY'}.
+     * {@code 'ANY_FAILURE'}, {@code 'NEW_FAILURE_AND_FIXED'} or {@code 'STATECHANGE_ONLY'}.
      */
     void strategy(String strategy) {
         checkArgument(strategies.contains(strategy), "Possible values: ${strategies.join(',')}")

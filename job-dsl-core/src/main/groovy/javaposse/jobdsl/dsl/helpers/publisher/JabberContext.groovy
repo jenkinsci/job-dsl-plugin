@@ -6,7 +6,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class JabberContext implements Context {
     private static final Set<String> VALID_STRATEGY_NAMES = [
-            'ALL', 'FAILURE_AND_FIXED', 'ANY_FAILURE', 'STATECHANGE_ONLY'
+            'ALL', 'FAILURE_AND_FIXED', 'ANY_FAILURE', 'STATECHANGE_ONLY', 'NEW_FAILURE_AND_FIXED'
     ]
     private static final Set<String> VALID_CHANNEL_NOTIFICATION_NAMES = [
             'Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests'
@@ -22,7 +22,7 @@ class JabberContext implements Context {
 
     /**
      * Specifies when to send notifications. Must be one of {@code 'ALL'} (default), {@code 'FAILURE_AND_FIXED'},
-     * {@code 'ANY_FAILURE'} or {@code 'STATECHANGE_ONLY'}.
+     * {@code 'ANY_FAILURE'}, {@code 'NEW_FAILURE_AND_FIXED'} or {@code 'STATECHANGE_ONLY'}.
      */
     void strategyName(String strategyName) {
         checkArgument(
