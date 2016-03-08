@@ -438,7 +438,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void publishJabber(String targets, @DslContext(JabberContext) Closure jabberClosure = null) {
         jobManagement.logPluginDeprecationWarning('jabber', '1.35')
 
-        JabberContext jabberContext = new JabberContext()
+        JabberContext jabberContext = new JabberContext(jobManagement)
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.jabber.im.transport.JabberPublisher' {
@@ -672,7 +672,9 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ircbot')
     void irc(@DslContext(IrcContext) Closure ircClosure) {
-        IrcContext ircContext = new IrcContext()
+        jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+
+        IrcContext ircContext = new IrcContext(jobManagement)
         ContextHelper.executeInContext(ircClosure, ircContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.ircbot.IrcPublisher' {
@@ -680,20 +682,20 @@ class PublisherContext extends AbstractExtensibleContext {
                 ircContext.channels.each { IrcContext.IrcPublisherChannel channel ->
                     'hudson.plugins.im.GroupChatIMMessageTarget' {
                         delegate.createNode('name', channel.name)
-                        password channel.password
-                        notificationOnly channel.notificationOnly ? 'true' : 'false'
+                        password(channel.password)
+                        notificationOnly(channel.notificationOnly)
                     }
                 }
             }
-            strategy ircContext.strategy
-            notifyOnBuildStart ircContext.notifyOnBuildStarts ? 'true' : 'false'
-            notifySuspects ircContext.notifyScmCommitters ? 'true' : 'false'
-            notifyCulprits ircContext.notifyScmCulprits ? 'true' : 'false'
-            notifyFixers ircContext.notifyScmFixers ? 'true' : 'false'
-            notifyUpstreamCommitters ircContext.notifyUpstreamCommitters ? 'true' : 'false'
-
-            String className = "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
-            buildToChatNotifier(class: className)
+            strategy(ircContext.strategy)
+            notifyOnBuildStart(ircContext.notifyOnBuildStarts)
+            notifySuspects(ircContext.notifyScmCommitters)
+            notifyCulprits(ircContext.notifyScmCulprits)
+            notifyFixers(ircContext.notifyScmFixers)
+            notifyUpstreamCommitters(ircContext.notifyUpstreamCommitters)
+            buildToChatNotifier(
+                    class: "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
+            )
         }
     }
 

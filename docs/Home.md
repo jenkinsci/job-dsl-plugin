@@ -28,6 +28,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
    ([JENKINS-32906](https://issues.jenkins-ci.org/browse/JENKINS-32906))
+ * Enhanced support for the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) and the
+   [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
+   ([#770](https://github.com/jenkinsci/job-dsl-plugin/pull/770))
  * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
    ([JENKINS-32678](https://issues.jenkins-ci.org/browse/JENKINS-32678))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
@@ -49,6 +52,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-144)
+ * Support for the older versions of the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-144)
  * Deprecated a method for the [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin), see
    [Migration](Migration#migrating-to-144) 
  * Deprecated several methods for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin), see
