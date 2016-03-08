@@ -28,6 +28,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
    ([JENKINS-32906](https://issues.jenkins-ci.org/browse/JENKINS-32906))
+ * Enhanced support for the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) and the
+   [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
+   ([#770](https://github.com/jenkinsci/job-dsl-plugin/pull/770))
  * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
    ([JENKINS-32678](https://issues.jenkins-ci.org/browse/JENKINS-32678))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
