@@ -1,10 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
-class JabberContext implements Context {
+class JabberContext extends AbstractContext {
     private static final Set<String> VALID_STRATEGY_NAMES = [
             'ALL', 'FAILURE_AND_FIXED', 'ANY_FAILURE', 'STATECHANGE_ONLY', 'NEW_FAILURE_AND_FIXED'
     ]
@@ -20,6 +21,10 @@ class JabberContext implements Context {
     boolean notifyUpstreamCommitters = false
     String channelNotificationName = 'Default'
 
+    JabberContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
     /**
      * Specifies when to send notifications. Must be one of {@code 'ALL'} (default), {@code 'FAILURE_AND_FIXED'},
      * {@code 'ANY_FAILURE'}, {@code 'NEW_FAILURE_AND_FIXED'} or {@code 'STATECHANGE_ONLY'}.
@@ -29,6 +34,9 @@ class JabberContext implements Context {
                 VALID_STRATEGY_NAMES.contains(strategyName),
                 "Jabber Strategy needs to be one of these values: ${VALID_STRATEGY_NAMES.join(',')}"
         )
+        if (strategyName == 'NEW_FAILURE_AND_FIXED') {
+            jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
+        }
         this.strategyName = strategyName
     }
 

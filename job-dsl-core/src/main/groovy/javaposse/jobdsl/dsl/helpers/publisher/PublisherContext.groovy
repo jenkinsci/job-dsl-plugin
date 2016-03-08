@@ -438,7 +438,7 @@ class PublisherContext extends AbstractExtensibleContext {
     void publishJabber(String targets, @DslContext(JabberContext) Closure jabberClosure = null) {
         jobManagement.logPluginDeprecationWarning('jabber', '1.35')
 
-        JabberContext jabberContext = new JabberContext()
+        JabberContext jabberContext = new JabberContext(jobManagement)
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.jabber.im.transport.JabberPublisher' {
@@ -672,7 +672,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ircbot')
     void irc(@DslContext(IrcContext) Closure ircClosure) {
-        IrcContext ircContext = new IrcContext()
+        IrcContext ircContext = new IrcContext(jobManagement)
         ContextHelper.executeInContext(ircClosure, ircContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.ircbot.IrcPublisher' {

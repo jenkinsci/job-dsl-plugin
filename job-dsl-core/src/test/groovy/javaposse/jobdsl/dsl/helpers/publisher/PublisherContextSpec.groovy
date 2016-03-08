@@ -1211,6 +1211,39 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
     }
 
+    def 'call Jabber publish with NEW_FAILURE_AND_FIXED strategy'() {
+        when:
+        context.publishJabber('me@gmail.com') {
+            strategyName('NEW_FAILURE_AND_FIXED')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.DefaultIMMessageTarget'
+                    children().size() == 1
+                    value[0].value() == 'me@gmail.com'
+                }
+            }
+            strategy[0].value() == 'NEW_FAILURE_AND_FIXED'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
+        1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+        1 * jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
+    }
+
     def 'call Jabber publish with invalid strategy'() {
         when:
         context.publishJabber('me@gmail.com') {
@@ -1702,6 +1735,18 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes[0].strategy[0].value() == 'STATECHANGE_ONLY'
         1 * jobManagement.requirePlugin('ircbot')
+    }
+
+    def 'irc notification strategy is set to NEW_FAILURE_AND_FIXED'() {
+        when:
+        context.irc {
+            strategy('NEW_FAILURE_AND_FIXED')
+        }
+
+        then:
+        context.publisherNodes[0].strategy[0].value() == 'NEW_FAILURE_AND_FIXED'
+        1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
     }
 
     def 'irc notification invalid strategy triggers exception'() {
