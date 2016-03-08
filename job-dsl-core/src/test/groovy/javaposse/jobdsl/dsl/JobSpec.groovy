@@ -210,12 +210,11 @@ class JobSpec extends Specification {
         when:
         job.scm {
             git {
-                wipeOutWorkspace()
             }
         }
 
         then:
-        job.node.scm[0].wipeOutWorkspace[0].text() == 'true'
+        job.node.scm[0].configVersion[0].text() == '2'
     }
 
     def 'duplicate scm calls allowed with multiscm'() {

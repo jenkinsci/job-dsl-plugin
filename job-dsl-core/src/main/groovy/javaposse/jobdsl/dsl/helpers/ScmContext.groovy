@@ -97,7 +97,8 @@ class ScmContext extends AbstractExtensibleContext {
         }
 
         if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
-            gitContext.extensions << new NodeBuilder().'hudson.plugins.git.extensions.impl.CloneOption' {
+            gitContext.extensionContext.extensions << new NodeBuilder().
+                    'hudson.plugins.git.extensions.impl.CloneOption' {
                 shallow(gitContext.shallowClone)
                 reference(gitContext.reference)
                 if (gitContext.cloneTimeout) {
@@ -136,8 +137,8 @@ class ScmContext extends AbstractExtensibleContext {
                 localBranch gitContext.localBranch
             }
             skipTag !gitContext.createTag
-            if (gitContext.extensions) {
-                extensions(gitContext.extensions)
+            if (gitContext.extensionContext.extensions) {
+                extensions(gitContext.extensionContext.extensions)
             }
         }
 
@@ -186,7 +187,9 @@ class ScmContext extends AbstractExtensibleContext {
             if (configure) {
                 delegate.configure(configure)
             }
-            delegate.createTag()
+            extensions {
+                perBuildTag()
+            }
         }
     }
 

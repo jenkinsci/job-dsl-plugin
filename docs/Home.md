@@ -32,6 +32,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-32678](https://issues.jenkins-ci.org/browse/JENKINS-32678))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([#753](https://github.com/jenkinsci/job-dsl-plugin/pull/753),
+   [#767](https://github.com/jenkinsci/job-dsl-plugin/pull/767),
    [#769](https://github.com/jenkinsci/job-dsl-plugin/pull/769))
  * Enhanced support for the [Mask Passwords Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin)
    ([#755](https://github.com/jenkinsci/job-dsl-plugin/pull/755))
@@ -50,6 +51,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-144)
  * Deprecated a method for the [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin), see
    [Migration](Migration#migrating-to-144) 
+ * Deprecated several methods for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin), see
+   [Migration](Migration#migrating-to-144)
  * Removed a method in `JobManagement` interface, see [Migration](Migration#migrating-to-144)
  * Moved two classes, see [Migration](Migration#migrating-to-144)
  * Removed anything that has been deprecated in 1.38, see [Migration](Migration#migrating-to-138)

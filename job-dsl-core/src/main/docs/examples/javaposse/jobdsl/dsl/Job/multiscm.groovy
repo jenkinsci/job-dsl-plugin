@@ -4,13 +4,17 @@ job('example') {
             remote {
                 github('jenkinsci/jenkins')
             }
-            relativeTargetDir('jenkins')
+            extensions {
+                relativeTargetDirectory('jenkins')
+            }
         }
         git {
             remote {
                 github('jenkinsci/job-dsl-plugin')
             }
-            relativeTargetDir('job-dsl-plugin')
+            extensions {
+                relativeTargetDirectory('job-dsl-plugin')
+            }
         }
     }
 }
