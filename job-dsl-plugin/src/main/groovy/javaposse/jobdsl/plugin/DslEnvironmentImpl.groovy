@@ -1,105 +1,99 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin
 
-import javaposse.jobdsl.dsl.Context;
-import javaposse.jobdsl.dsl.Item;
-import javaposse.jobdsl.dsl.JobManagement;
+import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.Item
+import javaposse.jobdsl.dsl.JobManagement
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Constructor
 
-public class DslEnvironmentImpl implements DslEnvironment {
-    private final Map<String, Object> data = new HashMap<String, Object>();
-    private final JobManagement jobManagement;
-    private final Item item;
+class DslEnvironmentImpl implements DslEnvironment {
+    private final Map<String, Object> data = [:]
+    private final JobManagement jobManagement
+    private final Item item
 
-    public DslEnvironmentImpl(JobManagement jobManagement, Item item) {
-        this.jobManagement = jobManagement;
-        this.item = item;
+    DslEnvironmentImpl(JobManagement jobManagement, Item item) {
+        this.jobManagement = jobManagement
+        this.item = item
     }
 
     @Override
-    public <T extends Context> T createContext(Class<T> contextClass) throws IllegalAccessException,
-            InvocationTargetException, InstantiationException {
-        Constructor<?>[] constructors = contextClass.getConstructors();
+    <T extends Context> T createContext(Class<T> contextClass) {
+        Constructor<?>[] constructors = contextClass.constructors
         if (constructors.length != 1) {
-            throw new IllegalArgumentException("the context class must have exactly one public constructor");
+            throw new IllegalArgumentException('the context class must have exactly one public constructor')
         }
-        Constructor<?> constructor = constructors[0];
-        Class<?>[] parameterTypes = constructor.getParameterTypes();
-        Object[] args = new Object[parameterTypes.length];
+        Constructor<?> constructor = constructors[0]
+        Class<?>[] parameterTypes = constructor.parameterTypes
+        Object[] args = new Object[parameterTypes.length]
         for (int i = 0; i < parameterTypes.length; i++) {
             if (parameterTypes[i].isInstance(jobManagement)) {
-                args[i] = jobManagement;
+                args[i] = jobManagement
             } else if (parameterTypes[i].isInstance(item)) {
-                args[i] = item;
+                args[i] = item
             } else {
-                throw new IllegalArgumentException("unsupported constructor parameter type: " + parameterTypes[i].getName());
+                throw new IllegalArgumentException("unsupported constructor parameter type: ${parameterTypes[i].name}")
             }
         }
-        return contextClass.cast(constructor.newInstance(args));
+        contextClass.cast(constructor.newInstance(args))
     }
 
     @Override
-    public int size() {
-        return data.size();
+    int size() {
+        data.size()
     }
 
     @Override
-    public boolean isEmpty() {
-        return data.isEmpty();
+    boolean isEmpty() {
+        data.empty
     }
 
     @Override
-    public boolean containsKey(Object key) {
-        return data.containsKey(key);
+    boolean containsKey(Object key) {
+        data.containsKey(key)
     }
 
     @Override
-    public boolean containsValue(Object value) {
-        return data.containsValue(value);
+    boolean containsValue(Object value) {
+        data.containsValue(value)
     }
 
     @Override
-    public Object get(Object key) {
-        return data.get(key);
+    Object get(Object key) {
+        data.get(key)
     }
 
     @Override
-    public Object put(String key, Object value) {
-        return data.put(key, value);
+    Object put(String key, Object value) {
+        data[key] = value
     }
 
     @Override
-    public Object remove(Object key) {
-        return data.remove(key);
+    Object remove(Object key) {
+        data.remove(key)
     }
 
     @Override
-    public void putAll(Map<? extends String, ?> m) {
-        data.putAll(m);
+    void putAll(Map<? extends String, ?> m) {
+        data.putAll(m)
     }
 
     @Override
-    public void clear() {
-        data.clear();
+    void clear() {
+        data.clear()
     }
 
     @Override
-    public Set<String> keySet() {
-        return data.keySet();
+    Set<String> keySet() {
+        data.keySet()
     }
 
     @Override
-    public Collection<Object> values() {
-        return data.values();
+    Collection<Object> values() {
+        data.values()
     }
 
     @Override
-    public Set<Entry<String, Object>> entrySet() {
-        return data.entrySet();
+    Set<Map.Entry<String, Object>> entrySet() {
+        data.entrySet()
     }
 }
