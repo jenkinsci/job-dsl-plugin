@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import spock.lang.Specification
 
 class AbstractExtensibleContextSpec extends Specification {

@@ -164,6 +164,11 @@ if (jobManagement.isMinimumPluginVersionInstalled('git', '2.4.0')) {
 }
 ```
 
+### ExtensibleContext
+
+The classes `ExtensibleContext` and `AbstractExtensibleContext` have been moved from the `javaposse.jobdsl.dsl.helpers`
+package to `javaposse.jobdsl.dsl`. This should not affect DSL scripts.
+
 ## Migrating to 1.42
 
 ### Task Scanner

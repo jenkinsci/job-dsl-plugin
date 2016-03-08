@@ -1,6 +1,6 @@
 package javaposse.jobdsl.plugin;
 
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
+import javaposse.jobdsl.dsl.ExtensibleContext;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
