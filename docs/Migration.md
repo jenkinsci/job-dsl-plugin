@@ -6,6 +6,11 @@ Support for versions older than 1.7 of the
 [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### IRC
+
+Support for versions older than 2.27 of the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### JobManagement
 
 The method `JobManagement#createOrUpdateConfig(String path, String config, boolean ignoreExisting)` has been

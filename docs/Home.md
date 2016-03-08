@@ -49,6 +49,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the
    [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-144)
+ * Support for the older versions of the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-144)
  * Deprecated a method for the [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin), see
    [Migration](Migration#migrating-to-144) 
  * Removed a method in `JobManagement` interface, see [Migration](Migration#migrating-to-144)

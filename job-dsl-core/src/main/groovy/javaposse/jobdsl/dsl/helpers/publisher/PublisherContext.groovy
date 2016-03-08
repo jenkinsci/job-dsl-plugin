@@ -672,6 +672,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ircbot')
     void irc(@DslContext(IrcContext) Closure ircClosure) {
+        jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+
         IrcContext ircContext = new IrcContext(jobManagement)
         ContextHelper.executeInContext(ircClosure, ircContext)
 
