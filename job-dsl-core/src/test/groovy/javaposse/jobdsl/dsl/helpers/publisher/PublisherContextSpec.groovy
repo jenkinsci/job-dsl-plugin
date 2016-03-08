@@ -1769,7 +1769,7 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        context.publisherNodes[0].notifyFixers[0].value() == 'true'
+        context.publisherNodes[0].notifyFixers[0].value() == true
         1 * jobManagement.requirePlugin('ircbot')
         1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
     }

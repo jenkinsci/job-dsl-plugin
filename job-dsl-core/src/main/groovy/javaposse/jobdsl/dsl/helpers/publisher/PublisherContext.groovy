@@ -682,20 +682,20 @@ class PublisherContext extends AbstractExtensibleContext {
                 ircContext.channels.each { IrcContext.IrcPublisherChannel channel ->
                     'hudson.plugins.im.GroupChatIMMessageTarget' {
                         delegate.createNode('name', channel.name)
-                        password channel.password
-                        notificationOnly channel.notificationOnly ? 'true' : 'false'
+                        password(channel.password)
+                        notificationOnly(channel.notificationOnly)
                     }
                 }
             }
-            strategy ircContext.strategy
-            notifyOnBuildStart ircContext.notifyOnBuildStarts ? 'true' : 'false'
-            notifySuspects ircContext.notifyScmCommitters ? 'true' : 'false'
-            notifyCulprits ircContext.notifyScmCulprits ? 'true' : 'false'
-            notifyFixers ircContext.notifyScmFixers ? 'true' : 'false'
-            notifyUpstreamCommitters ircContext.notifyUpstreamCommitters ? 'true' : 'false'
-
-            String className = "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
-            buildToChatNotifier(class: className)
+            strategy(ircContext.strategy)
+            notifyOnBuildStart(ircContext.notifyOnBuildStarts)
+            notifySuspects(ircContext.notifyScmCommitters)
+            notifyCulprits(ircContext.notifyScmCulprits)
+            notifyFixers(ircContext.notifyScmFixers)
+            notifyUpstreamCommitters(ircContext.notifyUpstreamCommitters)
+            buildToChatNotifier(
+                    class: "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
+            )
         }
     }
 
