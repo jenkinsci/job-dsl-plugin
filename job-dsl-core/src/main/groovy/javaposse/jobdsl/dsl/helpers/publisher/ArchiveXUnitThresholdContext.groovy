@@ -9,7 +9,7 @@ class ArchiveXUnitThresholdContext implements Context {
     int failureNew = 0
 
     /**
-     * Sets the build to unstable if the number or percentage of test failures or skiped tests exceeds the threshold.
+     * Sets the build to unstable if the number or percentage of test failures or skipped tests exceeds the threshold.
      * Defaults to 0.
      */
     void unstable(int unstable) {
@@ -17,7 +17,7 @@ class ArchiveXUnitThresholdContext implements Context {
     }
 
     /**
-     * Sets the build to unstable if the number or percentage of new test failures or skiped tests exceeds the
+     * Sets the build to unstable if the number or percentage of new test failures or skipped tests exceeds the
      * threshold. Defaults to 0.
      */
     void unstableNew(int unstableNew) {
@@ -25,7 +25,7 @@ class ArchiveXUnitThresholdContext implements Context {
     }
 
     /**
-     * Fails the build if the number or percentage of test failures or skiped tests exceeds the threshold.
+     * Fails the build if the number or percentage of test failures or skipped tests exceeds the threshold.
      * Defaults to 0.
      */
     void failure(int failure) {
@@ -33,7 +33,7 @@ class ArchiveXUnitThresholdContext implements Context {
     }
 
     /**
-     * Fails the build if the number or percentage of test failures or skiped tests exceeds the threshold.
+     * Fails the build if the number or percentage of test failures or skipped tests exceeds the threshold.
      * Defaults to 0.
      */
     void failureNew(int failureNew) {
