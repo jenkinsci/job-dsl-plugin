@@ -2028,8 +2028,8 @@ class StepContextSpec extends Specification {
                 ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCause': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
                 ['earliestHours': 9, 'earliestMinutes': 10,
-                 'latestHours': 14, 'latestMinutes': 45,
-                 'useBuildTime': false]
+                 'latestHours'  : 14, 'latestMinutes': 45,
+                 'useBuildTime' : false]
         ]
         testConditionClass << [
                 'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
@@ -3237,12 +3237,13 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'com.cloudbees.dockerpublish.DockerBuilder'
-            children().size() == 12
+            children().size() == 15
             server[0].value().empty
             registry[0].value().empty
             repoName[0].value().empty
             noCache[0].value() == false
             forcePull[0].value() == true
+            buildContext[0].value().empty
             dockerfilePath[0].value().empty
             skipBuild[0].value() == false
             skipDecorate[0].value() == false
@@ -3250,8 +3251,10 @@ class StepContextSpec extends Specification {
             skipPush[0].value() == false
             createFingerprint[0].value() == true
             skipTagLatest[0].value() == false
+            buildAdditionalArgs[0].value().empty
+            forceTag[0].value() == true
         }
-        1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.2')
     }
 
     def 'call dockerBuildAndPublish with all options'() {
@@ -3266,18 +3269,21 @@ class StepContextSpec extends Specification {
             skipPush()
             noCache()
             forcePull(false)
+            buildContext('test7')
             skipBuild()
             createFingerprints(false)
             skipDecorate()
             skipTagAsLatest()
-            dockerfileDirectory('test7')
+            dockerfileDirectory('test8')
+            buildAdditionalArgs('test9')
+            forceTag(false)
         }
 
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'com.cloudbees.dockerpublish.DockerBuilder'
-            children().size() == 12
+            children().size() == 15
             server[0].children().size() == 2
             server[0].uri[0].value() == 'test3'
             server[0].credentialsId[0].value() == 'test4'
@@ -3287,15 +3293,18 @@ class StepContextSpec extends Specification {
             repoName[0].value() == 'test1'
             noCache[0].value() == true
             forcePull[0].value() == false
-            dockerfilePath[0].value() == 'test7'
+            buildContext[0].value() == 'test7'
+            dockerfilePath[0].value() == 'test8'
             skipBuild[0].value() == true
             skipDecorate[0].value() == true
             repoTag[0].value() == 'test2'
             skipPush[0].value() == true
             createFingerprint[0].value() == false
             skipTagLatest[0].value() == true
+            buildAdditionalArgs[0].value() == 'test9'
+            forceTag[0].value() == false
         }
-        1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.2')
     }
 
     def 'call artifactDeployer with no options'() {
@@ -3454,7 +3463,7 @@ class StepContextSpec extends Specification {
 
         then:
         context.stepNodes.size() == 1
-        with (context.stepNodes[0]) {
+        with(context.stepNodes[0]) {
             name() == 'hudson.plugins.nant.NantBuilder'
             children().size() == 4
             nantBuildFile[0].value() == 'dir1/nant.build'

@@ -3,8 +3,8 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.Context
 
 class DockerBuildAndPublishContext implements Context {
-    String repositoryName
-    String tag
+    String repositoryName = ''
+    String tag = ''
     String dockerHostURI
     String serverCredentials
     String dockerRegistryURL
@@ -12,11 +12,14 @@ class DockerBuildAndPublishContext implements Context {
     boolean skipPush
     boolean noCache
     boolean forcePull = true
+    String buildContext = ''
     boolean skipBuild
     boolean createFingerprints = true
     boolean skipDecorate
     boolean skipTagAsLatest
-    String dockerfileDirectory
+    String dockerfileDirectory = ''
+    String buildAdditionalArgs = ''
+    boolean forceTag = true
 
     /**
      * Specifies the name of the repository to build.
@@ -82,6 +85,13 @@ class DockerBuildAndPublishContext implements Context {
     }
 
     /**
+     * Specifies the project root path for the build. Defaults to the workspace root if not specified
+     */
+    void buildContext(String buildContext) {
+        this.buildContext = buildContext
+    }
+
+    /**
      * If set, does not build the image. Defaults to {@code false}.
      */
     void skipBuild(boolean skipBuild = true) {
@@ -114,5 +124,19 @@ class DockerBuildAndPublishContext implements Context {
      */
     void dockerfileDirectory(String dockerfileDirectory) {
         this.dockerfileDirectory = dockerfileDirectory
+    }
+
+    /**
+     * Specifies Additional build arguments passed to docker build.
+     */
+    void buildAdditionalArgs(String buildAdditionalArgs) {
+        this.buildAdditionalArgs = buildAdditionalArgs
+    }
+
+    /**
+     * If set, force tag replacement when tag already exists. Defaults to {@code true}.
+     */
+    void forceTag(boolean forceTag = true) {
+        this.forceTag = forceTag
     }
 }
