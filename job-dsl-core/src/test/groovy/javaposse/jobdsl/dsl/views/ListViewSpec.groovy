@@ -462,6 +462,57 @@ class ListViewSpec<T extends ListView> extends Specification {
         RegexMatchValue.NAME | '.*'
     }
 
+    def 'all jobs filter'() {
+        when:
+        view.jobFilters {
+            all()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node allJobsFilter = filters[0]
+        allJobsFilter.name() == 'hudson.views.AllJobsFilter'
+        allJobsFilter.children().size() == 0
+
+        jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+    }
+
+    def 'all release jobs filter'() {
+        when:
+        view.jobFilters {
+            allRelease()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node allJobsFilter = filters[0]
+        allJobsFilter.name() == 'hudson.views.AllReleaseJobsFilter'
+        allJobsFilter.children().size() == 0
+
+        1 * jobManagement.requireMinimumPluginVersion('release', '2.5.3')
+    }
+
+    def 'release jobs filter'() {
+        when:
+        view.jobFilters {
+            release()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node releaseJobsFilter = filters[0]
+        releaseJobsFilter.name() == 'hudson.plugins.release.ReleaseJobsFilter'
+        releaseJobsFilter.children().size() == 0
+
+        1 * jobManagement.requireMinimumPluginVersion('release', '2.5.3')
+    }
+
     def 'recurse folders'() {
         when:
         view.recurse()
