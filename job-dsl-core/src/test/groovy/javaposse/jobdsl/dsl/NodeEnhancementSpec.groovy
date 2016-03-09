@@ -104,6 +104,19 @@ class NodeEnhancementSpec extends Specification {
         result == root.test[0]
     }
 
+    def 'div handles node with null attributes'() {
+        setup:
+        Node node = new Node(null, 'test', null)
+
+        when:
+        execute {
+            it / node
+        }
+
+        then:
+        root.test.size() == 1
+    }
+
     private Node execute(Closure closure) {
         closure.delegate = new MissingPropertyToStringDelegate(root)
 
