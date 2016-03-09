@@ -101,7 +101,8 @@ class NodeEnhancement {
         if (newValue instanceof List) {
             newValue = cloneNodeList((List) newValue)
         }
-        new Node(null, node.name(), new HashMap(node.attributes()), newValue)
+        Map attributes = node.attributes() ? new HashMap(node.attributes()) : [:]
+        new Node(null, node.name(), attributes, newValue)
     }
 
     /**
