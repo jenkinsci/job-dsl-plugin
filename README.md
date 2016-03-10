@@ -1,4 +1,4 @@
-Jenkins Job DSL / Plugin
+Jenkins Job DSL / Plugin [![Build Status](https://jenkins.ci.cloudbees.com/job/plugins/job//job-dsl-plugin/badge/icon)](https://jenkins.ci.cloudbees.com/job/plugins/job//job-dsl-plugin/)
 ========================
 
 The Jenkins "Job DSL / Plugin" is made up of two parts: The Domain Specific Language (DSL) itself that allows users to
