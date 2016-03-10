@@ -10,7 +10,7 @@ import javaposse.jobdsl.dsl.JobConfigurationNotFoundException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+import javaposse.jobdsl.dsl.ExtensibleContext
 
 /**
  * Checks the thread's {@link Thread#interrupted() interrupted} flag before delegating each call and throws an

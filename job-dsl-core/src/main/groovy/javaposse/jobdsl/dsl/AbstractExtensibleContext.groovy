@@ -1,10 +1,10 @@
-package javaposse.jobdsl.dsl.helpers
+package javaposse.jobdsl.dsl
 
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
-import javaposse.jobdsl.dsl.AbstractContext
-import javaposse.jobdsl.dsl.Item
-import javaposse.jobdsl.dsl.JobManagement
 
+/**
+ * Abstract base class for {@link javaposse.jobdsl.dsl.ExtensibleContext} implementations.
+ */
 abstract class AbstractExtensibleContext extends AbstractContext implements ExtensibleContext {
     protected final Item item
 

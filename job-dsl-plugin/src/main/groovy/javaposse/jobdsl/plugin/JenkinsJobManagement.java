@@ -33,7 +33,7 @@ import javaposse.jobdsl.dsl.DslScriptException;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.UserContent;
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
+import javaposse.jobdsl.dsl.ExtensibleContext;
 import javaposse.jobdsl.plugin.ExtensionPointHelper.ExtensionPointMethod;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
@@ -547,7 +547,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private DslEnvironment getSession(javaposse.jobdsl.dsl.Item item) {
         DslEnvironment session = environments.get(item);
         if (session == null) {
-            session = new DslEnvironmentImpl();
+            session = new DslEnvironmentImpl(this, item);
             environments.put(item, session);
         }
         return session;

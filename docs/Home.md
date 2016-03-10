@@ -47,6 +47,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-32941](https://issues.jenkins-ci.org/browse/JENKINS-32941))
  * Fixed documentation for [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-33176](https://issues.jenkins-ci.org/browse/JENKINS-33176))
+ * Added a method to allow instantiating contexts from an extension
+   ([JENKINS-32912](https://issues.jenkins-ci.org/browse/JENKINS-32912))
  * Log warning when script name collides with package name
    ([JENKINS-32628](https://issues.jenkins-ci.org/browse/JENKINS-32628))
  * Support for the older versions of the

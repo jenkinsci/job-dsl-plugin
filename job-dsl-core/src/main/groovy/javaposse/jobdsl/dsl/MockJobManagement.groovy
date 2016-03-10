@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 /**
  * Abstract base class for all non-Jenkins implementations of {@link JobManagement}.

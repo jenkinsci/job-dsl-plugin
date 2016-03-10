@@ -1,6 +1,6 @@
 package javaposse.jobdsl.plugin;
 
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
+import javaposse.jobdsl.dsl.ExtensibleContext;
 import org.apache.commons.lang.ClassUtils;
 
 import java.lang.reflect.InvocationTargetException;
