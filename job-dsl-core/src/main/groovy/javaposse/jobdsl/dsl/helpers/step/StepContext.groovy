@@ -1121,6 +1121,21 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Import *.developerprofile into build.
+     *
+     * @since 1.44
+     */
+    @RequiresPlugin(id = 'xcode-plugin', minimumVersion = '1.4')
+    void xcodeDeveloperProfile(@DslContext(XCodeContext) Closure closure = null) {
+        XCodeContext context = new XCodeContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'au.com.rayh.DeveloperProfileLoader' {
+            id(context.profile)
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {

@@ -21,6 +21,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.44 (unreleased)
+ * Added support for the [XCode Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xcode+Plugin)
+   ([JENKINS-32969](https://issues.jenkins-ci.org/browse/JENKINS-32969))
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
  * Added support for the [P4 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/P4+Plugin)
