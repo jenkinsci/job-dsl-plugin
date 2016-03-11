@@ -1,11 +1,11 @@
 package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.HgContext
@@ -25,11 +25,9 @@ class ScmContext extends AbstractExtensibleContext {
     private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
 
     final List<Node> scmNodes = []
-    private final List<WithXmlAction> withXmlActions
 
-    ScmContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement, Item item) {
+    ScmContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
-        this.withXmlActions = withXmlActions
     }
 
     @Override
@@ -76,10 +74,7 @@ class ScmContext extends AbstractExtensibleContext {
         if (hgContext.subdirectory) {
             scmNode.appendNode('subdir', hgContext.subdirectory)
         }
-        if (hgContext.withXmlClosure) {
-            WithXmlAction action = new WithXmlAction(hgContext.withXmlClosure)
-            action.execute(scmNode)
-        }
+        ContextHelper.executeConfigureBlock(scmNode, hgContext.configureBlock)
         scmNodes << scmNode
     }
 
@@ -90,7 +85,7 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(@DslContext(GitContext) Closure gitClosure) {
-        GitContext gitContext = new GitContext(withXmlActions, jobManagement)
+        GitContext gitContext = new GitContext(jobManagement, item)
         executeInContext(gitClosure, gitContext)
 
         if (gitContext.branches.empty) {
@@ -151,11 +146,8 @@ class ScmContext extends AbstractExtensibleContext {
             gitNode.children().add(gitContext.strategyContext.buildChooser)
         }
 
-        // Apply Context
-        if (gitContext.withXmlClosure) {
-            WithXmlAction action = new WithXmlAction(gitContext.withXmlClosure)
-            action.execute(gitNode)
-        }
+        ContextHelper.executeConfigureBlock(gitNode, gitContext.configureBlock)
+
         scmNodes << gitNode
     }
 
@@ -289,10 +281,7 @@ class ScmContext extends AbstractExtensibleContext {
             excludedRevprop(svnContext.excludedRevisionProperty ?: '')
         }
 
-        if (svnContext.configureClosure) {
-            WithXmlAction action = new WithXmlAction(svnContext.configureClosure)
-            action.execute(svnNode)
-        }
+        ContextHelper.executeConfigureBlock(svnNode, svnContext.configureBlock)
 
         scmNodes << svnNode
     }
@@ -336,7 +325,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     @RequiresPlugin(id = 'perforce')
-    void p4(String viewspec, String user, String password, Closure configure = null) {
+    void p4(String viewspec, String user, String password, Closure configureBlock = null) {
         checkNotNull(viewspec, 'viewspec must not be null')
 
         Node p4Node = new NodeBuilder().scm(class: 'hudson.plugins.perforce.PerforceSCM') {
@@ -372,11 +361,8 @@ class ScmContext extends AbstractExtensibleContext {
             pollOnlyOnMaster 'true'
         }
 
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(p4Node)
-        }
+        ContextHelper.executeConfigureBlock(p4Node, configureBlock)
+
         scmNodes << p4Node
     }
 
@@ -410,10 +396,7 @@ class ScmContext extends AbstractExtensibleContext {
         }
         p4Node.children().add(p4Context.workspaceContext.workspaceConfig)
 
-        if (p4Context.withXmlClosure) {
-            WithXmlAction action = new WithXmlAction(p4Context.withXmlClosure)
-            action.execute(p4Node)
-        }
+        ContextHelper.executeConfigureBlock(p4Node, p4Context.configureBlock)
 
         scmNodes << p4Node
     }

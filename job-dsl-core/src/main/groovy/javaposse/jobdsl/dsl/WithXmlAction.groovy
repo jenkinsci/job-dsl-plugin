@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+@Deprecated
 class WithXmlAction {
     private final Closure closure
 

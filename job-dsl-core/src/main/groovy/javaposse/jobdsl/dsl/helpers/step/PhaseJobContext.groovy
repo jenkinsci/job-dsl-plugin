@@ -19,7 +19,7 @@ class PhaseJobContext extends AbstractContext {
     boolean disableJob = false
     boolean abortAllJobs = false
     String killPhaseCondition = 'FAILURE'
-    Closure configureClosure
+    Closure configureBlock
 
     PhaseJobContext(JobManagement jobManagement, Item item, String jobName) {
         super(jobManagement)
@@ -196,7 +196,7 @@ class PhaseJobContext extends AbstractContext {
      * @since 1.30
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure configureClosure) {
-        this.configureClosure = configureClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 }

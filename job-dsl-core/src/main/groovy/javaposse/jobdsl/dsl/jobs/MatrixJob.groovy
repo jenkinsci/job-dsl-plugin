@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AxisContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
@@ -26,9 +25,7 @@ class MatrixJob extends Job {
             context.axisNodes.each {
                 axesNode << it
             }
-            context.configureBlocks.each {
-                new WithXmlAction(it).execute(axesNode)
-            }
+            ContextHelper.executeConfigureBlocks(axesNode, context.configureBlocks)
         }
     }
 

@@ -12,7 +12,7 @@ class EmailContext implements Context {
 
     ]
     List<EmailTrigger> emailTriggers = []
-    Closure configureClosure
+    Closure configureBlock
 
     /**
      * Specifies the condition that should cause an email notification to be sent. Can be called multiple times to add
@@ -58,8 +58,8 @@ class EmailContext implements Context {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure configureClosure) {
-        this.configureClosure = configureClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 
     static class EmailTrigger {

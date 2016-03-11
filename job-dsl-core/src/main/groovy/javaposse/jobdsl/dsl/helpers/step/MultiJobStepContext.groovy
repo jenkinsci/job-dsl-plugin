@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-import javaposse.jobdsl.dsl.WithXmlAction
 
 class MultiJobStepContext extends StepContext {
     private static final List<String> VALID_CONTINUATION_CONDITIONS = [
@@ -62,10 +61,7 @@ class MultiJobStepContext extends StepContext {
                         configs(jobInPhase.paramTrigger.configs ?: [class: 'java.util.Collections$EmptyList'])
                     }
 
-                    if (jobInPhase.configureClosure) {
-                        WithXmlAction action = new WithXmlAction(jobInPhase.configureClosure)
-                        action.execute(phaseJobNode)
-                    }
+                    ContextHelper.executeConfigureBlock(phaseJobNode, jobInPhase.configureBlock)
                 }
             }
         }

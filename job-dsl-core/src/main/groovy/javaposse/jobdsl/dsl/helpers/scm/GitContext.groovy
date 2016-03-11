@@ -2,13 +2,13 @@ package javaposse.jobdsl.dsl.helpers.scm
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class GitContext extends AbstractContext {
-    private final List<WithXmlAction> withXmlActions
+    private final Item item
 
     List<Node> remoteConfigs = []
     List<String> branches = []
@@ -24,22 +24,22 @@ class GitContext extends AbstractContext {
     String localBranch
     String relativeTargetDir
     String reference = ''
-    Closure withXmlClosure
+    Closure configureBlock
     final GitBrowserContext gitBrowserContext = new GitBrowserContext(jobManagement)
     Integer cloneTimeout
     GitExtensionContext extensionContext = new GitExtensionContext(jobManagement)
     final StrategyContext strategyContext = new StrategyContext(jobManagement)
 
-    GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
+    GitContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
-        this.withXmlActions = withXmlActions
+        this.item = item
     }
 
     /**
      * Adds a remote. Can be repeated to add multiple remotes.
      */
     void remote(@DslContext(RemoteContext) Closure remoteClosure) {
-        RemoteContext remoteContext = new RemoteContext(withXmlActions)
+        RemoteContext remoteContext = new RemoteContext(item)
         executeInContext(remoteClosure, remoteContext)
 
         remoteConfigs << NodeBuilder.newInstance().'hudson.plugins.git.UserRemoteConfig' {
@@ -254,8 +254,8 @@ class GitContext extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure withXmlClosure) {
-        this.withXmlClosure = withXmlClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 
     /**

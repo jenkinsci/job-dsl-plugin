@@ -13,7 +13,7 @@ class SvnContext extends AbstractContext {
     List<String> excludedUsers = []
     List<String> excludedCommitMessages = []
     String excludedRevisionProperty
-    Closure configureClosure
+    Closure configureBlock
 
     SvnContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -137,10 +137,10 @@ class SvnContext extends AbstractContext {
      * Sets a closure to be called when the XML node structure is created.
      * The SVN node is passed to the closure as the first parameter.
      *
-     * @param closure closure used to perform additional configuration on the generated SVN node
+     * @param configureBlock closure used to perform additional configuration on the generated SVN node
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure closure) {
-        this.configureClosure = closure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 }

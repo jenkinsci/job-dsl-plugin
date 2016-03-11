@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 
 /**
@@ -83,11 +82,7 @@ class ItemTriggerContext extends AbstractExtensibleContext {
             }
         }
 
-        // Apply their overrides
-        if (urlTriggerContext.configureClosure) {
-            WithXmlAction action = new WithXmlAction(urlTriggerContext.configureClosure)
-            action.execute(urlTriggerNode)
-        }
+        ContextHelper.executeConfigureBlock(urlTriggerNode, urlTriggerContext.configureBlock)
 
         triggerNodes << urlTriggerNode
     }

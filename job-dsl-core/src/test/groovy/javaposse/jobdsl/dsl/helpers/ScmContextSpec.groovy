@@ -3,9 +3,9 @@ package javaposse.jobdsl.dsl.helpers
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlActionSpec
 import javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy
 import javaposse.jobdsl.dsl.helpers.scm.SvnDepth
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -13,9 +13,8 @@ class ScmContextSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
 
     JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    ScmContext context = new ScmContext([], mockJobManagement, item)
-    Node root = new XmlParser().parse(new StringReader(WithXmlActionSpec.XML))
+    Item item = new FreeStyleJob(mockJobManagement)
+    ScmContext context = new ScmContext(mockJobManagement, item)
 
     def 'extension node is transformed to SCM node'() {
         Node node = new Node(null, 'org.example.CustomSCM', [foo: 'bar'])
@@ -1501,11 +1500,10 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == '**'
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
-        context.withXmlActions.size() == 1
         (1.._) * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
 
         when:
-        context.withXmlActions[0].execute(root)
+        Node root = item.node
 
         then:
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() ==
@@ -1532,11 +1530,10 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
-        context.withXmlActions.size() == 1
         (1.._) * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
 
         when:
-        context.withXmlActions[0].execute(root)
+        Node root = item.node
 
         then:
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() ==
@@ -1554,11 +1551,10 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.com/jenkinsci/job-dsl-plugin/'
-        context.withXmlActions.size() == 1
         (1.._) * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
 
         when:
-        context.withXmlActions[0].execute(root)
+        Node root = item.node
 
         then:
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() ==
@@ -1584,11 +1580,10 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == 'master'
         context.scmNodes[0].browser[0].attribute('class') == 'hudson.plugins.git.browser.GithubWeb'
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
-        context.withXmlActions.size() == 1
         (1.._) * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
 
         when:
-        context.withXmlActions[0].execute(root)
+        Node root = item.node
 
         then:
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() ==
@@ -1656,11 +1651,10 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].url[0].value() == 'https://github.acme.com/jenkinsci/job-dsl-plugin/'
         context.scmNodes[0].gitConfigName.size() == 1
         context.scmNodes[0].gitConfigName[0].text() == 'john'
-        context.withXmlActions.size() == 1
         (1.._) * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
 
         when:
-        context.withXmlActions[0].execute(root)
+        Node root = item.node
 
         then:
         root.'properties'[0].'com.coravy.hudson.plugins.github.GithubProjectProperty'[0].projectUrl[0].value() ==
