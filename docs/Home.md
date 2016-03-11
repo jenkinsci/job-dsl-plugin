@@ -20,7 +20,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.44 (unreleased)
+* 1.44 (March 11 2016)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
  * Added support for the [P4 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/P4+Plugin)
