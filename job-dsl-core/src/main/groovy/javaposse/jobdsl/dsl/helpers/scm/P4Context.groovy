@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 
 class P4Context implements Context {
     P4WorkspaceContext workspaceContext = new P4WorkspaceContext()
-    Closure withXmlClosure
+    Closure configureBlock
 
     /**
      * Sets the appropriate Perforce workspace behaviour.
@@ -20,7 +20,7 @@ class P4Context implements Context {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure withXmlClosure) {
-        this.withXmlClosure = withXmlClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 }

@@ -528,7 +528,7 @@ abstract class Job extends Item {
      * Allows a job to check out sources from an SCM provider.
      */
     void scm(@DslContext(ScmContext) Closure closure) {
-        ScmContext context = new ScmContext(withXmlActions, jobManagement, this)
+        ScmContext context = new ScmContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         if (!context.scmNodes.empty) {
@@ -552,7 +552,7 @@ abstract class Job extends Item {
      */
     @RequiresPlugin(id = 'multiple-scms')
     void multiscm(@DslContext(ScmContext) Closure closure) {
-        ScmContext context = new ScmContext(withXmlActions, jobManagement, this)
+        ScmContext context = new ScmContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         configure { Node project ->
@@ -645,19 +645,9 @@ abstract class Job extends Item {
         }
     }
 
-    Node getNode() {
-        Node project = templateName == null ? executeEmptyTemplate() : executeUsing()
-
-        executeWithXmlActions(project)
-
-        project
-    }
-
-    void executeWithXmlActions(final Node root) {
-        // Create builder, based on what we already have
-        withXmlActions.each { WithXmlAction withXmlClosure ->
-            withXmlClosure.execute(root)
-        }
+    @Override
+    protected Node getNodeTemplate() {
+        templateName == null ? super.nodeTemplate : executeUsing()
     }
 
     private Node executeUsing() {
@@ -669,16 +659,12 @@ abstract class Job extends Item {
         }
 
         Node templateNode = new XmlParser().parse(new StringReader(configXml))
-        Node emptyTemplateNode = executeEmptyTemplate()
+        Node emptyTemplateNode = super.nodeTemplate
 
         if (emptyTemplateNode.name() != templateNode.name()) {
             throw new JobTypeMismatchException(name, templateName)
         }
 
         templateNode
-    }
-
-    private Node executeEmptyTemplate() {
-        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
     }
 }

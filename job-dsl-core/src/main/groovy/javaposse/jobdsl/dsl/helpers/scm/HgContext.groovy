@@ -12,7 +12,7 @@ class HgContext extends AbstractContext {
     String credentialsId
     boolean clean
     boolean disableChangeLog
-    Closure withXmlClosure
+    Closure configureBlock
 
     HgContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -79,7 +79,7 @@ class HgContext extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure withXmlClosure) {
-        this.withXmlClosure = withXmlClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 }

@@ -76,23 +76,8 @@ class JobSpec extends Specification {
         job.node.canRoam[0].value() == false
     }
 
-    def 'create withXml blocks'() {
-        when:
-        job.configure { Node node ->
-            // Not going to actually execute this
-        }
-
-        job.configure { Node node ->
-            // Not going to actually execute this
-        }
-
-        then:
-        !job.withXmlActions.empty
-    }
-
     def 'update Node using withXml'() {
         setup:
-        Node project = new XmlParser().parse(new StringReader('<test><foo/><bar/><baz/></test>'))
         TestJob job = new TestJob(null)
         AtomicBoolean boolOutside = new AtomicBoolean(true)
 
@@ -100,7 +85,7 @@ class JobSpec extends Specification {
         job.configure { Node node ->
             node.foo[0].value = 'Test'
         }
-        job.executeWithXmlActions(project)
+        Node project = job.node
 
         then:
         project.foo[0].text() == 'Test'
@@ -109,7 +94,7 @@ class JobSpec extends Specification {
         job.configure { Node node ->
             node.bar[0].value = boolOutside.get()
         }
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
         project.bar[0].text() == 'true'
@@ -119,7 +104,7 @@ class JobSpec extends Specification {
 
         when: 'Change value on outside scope variable to ensure closure is being run again'
         boolOutside.set(false)
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
         project.bar[0].text() == 'false'
@@ -129,16 +114,16 @@ class JobSpec extends Specification {
             def baz = node.baz[0]
             baz.appendNode('some', 'value')
         }
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
         project.baz[0].children().size() == 1
 
         when: 'Execute withXmlActions again'
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
-        project.baz[0].children().size() == 2
+        project.baz[0].children().size() == 1
     }
 
     def 'call authorization'() {

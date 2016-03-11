@@ -7,7 +7,6 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
@@ -142,10 +141,7 @@ class StepContext extends AbstractExtensibleContext {
             }
         }
 
-        if (gradleContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(gradleContext.configureBlock)
-            action.execute(gradleNode)
-        }
+        ContextHelper.executeConfigureBlock(gradleNode, gradleContext.configureBlock)
 
         stepNodes << gradleNode
     }
@@ -182,7 +178,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'sbt')
     void sbt(String sbtName, String actions = null, String sbtFlags = null, String jvmFlags = null,
-             String subdirPath = null, Closure configure = null) {
+             String subdirPath = null, Closure configureBlock = null) {
         Preconditions.checkNotNull(sbtName, 'Please provide the name of the SBT to use')
 
         Node sbtNode = new NodeBuilder().'org.jvnet.hudson.plugins.SbtPluginBuilder' {
@@ -193,10 +189,7 @@ class StepContext extends AbstractExtensibleContext {
             delegate.subdirPath(subdirPath ?: '')
         }
 
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(sbtNode)
-        }
+        ContextHelper.executeConfigureBlock(sbtNode, configureBlock)
 
         stepNodes << sbtNode
     }
@@ -439,10 +432,7 @@ class StepContext extends AbstractExtensibleContext {
             }
         }
 
-        if (mavenContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(mavenContext.configureBlock)
-            action.execute(mavenNode)
-        }
+        ContextHelper.executeConfigureBlock(mavenNode, mavenContext.configureBlock)
 
         stepNodes << mavenNode
     }

@@ -4,7 +4,7 @@ package javaposse.jobdsl.dsl
  * DSL element representing a Jenkins view.
  */
 abstract class View extends AbstractContext {
-    private final List<WithXmlAction> withXmlActions = []
+    private final List<Closure> configureBlocks = []
 
     String name
 
@@ -45,8 +45,8 @@ abstract class View extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure withXmlClosure) {
-        withXmlActions.add(new WithXmlAction(withXmlClosure))
+    void configure(Closure configureBlock) {
+        configureBlocks << configureBlock
     }
 
     /**
@@ -68,14 +68,13 @@ abstract class View extends AbstractContext {
 
     Node getNode() {
         Node root = new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
-
-        withXmlActions.each { it.execute(root) }
+        ContextHelper.executeConfigureBlocks(root, configureBlocks)
         root
     }
 
     @Deprecated
     protected void execute(Closure rootClosure) {
         jobManagement.logDeprecationWarning()
-        withXmlActions << new WithXmlAction(rootClosure)
+        configure(rootClosure)
     }
 }

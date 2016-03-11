@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
@@ -66,9 +65,7 @@ class PublisherContext extends AbstractExtensibleContext {
             disabled(context.disabled)
         }
 
-        if (context.configureClosure) {
-            new WithXmlAction(context.configureClosure).execute(emailNode)
-        }
+        ContextHelper.executeConfigureBlock(emailNode, context.configureBlock)
 
         publisherNodes << emailNode
     }
@@ -135,11 +132,7 @@ class PublisherContext extends AbstractExtensibleContext {
             }
         }
 
-        // Apply their overrides
-        if (emailContext.configureClosure) {
-            WithXmlAction action = new WithXmlAction(emailContext.configureClosure)
-            action.execute(emailNode)
-        }
+        ContextHelper.executeConfigureBlock(emailNode, emailContext.configureBlock)
 
         publisherNodes << emailNode
     }

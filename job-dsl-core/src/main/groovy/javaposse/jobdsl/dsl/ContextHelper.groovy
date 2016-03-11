@@ -14,4 +14,18 @@ class ContextHelper {
             closure.call()
         }
     }
+
+    static void executeConfigureBlock(Node node, Closure configureBlock) {
+        if (configureBlock) {
+            configureBlock.delegate = new MissingPropertyToStringDelegate(node)
+
+            use(NodeEnhancement) {
+                configureBlock.call(node)
+            }
+        }
+    }
+
+    static void executeConfigureBlocks(Node node, List<Closure> configureBlocks) {
+        configureBlocks.each { executeConfigureBlock(node, it) }
+    }
 }

@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 
 class WrapperContext extends AbstractExtensibleContext {
@@ -296,10 +295,7 @@ class WrapperContext extends AbstractExtensibleContext {
             postFailedBuildSteps(releaseContext.postFailedBuildSteps)
         }
 
-        if (releaseContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
-            action.execute(releaseNode)
-        }
+        ContextHelper.executeConfigureBlock(releaseNode, releaseContext.configureBlock)
 
         wrapperNodes << releaseNode
     }

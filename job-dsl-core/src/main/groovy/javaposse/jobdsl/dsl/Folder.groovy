@@ -59,12 +59,6 @@ class Folder extends Item {
         }
     }
 
-    Node getNode() {
-        Node root = new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
-        withXmlActions.each { it.execute(root) }
-        root
-    }
-
     @Deprecated
     protected void execute(Closure rootClosure) {
         jobManagement.logDeprecationWarning()

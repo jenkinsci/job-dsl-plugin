@@ -60,6 +60,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-144) 
  * Deprecated several methods for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin), see
    [Migration](Migration#migrating-to-144)
+ * Deprecated the `WithXmlAction` class, see [Migration](Migration#migrating-to-144)
  * Removed a method in `JobManagement` interface, see [Migration](Migration#migrating-to-144)
  * Moved two classes, see [Migration](Migration#migrating-to-144)
  * Removed anything that has been deprecated in 1.38, see [Migration](Migration#migrating-to-138)

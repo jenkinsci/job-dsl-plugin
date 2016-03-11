@@ -93,6 +93,11 @@ The method `JobManagement#createOrUpdateConfig(String path, String config, boole
 The classes `javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext` and `javaposse.jobdsl.dsl.helpers.CpsContext` have
 been moved to the `javaposse.jobdsl.dsl.helpers.workflow` package.
 
+### WithXmlAction
+
+The class `javaposse.jobdsl.dsl.WithXmlAction` is [[deprecated|Deprecation-Policy]] and will be removed. Use
+`javaposse.jobdsl.dsl.ContextHelper#executeConfigureBlock` to evaluate a configure block.
+
 ### Perforce
 
 The method `p4(String viewSpec, Closure closure)` in the SCM context is [[deprecated|Deprecation-Policy]] and will be

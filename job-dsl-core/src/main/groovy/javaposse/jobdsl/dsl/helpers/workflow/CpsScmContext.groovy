@@ -11,7 +11,7 @@ class CpsScmContext extends AbstractContext {
     protected final Item item
 
     String scriptPath = 'JenkinsFile'
-    ScmContext scmContext = new ScmContext([], jobManagement, item)
+    ScmContext scmContext = new ScmContext(jobManagement, item)
 
     CpsScmContext(JobManagement jobManagement, Item item) {
         super(jobManagement)

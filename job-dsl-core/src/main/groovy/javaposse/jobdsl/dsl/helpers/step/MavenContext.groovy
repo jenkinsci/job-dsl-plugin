@@ -105,8 +105,8 @@ class MavenContext extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure closure) {
-        this.configureBlock = closure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 
     /**

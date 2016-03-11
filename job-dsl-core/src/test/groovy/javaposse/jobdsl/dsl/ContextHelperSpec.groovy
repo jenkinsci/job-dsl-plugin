@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue
 /**
  * Work through the additional functionality we're offer over node
  */
-class WithXmlActionSpec extends Specification {
+class ContextHelperSpec extends Specification {
     static final String XML = '''<?xml version="1.0" encoding="UTF-8"?>
 <project>
   <actions/>
@@ -47,15 +47,10 @@ class WithXmlActionSpec extends Specification {
         }
     }
 
-    def execute(Closure closure) {
-        def withXmlAction = new WithXmlAction(closure)
-        withXmlAction.execute(root)
-    }
-
     def 'lookup with existent nodes'() {
         when:
         def builders = 'build'
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             assertNotNull(project)
             assertTrue(project instanceof Node)
 
@@ -68,7 +63,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'lookup with non-existent nodes'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             project / builders / 'hudson.security.AuthorizationMatrixProperty'
         }
 
@@ -78,7 +73,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'add single child in left shift closure'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix << permission('hudson.model.Item.Delete:jryan')
         }
@@ -96,7 +91,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'call Node multiple times to append'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix << permission('hudson.model.Item.Delete:jryan')
             matrix << permission('hudson.model.Item.Configure:jryan')
@@ -111,7 +106,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'use chained left shift'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix << {
                 permission('hudson.model.Item.Configure:jryan')
@@ -129,7 +124,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'left shift chained with non-closures'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix << permission('hudson.model.Item.Configure:jryan') << permission('hudson.model.Item.Configure:jack')
         }
@@ -143,7 +138,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'left shift with multiple children in closure'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix << {
                 permission('hudson.model.Item.Configure:jill')
@@ -160,7 +155,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'left shift with children having children'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix << {
                 permission('hudson.model.Item.Configure:jill') {
@@ -181,7 +176,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'children with children without closure'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             def matrix = project / builders / 'hudson.security.AuthorizationMatrixProperty'
             matrix <<
                     permissions {
@@ -205,7 +200,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'Setup git browser node'() {
         when:
-        execute { project ->
+        ContextHelper.executeConfigureBlock(root) { project ->
             // Find irrelevant of existing attributes
             def browserNode = project / scm / browser
 
@@ -221,7 +216,7 @@ class WithXmlActionSpec extends Specification {
 
     def 'configuring nodes with attributes purely nested'() {
         when:
-        execute {
+        ContextHelper.executeConfigureBlock(root) {
             it / scm / browser(class: 'hudson.plugins.git.browser.GithubWeb') / url('https://github.com/foo/bar')
         }
 
@@ -229,7 +224,7 @@ class WithXmlActionSpec extends Specification {
         confirmBrowserUrl(root.scm[0])
 
         when: // Do it again with the same values, but hopefully the same thing
-        execute {
+        ContextHelper.executeConfigureBlock(root) {
             it / scm / browser(class: 'hudson.plugins.git.browser.GithubWeb') / url << 'https://github.com/foo/bar'
         }
 
@@ -237,7 +232,7 @@ class WithXmlActionSpec extends Specification {
         confirmBrowserUrl(root.scm[0])
 
         when: // Do it again with different values, but hopefully the same thing
-        execute {
+        ContextHelper.executeConfigureBlock(root) {
             it / scm / browser(class: 'hudson.plugins.git.browser.GitoriusWeb') / url << 'https://github.com/foo/baz'
         }
 
@@ -250,6 +245,5 @@ class WithXmlActionSpec extends Specification {
         assert scmNode.browser[1].attributes()['class'] == 'hudson.plugins.git.browser.GitoriusWeb'
         assert scmNode.browser[1].url.size() == 1
         assert scmNode.browser[1].url[0].value() == 'https://github.com/foo/baz'
-
     }
 }

@@ -21,7 +21,7 @@ class ExtendedEmailContext implements Context {
     final List<String> replyToList = []
     boolean saveToWorkspace
     boolean disabled
-    Closure configureClosure
+    Closure configureBlock
 
     /**
      * Adds email addresses that should receive emails. Defaults to {@code '$DEFAULT_RECIPIENTS'}. Can be called
@@ -133,7 +133,7 @@ class ExtendedEmailContext implements Context {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure configureClosure) {
-        this.configureClosure = configureClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 }

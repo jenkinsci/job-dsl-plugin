@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 
 class GerritContext implements Context {
     GerritEventContext eventContext = new GerritEventContext()
-    Closure configureClosure
+    Closure configureBlock
     List projects = []
 
     Integer startedCodeReview = null
@@ -80,8 +80,8 @@ class GerritContext implements Context {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure configureClosure) {
-        this.configureClosure = configureClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 
     /**
