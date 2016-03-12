@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.step.StepContext
 import spock.lang.Specification
 
 class DslEnvironmentImplSpec extends Specification {
@@ -30,10 +31,10 @@ class DslEnvironmentImplSpec extends Specification {
 
     def 'createContext with AbstractExtensibleContext'() {
         when:
-        AbstractExtensibleContext context = dslEnvironment.createContext(TestAbstractExtensibleContext)
+        AbstractExtensibleContext context = dslEnvironment.createContext(StepContext)
 
         then:
-        context instanceof TestAbstractExtensibleContext
+        context instanceof StepContext
     }
 
     @SuppressWarnings('UnnecessaryPublicModifier') // false positive, fixed in CodeNarc 0.25
@@ -72,16 +73,6 @@ class DslEnvironmentImplSpec extends Specification {
     static class TestAbstractContext extends AbstractContext {
         TestAbstractContext(JobManagement jobManagement) {
             super(jobManagement)
-        }
-    }
-
-    static class TestAbstractExtensibleContext extends AbstractExtensibleContext {
-        TestAbstractExtensibleContext(JobManagement jobManagement, Item item) {
-            super(jobManagement, item)
-        }
-
-        @Override
-        protected void addExtensionNode(Node node) {
         }
     }
 
