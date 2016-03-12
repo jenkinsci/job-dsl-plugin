@@ -209,19 +209,12 @@ public class ExecuteDslScripts extends Builder {
                         targets, usingScriptText, scriptText, ignoreExisting, additionalClasspath
                 );
 
-                Set<GeneratedJob> freshJobs = new LinkedHashSet<GeneratedJob>();
-                Set<GeneratedView> freshViews = new LinkedHashSet<GeneratedView>();
-                Set<GeneratedConfigFile> freshConfigFiles = new LinkedHashSet<GeneratedConfigFile>();
-                Set<GeneratedUserContent> freshUserContents = new LinkedHashSet<GeneratedUserContent>();
-                for (ScriptRequest request : scriptRequests) {
-                    LOGGER.log(Level.FINE, String.format("Request for %s", request.getLocation()));
-
-                    GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm);
-                    freshJobs.addAll(generatedItems.getJobs());
-                    freshViews.addAll(generatedItems.getViews());
-                    freshConfigFiles.addAll(generatedItems.getConfigFiles());
-                    freshUserContents.addAll(generatedItems.getUserContents());
-                }
+                DslScriptLoader dslScriptLoader = new DslScriptLoader(jm);
+                GeneratedItems generatedItems = dslScriptLoader.runScripts(scriptRequests);
+                Set<GeneratedJob> freshJobs = generatedItems.getJobs();
+                Set<GeneratedView> freshViews = generatedItems.getViews();
+                Set<GeneratedConfigFile> freshConfigFiles = generatedItems.getConfigFiles();
+                Set<GeneratedUserContent> freshUserContents = generatedItems.getUserContents();
 
                 updateTemplates(build, listener, freshJobs);
                 updateGeneratedJobs(build, listener, freshJobs);

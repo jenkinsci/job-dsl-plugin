@@ -12,79 +12,101 @@ import java.util.logging.Logger
  * Runs provided DSL scripts via an external {@link JobManagement}.
  */
 class DslScriptLoader {
+
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.name)
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator()
 
-    private static GeneratedItems runDslEngineForParent(ScriptRequest scriptRequest,
-                                                        JobManagement jobManagement) throws IOException {
-        PrintStream logger = jobManagement.outputStream
+    private final JobManagement jobManagement
+    private final PrintStream logger
 
+    /**
+     * For testing a string directly.
+     */
+    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
+        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File('.').toURI().toURL())
+        runDslEngine(scriptRequest, jobManagement)
+    }
+
+    static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+        DslScriptLoader loader = new DslScriptLoader(jobManagement)
+        loader.runScripts([scriptRequest])
+    }
+
+    DslScriptLoader(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+        this.logger = jobManagement.outputStream
+    }
+
+    GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.classLoader
         CompilerConfiguration config = createCompilerConfiguration(jobManagement)
 
         // Otherwise baseScript won't take effect
         GroovyClassLoader groovyClassLoader = new GroovyClassLoader(parentClassLoader, config)
+        GroovyScriptEngine engine
         try {
-            GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.urlRoots, groovyClassLoader)
-            try {
-                engine.config = config
+            URL[] urlRoots = scriptRequests*.urlRoots.flatten().unique()
+            engine = new GroovyScriptEngine(urlRoots, groovyClassLoader)
+            engine.config = config
 
-                Binding binding = createBinding(jobManagement)
-
-                JobParent jobParent
-                try {
-                    Script script
-                    if (scriptRequest.body != null) {
-                        logger.println('Processing provided DSL script')
-                        Class cls = engine.groovyClassLoader.parseClass(scriptRequest.body, 'script')
-                        script = InvokerHelper.createScript(cls, binding)
-                    } else {
-                        logger.println("Processing DSL script ${scriptRequest.location}")
-                        if (!isValidScriptName(scriptRequest.location)) {
-                            throw new DslException(
-                                    "invalid script name '${scriptRequest.location}; script names may only contain " +
-                                            'letters, digits and underscores, but may not start with a digit'
-                            )
-                        }
-                        checkCollidingScriptName(scriptRequest.location, engine.groovyClassLoader, logger)
-                        script = engine.createScript(scriptRequest.location, binding)
-                    }
-                    assert script instanceof JobParent
-
-                    jobParent = (JobParent) script
-                    jobParent.setJm(jobManagement)
-
-                    binding.setVariable('jobFactory', jobParent)
-
-                    script.run()
-                } catch (CompilationFailedException e) {
-                    throw new DslException(e.message, e)
-                } catch (GroovyRuntimeException e) {
-                    throw new DslScriptException(e.message, e)
-                } catch (ResourceException e) {
-                    throw new IOException('Unable to run script', e)
-                } catch (ScriptException e) {
-                    throw new IOException('Unable to run script', e)
-                }
+                Binding binding = createBinding()
 
                 GeneratedItems generatedItems = new GeneratedItems()
-                generatedItems.configFiles = extractGeneratedConfigFiles(jobParent, scriptRequest.ignoreExisting)
-                generatedItems.jobs = extractGeneratedJobs(jobParent, scriptRequest.ignoreExisting)
-                generatedItems.views = extractGeneratedViews(jobParent, scriptRequest.ignoreExisting)
-                generatedItems.userContents = extractGeneratedUserContents(jobParent, scriptRequest.ignoreExisting)
+                scriptRequests.each { ScriptRequest scriptRequest ->
+                    JobParent jobParent = runScript(scriptRequest, engine, binding)
 
-                scheduleJobsToRun(jobParent.queueToBuild, jobManagement)
+                    boolean ignoreExisting = scriptRequest.ignoreExisting
+                    generatedItems.configFiles.addAll(extractGeneratedConfigFiles(jobParent, ignoreExisting))
+                    generatedItems.jobs.addAll(extractGeneratedJobs(jobParent, ignoreExisting))
+                    generatedItems.views.addAll(extractGeneratedViews(jobParent, ignoreExisting))
+                    generatedItems.userContents.addAll(extractGeneratedUserContents(jobParent, ignoreExisting))
+
+                    scheduleJobsToRun(jobParent.queueToBuild)
+                }
 
                 return generatedItems
-            } finally {
-                if (engine.groovyClassLoader instanceof Closeable) {
-                    ((Closeable) engine.groovyClassLoader).close()
-                }
-            }
         } finally {
+            if (engine?.groovyClassLoader instanceof Closeable) {
+                ((Closeable) engine.groovyClassLoader).close()
+            }
             if (groovyClassLoader instanceof Closeable) {
                 ((Closeable) groovyClassLoader).close()
             }
+        }
+    }
+
+    private JobParent runScript(ScriptRequest scriptRequest, GroovyScriptEngine engine, Binding binding) {
+        LOGGER.log(Level.FINE, String.format("Request for ${scriptRequest.location}"))
+        try {
+            Script script
+            if (scriptRequest.body != null) {
+                logger.println('Processing provided DSL script')
+                Class cls = engine.groovyClassLoader.parseClass(scriptRequest.body, 'script')
+                script = InvokerHelper.createScript(cls, binding)
+            } else {
+                logger.println("Processing DSL script ${scriptRequest.location}")
+                checkValidScriptName(scriptRequest.location)
+                checkCollidingScriptName(scriptRequest.location, engine.groovyClassLoader, logger)
+                script = engine.createScript(scriptRequest.location, binding)
+            }
+            assert script instanceof JobParent
+
+            JobParent jobParent = (JobParent) script
+            jobParent.setJm(jobManagement)
+
+            binding.setVariable('jobFactory', jobParent)
+
+            script.run()
+
+            return jobParent
+        } catch (CompilationFailedException e) {
+            throw new DslException(e.message, e)
+        } catch (GroovyRuntimeException e) {
+            throw new DslScriptException(e.message, e)
+        } catch (ResourceException e) {
+            throw new IOException('Unable to run script', e)
+        } catch (ScriptException e) {
+            throw new IOException('Unable to run script', e)
         }
     }
 
@@ -99,6 +121,15 @@ class DslScriptLoader {
             }
         }
         true
+    }
+
+    private static void checkValidScriptName(String scriptName) {
+        if (!isValidScriptName(scriptName)) {
+            throw new DslException(
+                "invalid script name '${scriptName}; script names may only contain " +
+                    'letters, digits and underscores, but may not start with a digit'
+            )
+        }
     }
 
     private static void checkCollidingScriptName(String scriptFile, ClassLoader classLoader, PrintStream logger) {
@@ -116,18 +147,6 @@ class DslScriptLoader {
         String fileName = new File(scriptFile).name
         int idx = fileName.lastIndexOf('.')
         idx > -1 ? fileName[0..idx - 1] : fileName
-    }
-
-    /**
-     * For testing a string directly.
-     */
-    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File('.').toURI().toURL())
-        runDslEngine(scriptRequest, jobManagement)
-    }
-
-    static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        runDslEngineForParent(scriptRequest, jobManagement)
     }
 
     private static Set<GeneratedJob> extractGeneratedJobs(JobParent jobParent,
@@ -186,7 +205,7 @@ class DslScriptLoader {
     }
 
     @SuppressWarnings('CatchException')
-    static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {
+    private void scheduleJobsToRun(List<String> jobNames) {
         Map<String, Throwable> exceptions = [:]
         jobNames.each { String jobName ->
             try {
@@ -203,7 +222,7 @@ class DslScriptLoader {
         }
     }
 
-    private static Binding createBinding(JobManagement jobManagement) {
+    private Binding createBinding() {
         Binding binding = new Binding()
         binding.setVariable('out', jobManagement.outputStream) // Works for println, but not System.out
 
