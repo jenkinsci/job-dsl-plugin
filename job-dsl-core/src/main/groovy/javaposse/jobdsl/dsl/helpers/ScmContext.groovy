@@ -180,9 +180,6 @@ class ScmContext extends AbstractExtensibleContext {
             if (configure) {
                 delegate.configure(configure)
             }
-            extensions {
-                perBuildTag()
-            }
         }
     }
 
