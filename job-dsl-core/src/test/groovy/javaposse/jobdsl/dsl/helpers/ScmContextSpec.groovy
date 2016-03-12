@@ -1176,8 +1176,12 @@ class ScmContextSpec extends Specification {
 
         then:
         context.scmNodes[0] != null
-        context.scmNodes[0].userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == GIT_REPO_URL
-        context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == '**'
+        with(context.scmNodes[0]) {
+            userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == GIT_REPO_URL
+            branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == '**'
+            createTag.size() == 0
+            extensions.size() == 0
+        }
         (1.._) * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
