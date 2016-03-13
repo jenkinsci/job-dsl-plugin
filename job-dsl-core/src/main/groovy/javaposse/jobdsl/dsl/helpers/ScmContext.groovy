@@ -152,7 +152,7 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Adds a Git SCM source.
+     * Adds a Git SCM source. The "Create a tag for every build" option will be enabled by default.
      *
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
@@ -163,7 +163,7 @@ class ScmContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Adds a Git SCM source.
+     * Adds a Git SCM source. The "Create a tag for every build" option will be enabled by default.
      *
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
