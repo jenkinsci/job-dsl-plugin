@@ -13,12 +13,15 @@ class PhaseContext extends AbstractContext {
     String continuationCondition
     String executionType
     Boolean enableGroovyScript
+    Boolean isUseScriptFile
     String groovyScript
+    String scriptFileSource
 
     List<PhaseJobContext> jobsInPhase = []
 
     PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
-                 String executionType, Boolean enableGroovyScript, String groovyScript) {
+                 String executionType, Boolean enableGroovyScript, String groovyScript, Boolean isUseScriptFile,
+                 String scriptFileSource) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
@@ -26,6 +29,8 @@ class PhaseContext extends AbstractContext {
         this.executionType = executionType
         this.enableGroovyScript = enableGroovyScript
         this.groovyScript = groovyScript
+        this.isUseScriptFile = isUseScriptFile
+        this.scriptFileSource = scriptFileSource
     }
 
     /**
@@ -49,10 +54,6 @@ class PhaseContext extends AbstractContext {
         this.executionType = executionType
     }
 
-    /**
-     * Defines groovy script
-     * @param script
-     */
     void groovyScript(String script) {
         if (null == enableGroovyScript) {
             this.enableGroovyScript = true
@@ -62,6 +63,27 @@ class PhaseContext extends AbstractContext {
 
     void enableGroovyScript(boolean enableGroovyScript) {
         this.enableGroovyScript = enableGroovyScript
+    }
+
+    /**
+     * Defines groovy script
+     * @param source
+     * @param script
+     */
+    void groovyScript(String source, String script) {
+        if (null == enableGroovyScript) {
+            this.enableGroovyScript = true
+        }
+        if ('FILE' == source) {
+            this.scriptFileSource = script
+            this.isUseScriptFile = true
+        } else if ('SCRIPT' == source) {
+            this.groovyScript = script
+            this.isUseScriptFile = false
+        } else {
+            this.enableGroovyScript = false
+            this.isUseScriptFile = false
+        }
     }
 
     /**

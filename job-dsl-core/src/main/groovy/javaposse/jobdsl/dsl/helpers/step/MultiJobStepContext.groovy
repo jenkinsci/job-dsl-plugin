@@ -52,7 +52,7 @@ class MultiJobStepContext extends StepContext {
     void phase(String name, String continuationCondition, String executionType,
                @DslContext(PhaseContext) Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition, executionType,
-                null, '')
+                null, '', null, '')
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         Preconditions.checkNotNullOrEmpty(phaseContext.phaseName, 'A phase needs a name')
@@ -70,6 +70,8 @@ class MultiJobStepContext extends StepContext {
             delegate.executionType(phaseContext.executionType)
             delegate.enableGroovyScript(phaseContext.enableGroovyScript)
             delegate.groovyScript(phaseContext.groovyScript)
+            delegate.isUseScriptFile(phaseContext.isUseScriptFile)
+            delegate.scriptFileSource(phaseContext.scriptFileSource)
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
